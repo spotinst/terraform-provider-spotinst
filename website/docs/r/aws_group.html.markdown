@@ -6,7 +6,7 @@ description: |-
   Provides a Spotinst AWS group resource.
 ---
 
-# spotinst_aws_group
+# spotinst\_aws\_group
 
 Provides a Spotinst AWS group resource.
 
@@ -136,6 +136,13 @@ Each `availability_zone` supports the following:
 * `name` - The name of the availability zone.
 * `subnet_id` - (Optional)  A specific subnet ID within the given availability zone. If not specified, the default subnet will be used.
 
+
+<a id="signal"></a>
+## Signals
+
+Each `signal` supports the following:
+
+* `name` - (Required) The name of the signal defined for the group. Valid Values: INSTANCE_READY
 
 <a id="scheduled-task"></a>
 ## Scheduled Tasks
