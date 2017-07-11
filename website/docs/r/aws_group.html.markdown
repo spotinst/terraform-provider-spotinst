@@ -122,7 +122,11 @@ The following arguments are supported:
     * `monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
     * `user_data` - (Optional) The user data to provide when launching the instance.
     * `iam_instance_profile` - (Optional) The ARN of an IAM instance profile to associate with launched instances.
-    * `load_balancer_names` - (Optional) Registers each instance with the specified Elastic Load Balancers. For ALB, this is the name of `aws_alb_target_group`.  For ELB, this is the name of `aws_elb`.
+    * `load_balancer_names` - (Optional) Registers each instance with the specified Elastic Load Balancers (ELB). Should use `load_balancer` instead.
+    * `load_balancer` - (Optional) Application Load Balancer
+      * `name` - Name of the Application Load Balancer Target Group
+      * `type` - `TARGET_GROUP` or `CLASSIC`
+      * `arn`  - ARN of the ALB Target Group
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
