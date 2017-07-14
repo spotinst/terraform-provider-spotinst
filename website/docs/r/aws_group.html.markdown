@@ -122,7 +122,11 @@ The following arguments are supported:
     * `monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
     * `user_data` - (Optional) The user data to provide when launching the instance.
     * `iam_instance_profile` - (Optional) The ARN of an IAM instance profile to associate with launched instances.
-    * `load_balancer_names` - (Optional) Registers each instance with the specified Elastic Load Balancers.
+    * `load_balancer_names` - (Optional) Registers each instance with the specified Elastic Load Balancers (ELB). Should use `load_balancer` instead.
+    * `load_balancer` - (Optional) Application Load Balancer
+    	* `name` - Name of the Application Load Balancer Target Group
+    	* `type` - `TARGET_GROUP` or `CLASSIC`
+    	* `arn`  - ARN of the ALB Target Group
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
@@ -131,7 +135,7 @@ The following arguments are supported:
 <a id="availability-zone"></a>
 ## Availability Zone
 
-Each `availability_zone` supports the following:
+For multiple availability zones, define multiple entries of `availablity_zone`.  Each `availability_zone` supports the following:
 
 * `name` - The name of the availability zone.
 * `subnet_id` - (Optional)  A specific subnet ID within the given availability zone. If not specified, the default subnet will be used.
