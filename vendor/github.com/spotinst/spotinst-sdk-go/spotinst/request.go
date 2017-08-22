@@ -1,28 +1,30 @@
 package spotinst
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/url"
 )
 
-// request is used to help build up a request
+// request is used to help build up a request.
 type request struct {
-	config *clientConfig
-	method string
-	url    *url.URL
-	params url.Values
-	body   io.Reader
-	header http.Header
-	obj    interface{}
+	context context.Context
+	config  *clientConfig
+	method  string
+	url     *url.URL
+	params  url.Values
+	body    io.Reader
+	header  http.Header
+	obj     interface{}
 }
 
-// toHTTP converts the request to an HTTP request
+// toHTTP converts the request to an HTTP request.
 func (r *request) toHTTP() (*http.Request, error) {
-	// Encode the query parameters
+	// Encode the query parameters.
 	r.url.RawQuery = r.params.Encode()
 
-	// Check if we should encode the body
+	// Check if we should encode the body.
 	if r.body == nil && r.obj != nil {
 		if b, err := encodeBody(r.obj); err != nil {
 			return nil, err
@@ -31,7 +33,7 @@ func (r *request) toHTTP() (*http.Request, error) {
 		}
 	}
 
-	// Create the HTTP request
+	// Create the HTTP request.
 	req, err := http.NewRequest(r.method, r.url.RequestURI(), r.body)
 	if err != nil {
 		return nil, err
@@ -46,5 +48,5 @@ func (r *request) toHTTP() (*http.Request, error) {
 	req.Header.Add("Accept", r.config.contentType)
 	req.Header.Add("User-Agent", r.config.userAgent)
 
-	return req, nil
+	return req.WithContext(r.context), nil
 }

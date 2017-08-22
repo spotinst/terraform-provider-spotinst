@@ -1,92 +1,104 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: aws_group"
-sidebar_current: "docs-do-resource-aws_group"
+page_title: "Spotinst: group_aws"
+sidebar_current: "docs-do-resource-group_aws"
 description: |-
   Provides a Spotinst AWS group resource.
 ---
 
-# spotinst\_aws\_group
+# spotinst\_group\_aws
 
 Provides a Spotinst AWS group resource.
 
 ## Example Usage
 
 ```hcl
-# Create an AWS group
-resource "spotinst_aws_group" "workers" {
-  name = "workers-group"
+# Create an Elastigroup
+resource "spotinst_group_aws" "sidekiq" {
+  name        = "sidekiq"
   description = "created by Terraform"
-  product = "Linux/UNIX"
+  product     = "Linux/UNIX"
 
   capacity {
-    target = 50
-    minimum = 25
-    maximum = 100
+    target  = 10
+    minimum = 5
+    maximum = 25
   }
 
   strategy {
-    risk = 100
-  }
-
-  scheduled_task {
-    task_type = "scale"
-    cron_expression = "0 5 * * 0-4"
-    scale_target_capacity = 80
-  }
-
-  scheduled_task {
-    task_type = "backup_ami"
-    frequency = "hourly"
+    risk                 = 100
+    fallback_to_ondemand = true
   }
 
   instance_types {
-    ondemand = "c3.large"
-    spot = ["m3.large", "m4.large", "c3.large", "c4.large"]
+    ondemand = "m3.xlarge"
+    spot = [
+      "m3.xlarge",
+      "m3.2xlarge",
+    ]
   }
 
-  availability_zone {
-    name = "us-west-2b"
-    subnet_id = "subnet-7bbbf51e"
-  }
+  availability_zones = [
+    "us-west-2a:subnet-45699e0b",
+    "us-west-2b:subnet-338f5353",
+    "us-west-2c:subnet-338f5355",
+  ]
 
   launch_specification {
     monitoring = false
-    image_id = "ami-f0091d91"
-    key_pair = "pemfile"
-    security_group_ids = ["default", "allow-ssh"]
+    image_id   = "ami-1e299d75"
+    key_pair   = "spotinst-oregon"
+
+    security_group_ids = [
+      "sg-3d10b646",
+    ]
   }
 
-  tags {
-    foo = "bar"
-    bar = "baz"
+  ebs_block_device {
+    device_name           = "/dev/sda1"
+    volume_size           = 30
+    delete_on_termination = true
   }
 
   scaling_up_policy {
-    policy_name = "Scaling Policy 1"
-    metric_name = "CPUUtilization"
-    statistic = "average"
-    unit = "percent"
-    threshold = 80
-    adjustment = 1
-    namespace = "AWS/EC2"
-    period = 300
-    evaluation_periods = 2
-    cooldown = 300
+    policy_name        = "Sidkiq Scaling Up Policy"
+    metric_name        = "SidekiqQueuesDepth"
+    statistic          = "average"
+    unit               = "none"
+    adjustment         = 1
+    namespace          = "custom"
+    threshold          = 100
+    period             = 60
+    evaluation_periods = 5
+    cooldown           = 300
   }
 
   scaling_down_policy {
-    policy_name = "Scaling Policy 2"
-    metric_name = "CPUUtilization"
-    statistic = "average"
-    unit = "percent"
-    threshold = 40
-    adjustment = 1
-    namespace = "AWS/EC2"
-    period = 300
-    evaluation_periods = 2
-    cooldown = 300
+    policy_name        = "Sidkiq Scaling Down Policy"
+    metric_name        = "SidekiqQueuesDepth"
+    statistic          = "average"
+    unit               = "none"
+    adjustment         = 1
+    namespace          = "custom"
+    threshold          = 10
+    period             = 60
+    evaluation_periods = 10
+    cooldown           = 300
   }
+
+  tags {
+    "Env"     = "production"
+    "Name"    = "sidekiq-production"
+    "Project" = "app_v2"
+    "Roles"   = "app;sidekiq"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      "capacity",
+    ]
+  }
+}
 ```
 
 ## Argument Reference
@@ -245,9 +257,11 @@ using the [`taint` command](/docs/commands/taint.html).
 
     * `environment_id` - (Required) The ID of the Elastic Beanstalk environment.
 
-* `nirmata_integration` - (Optional) Describes the [Nirmata](http://nirmata.io/) integration.
+* `ec2_container_service_integration` - (Optional) Describes the [EC2 Container Service](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html/) integration.
 
-    * `api_key` - (Required) The API key of the Nirmata API.
+    * `cluster_name` - (Required) The name of the EC2 Container Service cluster.
+    * `autoscale_is_enabled` - (Optional) Specifies whether the auto scaling feature is enabled.
+    * `autoscale_cooldown` - (Optional) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
 
 ## Attributes Reference
 

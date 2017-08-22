@@ -1,6 +1,7 @@
 package spotinst
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -64,8 +65,8 @@ func testAccCheckSpotinstSubscriptionDestroy(s *terraform.State) error {
 		if rs.Type != "spotinst_subscription" {
 			continue
 		}
-		input := &spotinst.ReadSubscriptionInput{ID: spotinst.String(rs.Primary.ID)}
-		if _, err := client.SubscriptionService.Read(input); err == nil {
+		input := &spotinst.ReadSubscriptionInput{SubscriptionID: spotinst.String(rs.Primary.ID)}
+		if _, err := client.SubscriptionService.Read(context.Background(), input); err == nil {
 			return fmt.Errorf("Subscription still exists")
 		}
 	}
@@ -106,8 +107,8 @@ func testAccCheckSpotinstSubscriptionExists(n string, subscription *spotinst.Sub
 			return fmt.Errorf("No resource ID is set")
 		}
 		client := testAccProvider.Meta().(*spotinst.Client)
-		input := &spotinst.ReadSubscriptionInput{ID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.SubscriptionService.Read(input)
+		input := &spotinst.ReadSubscriptionInput{SubscriptionID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.SubscriptionService.Read(context.Background(), input)
 		if err != nil {
 			return err
 		}
@@ -121,24 +122,26 @@ func testAccCheckSpotinstSubscriptionExists(n string, subscription *spotinst.Sub
 
 const testAccCheckSpotinstSubscriptionConfigBasic = `
 resource "spotinst_subscription" "foo" {
-	resource_id = "sig-foo"
-	event_type = "aws_ec2_instance_launch"
-	protocol = "http"
-	endpoint = "http://endpoint.com"
-	format = {
-		instance_id = "%instance-id%"
-		tags = "foo,baz,baz"
-	}
+  resource_id = "sig-foo"
+  event_type  = "aws_ec2_instance_launch"
+  protocol    = "http"
+  endpoint    = "http://endpoint.com"
+
+  format {
+    instance_id = "%instance-id%"
+    tags        = "foo,baz,baz"
+  }
 }`
 
 const testAccCheckSpotinstSubscriptionConfigNewValue = `
 resource "spotinst_subscription" "foo" {
-	resource_id = "sig-foo"
-	event_type = "aws_ec2_instance_launch"
-	protocol = "https"
-	endpoint = "https://endpoint.com"
-	format = {
-		instance_id = "%instance-id%"
-		tags = "foo,baz,baz"
-	}
+  resource_id = "sig-foo"
+  event_type  = "aws_ec2_instance_launch"
+  protocol    = "https"
+  endpoint    = "https://endpoint.com"
+
+  format {
+    instance_id = "%instance-id%"
+    tags        = "foo,baz,baz"
+  }
 }`

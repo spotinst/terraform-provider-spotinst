@@ -14,23 +14,26 @@ Provides a Spotinst healthcheck resource.
 
 ```hcl 
 resource "spotinst_healthcheck" "foo" {
-	name = "hc-foo"
-	resource_id = "sig-foo"
-	check {
-		protocol = "http"
-		endpoint = "http://endpoint.com"
-		port = 1337
-		interval = 10
-		timeout = 10
-	}
-	threshold {
-		healthy = 1
-		unhealthy = 1
-	}
-	proxy {
-		addr = "http://proxy.com"
-		port = 80
-	}
+  name        = "hc-foo"
+  resource_id = "sig-foo"
+
+  check {
+    protocol = "http"
+    endpoint = "http://endpoint.com"
+    port     = 1337
+    interval = 10
+    timeout  = 10
+  }
+
+  threshold {
+    healthy   = 1
+    unhealthy = 1
+  }
+
+  proxy {
+    addr = "http://proxy.com"
+    port = 80
+  }
 }
 ```
 

@@ -3,22 +3,21 @@ package spotinst
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
 )
 
 const (
 	// SDKVersion is the current version of the SDK.
-	SDKVersion = "2.0.2"
+	SDKVersion = "2.4.4"
 
 	// SDKName is the name of the SDK.
 	SDKName = "spotinst-sdk-go"
 
-	// DefaultAPIAddress is the default address of the Spotinst API.
+	// DefaultAddress is the default address of the Spotinst API.
 	// It is used e.g. when initializing a new Client without a specific address.
-	DefaultAPIAddress = "api.spotinst.io"
-
-	// DefaultOAuthAddress is the default address of the Spotinst OAuth API.
-	// It is used e.g. when initializing a new Client without a specific address.
-	DefaultOAuthAddress = "oauth.spotinst.io"
+	DefaultAddress = "api.spotinst.io"
 
 	// DefaultScheme is the default protocol scheme to use when making HTTP
 	// calls.
@@ -44,20 +43,16 @@ const (
 // clientConfig is used to configure the creation of a client.
 type clientConfig struct {
 	// address is the address of the API server.
-	apiAddress string
-
-	// oauthAddress is the address of the OAuth server.
-	oauthAddress string
+	address string
 
 	// scheme is the URI scheme for the API server.
 	scheme string
 
-	// httpClient is the client to use. Default will be
-	// used if not provided.
+	// httpClient is the client to use. Default will be used if not provided.
 	httpClient *http.Client
 
-	// credentials is used to provide a per-request authorization token.
-	credentials *credentials
+	// credentials provides synchronous safe retrieval of Spotinst credentials.
+	credentials *credentials.Credentials
 
 	// userAgent is the user agent to use when making HTTP calls.
 	userAgent string
@@ -66,86 +61,56 @@ type clientConfig struct {
 	contentType string
 
 	// errorf logs to the error log.
-	errorlog Logger
+	errorlog log.Logger
 
 	// infof logs informational messages.
-	infolog Logger
+	infolog log.Logger
 
 	// tracef logs to the trace log.
-	tracelog Logger
+	tracelog log.Logger
 }
 
-// credentials is used to configure the credentials used by a client.
-type credentials struct {
-	Email        string `json:"username"`
-	Password     string `json:"password"`
-	ClientID     string `json:"client_id"`
-	ClientSecret string `json:"client_secret"`
-	Token        string `json:"token"`
-}
-
-// ClientOptionFunc is a function that configures a Client.
+// ClientOption is a function that configures a Client.
 // It is used in NewClient.
-type ClientOptionFunc func(*clientConfig)
+type ClientOption func(*clientConfig)
 
-// SetAPIAddress defines the address of the Spotinst API.
-func SetAPIAddress(addr string) ClientOptionFunc {
+// SetAddress defines the address of the Spotinst API.
+func SetAddress(addr string) ClientOption {
 	return func(c *clientConfig) {
-		c.apiAddress = addr
-	}
-}
-
-// SetOauthAddress defines the address of the Spotinst OAuth API.
-func SetOauthAddress(addr string) ClientOptionFunc {
-	return func(c *clientConfig) {
-		c.oauthAddress = addr
+		c.address = addr
 	}
 }
 
 // SetScheme defines the scheme for the address of the Spotinst API.
-func SetScheme(scheme string) ClientOptionFunc {
+func SetScheme(scheme string) ClientOption {
 	return func(c *clientConfig) {
 		c.scheme = scheme
 	}
 }
 
 // SetHttpClient defines the HTTP client.
-func SetHttpClient(client *http.Client) ClientOptionFunc {
+func SetHttpClient(client *http.Client) ClientOption {
 	return func(c *clientConfig) {
 		c.httpClient = client
 	}
 }
 
-// SetToken defines the authorization token.
-func SetToken(token string) ClientOptionFunc {
+// SetCredentials defines the credentials.
+func SetCredentials(creds *credentials.Credentials) ClientOption {
 	return func(c *clientConfig) {
-		c.credentials = &credentials{
-			Token: token,
-		}
-	}
-}
-
-// SetCredentials defines the authorization credentials.
-func SetCredentials(email, password, clientID, clientSecret string) ClientOptionFunc {
-	return func(c *clientConfig) {
-		c.credentials = &credentials{
-			Email:        email,
-			Password:     password,
-			ClientID:     clientID,
-			ClientSecret: clientSecret,
-		}
+		c.credentials = creds
 	}
 }
 
 // SetUserAgent defines the user agent.
-func SetUserAgent(ua string) ClientOptionFunc {
+func SetUserAgent(ua string) ClientOption {
 	return func(c *clientConfig) {
 		c.userAgent = fmt.Sprintf("%s+%s", ua, c.userAgent)
 	}
 }
 
 // SetContentType defines the content type.
-func SetContentType(ct string) ClientOptionFunc {
+func SetContentType(ct string) ClientOption {
 	return func(c *clientConfig) {
 		c.contentType = ct
 	}
@@ -153,7 +118,7 @@ func SetContentType(ct string) ClientOptionFunc {
 
 // SetErrorLog sets the logger for critical messages like nodes joining
 // or leaving the cluster or failing requests. It is nil by default.
-func SetErrorLog(logger Logger) ClientOptionFunc {
+func SetErrorLog(logger log.Logger) ClientOption {
 	return func(c *clientConfig) {
 		c.errorlog = logger
 	}
@@ -161,7 +126,7 @@ func SetErrorLog(logger Logger) ClientOptionFunc {
 
 // SetInfoLog sets the logger for informational messages, e.g. requests
 // and their response times. It is nil by default.
-func SetInfoLog(logger Logger) ClientOptionFunc {
+func SetInfoLog(logger log.Logger) ClientOption {
 	return func(c *clientConfig) {
 		c.infolog = logger
 	}
@@ -169,7 +134,7 @@ func SetInfoLog(logger Logger) ClientOptionFunc {
 
 // SetTraceLog specifies the log.Logger to use for output of HTTP requests
 // and responses which is helpful during debugging. It is nil by default.
-func SetTraceLog(logger Logger) ClientOptionFunc {
+func SetTraceLog(logger log.Logger) ClientOption {
 	return func(c *clientConfig) {
 		c.tracelog = logger
 	}

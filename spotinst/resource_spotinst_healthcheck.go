@@ -1,6 +1,7 @@
 package spotinst
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -57,13 +58,23 @@ func resourceSpotinstHealthCheck() *schema.Resource {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
+
+						"healthy": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
+						"unhealthy": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
 					},
 				},
 			},
 
 			"threshold": &schema.Schema{
 				Type:     schema.TypeSet,
-				Required: true,
+				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -78,6 +89,7 @@ func resourceSpotinstHealthCheck() *schema.Resource {
 						},
 					},
 				},
+				Deprecated: "Attribute `threshold` is deprecated. Use `check.healthy` and `check.unhealthy` instead.",
 			},
 
 			"proxy": &schema.Schema{
@@ -108,21 +120,21 @@ func resourceSpotinstHealthCheckCreate(d *schema.ResourceData, meta interface{})
 	if err != nil {
 		return err
 	}
-	log.Printf("[DEBUG] HealthCheck create configuration: %#v\n", newHealthCheck)
+	log.Printf("[DEBUG] HealthCheck create configuration: %#v", newHealthCheck)
 	input := &spotinst.CreateHealthCheckInput{HealthCheck: newHealthCheck}
-	resp, err := client.HealthCheckService.Create(input)
+	resp, err := client.HealthCheckService.Create(context.Background(), input)
 	if err != nil {
 		return fmt.Errorf("Error creating health check: %s", err)
 	}
 	d.SetId(spotinst.StringValue(resp.HealthCheck.ID))
-	log.Printf("[INFO] HealthCheck created successfully: %s\n", d.Id())
+	log.Printf("[INFO] HealthCheck created successfully: %s", d.Id())
 	return resourceSpotinstHealthCheckRead(d, meta)
 }
 
 func resourceSpotinstHealthCheckRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*spotinst.Client)
-	input := &spotinst.ReadHealthCheckInput{ID: spotinst.String(d.Id())}
-	resp, err := client.HealthCheckService.Read(input)
+	input := &spotinst.ReadHealthCheckInput{HealthCheckID: spotinst.String(d.Id())}
+	resp, err := client.HealthCheckService.Read(context.Background(), input)
 	if err != nil {
 		return fmt.Errorf("Error retrieving health check: %s", err)
 	}
@@ -133,14 +145,17 @@ func resourceSpotinstHealthCheckRead(d *schema.ResourceData, meta interface{}) e
 		// Set the check.
 		check := make([]map[string]interface{}, 0, 1)
 		check = append(check, map[string]interface{}{
-			"protocol": hc.Check.Protocol,
-			"endpoint": hc.Check.Endpoint,
-			"port":     hc.Check.Port,
-			"interval": hc.Check.Interval,
-			"timeout":  hc.Check.Timeout,
+			"protocol":  hc.Check.Protocol,
+			"endpoint":  hc.Check.Endpoint,
+			"port":      hc.Check.Port,
+			"interval":  hc.Check.Interval,
+			"timeout":   hc.Check.Timeout,
+			"healthy":   hc.Check.Healthy,
+			"unhealthy": hc.Check.Unhealthy,
 		})
 		d.Set("check", check)
 
+		// TODO: This can be removed later; for backward compatibility only.
 		// Set the threshold.
 		threshold := make([]map[string]interface{}, 0, 1)
 		threshold = append(threshold, map[string]interface{}{
@@ -152,8 +167,8 @@ func resourceSpotinstHealthCheckRead(d *schema.ResourceData, meta interface{}) e
 		// Set the proxy.
 		proxy := make([]map[string]interface{}, 0, 1)
 		proxy = append(proxy, map[string]interface{}{
-			"addr": hc.Addr,
-			"port": hc.Port,
+			"addr": hc.ProxyAddr,
+			"port": hc.ProxyPort,
 		})
 		d.Set("proxy", proxy)
 	} else {
@@ -164,16 +179,17 @@ func resourceSpotinstHealthCheckRead(d *schema.ResourceData, meta interface{}) e
 
 func resourceSpotinstHealthCheckUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*spotinst.Client)
-	healthCheck := &spotinst.HealthCheck{ID: spotinst.String(d.Id())}
+	healthCheck := &spotinst.HealthCheck{}
+	healthCheck.SetId(spotinst.String(d.Id()))
 	update := false
 
 	if d.HasChange("name") {
-		healthCheck.Name = spotinst.String(d.Get("name").(string))
+		healthCheck.SetName(spotinst.String(d.Get("name").(string)))
 		update = true
 	}
 
 	if d.HasChange("resource_id") {
-		healthCheck.ResourceID = spotinst.String(d.Get("resource_id").(string))
+		healthCheck.SetResourceId(spotinst.String(d.Get("resource_id").(string)))
 		update = true
 	}
 
@@ -182,38 +198,54 @@ func resourceSpotinstHealthCheckUpdate(d *schema.ResourceData, meta interface{})
 			if check, err := expandHealthCheckConfig(v); err != nil {
 				return err
 			} else {
-				healthCheck.Check = check
+				healthCheck.SetCheck(check)
 				update = true
 			}
 		}
 	}
 
+	// TODO: This can be removed later; for backward compatibility only.
 	if d.HasChange("threshold") {
 		if v, ok := d.GetOk("threshold"); ok {
-			if threshold, err := expandHealthCheckThreshold(v); err != nil {
+			if healthy, unhealthy, err := expandHealthCheckThreshold(v); err != nil {
 				return err
 			} else {
-				healthCheck.Check.HealthCheckThreshold = threshold
-				update = true
+				if healthCheck.Check == nil {
+					healthCheck.Check = &spotinst.HealthCheckConfig{}
+				}
+				if healthy != nil {
+					healthCheck.Check.SetHealthy(healthy)
+					update = true
+				}
+				if unhealthy != nil {
+					healthCheck.Check.SetUnhealthy(unhealthy)
+					update = true
+				}
 			}
 		}
 	}
 
 	if d.HasChange("proxy") {
 		if v, ok := d.GetOk("proxy"); ok {
-			if proxy, err := expandHealthCheckProxy(v); err != nil {
+			if addr, port, err := expandHealthCheckProxy(v); err != nil {
 				return err
 			} else {
-				healthCheck.HealthCheckProxy = proxy
-				update = true
+				if addr != nil {
+					healthCheck.SetProxyAddr(addr)
+					update = true
+				}
+				if port != nil {
+					healthCheck.SetProxyPort(port)
+					update = true
+				}
 			}
 		}
 	}
 
 	if update {
-		log.Printf("[DEBUG] HealthCheck update configuration: %s\n", stringutil.Stringify(healthCheck))
+		log.Printf("[DEBUG] HealthCheck update configuration: %s", stringutil.Stringify(healthCheck))
 		input := &spotinst.UpdateHealthCheckInput{HealthCheck: healthCheck}
-		if _, err := client.HealthCheckService.Update(input); err != nil {
+		if _, err := client.HealthCheckService.Update(context.Background(), input); err != nil {
 			return fmt.Errorf("Error updating health check %s: %s", d.Id(), err)
 		}
 	}
@@ -223,9 +255,9 @@ func resourceSpotinstHealthCheckUpdate(d *schema.ResourceData, meta interface{})
 
 func resourceSpotinstHealthCheckDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*spotinst.Client)
-	log.Printf("[INFO] Deleting health check: %s\n", d.Id())
-	input := &spotinst.DeleteHealthCheckInput{ID: spotinst.String(d.Id())}
-	if _, err := client.HealthCheckService.Delete(input); err != nil {
+	log.Printf("[INFO] Deleting health check: %s", d.Id())
+	input := &spotinst.DeleteHealthCheckInput{HealthCheckID: spotinst.String(d.Id())}
+	if _, err := client.HealthCheckService.Delete(context.Background(), input); err != nil {
 		return fmt.Errorf("Error deleting health check: %s", err)
 	}
 	d.SetId("")
@@ -234,32 +266,45 @@ func resourceSpotinstHealthCheckDelete(d *schema.ResourceData, meta interface{})
 
 // buildHealthCheckOpts builds the Spotinst HealthCheck options.
 func buildHealthCheckOpts(d *schema.ResourceData, meta interface{}) (*spotinst.HealthCheck, error) {
-	healthCheck := &spotinst.HealthCheck{
-		Name:       spotinst.String(d.Get("name").(string)),
-		ResourceID: spotinst.String(d.Get("resource_id").(string)),
-	}
+	healthCheck := &spotinst.HealthCheck{}
+	healthCheck.SetName(spotinst.String(d.Get("name").(string)))
+	healthCheck.SetResourceId(spotinst.String(d.Get("resource_id").(string)))
 
 	if v, ok := d.GetOk("check"); ok {
 		if check, err := expandHealthCheckConfig(v); err != nil {
 			return nil, err
 		} else {
-			healthCheck.Check = check
+			healthCheck.SetCheck(check)
 		}
 	}
 
+	// TODO: This can be removed later; for backward compatibility only.
 	if v, ok := d.GetOk("threshold"); ok {
-		if threshold, err := expandHealthCheckThreshold(v); err != nil {
+		if healthy, unhealthy, err := expandHealthCheckThreshold(v); err != nil {
 			return nil, err
 		} else {
-			healthCheck.Check.HealthCheckThreshold = threshold
+			if healthCheck.Check == nil {
+				healthCheck.Check = &spotinst.HealthCheckConfig{}
+			}
+			if healthy != nil {
+				healthCheck.Check.SetHealthy(healthy)
+			}
+			if unhealthy != nil {
+				healthCheck.Check.SetUnhealthy(unhealthy)
+			}
 		}
 	}
 
 	if v, ok := d.GetOk("proxy"); ok {
-		if proxy, err := expandHealthCheckProxy(v); err != nil {
+		if addr, port, err := expandHealthCheckProxy(v); err != nil {
 			return nil, err
 		} else {
-			healthCheck.HealthCheckProxy = proxy
+			if addr != nil {
+				healthCheck.SetProxyAddr(addr)
+			}
+			if port != nil {
+				healthCheck.SetProxyPort(port)
+			}
 		}
 	}
 
@@ -273,61 +318,69 @@ func expandHealthCheckConfig(data interface{}) (*spotinst.HealthCheckConfig, err
 	check := &spotinst.HealthCheckConfig{}
 
 	if v, ok := m["protocol"].(string); ok && v != "" {
-		check.Protocol = spotinst.String(v)
+		check.SetProtocol(spotinst.String(v))
 	}
 
 	if v, ok := m["endpoint"].(string); ok && v != "" {
-		check.Endpoint = spotinst.String(v)
+		check.SetEndpoint(spotinst.String(v))
 	}
 
 	if v, ok := m["port"].(int); ok && v >= 0 {
-		check.Port = spotinst.Int(v)
+		check.SetPort(spotinst.Int(v))
 	}
 
 	if v, ok := m["interval"].(int); ok && v >= 0 {
-		check.Interval = spotinst.Int(v)
+		check.SetInterval(spotinst.Int(v))
 	}
 
 	if v, ok := m["timeout"].(int); ok && v >= 0 {
-		check.Timeout = spotinst.Int(v)
+		check.SetTimeout(spotinst.Int(v))
 	}
 
-	log.Printf("[DEBUG] HealthCheck check configuration: %s\n", stringutil.Stringify(check))
-	return check, nil
-}
-
-// expandHealthCheckThreshold expands the Threshold block.
-func expandHealthCheckThreshold(data interface{}) (*spotinst.HealthCheckThreshold, error) {
-	list := data.(*schema.Set).List()
-	m := list[0].(map[string]interface{})
-	threshold := &spotinst.HealthCheckThreshold{}
-
 	if v, ok := m["healthy"].(int); ok && v >= 0 {
-		threshold.Healthy = spotinst.Int(v)
+		check.SetHealthy(spotinst.Int(v))
 	}
 
 	if v, ok := m["unhealthy"].(int); ok && v >= 0 {
-		threshold.Unhealthy = spotinst.Int(v)
+		check.SetUnhealthy(spotinst.Int(v))
 	}
 
-	log.Printf("[DEBUG] HealthCheck threshold configuration: %s\n", stringutil.Stringify(threshold))
-	return threshold, nil
+	log.Printf("[DEBUG] HealthCheck check configuration: %s", stringutil.Stringify(check))
+	return check, nil
 }
 
 // expandHealthCheckProxy expands the Proxy block.
-func expandHealthCheckProxy(data interface{}) (*spotinst.HealthCheckProxy, error) {
+func expandHealthCheckProxy(data interface{}) (*string, *int, error) {
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
-	proxy := &spotinst.HealthCheckProxy{}
+
+	var addr *string
+	var port *int
 
 	if v, ok := m["addr"].(string); ok && v != "" {
-		proxy.Addr = spotinst.String(v)
+		addr = spotinst.String(v)
 	}
 
 	if v, ok := m["port"].(int); ok && v > 0 {
-		proxy.Port = spotinst.Int(v)
+		port = spotinst.Int(v)
 	}
 
-	log.Printf("[DEBUG] HealthCheck proxy configuration: %s\n", stringutil.Stringify(proxy))
-	return proxy, nil
+	return addr, port, nil
+}
+
+// expandHealthCheckThreshold expands the Threshold block.
+func expandHealthCheckThreshold(data interface{}) (*int, *int, error) {
+	list := data.(*schema.Set).List()
+	m := list[0].(map[string]interface{})
+	var healthy, unhealthy *int
+
+	if v, ok := m["healthy"].(int); ok && v >= 0 {
+		healthy = spotinst.Int(v)
+	}
+
+	if v, ok := m["unhealthy"].(int); ok && v >= 0 {
+		unhealthy = spotinst.Int(v)
+	}
+
+	return healthy, unhealthy, nil
 }

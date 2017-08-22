@@ -1,6 +1,7 @@
 package spotinst
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -61,8 +62,8 @@ func testAccCheckSpotinstHealthCheckDestroy(s *terraform.State) error {
 		if rs.Type != "spotinst_healthcheck" {
 			continue
 		}
-		input := &spotinst.ReadHealthCheckInput{ID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.HealthCheckService.Read(input)
+		input := &spotinst.ReadHealthCheckInput{HealthCheckID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.HealthCheckService.Read(context.Background(), input)
 		if err == nil && resp != nil && resp.HealthCheck != nil {
 			return fmt.Errorf("HealthCheck still exists")
 		}
@@ -104,8 +105,8 @@ func testAccCheckSpotinstHealthCheckExists(n string, healthCheck *spotinst.Healt
 			return fmt.Errorf("No resource ID is set")
 		}
 		client := testAccProvider.Meta().(*spotinst.Client)
-		input := &spotinst.ReadHealthCheckInput{ID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.HealthCheckService.Read(input)
+		input := &spotinst.ReadHealthCheckInput{HealthCheckID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.HealthCheckService.Read(context.Background(), input)
 		if err != nil {
 			return err
 		}
@@ -119,42 +120,48 @@ func testAccCheckSpotinstHealthCheckExists(n string, healthCheck *spotinst.Healt
 
 const testAccCheckSpotinstHealthCheckConfigBasic = `
 resource "spotinst_healthcheck" "foo" {
-	name = "hc-foo"
-	resource_id = "sig-foo"
-	check {
-		protocol = "http"
-		endpoint = "http://endpoint.com"
-		port = 1337
-		interval = 10
-		timeout = 10
-	}
-	threshold {
-		healthy = 1
-		unhealthy = 1
-	}
-	proxy {
-		addr = "http://proxy.com"
-		port = 80
-	}
+  name        = "hc-foo"
+  resource_id = "sig-foo"
+
+  check {
+    protocol = "http"
+    endpoint = "http://endpoint.com"
+    port     = 1337
+    interval = 10
+    timeout  = 10
+  }
+
+  threshold {
+    healthy   = 1
+    unhealthy = 1
+  }
+
+  proxy {
+    addr = "http://proxy.com"
+    port = 80
+  }
 }`
 
 const testAccCheckSpotinstHealthCheckConfigNewValue = `
 resource "spotinst_healthcheck" "foo" {
-	name = "hc-bar"
-	resource_id = "sig-foo"
-	check {
-		protocol = "https"
-		endpoint = "https://endpoint.com"
-		port = 3000
-		interval = 10
-		timeout = 10
-	}
-	threshold {
-		healthy = 2
-		unhealthy = 2
-	}
-	proxy {
-		addr = "http://proxy.com"
-		port = 8080
-	}
+  name        = "hc-bar"
+  resource_id = "sig-foo"
+
+  check {
+    protocol = "https"
+    endpoint = "https://endpoint.com"
+    port     = 3000
+    interval = 10
+    timeout  = 10
+  }
+
+  threshold {
+    healthy   = 2
+    unhealthy = 2
+  }
+
+  proxy {
+    addr = "http://proxy.com"
+    port = 8080
+  }
 }`

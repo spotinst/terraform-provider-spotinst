@@ -74,15 +74,13 @@ func (es Errors) Error() string {
 
 // decodeBody is used to JSON decode a body
 func decodeBody(resp *http.Response, out interface{}) error {
-	dec := json.NewDecoder(resp.Body)
-	return dec.Decode(out)
+	return json.NewDecoder(resp.Body).Decode(out)
 }
 
 // encodeBody is used to encode a request body
 func encodeBody(obj interface{}) (io.Reader, error) {
 	buf := bytes.NewBuffer(nil)
-	enc := json.NewEncoder(buf)
-	if err := enc.Encode(obj); err != nil {
+	if err := json.NewEncoder(buf).Encode(obj); err != nil {
 		return nil, err
 	}
 	return buf, nil
@@ -104,14 +102,13 @@ func requireOK(d time.Duration, resp *http.Response, err error) (time.Duration, 
 func extractError(resp *http.Response) error {
 	b := bytes.NewBuffer(make([]byte, 0))
 
-	// TeeReader returns a Reader that writes to b
-	// what it reads from r.Body.
+	// TeeReader returns a Reader that writes to b what it reads from r.Body.
 	reader := io.TeeReader(resp.Body, b)
 	defer resp.Body.Close()
 	resp.Body = ioutil.NopCloser(b)
 
-	output := &responseWrapper{}
-	if err := json.NewDecoder(reader).Decode(output); err != nil {
+	var output responseWrapper
+	if err := json.NewDecoder(reader).Decode(&output); err != nil {
 		return err
 	}
 

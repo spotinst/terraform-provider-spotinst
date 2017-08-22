@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
@@ -30,19 +31,9 @@ func TestProvider_impl(t *testing.T) {
 
 func testAccPreCheck(t *testing.T) {
 	c := map[string]string{
-		"email":         os.Getenv("SPOTINST_EMAIL"),
-		"password":      os.Getenv("SPOTINST_PASSWORD"),
-		"client_id":     os.Getenv("SPOTINST_CLIENT_ID"),
-		"client_secret": os.Getenv("SPOTINST_CLIENT_SECRET"),
-		"token":         os.Getenv("SPOTINST_TOKEN"),
+		"token": os.Getenv(credentials.EnvCredentialsVarToken),
 	}
-	if c["password"] != "" && c["token"] != "" {
-		t.Fatalf("ERR_CONFLICT: Both a password and a token were set, only one is required")
-	}
-	if c["password"] != "" && (c["email"] == "" || c["client_id"] == "" || c["client_secret"] == "") {
-		t.Fatalf("ERR_MISSING: A password was set without email, client_id or client_secret")
-	}
-	if c["password"] == "" && c["token"] == "" {
-		t.Fatalf("ERR_MISSING: A token is required if not using password")
+	if c["token"] == "" {
+		t.Fatal(ErrNoValidCredentials.Error())
 	}
 }
