@@ -2057,6 +2057,14 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*spotinst.AWSG
 		}
 	}
 
+	if v, ok := d.GetOk("mesosphere_integration"); ok {
+		if integration, err := expandAWSGroupMesosphereIntegration(v, nullify); err != nil {
+			return nil, err
+		} else {
+			group.Integration.SetMesosphere(integration)
+		}
+	}
+
 	return group, nil
 }
 
