@@ -370,31 +370,15 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 						},
 
 						"user_data": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-							StateFunc: func(v interface{}) string {
-								switch v.(type) {
-								case string:
-									hash := sha1.Sum([]byte(v.(string)))
-									return hex.EncodeToString(hash[:])
-								default:
-									return ""
-								}
-							},
+							Type:      schema.TypeString,
+							Optional:  true,
+							StateFunc: hexStateFunc,
 						},
 
 						"shutdown_script": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-							StateFunc: func(v interface{}) string {
-								switch v.(type) {
-								case string:
-									hash := sha1.Sum([]byte(v.(string)))
-									return hex.EncodeToString(hash[:])
-								default:
-									return ""
-								}
-							},
+							Type:      schema.TypeString,
+							Optional:  true,
+							StateFunc: hexStateFunc,
 						},
 
 						"iam_role": &schema.Schema{
@@ -2645,13 +2629,13 @@ func expandAWSGroupLaunchSpecification(data interface{}, nullify bool) (*spotins
 	}
 
 	if v, ok := m["user_data"].(string); ok && v != "" {
-		lc.SetUserData(spotinst.String(base64.StdEncoding.EncodeToString([]byte(v))))
+		lc.SetUserData(spotinst.String(base64Encode(v)))
 	} else if nullify {
 		lc.SetUserData(nil)
 	}
 
 	if v, ok := m["shutdown_script"].(string); ok && v != "" {
-		lc.SetShutdownScript(spotinst.String(base64.StdEncoding.EncodeToString([]byte(v))))
+		lc.SetShutdownScript(spotinst.String(base64Encode(v)))
 	} else if nullify {
 		lc.SetShutdownScript(nil)
 	}
@@ -2995,13 +2979,31 @@ func hashAWSGroupTagKV(v interface{}) int {
 
 //region Helper methods
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMap(ts []*spotinst.AWSGroupComputeTag) map[string]string {
-	result := make(map[string]string)
-	for _, t := range ts {
-		result[spotinst.StringValue(t.Key)] = spotinst.StringValue(t.Value)
+func hexStateFunc(v interface{}) string {
+	switch s := v.(type) {
+	case string:
+		hash := sha1.Sum([]byte(s))
+		return hex.EncodeToString(hash[:])
+	default:
+		return ""
 	}
-	return result
+}
+
+// base64Encode encodes data if the input isn't already encoded using
+// base64.StdEncoding.EncodeToString. If the input is already base64 encoded,
+// return the original input unchanged.
+func base64Encode(data string) string {
+	// Check whether the data is already Base64 encoded; don't double-encode
+	if isBase64Encoded(data) {
+		return data
+	}
+	// data has not been encoded encode and return
+	return base64.StdEncoding.EncodeToString([]byte(data))
+}
+
+func isBase64Encoded(data string) bool {
+	_, err := base64.StdEncoding.DecodeString(data)
+	return err == nil
 }
 
 //endregion
