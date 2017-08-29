@@ -556,40 +556,40 @@
 			"revisionTime": "2016-09-27T10:08:44Z"
 		},
 		{
-			"checksumSHA1": "VhE+Uc5w70OQwOrO0+JbyXC+r/w=",
+			"checksumSHA1": "2Y8zkXUqU3YnLC/u4bszLOlK50A=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst",
-			"revision": "7ca095dfa720b2ec7bde75dffdee91ee83f6ec4e",
-			"revisionTime": "2017-08-03T12:14:01Z"
+			"revision": "14f763f69f21950cd71003cd4abb2be91c6c0e1e",
+			"revisionTime": "2017-08-29T07:38:44Z"
 		},
 		{
 			"checksumSHA1": "MGuCn/wVqo8zsbuKEkMkfJih3Js=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/credentials",
-			"revision": "7ca095dfa720b2ec7bde75dffdee91ee83f6ec4e",
-			"revisionTime": "2017-08-03T12:14:01Z"
+			"revision": "14f763f69f21950cd71003cd4abb2be91c6c0e1e",
+			"revisionTime": "2017-08-29T07:38:44Z"
 		},
 		{
 			"checksumSHA1": "lQI5hFOaauIWcNAi31tJbKqBhKs=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/log",
-			"revision": "7ca095dfa720b2ec7bde75dffdee91ee83f6ec4e",
-			"revisionTime": "2017-08-03T12:14:01Z"
+			"revision": "14f763f69f21950cd71003cd4abb2be91c6c0e1e",
+			"revisionTime": "2017-08-29T07:38:44Z"
 		},
 		{
 			"checksumSHA1": "zljsLRUfGKtRMvdc6UhZEllYceg=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil",
-			"revision": "7ca095dfa720b2ec7bde75dffdee91ee83f6ec4e",
-			"revisionTime": "2017-08-03T12:14:01Z"
+			"revision": "14f763f69f21950cd71003cd4abb2be91c6c0e1e",
+			"revisionTime": "2017-08-29T07:38:44Z"
 		},
 		{
 			"checksumSHA1": "/oApHzKZwKYrVFEosDhHV4y3sbQ=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil",
-			"revision": "7ca095dfa720b2ec7bde75dffdee91ee83f6ec4e",
-			"revisionTime": "2017-08-03T12:14:01Z"
+			"revision": "14f763f69f21950cd71003cd4abb2be91c6c0e1e",
+			"revisionTime": "2017-08-29T07:38:44Z"
 		},
 		{
 			"checksumSHA1": "F8PDlBY72o5HHNLXpB4X1itP70w=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates",
-			"revision": "7ca095dfa720b2ec7bde75dffdee91ee83f6ec4e",
-			"revisionTime": "2017-08-03T12:14:01Z"
+			"revision": "14f763f69f21950cd71003cd4abb2be91c6c0e1e",
+			"revisionTime": "2017-08-29T07:38:44Z"
 		},
 		{
 			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",

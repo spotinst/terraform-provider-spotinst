@@ -87,7 +87,6 @@ type AWSGroup struct {
 	Scaling     *AWSGroupScaling     `json:"scaling,omitempty"`
 	Scheduling  *AWSGroupScheduling  `json:"scheduling,omitempty"`
 	Integration *AWSGroupIntegration `json:"thirdPartiesIntegration,omitempty"`
-	Multai      *AWSGroupMultai      `json:"multai,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -109,6 +108,7 @@ type AWSGroup struct {
 type AWSGroupIntegration struct {
 	EC2ContainerService *AWSGroupEC2ContainerServiceIntegration `json:"ecs,omitempty"`
 	ElasticBeanstalk    *AWSGroupElasticBeanstalkIntegration    `json:"elasticBeanstalk,omitempty"`
+	CodeDeploy          *AWSGroupCodeDeployIntegration          `json:"codeDeploy,omitempty"`
 	Rancher             *AWSGroupRancherIntegration             `json:"rancher,omitempty"`
 	Kubernetes          *AWSGroupKubernetesIntegration          `json:"kubernetes,omitempty"`
 	Mesosphere          *AWSGroupMesosphereIntegration          `json:"mesosphere,omitempty"`
@@ -117,20 +117,18 @@ type AWSGroupIntegration struct {
 	nullFields      []string `json:"-"`
 }
 
-type AWSGroupMultai struct {
-	Token     *string                   `json:"token,omitempty"`
-	Balancers []*AWSGroupMultaiBalancer `json:"balancers,omitempty"`
+type AWSGroupCodeDeployIntegration struct {
+	DeploymentGroups           []*AWSGroupCodeDeployIntegrationDeploymentGroup `json:"deploymentGroups,omitempty"`
+	CleanUpOnFailure           *bool                                           `json:"cleanUpOnFailure,omitempty"`
+	TerminateInstanceOnFailure *bool                                           `json:"terminateInstanceOnFailure,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
 }
 
-type AWSGroupMultaiBalancer struct {
-	ProjectID   *string `json:"projectId,omitempty"`
-	BalancerID  *string `json:"balancerId,omitempty"`
-	TargetSetID *string `json:"targetSetId,omitempty"`
-	AzAwareness *bool   `json:"azAwareness,omitempty"`
-	AutoWeight  *bool   `json:"autoWeight,omitempty"`
+type AWSGroupCodeDeployIntegrationDeploymentGroup struct {
+	ApplicationName     *string `json:"applicationName,omitempty"`
+	DeploymentGroupName *string `json:"deploymentGroupName,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -843,13 +841,6 @@ func (o *AWSGroup) SetIntegration(v *AWSGroupIntegration) *AWSGroup {
 	return o
 }
 
-func (o *AWSGroup) SetMultai(v *AWSGroupMultai) *AWSGroup {
-	if o.Multai = v; o.Multai == nil {
-		o.nullFields = append(o.nullFields, "Multai")
-	}
-	return o
-}
-
 // endregion
 
 // region AWSGroupIntegration
@@ -895,71 +886,9 @@ func (o *AWSGroupIntegration) SetMesosphere(v *AWSGroupMesosphereIntegration) *A
 	return o
 }
 
-// endregion
-
-// region AWSGroupMultai
-
-func (o *AWSGroupMultai) MarshalJSON() ([]byte, error) {
-	type noMethod AWSGroupMultai
-	raw := noMethod(*o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
-func (o *AWSGroupMultai) SetToken(v *string) *AWSGroupMultai {
-	if o.Token = v; o.Token == nil {
-		o.nullFields = append(o.nullFields, "Token")
-	}
-	return o
-}
-
-func (o *AWSGroupMultai) SetBalancers(v []*AWSGroupMultaiBalancer) *AWSGroupMultai {
-	if o.Balancers = v; o.Balancers == nil {
-		o.nullFields = append(o.nullFields, "Balancers")
-	}
-	return o
-}
-
-// endregion
-
-// region AWSGroupMultaiBalancer
-
-func (o *AWSGroupMultaiBalancer) MarshalJSON() ([]byte, error) {
-	type noMethod AWSGroupMultaiBalancer
-	raw := noMethod(*o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
-func (o *AWSGroupMultaiBalancer) SetProjectId(v *string) *AWSGroupMultaiBalancer {
-	if o.ProjectID = v; o.ProjectID == nil {
-		o.nullFields = append(o.nullFields, "ProjectID")
-	}
-	return o
-}
-
-func (o *AWSGroupMultaiBalancer) SetBalancerId(v *string) *AWSGroupMultaiBalancer {
-	if o.BalancerID = v; o.BalancerID == nil {
-		o.nullFields = append(o.nullFields, "BalancerID")
-	}
-	return o
-}
-
-func (o *AWSGroupMultaiBalancer) SetTargetSetId(v *string) *AWSGroupMultaiBalancer {
-	if o.TargetSetID = v; o.TargetSetID == nil {
-		o.nullFields = append(o.nullFields, "TargetSetID")
-	}
-	return o
-}
-
-func (o *AWSGroupMultaiBalancer) SetAzAwareness(v *bool) *AWSGroupMultaiBalancer {
-	if o.AzAwareness = v; o.AzAwareness == nil {
-		o.nullFields = append(o.nullFields, "AzAwareness")
-	}
-	return o
-}
-
-func (o *AWSGroupMultaiBalancer) SetAutoWeight(v *bool) *AWSGroupMultaiBalancer {
-	if o.AutoWeight = v; o.AutoWeight == nil {
-		o.nullFields = append(o.nullFields, "AutoWeight")
+func (o *AWSGroupIntegration) SetCodeDeploy(v *AWSGroupCodeDeployIntegration) *AWSGroupIntegration {
+	if o.CodeDeploy = v; o.CodeDeploy == nil {
+		o.nullFields = append(o.nullFields, "CodeDeploy")
 	}
 	return o
 }
@@ -2135,6 +2064,61 @@ func (o *AWSGroupRollStrategy) SetAction(v *string) *AWSGroupRollStrategy {
 func (o *AWSGroupRollStrategy) SetShouldDrainInstances(v *bool) *AWSGroupRollStrategy {
 	if o.ShouldDrainInstances = v; o.ShouldDrainInstances == nil {
 		o.nullFields = append(o.nullFields, "ShouldDrainInstances")
+	}
+	return o
+}
+
+// endregion
+
+// region AWSGroupCodeDeployIntegration
+
+func (o *AWSGroupCodeDeployIntegration) MarshalJSON() ([]byte, error) {
+	type noMethod AWSGroupCodeDeployIntegration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *AWSGroupCodeDeployIntegration) SetDeploymentGroups(v []*AWSGroupCodeDeployIntegrationDeploymentGroup) *AWSGroupCodeDeployIntegration {
+	if o.DeploymentGroups = v; o.DeploymentGroups == nil {
+		o.nullFields = append(o.nullFields, "DeploymentGroups")
+	}
+	return o
+}
+
+func (o *AWSGroupCodeDeployIntegration) SetCleanUpOnFailure(v *bool) *AWSGroupCodeDeployIntegration {
+	if o.CleanUpOnFailure = v; o.CleanUpOnFailure == nil {
+		o.nullFields = append(o.nullFields, "CleanUpOnFailure")
+	}
+	return o
+}
+
+func (o *AWSGroupCodeDeployIntegration) SetTerminateInstanceOnFailure(v *bool) *AWSGroupCodeDeployIntegration {
+	if o.TerminateInstanceOnFailure = v; o.TerminateInstanceOnFailure == nil {
+		o.nullFields = append(o.nullFields, "TerminateInstanceOnFailure")
+	}
+	return o
+}
+
+// endregion
+
+// region AWSGroupCodeDeployIntegrationDeploymentGroup
+
+func (o *AWSGroupCodeDeployIntegrationDeploymentGroup) MarshalJSON() ([]byte, error) {
+	type noMethod AWSGroupCodeDeployIntegrationDeploymentGroup
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *AWSGroupCodeDeployIntegrationDeploymentGroup) SetApplicationName(v *string) *AWSGroupCodeDeployIntegrationDeploymentGroup {
+	if o.ApplicationName = v; o.ApplicationName == nil {
+		o.nullFields = append(o.nullFields, "ApplicationName")
+	}
+	return o
+}
+
+func (o *AWSGroupCodeDeployIntegrationDeploymentGroup) SetDeploymentGroupName(v *string) *AWSGroupCodeDeployIntegrationDeploymentGroup {
+	if o.DeploymentGroupName = v; o.DeploymentGroupName == nil {
+		o.nullFields = append(o.nullFields, "DeploymentGroupName")
 	}
 	return o
 }
