@@ -650,6 +650,43 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				},
 			},
 
+			"codedeploy_integration": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"cleanup_on_failure": &schema.Schema{
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+
+						"terminate_instance_on_failure": &schema.Schema{
+							Type:     schema.TypeBool,
+							Required: true,
+						},
+
+						"deployment_groups": &schema.Schema{
+							Type:     schema.TypeSet,
+							Required: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"application_name": &schema.Schema{
+										Type:     schema.TypeString,
+										Required: true,
+									},
+
+									"deployment_group_name": &schema.Schema{
+										Type:     schema.TypeString,
+										Required: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+
 			"roll_config": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -986,6 +1023,15 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 				}
 			} else {
 				d.Set("mesosphere_integration", []*spotinst.AWSGroupMesosphereIntegration{})
+			}
+
+			// Set CodeDeploy integration.
+			if g.Integration.CodeDeploy != nil {
+				if err := d.Set("codedeploy_integration", flattenAWSGroupCodeDeployIntegration(g.Integration.CodeDeploy)); err != nil {
+					return fmt.Errorf("Error setting CodeDeploy configuration: %#v", err)
+				}
+			} else {
+				d.Set("codedeploy_integration", []*spotinst.AWSGroupCodeDeployIntegration{})
 			}
 		}
 
@@ -1531,6 +1577,26 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
+	if d.HasChange("codedeploy_integration") {
+		if v, ok := d.GetOk("codedeploy_integration"); ok {
+			if integration, err := expandAWSGroupCodeDeployIntegration(v, nullify); err != nil {
+				return err
+			} else {
+				if group.Integration == nil {
+					group.SetIntegration(&spotinst.AWSGroupIntegration{})
+				}
+				group.Integration.SetCodeDeploy(integration)
+				update = true
+			}
+		} else {
+			if group.Integration == nil {
+				group.SetIntegration(&spotinst.AWSGroupIntegration{})
+			}
+			group.Integration.SetCodeDeploy(nil)
+			update = true
+		}
+	}
+
 	if update {
 		log.Printf("[DEBUG] AWSGroup update configuration: %s", stringutil.Stringify(group))
 		input := &spotinst.UpdateAWSGroupInput{Group: group}
@@ -1833,6 +1899,22 @@ func flattenAWSGroupMesosphereIntegration(integration *spotinst.AWSGroupMesosphe
 	return []interface{}{result}
 }
 
+func flattenAWSGroupCodeDeployIntegration(integration *spotinst.AWSGroupCodeDeployIntegration) []interface{} {
+	result := make(map[string]interface{})
+	result["cleanup_on_failure"] = spotinst.BoolValue(integration.CleanUpOnFailure)
+	result["terminate_instance_on_failure"] = spotinst.BoolValue(integration.TerminateInstanceOnFailure)
+
+	deploymentGroups := make([]interface{}, len(integration.DeploymentGroups))
+	for i, dg := range integration.DeploymentGroups {
+		m := make(map[string]interface{})
+		m["application_name"] = spotinst.StringValue(dg.ApplicationName)
+		m["deployment_group_name"] = spotinst.StringValue(dg.DeploymentGroupName)
+		deploymentGroups[i] = m
+	}
+
+	return []interface{}{result}
+}
+
 //endregion
 
 //region Build method
@@ -1898,6 +1980,14 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*spotinst.AWSG
 			return nil, err
 		} else {
 			group.Scheduling.SetTasks(tasks)
+		}
+	}
+
+	if v, ok := d.GetOk("instance_types"); ok {
+		if types, err := expandAWSGroupInstanceTypes(v, nullify); err != nil {
+			return nil, err
+		} else {
+			group.Compute.SetInstanceTypes(types)
 		}
 	}
 
@@ -2046,6 +2136,14 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*spotinst.AWSG
 			return nil, err
 		} else {
 			group.Integration.SetMesosphere(integration)
+		}
+	}
+
+	if v, ok := d.GetOk("codedeploy_integration"); ok {
+		if integration, err := expandAWSGroupCodeDeployIntegration(v, nullify); err != nil {
+			return nil, err
+		} else {
+			group.Integration.SetCodeDeploy(integration)
 		}
 	}
 
@@ -2785,6 +2883,56 @@ func expandAWSGroupMesosphereIntegration(data interface{}, nullify bool) (*spoti
 
 	log.Printf("[DEBUG] AWSGroup Mesosphere integration configuration: %s", stringutil.Stringify(i))
 	return i, nil
+}
+
+// expandAWSGroupCodeDeployIntegration expands the CodeDeploy Integration block.
+func expandAWSGroupCodeDeployIntegration(data interface{}, nullify bool) (*spotinst.AWSGroupCodeDeployIntegration, error) {
+	list := data.(*schema.Set).List()
+	m := list[0].(map[string]interface{})
+	i := &spotinst.AWSGroupCodeDeployIntegration{}
+
+	if v, ok := m["cleanup_on_failure"].(bool); ok {
+		i.SetCleanUpOnFailure(spotinst.Bool(v))
+	}
+
+	if v, ok := m["terminate_instance_on_failure"].(bool); ok {
+		i.SetTerminateInstanceOnFailure(spotinst.Bool(v))
+	}
+
+	if v, ok := m["deployment_groups"]; ok {
+		deploymentGroups, err := expandAWSGroupCodeDeployIntegrationDeploymentGroups(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		i.SetDeploymentGroups(deploymentGroups)
+	}
+
+	log.Printf("[DEBUG] AWSGroup CodeDeploy integration configuration: %s", stringutil.Stringify(i))
+	return i, nil
+}
+
+func expandAWSGroupCodeDeployIntegrationDeploymentGroups(data interface{}, nullify bool) ([]*spotinst.AWSGroupCodeDeployIntegrationDeploymentGroup, error) {
+	list := data.(*schema.Set).List()
+	deploymentGroups := make([]*spotinst.AWSGroupCodeDeployIntegrationDeploymentGroup, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr["application_name"]; !ok {
+			return nil, errors.New("invalid deployment group attributes: application_name missing")
+		}
+
+		if _, ok := attr["deployment_group_name"]; !ok {
+			return nil, errors.New("invalid deployment group attributes: deployment_group_name missing")
+		}
+		deploymentGroup := &spotinst.AWSGroupCodeDeployIntegrationDeploymentGroup{
+			ApplicationName:     spotinst.String(attr["application_name"].(string)),
+			DeploymentGroupName: spotinst.String(attr["deployment_group_name"].(string)),
+		}
+		deploymentGroups = append(deploymentGroups, deploymentGroup)
+	}
+	return deploymentGroups, nil
 }
 
 // expandAWSGroupElasticIPs expands the Elastic IPs block.
