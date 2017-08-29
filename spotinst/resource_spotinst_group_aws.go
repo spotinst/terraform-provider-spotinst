@@ -2869,63 +2869,53 @@ func expandAWSGroupRollConfig(data interface{}, groupID string) (*spotinst.RollA
 func hashAWSGroupCapacity(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
-
 	buf.WriteString(fmt.Sprintf("%d-", m["target"].(int)))
 	buf.WriteString(fmt.Sprintf("%d-", m["minimum"].(int)))
 	buf.WriteString(fmt.Sprintf("%d-", m["maximum"].(int)))
-
 	return hashcode.String(buf.String())
 }
 
 func hashAWSGroupStrategy(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
-
 	buf.WriteString(fmt.Sprintf("%f-", m["risk"].(float64)))
 	buf.WriteString(fmt.Sprintf("%d-", m["draining_timeout"].(int)))
 	buf.WriteString(fmt.Sprintf("%d-", m["ondemand_count"].(int)))
 	buf.WriteString(fmt.Sprintf("%t-", m["utilize_reserved_instances"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["fallback_to_ondemand"].(bool)))
 	buf.WriteString(fmt.Sprintf("%d-", m["spin_up_time"].(int)))
-
 	return hashcode.String(buf.String())
 }
 
 func hashAWSGroupPersistence(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
-
 	buf.WriteString(fmt.Sprintf("%t-", m["persist_root_device"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["persist_block_devices"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["persist_private_ip"].(bool)))
-
 	return hashcode.String(buf.String())
 }
 
 func hashAWSGroupLoadBalancer(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
-
 	buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m["type"].(string)))
 	if v, ok := m["arn"].(string); ok && len(v) > 0 {
 		buf.WriteString(fmt.Sprintf("%s-", v))
 	}
-
 	return hashcode.String(buf.String())
 }
 
 func hashAWSGroupEBSBlockDevice(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
-
 	buf.WriteString(fmt.Sprintf("%s-", m["device_name"].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m["snapshot_id"].(string)))
 	buf.WriteString(fmt.Sprintf("%d-", m["volume_size"].(int)))
 	buf.WriteString(fmt.Sprintf("%t-", m["delete_on_termination"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["encrypted"].(bool)))
 	buf.WriteString(fmt.Sprintf("%d-", m["iops"].(int)))
-
 	return hashcode.String(buf.String())
 }
 
