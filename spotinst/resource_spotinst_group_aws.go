@@ -177,47 +177,6 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				},
 			},
 
-			"multai_balancer": &schema.Schema{
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"project_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-						},
-
-						"balancer_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-						},
-
-						"target_set_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-						},
-
-						"az_awareness": &schema.Schema{
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-
-						"auto_weight": &schema.Schema{
-							Type:     schema.TypeBool,
-							Optional: true,
-						},
-					},
-				},
-				Set:        hashAWSGroupMultaiBalancer,
-				Deprecated: "Attribute `multai_balancer` is deprecated.",
-			},
-
-			"multai_token": &schema.Schema{
-				Type:       schema.TypeString,
-				Optional:   true,
-				Deprecated: "Attribute `multai_token` is deprecated.",
-			},
-
 			"product": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -940,24 +899,6 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 
 		}
 
-		// Set Multai load balancer.
-		if g.Multai != nil {
-			if g.Multai.Balancers != nil {
-				if err := d.Set("multai_balancer", flattenAWSGroupMultaiBalancers(g.Multai.Balancers)); err != nil {
-					return fmt.Errorf("Error setting multai load balancer configuration: %#v", err)
-				}
-			} else {
-				d.Set("multai_balancer", []*spotinst.AWSGroupMultaiBalancer{})
-			}
-
-			// Set Multai Token.
-			if g.Multai.Token != nil {
-				if token, ok := d.GetOk("multai_token"); ok && token != "" {
-					d.Set("multai_token", g.Multai.Token)
-				}
-			}
-		}
-
 		// Set launch specification.
 		if g.Compute.LaunchSpecification != nil {
 			// Check if image ID is set in launch spec
@@ -1443,26 +1384,6 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
-	if d.HasChange("multai_balancer") {
-		if v, ok := d.GetOk("multai_balancer"); ok {
-			if balancers, err := expandAWSGroupMultaiBalancers(v, nullify); err != nil {
-				return err
-			} else {
-				if group.Multai == nil {
-					group.SetMultai(&spotinst.AWSGroupMultai{})
-				}
-				group.Multai.SetBalancers(balancers)
-				update = true
-			}
-		} else {
-			if group.Multai == nil {
-				group.SetMultai(&spotinst.AWSGroupMultai{})
-			}
-			group.Multai.SetBalancers(nil)
-			update = true
-		}
-	}
-
 	if d.HasChange("persistence") {
 		if v, ok := d.GetOk("persistence"); ok {
 			if persistence, err := expandAWSGroupPersistence(v, nullify); err != nil {
@@ -1482,22 +1403,6 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 				group.SetStrategy(&spotinst.AWSGroupStrategy{})
 			}
 			group.Strategy.SetPersistence(nil)
-			update = true
-		}
-	}
-
-	if d.HasChange("multai_token") {
-		if d.Get("multai_token") != nil && d.Get("multai_token") != "" {
-			if group.Multai == nil {
-				group.SetMultai(&spotinst.AWSGroupMultai{})
-			}
-			group.Multai.SetToken(spotinst.String(d.Get("multai_token").(string)))
-			update = true
-		} else {
-			if group.Multai == nil {
-				group.SetMultai(&spotinst.AWSGroupMultai{})
-			}
-			group.Multai.SetToken(nil)
 			update = true
 		}
 	}
@@ -1797,20 +1702,6 @@ func flattenAWSGroupScheduledTasks(tasks []*spotinst.AWSGroupScheduledTask) []in
 	return result
 }
 
-func flattenAWSGroupMultaiBalancers(balancers []*spotinst.AWSGroupMultaiBalancer) []interface{} {
-	result := make([]interface{}, 0, len(balancers))
-	for _, t := range balancers {
-		m := make(map[string]interface{})
-		m["project_id"] = spotinst.StringValue(t.ProjectID)
-		m["balancer_id"] = spotinst.StringValue(t.BalancerID)
-		m["target_set_id"] = spotinst.StringValue(t.TargetSetID)
-		m["az_awareness"] = spotinst.BoolValue(t.AzAwareness)
-		m["auto_weight"] = spotinst.BoolValue(t.AutoWeight)
-		result = append(result, m)
-	}
-	return result
-}
-
 func flattenAWSGroupPersistence(persistence *spotinst.AWSGroupPersistence) []interface{} {
 	result := make(map[string]interface{})
 	result["persist_block_devices"] = spotinst.BoolValue(persistence.ShouldPersistBlockDevices)
@@ -1967,7 +1858,6 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*spotinst.AWSG
 	group := &spotinst.AWSGroup{
 		Scaling:     &spotinst.AWSGroupScaling{},
 		Scheduling:  &spotinst.AWSGroupScheduling{},
-		Multai:      &spotinst.AWSGroupMultai{},
 		Integration: &spotinst.AWSGroupIntegration{},
 		Compute: &spotinst.AWSGroupCompute{
 			LaunchSpecification: &spotinst.AWSGroupComputeLaunchSpecification{},
@@ -2024,28 +1914,6 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*spotinst.AWSG
 			return nil, err
 		} else {
 			group.Scheduling.SetTasks(tasks)
-		}
-	}
-
-	// TODO: Deprecated.
-	if v, ok := d.GetOk("multai_balancer"); ok {
-		if balancers, err := expandAWSGroupMultaiBalancers(v, nullify); err != nil {
-			return nil, err
-		} else {
-			group.Multai.Balancers = balancers
-		}
-	}
-
-	// TODO: Deprecated.
-	if v, ok := d.GetOk("multai_token"); ok {
-		group.Multai.Token = spotinst.String(v.(string))
-	}
-
-	if v, ok := d.GetOk("instance_types"); ok {
-		if types, err := expandAWSGroupInstanceTypes(v, nullify); err != nil {
-			return nil, err
-		} else {
-			group.Compute.SetInstanceTypes(types)
 		}
 	}
 
@@ -2437,41 +2305,6 @@ func expandAWSGroupScheduledTasks(data interface{}, nullify bool) ([]*spotinst.A
 	}
 
 	return tasks, nil
-}
-
-// expandAWSGroupMultaiBalancers expands the Multai Balancer Task block.
-func expandAWSGroupMultaiBalancers(data interface{}, nullify bool) ([]*spotinst.AWSGroupMultaiBalancer, error) {
-	list := data.(*schema.Set).List()
-	balancers := make([]*spotinst.AWSGroupMultaiBalancer, 0, len(list))
-	for _, item := range list {
-		m := item.(map[string]interface{})
-		balancer := &spotinst.AWSGroupMultaiBalancer{}
-
-		if v, ok := m["project_id"].(string); ok && v != "" {
-			balancer.SetProjectId(spotinst.String(v))
-		}
-
-		if v, ok := m["balancer_id"].(string); ok && v != "" {
-			balancer.SetBalancerId(spotinst.String(v))
-		}
-
-		if v, ok := m["target_set_id"].(string); ok && v != "" {
-			balancer.SetTargetSetId(spotinst.String(v))
-		}
-
-		if v, ok := m["az_awareness"].(bool); ok {
-			balancer.SetAzAwareness(spotinst.Bool(v))
-		}
-
-		if v, ok := m["auto_weight"].(bool); ok {
-			balancer.SetAutoWeight(spotinst.Bool(v))
-		}
-
-		log.Printf("[DEBUG] AWSGroup multai balancer configuration: %s", stringutil.Stringify(balancer))
-		balancers = append(balancers, balancer)
-	}
-
-	return balancers, nil
 }
 
 // expandAWSGroupPersistence expands the Persistence block.
@@ -3062,19 +2895,6 @@ func hashAWSGroupStrategy(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%t-", m["utilize_reserved_instances"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["fallback_to_ondemand"].(bool)))
 	buf.WriteString(fmt.Sprintf("%d-", m["spin_up_time"].(int)))
-
-	return hashcode.String(buf.String())
-}
-
-func hashAWSGroupMultaiBalancer(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-
-	buf.WriteString(fmt.Sprintf("%s-", m["project_id"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["balancer_id"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["target_set_id"].(string)))
-	buf.WriteString(fmt.Sprintf("%t-", m["auto_weight"].(bool)))
-	buf.WriteString(fmt.Sprintf("%t-", m["az_awareness"].(bool)))
 
 	return hashcode.String(buf.String())
 }
