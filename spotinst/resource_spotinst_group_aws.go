@@ -613,6 +613,30 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
+
+						"autoscale_headroom": &schema.Schema{
+							Type:     schema.TypeSet,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"cpu_per_unit": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"memory_per_unit": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"num_of_units": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -996,15 +1020,6 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 				}
 			} else {
 				d.Set("elastic_beanstalk_integration", []*spotinst.AWSGroupElasticBeanstalkIntegration{})
-			}
-
-			// Set EC2 Container Service integration.
-			if g.Integration.EC2ContainerService != nil {
-				if err := d.Set("ec2_container_service_integration", flattenAWSGroupEC2ContainerServiceIntegration(g.Integration.EC2ContainerService)); err != nil {
-					return fmt.Errorf("Error setting EC2 Container Service configuration: %#v", err)
-				}
-			} else {
-				d.Set("ec2_container_service_integration", []*spotinst.AWSGroupEC2ContainerServiceIntegration{})
 			}
 
 			// Set Kubernetes integration.
@@ -1873,16 +1888,6 @@ func flattenAWSGroupRancherIntegration(integration *spotinst.AWSGroupRancherInte
 func flattenAWSGroupElasticBeanstalkIntegration(integration *spotinst.AWSGroupElasticBeanstalkIntegration) []interface{} {
 	result := make(map[string]interface{})
 	result["environment_id"] = spotinst.StringValue(integration.EnvironmentID)
-	return []interface{}{result}
-}
-
-func flattenAWSGroupEC2ContainerServiceIntegration(integration *spotinst.AWSGroupEC2ContainerServiceIntegration) []interface{} {
-	result := make(map[string]interface{})
-	result["cluster_name"] = spotinst.StringValue(integration.ClusterName)
-	if integration.AutoScale != nil {
-		result["autoscale_is_enabled"] = spotinst.BoolValue(integration.AutoScale.IsEnabled)
-		result["autoscale_cooldown"] = spotinst.IntValue(integration.AutoScale.Cooldown)
-	}
 	return []interface{}{result}
 }
 
@@ -2849,8 +2854,44 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}, nullify bool
 		i.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
-	log.Printf("[DEBUG] AWSGroup ECS integration configuration:  %s", stringutil.Stringify(i))
+	if v, ok := m["autoscale_headroom"]; ok {
+		headroom, err := expandAWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		if headroom != nil {
+			if i.AutoScale == nil {
+				i.SetAutoScale(&spotinst.AWSGroupEC2ContainerServiceIntegrationAutoScale{})
+			}
+			i.AutoScale.SetHeadroom(headroom)
+		}
+	}
+
+	log.Printf("[DEBUG] AWSGroup ECS integration configuration: %s", stringutil.Stringify(i))
 	return i, nil
+}
+
+func expandAWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom(data interface{}, nullify bool) (*spotinst.AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom, error) {
+	if list := data.(*schema.Set).List(); len(list) > 0 {
+		m := list[0].(map[string]interface{})
+		i := &spotinst.AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom{}
+
+		if v, ok := m["cpu_per_unit"].(int); ok && v > 0 {
+			i.SetCPUPerUnit(spotinst.Int(v))
+		}
+
+		if v, ok := m["memory_per_unit"].(int); ok && v > 0 {
+			i.SetMemoryPerUnit(spotinst.Int(v))
+		}
+
+		if v, ok := m["num_of_units"].(int); ok && v > 0 {
+			i.SetNumOfUnits(spotinst.Int(v))
+		}
+
+		return i, nil
+	}
+
+	return nil, nil
 }
 
 // expandAWSGroupKubernetesIntegration expands the Kubernetes Integration block.
@@ -2867,7 +2908,7 @@ func expandAWSGroupKubernetesIntegration(data interface{}, nullify bool) (*spoti
 		i.SetToken(spotinst.String(v))
 	}
 
-	log.Printf("[DEBUG] AWSGroup Kubernetes integration configuration:  %s", stringutil.Stringify(i))
+	log.Printf("[DEBUG] AWSGroup Kubernetes integration configuration: %s", stringutil.Stringify(i))
 	return i, nil
 }
 

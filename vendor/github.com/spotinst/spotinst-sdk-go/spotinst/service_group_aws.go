@@ -159,8 +159,18 @@ type AWSGroupEC2ContainerServiceIntegration struct {
 }
 
 type AWSGroupEC2ContainerServiceIntegrationAutoScale struct {
-	IsEnabled *bool `json:"isEnabled,omitempty"`
-	Cooldown  *int  `json:"cooldown,omitempty"`
+	IsEnabled *bool                                                    `json:"isEnabled,omitempty"`
+	Cooldown  *int                                                     `json:"cooldown,omitempty"`
+	Headroom  *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom `json:"headroom,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom struct {
+	CPUPerUnit    *int `json:"cpuPerUnit,omitempty"`
+	MemoryPerUnit *int `json:"memoryPerUnit,omitempty"`
+	NumOfUnits    *int `json:"numOfUnits,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -985,6 +995,44 @@ func (o *AWSGroupEC2ContainerServiceIntegrationAutoScale) SetIsEnabled(v *bool) 
 func (o *AWSGroupEC2ContainerServiceIntegrationAutoScale) SetCooldown(v *int) *AWSGroupEC2ContainerServiceIntegrationAutoScale {
 	if o.Cooldown = v; o.Cooldown == nil {
 		o.nullFields = append(o.nullFields, "Cooldown")
+	}
+	return o
+}
+
+func (o *AWSGroupEC2ContainerServiceIntegrationAutoScale) SetHeadroom(v *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom) *AWSGroupEC2ContainerServiceIntegrationAutoScale {
+	if o.Headroom = v; o.Headroom == nil {
+		o.nullFields = append(o.nullFields, "Headroom")
+	}
+	return o
+}
+
+// endregion
+
+// region AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom
+
+func (o *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom) MarshalJSON() ([]byte, error) {
+	type noMethod AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom) SetCPUPerUnit(v *int) *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom {
+	if o.CPUPerUnit = v; o.CPUPerUnit == nil {
+		o.nullFields = append(o.nullFields, "CPUPerUnit")
+	}
+	return o
+}
+
+func (o *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom) SetMemoryPerUnit(v *int) *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom {
+	if o.MemoryPerUnit = v; o.MemoryPerUnit == nil {
+		o.nullFields = append(o.nullFields, "MemoryPerUnit")
+	}
+	return o
+}
+
+func (o *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom) SetNumOfUnits(v *int) *AWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom {
+	if o.NumOfUnits = v; o.NumOfUnits == nil {
+		o.nullFields = append(o.nullFields, "NumOfUnits")
 	}
 	return o
 }
