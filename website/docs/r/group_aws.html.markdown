@@ -116,9 +116,9 @@ The following arguments are supported:
 
 * `strategy` - (Required) This determines how your group request is fulfilled from the possible On-Demand and Spot pools selected for launch. Only a single block is allowed.
 
-    * `risk` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `capcity.target` number.
+    * `risk` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `capacity.target` number.
     * `ondemand_count` - (Optional; Required if not using `risk`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the "risk" parameter is being ignored.
-    * `availability_vs_cost` - (Optional) The percentage of Spot instances that would spin up from the `capcity.target` number.
+    * `availability_vs_cost` - (Optional) The percentage of Spot instances that would spin up from the `capacity.target` number.
     * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 
 * `instance_types` - The type of instance determines your instance's CPU capacity, memory and storage (e.g., m1.small, c1.xlarge).
@@ -168,9 +168,9 @@ Each `scheduled_task` supports the following:
 * `task_type` - (Required) The task type to run. Supported task types are `scale` and `backup_ami`.
 * `cron_expression` - (Optional; Required if not using `frequency`) A valid cron expression. The cron is running in UTC time zone and is in [Unix cron format](https://en.wikipedia.org/wiki/Cron).
 * `frequency` - (Optional; Required if not using `cron_expression`) The recurrence frequency to run this task. Supported values are `hourly`, `daily` and `weekly`.
-* `scale_target_capcity` - (Optional) The desired number of instances the group should have.
-* `scale_min_capcity` - (Optional) The minimum number of instances the group should have.
-* `scale_max_capcity` - (Optional) The maximum number of instances the group should have.
+* `scale_target_capacity` - (Optional) The desired number of instances the group should have.
+* `scale_min_capacity` - (Optional) The minimum number of instances the group should have.
+* `scale_max_capacity` - (Optional) The maximum number of instances the group should have.
 
 
 <a id="scaling-policy"></a>
