@@ -2,140 +2,160 @@ package spotinst
 
 import (
 	"fmt"
+	"net"
 	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
 )
 
 const (
-	// SDKVersion is the current version of the SDK.
-	SDKVersion = "2.4.6"
-
-	// SDKName is the name of the SDK.
-	SDKName = "spotinst-sdk-go"
-
-	// DefaultAddress is the default address of the Spotinst API.
+	// defaultBaseURL is the default base URL of the Spotinst API.
 	// It is used e.g. when initializing a new Client without a specific address.
-	DefaultAddress = "api.spotinst.io"
+	defaultBaseURL = "https://api.spotinst.io"
 
-	// DefaultScheme is the default protocol scheme to use when making HTTP
+	// defaultContentType is the default content type to use when making HTTP
 	// calls.
-	DefaultScheme = "https"
+	defaultContentType = "application/json"
 
-	// DefaultContentType is the default content type to use when making HTTP
+	// defaultUserAgent is the default user agent to use when making HTTP
 	// calls.
-	DefaultContentType = "application/json"
+	defaultUserAgent = SDKName + "/" + SDKVersion
 
-	// DefaultUserAgent is the default user agent to use when making HTTP
-	// calls.
-	DefaultUserAgent = SDKName + "/" + SDKVersion
-
-	// DefaultMaxRetries is the number of retries for a single request after
+	// defaultMaxRetries is the number of retries for a single request after
 	// the client will give up and return an error. It is zero by default, so
 	// retry is disabled by default.
-	DefaultMaxRetries = 0
+	defaultMaxRetries = 0
 
-	// DefaultGzipEnabled specifies if gzip compression is enabled by default.
-	DefaultGzipEnabled = false
+	// defaultGzipEnabled specifies if gzip compression is enabled by default.
+	defaultGzipEnabled = false
 )
 
-// clientConfig is used to configure the creation of a client.
-type clientConfig struct {
-	// address is the address of the API server.
-	address string
-
-	// scheme is the URI scheme for the API server.
-	scheme string
-
-	// httpClient is the client to use. Default will be used if not provided.
-	httpClient *http.Client
-
-	// credentials provides synchronous safe retrieval of Spotinst credentials.
-	credentials *credentials.Credentials
-
-	// userAgent is the user agent to use when making HTTP calls.
-	userAgent string
-
-	// contentType is the content type to use when making HTTP calls.
-	contentType string
-
-	// errorf logs to the error log.
-	errorlog log.Logger
-
-	// infof logs informational messages.
-	infolog log.Logger
-
-	// tracef logs to the trace log.
-	tracelog log.Logger
+// A Config provides Configuration to a service client instance.
+type Config struct {
+	BaseURL     *url.URL
+	HTTPClient  *http.Client
+	Credentials *credentials.Credentials
+	Logger      log.Logger
+	UserAgent   string
+	ContentType string
 }
 
-// ClientOption is a function that configures a Client.
-// It is used in NewClient.
-type ClientOption func(*clientConfig)
+func DefaultBaseURL() *url.URL {
+	baseURL, _ := url.Parse(defaultBaseURL)
+	return baseURL
+}
 
-// SetAddress defines the address of the Spotinst API.
-func SetAddress(addr string) ClientOption {
-	return func(c *clientConfig) {
-		c.address = addr
+// DefaultTransport returns a new http.Transport with similar default
+// values to http.DefaultTransport. Do not use this for transient transports as
+// it can leak file descriptors over time. Only use this for transports that
+// will be re-used for the same host(s).
+func DefaultTransport() *http.Transport {
+	return &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		TLSHandshakeTimeout: 10 * time.Second,
+		DisableKeepAlives:   false,
+		MaxIdleConnsPerHost: 1,
 	}
 }
 
-// SetScheme defines the scheme for the address of the Spotinst API.
-func SetScheme(scheme string) ClientOption {
-	return func(c *clientConfig) {
-		c.scheme = scheme
+// DefaultHTTPClient returns a new http.Client with similar default values to
+// http.Client, but with a non-shared Transport, idle connections disabled, and
+// KeepAlives disabled.
+func DefaultHTTPClient() *http.Client {
+	return &http.Client{
+		Transport: DefaultTransport(),
 	}
 }
 
-// SetHttpClient defines the HTTP client.
-func SetHttpClient(client *http.Client) ClientOption {
-	return func(c *clientConfig) {
-		c.httpClient = client
+// DefaultConfig returns a default configuration for the client. By default this
+// will pool and reuse idle connections to API. If you have a long-lived
+// client object, this is the desired behavior and should make the most efficient
+// use of the connections to API.
+func DefaultConfig() *Config {
+	return &Config{
+		BaseURL:     DefaultBaseURL(),
+		HTTPClient:  DefaultHTTPClient(),
+		UserAgent:   defaultUserAgent,
+		ContentType: defaultContentType,
+		Credentials: credentials.NewChainCredentials(
+			new(credentials.EnvProvider),
+			new(credentials.FileProvider),
+		),
 	}
 }
 
-// SetCredentials defines the credentials.
-func SetCredentials(creds *credentials.Credentials) ClientOption {
-	return func(c *clientConfig) {
-		c.credentials = creds
-	}
+// WithBaseURL defines the base URL of the Spotinst API.
+func (c *Config) WithBaseURL(rawurl string) *Config {
+	baseURL, _ := url.Parse(rawurl)
+	c.BaseURL = baseURL
+	return c
 }
 
-// SetUserAgent defines the user agent.
-func SetUserAgent(ua string) ClientOption {
-	return func(c *clientConfig) {
-		c.userAgent = fmt.Sprintf("%s+%s", ua, c.userAgent)
-	}
+// WithHTTPClient defines the HTTP client.
+func (c *Config) WithHTTPClient(client *http.Client) *Config {
+	c.HTTPClient = client
+	return c
 }
 
-// SetContentType defines the content type.
-func SetContentType(ct string) ClientOption {
-	return func(c *clientConfig) {
-		c.contentType = ct
-	}
+// WithCredentials defines the credentials.
+func (c *Config) WithCredentials(creds *credentials.Credentials) *Config {
+	c.Credentials = creds
+	return c
 }
 
-// SetErrorLog sets the logger for critical messages like nodes joining
-// or leaving the cluster or failing requests. It is nil by default.
-func SetErrorLog(logger log.Logger) ClientOption {
-	return func(c *clientConfig) {
-		c.errorlog = logger
-	}
+// WithUserAgent defines the user agent.
+func (c *Config) WithUserAgent(ua string) *Config {
+	c.UserAgent = fmt.Sprintf("%s+%s", ua, c.UserAgent)
+	return c
 }
 
-// SetInfoLog sets the logger for informational messages, e.g. requests
+// WithContentType defines the content type.
+func (c *Config) WithContentType(ct string) *Config {
+	c.ContentType = ct
+	return c
+}
+
+// WithLogger defines the logger for informational messages, e.g. requests
 // and their response times. It is nil by default.
-func SetInfoLog(logger log.Logger) ClientOption {
-	return func(c *clientConfig) {
-		c.infolog = logger
+func (c *Config) WithLogger(logger log.Logger) *Config {
+	c.Logger = logger
+	return c
+}
+
+// Merge merges the passed in configs into the existing config object.
+func (c *Config) Merge(cfgs ...*Config) {
+	for _, other := range cfgs {
+		mergeConfig(c, other)
 	}
 }
 
-// SetTraceLog specifies the log.Logger to use for output of HTTP requests
-// and responses which is helpful during debugging. It is nil by default.
-func SetTraceLog(logger log.Logger) ClientOption {
-	return func(c *clientConfig) {
-		c.tracelog = logger
+func mergeConfig(dst *Config, other *Config) {
+	if other == nil {
+		return
+	}
+	if other.BaseURL != nil {
+		dst.BaseURL = other.BaseURL
+	}
+	if other.Credentials != nil {
+		dst.Credentials = other.Credentials
+	}
+	if other.HTTPClient != nil {
+		dst.HTTPClient = other.HTTPClient
+	}
+	if other.UserAgent != "" {
+		dst.UserAgent = other.UserAgent
+	}
+	if other.ContentType != "" {
+		dst.ContentType = other.ContentType
+	}
+	if other.Logger != nil {
+		dst.Logger = other.Logger
 	}
 }

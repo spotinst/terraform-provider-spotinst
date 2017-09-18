@@ -5,11 +5,9 @@ import (
 	"fmt"
 )
 
-var (
-	// ErrNoValidProvidersFoundInChain Is returned when there are no valid
-	// credentials providers in the ChainProvider.
-	ErrNoValidProvidersFoundInChain = errors.New("spotinst: no valid credentials providers in chain")
-)
+// ErrNoValidProvidersFoundInChain Is returned when there are no valid
+// credentials providers in the ChainProvider.
+var ErrNoValidProvidersFoundInChain = errors.New("spotinst: no valid credentials providers in chain")
 
 // A ChainProvider will search for a provider which returns credentials
 // and cache that provider until Retrieve is called again.
@@ -35,7 +33,6 @@ var (
 //		new(credentials.EnvProvider),
 //		new(credentials.FileProvider),
 //	)
-//
 type ChainProvider struct {
 	Providers []Provider
 	active    Provider

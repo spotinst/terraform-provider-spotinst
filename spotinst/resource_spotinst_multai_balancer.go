@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
@@ -57,19 +58,19 @@ func resourceSpotinstMultaiBalancer() *schema.Resource {
 }
 
 func resourceSpotinstMultaiBalancerCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	balancer, err := buildBalancerOpts(d, meta)
 	if err != nil {
 		return err
 	}
 	log.Printf("[DEBUG] Balancer create configuration: %s",
 		stringutil.Stringify(balancer))
-	input := &spotinst.CreateBalancerInput{
+	input := &multai.CreateLoadBalancerInput{
 		Balancer: balancer,
 	}
-	resp, err := client.MultaiService.BalancerService().CreateBalancer(context.Background(), input)
+	resp, err := client.multai.CreateLoadBalancer(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error creating balancer: %s", err)
+		return fmt.Errorf("failed to create balancer: %s", err)
 	}
 	d.SetId(spotinst.StringValue(resp.Balancer.ID))
 	log.Printf("[INFO] Balancer created successfully: %s", d.Id())
@@ -77,13 +78,13 @@ func resourceSpotinstMultaiBalancerCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceSpotinstMultaiBalancerRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	input := &spotinst.ReadBalancerInput{
+	client := meta.(*Client)
+	input := &multai.ReadLoadBalancerInput{
 		BalancerID: spotinst.String(d.Id()),
 	}
-	resp, err := client.MultaiService.BalancerService().ReadBalancer(context.Background(), input)
+	resp, err := client.multai.ReadLoadBalancer(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error retrieving balabcer: %s", err)
+		return fmt.Errorf("failed to read balabcer: %s", err)
 	}
 	if b := resp.Balancer; b != nil {
 		d.Set("name", b.Name)
@@ -97,8 +98,8 @@ func resourceSpotinstMultaiBalancerRead(d *schema.ResourceData, meta interface{}
 }
 
 func resourceSpotinstMultaiBalancerUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	balancer := &spotinst.Balancer{ID: spotinst.String(d.Id())}
+	client := meta.(*Client)
+	balancer := &multai.LoadBalancer{ID: spotinst.String(d.Id())}
 	update := false
 
 	if d.HasChange("connection_timeouts") {
@@ -137,11 +138,11 @@ func resourceSpotinstMultaiBalancerUpdate(d *schema.ResourceData, meta interface
 	if update {
 		log.Printf("[DEBUG] Balancer update configuration: %s",
 			stringutil.Stringify(balancer))
-		input := &spotinst.UpdateBalancerInput{
+		input := &multai.UpdateLoadBalancerInput{
 			Balancer: balancer,
 		}
-		if _, err := client.MultaiService.BalancerService().UpdateBalancer(context.Background(), input); err != nil {
-			return fmt.Errorf("Error updating balancer %s: %s", d.Id(), err)
+		if _, err := client.multai.UpdateLoadBalancer(context.Background(), input); err != nil {
+			return fmt.Errorf("failed to update balancer %s: %s", d.Id(), err)
 		}
 	}
 
@@ -149,20 +150,20 @@ func resourceSpotinstMultaiBalancerUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceSpotinstMultaiBalancerDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	log.Printf("[INFO] Deleting balancer: %s", d.Id())
-	input := &spotinst.DeleteBalancerInput{
+	input := &multai.DeleteLoadBalancerInput{
 		BalancerID: spotinst.String(d.Id()),
 	}
-	if _, err := client.MultaiService.BalancerService().DeleteBalancer(context.Background(), input); err != nil {
-		return fmt.Errorf("Error deleting balancer: %s", err)
+	if _, err := client.multai.DeleteLoadBalancer(context.Background(), input); err != nil {
+		return fmt.Errorf("failed to delete balancer: %s", err)
 	}
 	d.SetId("")
 	return nil
 }
 
-func buildBalancerOpts(d *schema.ResourceData, meta interface{}) (*spotinst.Balancer, error) {
-	balancer := &spotinst.Balancer{
+func buildBalancerOpts(d *schema.ResourceData, meta interface{}) (*multai.LoadBalancer, error) {
+	balancer := &multai.LoadBalancer{
 		Name: spotinst.String(d.Get("name").(string)),
 	}
 	if v, ok := d.GetOk("connection_timeouts"); ok {
@@ -199,10 +200,10 @@ func expandBalancerDnsAliases(data interface{}) ([]string, error) {
 	return aliases, nil
 }
 
-func expandBalancerTimeouts(data interface{}) (*spotinst.Timeouts, error) {
+func expandBalancerTimeouts(data interface{}) (*multai.Timeouts, error) {
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
-	timeouts := &spotinst.Timeouts{}
+	timeouts := &multai.Timeouts{}
 	if v, ok := m["idle"].(int); ok {
 		timeouts.Idle = spotinst.Int(v)
 	}
@@ -213,18 +214,18 @@ func expandBalancerTimeouts(data interface{}) (*spotinst.Timeouts, error) {
 	return timeouts, nil
 }
 
-func flattenBalancerTimeouts(timeouts *spotinst.Timeouts) []interface{} {
+func flattenBalancerTimeouts(timeouts *multai.Timeouts) []interface{} {
 	out := make(map[string]interface{})
 	out["idle"] = spotinst.IntValue(timeouts.Idle)
 	out["draining"] = spotinst.IntValue(timeouts.Draining)
 	return []interface{}{out}
 }
 
-func expandTags(data interface{}) ([]*spotinst.Tag, error) {
+func expandTags(data interface{}) ([]*multai.Tag, error) {
 	list := data.(map[string]interface{})
-	tags := make([]*spotinst.Tag, 0, len(list))
+	tags := make([]*multai.Tag, 0, len(list))
 	for k, v := range list {
-		tag := &spotinst.Tag{
+		tag := &multai.Tag{
 			Key:   spotinst.String(k),
 			Value: spotinst.String(v.(string)),
 		}
@@ -234,7 +235,7 @@ func expandTags(data interface{}) ([]*spotinst.Tag, error) {
 	return tags, nil
 }
 
-func flattenTags(tags []*spotinst.Tag) map[string]string {
+func flattenTags(tags []*multai.Tag) map[string]string {
 	out := make(map[string]string)
 	for _, t := range tags {
 		out[spotinst.StringValue(t.Key)] = spotinst.StringValue(t.Value)

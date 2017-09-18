@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
@@ -42,7 +43,7 @@ func resourceSpotinstMultaiRoutingRule() *schema.Resource {
 			"strategy": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  spotinst.StrategyRoundRobin.String(),
+				Default:  multai.StrategyRoundRobin.String(),
 			},
 
 			"middleware_ids": &schema.Schema{
@@ -66,19 +67,19 @@ func resourceSpotinstMultaiRoutingRule() *schema.Resource {
 }
 
 func resourceSpotinstMultaiRoutingRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	rule, err := buildBalancerRoutingRuleOpts(d, meta)
 	if err != nil {
 		return err
 	}
 	log.Printf("[DEBUG] Routing rule create configuration: %s",
 		stringutil.Stringify(rule))
-	input := &spotinst.CreateRoutingRuleInput{
+	input := &multai.CreateRoutingRuleInput{
 		RoutingRule: rule,
 	}
-	resp, err := client.MultaiService.BalancerService().CreateRoutingRule(context.Background(), input)
+	resp, err := client.multai.CreateRoutingRule(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error creating routing rule: %s", err)
+		return fmt.Errorf("failed to create routing rule: %s", err)
 	}
 	d.SetId(spotinst.StringValue(resp.RoutingRule.ID))
 	log.Printf("[INFO] Routing rule created successfully: %s", d.Id())
@@ -86,13 +87,13 @@ func resourceSpotinstMultaiRoutingRuleCreate(d *schema.ResourceData, meta interf
 }
 
 func resourceSpotinstMultaiRoutingRuleRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	input := &spotinst.ReadRoutingRuleInput{
+	client := meta.(*Client)
+	input := &multai.ReadRoutingRuleInput{
 		RoutingRuleID: spotinst.String(d.Id()),
 	}
-	resp, err := client.MultaiService.BalancerService().ReadRoutingRule(context.Background(), input)
+	resp, err := client.multai.ReadRoutingRule(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error retrieving routing rule: %s", err)
+		return fmt.Errorf("failed to read routing rule: %s", err)
 	}
 	if rr := resp.RoutingRule; rr != nil {
 		d.Set("balancer_id", rr.BalancerID)
@@ -110,8 +111,8 @@ func resourceSpotinstMultaiRoutingRuleRead(d *schema.ResourceData, meta interfac
 }
 
 func resourceSpotinstMultaiRoutingRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	rule := &spotinst.RoutingRule{ID: spotinst.String(d.Id())}
+	client := meta.(*Client)
+	rule := &multai.RoutingRule{ID: spotinst.String(d.Id())}
 	update := false
 
 	if d.HasChange("listener_id") {
@@ -166,11 +167,11 @@ func resourceSpotinstMultaiRoutingRuleUpdate(d *schema.ResourceData, meta interf
 	if update {
 		log.Printf("[DEBUG] Routing rule update configuration: %s",
 			stringutil.Stringify(rule))
-		input := &spotinst.UpdateRoutingRuleInput{
+		input := &multai.UpdateRoutingRuleInput{
 			RoutingRule: rule,
 		}
-		if _, err := client.MultaiService.BalancerService().UpdateRoutingRule(context.Background(), input); err != nil {
-			return fmt.Errorf("Error updating routing rule %s: %s", d.Id(), err)
+		if _, err := client.multai.UpdateRoutingRule(context.Background(), input); err != nil {
+			return fmt.Errorf("failed to update routing rule %s: %s", d.Id(), err)
 		}
 	}
 
@@ -178,20 +179,20 @@ func resourceSpotinstMultaiRoutingRuleUpdate(d *schema.ResourceData, meta interf
 }
 
 func resourceSpotinstMultaiRoutingRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	log.Printf("[INFO] Deleting routing rule: %s", d.Id())
-	input := &spotinst.DeleteRoutingRuleInput{
+	input := &multai.DeleteRoutingRuleInput{
 		RoutingRuleID: spotinst.String(d.Id()),
 	}
-	if _, err := client.MultaiService.BalancerService().DeleteRoutingRule(context.Background(), input); err != nil {
-		return fmt.Errorf("Error deleting routing rule: %s", err)
+	if _, err := client.multai.DeleteRoutingRule(context.Background(), input); err != nil {
+		return fmt.Errorf("failed to delete routing rule: %s", err)
 	}
 	d.SetId("")
 	return nil
 }
 
-func buildBalancerRoutingRuleOpts(d *schema.ResourceData, meta interface{}) (*spotinst.RoutingRule, error) {
-	rule := &spotinst.RoutingRule{
+func buildBalancerRoutingRuleOpts(d *schema.ResourceData, meta interface{}) (*multai.RoutingRule, error) {
+	rule := &multai.RoutingRule{
 		BalancerID: spotinst.String(d.Get("balancer_id").(string)),
 		ListenerID: spotinst.String(d.Get("listener_id").(string)),
 		Route:      spotinst.String(d.Get("route").(string)),

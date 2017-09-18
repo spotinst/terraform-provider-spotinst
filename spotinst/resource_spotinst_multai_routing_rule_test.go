@@ -7,11 +7,12 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 )
 
 func TestAccSpotinstMultaiRoutingRule_Basic(t *testing.T) {
-	var rule spotinst.RoutingRule
+	var rule multai.RoutingRule
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -30,7 +31,7 @@ func TestAccSpotinstMultaiRoutingRule_Basic(t *testing.T) {
 }
 
 func TestAccSpotinstMultaiRoutingRule_Updated(t *testing.T) {
-	var rule spotinst.RoutingRule
+	var rule multai.RoutingRule
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -57,59 +58,59 @@ func TestAccSpotinstMultaiRoutingRule_Updated(t *testing.T) {
 }
 
 func testAccCheckSpotinstMultaiRoutingRuleDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*spotinst.Client)
+	client := testAccProvider.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "spotinst_multai_routing_rule" {
 			continue
 		}
-		input := &spotinst.ReadRoutingRuleInput{
+		input := &multai.ReadRoutingRuleInput{
 			RoutingRuleID: spotinst.String(rs.Primary.ID),
 		}
-		resp, err := client.MultaiService.BalancerService().ReadRoutingRule(context.Background(), input)
+		resp, err := client.multai.ReadRoutingRule(context.Background(), input)
 		if err == nil && resp != nil && resp.RoutingRule != nil {
-			return fmt.Errorf("RoutingRule still exists")
+			return fmt.Errorf("routing rule still exists")
 		}
 	}
 	return nil
 }
 
-func testAccCheckSpotinstMultaiRoutingRuleAttributes(rule *spotinst.RoutingRule) resource.TestCheckFunc {
+func testAccCheckSpotinstMultaiRoutingRuleAttributes(rule *multai.RoutingRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if p := spotinst.StringValue(rule.Route); p != "Path(`/foo`)" {
-			return fmt.Errorf("Bad content: %s", p)
+			return fmt.Errorf("bad content: %s", p)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSpotinstMultaiRoutingRuleAttributesUpdated(rule *spotinst.RoutingRule) resource.TestCheckFunc {
+func testAccCheckSpotinstMultaiRoutingRuleAttributesUpdated(rule *multai.RoutingRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if p := spotinst.StringValue(rule.Route); p != "Path(`/bar`)" {
-			return fmt.Errorf("Bad content: %s", p)
+			return fmt.Errorf("bad content: %s", p)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSpotinstMultaiRoutingRuleExists(n string, rule *spotinst.RoutingRule) resource.TestCheckFunc {
+func testAccCheckSpotinstMultaiRoutingRuleExists(n string, rule *multai.RoutingRule) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("No resource ID is rule")
+			return fmt.Errorf("no resource ID is rule")
 		}
-		client := testAccProvider.Meta().(*spotinst.Client)
-		input := &spotinst.ReadRoutingRuleInput{
+		client := testAccProvider.Meta().(*Client)
+		input := &multai.ReadRoutingRuleInput{
 			RoutingRuleID: spotinst.String(rs.Primary.ID),
 		}
-		resp, err := client.MultaiService.BalancerService().ReadRoutingRule(context.Background(), input)
+		resp, err := client.multai.ReadRoutingRule(context.Background(), input)
 		if err != nil {
 			return err
 		}
 		if spotinst.StringValue(resp.RoutingRule.ID) != rs.Primary.Attributes["id"] {
-			return fmt.Errorf("RoutingRule not found: %+v,\n %+v\n", resp.RoutingRule, rs.Primary.Attributes)
+			return fmt.Errorf("routing rule not found: %+v,\n %+v\n", resp.RoutingRule, rs.Primary.Attributes)
 		}
 		*rule = *resp.RoutingRule
 		return nil

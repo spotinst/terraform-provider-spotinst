@@ -7,9 +7,15 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
+	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
+	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
+	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
 )
 
 var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
@@ -22,19 +28,24 @@ type Config struct {
 	Account string
 }
 
+type Client struct {
+	elastigroup  elastigroup.Service
+	healthCheck  healthcheck.Service
+	subscription subscription.Service
+	multai       multai.Service
+	mrscaler     mrscaler.Service
+}
+
 // Validate returns an error in case of invalid configuration.
 func (c *Config) Validate() error {
 	return nil
 }
 
 // Client returns a new client for accessing Spotinst.
-func (c *Config) Client() (*spotinst.Client, error) {
-	// Set default client options.
-	clientOpts := []spotinst.ClientOption{
-		spotinst.SetUserAgent("HashiCorp-Terraform/" + terraform.VersionString()),
-		spotinst.SetTraceLog(newStdLogger("TRACE")),
-		spotinst.SetErrorLog(newStdLogger("ERROR")),
-	}
+func (c *Config) Client() (*Client, error) {
+	config := spotinst.DefaultConfig()
+	config.WithLogger(newStdLogger("DEBUG"))
+	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString())
 
 	// Set user credentials.
 	providers := []credentials.Provider{
@@ -59,10 +70,19 @@ func (c *Config) Client() (*spotinst.Client, error) {
 		stdlog.Printf("[ERROR] Failed to instantiate Spotinst client: %v", err)
 		return nil, ErrNoValidCredentials
 	}
-	clientOpts = append(clientOpts, spotinst.SetCredentials(creds))
+	config.WithCredentials(creds)
+
+	// Create a new session.
+	sess := session.New(config)
 
 	// Create a new client.
-	client := spotinst.NewClient(clientOpts...)
+	client := &Client{
+		elastigroup:  elastigroup.New(sess),
+		healthCheck:  healthcheck.New(sess),
+		subscription: subscription.New(sess),
+		multai:       multai.New(sess),
+		mrscaler:     mrscaler.New(sess),
+	}
 	stdlog.Println("[INFO] Spotinst client configured")
 
 	return client, nil

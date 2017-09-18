@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
@@ -114,19 +115,19 @@ func resourceSpotinstMultaiTargetSet() *schema.Resource {
 }
 
 func resourceSpotinstMultaiTargetSetCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	set, err := buildBalancerTargetSetOpts(d, meta)
 	if err != nil {
 		return err
 	}
 	log.Printf("[DEBUG] Target set create configuration: %s",
 		stringutil.Stringify(set))
-	input := &spotinst.CreateTargetSetInput{
+	input := &multai.CreateTargetSetInput{
 		TargetSet: set,
 	}
-	resp, err := client.MultaiService.BalancerService().CreateTargetSet(context.Background(), input)
+	resp, err := client.multai.CreateTargetSet(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error creating target set: %s", err)
+		return fmt.Errorf("failed to create target set: %s", err)
 	}
 	d.SetId(spotinst.StringValue(resp.TargetSet.ID))
 	log.Printf("[INFO] Target set created successfully: %s", d.Id())
@@ -134,13 +135,13 @@ func resourceSpotinstMultaiTargetSetCreate(d *schema.ResourceData, meta interfac
 }
 
 func resourceSpotinstMultaiTargetSetRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	input := &spotinst.ReadTargetSetInput{
+	client := meta.(*Client)
+	input := &multai.ReadTargetSetInput{
 		TargetSetID: spotinst.String(d.Id()),
 	}
-	resp, err := client.MultaiService.BalancerService().ReadTargetSet(context.Background(), input)
+	resp, err := client.multai.ReadTargetSet(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error retrieving target set: %s", err)
+		return fmt.Errorf("failed to read target set: %s", err)
 	}
 	if s := resp.TargetSet; s != nil {
 		d.Set("balancer_id", s.BalancerID)
@@ -158,8 +159,8 @@ func resourceSpotinstMultaiTargetSetRead(d *schema.ResourceData, meta interface{
 }
 
 func resourceSpotinstMultaiTargetSetUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	set := &spotinst.TargetSet{ID: spotinst.String(d.Id())}
+	client := meta.(*Client)
+	set := &multai.TargetSet{ID: spotinst.String(d.Id())}
 	update := false
 
 	if d.HasChange("name") {
@@ -207,11 +208,11 @@ func resourceSpotinstMultaiTargetSetUpdate(d *schema.ResourceData, meta interfac
 	if update {
 		log.Printf("[DEBUG] Target set update configuration: %s",
 			stringutil.Stringify(set))
-		input := &spotinst.UpdateTargetSetInput{
+		input := &multai.UpdateTargetSetInput{
 			TargetSet: set,
 		}
-		if _, err := client.MultaiService.BalancerService().UpdateTargetSet(context.Background(), input); err != nil {
-			return fmt.Errorf("Error updating target set %s: %s", d.Id(), err)
+		if _, err := client.multai.UpdateTargetSet(context.Background(), input); err != nil {
+			return fmt.Errorf("failed to update target set %s: %s", d.Id(), err)
 		}
 	}
 
@@ -219,20 +220,20 @@ func resourceSpotinstMultaiTargetSetUpdate(d *schema.ResourceData, meta interfac
 }
 
 func resourceSpotinstMultaiTargetSetDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	log.Printf("[INFO] Deleting target set: %s", d.Id())
-	input := &spotinst.DeleteTargetSetInput{
+	input := &multai.DeleteTargetSetInput{
 		TargetSetID: spotinst.String(d.Id()),
 	}
-	if _, err := client.MultaiService.BalancerService().DeleteTargetSet(context.Background(), input); err != nil {
-		return fmt.Errorf("Error deleting target set: %s", err)
+	if _, err := client.multai.DeleteTargetSet(context.Background(), input); err != nil {
+		return fmt.Errorf("failed to delete target set: %s", err)
 	}
 	d.SetId("")
 	return nil
 }
 
-func buildBalancerTargetSetOpts(d *schema.ResourceData, meta interface{}) (*spotinst.TargetSet, error) {
-	set := &spotinst.TargetSet{
+func buildBalancerTargetSetOpts(d *schema.ResourceData, meta interface{}) (*multai.TargetSet, error) {
+	set := &multai.TargetSet{
 		BalancerID:   spotinst.String(d.Get("balancer_id").(string)),
 		DeploymentID: spotinst.String(d.Get("deployment_id").(string)),
 		Name:         spotinst.String(d.Get("name").(string)),
@@ -257,10 +258,10 @@ func buildBalancerTargetSetOpts(d *schema.ResourceData, meta interface{}) (*spot
 	return set, nil
 }
 
-func expandBalancerTargetSetHealthCheck(data interface{}) (*spotinst.TargetSetHealthCheck, error) {
+func expandBalancerTargetSetHealthCheck(data interface{}) (*multai.TargetSetHealthCheck, error) {
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
-	hc := new(spotinst.TargetSetHealthCheck)
+	hc := new(multai.TargetSetHealthCheck)
 	if v, ok := m["protocol"].(string); ok {
 		hc.Protocol = spotinst.String(strings.ToUpper(v))
 	}
@@ -287,7 +288,7 @@ func expandBalancerTargetSetHealthCheck(data interface{}) (*spotinst.TargetSetHe
 	return hc, nil
 }
 
-func flattenBalancerTargetSetHealthCheck(hc *spotinst.TargetSetHealthCheck) []interface{} {
+func flattenBalancerTargetSetHealthCheck(hc *multai.TargetSetHealthCheck) []interface{} {
 	out := make(map[string]interface{})
 	out["protocol"] = spotinst.StringValue(hc.Protocol)
 	out["path"] = spotinst.StringValue(hc.Path)

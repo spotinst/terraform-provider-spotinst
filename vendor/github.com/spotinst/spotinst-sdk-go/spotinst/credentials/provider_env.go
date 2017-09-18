@@ -18,11 +18,9 @@ const (
 	EnvCredentialsVarAccount = "SPOTINST_ACCOUNT"
 )
 
-var (
-	// ErrEnvCredentialsTokenNotFound is returned when the Spotinst Token can't be
-	// found in the process's environment.
-	ErrEnvCredentialsTokenNotFound = fmt.Errorf("spotinst: %s not found in environment", EnvCredentialsVarToken)
-)
+// ErrEnvCredentialsTokenNotFound is returned when the Spotinst Token can't be
+// found in the process's environment.
+var ErrEnvCredentialsTokenNotFound = fmt.Errorf("spotinst: %s not found in environment", EnvCredentialsVarToken)
 
 // A EnvProvider retrieves credentials from the environment variables of the
 // running process.

@@ -1,4 +1,4 @@
-package spotinst
+package healthcheck
 
 import (
 	"context"
@@ -6,35 +6,19 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates"
 )
 
-// HealthCheck is an interface for interfacing with the HealthCheck
-// endpoints of the Spotinst API.
-type HealthCheckService interface {
-	List(context.Context, *ListHealthCheckInput) (*ListHealthCheckOutput, error)
-	Create(context.Context, *CreateHealthCheckInput) (*CreateHealthCheckOutput, error)
-	Read(context.Context, *ReadHealthCheckInput) (*ReadHealthCheckOutput, error)
-	Update(context.Context, *UpdateHealthCheckInput) (*UpdateHealthCheckOutput, error)
-	Delete(context.Context, *DeleteHealthCheckInput) (*DeleteHealthCheckOutput, error)
-}
-
-// HealthCheckServiceOp handles communication with the balancer related methods
-// of the Spotinst API.
-type HealthCheckServiceOp struct {
-	client *Client
-}
-
-var _ HealthCheckService = &HealthCheckServiceOp{}
-
 type HealthCheck struct {
-	ID         *string            `json:"id,omitempty"`
-	Name       *string            `json:"name,omitempty"`
-	ResourceID *string            `json:"resourceId,omitempty"`
-	Check      *HealthCheckConfig `json:"check,omitempty"`
-	ProxyAddr  *string            `json:"proxyAddress,omitempty"`
-	ProxyPort  *int               `json:"proxyPort,omitempty"`
+	ID         *string `json:"id,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	ResourceID *string `json:"resourceId,omitempty"`
+	Check      *Check  `json:"check,omitempty"`
+	ProxyAddr  *string `json:"proxyAddress,omitempty"`
+	ProxyPort  *int    `json:"proxyPort,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -53,7 +37,7 @@ type HealthCheck struct {
 	nullFields []string `json:"-"`
 }
 
-type HealthCheckConfig struct {
+type Check struct {
 	Protocol  *string `json:"protocol,omitempty"`
 	Endpoint  *string `json:"endpoint,omitempty"`
 	Port      *int    `json:"port,omitempty"`
@@ -66,9 +50,9 @@ type HealthCheckConfig struct {
 	nullFields      []string `json:"-"`
 }
 
-type ListHealthCheckInput struct{}
+type ListHealthChecksInput struct{}
 
-type ListHealthCheckOutput struct {
+type ListHealthChecksOutput struct {
 	HealthChecks []*HealthCheck `json:"healthChecks,omitempty"`
 }
 
@@ -111,7 +95,7 @@ func healthCheckFromJSON(in []byte) (*HealthCheck, error) {
 }
 
 func healthChecksFromJSON(in []byte) ([]*HealthCheck, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -137,9 +121,9 @@ func healthChecksFromHttpResponse(resp *http.Response) ([]*HealthCheck, error) {
 	return healthChecksFromJSON(body)
 }
 
-func (s *HealthCheckServiceOp) List(ctx context.Context, input *ListHealthCheckInput) (*ListHealthCheckOutput, error) {
-	r := s.client.newRequest(ctx, "GET", "/healthCheck")
-	_, resp, err := requireOK(s.client.doRequest(r))
+func (s *ServiceOp) List(ctx context.Context, input *ListHealthChecksInput) (*ListHealthChecksOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/healthCheck")
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -150,14 +134,14 @@ func (s *HealthCheckServiceOp) List(ctx context.Context, input *ListHealthCheckI
 		return nil, err
 	}
 
-	return &ListHealthCheckOutput{HealthChecks: hcs}, nil
+	return &ListHealthChecksOutput{HealthChecks: hcs}, nil
 }
 
-func (s *HealthCheckServiceOp) Create(ctx context.Context, input *CreateHealthCheckInput) (*CreateHealthCheckOutput, error) {
-	r := s.client.newRequest(ctx, "POST", "/healthCheck")
-	r.obj = input
+func (s *ServiceOp) Create(ctx context.Context, input *CreateHealthCheckInput) (*CreateHealthCheckOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/healthCheck")
+	r.Obj = input
 
-	_, resp, err := requireOK(s.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -176,16 +160,16 @@ func (s *HealthCheckServiceOp) Create(ctx context.Context, input *CreateHealthCh
 	return output, nil
 }
 
-func (s *HealthCheckServiceOp) Read(ctx context.Context, input *ReadHealthCheckInput) (*ReadHealthCheckOutput, error) {
-	path, err := uritemplates.Expand("/healthCheck/{healthCheckId}", map[string]string{
-		"healthCheckId": StringValue(input.HealthCheckID),
+func (s *ServiceOp) Read(ctx context.Context, input *ReadHealthCheckInput) (*ReadHealthCheckOutput, error) {
+	path, err := uritemplates.Expand("/healthCheck/{healthCheckId}", uritemplates.Values{
+		"healthCheckId": spotinst.StringValue(input.HealthCheckID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := s.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(s.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -204,9 +188,9 @@ func (s *HealthCheckServiceOp) Read(ctx context.Context, input *ReadHealthCheckI
 	return output, nil
 }
 
-func (s *HealthCheckServiceOp) Update(ctx context.Context, input *UpdateHealthCheckInput) (*UpdateHealthCheckOutput, error) {
-	path, err := uritemplates.Expand("/healthCheck/{healthCheckId}", map[string]string{
-		"healthCheckId": StringValue(input.HealthCheck.ID),
+func (s *ServiceOp) Update(ctx context.Context, input *UpdateHealthCheckInput) (*UpdateHealthCheckOutput, error) {
+	path, err := uritemplates.Expand("/healthCheck/{healthCheckId}", uritemplates.Values{
+		"healthCheckId": spotinst.StringValue(input.HealthCheck.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -215,10 +199,10 @@ func (s *HealthCheckServiceOp) Update(ctx context.Context, input *UpdateHealthCh
 	// We do not need the ID anymore so let's drop it.
 	input.HealthCheck.ID = nil
 
-	r := s.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(s.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -237,16 +221,16 @@ func (s *HealthCheckServiceOp) Update(ctx context.Context, input *UpdateHealthCh
 	return output, nil
 }
 
-func (s *HealthCheckServiceOp) Delete(ctx context.Context, input *DeleteHealthCheckInput) (*DeleteHealthCheckOutput, error) {
-	path, err := uritemplates.Expand("/healthCheck/{healthCheckId}", map[string]string{
-		"healthCheckId": StringValue(input.HealthCheckID),
+func (s *ServiceOp) Delete(ctx context.Context, input *DeleteHealthCheckInput) (*DeleteHealthCheckOutput, error) {
+	path, err := uritemplates.Expand("/healthCheck/{healthCheckId}", uritemplates.Values{
+		"healthCheckId": spotinst.StringValue(input.HealthCheckID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := s.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(s.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -284,7 +268,7 @@ func (o *HealthCheck) SetResourceId(v *string) *HealthCheck {
 	return o
 }
 
-func (o *HealthCheck) SetCheck(v *HealthCheckConfig) *HealthCheck {
+func (o *HealthCheck) SetCheck(v *Check) *HealthCheck {
 	if o.Check = v; o.Check == nil {
 		o.nullFields = append(o.nullFields, "Check")
 	}
@@ -307,57 +291,57 @@ func (o *HealthCheck) SetProxyPort(v *int) *HealthCheck {
 
 // endregion
 
-// region HealthCheckConfig
+// region Check
 
-func (o *HealthCheckConfig) MarshalJSON() ([]byte, error) {
-	type noMethod HealthCheckConfig
+func (o *Check) MarshalJSON() ([]byte, error) {
+	type noMethod Check
 	raw := noMethod(*o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *HealthCheckConfig) SetProtocol(v *string) *HealthCheckConfig {
+func (o *Check) SetProtocol(v *string) *Check {
 	if o.Protocol = v; o.Protocol == nil {
 		o.nullFields = append(o.nullFields, "Protocol")
 	}
 	return o
 }
 
-func (o *HealthCheckConfig) SetEndpoint(v *string) *HealthCheckConfig {
+func (o *Check) SetEndpoint(v *string) *Check {
 	if o.Endpoint = v; o.Endpoint == nil {
 		o.nullFields = append(o.nullFields, "Endpoint")
 	}
 	return o
 }
 
-func (o *HealthCheckConfig) SetPort(v *int) *HealthCheckConfig {
+func (o *Check) SetPort(v *int) *Check {
 	if o.Port = v; o.Port == nil {
 		o.nullFields = append(o.nullFields, "Port")
 	}
 	return o
 }
 
-func (o *HealthCheckConfig) SetInterval(v *int) *HealthCheckConfig {
+func (o *Check) SetInterval(v *int) *Check {
 	if o.Interval = v; o.Interval == nil {
 		o.nullFields = append(o.nullFields, "Interval")
 	}
 	return o
 }
 
-func (o *HealthCheckConfig) SetTimeout(v *int) *HealthCheckConfig {
+func (o *Check) SetTimeout(v *int) *Check {
 	if o.Timeout = v; o.Timeout == nil {
 		o.nullFields = append(o.nullFields, "Timeout")
 	}
 	return o
 }
 
-func (o *HealthCheckConfig) SetHealthy(v *int) *HealthCheckConfig {
+func (o *Check) SetHealthy(v *int) *Check {
 	if o.Healthy = v; o.Healthy == nil {
 		o.nullFields = append(o.nullFields, "Healthy")
 	}
 	return o
 }
 
-func (o *HealthCheckConfig) SetUnhealthy(v *int) *HealthCheckConfig {
+func (o *Check) SetUnhealthy(v *int) *Check {
 	if o.Unhealthy = v; o.Unhealthy == nil {
 		o.nullFields = append(o.nullFields, "Unhealthy")
 	}

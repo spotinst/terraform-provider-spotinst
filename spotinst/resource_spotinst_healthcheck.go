@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
@@ -115,16 +116,16 @@ func resourceSpotinstHealthCheck() *schema.Resource {
 }
 
 func resourceSpotinstHealthCheckCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	newHealthCheck, err := buildHealthCheckOpts(d, meta)
 	if err != nil {
 		return err
 	}
 	log.Printf("[DEBUG] HealthCheck create configuration: %#v", newHealthCheck)
-	input := &spotinst.CreateHealthCheckInput{HealthCheck: newHealthCheck}
-	resp, err := client.HealthCheckService.Create(context.Background(), input)
+	input := &healthcheck.CreateHealthCheckInput{HealthCheck: newHealthCheck}
+	resp, err := client.healthCheck.Create(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error creating health check: %s", err)
+		return fmt.Errorf("failed to create health check: %s", err)
 	}
 	d.SetId(spotinst.StringValue(resp.HealthCheck.ID))
 	log.Printf("[INFO] HealthCheck created successfully: %s", d.Id())
@@ -132,11 +133,11 @@ func resourceSpotinstHealthCheckCreate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceSpotinstHealthCheckRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	input := &spotinst.ReadHealthCheckInput{HealthCheckID: spotinst.String(d.Id())}
-	resp, err := client.HealthCheckService.Read(context.Background(), input)
+	client := meta.(*Client)
+	input := &healthcheck.ReadHealthCheckInput{HealthCheckID: spotinst.String(d.Id())}
+	resp, err := client.healthCheck.Read(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error retrieving health check: %s", err)
+		return fmt.Errorf("failed to read health check: %s", err)
 	}
 	if hc := resp.HealthCheck; hc != nil {
 		d.Set("name", hc.Name)
@@ -178,8 +179,8 @@ func resourceSpotinstHealthCheckRead(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceSpotinstHealthCheckUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	healthCheck := &spotinst.HealthCheck{}
+	client := meta.(*Client)
+	healthCheck := &healthcheck.HealthCheck{}
 	healthCheck.SetId(spotinst.String(d.Id()))
 	update := false
 
@@ -211,7 +212,7 @@ func resourceSpotinstHealthCheckUpdate(d *schema.ResourceData, meta interface{})
 				return err
 			} else {
 				if healthCheck.Check == nil {
-					healthCheck.Check = &spotinst.HealthCheckConfig{}
+					healthCheck.Check = &healthcheck.Check{}
 				}
 				if healthy != nil {
 					healthCheck.Check.SetHealthy(healthy)
@@ -244,9 +245,9 @@ func resourceSpotinstHealthCheckUpdate(d *schema.ResourceData, meta interface{})
 
 	if update {
 		log.Printf("[DEBUG] HealthCheck update configuration: %s", stringutil.Stringify(healthCheck))
-		input := &spotinst.UpdateHealthCheckInput{HealthCheck: healthCheck}
-		if _, err := client.HealthCheckService.Update(context.Background(), input); err != nil {
-			return fmt.Errorf("Error updating health check %s: %s", d.Id(), err)
+		input := &healthcheck.UpdateHealthCheckInput{HealthCheck: healthCheck}
+		if _, err := client.healthCheck.Update(context.Background(), input); err != nil {
+			return fmt.Errorf("failed to update health check %s: %s", d.Id(), err)
 		}
 	}
 
@@ -254,19 +255,19 @@ func resourceSpotinstHealthCheckUpdate(d *schema.ResourceData, meta interface{})
 }
 
 func resourceSpotinstHealthCheckDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	log.Printf("[INFO] Deleting health check: %s", d.Id())
-	input := &spotinst.DeleteHealthCheckInput{HealthCheckID: spotinst.String(d.Id())}
-	if _, err := client.HealthCheckService.Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("Error deleting health check: %s", err)
+	input := &healthcheck.DeleteHealthCheckInput{HealthCheckID: spotinst.String(d.Id())}
+	if _, err := client.healthCheck.Delete(context.Background(), input); err != nil {
+		return fmt.Errorf("failed to delete health check: %s", err)
 	}
 	d.SetId("")
 	return nil
 }
 
 // buildHealthCheckOpts builds the Spotinst HealthCheck options.
-func buildHealthCheckOpts(d *schema.ResourceData, meta interface{}) (*spotinst.HealthCheck, error) {
-	healthCheck := &spotinst.HealthCheck{}
+func buildHealthCheckOpts(d *schema.ResourceData, meta interface{}) (*healthcheck.HealthCheck, error) {
+	healthCheck := &healthcheck.HealthCheck{}
 	healthCheck.SetName(spotinst.String(d.Get("name").(string)))
 	healthCheck.SetResourceId(spotinst.String(d.Get("resource_id").(string)))
 
@@ -284,7 +285,7 @@ func buildHealthCheckOpts(d *schema.ResourceData, meta interface{}) (*spotinst.H
 			return nil, err
 		} else {
 			if healthCheck.Check == nil {
-				healthCheck.Check = &spotinst.HealthCheckConfig{}
+				healthCheck.Check = &healthcheck.Check{}
 			}
 			if healthy != nil {
 				healthCheck.Check.SetHealthy(healthy)
@@ -312,10 +313,10 @@ func buildHealthCheckOpts(d *schema.ResourceData, meta interface{}) (*spotinst.H
 }
 
 // expandHealthCheckConfig expands the Check block.
-func expandHealthCheckConfig(data interface{}) (*spotinst.HealthCheckConfig, error) {
+func expandHealthCheckConfig(data interface{}) (*healthcheck.Check, error) {
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
-	check := &spotinst.HealthCheckConfig{}
+	check := &healthcheck.Check{}
 
 	if v, ok := m["protocol"].(string); ok && v != "" {
 		check.SetProtocol(spotinst.String(v))

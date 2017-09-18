@@ -1,4 +1,4 @@
-package spotinst
+package subscription
 
 import (
 	"context"
@@ -6,27 +6,11 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates"
 )
-
-// Subscription is an interface for interfacing with the Subscription
-// endpoints of the Spotinst API.
-type SubscriptionService interface {
-	List(context.Context, *ListSubscriptionInput) (*ListSubscriptionOutput, error)
-	Create(context.Context, *CreateSubscriptionInput) (*CreateSubscriptionOutput, error)
-	Read(context.Context, *ReadSubscriptionInput) (*ReadSubscriptionOutput, error)
-	Update(context.Context, *UpdateSubscriptionInput) (*UpdateSubscriptionOutput, error)
-	Delete(context.Context, *DeleteSubscriptionInput) (*DeleteSubscriptionOutput, error)
-}
-
-// SubscriptionServiceOp handles communication with the balancer related methods
-// of the Spotinst API.
-type SubscriptionServiceOp struct {
-	client *Client
-}
-
-var _ SubscriptionService = &SubscriptionServiceOp{}
 
 type Subscription struct {
 	ID         *string                `json:"id,omitempty"`
@@ -53,9 +37,9 @@ type Subscription struct {
 	nullFields []string `json:"-"`
 }
 
-type ListSubscriptionInput struct{}
+type ListSubscriptionsInput struct{}
 
-type ListSubscriptionOutput struct {
+type ListSubscriptionsOutput struct {
 	Subscriptions []*Subscription `json:"subscriptions,omitempty"`
 }
 
@@ -98,7 +82,7 @@ func subscriptionFromJSON(in []byte) (*Subscription, error) {
 }
 
 func subscriptionsFromJSON(in []byte) ([]*Subscription, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -124,9 +108,9 @@ func subscriptionsFromHttpResponse(resp *http.Response) ([]*Subscription, error)
 	return subscriptionsFromJSON(body)
 }
 
-func (s *SubscriptionServiceOp) List(ctx context.Context, input *ListSubscriptionInput) (*ListSubscriptionOutput, error) {
-	r := s.client.newRequest(ctx, "GET", "/events/subscription")
-	_, resp, err := requireOK(s.client.doRequest(r))
+func (s *ServiceOp) List(ctx context.Context, input *ListSubscriptionsInput) (*ListSubscriptionsOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/events/subscription")
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -137,14 +121,14 @@ func (s *SubscriptionServiceOp) List(ctx context.Context, input *ListSubscriptio
 		return nil, err
 	}
 
-	return &ListSubscriptionOutput{Subscriptions: gs}, nil
+	return &ListSubscriptionsOutput{Subscriptions: gs}, nil
 }
 
-func (s *SubscriptionServiceOp) Create(ctx context.Context, input *CreateSubscriptionInput) (*CreateSubscriptionOutput, error) {
-	r := s.client.newRequest(ctx, "POST", "/events/subscription")
-	r.obj = input
+func (s *ServiceOp) Create(ctx context.Context, input *CreateSubscriptionInput) (*CreateSubscriptionOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/events/subscription")
+	r.Obj = input
 
-	_, resp, err := requireOK(s.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -163,16 +147,16 @@ func (s *SubscriptionServiceOp) Create(ctx context.Context, input *CreateSubscri
 	return output, nil
 }
 
-func (s *SubscriptionServiceOp) Read(ctx context.Context, input *ReadSubscriptionInput) (*ReadSubscriptionOutput, error) {
-	path, err := uritemplates.Expand("/events/subscription/{subscriptionId}", map[string]string{
-		"subscriptionId": StringValue(input.SubscriptionID),
+func (s *ServiceOp) Read(ctx context.Context, input *ReadSubscriptionInput) (*ReadSubscriptionOutput, error) {
+	path, err := uritemplates.Expand("/events/subscription/{subscriptionId}", uritemplates.Values{
+		"subscriptionId": spotinst.StringValue(input.SubscriptionID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := s.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(s.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -191,9 +175,9 @@ func (s *SubscriptionServiceOp) Read(ctx context.Context, input *ReadSubscriptio
 	return output, nil
 }
 
-func (s *SubscriptionServiceOp) Update(ctx context.Context, input *UpdateSubscriptionInput) (*UpdateSubscriptionOutput, error) {
-	path, err := uritemplates.Expand("/events/subscription/{subscriptionId}", map[string]string{
-		"subscriptionId": StringValue(input.Subscription.ID),
+func (s *ServiceOp) Update(ctx context.Context, input *UpdateSubscriptionInput) (*UpdateSubscriptionOutput, error) {
+	path, err := uritemplates.Expand("/events/subscription/{subscriptionId}", uritemplates.Values{
+		"subscriptionId": spotinst.StringValue(input.Subscription.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -202,10 +186,10 @@ func (s *SubscriptionServiceOp) Update(ctx context.Context, input *UpdateSubscri
 	// We do not need the ID anymore so let's drop it.
 	input.Subscription.ID = nil
 
-	r := s.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(s.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -224,16 +208,16 @@ func (s *SubscriptionServiceOp) Update(ctx context.Context, input *UpdateSubscri
 	return output, nil
 }
 
-func (s *SubscriptionServiceOp) Delete(ctx context.Context, input *DeleteSubscriptionInput) (*DeleteSubscriptionOutput, error) {
-	path, err := uritemplates.Expand("/events/subscription/{subscriptionId}", map[string]string{
-		"subscriptionId": StringValue(input.SubscriptionID),
+func (s *ServiceOp) Delete(ctx context.Context, input *DeleteSubscriptionInput) (*DeleteSubscriptionOutput, error) {
+	path, err := uritemplates.Expand("/events/subscription/{subscriptionId}", uritemplates.Values{
+		"subscriptionId": spotinst.StringValue(input.SubscriptionID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := s.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(s.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}

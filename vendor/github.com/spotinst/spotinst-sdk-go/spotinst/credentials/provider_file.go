@@ -98,7 +98,7 @@ func (p *FileProvider) filename() (string, error) {
 			return "", ErrFileCredentialsHomeNotFound
 		}
 
-		p.Filename = filepath.Join(homeDir, ".spotinst", "credentials.json")
+		p.Filename = filepath.Join(homeDir, ".spotinst", "credentials")
 	}
 
 	return p.Filename, nil

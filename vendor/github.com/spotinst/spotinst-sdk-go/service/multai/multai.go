@@ -1,4 +1,4 @@
-package spotinst
+package multai
 
 import (
 	"context"
@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates"
 )
@@ -142,58 +144,7 @@ func (s Strategy) String() string {
 	return Strategy_name[s]
 }
 
-// BalancerService is an interface for interfacing with the balancer
-// targets of the Spotinst API.
-type BalancerService interface {
-	ListBalancers(context.Context, *ListBalancersInput) (*ListBalancersOutput, error)
-	CreateBalancer(context.Context, *CreateBalancerInput) (*CreateBalancerOutput, error)
-	ReadBalancer(context.Context, *ReadBalancerInput) (*ReadBalancerOutput, error)
-	UpdateBalancer(context.Context, *UpdateBalancerInput) (*UpdateBalancerOutput, error)
-	DeleteBalancer(context.Context, *DeleteBalancerInput) (*DeleteBalancerOutput, error)
-
-	ListListeners(context.Context, *ListListenersInput) (*ListListenersOutput, error)
-	CreateListener(context.Context, *CreateListenerInput) (*CreateListenerOutput, error)
-	ReadListener(context.Context, *ReadListenerInput) (*ReadListenerOutput, error)
-	UpdateListener(context.Context, *UpdateListenerInput) (*UpdateListenerOutput, error)
-	DeleteListener(context.Context, *DeleteListenerInput) (*DeleteListenerOutput, error)
-
-	ListRoutingRules(context.Context, *ListRoutingRulesInput) (*ListRoutingRulesOutput, error)
-	CreateRoutingRule(context.Context, *CreateRoutingRuleInput) (*CreateRoutingRuleOutput, error)
-	ReadRoutingRule(context.Context, *ReadRoutingRuleInput) (*ReadRoutingRuleOutput, error)
-	UpdateRoutingRule(context.Context, *UpdateRoutingRuleInput) (*UpdateRoutingRuleOutput, error)
-	DeleteRoutingRule(context.Context, *DeleteRoutingRuleInput) (*DeleteRoutingRuleOutput, error)
-
-	ListMiddlewares(context.Context, *ListMiddlewaresInput) (*ListMiddlewaresOutput, error)
-	CreateMiddleware(context.Context, *CreateMiddlewareInput) (*CreateMiddlewareOutput, error)
-	ReadMiddleware(context.Context, *ReadMiddlewareInput) (*ReadMiddlewareOutput, error)
-	UpdateMiddleware(context.Context, *UpdateMiddlewareInput) (*UpdateMiddlewareOutput, error)
-	DeleteMiddleware(context.Context, *DeleteMiddlewareInput) (*DeleteMiddlewareOutput, error)
-
-	ListTargetSets(context.Context, *ListTargetSetsInput) (*ListTargetSetsOutput, error)
-	CreateTargetSet(context.Context, *CreateTargetSetInput) (*CreateTargetSetOutput, error)
-	ReadTargetSet(context.Context, *ReadTargetSetInput) (*ReadTargetSetOutput, error)
-	UpdateTargetSet(context.Context, *UpdateTargetSetInput) (*UpdateTargetSetOutput, error)
-	DeleteTargetSet(context.Context, *DeleteTargetSetInput) (*DeleteTargetSetOutput, error)
-
-	ListTargets(context.Context, *ListTargetsInput) (*ListTargetsOutput, error)
-	CreateTarget(context.Context, *CreateTargetInput) (*CreateTargetOutput, error)
-	ReadTarget(context.Context, *ReadTargetInput) (*ReadTargetOutput, error)
-	UpdateTarget(context.Context, *UpdateTargetInput) (*UpdateTargetOutput, error)
-	DeleteTarget(context.Context, *DeleteTargetInput) (*DeleteTargetOutput, error)
-
-	ListRuntimes(context.Context, *ListRuntimesInput) (*ListRuntimesOutput, error)
-	ReadRuntime(context.Context, *ReadRuntimeInput) (*ReadRuntimeOutput, error)
-}
-
-// BalancerServiceOp handles communication with the balancer related methods
-// of the Spotinst API.
-type BalancerServiceOp struct {
-	client *Client
-}
-
-var _ BalancerService = &BalancerServiceOp{}
-
-type Balancer struct {
+type LoadBalancer struct {
 	ID              *string    `json:"id,omitempty"`
 	Name            *string    `json:"name,omitempty"`
 	DNSRRType       *string    `json:"dnsRrType,omitempty"`
@@ -216,56 +167,56 @@ type Timeouts struct {
 	nullFields      []string `json:"-"`
 }
 
-type ListBalancersInput struct {
+type ListLoadBalancersInput struct {
 	DeploymentID *string `json:"deploymentId,omitempty"`
 }
 
-type ListBalancersOutput struct {
-	Balancers []*Balancer `json:"balancers,omitempty"`
+type ListLoadBalancersOutput struct {
+	Balancers []*LoadBalancer `json:"balancers,omitempty"`
 }
 
-type CreateBalancerInput struct {
-	Balancer *Balancer `json:"balancer,omitempty"`
+type CreateLoadBalancerInput struct {
+	Balancer *LoadBalancer `json:"balancer,omitempty"`
 }
 
-type CreateBalancerOutput struct {
-	Balancer *Balancer `json:"balancer,omitempty"`
+type CreateLoadBalancerOutput struct {
+	Balancer *LoadBalancer `json:"balancer,omitempty"`
 }
 
-type ReadBalancerInput struct {
+type ReadLoadBalancerInput struct {
 	BalancerID *string `json:"balancerId,omitempty"`
 }
 
-type ReadBalancerOutput struct {
-	Balancer *Balancer `json:"balancer,omitempty"`
+type ReadLoadBalancerOutput struct {
+	Balancer *LoadBalancer `json:"balancer,omitempty"`
 }
 
-type UpdateBalancerInput struct {
-	Balancer *Balancer `json:"balancer,omitempty"`
+type UpdateLoadBalancerInput struct {
+	Balancer *LoadBalancer `json:"balancer,omitempty"`
 }
 
-type UpdateBalancerOutput struct{}
+type UpdateLoadBalancerOutput struct{}
 
-type DeleteBalancerInput struct {
+type DeleteLoadBalancerInput struct {
 	BalancerID *string `json:"balancerId,omitempty"`
 }
 
-type DeleteBalancerOutput struct{}
+type DeleteLoadBalancerOutput struct{}
 
-func balancerFromJSON(in []byte) (*Balancer, error) {
-	b := new(Balancer)
+func balancerFromJSON(in []byte) (*LoadBalancer, error) {
+	b := new(LoadBalancer)
 	if err := json.Unmarshal(in, b); err != nil {
 		return nil, err
 	}
 	return b, nil
 }
 
-func balancersFromJSON(in []byte) ([]*Balancer, error) {
-	var rw responseWrapper
+func balancersFromJSON(in []byte) ([]*LoadBalancer, error) {
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
-	out := make([]*Balancer, len(rw.Response.Items))
+	out := make([]*LoadBalancer, len(rw.Response.Items))
 	if len(out) == 0 {
 		return out, nil
 	}
@@ -279,7 +230,7 @@ func balancersFromJSON(in []byte) ([]*Balancer, error) {
 	return out, nil
 }
 
-func balancersFromHttpResponse(resp *http.Response) ([]*Balancer, error) {
+func balancersFromHttpResponse(resp *http.Response) ([]*LoadBalancer, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -287,14 +238,14 @@ func balancersFromHttpResponse(resp *http.Response) ([]*Balancer, error) {
 	return balancersFromJSON(body)
 }
 
-func (b *BalancerServiceOp) ListBalancers(ctx context.Context, input *ListBalancersInput) (*ListBalancersOutput, error) {
-	r := b.client.newRequest(ctx, "GET", "/loadBalancer/balancer")
+func (s *ServiceOp) ListLoadBalancers(ctx context.Context, input *ListLoadBalancersInput) (*ListLoadBalancersOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/balancer")
 
 	if input.DeploymentID != nil {
-		r.params.Set("deploymentId", StringValue(input.DeploymentID))
+		r.Params.Set("deploymentId", spotinst.StringValue(input.DeploymentID))
 	}
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -305,14 +256,14 @@ func (b *BalancerServiceOp) ListBalancers(ctx context.Context, input *ListBalanc
 		return nil, err
 	}
 
-	return &ListBalancersOutput{Balancers: bs}, nil
+	return &ListLoadBalancersOutput{Balancers: bs}, nil
 }
 
-func (b *BalancerServiceOp) CreateBalancer(ctx context.Context, input *CreateBalancerInput) (*CreateBalancerOutput, error) {
-	r := b.client.newRequest(ctx, "POST", "/loadBalancer/balancer")
-	r.obj = input
+func (s *ServiceOp) CreateLoadBalancer(ctx context.Context, input *CreateLoadBalancerInput) (*CreateLoadBalancerOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/balancer")
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +274,7 @@ func (b *BalancerServiceOp) CreateBalancer(ctx context.Context, input *CreateBal
 		return nil, err
 	}
 
-	output := new(CreateBalancerOutput)
+	output := new(CreateLoadBalancerOutput)
 	if len(bs) > 0 {
 		output.Balancer = bs[0]
 	}
@@ -331,16 +282,16 @@ func (b *BalancerServiceOp) CreateBalancer(ctx context.Context, input *CreateBal
 	return output, nil
 }
 
-func (b *BalancerServiceOp) ReadBalancer(ctx context.Context, input *ReadBalancerInput) (*ReadBalancerOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/balancer/{balancerId}", map[string]string{
-		"balancerId": StringValue(input.BalancerID),
+func (s *ServiceOp) ReadLoadBalancer(ctx context.Context, input *ReadLoadBalancerInput) (*ReadLoadBalancerOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/balancer/{balancerId}", uritemplates.Values{
+		"balancerId": spotinst.StringValue(input.BalancerID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +302,7 @@ func (b *BalancerServiceOp) ReadBalancer(ctx context.Context, input *ReadBalance
 		return nil, err
 	}
 
-	output := new(ReadBalancerOutput)
+	output := new(ReadLoadBalancerOutput)
 	if len(bs) > 0 {
 		output.Balancer = bs[0]
 	}
@@ -359,9 +310,9 @@ func (b *BalancerServiceOp) ReadBalancer(ctx context.Context, input *ReadBalance
 	return output, nil
 }
 
-func (b *BalancerServiceOp) UpdateBalancer(ctx context.Context, input *UpdateBalancerInput) (*UpdateBalancerOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/balancer/{balancerId}", map[string]string{
-		"balancerId": StringValue(input.Balancer.ID),
+func (s *ServiceOp) UpdateLoadBalancer(ctx context.Context, input *UpdateLoadBalancerInput) (*UpdateLoadBalancerOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/balancer/{balancerId}", uritemplates.Values{
+		"balancerId": spotinst.StringValue(input.Balancer.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -370,103 +321,89 @@ func (b *BalancerServiceOp) UpdateBalancer(ctx context.Context, input *UpdateBal
 	// We do not need the ID anymore so let's drop it.
 	input.Balancer.ID = nil
 
-	r := b.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	return &UpdateBalancerOutput{}, nil
+	return &UpdateLoadBalancerOutput{}, nil
 }
 
-func (b *BalancerServiceOp) DeleteBalancer(ctx context.Context, input *DeleteBalancerInput) (*DeleteBalancerOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/balancer/{balancerId}", map[string]string{
-		"balancerId": StringValue(input.BalancerID),
+func (s *ServiceOp) DeleteLoadBalancer(ctx context.Context, input *DeleteLoadBalancerInput) (*DeleteLoadBalancerOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/balancer/{balancerId}", uritemplates.Values{
+		"balancerId": spotinst.StringValue(input.BalancerID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	return &DeleteBalancerOutput{}, nil
+	return &DeleteLoadBalancerOutput{}, nil
 }
 
-// region Balancer
+// region LoadBalancer
 
-func (o *Balancer) MarshalJSON() ([]byte, error) {
-	type noMethod Balancer
+func (o *LoadBalancer) MarshalJSON() ([]byte, error) {
+	type noMethod LoadBalancer
 	raw := noMethod(*o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Balancer) SetId(v *string) *Balancer {
+func (o *LoadBalancer) SetId(v *string) *LoadBalancer {
 	if o.ID = v; o.ID == nil {
 		o.nullFields = append(o.nullFields, "ID")
 	}
 	return o
 }
 
-func (o *Balancer) SetName(v *string) *Balancer {
+func (o *LoadBalancer) SetName(v *string) *LoadBalancer {
 	if o.Name = v; o.Name == nil {
 		o.nullFields = append(o.nullFields, "Name")
 	}
 	return o
 }
 
-func (o *Balancer) SetDNSRRType(v *string) *Balancer {
+func (o *LoadBalancer) SetDNSRRType(v *string) *LoadBalancer {
 	if o.DNSRRType = v; o.DNSRRType == nil {
 		o.nullFields = append(o.nullFields, "DNSRRType")
 	}
 	return o
 }
 
-func (o *Balancer) SetDNSRRName(v *string) *Balancer {
+func (o *LoadBalancer) SetDNSRRName(v *string) *LoadBalancer {
 	if o.DNSRRName = v; o.DNSRRName == nil {
 		o.nullFields = append(o.nullFields, "DNSRRName")
 	}
 	return o
 }
 
-func (o *Balancer) SetDNSCNAMEAliases(v []string) *Balancer {
+func (o *LoadBalancer) SetDNSCNAMEAliases(v []string) *LoadBalancer {
 	if o.DNSCNAMEAliases = v; o.DNSCNAMEAliases == nil {
 		o.nullFields = append(o.nullFields, "DNSCNAMEAliases")
 	}
 	return o
 }
 
-func (o *Balancer) SetTimeouts(v *Timeouts) *Balancer {
+func (o *LoadBalancer) SetTimeouts(v *Timeouts) *LoadBalancer {
 	if o.Timeouts = v; o.Timeouts == nil {
 		o.nullFields = append(o.nullFields, "Timeouts")
 	}
 	return o
 }
 
-func (o *Balancer) SetTags(v []*Tag) *Balancer {
+func (o *LoadBalancer) SetTags(v []*Tag) *LoadBalancer {
 	if o.Tags = v; o.Tags == nil {
 		o.nullFields = append(o.nullFields, "Tags")
-	}
-	return o
-}
-
-func (o *Balancer) SetCreatedAt(v *time.Time) *Balancer {
-	if o.CreatedAt = v; o.CreatedAt == nil {
-		o.nullFields = append(o.nullFields, "CreatedAt")
-	}
-	return o
-}
-
-func (o *Balancer) SetUpdatedAt(v *time.Time) *Balancer {
-	if o.UpdatedAt = v; o.UpdatedAt == nil {
-		o.nullFields = append(o.nullFields, "UpdatedAt")
 	}
 	return o
 }
@@ -532,7 +469,7 @@ func listenerFromJSON(in []byte) (*Listener, error) {
 }
 
 func listenersFromJSON(in []byte) ([]*Listener, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -558,14 +495,14 @@ func listenersFromHttpResponse(resp *http.Response) ([]*Listener, error) {
 	return listenersFromJSON(body)
 }
 
-func (b *BalancerServiceOp) ListListeners(ctx context.Context, input *ListListenersInput) (*ListListenersOutput, error) {
-	r := b.client.newRequest(ctx, "GET", "/loadBalancer/listener")
+func (s *ServiceOp) ListListeners(ctx context.Context, input *ListListenersInput) (*ListListenersOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/listener")
 
 	if input.BalancerID != nil {
-		r.params.Set("balancerId", StringValue(input.BalancerID))
+		r.Params.Set("balancerId", spotinst.StringValue(input.BalancerID))
 	}
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -579,11 +516,11 @@ func (b *BalancerServiceOp) ListListeners(ctx context.Context, input *ListListen
 	return &ListListenersOutput{Listeners: ls}, nil
 }
 
-func (b *BalancerServiceOp) CreateListener(ctx context.Context, input *CreateListenerInput) (*CreateListenerOutput, error) {
-	r := b.client.newRequest(ctx, "POST", "/loadBalancer/listener")
-	r.obj = input
+func (s *ServiceOp) CreateListener(ctx context.Context, input *CreateListenerInput) (*CreateListenerOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/listener")
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -602,16 +539,16 @@ func (b *BalancerServiceOp) CreateListener(ctx context.Context, input *CreateLis
 	return output, nil
 }
 
-func (b *BalancerServiceOp) ReadListener(ctx context.Context, input *ReadListenerInput) (*ReadListenerOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/listener/{listenerId}", map[string]string{
-		"listenerId": StringValue(input.ListenerID),
+func (s *ServiceOp) ReadListener(ctx context.Context, input *ReadListenerInput) (*ReadListenerOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/listener/{listenerId}", uritemplates.Values{
+		"listenerId": spotinst.StringValue(input.ListenerID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -630,9 +567,9 @@ func (b *BalancerServiceOp) ReadListener(ctx context.Context, input *ReadListene
 	return output, nil
 }
 
-func (b *BalancerServiceOp) UpdateListener(ctx context.Context, input *UpdateListenerInput) (*UpdateListenerOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/listener/{listenerId}", map[string]string{
-		"listenerId": StringValue(input.Listener.ID),
+func (s *ServiceOp) UpdateListener(ctx context.Context, input *UpdateListenerInput) (*UpdateListenerOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/listener/{listenerId}", uritemplates.Values{
+		"listenerId": spotinst.StringValue(input.Listener.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -641,10 +578,10 @@ func (b *BalancerServiceOp) UpdateListener(ctx context.Context, input *UpdateLis
 	// We do not need the ID anymore so let's drop it.
 	input.Listener.ID = nil
 
-	r := b.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -653,16 +590,16 @@ func (b *BalancerServiceOp) UpdateListener(ctx context.Context, input *UpdateLis
 	return &UpdateListenerOutput{}, nil
 }
 
-func (b *BalancerServiceOp) DeleteListener(ctx context.Context, input *DeleteListenerInput) (*DeleteListenerOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/listener/{listenerId}", map[string]string{
-		"listenerId": StringValue(input.ListenerID),
+func (s *ServiceOp) DeleteListener(ctx context.Context, input *DeleteListenerInput) (*DeleteListenerOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/listener/{listenerId}", uritemplates.Values{
+		"listenerId": spotinst.StringValue(input.ListenerID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -844,7 +781,7 @@ func routingRuleFromJSON(in []byte) (*RoutingRule, error) {
 }
 
 func routingRulesFromJSON(in []byte) ([]*RoutingRule, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -870,14 +807,14 @@ func routingRulesFromHttpResponse(resp *http.Response) ([]*RoutingRule, error) {
 	return routingRulesFromJSON(body)
 }
 
-func (b *BalancerServiceOp) ListRoutingRules(ctx context.Context, input *ListRoutingRulesInput) (*ListRoutingRulesOutput, error) {
-	r := b.client.newRequest(ctx, "GET", "/loadBalancer/routingRule")
+func (s *ServiceOp) ListRoutingRules(ctx context.Context, input *ListRoutingRulesInput) (*ListRoutingRulesOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/routingRule")
 
 	if input.BalancerID != nil {
-		r.params.Set("balancerId", StringValue(input.BalancerID))
+		r.Params.Set("balancerId", spotinst.StringValue(input.BalancerID))
 	}
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -891,11 +828,11 @@ func (b *BalancerServiceOp) ListRoutingRules(ctx context.Context, input *ListRou
 	return &ListRoutingRulesOutput{RoutingRules: rr}, nil
 }
 
-func (b *BalancerServiceOp) CreateRoutingRule(ctx context.Context, input *CreateRoutingRuleInput) (*CreateRoutingRuleOutput, error) {
-	r := b.client.newRequest(ctx, "POST", "/loadBalancer/routingRule")
-	r.obj = input
+func (s *ServiceOp) CreateRoutingRule(ctx context.Context, input *CreateRoutingRuleInput) (*CreateRoutingRuleOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/routingRule")
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -914,16 +851,16 @@ func (b *BalancerServiceOp) CreateRoutingRule(ctx context.Context, input *Create
 	return output, nil
 }
 
-func (b *BalancerServiceOp) ReadRoutingRule(ctx context.Context, input *ReadRoutingRuleInput) (*ReadRoutingRuleOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/routingRule/{routingRuleId}", map[string]string{
-		"routingRuleId": StringValue(input.RoutingRuleID),
+func (s *ServiceOp) ReadRoutingRule(ctx context.Context, input *ReadRoutingRuleInput) (*ReadRoutingRuleOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/routingRule/{routingRuleId}", uritemplates.Values{
+		"routingRuleId": spotinst.StringValue(input.RoutingRuleID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -942,9 +879,9 @@ func (b *BalancerServiceOp) ReadRoutingRule(ctx context.Context, input *ReadRout
 	return output, nil
 }
 
-func (b *BalancerServiceOp) UpdateRoutingRule(ctx context.Context, input *UpdateRoutingRuleInput) (*UpdateRoutingRuleOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/routingRule/{routingRuleId}", map[string]string{
-		"routingRuleId": StringValue(input.RoutingRule.ID),
+func (s *ServiceOp) UpdateRoutingRule(ctx context.Context, input *UpdateRoutingRuleInput) (*UpdateRoutingRuleOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/routingRule/{routingRuleId}", uritemplates.Values{
+		"routingRuleId": spotinst.StringValue(input.RoutingRule.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -953,10 +890,10 @@ func (b *BalancerServiceOp) UpdateRoutingRule(ctx context.Context, input *Update
 	// We do not need the ID anymore so let's drop it.
 	input.RoutingRule.ID = nil
 
-	r := b.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -965,16 +902,16 @@ func (b *BalancerServiceOp) UpdateRoutingRule(ctx context.Context, input *Update
 	return &UpdateRoutingRuleOutput{}, nil
 }
 
-func (b *BalancerServiceOp) DeleteRoutingRule(ctx context.Context, input *DeleteRoutingRuleInput) (*DeleteRoutingRuleOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/routingRule/{routingRuleId}", map[string]string{
-		"routingRuleId": StringValue(input.RoutingRuleID),
+func (s *ServiceOp) DeleteRoutingRule(ctx context.Context, input *DeleteRoutingRuleInput) (*DeleteRoutingRuleOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/routingRule/{routingRuleId}", uritemplates.Values{
+		"routingRuleId": spotinst.StringValue(input.RoutingRuleID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1054,20 +991,6 @@ func (o *RoutingRule) SetTags(v []*Tag) *RoutingRule {
 	return o
 }
 
-func (o *RoutingRule) SetCreatedAt(v *time.Time) *RoutingRule {
-	if o.CreatedAt = v; o.CreatedAt == nil {
-		o.nullFields = append(o.nullFields, "CreatedAt")
-	}
-	return o
-}
-
-func (o *RoutingRule) SetUpdatedAt(v *time.Time) *RoutingRule {
-	if o.UpdatedAt = v; o.UpdatedAt == nil {
-		o.nullFields = append(o.nullFields, "UpdatedAt")
-	}
-	return o
-}
-
 // endregion
 
 type Middleware struct {
@@ -1129,7 +1052,7 @@ func middlewareFromJSON(in []byte) (*Middleware, error) {
 }
 
 func middlewaresFromJSON(in []byte) ([]*Middleware, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -1155,14 +1078,14 @@ func middlewaresFromHttpResponse(resp *http.Response) ([]*Middleware, error) {
 	return middlewaresFromJSON(body)
 }
 
-func (b *BalancerServiceOp) ListMiddlewares(ctx context.Context, input *ListMiddlewaresInput) (*ListMiddlewaresOutput, error) {
-	r := b.client.newRequest(ctx, "GET", "/loadBalancer/middleware")
+func (s *ServiceOp) ListMiddlewares(ctx context.Context, input *ListMiddlewaresInput) (*ListMiddlewaresOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/middleware")
 
 	if input.BalancerID != nil {
-		r.params.Set("balancerId", StringValue(input.BalancerID))
+		r.Params.Set("balancerId", spotinst.StringValue(input.BalancerID))
 	}
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1176,11 +1099,11 @@ func (b *BalancerServiceOp) ListMiddlewares(ctx context.Context, input *ListMidd
 	return &ListMiddlewaresOutput{Middlewares: ms}, nil
 }
 
-func (b *BalancerServiceOp) CreateMiddleware(ctx context.Context, input *CreateMiddlewareInput) (*CreateMiddlewareOutput, error) {
-	r := b.client.newRequest(ctx, "POST", "/loadBalancer/middleware")
-	r.obj = input
+func (s *ServiceOp) CreateMiddleware(ctx context.Context, input *CreateMiddlewareInput) (*CreateMiddlewareOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/middleware")
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1199,16 +1122,16 @@ func (b *BalancerServiceOp) CreateMiddleware(ctx context.Context, input *CreateM
 	return output, nil
 }
 
-func (b *BalancerServiceOp) ReadMiddleware(ctx context.Context, input *ReadMiddlewareInput) (*ReadMiddlewareOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/middleware/{middlewareId}", map[string]string{
-		"middlewareId": StringValue(input.MiddlewareID),
+func (s *ServiceOp) ReadMiddleware(ctx context.Context, input *ReadMiddlewareInput) (*ReadMiddlewareOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/middleware/{middlewareId}", uritemplates.Values{
+		"middlewareId": spotinst.StringValue(input.MiddlewareID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1227,9 +1150,9 @@ func (b *BalancerServiceOp) ReadMiddleware(ctx context.Context, input *ReadMiddl
 	return output, nil
 }
 
-func (b *BalancerServiceOp) UpdateMiddleware(ctx context.Context, input *UpdateMiddlewareInput) (*UpdateMiddlewareOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/middleware/{middlewareId}", map[string]string{
-		"middlewareId": StringValue(input.Middleware.ID),
+func (s *ServiceOp) UpdateMiddleware(ctx context.Context, input *UpdateMiddlewareInput) (*UpdateMiddlewareOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/middleware/{middlewareId}", uritemplates.Values{
+		"middlewareId": spotinst.StringValue(input.Middleware.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -1238,10 +1161,10 @@ func (b *BalancerServiceOp) UpdateMiddleware(ctx context.Context, input *UpdateM
 	// We do not need the ID anymore so let's drop it.
 	input.Middleware.ID = nil
 
-	r := b.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1250,16 +1173,16 @@ func (b *BalancerServiceOp) UpdateMiddleware(ctx context.Context, input *UpdateM
 	return &UpdateMiddlewareOutput{}, nil
 }
 
-func (b *BalancerServiceOp) DeleteMiddleware(ctx context.Context, input *DeleteMiddlewareInput) (*DeleteMiddlewareOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/middleware/{middlewareId}", map[string]string{
-		"middlewareId": StringValue(input.MiddlewareID),
+func (s *ServiceOp) DeleteMiddleware(ctx context.Context, input *DeleteMiddlewareInput) (*DeleteMiddlewareOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/middleware/{middlewareId}", uritemplates.Values{
+		"middlewareId": spotinst.StringValue(input.MiddlewareID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1395,7 +1318,7 @@ func targetSetFromJSON(in []byte) (*TargetSet, error) {
 }
 
 func targetSetsFromJSON(in []byte) ([]*TargetSet, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -1421,14 +1344,14 @@ func targetSetsFromHttpResponse(resp *http.Response) ([]*TargetSet, error) {
 	return targetSetsFromJSON(body)
 }
 
-func (b *BalancerServiceOp) ListTargetSets(ctx context.Context, input *ListTargetSetsInput) (*ListTargetSetsOutput, error) {
-	r := b.client.newRequest(ctx, "GET", "/loadBalancer/targetSet")
+func (s *ServiceOp) ListTargetSets(ctx context.Context, input *ListTargetSetsInput) (*ListTargetSetsOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/targetSet")
 
 	if input.BalancerID != nil {
-		r.params.Set("balancerId", StringValue(input.BalancerID))
+		r.Params.Set("balancerId", spotinst.StringValue(input.BalancerID))
 	}
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1442,11 +1365,11 @@ func (b *BalancerServiceOp) ListTargetSets(ctx context.Context, input *ListTarge
 	return &ListTargetSetsOutput{TargetSets: ts}, nil
 }
 
-func (b *BalancerServiceOp) CreateTargetSet(ctx context.Context, input *CreateTargetSetInput) (*CreateTargetSetOutput, error) {
-	r := b.client.newRequest(ctx, "POST", "/loadBalancer/targetSet")
-	r.obj = input
+func (s *ServiceOp) CreateTargetSet(ctx context.Context, input *CreateTargetSetInput) (*CreateTargetSetOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/targetSet")
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1465,16 +1388,16 @@ func (b *BalancerServiceOp) CreateTargetSet(ctx context.Context, input *CreateTa
 	return output, nil
 }
 
-func (b *BalancerServiceOp) ReadTargetSet(ctx context.Context, input *ReadTargetSetInput) (*ReadTargetSetOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/targetSet/{targetSetId}", map[string]string{
-		"targetSetId": StringValue(input.TargetSetID),
+func (s *ServiceOp) ReadTargetSet(ctx context.Context, input *ReadTargetSetInput) (*ReadTargetSetOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/targetSet/{targetSetId}", uritemplates.Values{
+		"targetSetId": spotinst.StringValue(input.TargetSetID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1493,9 +1416,9 @@ func (b *BalancerServiceOp) ReadTargetSet(ctx context.Context, input *ReadTarget
 	return output, nil
 }
 
-func (b *BalancerServiceOp) UpdateTargetSet(ctx context.Context, input *UpdateTargetSetInput) (*UpdateTargetSetOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/targetSet/{targetSetId}", map[string]string{
-		"targetSetId": StringValue(input.TargetSet.ID),
+func (s *ServiceOp) UpdateTargetSet(ctx context.Context, input *UpdateTargetSetInput) (*UpdateTargetSetOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/targetSet/{targetSetId}", uritemplates.Values{
+		"targetSetId": spotinst.StringValue(input.TargetSet.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -1504,10 +1427,10 @@ func (b *BalancerServiceOp) UpdateTargetSet(ctx context.Context, input *UpdateTa
 	// We do not need the ID anymore so let's drop it.
 	input.TargetSet.ID = nil
 
-	r := b.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1516,16 +1439,16 @@ func (b *BalancerServiceOp) UpdateTargetSet(ctx context.Context, input *UpdateTa
 	return &UpdateTargetSetOutput{}, nil
 }
 
-func (b *BalancerServiceOp) DeleteTargetSet(ctx context.Context, input *DeleteTargetSetInput) (*DeleteTargetSetOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/targetSet/{targetSetId}", map[string]string{
-		"targetSetId": StringValue(input.TargetSetID),
+func (s *ServiceOp) DeleteTargetSet(ctx context.Context, input *DeleteTargetSetInput) (*DeleteTargetSetOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/targetSet/{targetSetId}", uritemplates.Values{
+		"targetSetId": spotinst.StringValue(input.TargetSetID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1741,7 +1664,7 @@ func targetFromJSON(in []byte) (*Target, error) {
 }
 
 func targetsFromJSON(in []byte) ([]*Target, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -1767,18 +1690,18 @@ func targetsFromHttpResponse(resp *http.Response) ([]*Target, error) {
 	return targetsFromJSON(body)
 }
 
-func (b *BalancerServiceOp) ListTargets(ctx context.Context, input *ListTargetsInput) (*ListTargetsOutput, error) {
-	r := b.client.newRequest(ctx, "GET", "/loadBalancer/target")
+func (s *ServiceOp) ListTargets(ctx context.Context, input *ListTargetsInput) (*ListTargetsOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/target")
 
 	if input.BalancerID != nil {
-		r.params.Set("balancerId", StringValue(input.BalancerID))
+		r.Params.Set("balancerId", spotinst.StringValue(input.BalancerID))
 	}
 
 	if input.TargetSetID != nil {
-		r.params.Set("targetSetId", StringValue(input.TargetSetID))
+		r.Params.Set("targetSetId", spotinst.StringValue(input.TargetSetID))
 	}
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1792,11 +1715,11 @@ func (b *BalancerServiceOp) ListTargets(ctx context.Context, input *ListTargetsI
 	return &ListTargetsOutput{Targets: ts}, nil
 }
 
-func (b *BalancerServiceOp) CreateTarget(ctx context.Context, input *CreateTargetInput) (*CreateTargetOutput, error) {
-	r := b.client.newRequest(ctx, "POST", "/loadBalancer/target")
-	r.obj = input
+func (s *ServiceOp) CreateTarget(ctx context.Context, input *CreateTargetInput) (*CreateTargetOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/target")
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1815,16 +1738,16 @@ func (b *BalancerServiceOp) CreateTarget(ctx context.Context, input *CreateTarge
 	return output, nil
 }
 
-func (b *BalancerServiceOp) ReadTarget(ctx context.Context, input *ReadTargetInput) (*ReadTargetOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/target/{targetId}", map[string]string{
-		"targetId": StringValue(input.TargetID),
+func (s *ServiceOp) ReadTarget(ctx context.Context, input *ReadTargetInput) (*ReadTargetOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/target/{targetId}", uritemplates.Values{
+		"targetId": spotinst.StringValue(input.TargetID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1843,9 +1766,9 @@ func (b *BalancerServiceOp) ReadTarget(ctx context.Context, input *ReadTargetInp
 	return output, nil
 }
 
-func (b *BalancerServiceOp) UpdateTarget(ctx context.Context, input *UpdateTargetInput) (*UpdateTargetOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/target/{targetId}", map[string]string{
-		"targetId": StringValue(input.Target.ID),
+func (s *ServiceOp) UpdateTarget(ctx context.Context, input *UpdateTargetInput) (*UpdateTargetOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/target/{targetId}", uritemplates.Values{
+		"targetId": spotinst.StringValue(input.Target.ID),
 	})
 	if err != nil {
 		return nil, err
@@ -1854,10 +1777,10 @@ func (b *BalancerServiceOp) UpdateTarget(ctx context.Context, input *UpdateTarge
 	// We do not need the ID anymore so let's drop it.
 	input.Target.ID = nil
 
-	r := b.client.newRequest(ctx, "PUT", path)
-	r.obj = input
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1866,16 +1789,16 @@ func (b *BalancerServiceOp) UpdateTarget(ctx context.Context, input *UpdateTarge
 	return &UpdateTargetOutput{}, nil
 }
 
-func (b *BalancerServiceOp) DeleteTarget(ctx context.Context, input *DeleteTargetInput) (*DeleteTargetOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/target/{targetId}", map[string]string{
-		"targetId": StringValue(input.TargetID),
+func (s *ServiceOp) DeleteTarget(ctx context.Context, input *DeleteTargetInput) (*DeleteTargetOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/target/{targetId}", uritemplates.Values{
+		"targetId": spotinst.StringValue(input.TargetID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "DELETE", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -1998,7 +1921,7 @@ func runtimeFromJSON(in []byte) (*Runtime, error) {
 }
 
 func runtimesFromJSON(in []byte) ([]*Runtime, error) {
-	var rw responseWrapper
+	var rw client.Response
 	if err := json.Unmarshal(in, &rw); err != nil {
 		return nil, err
 	}
@@ -2024,14 +1947,14 @@ func runtimesFromHttpResponse(resp *http.Response) ([]*Runtime, error) {
 	return runtimesFromJSON(body)
 }
 
-func (b *BalancerServiceOp) ListRuntimes(ctx context.Context, input *ListRuntimesInput) (*ListRuntimesOutput, error) {
-	r := b.client.newRequest(ctx, "GET", "/loadBalancer/runtime")
+func (s *ServiceOp) ListRuntimes(ctx context.Context, input *ListRuntimesInput) (*ListRuntimesOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/runtime")
 
 	if input.DeploymentID != nil {
-		r.params.Set("deploymentId", StringValue(input.DeploymentID))
+		r.Params.Set("deploymentId", spotinst.StringValue(input.DeploymentID))
 	}
 
-	_, resp, err := requireOK(b.client.doRequest(r))
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -2045,16 +1968,16 @@ func (b *BalancerServiceOp) ListRuntimes(ctx context.Context, input *ListRuntime
 	return &ListRuntimesOutput{Runtimes: rts}, nil
 }
 
-func (b *BalancerServiceOp) ReadRuntime(ctx context.Context, input *ReadRuntimeInput) (*ReadRuntimeOutput, error) {
-	path, err := uritemplates.Expand("/loadBalancer/runtime/{runtimeId}", map[string]string{
-		"runtimeId": StringValue(input.RuntimeID),
+func (s *ServiceOp) ReadRuntime(ctx context.Context, input *ReadRuntimeInput) (*ReadRuntimeOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/runtime/{runtimeId}", uritemplates.Values{
+		"runtimeId": spotinst.StringValue(input.RuntimeID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	r := b.client.newRequest(ctx, "GET", path)
-	_, resp, err := requireOK(b.client.doRequest(r))
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
 	}
@@ -2110,3 +2033,412 @@ func (o *Runtime) SetTags(v []*Tag) *Runtime {
 }
 
 // endregion
+
+type Deployment struct {
+	ID        *string    `json:"id,omitempty"`
+	Name      *string    `json:"name,omitempty"`
+	Tags      []*Tag     `json:"tags,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type ListDeploymentsInput struct{}
+
+type ListDeploymentsOutput struct {
+	Deployments []*Deployment `json:"deployments,omitempty"`
+}
+
+type CreateDeploymentInput struct {
+	Deployment *Deployment `json:"deployment,omitempty"`
+}
+
+type CreateDeploymentOutput struct {
+	Deployment *Deployment `json:"deployment,omitempty"`
+}
+
+type ReadDeploymentInput struct {
+	DeploymentID *string `json:"deploymentId,omitempty"`
+}
+
+type ReadDeploymentOutput struct {
+	Deployment *Deployment `json:"deployment,omitempty"`
+}
+
+type UpdateDeploymentInput struct {
+	Deployment *Deployment `json:"deployment,omitempty"`
+}
+
+type UpdateDeploymentOutput struct{}
+
+type DeleteDeploymentInput struct {
+	DeploymentID *string `json:"deployment,omitempty"`
+}
+
+type DeleteDeploymentOutput struct{}
+
+func deploymentFromJSON(in []byte) (*Deployment, error) {
+	b := new(Deployment)
+	if err := json.Unmarshal(in, b); err != nil {
+		return nil, err
+	}
+	return b, nil
+}
+
+func deploymentsFromJSON(in []byte) ([]*Deployment, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	out := make([]*Deployment, len(rw.Response.Items))
+	if len(out) == 0 {
+		return out, nil
+	}
+	for i, rp := range rw.Response.Items {
+		p, err := deploymentFromJSON(rp)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = p
+	}
+	return out, nil
+}
+
+func deploymentsFromHttpResponse(resp *http.Response) ([]*Deployment, error) {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return deploymentsFromJSON(body)
+}
+
+func (s *ServiceOp) ListDeployments(ctx context.Context, input *ListDeploymentsInput) (*ListDeploymentsOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/deployment")
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	ds, err := deploymentsFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ListDeploymentsOutput{Deployments: ds}, nil
+}
+
+func (s *ServiceOp) CreateDeployment(ctx context.Context, input *CreateDeploymentInput) (*CreateDeploymentOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/deployment")
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	ds, err := deploymentsFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(CreateDeploymentOutput)
+	if len(ds) > 0 {
+		output.Deployment = ds[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) ReadDeployment(ctx context.Context, input *ReadDeploymentInput) (*ReadDeploymentOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/deployment/{deploymentId}", uritemplates.Values{
+		"deploymentId": spotinst.StringValue(input.DeploymentID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	ds, err := deploymentsFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ReadDeploymentOutput)
+	if len(ds) > 0 {
+		output.Deployment = ds[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) UpdateDeployment(ctx context.Context, input *UpdateDeploymentInput) (*UpdateDeploymentOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/deployment/{deploymentId}", uritemplates.Values{
+		"deploymentId": spotinst.StringValue(input.Deployment.ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.Deployment.ID = nil
+
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return &UpdateDeploymentOutput{}, nil
+}
+
+func (s *ServiceOp) DeleteDeployment(ctx context.Context, input *DeleteDeploymentInput) (*DeleteDeploymentOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/deployment/{deploymentId}", uritemplates.Values{
+		"deploymentId": spotinst.StringValue(input.DeploymentID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return &DeleteDeploymentOutput{}, nil
+}
+
+// region Deployment
+
+func (o *Deployment) MarshalJSON() ([]byte, error) {
+	type noMethod Deployment
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Deployment) SetId(v *string) *Deployment {
+	if o.ID = v; o.ID == nil {
+		o.nullFields = append(o.nullFields, "ID")
+	}
+	return o
+}
+
+func (o *Deployment) SetName(v *string) *Deployment {
+	if o.Name = v; o.Name == nil {
+		o.nullFields = append(o.nullFields, "Name")
+	}
+	return o
+}
+
+func (o *Deployment) SetTags(v []*Tag) *Deployment {
+	if o.Tags = v; o.Tags == nil {
+		o.nullFields = append(o.nullFields, "Tags")
+	}
+	return o
+}
+
+// endregion
+
+type Certificate struct {
+	ID           *string    `json:"id,omitempty"`
+	Name         *string    `json:"name,omitempty"`
+	CertPEMBlock *string    `json:"certificatePemBlock,omitempty"`
+	KeyPEMBlock  *string    `json:"keyPemBlock,omitempty"`
+	Tags         []*Tag     `json:"tags,omitempty"`
+	CreatedAt    *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt    *time.Time `json:"updatedAt,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type ListCertificatesInput struct{}
+
+type ListCertificatesOutput struct {
+	Certificates []*Certificate `json:"certificates,omitempty"`
+}
+
+type CreateCertificateInput struct {
+	Certificate *Certificate `json:"certificate,omitempty"`
+}
+
+type CreateCertificateOutput struct {
+	Certificate *Certificate `json:"certificate,omitempty"`
+}
+
+type ReadCertificateInput struct {
+	CertificateID *string `json:"certificateId,omitempty"`
+}
+
+type ReadCertificateOutput struct {
+	Certificate *Certificate `json:"certificate,omitempty"`
+}
+
+type UpdateCertificateInput struct {
+	Certificate *Certificate `json:"certificate,omitempty"`
+}
+
+type UpdateCertificateOutput struct{}
+
+type DeleteCertificateInput struct {
+	CertificateID *string `json:"certificateId,omitempty"`
+}
+
+type DeleteCertificateOutput struct{}
+
+func certificateFromJSON(in []byte) (*Certificate, error) {
+	b := new(Certificate)
+	if err := json.Unmarshal(in, b); err != nil {
+		return nil, err
+	}
+	return b, nil
+}
+
+func certificatesFromJSON(in []byte) ([]*Certificate, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	out := make([]*Certificate, len(rw.Response.Items))
+	if len(out) == 0 {
+		return out, nil
+	}
+	for i, rp := range rw.Response.Items {
+		p, err := certificateFromJSON(rp)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = p
+	}
+	return out, nil
+}
+
+func certificatesFromHttpResponse(resp *http.Response) ([]*Certificate, error) {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return certificatesFromJSON(body)
+}
+
+func (s *ServiceOp) ListCertificates(ctx context.Context, input *ListCertificatesInput) (*ListCertificatesOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/loadBalancer/certificate")
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	cs, err := certificatesFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ListCertificatesOutput{Certificates: cs}, nil
+}
+
+func (s *ServiceOp) CreateCertificate(ctx context.Context, input *CreateCertificateInput) (*CreateCertificateOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/loadBalancer/certificate")
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	cs, err := certificatesFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(CreateCertificateOutput)
+	if len(cs) > 0 {
+		output.Certificate = cs[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) ReadCertificate(ctx context.Context, input *ReadCertificateInput) (*ReadCertificateOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/certificate/{certificateId}", uritemplates.Values{
+		"certificateId": spotinst.StringValue(input.CertificateID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	cs, err := certificatesFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ReadCertificateOutput)
+	if len(cs) > 0 {
+		output.Certificate = cs[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) UpdateCertificate(ctx context.Context, input *UpdateCertificateInput) (*UpdateCertificateOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/certificate/{certificateId}", uritemplates.Values{
+		"certificateId": spotinst.StringValue(input.Certificate.ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.Certificate.ID = nil
+
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return &UpdateCertificateOutput{}, nil
+}
+
+func (s *ServiceOp) DeleteCertificate(ctx context.Context, input *DeleteCertificateInput) (*DeleteCertificateOutput, error) {
+	path, err := uritemplates.Expand("/loadBalancer/certificate/{certificateId}", uritemplates.Values{
+		"certificateId": spotinst.StringValue(input.CertificateID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return &DeleteCertificateOutput{}, nil
+}

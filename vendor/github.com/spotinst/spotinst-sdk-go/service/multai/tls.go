@@ -1,4 +1,4 @@
-package spotinst
+package multai
 
 import (
 	"crypto/tls"

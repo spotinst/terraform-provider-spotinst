@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
@@ -57,19 +58,19 @@ func resourceSpotinstMultaiTarget() *schema.Resource {
 }
 
 func resourceSpotinstMultaiTargetCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	target, err := buildBalancerTargetOpts(d, meta)
 	if err != nil {
 		return err
 	}
 	log.Printf("[DEBUG] Target create configuration: %s",
 		stringutil.Stringify(target))
-	input := &spotinst.CreateTargetInput{
+	input := &multai.CreateTargetInput{
 		Target: target,
 	}
-	resp, err := client.MultaiService.BalancerService().CreateTarget(context.Background(), input)
+	resp, err := client.multai.CreateTarget(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error creating target: %s", err)
+		return fmt.Errorf("failed to create target: %s", err)
 	}
 	d.SetId(spotinst.StringValue(resp.Target.ID))
 	log.Printf("[INFO] Target created successfully: %s", d.Id())
@@ -77,13 +78,13 @@ func resourceSpotinstMultaiTargetCreate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceSpotinstMultaiTargetRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	input := &spotinst.ReadTargetInput{
+	client := meta.(*Client)
+	input := &multai.ReadTargetInput{
 		TargetID: spotinst.String(d.Id()),
 	}
-	resp, err := client.MultaiService.BalancerService().ReadTarget(context.Background(), input)
+	resp, err := client.multai.ReadTarget(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error retrieving target: %s", err)
+		return fmt.Errorf("failed to read target: %s", err)
 	}
 	if t := resp.Target; t != nil {
 		d.Set("balancer_id", t.BalancerID)
@@ -100,8 +101,8 @@ func resourceSpotinstMultaiTargetRead(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceSpotinstMultaiTargetUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	target := &spotinst.Target{ID: spotinst.String(d.Id())}
+	client := meta.(*Client)
+	target := &multai.Target{ID: spotinst.String(d.Id())}
 	update := false
 
 	if d.HasChange("name") {
@@ -138,11 +139,11 @@ func resourceSpotinstMultaiTargetUpdate(d *schema.ResourceData, meta interface{}
 	if update {
 		log.Printf("[DEBUG] Target update configuration: %s",
 			stringutil.Stringify(target))
-		input := &spotinst.UpdateTargetInput{
+		input := &multai.UpdateTargetInput{
 			Target: target,
 		}
-		if _, err := client.MultaiService.BalancerService().UpdateTarget(context.Background(), input); err != nil {
-			return fmt.Errorf("Error updating target %s: %s", d.Id(), err)
+		if _, err := client.multai.UpdateTarget(context.Background(), input); err != nil {
+			return fmt.Errorf("failed to update target %s: %s", d.Id(), err)
 		}
 	}
 
@@ -150,20 +151,20 @@ func resourceSpotinstMultaiTargetUpdate(d *schema.ResourceData, meta interface{}
 }
 
 func resourceSpotinstMultaiTargetDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	log.Printf("[INFO] Deleting target: %s", d.Id())
-	input := &spotinst.DeleteTargetInput{
+	input := &multai.DeleteTargetInput{
 		TargetID: spotinst.String(d.Id()),
 	}
-	if _, err := client.MultaiService.BalancerService().DeleteTarget(context.Background(), input); err != nil {
-		return fmt.Errorf("Error deleting target: %s", err)
+	if _, err := client.multai.DeleteTarget(context.Background(), input); err != nil {
+		return fmt.Errorf("failed to delete target: %s", err)
 	}
 	d.SetId("")
 	return nil
 }
 
-func buildBalancerTargetOpts(d *schema.ResourceData, meta interface{}) (*spotinst.Target, error) {
-	target := &spotinst.Target{
+func buildBalancerTargetOpts(d *schema.ResourceData, meta interface{}) (*multai.Target, error) {
+	target := &multai.Target{
 		BalancerID:  spotinst.String(d.Get("balancer_id").(string)),
 		TargetSetID: spotinst.String(d.Get("target_set_id").(string)),
 		Name:        spotinst.String(d.Get("name").(string)),

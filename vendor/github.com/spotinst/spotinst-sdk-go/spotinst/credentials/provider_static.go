@@ -7,10 +7,8 @@ import (
 // StaticCredentialsProviderName provides a name of Static provider.
 const StaticCredentialsProviderName = "StaticProvider"
 
-var (
-	// ErrStaticCredentialsEmpty is emitted when static credentials are empty.
-	ErrStaticCredentialsEmpty = errors.New("spotinst: static credentials are empty")
-)
+// ErrStaticCredentialsEmpty is emitted when static credentials are empty.
+var ErrStaticCredentialsEmpty = errors.New("spotinst: static credentials are empty")
 
 // A StaticProvider is a set of credentials which are set programmatically.
 type StaticProvider struct {

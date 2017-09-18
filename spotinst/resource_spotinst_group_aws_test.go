@@ -7,11 +7,12 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 )
 
 func TestAccSpotinstAWSGroup_Basic(t *testing.T) {
-	var group spotinst.AWSGroup
+	var group aws.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -31,7 +32,7 @@ func TestAccSpotinstAWSGroup_Basic(t *testing.T) {
 }
 
 func TestAccSpotinstAWSGroup_Updated(t *testing.T) {
-	var group spotinst.AWSGroup
+	var group aws.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -60,50 +61,50 @@ func TestAccSpotinstAWSGroup_Updated(t *testing.T) {
 }
 
 func testAccCheckSpotinstAWSGroupDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*spotinst.Client)
+	client := testAccProvider.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "spotinst_group_aws" {
 			continue
 		}
-		input := &spotinst.ReadAWSGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.GroupService.CloudProviderAWS().Read(context.Background(), input)
+		input := &aws.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.elastigroup.CloudProviderAWS().Read(context.Background(), input)
 		if err == nil && resp != nil && resp.Group != nil {
-			return fmt.Errorf("Group still exists")
+			return fmt.Errorf("group still exists")
 		}
 	}
 	return nil
 }
 
-func testAccCheckSpotinstAWSGroupAttributes(group *spotinst.AWSGroup) resource.TestCheckFunc {
+func testAccCheckSpotinstAWSGroupAttributes(group *aws.Group) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if spotinst.StringValue(group.Name) != "terraform" {
-			return fmt.Errorf("Bad content: %v", group.Name)
+			return fmt.Errorf("bad content: %v", group.Name)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSpotinstAWSGroupAttributesUpdated(group *spotinst.AWSGroup) resource.TestCheckFunc {
+func testAccCheckSpotinstAWSGroupAttributesUpdated(group *aws.Group) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if spotinst.StringValue(group.Name) != "terraform_updated" {
-			return fmt.Errorf("Bad content: %v", group.Name)
+			return fmt.Errorf("bad content: %v", group.Name)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSpotinstAWSGroupExists(n string, group *spotinst.AWSGroup) resource.TestCheckFunc {
+func testAccCheckSpotinstAWSGroupExists(n string, group *aws.Group) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("No resource ID is set")
+			return fmt.Errorf("no resource ID is set")
 		}
-		client := testAccProvider.Meta().(*spotinst.Client)
-		input := &spotinst.ReadAWSGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.GroupService.CloudProviderAWS().Read(context.Background(), input)
+		client := testAccProvider.Meta().(*Client)
+		input := &aws.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.elastigroup.CloudProviderAWS().Read(context.Background(), input)
 		if err != nil {
 			return err
 		}

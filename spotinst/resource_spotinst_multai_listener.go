@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
@@ -99,19 +100,19 @@ func resourceSpotinstMultaiListener() *schema.Resource {
 }
 
 func resourceSpotinstMultaiListenerCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	listener, err := buildBalancerListenerOpts(d, meta)
 	if err != nil {
 		return err
 	}
 	log.Printf("[DEBUG] Listener create configuration: %s",
 		stringutil.Stringify(listener))
-	input := &spotinst.CreateListenerInput{
+	input := &multai.CreateListenerInput{
 		Listener: listener,
 	}
-	resp, err := client.MultaiService.BalancerService().CreateListener(context.Background(), input)
+	resp, err := client.multai.CreateListener(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error creating listener: %s", err)
+		return fmt.Errorf("failed to create listener: %s", err)
 	}
 	d.SetId(spotinst.StringValue(resp.Listener.ID))
 	log.Printf("[INFO] Listener created successfully: %s", d.Id())
@@ -119,13 +120,13 @@ func resourceSpotinstMultaiListenerCreate(d *schema.ResourceData, meta interface
 }
 
 func resourceSpotinstMultaiListenerRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	input := &spotinst.ReadListenerInput{
+	client := meta.(*Client)
+	input := &multai.ReadListenerInput{
 		ListenerID: spotinst.String(d.Id()),
 	}
-	resp, err := client.MultaiService.BalancerService().ReadListener(context.Background(), input)
+	resp, err := client.multai.ReadListener(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("Error retrieving listener: %s", err)
+		return fmt.Errorf("failed to read listener: %s", err)
 	}
 	if ln := resp.Listener; ln != nil {
 		d.Set("balancer_id", ln.BalancerID)
@@ -142,8 +143,8 @@ func resourceSpotinstMultaiListenerRead(d *schema.ResourceData, meta interface{}
 }
 
 func resourceSpotinstMultaiListenerUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
-	listener := &spotinst.Listener{ID: spotinst.String(d.Id())}
+	client := meta.(*Client)
+	listener := &multai.Listener{ID: spotinst.String(d.Id())}
 	update := false
 
 	if d.HasChange("protocol") {
@@ -181,11 +182,11 @@ func resourceSpotinstMultaiListenerUpdate(d *schema.ResourceData, meta interface
 	if update {
 		log.Printf("[DEBUG] Listener update configuration: %s",
 			stringutil.Stringify(listener))
-		input := &spotinst.UpdateListenerInput{
+		input := &multai.UpdateListenerInput{
 			Listener: listener,
 		}
-		if _, err := client.MultaiService.BalancerService().UpdateListener(context.Background(), input); err != nil {
-			return fmt.Errorf("Error updating listener %s: %s", d.Id(), err)
+		if _, err := client.multai.UpdateListener(context.Background(), input); err != nil {
+			return fmt.Errorf("failed to update listener %s: %s", d.Id(), err)
 		}
 	}
 
@@ -193,20 +194,20 @@ func resourceSpotinstMultaiListenerUpdate(d *schema.ResourceData, meta interface
 }
 
 func resourceSpotinstMultaiListenerDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*spotinst.Client)
+	client := meta.(*Client)
 	log.Printf("[INFO] Deleting listener: %s", d.Id())
-	input := &spotinst.DeleteListenerInput{
+	input := &multai.DeleteListenerInput{
 		ListenerID: spotinst.String(d.Id()),
 	}
-	if _, err := client.MultaiService.BalancerService().DeleteListener(context.Background(), input); err != nil {
-		return fmt.Errorf("Error deleting listener: %s", err)
+	if _, err := client.multai.DeleteListener(context.Background(), input); err != nil {
+		return fmt.Errorf("failed to delete listener: %s", err)
 	}
 	d.SetId("")
 	return nil
 }
 
-func buildBalancerListenerOpts(d *schema.ResourceData, meta interface{}) (*spotinst.Listener, error) {
-	listener := &spotinst.Listener{
+func buildBalancerListenerOpts(d *schema.ResourceData, meta interface{}) (*multai.Listener, error) {
+	listener := &multai.Listener{
 		BalancerID: spotinst.String(d.Get("balancer_id").(string)),
 		Protocol:   spotinst.String(strings.ToUpper(d.Get("protocol").(string))),
 		Port:       spotinst.Int(d.Get("port").(int)),
@@ -228,10 +229,10 @@ func buildBalancerListenerOpts(d *schema.ResourceData, meta interface{}) (*spoti
 	return listener, nil
 }
 
-func expandBalancerListenerTLSConfig(data interface{}) (*spotinst.TLSConfig, error) {
+func expandBalancerListenerTLSConfig(data interface{}) (*multai.TLSConfig, error) {
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
-	config := new(spotinst.TLSConfig)
+	config := new(multai.TLSConfig)
 	if v, ok := m["certificate_ids"].([]interface{}); ok {
 		out := make([]string, len(v))
 		for i, j := range v {
@@ -262,7 +263,7 @@ func expandBalancerListenerTLSConfig(data interface{}) (*spotinst.TLSConfig, err
 	return config, nil
 }
 
-func flattenBalancerListenerTLSConfig(config *spotinst.TLSConfig) []interface{} {
+func flattenBalancerListenerTLSConfig(config *multai.TLSConfig) []interface{} {
 	out := make(map[string]interface{})
 	out["certificate_ids"] = config.CertificateIDs
 	out["min_version"] = spotinst.StringValue(config.MinVersion)

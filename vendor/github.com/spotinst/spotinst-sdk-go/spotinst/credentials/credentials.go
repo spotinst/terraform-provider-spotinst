@@ -81,5 +81,6 @@ func (c *Credentials) Get() (Value, error) {
 func (c *Credentials) Refresh() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
 	c.forceRefresh = true
 }

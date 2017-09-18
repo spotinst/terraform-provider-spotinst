@@ -7,11 +7,12 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 )
 
 func TestAccSpotinstMultaiTarget_Basic(t *testing.T) {
-	var target spotinst.Target
+	var target multai.Target
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -30,7 +31,7 @@ func TestAccSpotinstMultaiTarget_Basic(t *testing.T) {
 }
 
 func TestAccSpotinstMultaiTarget_Updated(t *testing.T) {
-	var target spotinst.Target
+	var target multai.Target
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -57,59 +58,59 @@ func TestAccSpotinstMultaiTarget_Updated(t *testing.T) {
 }
 
 func testAccCheckSpotinstMultaiTargetDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*spotinst.Client)
+	client := testAccProvider.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != "spotinst_multai_target" {
 			continue
 		}
-		input := &spotinst.ReadTargetInput{
+		input := &multai.ReadTargetInput{
 			TargetID: spotinst.String(rs.Primary.ID),
 		}
-		resp, err := client.MultaiService.BalancerService().ReadTarget(context.Background(), input)
+		resp, err := client.multai.ReadTarget(context.Background(), input)
 		if err == nil && resp != nil && resp.Target != nil {
-			return fmt.Errorf("Target still exists")
+			return fmt.Errorf("target still exists")
 		}
 	}
 	return nil
 }
 
-func testAccCheckSpotinstMultaiTargetAttributes(target *spotinst.Target) resource.TestCheckFunc {
+func testAccCheckSpotinstMultaiTargetAttributes(target *multai.Target) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if p := spotinst.IntValue(target.Weight); p != 1 {
-			return fmt.Errorf("Bad content: %d", p)
+			return fmt.Errorf("bad content: %d", p)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSpotinstMultaiTargetAttributesUpdated(target *spotinst.Target) resource.TestCheckFunc {
+func testAccCheckSpotinstMultaiTargetAttributesUpdated(target *multai.Target) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if p := spotinst.IntValue(target.Weight); p != 2 {
-			return fmt.Errorf("Bad content: %d", p)
+			return fmt.Errorf("bad content: %d", p)
 		}
 		return nil
 	}
 }
 
-func testAccCheckSpotinstMultaiTargetExists(n string, target *spotinst.Target) resource.TestCheckFunc {
+func testAccCheckSpotinstMultaiTargetExists(n string, target *multai.Target) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
 		if !ok {
-			return fmt.Errorf("Not found: %s", n)
+			return fmt.Errorf("not found: %s", n)
 		}
 		if rs.Primary.ID == "" {
-			return fmt.Errorf("No resource ID is target")
+			return fmt.Errorf("no resource ID is target")
 		}
-		client := testAccProvider.Meta().(*spotinst.Client)
-		input := &spotinst.ReadTargetInput{
+		client := testAccProvider.Meta().(*Client)
+		input := &multai.ReadTargetInput{
 			TargetID: spotinst.String(rs.Primary.ID),
 		}
-		resp, err := client.MultaiService.BalancerService().ReadTarget(context.Background(), input)
+		resp, err := client.multai.ReadTarget(context.Background(), input)
 		if err != nil {
 			return err
 		}
 		if spotinst.StringValue(resp.Target.ID) != rs.Primary.Attributes["id"] {
-			return fmt.Errorf("Target not found: %+v,\n %+v\n", resp.Target, rs.Primary.Attributes)
+			return fmt.Errorf("target not found: %+v,\n %+v\n", resp.Target, rs.Primary.Attributes)
 		}
 		*target = *resp.Target
 		return nil
