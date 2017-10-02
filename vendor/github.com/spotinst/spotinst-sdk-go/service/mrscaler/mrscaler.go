@@ -50,7 +50,6 @@ type Strategy struct {
 
 type Cloning struct {
 	OriginClusterID *string `json:"originClusterId,omitempty"`
-	NumberOfRetries *string `json:"numberOfRetries,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -82,8 +81,8 @@ type AvailabilityZone struct {
 }
 
 type Tag struct {
-	TagKey   *string `json:"tagKey,omitempty"`
-	TagValue *string `json:"tagValue,omitempty"`
+	Key   *string `json:"tagKey,omitempty"`
+	Value *string `json:"tagValue,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -99,18 +98,28 @@ type InstanceGroups struct {
 }
 
 type InstanceGroup struct {
-	InstanceTypes    []*string         `json:"instanceTypes,omitempty"`
-	Target           *int              `json:"target,omitempty"`
-	LifeCycle        *string           `json:"lifeCycle,omitempty"`
-	EBSConfiguration *EBSConfiguration `json:"ebsConfiguration,omitempty"`
+	InstanceTypes    []string               `json:"instanceTypes,omitempty"`
+	Target           *int                   `json:"target,omitempty"`
+	Capacity         *InstanceGroupCapacity `json:"capacity,omitempty"`
+	LifeCycle        *string                `json:"lifeCycle,omitempty"`
+	EBSConfiguration *EBSConfiguration      `json:"ebsConfiguration,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type InstanceGroupCapacity struct {
+	Target  *int `json:"target,omitempty"`
+	Minimum *int `json:"minimum,omitempty"`
+	Maximum *int `json:"maximum,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
 }
 
 type EBSConfiguration struct {
-	EbsOptimized          *string              `json:"ebsOptimized,omitempty"`
-	EbsBlockDeviceConfigs []*BlockDeviceConfig `json:"ebsBlockDeviceConfigs,omitempty"`
+	Optimized          *bool                `json:"ebsOptimized,omitempty"`
+	BlockDeviceConfigs []*BlockDeviceConfig `json:"ebsBlockDeviceConfigs,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -126,8 +135,8 @@ type BlockDeviceConfig struct {
 
 type VolumeSpecification struct {
 	VolumeType *string `json:"volumeType,omitempty"`
-	SizeInGB   *string `json:"sizeInGB,omitempty"`
-	Iops       *string `json:"iops,omitempty"`
+	SizeInGB   *int    `json:"sizeInGB,omitempty"`
+	IOPS       *int    `json:"iops,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -392,13 +401,6 @@ func (o *Cloning) SetOriginClusterID(v *string) *Cloning {
 	return o
 }
 
-func (o *Cloning) SetNumberOfRetries(v *string) *Cloning {
-	if o.NumberOfRetries = v; v == nil {
-		o.nullFields = append(o.nullFields, "NumberOfRetries")
-	}
-	return o
-}
-
 //endregion
 
 //region Wrapping
@@ -488,16 +490,16 @@ func (o *Tag) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Tag) SetTagKey(v *string) *Tag {
-	if o.TagKey = v; v == nil {
-		o.nullFields = append(o.nullFields, "TagKey")
+func (o *Tag) SetKey(v *string) *Tag {
+	if o.Key = v; v == nil {
+		o.nullFields = append(o.nullFields, "Key")
 	}
 	return o
 }
 
-func (o *Tag) SetTagValue(v *string) *Tag {
-	if o.TagValue = v; v == nil {
-		o.nullFields = append(o.nullFields, "TagValue")
+func (o *Tag) SetValue(v *string) *Tag {
+	if o.Value = v; v == nil {
+		o.nullFields = append(o.nullFields, "Value")
 	}
 	return o
 }
@@ -543,7 +545,7 @@ func (o *InstanceGroup) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *InstanceGroup) SetInstanceTypes(v []*string) *InstanceGroup {
+func (o *InstanceGroup) SetInstanceTypes(v []string) *InstanceGroup {
 	if o.InstanceTypes = v; v == nil {
 		o.nullFields = append(o.nullFields, "InstanceTypes")
 	}
@@ -553,6 +555,13 @@ func (o *InstanceGroup) SetInstanceTypes(v []*string) *InstanceGroup {
 func (o *InstanceGroup) SetTarget(v *int) *InstanceGroup {
 	if o.Target = v; v == nil {
 		o.nullFields = append(o.nullFields, "Target")
+	}
+	return o
+}
+
+func (o *InstanceGroup) SetCapacity(v *InstanceGroupCapacity) *InstanceGroup {
+	if o.Capacity = v; v == nil {
+		o.nullFields = append(o.nullFields, "Capacity")
 	}
 	return o
 }
@@ -567,6 +576,112 @@ func (o *InstanceGroup) SetLifeCycle(v *string) *InstanceGroup {
 func (o *InstanceGroup) SetEBSConfiguration(v *EBSConfiguration) *InstanceGroup {
 	if o.EBSConfiguration = v; v == nil {
 		o.nullFields = append(o.nullFields, "EBSConfiguration")
+	}
+	return o
+}
+
+//endregion
+
+//region InstanceGroupCapacity
+func (o *InstanceGroupCapacity) MarshalJSON() ([]byte, error) {
+	type noMethod InstanceGroupCapacity
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *InstanceGroupCapacity) SetTarget(v *int) *InstanceGroupCapacity {
+	if o.Target = v; v == nil {
+		o.nullFields = append(o.nullFields, "Target")
+	}
+	return o
+}
+
+func (o *InstanceGroupCapacity) SetMinimum(v *int) *InstanceGroupCapacity {
+	if o.Minimum = v; v == nil {
+		o.nullFields = append(o.nullFields, "Minimum")
+	}
+	return o
+}
+
+func (o *InstanceGroupCapacity) SetMaximum(v *int) *InstanceGroupCapacity {
+	if o.Maximum = v; v == nil {
+		o.nullFields = append(o.nullFields, "Maximum")
+	}
+	return o
+}
+
+//endregion
+
+//region EBSConfiguration
+func (o *EBSConfiguration) MarshalJSON() ([]byte, error) {
+	type noMethod EBSConfiguration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *EBSConfiguration) SetOptimized(v *bool) *EBSConfiguration {
+	if o.Optimized = v; v == nil {
+		o.nullFields = append(o.nullFields, "Optimized")
+	}
+	return o
+}
+
+func (o *EBSConfiguration) SetBlockDeviceConfigs(v []*BlockDeviceConfig) *EBSConfiguration {
+	if o.BlockDeviceConfigs = v; v == nil {
+		o.nullFields = append(o.nullFields, "BlockDeviceConfigs")
+	}
+	return o
+}
+
+//endregion
+
+//region BlockDeviceConfig
+func (o *BlockDeviceConfig) MarshalJSON() ([]byte, error) {
+	type noMethod BlockDeviceConfig
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *BlockDeviceConfig) SetVolumesPerInstance(v *int) *BlockDeviceConfig {
+	if o.VolumesPerInstance = v; v == nil {
+		o.nullFields = append(o.nullFields, "VolumesPerInstance")
+	}
+	return o
+}
+
+func (o *BlockDeviceConfig) SetVolumeSpecification(v *VolumeSpecification) *BlockDeviceConfig {
+	if o.VolumeSpecification = v; v == nil {
+		o.nullFields = append(o.nullFields, "VolumeSpecification")
+	}
+	return o
+}
+
+//endregion
+
+//region VolumeSpecification
+func (o *VolumeSpecification) MarshalJSON() ([]byte, error) {
+	type noMethod VolumeSpecification
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *VolumeSpecification) SetVolumeType(v *string) *VolumeSpecification {
+	if o.VolumeType = v; v == nil {
+		o.nullFields = append(o.nullFields, "VolumeType")
+	}
+	return o
+}
+
+func (o *VolumeSpecification) SetSizeInGB(v *int) *VolumeSpecification {
+	if o.SizeInGB = v; v == nil {
+		o.nullFields = append(o.nullFields, "SizeInGB")
+	}
+	return o
+}
+
+func (o *VolumeSpecification) SetIOPS(v *int) *VolumeSpecification {
+	if o.IOPS = v; v == nil {
+		o.nullFields = append(o.nullFields, "IOPS")
 	}
 	return o
 }
@@ -806,6 +921,29 @@ func (o *Configurations) MarshalJSON() ([]byte, error) {
 func (o *Configurations) SetFile(v *ConfigurationFile) *Configurations {
 	if o.File = v; v == nil {
 		o.nullFields = append(o.nullFields, "File")
+	}
+	return o
+}
+
+//endregion
+
+//region ConfigurationFile
+func (o *ConfigurationFile) MarshalJSON() ([]byte, error) {
+	type noMethod ConfigurationFile
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *ConfigurationFile) SetBucket(v *string) *ConfigurationFile {
+	if o.Bucket = v; v == nil {
+		o.nullFields = append(o.nullFields, "Bucket")
+	}
+	return o
+}
+
+func (o *ConfigurationFile) SetKey(v *string) *ConfigurationFile {
+	if o.Key = v; v == nil {
+		o.nullFields = append(o.nullFields, "Key")
 	}
 	return o
 }

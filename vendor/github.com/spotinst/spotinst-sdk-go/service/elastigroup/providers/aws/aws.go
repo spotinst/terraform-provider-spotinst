@@ -362,9 +362,13 @@ type LoadBalancersConfig struct {
 }
 
 type LoadBalancer struct {
-	Name *string `json:"name,omitempty"`
-	Arn  *string `json:"arn,omitempty"`
-	Type *string `json:"type,omitempty"`
+	Name          *string `json:"name,omitempty"`
+	Arn           *string `json:"arn,omitempty"`
+	Type          *string `json:"type,omitempty"`
+	BalancerID    *string `json:"balancerId,omitempty"`
+	TargetSetID   *string `json:"targetSetId,omitempty"`
+	ZoneAwareness *bool   `json:"azAwareness,omitempty"`
+	AutoWeight    *bool   `json:"autoWeight,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1857,6 +1861,34 @@ func (o *LoadBalancer) SetArn(v *string) *LoadBalancer {
 func (o *LoadBalancer) SetType(v *string) *LoadBalancer {
 	if o.Type = v; o.Type == nil {
 		o.nullFields = append(o.nullFields, "Type")
+	}
+	return o
+}
+
+func (o *LoadBalancer) SetBalancerId(v *string) *LoadBalancer {
+	if o.BalancerID = v; o.BalancerID == nil {
+		o.nullFields = append(o.nullFields, "BalancerID")
+	}
+	return o
+}
+
+func (o *LoadBalancer) SetTargetSetId(v *string) *LoadBalancer {
+	if o.TargetSetID = v; o.TargetSetID == nil {
+		o.nullFields = append(o.nullFields, "TargetSetID")
+	}
+	return o
+}
+
+func (o *LoadBalancer) SetZoneAwareness(v *bool) *LoadBalancer {
+	if o.ZoneAwareness = v; o.ZoneAwareness == nil {
+		o.nullFields = append(o.nullFields, "ZoneAwareness")
+	}
+	return o
+}
+
+func (o *LoadBalancer) SetAutoWeight(v *bool) *LoadBalancer {
+	if o.AutoWeight = v; o.AutoWeight == nil {
+		o.nullFields = append(o.nullFields, "AutoWeight")
 	}
 	return o
 }
