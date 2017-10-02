@@ -295,9 +295,14 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"type": &schema.Schema{
 							Type:     schema.TypeString,
 							Required: true,
+						},
+
+						"name": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 
 						"arn": &schema.Schema{
@@ -305,9 +310,24 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 							Optional: true,
 						},
 
-						"type": &schema.Schema{
+						"balancer_id": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
+						},
+
+						"target_set_id": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"zone_awareness": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+
+						"auto_weight": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
 						},
 					},
 				},
@@ -1720,9 +1740,27 @@ func flattenAWSGroupLoadBalancers(balancers []*aws.LoadBalancer) []interface{} {
 	result := make([]interface{}, 0, len(balancers))
 	for _, b := range balancers {
 		m := make(map[string]interface{})
-		m["name"] = spotinst.StringValue(b.Name)
-		m["arn"] = spotinst.StringValue(b.Arn)
 		m["type"] = strings.ToLower(spotinst.StringValue(b.Type))
+
+		if b.Name != nil {
+			m["name"] = spotinst.StringValue(b.Name)
+		}
+		if b.Arn != nil {
+			m["arn"] = spotinst.StringValue(b.Arn)
+		}
+		if b.BalancerID != nil {
+			m["balancer_id"] = spotinst.StringValue(b.BalancerID)
+		}
+		if b.TargetSetID != nil {
+			m["target_set_id"] = spotinst.StringValue(b.TargetSetID)
+		}
+		if b.ZoneAwareness != nil {
+			m["zone_awareness"] = spotinst.BoolValue(b.ZoneAwareness)
+		}
+		if b.AutoWeight != nil {
+			m["auto_weight"] = spotinst.BoolValue(b.AutoWeight)
+		}
+
 		result = append(result, m)
 	}
 	return result
@@ -2776,6 +2814,10 @@ func expandAWSGroupLoadBalancer(data interface{}, nullify bool) ([]*aws.LoadBala
 		m := item.(map[string]interface{})
 		lb := &aws.LoadBalancer{}
 
+		if v, ok := m["type"].(string); ok && v != "" {
+			lb.SetType(spotinst.String(strings.ToUpper(v)))
+		}
+
 		if v, ok := m["name"].(string); ok && v != "" {
 			lb.SetName(spotinst.String(v))
 		}
@@ -2784,8 +2826,20 @@ func expandAWSGroupLoadBalancer(data interface{}, nullify bool) ([]*aws.LoadBala
 			lb.SetArn(spotinst.String(v))
 		}
 
-		if v, ok := m["type"].(string); ok && v != "" {
-			lb.SetType(spotinst.String(strings.ToUpper(v)))
+		if v, ok := m["balancer_id"].(string); ok && v != "" {
+			lb.SetBalancerId(spotinst.String(v))
+		}
+
+		if v, ok := m["target_set_id"].(string); ok && v != "" {
+			lb.SetTargetSetId(spotinst.String(v))
+		}
+
+		if v, ok := m["zone_awareness"].(bool); ok {
+			lb.SetZoneAwareness(spotinst.Bool(v))
+		}
+
+		if v, ok := m["auto_weight"].(bool); ok {
+			lb.SetAutoWeight(spotinst.Bool(v))
 		}
 
 		log.Printf("[DEBUG] Group load balancer configuration: %s", stringutil.Stringify(lb))
@@ -3089,10 +3143,24 @@ func hashAWSGroupPersistence(v interface{}) int {
 func hashAWSGroupLoadBalancer(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["type"].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", strings.ToLower(m["type"].(string))))
+	if v, ok := m["name"].(string); ok && len(v) > 0 {
+		buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
+	}
 	if v, ok := m["arn"].(string); ok && len(v) > 0 {
 		buf.WriteString(fmt.Sprintf("%s-", v))
+	}
+	if v, ok := m["balancer_id"].(string); ok && len(v) > 0 {
+		buf.WriteString(fmt.Sprintf("%s-", v))
+	}
+	if v, ok := m["target_set_id"].(string); ok && len(v) > 0 {
+		buf.WriteString(fmt.Sprintf("%s-", v))
+	}
+	if v, ok := m["zone_awareness"].(bool); ok {
+		buf.WriteString(fmt.Sprintf("%t-", v))
+	}
+	if v, ok := m["auto_weight"].(bool); ok {
+		buf.WriteString(fmt.Sprintf("%t-", v))
 	}
 	return hashcode.String(buf.String())
 }
