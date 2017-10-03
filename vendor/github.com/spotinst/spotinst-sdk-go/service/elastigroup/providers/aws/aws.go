@@ -93,39 +93,7 @@ type Integration struct {
 	Rancher             *RancherIntegration             `json:"rancher,omitempty"`
 	Kubernetes          *KubernetesIntegration          `json:"kubernetes,omitempty"`
 	Mesosphere          *MesosphereIntegration          `json:"mesosphere,omitempty"`
-
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
-}
-
-type CodeDeployIntegration struct {
-	DeploymentGroups           []*DeploymentGroup `json:"deploymentGroups,omitempty"`
-	CleanUpOnFailure           *bool              `json:"cleanUpOnFailure,omitempty"`
-	TerminateInstanceOnFailure *bool              `json:"terminateInstanceOnFailure,omitempty"`
-
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
-}
-
-type DeploymentGroup struct {
-	ApplicationName     *string `json:"applicationName,omitempty"`
-	DeploymentGroupName *string `json:"deploymentGroupName,omitempty"`
-
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
-}
-
-type RancherIntegration struct {
-	MasterHost *string `json:"masterHost,omitempty"`
-	AccessKey  *string `json:"accessKey,omitempty"`
-	SecretKey  *string `json:"secretKey,omitempty"`
-
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
-}
-
-type ElasticBeanstalkIntegration struct {
-	EnvironmentID *string `json:"environmentId,omitempty"`
+	Multai              *MultaiIntegration              `json:"mlbRuntime,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -157,6 +125,39 @@ type Headroom struct {
 	nullFields      []string `json:"-"`
 }
 
+type ElasticBeanstalkIntegration struct {
+	EnvironmentID *string `json:"environmentId,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type CodeDeployIntegration struct {
+	DeploymentGroups           []*DeploymentGroup `json:"deploymentGroups,omitempty"`
+	CleanUpOnFailure           *bool              `json:"cleanUpOnFailure,omitempty"`
+	TerminateInstanceOnFailure *bool              `json:"terminateInstanceOnFailure,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type DeploymentGroup struct {
+	ApplicationName     *string `json:"applicationName,omitempty"`
+	DeploymentGroupName *string `json:"deploymentGroupName,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type RancherIntegration struct {
+	MasterHost *string `json:"masterHost,omitempty"`
+	AccessKey  *string `json:"accessKey,omitempty"`
+	SecretKey  *string `json:"secretKey,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
 type KubernetesIntegration struct {
 	Server *string `json:"apiServer,omitempty"`
 	Token  *string `json:"token,omitempty"`
@@ -167,6 +168,13 @@ type KubernetesIntegration struct {
 
 type MesosphereIntegration struct {
 	Server *string `json:"apiServer,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type MultaiIntegration struct {
+	DeploymentID *string `json:"deploymentId,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -852,6 +860,13 @@ func (o *Integration) SetElasticBeanstalk(v *ElasticBeanstalkIntegration) *Integ
 	return o
 }
 
+func (o *Integration) SetCodeDeploy(v *CodeDeployIntegration) *Integration {
+	if o.CodeDeploy = v; o.CodeDeploy == nil {
+		o.nullFields = append(o.nullFields, "CodeDeploy")
+	}
+	return o
+}
+
 func (o *Integration) SetRancher(v *RancherIntegration) *Integration {
 	if o.Rancher = v; o.Rancher == nil {
 		o.nullFields = append(o.nullFields, "Rancher")
@@ -873,16 +888,16 @@ func (o *Integration) SetMesosphere(v *MesosphereIntegration) *Integration {
 	return o
 }
 
-func (o *Integration) SetCodeDeploy(v *CodeDeployIntegration) *Integration {
-	if o.CodeDeploy = v; o.CodeDeploy == nil {
-		o.nullFields = append(o.nullFields, "CodeDeploy")
+func (o *Integration) SetMultai(v *MultaiIntegration) *Integration {
+	if o.Multai = v; o.Multai == nil {
+		o.nullFields = append(o.nullFields, "Multai")
 	}
 	return o
 }
 
 // endregion
 
-// regionRancherIntegration
+// region RancherIntegration
 
 func (o *RancherIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod RancherIntegration
@@ -913,7 +928,7 @@ func (o *RancherIntegration) SetSecretKey(v *string) *RancherIntegration {
 
 // endregion
 
-// regionElasticBeanstalkIntegration
+// region ElasticBeanstalkIntegration
 
 func (o *ElasticBeanstalkIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod ElasticBeanstalkIntegration
@@ -930,7 +945,7 @@ func (o *ElasticBeanstalkIntegration) SetEnvironmentId(v *string) *ElasticBeanst
 
 // endregion
 
-// regionEC2ContainerServiceIntegration
+// region EC2ContainerServiceIntegration
 
 func (o *EC2ContainerServiceIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod EC2ContainerServiceIntegration
@@ -954,7 +969,7 @@ func (o *EC2ContainerServiceIntegration) SetAutoScale(v *AutoScale) *EC2Containe
 
 // endregion
 
-// regionAutoScale
+// region AutoScale
 
 func (o *AutoScale) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScale
@@ -985,7 +1000,7 @@ func (o *AutoScale) SetHeadroom(v *Headroom) *AutoScale {
 
 // endregion
 
-// regionHeadroom
+// region Headroom
 
 func (o *Headroom) MarshalJSON() ([]byte, error) {
 	type noMethod Headroom
@@ -1016,7 +1031,7 @@ func (o *Headroom) SetNumOfUnits(v *int) *Headroom {
 
 // endregion
 
-// regionKubernetesIntegration
+// region KubernetesIntegration
 
 func (o *KubernetesIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod KubernetesIntegration
@@ -1040,7 +1055,7 @@ func (o *KubernetesIntegration) SetToken(v *string) *KubernetesIntegration {
 
 // endregion
 
-// regionMesosphereIntegration
+// region MesosphereIntegration
 
 func (o *MesosphereIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod MesosphereIntegration
@@ -1051,6 +1066,23 @@ func (o *MesosphereIntegration) MarshalJSON() ([]byte, error) {
 func (o *MesosphereIntegration) SetServer(v *string) *MesosphereIntegration {
 	if o.Server = v; o.Server == nil {
 		o.nullFields = append(o.nullFields, "Server")
+	}
+	return o
+}
+
+// endregion
+
+// region MultaiIntegration
+
+func (o *MultaiIntegration) MarshalJSON() ([]byte, error) {
+	type noMethod MultaiIntegration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *MultaiIntegration) SetDeploymentId(v *string) *MultaiIntegration {
+	if o.DeploymentID = v; o.DeploymentID == nil {
+		o.nullFields = append(o.nullFields, "DeploymentID")
 	}
 	return o
 }
@@ -1074,7 +1106,7 @@ func (o *Scheduling) SetTasks(v []*ScheduledTask) *Scheduling {
 
 // endregion
 
-// regionScheduledTask
+// region ScheduledTask
 
 func (o *ScheduledTask) MarshalJSON() ([]byte, error) {
 	type noMethod ScheduledTask
@@ -1442,7 +1474,7 @@ func (o *Strategy) SetPersistence(v *Persistence) *Strategy {
 
 // endregion
 
-// regionPersistence
+// region Persistence
 
 func (o *Persistence) MarshalJSON() ([]byte, error) {
 	type noMethod Persistence
@@ -2075,7 +2107,7 @@ func (o *IAMInstanceProfile) SetArn(v *string) *IAMInstanceProfile {
 
 // endregion
 
-// regionRollStrategy
+// region RollStrategy
 
 func (o *RollStrategy) MarshalJSON() ([]byte, error) {
 	type noMethod RollStrategy
@@ -2099,7 +2131,7 @@ func (o *RollStrategy) SetShouldDrainInstances(v *bool) *RollStrategy {
 
 // endregion
 
-// regionCodeDeployIntegration
+// region CodeDeployIntegration
 
 func (o *CodeDeployIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod CodeDeployIntegration
@@ -2130,7 +2162,7 @@ func (o *CodeDeployIntegration) SetTerminateInstanceOnFailure(v *bool) *CodeDepl
 
 // endregion
 
-// regionDeploymentGroup
+// region DeploymentGroup
 
 func (o *DeploymentGroup) MarshalJSON() ([]byte, error) {
 	type noMethod DeploymentGroup
