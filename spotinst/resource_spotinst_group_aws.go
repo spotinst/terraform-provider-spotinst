@@ -695,6 +695,20 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				},
 			},
 
+			"multai_integration": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"deployment_id": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+			},
+
 			"codedeploy_integration": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -1059,6 +1073,15 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 				}
 			} else {
 				d.Set("mesosphere_integration", []*aws.MesosphereIntegration{})
+			}
+
+			// Set Multai integration.
+			if g.Integration.Multai != nil {
+				if err := d.Set("multai_integration", flattenAWSGroupMultaiIntegration(g.Integration.Multai)); err != nil {
+					return fmt.Errorf("failed to set Multai configuration: %#v", err)
+				}
+			} else {
+				d.Set("multai_integration", []*aws.MultaiIntegration{})
 			}
 
 			// Set CodeDeploy integration.
@@ -1613,6 +1636,26 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
+	if d.HasChange("multai_integration") {
+		if v, ok := d.GetOk("multai_integration"); ok {
+			if integration, err := expandAWSGroupMultaiIntegration(v, nullify); err != nil {
+				return err
+			} else {
+				if group.Integration == nil {
+					group.SetIntegration(&aws.Integration{})
+				}
+				group.Integration.SetMultai(integration)
+				update = true
+			}
+		} else {
+			if group.Integration == nil {
+				group.SetIntegration(&aws.Integration{})
+			}
+			group.Integration.SetMultai(nil)
+			update = true
+		}
+	}
+
 	if d.HasChange("codedeploy_integration") {
 		if v, ok := d.GetOk("codedeploy_integration"); ok {
 			if integration, err := expandAWSGroupCodeDeployIntegration(v, nullify); err != nil {
@@ -1943,6 +1986,12 @@ func flattenAWSGroupMesosphereIntegration(integration *aws.MesosphereIntegration
 	return []interface{}{result}
 }
 
+func flattenAWSGroupMultaiIntegration(integration *aws.MultaiIntegration) []interface{} {
+	result := make(map[string]interface{})
+	result["deployment_id"] = spotinst.StringValue(integration.DeploymentID)
+	return []interface{}{result}
+}
+
 func flattenAWSGroupCodeDeployIntegration(integration *aws.CodeDeployIntegration) []interface{} {
 	result := make(map[string]interface{})
 	result["cleanup_on_failure"] = spotinst.BoolValue(integration.CleanUpOnFailure)
@@ -2180,6 +2229,14 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 			return nil, err
 		} else {
 			group.Integration.SetMesosphere(integration)
+		}
+	}
+
+	if v, ok := d.GetOk("multai_integration"); ok {
+		if integration, err := expandAWSGroupMultaiIntegration(v, nullify); err != nil {
+			return nil, err
+		} else {
+			group.Integration.SetMultai(integration)
 		}
 	}
 
@@ -2978,6 +3035,20 @@ func expandAWSGroupMesosphereIntegration(data interface{}, nullify bool) (*aws.M
 	}
 
 	log.Printf("[DEBUG] Group Mesosphere integration configuration: %s", stringutil.Stringify(i))
+	return i, nil
+}
+
+// expandAWSGroupMultaiIntegration expands the Multai Integration block.
+func expandAWSGroupMultaiIntegration(data interface{}, nullify bool) (*aws.MultaiIntegration, error) {
+	list := data.(*schema.Set).List()
+	m := list[0].(map[string]interface{})
+	i := &aws.MultaiIntegration{}
+
+	if v, ok := m["deployment_id"].(string); ok && v != "" {
+		i.SetDeploymentId(spotinst.String(v))
+	}
+
+	log.Printf("[DEBUG] Group Multai integration configuration: %s", stringutil.Stringify(i))
 	return i, nil
 }
 
