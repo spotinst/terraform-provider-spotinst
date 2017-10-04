@@ -30,6 +30,7 @@ func Provider() terraform.ResourceProvider {
 			"spotinst_group_aws":           resourceSpotinstAWSGroup(),
 			"spotinst_subscription":        resourceSpotinstSubscription(),
 			"spotinst_healthcheck":         resourceSpotinstHealthCheck(),
+			"spotinst_multai_deployment":   resourceSpotinstMultaiDeployment(),
 			"spotinst_multai_balancer":     resourceSpotinstMultaiBalancer(),
 			"spotinst_multai_listener":     resourceSpotinstMultaiListener(),
 			"spotinst_multai_routing_rule": resourceSpotinstMultaiRoutingRule(),
