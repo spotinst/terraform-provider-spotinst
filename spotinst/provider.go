@@ -28,6 +28,7 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"spotinst_aws_group":           resourceSpotinstAWSGroup(), // deprecated
 			"spotinst_group_aws":           resourceSpotinstAWSGroup(),
+			"spotinst_mrscaler":            resourceSpotinstAWSMrScaler(),
 			"spotinst_subscription":        resourceSpotinstSubscription(),
 			"spotinst_healthcheck":         resourceSpotinstHealthCheck(),
 			"spotinst_multai_deployment":   resourceSpotinstMultaiDeployment(),

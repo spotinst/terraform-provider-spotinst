@@ -137,7 +137,7 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 
 						"task_type": &schema.Schema{
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 
 						"frequency": &schema.Schema{
@@ -171,6 +171,16 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 						},
 
 						"grace_period": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
+						"min_capacity": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
+						"max_capacity": &schema.Schema{
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
@@ -221,6 +231,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 
 						"persist_private_ip": &schema.Schema{
 							Type:     schema.TypeBool,
+							Optional: true,
+						},
+
+						"block_devices_mode": &schema.Schema{
+							Type:     schema.TypeString,
 							Optional: true,
 						},
 					},
@@ -974,7 +989,7 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 					return fmt.Errorf("failed to set scheduled tasks configuration: %#v", err)
 				}
 			} else {
-				d.Set("scheduled_task", []*aws.ScheduledTask{})
+				d.Set("scheduled_task", []*aws.Task{})
 			}
 
 		}
@@ -1831,12 +1846,12 @@ func flattenAWSGroupSignals(signals []*aws.Signal) []interface{} {
 	return result
 }
 
-func flattenAWSGroupScheduledTasks(tasks []*aws.ScheduledTask) []interface{} {
+func flattenAWSGroupScheduledTasks(tasks []*aws.Task) []interface{} {
 	result := make([]interface{}, 0, len(tasks))
 	for _, t := range tasks {
 		m := make(map[string]interface{})
 		m["is_enabled"] = spotinst.BoolValue(t.IsEnabled)
-		m["task_type"] = spotinst.StringValue(t.TaskType)
+		m["task_type"] = spotinst.StringValue(t.Type)
 		m["cron_expression"] = spotinst.StringValue(t.CronExpression)
 		m["frequency"] = spotinst.StringValue(t.Frequency)
 		m["scale_target_capacity"] = spotinst.IntValue(t.ScaleTargetCapacity)
@@ -1844,6 +1859,8 @@ func flattenAWSGroupScheduledTasks(tasks []*aws.ScheduledTask) []interface{} {
 		m["scale_max_capacity"] = spotinst.IntValue(t.ScaleMaxCapacity)
 		m["batch_size_percentage"] = spotinst.IntValue(t.BatchSizePercentage)
 		m["grace_period"] = spotinst.IntValue(t.GracePeriod)
+		m["min_capacity"] = spotinst.IntValue(t.MinCapacity)
+		m["max_capacity"] = spotinst.IntValue(t.MaxCapacity)
 		result = append(result, m)
 	}
 	return result
@@ -1852,8 +1869,9 @@ func flattenAWSGroupScheduledTasks(tasks []*aws.ScheduledTask) []interface{} {
 func flattenAWSGroupPersistence(persistence *aws.Persistence) []interface{} {
 	result := make(map[string]interface{})
 	result["persist_block_devices"] = spotinst.BoolValue(persistence.ShouldPersistBlockDevices)
-	result["persist_private_ip"] = spotinst.BoolValue(persistence.ShouldPersistPrivateIp)
+	result["persist_private_ip"] = spotinst.BoolValue(persistence.ShouldPersistPrivateIP)
 	result["persist_root_device"] = spotinst.BoolValue(persistence.ShouldPersistRootDevice)
+	result["block_devices_mode"] = spotinst.StringValue(persistence.BlockDevicesMode)
 	return []interface{}{result}
 }
 
@@ -2447,20 +2465,22 @@ func expandAWSGroupScalingPolicyDimensions(list map[string]interface{}) []*aws.D
 	return dimensions
 }
 
+const taskTypeStatefulUpdateCapacity = "statefulUpdateCapacity"
+
 // expandAWSGroupScheduledTasks expands the Scheduled Task block.
-func expandAWSGroupScheduledTasks(data interface{}, nullify bool) ([]*aws.ScheduledTask, error) {
+func expandAWSGroupScheduledTasks(data interface{}, nullify bool) ([]*aws.Task, error) {
 	list := data.(*schema.Set).List()
-	tasks := make([]*aws.ScheduledTask, 0, len(list))
+	tasks := make([]*aws.Task, 0, len(list))
 	for _, item := range list {
 		m := item.(map[string]interface{})
-		task := &aws.ScheduledTask{}
+		task := &aws.Task{}
 
 		if v, ok := m["is_enabled"].(bool); ok {
 			task.SetIsEnabled(spotinst.Bool(v))
 		}
 
 		if v, ok := m["task_type"].(string); ok && v != "" {
-			task.SetTaskType(spotinst.String(v))
+			task.SetType(spotinst.String(v))
 		}
 
 		if v, ok := m["frequency"].(string); ok && v != "" {
@@ -2471,24 +2491,36 @@ func expandAWSGroupScheduledTasks(data interface{}, nullify bool) ([]*aws.Schedu
 			task.SetCronExpression(spotinst.String(v))
 		}
 
-		if v, ok := m["scale_target_capacity"].(int); ok && v >= 0 {
-			task.SetScaleTargetCapacity(spotinst.Int(v))
-		}
-
-		if v, ok := m["scale_min_capacity"].(int); ok && v >= 0 {
-			task.SetScaleMinCapacity(spotinst.Int(v))
-		}
-
-		if v, ok := m["scale_max_capacity"].(int); ok && v >= 0 {
-			task.SetScaleMaxCapacity(spotinst.Int(v))
-		}
-
 		if v, ok := m["batch_size_percentage"].(int); ok && v > 0 {
 			task.SetBatchSizePercentage(spotinst.Int(v))
 		}
 
 		if v, ok := m["grace_period"].(int); ok && v > 0 {
 			task.SetGracePeriod(spotinst.Int(v))
+		}
+
+		if spotinst.StringValue(task.Type) != taskTypeStatefulUpdateCapacity {
+			if v, ok := m["scale_target_capacity"].(int); ok && v >= 0 {
+				task.SetScaleTargetCapacity(spotinst.Int(v))
+			}
+
+			if v, ok := m["scale_min_capacity"].(int); ok && v >= 0 {
+				task.SetScaleMinCapacity(spotinst.Int(v))
+			}
+
+			if v, ok := m["scale_max_capacity"].(int); ok && v >= 0 {
+				task.SetScaleMaxCapacity(spotinst.Int(v))
+			}
+		}
+
+		if spotinst.StringValue(task.Type) == taskTypeStatefulUpdateCapacity {
+			if v, ok := m["min_capacity"].(int); ok && v >= 0 {
+				task.SetMinCapacity(spotinst.Int(v))
+			}
+
+			if v, ok := m["max_capacity"].(int); ok && v >= 0 {
+				task.SetMaxCapacity(spotinst.Int(v))
+			}
 		}
 
 		log.Printf("[DEBUG] Group scheduled task configuration: %s", stringutil.Stringify(task))
@@ -2505,9 +2537,9 @@ func expandAWSGroupPersistence(data interface{}, nullify bool) (*aws.Persistence
 	persistence := &aws.Persistence{}
 
 	if v, ok := m["persist_private_ip"].(bool); ok {
-		persistence.SetShouldPersistPrivateIp(spotinst.Bool(v))
+		persistence.SetShouldPersistPrivateIP(spotinst.Bool(v))
 	} else if nullify {
-		persistence.SetShouldPersistPrivateIp(nil)
+		persistence.SetShouldPersistPrivateIP(nil)
 	}
 
 	if v, ok := m["persist_root_device"].(bool); ok {
@@ -2520,6 +2552,12 @@ func expandAWSGroupPersistence(data interface{}, nullify bool) (*aws.Persistence
 		persistence.SetShouldPersistBlockDevices(spotinst.Bool(v))
 	} else if nullify {
 		persistence.SetShouldPersistBlockDevices(nil)
+	}
+
+	if v, ok := m["block_devices_mode"].(string); ok {
+		persistence.SetBlockDevicesMode(spotinst.String(v))
+	} else if nullify {
+		persistence.SetBlockDevicesMode(nil)
 	}
 
 	log.Printf("[DEBUG] Group persistence configuration: %s", stringutil.Stringify(persistence))
@@ -3208,6 +3246,7 @@ func hashAWSGroupPersistence(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%t-", m["persist_root_device"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["persist_block_devices"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["persist_private_ip"].(bool)))
+	buf.WriteString(fmt.Sprintf("%s-", m["block_devices_mode"].(string)))
 	return hashcode.String(buf.String())
 }
 
