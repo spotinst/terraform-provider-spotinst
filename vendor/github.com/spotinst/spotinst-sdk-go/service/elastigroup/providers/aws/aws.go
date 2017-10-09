@@ -181,22 +181,24 @@ type MultaiIntegration struct {
 }
 
 type Scheduling struct {
-	Tasks []*ScheduledTask `json:"tasks,omitempty"`
+	Tasks []*Task `json:"tasks,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
 }
 
-type ScheduledTask struct {
+type Task struct {
 	IsEnabled           *bool   `json:"isEnabled,omitempty"`
+	Type                *string `json:"taskType,omitempty"`
 	Frequency           *string `json:"frequency,omitempty"`
 	CronExpression      *string `json:"cronExpression,omitempty"`
-	TaskType            *string `json:"taskType,omitempty"`
 	ScaleTargetCapacity *int    `json:"scaleTargetCapacity,omitempty"`
 	ScaleMinCapacity    *int    `json:"scaleMinCapacity,omitempty"`
 	ScaleMaxCapacity    *int    `json:"scaleMaxCapacity,omitempty"`
 	BatchSizePercentage *int    `json:"batchSizePercentage,omitempty"`
 	GracePeriod         *int    `json:"gracePeriod,omitempty"`
+	MinCapacity         *int    `json:"minCapacity,omitempty"`
+	MaxCapacity         *int    `json:"maxCapacity,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -268,9 +270,10 @@ type Strategy struct {
 }
 
 type Persistence struct {
-	ShouldPersistPrivateIp    *bool `json:"shouldPersistPrivateIp,omitempty"`
-	ShouldPersistBlockDevices *bool `json:"shouldPersistBlockDevices,omitempty"`
-	ShouldPersistRootDevice   *bool `json:"shouldPersistRootDevice,omitempty"`
+	ShouldPersistPrivateIP    *bool   `json:"shouldPersistPrivateIp,omitempty"`
+	ShouldPersistBlockDevices *bool   `json:"shouldPersistBlockDevices,omitempty"`
+	ShouldPersistRootDevice   *bool   `json:"shouldPersistRootDevice,omitempty"`
+	BlockDevicesMode          *string `json:"blockDevicesMode,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1097,7 +1100,7 @@ func (o *Scheduling) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Scheduling) SetTasks(v []*ScheduledTask) *Scheduling {
+func (o *Scheduling) SetTasks(v []*Task) *Scheduling {
 	if o.Tasks = v; o.Tasks == nil {
 		o.nullFields = append(o.nullFields, "Tasks")
 	}
@@ -1106,73 +1109,87 @@ func (o *Scheduling) SetTasks(v []*ScheduledTask) *Scheduling {
 
 // endregion
 
-// region ScheduledTask
+// region Task
 
-func (o *ScheduledTask) MarshalJSON() ([]byte, error) {
-	type noMethod ScheduledTask
+func (o *Task) MarshalJSON() ([]byte, error) {
+	type noMethod Task
 	raw := noMethod(*o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *ScheduledTask) SetIsEnabled(v *bool) *ScheduledTask {
+func (o *Task) SetIsEnabled(v *bool) *Task {
 	if o.IsEnabled = v; o.IsEnabled == nil {
 		o.nullFields = append(o.nullFields, "IsEnabled")
 	}
 	return o
 }
 
-func (o *ScheduledTask) SetFrequency(v *string) *ScheduledTask {
+func (o *Task) SetType(v *string) *Task {
+	if o.Type = v; o.Type == nil {
+		o.nullFields = append(o.nullFields, "Type")
+	}
+	return o
+}
+
+func (o *Task) SetFrequency(v *string) *Task {
 	if o.Frequency = v; o.Frequency == nil {
 		o.nullFields = append(o.nullFields, "Frequency")
 	}
 	return o
 }
 
-func (o *ScheduledTask) SetCronExpression(v *string) *ScheduledTask {
+func (o *Task) SetCronExpression(v *string) *Task {
 	if o.CronExpression = v; o.CronExpression == nil {
 		o.nullFields = append(o.nullFields, "CronExpression")
 	}
 	return o
 }
 
-func (o *ScheduledTask) SetTaskType(v *string) *ScheduledTask {
-	if o.TaskType = v; o.TaskType == nil {
-		o.nullFields = append(o.nullFields, "TaskType")
-	}
-	return o
-}
-
-func (o *ScheduledTask) SetScaleTargetCapacity(v *int) *ScheduledTask {
+func (o *Task) SetScaleTargetCapacity(v *int) *Task {
 	if o.ScaleTargetCapacity = v; o.ScaleTargetCapacity == nil {
 		o.nullFields = append(o.nullFields, "ScaleTargetCapacity")
 	}
 	return o
 }
 
-func (o *ScheduledTask) SetScaleMinCapacity(v *int) *ScheduledTask {
+func (o *Task) SetScaleMinCapacity(v *int) *Task {
 	if o.ScaleMinCapacity = v; o.ScaleMinCapacity == nil {
 		o.nullFields = append(o.nullFields, "ScaleMinCapacity")
 	}
 	return o
 }
 
-func (o *ScheduledTask) SetScaleMaxCapacity(v *int) *ScheduledTask {
+func (o *Task) SetScaleMaxCapacity(v *int) *Task {
 	if o.ScaleMaxCapacity = v; o.ScaleMaxCapacity == nil {
 		o.nullFields = append(o.nullFields, "ScaleMaxCapacity")
 	}
 	return o
 }
 
-func (o *ScheduledTask) SetBatchSizePercentage(v *int) *ScheduledTask {
+func (o *Task) SetBatchSizePercentage(v *int) *Task {
 	if o.BatchSizePercentage = v; o.BatchSizePercentage == nil {
 		o.nullFields = append(o.nullFields, "BatchSizePercentage")
 	}
 	return o
 }
 
-func (o *ScheduledTask) SetGracePeriod(v *int) *ScheduledTask {
+func (o *Task) SetGracePeriod(v *int) *Task {
 	if o.GracePeriod = v; o.GracePeriod == nil {
 		o.nullFields = append(o.nullFields, "GracePeriod")
+	}
+	return o
+}
+
+func (o *Task) SetMinCapacity(v *int) *Task {
+	if o.MinCapacity = v; o.MinCapacity == nil {
+		o.nullFields = append(o.nullFields, "MinCapacity")
+	}
+	return o
+}
+
+func (o *Task) SetMaxCapacity(v *int) *Task {
+	if o.MaxCapacity = v; o.MaxCapacity == nil {
+		o.nullFields = append(o.nullFields, "MaxCapacity")
 	}
 	return o
 }
@@ -1482,9 +1499,9 @@ func (o *Persistence) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Persistence) SetShouldPersistPrivateIp(v *bool) *Persistence {
-	if o.ShouldPersistPrivateIp = v; o.ShouldPersistPrivateIp == nil {
-		o.nullFields = append(o.nullFields, "ShouldPersistPrivateIp")
+func (o *Persistence) SetShouldPersistPrivateIP(v *bool) *Persistence {
+	if o.ShouldPersistPrivateIP = v; o.ShouldPersistPrivateIP == nil {
+		o.nullFields = append(o.nullFields, "ShouldPersistPrivateIP")
 	}
 	return o
 }
@@ -1499,6 +1516,13 @@ func (o *Persistence) SetShouldPersistBlockDevices(v *bool) *Persistence {
 func (o *Persistence) SetShouldPersistRootDevice(v *bool) *Persistence {
 	if o.ShouldPersistRootDevice = v; o.ShouldPersistRootDevice == nil {
 		o.nullFields = append(o.nullFields, "ShouldPersistRootDevice")
+	}
+	return o
+}
+
+func (o *Persistence) SetBlockDevicesMode(v *string) *Persistence {
+	if o.BlockDevicesMode = v; o.BlockDevicesMode == nil {
+		o.nullFields = append(o.nullFields, "BlockDevicesMode")
 	}
 	return o
 }

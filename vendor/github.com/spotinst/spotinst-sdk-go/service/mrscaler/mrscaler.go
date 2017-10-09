@@ -13,6 +13,36 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates"
 )
 
+// A InstanceGroupType represents the type of an instance group.
+type InstanceGroupType int
+
+const (
+	// InstanceGroupTypeMaster represents the master instance group type.
+	InstanceGroupTypeMaster InstanceGroupType = iota
+
+	// InstanceGroupTypeCore represents the core instance group type.
+	InstanceGroupTypeCore
+
+	// InstanceGroupTypeTask represents the task instance group type.
+	InstanceGroupTypeTask
+)
+
+var InstanceGroupType_name = map[InstanceGroupType]string{
+	InstanceGroupTypeMaster: "master",
+	InstanceGroupTypeCore:   "core",
+	InstanceGroupTypeTask:   "task",
+}
+
+var InstanceGroupType_value = map[string]InstanceGroupType{
+	"master": InstanceGroupTypeMaster,
+	"core":   InstanceGroupTypeCore,
+	"task":   InstanceGroupTypeTask,
+}
+
+func (p InstanceGroupType) String() string {
+	return InstanceGroupType_name[p]
+}
+
 type Scaler struct {
 	ID          *string   `json:"id,omitempty"`
 	Name        *string   `json:"name,omitempty"`
@@ -170,12 +200,12 @@ type ScalingPolicy struct {
 
 type Action struct {
 	Type              *string `json:"type,omitempty"`
-	Adjustment        *int    `json:"adjustment,omitempty"`
-	MinTargetCapacity *int    `json:"minTargetCapacity,omitempty"`
-	MaxTargetCapacity *int    `json:"maxTargetCapacity,omitempty"`
-	Target            *int    `json:"target,omitempty"`
-	Minimum           *int    `json:"minimum,omitempty"`
-	Maximum           *int    `json:"maximum,omitempty"`
+	Adjustment        *string `json:"adjustment,omitempty"`
+	MinTargetCapacity *string `json:"minTargetCapacity,omitempty"`
+	MaxTargetCapacity *string `json:"maxTargetCapacity,omitempty"`
+	Target            *string `json:"target,omitempty"`
+	Minimum           *string `json:"minimum,omitempty"`
+	Maximum           *string `json:"maximum,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -301,7 +331,7 @@ func (o *Scaler) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Scaler) SetID(v *string) *Scaler {
+func (o *Scaler) SetId(v *string) *Scaler {
 	if o.ID = v; v == nil {
 		o.nullFields = append(o.nullFields, "ID")
 	}
@@ -391,7 +421,7 @@ func (o *Cloning) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Cloning) SetOriginClusterID(v *string) *Cloning {
+func (o *Cloning) SetOriginClusterId(v *string) *Cloning {
 	if o.OriginClusterID = v; v == nil {
 		o.nullFields = append(o.nullFields, "OriginClusterID")
 	}
@@ -408,7 +438,7 @@ func (o *Wrapping) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Wrapping) SetSourceClusterID(v *string) *Wrapping {
+func (o *Wrapping) SetSourceClusterId(v *string) *Wrapping {
 	if o.SourceClusterID = v; v == nil {
 		o.nullFields = append(o.nullFields, "SourceClusterID")
 	}
@@ -470,7 +500,7 @@ func (o *AvailabilityZone) SetName(v *string) *AvailabilityZone {
 	return o
 }
 
-func (o *AvailabilityZone) SetSubnetID(v *string) *AvailabilityZone {
+func (o *AvailabilityZone) SetSubnetId(v *string) *AvailabilityZone {
 	if o.SubnetID = v; v == nil {
 		o.nullFields = append(o.nullFields, "SubnetID")
 	}
@@ -696,6 +726,8 @@ func (o *Scaling) MarshalJSON() ([]byte, error) {
 func (o *Scaling) SetUp(v []*ScalingPolicy) *Scaling {
 	if o.Up = v; v == nil {
 		o.nullFields = append(o.nullFields, "Up")
+	} else if len(o.Down) == 0 {
+		o.forceSendFields = append(o.forceSendFields, "Up")
 	}
 	return o
 }
@@ -703,6 +735,8 @@ func (o *Scaling) SetUp(v []*ScalingPolicy) *Scaling {
 func (o *Scaling) SetDown(v []*ScalingPolicy) *Scaling {
 	if o.Down = v; v == nil {
 		o.nullFields = append(o.nullFields, "Down")
+	} else if len(o.Down) == 0 {
+		o.forceSendFields = append(o.forceSendFields, "Down")
 	}
 	return o
 }
@@ -818,42 +852,42 @@ func (o *Action) SetType(v *string) *Action {
 	return o
 }
 
-func (o *Action) SetAdjustment(v *int) *Action {
+func (o *Action) SetAdjustment(v *string) *Action {
 	if o.Adjustment = v; v == nil {
 		o.nullFields = append(o.nullFields, "Adjustment")
 	}
 	return o
 }
 
-func (o *Action) SetMinTargetCapacity(v *int) *Action {
+func (o *Action) SetMinTargetCapacity(v *string) *Action {
 	if o.MinTargetCapacity = v; v == nil {
 		o.nullFields = append(o.nullFields, "MinTargetCapacity")
 	}
 	return o
 }
 
-func (o *Action) SetMaxTargetCapacity(v *int) *Action {
+func (o *Action) SetMaxTargetCapacity(v *string) *Action {
 	if o.MaxTargetCapacity = v; v == nil {
 		o.nullFields = append(o.nullFields, "MaxTargetCapacity")
 	}
 	return o
 }
 
-func (o *Action) SetTarget(v *int) *Action {
+func (o *Action) SetTarget(v *string) *Action {
 	if o.Target = v; v == nil {
 		o.nullFields = append(o.nullFields, "Target")
 	}
 	return o
 }
 
-func (o *Action) SetMinimum(v *int) *Action {
+func (o *Action) SetMinimum(v *string) *Action {
 	if o.Minimum = v; v == nil {
 		o.nullFields = append(o.nullFields, "Minimum")
 	}
 	return o
 }
 
-func (o *Action) SetMaximum(v *int) *Action {
+func (o *Action) SetMaximum(v *string) *Action {
 	if o.Maximum = v; v == nil {
 		o.nullFields = append(o.nullFields, "Maximum")
 	}
