@@ -265,25 +265,6 @@ func resourceSpotinstAWSMrScaler() *schema.Resource {
 				},
 			},
 
-			"availability_zone": {
-				Type:          schema.TypeSet,
-				Optional:      true,
-				ConflictsWith: []string{"availability_zones"},
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-
-						"subnet_id": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
-				},
-			},
-
 			"availability_zones": {
 				Type:     schema.TypeList,
 				Optional: true,
