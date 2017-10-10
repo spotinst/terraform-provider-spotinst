@@ -123,6 +123,7 @@ The following arguments are supported:
 * `task_maximum` - (Optional) maximal amount of instances in task group.
 * `task_minimum` - (Optional) The minimal amount of instances in task group.
 * `task_lifecycle` - (Required) The MrScaler lifecycle for instances in task group. Allowed values are 'SPOT' and 'ON_DEMAND'.
+* `task_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
 * `task_ebs_block_device` - (Required) This determines the ebs configuration for your task group instances. Only a single block is allowed.
     * `volumes_per_instance` - (Optional; Default 1) Amount of volumes per instance in the task group.
     * `volume_type` - (Required) volume type. Allowed values are 'gp2', 'io1' and others.
@@ -136,6 +137,7 @@ The following arguments are supported:
 * `core_maximum` - (Optional) maximal amount of instances in core group.
 * `core_minimum` - (Optional) The minimal amount of instances in core group.
 * `core_lifecycle` - (Required) The MrScaler lifecycle for instances in core group. Allowed values are 'SPOT' and 'ON_DEMAND'.
+* `core_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
 * `core_ebs_block_device` - (Required) This determines the ebs configuration for your core group instances. Only a single block is allowed.
     * `volumes_per_instance` - (Optional; Default 1) Amount of volumes per instance in the core group.
     * `volume_type` - (Required) volume type. Allowed values are 'gp2', 'io1' and others.
@@ -147,6 +149,7 @@ The following arguments are supported:
 * `master_instance_types` - (Required) The MrScaler instance types for the master nodes.
 * `master_target` - (Required) amount of instances in master group.
 * `master_lifecycle` - (Required) The MrScaler lifecycle for instances in master group. Allowed values are 'SPOT' and 'ON_DEMAND'.
+* `master_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
 * `master_ebs_block_device` - (Required) This determines the ebs configuration for your master group instances. Only a single block is allowed.
     * `volumes_per_instance` - (Optional; Default 1) Amount of volumes per instance in the master group.
     * `volume_type` - (Required) volume type. Allowed values are 'gp2', 'io1' and others.
@@ -165,6 +168,15 @@ The following arguments are supported:
 
 * `availability_zones` - (Required in Clone) List of AZs and their subnet Ids. See example above for usage.
 
+<a id="configurations"></a>
+## Configurations (Clone strategy only)
+
+* `configurations_file` - (Optional in Clone) Setting for a configuration file in S3.
+    * `bucket` - (Required) Bucket name.
+    * `key` - (Required) Key.
+
+
+
 <a id="scaling-policy"></a>
 ## Scaling Policies
 
@@ -178,18 +190,24 @@ Possible core group scaling policies (Clone strategy only):
 
 Each `*_scaling_*_policy` supports the following:
 
-* `namespace` - (Required) The namespace for the alarm's associated metric.
+* `policy_name` - (Required) The name of the policy.
 * `metric_name` - (Required) The name of the metric, with or without spaces.
+* `statistic` - (Required) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
+* `unit` - (Required) The unit for the metric.
 * `threshold` - (Required) The value against which the specified statistic is compared.
-* `policy_name` - (Optional) The name of the policy.
-* `statistic` - (Optional) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
-* `unit` - (Optional) The unit for the alarm's associated metric.
-* `adjustment` - (Required) The number of instances to add/remove to/from the target capacity when scale is needed.
-* `action_type` - (Required) The number of instances to add/remove to/from the target capacity when scale is needed.
-* `period` - (Optional) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
-* `evaluation_periods` - (Optional) The number of periods over which data is compared to the specified threshold.
-* `cooldown` - (Optional) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
+* `adjustment` - (Optional) The number of instances to add/remove to/from the target capacity when scale is needed.
+* `min_target_capacity` - (Optional) Min target capacity for scale up.
+* `max_target_capacity` - (Optional) Max target capacity for scale down.
+* `namespace` - (Required) The namespace for the metric.
+* `operator` - (Required) The operator to use. Allowed values are : 'gt', 'gte', 'lt' , 'lte'.
+* `evaluation_periods` - (Required) The number of periods over which data is compared to the specified threshold.
+* `period` - (Required) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
+* `cooldown` - (Required) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start.
 * `dimensions` - (Optional) A mapping of dimensions describing qualities of the metric.
+* `minimum` - (Optional) The minimum to set when scale is needed.
+* `maximum` - (Optional) The maximum to set when scale is needed.
+* `target` - (Optional) The number of instances to set when scale is needed.
+* `action_type` - (Required) The type of action to perform. Allowed values are : 'adjustment', 'setMinTarget', 'setMaxTarget', 'updateCapacity', 'percentageAdjustment'
 
 
 ## Attributes Reference

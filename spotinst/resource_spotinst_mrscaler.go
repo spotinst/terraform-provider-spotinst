@@ -953,7 +953,7 @@ func flattenAWSMrScalerScalingPolicies(policies []*mrscaler.ScalingPolicy) []int
 		if p.Action != nil && p.Action.Type != nil {
 			m["action_type"] = spotinst.StringValue(p.Action.Type)
 			m["adjustment"] = spotinst.StringValue(p.Action.Adjustment)
-			m["min_target_capacity"] = spotinst.StringValue(p.Action.MaxTargetCapacity)
+			m["min_target_capacity"] = spotinst.StringValue(p.Action.MinTargetCapacity)
 			m["max_target_capacity"] = spotinst.StringValue(p.Action.MaxTargetCapacity)
 			m["minimum"] = spotinst.StringValue(p.Action.Minimum)
 			m["maximum"] = spotinst.StringValue(p.Action.Maximum)
