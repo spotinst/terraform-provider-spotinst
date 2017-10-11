@@ -346,7 +346,15 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 						},
 					},
 				},
-				Set: hashAWSGroupLoadBalancer,
+				Set:           hashAWSGroupLoadBalancer,
+				ConflictsWith: []string{"load_balancers"},
+			},
+
+			"load_balancers": &schema.Schema{
+				Type:          schema.TypeList,
+				Optional:      true,
+				Elem:          &schema.Schema{Type: schema.TypeString},
+				ConflictsWith: []string{"load_balancer"},
 			},
 
 			"launch_specification": &schema.Schema{
@@ -356,9 +364,10 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"load_balancer_names": &schema.Schema{
-							Type:     schema.TypeList,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
+							Type:       schema.TypeList,
+							Optional:   true,
+							Elem:       &schema.Schema{Type: schema.TypeString},
+							Deprecated: "Attribute `load_balancer_names` is deprecated. Use `load_balancer` instead.",
 						},
 
 						"monitoring": &schema.Schema{
@@ -998,7 +1007,7 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 		if g.Compute.LaunchSpecification != nil {
 			// Check if image ID is set in launch spec
 			imageIDSetInLaunchSpec := true
-			if v, ok := d.GetOk("image_id"); ok && v != "" {
+			if v, ok := d.GetOk("image_id"); ok && v != nil {
 				imageIDSetInLaunchSpec = false
 			}
 			if err := d.Set("launch_specification", flattenAWSGroupLaunchSpecification(g.Compute.LaunchSpecification, imageIDSetInLaunchSpec)); err != nil {
@@ -1008,15 +1017,17 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 
 		// Set image ID.
 		if g.Compute.LaunchSpecification.ImageID != nil {
-			if d.Get("image_id") != nil && d.Get("image_id") != "" {
+			if v, ok := d.GetOk("image_id"); ok && v != nil {
 				d.Set("image_id", g.Compute.LaunchSpecification.ImageID)
 			}
 		}
 
 		// Set load balancers.
 		if g.Compute.LaunchSpecification.LoadBalancersConfig != nil {
-			if err := d.Set("load_balancer", flattenAWSGroupLoadBalancers(g.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers)); err != nil {
-				return fmt.Errorf("failed to set load balancers configuration: %#v", err)
+			if v, ok := d.GetOk("load_balancer"); ok && v != nil {
+				if err := d.Set("load_balancer", flattenAWSGroupLoadBalancers(g.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers)); err != nil {
+					return fmt.Errorf("failed to set load balancers configuration: %#v", err)
+				}
 			}
 		} else {
 			d.Set("load_balancer", []*aws.LoadBalancer{})
@@ -1217,7 +1228,38 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 			}
 			group.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(nil)
 			update = true
+		}
+	}
 
+	if d.HasChange("load_balancers") {
+		if v, ok := d.GetOk("load_balancers"); ok {
+			if lbs, err := expandAWSGroupLoadBalancers(v, nullify); err != nil {
+				return err
+			} else {
+				if group.Compute == nil {
+					group.SetCompute(&aws.Compute{})
+				}
+				if group.Compute.LaunchSpecification == nil {
+					group.Compute.SetLaunchSpecification(&aws.LaunchSpecification{})
+				}
+				if group.Compute.LaunchSpecification.LoadBalancersConfig == nil {
+					group.Compute.LaunchSpecification.SetLoadBalancersConfig(&aws.LoadBalancersConfig{})
+					group.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(lbs)
+					update = true
+				}
+			}
+		} else {
+			if group.Compute == nil {
+				group.SetCompute(&aws.Compute{})
+			}
+			if group.Compute.LaunchSpecification == nil {
+				group.Compute.SetLaunchSpecification(&aws.LaunchSpecification{})
+			}
+			if group.Compute.LaunchSpecification.LoadBalancersConfig == nil {
+				group.Compute.LaunchSpecification.SetLoadBalancersConfig(&aws.LoadBalancersConfig{})
+			}
+			group.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(nil)
+			update = true
 		}
 	}
 
@@ -2030,7 +2072,7 @@ func flattenAWSGroupCodeDeployIntegration(integration *aws.CodeDeployIntegration
 
 //region Build method
 
-/* buildAWSGroupOpts builds the Spotinst AWS Group options.*/
+// buildAWSGroupOpts builds the Spotinst AWS Group options.
 func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, error) {
 	group := &aws.Group{
 		Scaling:     &aws.Scaling{},
@@ -2156,6 +2198,17 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 
 	if v, ok := d.GetOk("load_balancer"); ok {
 		if lbs, err := expandAWSGroupLoadBalancer(v, nullify); err != nil {
+			return nil, err
+		} else {
+			if group.Compute.LaunchSpecification.LoadBalancersConfig == nil {
+				group.Compute.LaunchSpecification.LoadBalancersConfig = &aws.LoadBalancersConfig{}
+			}
+			group.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(lbs)
+		}
+	}
+
+	if v, ok := d.GetOk("load_balancers"); ok {
+		if lbs, err := expandAWSGroupLoadBalancers(v, nullify); err != nil {
 			return nil, err
 		} else {
 			if group.Compute.LaunchSpecification.LoadBalancersConfig == nil {
@@ -2935,6 +2988,50 @@ func expandAWSGroupLoadBalancer(data interface{}, nullify bool) ([]*aws.LoadBala
 
 		if v, ok := m["auto_weight"].(bool); ok {
 			lb.SetAutoWeight(spotinst.Bool(v))
+		}
+
+		log.Printf("[DEBUG] Group load balancer configuration: %s", stringutil.Stringify(lb))
+		lbs = append(lbs, lb)
+	}
+
+	return lbs, nil
+}
+
+// expandAWSGroupLoadBalancers expands the Load Balancer block.
+func expandAWSGroupLoadBalancers(data interface{}, nullify bool) ([]*aws.LoadBalancer, error) {
+	list := data.([]interface{})
+	lbs := make([]*aws.LoadBalancer, 0, len(list))
+	for _, item := range list {
+		m := item.(string)
+		lb := &aws.LoadBalancer{}
+
+		fields := strings.Split(m, ",")
+		for _, field := range fields {
+			kv := strings.Split(field, ":")
+			if len(kv) == 2 {
+				key := kv[0]
+				val := spotinst.String(kv[1])
+				switch key {
+				case "type":
+					lb.SetType(val)
+				case "name":
+					lb.SetName(val)
+				case "arn":
+					lb.SetArn(val)
+				case "balancer_id":
+					lb.SetBalancerId(val)
+				case "target_set_id":
+					lb.SetTargetSetId(val)
+				case "auto_weight":
+					if kv[1] == "true" {
+						lb.SetAutoWeight(spotinst.Bool(true))
+					}
+				case "zone_awareness":
+					if kv[1] == "true" {
+						lb.SetZoneAwareness(spotinst.Bool(true))
+					}
+				}
+			}
 		}
 
 		log.Printf("[DEBUG] Group load balancer configuration: %s", stringutil.Stringify(lb))
