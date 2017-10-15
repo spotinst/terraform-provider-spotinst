@@ -17,6 +17,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
 
@@ -929,200 +930,219 @@ func resourceSpotinstAWSGroupCreate(d *schema.ResourceData, meta interface{}) er
 	return resourceSpotinstAWSGroupRead(d, meta)
 }
 
+// ErrCodeGroupNotFound for service response error code
+// "GROUP_DOESNT_EXIST".
+const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
+
 func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client)
 	input := &aws.ReadGroupInput{GroupID: spotinst.String(d.Id())}
-	resp, err := client.elastigroup.CloudProviderAWS().Read(context.Background(), input)
+	resp, err := meta.(*Client).elastigroup.CloudProviderAWS().Read(context.Background(), input)
 	if err != nil {
+		// If the group was not found, return nil so that we can show
+		// that the group is gone.
+		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+			for _, err := range errs {
+				if err.Code == ErrCodeGroupNotFound {
+					d.SetId("")
+					return nil
+				}
+			}
+		}
+
+		// Some other error, report it.
 		return fmt.Errorf("failed to read group: %s", err)
 	}
-	if g := resp.Group; g != nil {
-		d.Set("name", g.Name)
-		d.Set("description", g.Description)
-		d.Set("product", g.Compute.Product)
-		d.Set("elastic_ips", g.Compute.ElasticIPs)
 
-		// Set capacity.
-		if g.Capacity != nil {
-			if err := d.Set("capacity", flattenAWSGroupCapacity(g.Capacity)); err != nil {
-				return fmt.Errorf("failed to set capacity onfiguration: %#v", err)
-			}
-		}
-
-		if g.Strategy != nil {
-			if err := d.Set("strategy", flattenAWSGroupStrategy(g.Strategy)); err != nil {
-				return fmt.Errorf("failed to set strategy configuration: %#v", err)
-			}
-
-			// Set signals.
-			if g.Strategy.Signals != nil {
-				if err := d.Set("signal", flattenAWSGroupSignals(g.Strategy.Signals)); err != nil {
-					return fmt.Errorf("failed to set signals configuration: %#v", err)
-				}
-			} else {
-				d.Set("signal", []*aws.ScalingPolicy{})
-			}
-
-			if g.Strategy.Persistence != nil {
-				if err := d.Set("persistence", flattenAWSGroupPersistence(g.Strategy.Persistence)); err != nil {
-					return fmt.Errorf("failed to set persistence configuration: %#v", err)
-				}
-			}
-		}
-
-		if g.Scaling != nil {
-			// Set scaling up policies.
-			if g.Scaling.Up != nil {
-				if err := d.Set("scaling_up_policy", flattenAWSGroupScalingPolicies(g.Scaling.Up)); err != nil {
-					return fmt.Errorf("failed to set scaling up policies configuration: %#v", err)
-				}
-			} else {
-				d.Set("scaling_up_policy", []*aws.ScalingPolicy{})
-			}
-
-			// Set scaling down policies.
-			if g.Scaling.Down != nil {
-				if err := d.Set("scaling_down_policy", flattenAWSGroupScalingPolicies(g.Scaling.Down)); err != nil {
-					return fmt.Errorf("failed to set scaling down policies configuration: %#v", err)
-				}
-			} else {
-				d.Set("scaling_down_policy", []*aws.ScalingPolicy{})
-			}
-
-		}
-
-		if g.Scheduling != nil {
-			// Set scheduled tasks.
-			if g.Scheduling.Tasks != nil {
-				if err := d.Set("scheduled_task", flattenAWSGroupScheduledTasks(g.Scheduling.Tasks)); err != nil {
-					return fmt.Errorf("failed to set scheduled tasks configuration: %#v", err)
-				}
-			} else {
-				d.Set("scheduled_task", []*aws.Task{})
-			}
-
-		}
-
-		// Set launch specification.
-		if g.Compute.LaunchSpecification != nil {
-			// Check if image ID is set in launch spec
-			imageIDSetInLaunchSpec := true
-			if v, ok := d.GetOk("image_id"); ok && v != nil {
-				imageIDSetInLaunchSpec = false
-			}
-			if err := d.Set("launch_specification", flattenAWSGroupLaunchSpecification(g.Compute.LaunchSpecification, imageIDSetInLaunchSpec)); err != nil {
-				return fmt.Errorf("failed to set launch specification configuration: %#v", err)
-			}
-		}
-
-		// Set image ID.
-		if g.Compute.LaunchSpecification.ImageID != nil {
-			if v, ok := d.GetOk("image_id"); ok && v != nil {
-				d.Set("image_id", g.Compute.LaunchSpecification.ImageID)
-			}
-		}
-
-		// Set load balancers.
-		if g.Compute.LaunchSpecification.LoadBalancersConfig != nil {
-			if v, ok := d.GetOk("load_balancer"); ok && v != nil {
-				if err := d.Set("load_balancer", flattenAWSGroupLoadBalancers(g.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers)); err != nil {
-					return fmt.Errorf("failed to set load balancers configuration: %#v", err)
-				}
-			}
-		} else {
-			d.Set("load_balancer", []*aws.LoadBalancer{})
-		}
-
-		// Set EBS volume pool.
-		if g.Compute.EBSVolumePool != nil {
-			if err := d.Set("hot_ebs_volume", flattenAWSGroupEBSVolumePool(g.Compute.EBSVolumePool)); err != nil {
-				return fmt.Errorf("failed to set EBS volume pool configuration: %#v", err)
-			}
-		} else {
-			d.Set("hot_ebs_volume", []*aws.EBSVolume{})
-		}
-
-		// Set network interfaces.
-		if g.Compute.LaunchSpecification.NetworkInterfaces != nil {
-			if err := d.Set("network_interface", flattenAWSGroupNetworkInterfaces(g.Compute.LaunchSpecification.NetworkInterfaces)); err != nil {
-				return fmt.Errorf("failed to set network interfaces configuration: %#v", err)
-			}
-		} else {
-			d.Set("network_interface", []*aws.NetworkInterface{})
-		}
-
-		// Set block devices.
-		if g.Compute.LaunchSpecification.BlockDeviceMappings != nil {
-			if err := d.Set("ebs_block_device", flattenAWSGroupEBSBlockDevices(g.Compute.LaunchSpecification.BlockDeviceMappings)); err != nil {
-				return fmt.Errorf("failed to set EBS block devices configuration: %#v", err)
-			}
-			if err := d.Set("ephemeral_block_device", flattenAWSGroupEphemeralBlockDevices(g.Compute.LaunchSpecification.BlockDeviceMappings)); err != nil {
-				return fmt.Errorf("failed to set Ephemeral block devices configuration: %#v", err)
-			}
-		} else {
-			d.Set("ebs_block_device", []*aws.BlockDeviceMapping{})
-			d.Set("ephemeral_block_device", []*aws.BlockDeviceMapping{})
-		}
-
-		if g.Integration != nil {
-			// Set Rancher integration.
-			if g.Integration.Rancher != nil {
-				if err := d.Set("rancher_integration", flattenAWSGroupRancherIntegration(g.Integration.Rancher)); err != nil {
-					return fmt.Errorf("failed to set Rancher configuration: %#v", err)
-				}
-			} else {
-				d.Set("rancher_integration", []*aws.RancherIntegration{})
-			}
-
-			// Set Elastic Beanstalk integration.
-			if g.Integration.ElasticBeanstalk != nil {
-				if err := d.Set("elastic_beanstalk_integration", flattenAWSGroupElasticBeanstalkIntegration(g.Integration.ElasticBeanstalk)); err != nil {
-					return fmt.Errorf("failed to set Elastic Beanstalk configuration: %#v", err)
-				}
-			} else {
-				d.Set("elastic_beanstalk_integration", []*aws.ElasticBeanstalkIntegration{})
-			}
-
-			// Set Kubernetes integration.
-			if g.Integration.Kubernetes != nil {
-				if err := d.Set("kubernetes_integration", flattenAWSGroupKubernetesIntegration(g.Integration.Kubernetes)); err != nil {
-					return fmt.Errorf("failed to set Kubernetes configuration: %#v", err)
-				}
-			} else {
-				d.Set("kubernetes_integration", []*aws.KubernetesIntegration{})
-			}
-
-			// Set Mesosphere integration.
-			if g.Integration.Mesosphere != nil {
-				if err := d.Set("mesosphere_integration", flattenAWSGroupMesosphereIntegration(g.Integration.Mesosphere)); err != nil {
-					return fmt.Errorf("failed to set Mesosphere configuration: %#v", err)
-				}
-			} else {
-				d.Set("mesosphere_integration", []*aws.MesosphereIntegration{})
-			}
-
-			// Set Multai integration.
-			if g.Integration.Multai != nil {
-				if err := d.Set("multai_integration", flattenAWSGroupMultaiIntegration(g.Integration.Multai)); err != nil {
-					return fmt.Errorf("failed to set Multai configuration: %#v", err)
-				}
-			} else {
-				d.Set("multai_integration", []*aws.MultaiIntegration{})
-			}
-
-			// Set CodeDeploy integration.
-			if g.Integration.CodeDeploy != nil {
-				if err := d.Set("codedeploy_integration", flattenAWSGroupCodeDeployIntegration(g.Integration.CodeDeploy)); err != nil {
-					return fmt.Errorf("failed to set CodeDeploy configuration: %#v", err)
-				}
-			} else {
-				d.Set("codedeploy_integration", []*aws.CodeDeployIntegration{})
-			}
-		}
-
-	} else {
+	// If nothing was found, then return no state.
+	if resp.Group == nil {
 		d.SetId("")
+		return nil
 	}
+
+	g := resp.Group
+	d.Set("name", g.Name)
+	d.Set("description", g.Description)
+	d.Set("product", g.Compute.Product)
+	d.Set("elastic_ips", g.Compute.ElasticIPs)
+
+	// Set capacity.
+	if g.Capacity != nil {
+		if err := d.Set("capacity", flattenAWSGroupCapacity(g.Capacity)); err != nil {
+			return fmt.Errorf("failed to set capacity onfiguration: %#v", err)
+		}
+	}
+
+	if g.Strategy != nil {
+		if err := d.Set("strategy", flattenAWSGroupStrategy(g.Strategy)); err != nil {
+			return fmt.Errorf("failed to set strategy configuration: %#v", err)
+		}
+
+		// Set signals.
+		if g.Strategy.Signals != nil {
+			if err := d.Set("signal", flattenAWSGroupSignals(g.Strategy.Signals)); err != nil {
+				return fmt.Errorf("failed to set signals configuration: %#v", err)
+			}
+		} else {
+			d.Set("signal", []*aws.ScalingPolicy{})
+		}
+
+		if g.Strategy.Persistence != nil {
+			if err := d.Set("persistence", flattenAWSGroupPersistence(g.Strategy.Persistence)); err != nil {
+				return fmt.Errorf("failed to set persistence configuration: %#v", err)
+			}
+		}
+	}
+
+	if g.Scaling != nil {
+		// Set scaling up policies.
+		if g.Scaling.Up != nil {
+			if err := d.Set("scaling_up_policy", flattenAWSGroupScalingPolicies(g.Scaling.Up)); err != nil {
+				return fmt.Errorf("failed to set scaling up policies configuration: %#v", err)
+			}
+		} else {
+			d.Set("scaling_up_policy", []*aws.ScalingPolicy{})
+		}
+
+		// Set scaling down policies.
+		if g.Scaling.Down != nil {
+			if err := d.Set("scaling_down_policy", flattenAWSGroupScalingPolicies(g.Scaling.Down)); err != nil {
+				return fmt.Errorf("failed to set scaling down policies configuration: %#v", err)
+			}
+		} else {
+			d.Set("scaling_down_policy", []*aws.ScalingPolicy{})
+		}
+
+	}
+
+	if g.Scheduling != nil {
+		// Set scheduled tasks.
+		if g.Scheduling.Tasks != nil {
+			if err := d.Set("scheduled_task", flattenAWSGroupScheduledTasks(g.Scheduling.Tasks)); err != nil {
+				return fmt.Errorf("failed to set scheduled tasks configuration: %#v", err)
+			}
+		} else {
+			d.Set("scheduled_task", []*aws.Task{})
+		}
+
+	}
+
+	// Set launch specification.
+	if g.Compute.LaunchSpecification != nil {
+		// Check if image ID is set in launch spec
+		imageIDSetInLaunchSpec := true
+		if v, ok := d.GetOk("image_id"); ok && v != nil {
+			imageIDSetInLaunchSpec = false
+		}
+		if err := d.Set("launch_specification", flattenAWSGroupLaunchSpecification(g.Compute.LaunchSpecification, imageIDSetInLaunchSpec)); err != nil {
+			return fmt.Errorf("failed to set launch specification configuration: %#v", err)
+		}
+	}
+
+	// Set image ID.
+	if g.Compute.LaunchSpecification.ImageID != nil {
+		if v, ok := d.GetOk("image_id"); ok && v != nil {
+			d.Set("image_id", g.Compute.LaunchSpecification.ImageID)
+		}
+	}
+
+	// Set load balancers.
+	if g.Compute.LaunchSpecification.LoadBalancersConfig != nil {
+		if v, ok := d.GetOk("load_balancer"); ok && v != nil {
+			if err := d.Set("load_balancer", flattenAWSGroupLoadBalancers(g.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers)); err != nil {
+				return fmt.Errorf("failed to set load balancers configuration: %#v", err)
+			}
+		}
+	} else {
+		d.Set("load_balancer", []*aws.LoadBalancer{})
+	}
+
+	// Set EBS volume pool.
+	if g.Compute.EBSVolumePool != nil {
+		if err := d.Set("hot_ebs_volume", flattenAWSGroupEBSVolumePool(g.Compute.EBSVolumePool)); err != nil {
+			return fmt.Errorf("failed to set EBS volume pool configuration: %#v", err)
+		}
+	} else {
+		d.Set("hot_ebs_volume", []*aws.EBSVolume{})
+	}
+
+	// Set network interfaces.
+	if g.Compute.LaunchSpecification.NetworkInterfaces != nil {
+		if err := d.Set("network_interface", flattenAWSGroupNetworkInterfaces(g.Compute.LaunchSpecification.NetworkInterfaces)); err != nil {
+			return fmt.Errorf("failed to set network interfaces configuration: %#v", err)
+		}
+	} else {
+		d.Set("network_interface", []*aws.NetworkInterface{})
+	}
+
+	// Set block devices.
+	if g.Compute.LaunchSpecification.BlockDeviceMappings != nil {
+		if err := d.Set("ebs_block_device", flattenAWSGroupEBSBlockDevices(g.Compute.LaunchSpecification.BlockDeviceMappings)); err != nil {
+			return fmt.Errorf("failed to set EBS block devices configuration: %#v", err)
+		}
+		if err := d.Set("ephemeral_block_device", flattenAWSGroupEphemeralBlockDevices(g.Compute.LaunchSpecification.BlockDeviceMappings)); err != nil {
+			return fmt.Errorf("failed to set Ephemeral block devices configuration: %#v", err)
+		}
+	} else {
+		d.Set("ebs_block_device", []*aws.BlockDeviceMapping{})
+		d.Set("ephemeral_block_device", []*aws.BlockDeviceMapping{})
+	}
+
+	if g.Integration != nil {
+		// Set Rancher integration.
+		if g.Integration.Rancher != nil {
+			if err := d.Set("rancher_integration", flattenAWSGroupRancherIntegration(g.Integration.Rancher)); err != nil {
+				return fmt.Errorf("failed to set Rancher configuration: %#v", err)
+			}
+		} else {
+			d.Set("rancher_integration", []*aws.RancherIntegration{})
+		}
+
+		// Set Elastic Beanstalk integration.
+		if g.Integration.ElasticBeanstalk != nil {
+			if err := d.Set("elastic_beanstalk_integration", flattenAWSGroupElasticBeanstalkIntegration(g.Integration.ElasticBeanstalk)); err != nil {
+				return fmt.Errorf("failed to set Elastic Beanstalk configuration: %#v", err)
+			}
+		} else {
+			d.Set("elastic_beanstalk_integration", []*aws.ElasticBeanstalkIntegration{})
+		}
+
+		// Set Kubernetes integration.
+		if g.Integration.Kubernetes != nil {
+			if err := d.Set("kubernetes_integration", flattenAWSGroupKubernetesIntegration(g.Integration.Kubernetes)); err != nil {
+				return fmt.Errorf("failed to set Kubernetes configuration: %#v", err)
+			}
+		} else {
+			d.Set("kubernetes_integration", []*aws.KubernetesIntegration{})
+		}
+
+		// Set Mesosphere integration.
+		if g.Integration.Mesosphere != nil {
+			if err := d.Set("mesosphere_integration", flattenAWSGroupMesosphereIntegration(g.Integration.Mesosphere)); err != nil {
+				return fmt.Errorf("failed to set Mesosphere configuration: %#v", err)
+			}
+		} else {
+			d.Set("mesosphere_integration", []*aws.MesosphereIntegration{})
+		}
+
+		// Set Multai integration.
+		if g.Integration.Multai != nil {
+			if err := d.Set("multai_integration", flattenAWSGroupMultaiIntegration(g.Integration.Multai)); err != nil {
+				return fmt.Errorf("failed to set Multai configuration: %#v", err)
+			}
+		} else {
+			d.Set("multai_integration", []*aws.MultaiIntegration{})
+		}
+
+		// Set CodeDeploy integration.
+		if g.Integration.CodeDeploy != nil {
+			if err := d.Set("codedeploy_integration", flattenAWSGroupCodeDeployIntegration(g.Integration.CodeDeploy)); err != nil {
+				return fmt.Errorf("failed to set CodeDeploy configuration: %#v", err)
+			}
+		} else {
+			d.Set("codedeploy_integration", []*aws.CodeDeployIntegration{})
+		}
+	}
+
 	return nil
 }
 

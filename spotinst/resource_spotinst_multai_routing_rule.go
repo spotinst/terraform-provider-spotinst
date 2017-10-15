@@ -95,18 +95,23 @@ func resourceSpotinstMultaiRoutingRuleRead(d *schema.ResourceData, meta interfac
 	if err != nil {
 		return fmt.Errorf("failed to read routing rule: %s", err)
 	}
-	if rr := resp.RoutingRule; rr != nil {
-		d.Set("balancer_id", rr.BalancerID)
-		d.Set("listener_id", rr.ListenerID)
-		d.Set("route", rr.Route)
-		d.Set("priority", rr.Priority)
-		d.Set("strategy", rr.Strategy)
-		d.Set("middleware_ids", rr.MiddlewareIDs)
-		d.Set("target_set_ids", rr.TargetSetIDs)
-		d.Set("tags", flattenTags(rr.Tags))
-	} else {
+
+	// If nothing was found, then return no state.
+	if resp.RoutingRule == nil {
 		d.SetId("")
+		return nil
 	}
+
+	rr := resp.RoutingRule
+	d.Set("balancer_id", rr.BalancerID)
+	d.Set("listener_id", rr.ListenerID)
+	d.Set("route", rr.Route)
+	d.Set("priority", rr.Priority)
+	d.Set("strategy", rr.Strategy)
+	d.Set("middleware_ids", rr.MiddlewareIDs)
+	d.Set("target_set_ids", rr.TargetSetIDs)
+	d.Set("tags", flattenTags(rr.Tags))
+
 	return nil
 }
 

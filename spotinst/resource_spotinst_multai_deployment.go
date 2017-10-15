@@ -61,12 +61,17 @@ func resourceSpotinstMultaiDeploymentRead(d *schema.ResourceData, meta interface
 	if err != nil {
 		return fmt.Errorf("failed to read deployment: %s", err)
 	}
-	if b := resp.Deployment; b != nil {
-		d.Set("name", b.Name)
-		d.Set("tags", flattenTags(b.Tags))
-	} else {
+
+	// If nothing was found, then return no state.
+	if resp.Deployment == nil {
 		d.SetId("")
+		return nil
 	}
+
+	b := resp.Deployment
+	d.Set("name", b.Name)
+	d.Set("tags", flattenTags(b.Tags))
+
 	return nil
 }
 

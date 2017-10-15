@@ -143,18 +143,23 @@ func resourceSpotinstMultaiTargetSetRead(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return fmt.Errorf("failed to read target set: %s", err)
 	}
-	if s := resp.TargetSet; s != nil {
-		d.Set("balancer_id", s.BalancerID)
-		d.Set("deployment_id", s.DeploymentID)
-		d.Set("name", s.Name)
-		d.Set("protocol", s.Protocol)
-		d.Set("port", s.Port)
-		d.Set("weight", s.Weight)
-		d.Set("health_check", flattenBalancerTargetSetHealthCheck(s.HealthCheck))
-		d.Set("tags", flattenTags(s.Tags))
-	} else {
+
+	// If nothing was found, then return no state.
+	if resp.TargetSet == nil {
 		d.SetId("")
+		return nil
 	}
+
+	s := resp.TargetSet
+	d.Set("balancer_id", s.BalancerID)
+	d.Set("deployment_id", s.DeploymentID)
+	d.Set("name", s.Name)
+	d.Set("protocol", s.Protocol)
+	d.Set("port", s.Port)
+	d.Set("weight", s.Weight)
+	d.Set("health_check", flattenBalancerTargetSetHealthCheck(s.HealthCheck))
+	d.Set("tags", flattenTags(s.Tags))
+
 	return nil
 }
 

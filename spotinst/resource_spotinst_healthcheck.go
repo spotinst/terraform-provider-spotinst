@@ -139,42 +139,47 @@ func resourceSpotinstHealthCheckRead(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return fmt.Errorf("failed to read health check: %s", err)
 	}
-	if hc := resp.HealthCheck; hc != nil {
-		d.Set("name", hc.Name)
-		d.Set("resource_id", hc.ResourceID)
 
-		// Set the check.
-		check := make([]map[string]interface{}, 0, 1)
-		check = append(check, map[string]interface{}{
-			"protocol":  hc.Check.Protocol,
-			"endpoint":  hc.Check.Endpoint,
-			"port":      hc.Check.Port,
-			"interval":  hc.Check.Interval,
-			"timeout":   hc.Check.Timeout,
-			"healthy":   hc.Check.Healthy,
-			"unhealthy": hc.Check.Unhealthy,
-		})
-		d.Set("check", check)
-
-		// TODO: This can be removed later; for backward compatibility only.
-		// Set the threshold.
-		threshold := make([]map[string]interface{}, 0, 1)
-		threshold = append(threshold, map[string]interface{}{
-			"healthy":   hc.Check.Healthy,
-			"unhealthy": hc.Check.Unhealthy,
-		})
-		d.Set("threshold", threshold)
-
-		// Set the proxy.
-		proxy := make([]map[string]interface{}, 0, 1)
-		proxy = append(proxy, map[string]interface{}{
-			"addr": hc.ProxyAddr,
-			"port": hc.ProxyPort,
-		})
-		d.Set("proxy", proxy)
-	} else {
+	// If nothing was found, then return no state.
+	if resp.HealthCheck == nil {
 		d.SetId("")
+		return nil
 	}
+
+	hc := resp.HealthCheck
+	d.Set("name", hc.Name)
+	d.Set("resource_id", hc.ResourceID)
+
+	// Set the check.
+	check := make([]map[string]interface{}, 0, 1)
+	check = append(check, map[string]interface{}{
+		"protocol":  hc.Check.Protocol,
+		"endpoint":  hc.Check.Endpoint,
+		"port":      hc.Check.Port,
+		"interval":  hc.Check.Interval,
+		"timeout":   hc.Check.Timeout,
+		"healthy":   hc.Check.Healthy,
+		"unhealthy": hc.Check.Unhealthy,
+	})
+	d.Set("check", check)
+
+	// TODO: This can be removed later; for backward compatibility only.
+	// Set the threshold.
+	threshold := make([]map[string]interface{}, 0, 1)
+	threshold = append(threshold, map[string]interface{}{
+		"healthy":   hc.Check.Healthy,
+		"unhealthy": hc.Check.Unhealthy,
+	})
+	d.Set("threshold", threshold)
+
+	// Set the proxy.
+	proxy := make([]map[string]interface{}, 0, 1)
+	proxy = append(proxy, map[string]interface{}{
+		"addr": hc.ProxyAddr,
+		"port": hc.ProxyPort,
+	})
+	d.Set("proxy", proxy)
+
 	return nil
 }
 

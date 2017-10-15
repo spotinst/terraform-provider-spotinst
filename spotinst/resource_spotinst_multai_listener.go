@@ -128,17 +128,22 @@ func resourceSpotinstMultaiListenerRead(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return fmt.Errorf("failed to read listener: %s", err)
 	}
-	if ln := resp.Listener; ln != nil {
-		d.Set("balancer_id", ln.BalancerID)
-		d.Set("protocol", ln.Protocol)
-		d.Set("port", ln.Port)
-		d.Set("tags", flattenTags(ln.Tags))
-		if ln.TLSConfig != nil {
-			d.Set("tls_config", flattenBalancerListenerTLSConfig(ln.TLSConfig))
-		}
-	} else {
+
+	// If nothing was found, then return no state.
+	if resp.Listener == nil {
 		d.SetId("")
+		return nil
 	}
+
+	ln := resp.Listener
+	d.Set("balancer_id", ln.BalancerID)
+	d.Set("protocol", ln.Protocol)
+	d.Set("port", ln.Port)
+	d.Set("tags", flattenTags(ln.Tags))
+	if ln.TLSConfig != nil {
+		d.Set("tls_config", flattenBalancerListenerTLSConfig(ln.TLSConfig))
+	}
+
 	return nil
 }
 

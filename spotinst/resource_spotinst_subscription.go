@@ -76,15 +76,20 @@ func resourceSpotinstSubscriptionRead(d *schema.ResourceData, meta interface{}) 
 	if err != nil {
 		return fmt.Errorf("failed to read subscription: %s", err)
 	}
-	if s := resp.Subscription; s != nil {
-		d.Set("resource_id", s.ResourceID)
-		d.Set("event_type", s.EventType)
-		d.Set("protocol", s.Protocol)
-		d.Set("endpoint", s.Endpoint)
-		d.Set("format", s.Format)
-	} else {
+
+	// If nothing was found, then return no state.
+	if resp.Subscription == nil {
 		d.SetId("")
+		return nil
 	}
+
+	s := resp.Subscription
+	d.Set("resource_id", s.ResourceID)
+	d.Set("event_type", s.EventType)
+	d.Set("protocol", s.Protocol)
+	d.Set("endpoint", s.Endpoint)
+	d.Set("format", s.Format)
+
 	return nil
 }
 

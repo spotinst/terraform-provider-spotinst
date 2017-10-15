@@ -86,14 +86,19 @@ func resourceSpotinstMultaiBalancerRead(d *schema.ResourceData, meta interface{}
 	if err != nil {
 		return fmt.Errorf("failed to read balabcer: %s", err)
 	}
-	if b := resp.Balancer; b != nil {
-		d.Set("name", b.Name)
-		d.Set("dns_cname_aliases", b.DNSCNAMEAliases)
-		d.Set("tags", flattenTags(b.Tags))
-		d.Set("connection_timeouts", flattenBalancerTimeouts(b.Timeouts))
-	} else {
+
+	// If nothing was found, then return no state.
+	if resp.Balancer == nil {
 		d.SetId("")
+		return nil
 	}
+
+	b := resp.Balancer
+	d.Set("name", b.Name)
+	d.Set("dns_cname_aliases", b.DNSCNAMEAliases)
+	d.Set("tags", flattenTags(b.Tags))
+	d.Set("connection_timeouts", flattenBalancerTimeouts(b.Timeouts))
+
 	return nil
 }
 

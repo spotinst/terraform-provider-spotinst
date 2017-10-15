@@ -414,333 +414,337 @@ func resourceSpotinstAWSMrScalerCreate(d *schema.ResourceData, meta interface{})
 	return resourceSpotinstAWSMrScalerRead(d, meta)
 }
 
-func resourceSpotinstAWSMrScalerRead(in *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstAWSMrScalerRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Client)
-	input := &mrscaler.ReadScalerInput{ScalerID: spotinst.String(in.Id())}
+	input := &mrscaler.ReadScalerInput{ScalerID: spotinst.String(d.Id())}
 	resp, err := client.mrscaler.Read(context.Background(), input)
 	if err != nil {
 		return fmt.Errorf("failed to read mr scaler: %s", err)
 	}
-	if ext := resp.Scaler; ext != nil {
-		in.Set("name", ext.Name)
-		in.Set("description", ext.Description)
-		in.Set("region", ext.Region)
 
-		if ext.Strategy != nil {
-			if ext.Strategy.Wrapping != nil {
-				in.Set("clusterId", ext.Strategy.Wrapping.SourceClusterID)
-			} else {
-				in.Set("clusterId", ext.Strategy.Cloning.OriginClusterID)
-			}
-		}
-
-		if ext.Compute != nil {
-			if ext.Compute.InstanceGroups != nil {
-				// Set Master Instance Group
-				if ext.Compute.InstanceGroups.MasterGroup != nil {
-					// Set Lifecycle
-					if ext.Compute.InstanceGroups.MasterGroup.LifeCycle != nil {
-						if err := in.Set("master_lifecycle", ext.Compute.InstanceGroups.MasterGroup.LifeCycle); err != nil {
-							return fmt.Errorf("failed to set master lifecycle configuration: %#v", err)
-						}
-					}
-
-					// Set Target
-					if ext.Compute.InstanceGroups.MasterGroup.Target != nil {
-						if err := in.Set("master_target", ext.Compute.InstanceGroups.MasterGroup.Target); err != nil {
-							return fmt.Errorf("failed to set master target configuration: %#v", err)
-						}
-					}
-
-					// Set Instance Types
-					if ext.Compute.InstanceGroups.MasterGroup.InstanceTypes != nil {
-						if err := in.Set("master_instance_types", ext.Compute.InstanceGroups.MasterGroup.InstanceTypes); err != nil {
-							return fmt.Errorf("failed to set master instance types configuration: %#v", err)
-						}
-					}
-
-					// Set EBS Configuration
-					if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration != nil {
-						// Set EBS Optimized
-						if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.Optimized != nil {
-							if err := in.Set("master_ebs_optimized", ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.Optimized); err != nil {
-								return fmt.Errorf("failed to set master ebs optimized configuration: %#v", err)
-							}
-						}
-
-						// Set block devices.
-						if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.BlockDeviceConfigs != nil {
-							if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.BlockDeviceConfigs != nil {
-								if err := in.Set("master_ebs_block_device", flattenAWSMrScalerBlockDevices(ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.BlockDeviceConfigs)); err != nil {
-									return fmt.Errorf("failed to set master block devices configuration: %#v", err)
-								}
-							}
-						}
-					}
-				}
-
-				// Set Core Instance Group
-				if ext.Compute.InstanceGroups.CoreGroup != nil {
-					// Set Lifecycle
-					if ext.Compute.InstanceGroups.CoreGroup.LifeCycle != nil {
-						if err := in.Set("core_lifecycle", ext.Compute.InstanceGroups.CoreGroup.LifeCycle); err != nil {
-							return fmt.Errorf("failed to set core lifecycle configuration: %#v", err)
-						}
-					}
-
-					// Set Target
-					if ext.Compute.InstanceGroups.CoreGroup.Target != nil {
-						if err := in.Set("core_target", ext.Compute.InstanceGroups.CoreGroup.Target); err != nil {
-							return fmt.Errorf("failed to set core capacity target configuration: %#v", err)
-						}
-					}
-
-					// Set Capacity
-					if ext.Compute.InstanceGroups.CoreGroup.Capacity != nil {
-						// Set Target
-						if ext.Compute.InstanceGroups.CoreGroup.Capacity.Target != nil {
-							if err := in.Set("core_target", ext.Compute.InstanceGroups.CoreGroup.Capacity.Target); err != nil {
-								return fmt.Errorf("failed to set core target configuration: %#v", err)
-							}
-						}
-
-						// Set Minimum
-						if ext.Compute.InstanceGroups.CoreGroup.Capacity.Minimum != nil {
-							if err := in.Set("core_minimum", ext.Compute.InstanceGroups.CoreGroup.Capacity.Minimum); err != nil {
-								return fmt.Errorf("failed to set core minimum configuration: %#v", err)
-							}
-						}
-
-						// Set Maximum
-						if ext.Compute.InstanceGroups.CoreGroup.Capacity.Maximum != nil {
-							if err := in.Set("core_maximum", ext.Compute.InstanceGroups.CoreGroup.Capacity.Maximum); err != nil {
-								return fmt.Errorf("failed to set core maximum configuration: %#v", err)
-							}
-						}
-					}
-
-					// Set Instance Types
-					if ext.Compute.InstanceGroups.CoreGroup.InstanceTypes != nil {
-						if err := in.Set("core_instance_types", ext.Compute.InstanceGroups.CoreGroup.InstanceTypes); err != nil {
-							return fmt.Errorf("failed to set core instance types configuration: %#v", err)
-						}
-					}
-
-					// Set EBS Configuration
-					if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration != nil {
-						// Set EBS Optimized
-						if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.Optimized != nil {
-							if err := in.Set("core_ebs_optimized", ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.Optimized); err != nil {
-								return fmt.Errorf("failed to set core ebs optimized configuration: %#v", err)
-							}
-						}
-
-						// Set block devices.
-						if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.BlockDeviceConfigs != nil {
-							if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.BlockDeviceConfigs != nil {
-								if err := in.Set("core_ebs_block_device", flattenAWSMrScalerBlockDevices(ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.BlockDeviceConfigs)); err != nil {
-									return fmt.Errorf("failed to set core block devices configuration: %#v", err)
-								}
-							}
-						}
-					}
-				}
-
-				// Set Task Instance Group
-				if ext.Compute.InstanceGroups.TaskGroup != nil {
-					// Set Lifecycle
-					if ext.Compute.InstanceGroups.TaskGroup.LifeCycle != nil {
-						if err := in.Set("task_lifecycle", ext.Compute.InstanceGroups.TaskGroup.LifeCycle); err != nil {
-							return fmt.Errorf("failed to set task lifecycle configuration: %#v", err)
-						}
-					}
-
-					// Set Capacity
-					if ext.Compute.InstanceGroups.TaskGroup.Capacity != nil {
-						// Set Target
-						if ext.Compute.InstanceGroups.TaskGroup.Capacity.Target != nil {
-							if err := in.Set("task_target", ext.Compute.InstanceGroups.TaskGroup.Capacity.Target); err != nil {
-								return fmt.Errorf("failed to set task capacity target configuration: %#v", err)
-							}
-						}
-
-						// Set Minimum
-						if ext.Compute.InstanceGroups.TaskGroup.Capacity.Minimum != nil {
-							if err := in.Set("task_minimum", ext.Compute.InstanceGroups.TaskGroup.Capacity.Minimum); err != nil {
-								return fmt.Errorf("failed to set task minimum configuration: %#v", err)
-							}
-						}
-
-						// Set Maximum
-						if ext.Compute.InstanceGroups.TaskGroup.Capacity.Maximum != nil {
-							if err := in.Set("task_maximum", ext.Compute.InstanceGroups.TaskGroup.Capacity.Maximum); err != nil {
-								return fmt.Errorf("failed to set task maximum configuration: %#v", err)
-							}
-						}
-					}
-
-					// Set Instance Types
-					if ext.Compute.InstanceGroups.TaskGroup.InstanceTypes != nil {
-						if err := in.Set("task_instance_types", ext.Compute.InstanceGroups.TaskGroup.InstanceTypes); err != nil {
-							return fmt.Errorf("failed to set task instance types configuration: %#v", err)
-						}
-					}
-
-					// Set EBS Configuration
-					if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration != nil {
-						// Set EBS Optimized
-						if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.Optimized != nil {
-							if err := in.Set("task_ebs_optimized", ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.Optimized); err != nil {
-								return fmt.Errorf("failed to set task ebs optimized configuration: %#v", err)
-							}
-						}
-
-						// Set block devices.
-						if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.BlockDeviceConfigs != nil {
-							if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.BlockDeviceConfigs != nil {
-								if err := in.Set("task_ebs_block_device", flattenAWSMrScalerBlockDevices(ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.BlockDeviceConfigs)); err != nil {
-									return fmt.Errorf("failed to set task block devices configuration: %#v", err)
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// Set Configuration file
-			if ext.Compute.Configurations != nil {
-				if ext.Compute.Configurations.File != nil {
-					if err := in.Set("configurations_file", flattenAWSMrScalerConfigurationsFile(ext.Compute.Configurations.File)); err != nil {
-						return fmt.Errorf("failed to set configurations file configuration: %#v", err)
-					}
-				}
-			}
-
-			// Set Availability Zones
-			if ext.Compute.AvailabilityZones != nil {
-				// TODO - implement
-			}
-
-			// Set Tags
-			if ext.Compute.Tags != nil {
-				// TODO - implement
-			}
-		}
-
-		// Set Task Scaling
-		if ext.Scaling != nil {
-			// Set Down scaling policies
-			if ext.Scaling.Down != nil {
-				if err := in.Set("task_scaling_down_policy", flattenAWSMrScalerScalingPolicies(ext.Scaling.Down)); err != nil {
-					return fmt.Errorf("failed to set task down scaling policy configuration: %#v", err)
-				}
-			}
-
-			// Set Up scaling policies
-			if ext.Scaling.Up != nil {
-				if err := in.Set("task_scaling_up_policy", flattenAWSMrScalerScalingPolicies(ext.Scaling.Up)); err != nil {
-					return fmt.Errorf("failed to set task up scaling policy configuration: %#v", err)
-				}
-			}
-		}
-
-		// Set Core Scaling
-		if ext.CoreScaling != nil {
-			// Set Down scaling policies
-			if ext.CoreScaling.Down != nil {
-				if err := in.Set("core_scaling_down_policy", flattenAWSMrScalerScalingPolicies(ext.CoreScaling.Down)); err != nil {
-					return fmt.Errorf("failed to set core down scaling policy configuration: %#v", err)
-				}
-			}
-
-			// Set Up scaling policies
-			if ext.CoreScaling.Up != nil {
-				if err := in.Set("core_scaling_up_policy", flattenAWSMrScalerScalingPolicies(ext.CoreScaling.Up)); err != nil {
-					return fmt.Errorf("failed to set core up scaling policy configuration: %#v", err)
-				}
-			}
-		}
-
-	} else {
-		in.SetId("")
+	// If nothing was found, then return no state.
+	if resp.Scaler == nil {
+		d.SetId("")
+		return nil
 	}
+
+	ext := resp.Scaler
+	d.Set("name", ext.Name)
+	d.Set("description", ext.Description)
+	d.Set("region", ext.Region)
+
+	if ext.Strategy != nil {
+		if ext.Strategy.Wrapping != nil {
+			d.Set("clusterId", ext.Strategy.Wrapping.SourceClusterID)
+		} else {
+			d.Set("clusterId", ext.Strategy.Cloning.OriginClusterID)
+		}
+	}
+
+	if ext.Compute != nil {
+		if ext.Compute.InstanceGroups != nil {
+			// Set Master Instance Group
+			if ext.Compute.InstanceGroups.MasterGroup != nil {
+				// Set Lifecycle
+				if ext.Compute.InstanceGroups.MasterGroup.LifeCycle != nil {
+					if err := d.Set("master_lifecycle", ext.Compute.InstanceGroups.MasterGroup.LifeCycle); err != nil {
+						return fmt.Errorf("failed to set master lifecycle configuration: %#v", err)
+					}
+				}
+
+				// Set Target
+				if ext.Compute.InstanceGroups.MasterGroup.Target != nil {
+					if err := d.Set("master_target", ext.Compute.InstanceGroups.MasterGroup.Target); err != nil {
+						return fmt.Errorf("failed to set master target configuration: %#v", err)
+					}
+				}
+
+				// Set Instance Types
+				if ext.Compute.InstanceGroups.MasterGroup.InstanceTypes != nil {
+					if err := d.Set("master_instance_types", ext.Compute.InstanceGroups.MasterGroup.InstanceTypes); err != nil {
+						return fmt.Errorf("failed to set master instance types configuration: %#v", err)
+					}
+				}
+
+				// Set EBS Configuration
+				if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration != nil {
+					// Set EBS Optimized
+					if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.Optimized != nil {
+						if err := d.Set("master_ebs_optimized", ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.Optimized); err != nil {
+							return fmt.Errorf("failed to set master ebs optimized configuration: %#v", err)
+						}
+					}
+
+					// Set block devices.
+					if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.BlockDeviceConfigs != nil {
+						if ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.BlockDeviceConfigs != nil {
+							if err := d.Set("master_ebs_block_device", flattenAWSMrScalerBlockDevices(ext.Compute.InstanceGroups.MasterGroup.EBSConfiguration.BlockDeviceConfigs)); err != nil {
+								return fmt.Errorf("failed to set master block devices configuration: %#v", err)
+							}
+						}
+					}
+				}
+			}
+
+			// Set Core Instance Group
+			if ext.Compute.InstanceGroups.CoreGroup != nil {
+				// Set Lifecycle
+				if ext.Compute.InstanceGroups.CoreGroup.LifeCycle != nil {
+					if err := d.Set("core_lifecycle", ext.Compute.InstanceGroups.CoreGroup.LifeCycle); err != nil {
+						return fmt.Errorf("failed to set core lifecycle configuration: %#v", err)
+					}
+				}
+
+				// Set Target
+				if ext.Compute.InstanceGroups.CoreGroup.Target != nil {
+					if err := d.Set("core_target", ext.Compute.InstanceGroups.CoreGroup.Target); err != nil {
+						return fmt.Errorf("failed to set core capacity target configuration: %#v", err)
+					}
+				}
+
+				// Set Capacity
+				if ext.Compute.InstanceGroups.CoreGroup.Capacity != nil {
+					// Set Target
+					if ext.Compute.InstanceGroups.CoreGroup.Capacity.Target != nil {
+						if err := d.Set("core_target", ext.Compute.InstanceGroups.CoreGroup.Capacity.Target); err != nil {
+							return fmt.Errorf("failed to set core target configuration: %#v", err)
+						}
+					}
+
+					// Set Minimum
+					if ext.Compute.InstanceGroups.CoreGroup.Capacity.Minimum != nil {
+						if err := d.Set("core_minimum", ext.Compute.InstanceGroups.CoreGroup.Capacity.Minimum); err != nil {
+							return fmt.Errorf("failed to set core minimum configuration: %#v", err)
+						}
+					}
+
+					// Set Maximum
+					if ext.Compute.InstanceGroups.CoreGroup.Capacity.Maximum != nil {
+						if err := d.Set("core_maximum", ext.Compute.InstanceGroups.CoreGroup.Capacity.Maximum); err != nil {
+							return fmt.Errorf("failed to set core maximum configuration: %#v", err)
+						}
+					}
+				}
+
+				// Set Instance Types
+				if ext.Compute.InstanceGroups.CoreGroup.InstanceTypes != nil {
+					if err := d.Set("core_instance_types", ext.Compute.InstanceGroups.CoreGroup.InstanceTypes); err != nil {
+						return fmt.Errorf("failed to set core instance types configuration: %#v", err)
+					}
+				}
+
+				// Set EBS Configuration
+				if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration != nil {
+					// Set EBS Optimized
+					if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.Optimized != nil {
+						if err := d.Set("core_ebs_optimized", ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.Optimized); err != nil {
+							return fmt.Errorf("failed to set core ebs optimized configuration: %#v", err)
+						}
+					}
+
+					// Set block devices.
+					if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.BlockDeviceConfigs != nil {
+						if ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.BlockDeviceConfigs != nil {
+							if err := d.Set("core_ebs_block_device", flattenAWSMrScalerBlockDevices(ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.BlockDeviceConfigs)); err != nil {
+								return fmt.Errorf("failed to set core block devices configuration: %#v", err)
+							}
+						}
+					}
+				}
+			}
+
+			// Set Task Instance Group
+			if ext.Compute.InstanceGroups.TaskGroup != nil {
+				// Set Lifecycle
+				if ext.Compute.InstanceGroups.TaskGroup.LifeCycle != nil {
+					if err := d.Set("task_lifecycle", ext.Compute.InstanceGroups.TaskGroup.LifeCycle); err != nil {
+						return fmt.Errorf("failed to set task lifecycle configuration: %#v", err)
+					}
+				}
+
+				// Set Capacity
+				if ext.Compute.InstanceGroups.TaskGroup.Capacity != nil {
+					// Set Target
+					if ext.Compute.InstanceGroups.TaskGroup.Capacity.Target != nil {
+						if err := d.Set("task_target", ext.Compute.InstanceGroups.TaskGroup.Capacity.Target); err != nil {
+							return fmt.Errorf("failed to set task capacity target configuration: %#v", err)
+						}
+					}
+
+					// Set Minimum
+					if ext.Compute.InstanceGroups.TaskGroup.Capacity.Minimum != nil {
+						if err := d.Set("task_minimum", ext.Compute.InstanceGroups.TaskGroup.Capacity.Minimum); err != nil {
+							return fmt.Errorf("failed to set task minimum configuration: %#v", err)
+						}
+					}
+
+					// Set Maximum
+					if ext.Compute.InstanceGroups.TaskGroup.Capacity.Maximum != nil {
+						if err := d.Set("task_maximum", ext.Compute.InstanceGroups.TaskGroup.Capacity.Maximum); err != nil {
+							return fmt.Errorf("failed to set task maximum configuration: %#v", err)
+						}
+					}
+				}
+
+				// Set Instance Types
+				if ext.Compute.InstanceGroups.TaskGroup.InstanceTypes != nil {
+					if err := d.Set("task_instance_types", ext.Compute.InstanceGroups.TaskGroup.InstanceTypes); err != nil {
+						return fmt.Errorf("failed to set task instance types configuration: %#v", err)
+					}
+				}
+
+				// Set EBS Configuration
+				if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration != nil {
+					// Set EBS Optimized
+					if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.Optimized != nil {
+						if err := d.Set("task_ebs_optimized", ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.Optimized); err != nil {
+							return fmt.Errorf("failed to set task ebs optimized configuration: %#v", err)
+						}
+					}
+
+					// Set block devices.
+					if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.BlockDeviceConfigs != nil {
+						if ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.BlockDeviceConfigs != nil {
+							if err := d.Set("task_ebs_block_device", flattenAWSMrScalerBlockDevices(ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.BlockDeviceConfigs)); err != nil {
+								return fmt.Errorf("failed to set task block devices configuration: %#v", err)
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Set Configuration file
+		if ext.Compute.Configurations != nil {
+			if ext.Compute.Configurations.File != nil {
+				if err := d.Set("configurations_file", flattenAWSMrScalerConfigurationsFile(ext.Compute.Configurations.File)); err != nil {
+					return fmt.Errorf("failed to set configurations file configuration: %#v", err)
+				}
+			}
+		}
+
+		// Set Availability Zones
+		if ext.Compute.AvailabilityZones != nil {
+			// TODO - implement
+		}
+
+		// Set Tags
+		if ext.Compute.Tags != nil {
+			// TODO - implement
+		}
+	}
+
+	// Set Task Scaling
+	if ext.Scaling != nil {
+		// Set Down scaling policies
+		if ext.Scaling.Down != nil {
+			if err := d.Set("task_scaling_down_policy", flattenAWSMrScalerScalingPolicies(ext.Scaling.Down)); err != nil {
+				return fmt.Errorf("failed to set task down scaling policy configuration: %#v", err)
+			}
+		}
+
+		// Set Up scaling policies
+		if ext.Scaling.Up != nil {
+			if err := d.Set("task_scaling_up_policy", flattenAWSMrScalerScalingPolicies(ext.Scaling.Up)); err != nil {
+				return fmt.Errorf("failed to set task up scaling policy configuration: %#v", err)
+			}
+		}
+	}
+
+	// Set Core Scaling
+	if ext.CoreScaling != nil {
+		// Set Down scaling policies
+		if ext.CoreScaling.Down != nil {
+			if err := d.Set("core_scaling_down_policy", flattenAWSMrScalerScalingPolicies(ext.CoreScaling.Down)); err != nil {
+				return fmt.Errorf("failed to set core down scaling policy configuration: %#v", err)
+			}
+		}
+
+		// Set Up scaling policies
+		if ext.CoreScaling.Up != nil {
+			if err := d.Set("core_scaling_up_policy", flattenAWSMrScalerScalingPolicies(ext.CoreScaling.Up)); err != nil {
+				return fmt.Errorf("failed to set core up scaling policy configuration: %#v", err)
+			}
+		}
+	}
+
 	return nil
 }
 
-func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstAWSMrScalerUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Client)
 	ext := &mrscaler.Scaler{}
-	ext.SetId(spotinst.String(loc.Id()))
+	ext.SetId(spotinst.String(d.Id()))
 
 	disallowedFieldUpdate := false
 	disallowedField := ""
 
-	if loc.HasChange("configurations_file") {
+	if d.HasChange("configurations_file") {
 		disallowedField = "configurations_file"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("availability_zones") {
+	if d.HasChange("availability_zones") {
 		disallowedField = "availability_zones"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("task_lifecycle") {
+	if d.HasChange("task_lifecycle") {
 		disallowedField = "task_lifecycle"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("tags") {
+	if d.HasChange("tags") {
 		disallowedField = "tags"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("core_lifecycle") {
+	if d.HasChange("core_lifecycle") {
 		disallowedField = "core_lifecycle"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("core_instance_types") {
+	if d.HasChange("core_instance_types") {
 		disallowedField = "core_instance_types"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("master_ebs_block_device") {
+	if d.HasChange("master_ebs_block_device") {
 		disallowedField = "master_ebs_block_device"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("master_ebs_optimized") {
+	if d.HasChange("master_ebs_optimized") {
 		disallowedField = "master_ebs_optimized"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("master_lifecycle") {
+	if d.HasChange("master_lifecycle") {
 		disallowedField = "master_lifecycle"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("master_target") {
+	if d.HasChange("master_target") {
 		disallowedField = "master_target"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("master_instance_types") {
+	if d.HasChange("master_instance_types") {
 		disallowedField = "master_instance_types"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("cluster_id") {
+	if d.HasChange("cluster_id") {
 		disallowedField = "cluster_id"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("strategy") {
+	if d.HasChange("strategy") {
 		disallowedField = "strategy"
 		disallowedFieldUpdate = true
 	}
 
-	if loc.HasChange("region") {
+	if d.HasChange("region") {
 		disallowedField = "region"
 		disallowedFieldUpdate = true
 	}
@@ -751,42 +755,42 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 
 	update := false
 
-	if loc.HasChange("name") {
-		ext.SetName(spotinst.String(loc.Get("name").(string)))
+	if d.HasChange("name") {
+		ext.SetName(spotinst.String(d.Get("name").(string)))
 		update = true
 	}
 
-	if loc.HasChange("description") {
-		ext.SetDescription(spotinst.String(loc.Get("description").(string)))
+	if d.HasChange("description") {
+		ext.SetDescription(spotinst.String(d.Get("description").(string)))
 		update = true
 	}
 
-	if loc.HasChange("core_minimum") || loc.HasChange("core_maximum") || loc.HasChange("core_target") {
+	if d.HasChange("core_minimum") || d.HasChange("core_maximum") || d.HasChange("core_target") {
 		buildEmptyCoreCapacity(ext)
 
 		// Required properties (despite not being required in schema)
-		ext.Compute.InstanceGroups.CoreGroup.Capacity.SetMinimum(spotinst.Int(loc.Get("core_minimum").(int)))
-		ext.Compute.InstanceGroups.CoreGroup.Capacity.SetMaximum(spotinst.Int(loc.Get("core_maximum").(int)))
-		ext.Compute.InstanceGroups.CoreGroup.Capacity.SetTarget(spotinst.Int(loc.Get("core_target").(int)))
+		ext.Compute.InstanceGroups.CoreGroup.Capacity.SetMinimum(spotinst.Int(d.Get("core_minimum").(int)))
+		ext.Compute.InstanceGroups.CoreGroup.Capacity.SetMaximum(spotinst.Int(d.Get("core_maximum").(int)))
+		ext.Compute.InstanceGroups.CoreGroup.Capacity.SetTarget(spotinst.Int(d.Get("core_target").(int)))
 
 		update = true
 	}
 
-	if loc.HasChange("task_minimum") || loc.HasChange("task_maximum") || loc.HasChange("task_target") {
+	if d.HasChange("task_minimum") || d.HasChange("task_maximum") || d.HasChange("task_target") {
 		buildEmptyTaskCapacity(ext)
 
 		// Required properties
-		ext.Compute.InstanceGroups.TaskGroup.Capacity.SetMinimum(spotinst.Int(loc.Get("task_minimum").(int)))
-		ext.Compute.InstanceGroups.TaskGroup.Capacity.SetMaximum(spotinst.Int(loc.Get("task_maximum").(int)))
-		ext.Compute.InstanceGroups.TaskGroup.Capacity.SetTarget(spotinst.Int(loc.Get("task_target").(int)))
+		ext.Compute.InstanceGroups.TaskGroup.Capacity.SetMinimum(spotinst.Int(d.Get("task_minimum").(int)))
+		ext.Compute.InstanceGroups.TaskGroup.Capacity.SetMaximum(spotinst.Int(d.Get("task_maximum").(int)))
+		ext.Compute.InstanceGroups.TaskGroup.Capacity.SetTarget(spotinst.Int(d.Get("task_target").(int)))
 
 		update = true
 	}
 
-	if loc.HasChange("task_instance_types") {
+	if d.HasChange("task_instance_types") {
 		buildEmptyTaskGroup(ext)
 
-		if v, ok := loc.GetOk("task_instance_types"); ok {
+		if v, ok := d.GetOk("task_instance_types"); ok {
 			types := expandInstanceTypesList(v.([]interface{}))
 			ext.Compute.InstanceGroups.TaskGroup.SetInstanceTypes(types)
 		} else {
@@ -795,26 +799,26 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 		update = true
 	}
 
-	if loc.HasChange("core_ebs_optimized") {
+	if d.HasChange("core_ebs_optimized") {
 		buildEmptyCoreEBSConfiguration(ext)
 
 		// Has default boolean value
-		ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.SetOptimized(spotinst.Bool(loc.Get("core_ebs_optimized").(bool)))
+		ext.Compute.InstanceGroups.CoreGroup.EBSConfiguration.SetOptimized(spotinst.Bool(d.Get("core_ebs_optimized").(bool)))
 		update = true
 	}
 
-	if loc.HasChange("task_ebs_optimized") {
+	if d.HasChange("task_ebs_optimized") {
 		buildEmptyTaskEBSConfiguration(ext)
 
 		// Has default boolean value
-		ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.SetOptimized(spotinst.Bool(loc.Get("task_ebs_optimized").(bool)))
+		ext.Compute.InstanceGroups.TaskGroup.EBSConfiguration.SetOptimized(spotinst.Bool(d.Get("task_ebs_optimized").(bool)))
 		update = true
 	}
 
-	if loc.HasChange("task_ebs_block_device") {
+	if d.HasChange("task_ebs_block_device") {
 		buildEmptyTaskEBSConfiguration(ext)
 
-		if devices, err := expandAWSMrScalerDevices(loc.Get("task_ebs_block_device")); err != nil {
+		if devices, err := expandAWSMrScalerDevices(d.Get("task_ebs_block_device")); err != nil {
 			return err
 		} else {
 			log.Printf("[DEBUG] Mr Scaler update task ebs devices configuration: %s", stringutil.Stringify(devices))
@@ -823,10 +827,10 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 		update = true
 	}
 
-	if loc.HasChange("core_ebs_block_device") {
+	if d.HasChange("core_ebs_block_device") {
 		buildEmptyCoreEBSConfiguration(ext)
 
-		if devices, err := expandAWSMrScalerDevices(loc.Get("core_ebs_block_device")); err != nil {
+		if devices, err := expandAWSMrScalerDevices(d.Get("core_ebs_block_device")); err != nil {
 			return err
 		} else {
 			log.Printf("[DEBUG] Mr Scaler update core ebs devices configuration: %s", stringutil.Stringify(devices))
@@ -836,11 +840,11 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 		update = true
 	}
 
-	if loc.HasChange("core_scaling_up_policy") {
+	if d.HasChange("core_scaling_up_policy") {
 		buildEmptyCoreScaling(ext)
 
-		if v := loc.Get("core_scaling_up_policy"); v != nil {
-			if policies, err := expandAWSMrScalerScalingPolicies(loc.Get("core_scaling_up_policy")); err != nil {
+		if v := d.Get("core_scaling_up_policy"); v != nil {
+			if policies, err := expandAWSMrScalerScalingPolicies(d.Get("core_scaling_up_policy")); err != nil {
 				return err
 			} else {
 				ext.CoreScaling.SetUp(policies)
@@ -853,11 +857,11 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 		update = true
 	}
 
-	if loc.HasChange("core_scaling_down_policy") {
+	if d.HasChange("core_scaling_down_policy") {
 		buildEmptyCoreScaling(ext)
 
-		if v := loc.Get("core_scaling_down_policy"); v != nil {
-			if policies, err := expandAWSMrScalerScalingPolicies(loc.Get("core_scaling_down_policy")); err != nil {
+		if v := d.Get("core_scaling_down_policy"); v != nil {
+			if policies, err := expandAWSMrScalerScalingPolicies(d.Get("core_scaling_down_policy")); err != nil {
 				return err
 			} else {
 				ext.CoreScaling.SetDown(policies)
@@ -870,11 +874,11 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 		update = true
 	}
 
-	if loc.HasChange("task_scaling_up_policy") {
+	if d.HasChange("task_scaling_up_policy") {
 		buildEmptyTaskScaling(ext)
 
-		if v := loc.Get("task_scaling_up_policy"); v != nil {
-			if policies, err := expandAWSMrScalerScalingPolicies(loc.Get("task_scaling_up_policy")); err != nil {
+		if v := d.Get("task_scaling_up_policy"); v != nil {
+			if policies, err := expandAWSMrScalerScalingPolicies(d.Get("task_scaling_up_policy")); err != nil {
 				return err
 			} else {
 				ext.Scaling.SetUp(policies)
@@ -886,11 +890,11 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 		update = true
 	}
 
-	if loc.HasChange("task_scaling_down_policy") {
+	if d.HasChange("task_scaling_down_policy") {
 		buildEmptyTaskScaling(ext)
 
-		if v := loc.Get("task_scaling_down_policy"); v != nil {
-			if policies, err := expandAWSMrScalerScalingPolicies(loc.Get("task_scaling_down_policy")); err != nil {
+		if v := d.Get("task_scaling_down_policy"); v != nil {
+			if policies, err := expandAWSMrScalerScalingPolicies(d.Get("task_scaling_down_policy")); err != nil {
 				return err
 			} else {
 				ext.Scaling.SetDown(policies)
@@ -906,11 +910,11 @@ func resourceSpotinstAWSMrScalerUpdate(loc *schema.ResourceData, meta interface{
 		log.Printf("[DEBUG] Mr Scaler update configuration: %s", stringutil.Stringify(ext))
 		input := &mrscaler.UpdateScalerInput{Scaler: ext}
 		if _, err := client.mrscaler.Update(context.Background(), input); err != nil {
-			return fmt.Errorf("failed to update mr scaler %s: %s", loc.Id(), err)
+			return fmt.Errorf("failed to update mr scaler %s: %s", d.Id(), err)
 		}
 	}
 
-	return resourceSpotinstAWSMrScalerRead(loc, meta)
+	return resourceSpotinstAWSMrScalerRead(d, meta)
 }
 
 func resourceSpotinstAWSMrScalerDelete(d *schema.ResourceData, meta interface{}) error {
