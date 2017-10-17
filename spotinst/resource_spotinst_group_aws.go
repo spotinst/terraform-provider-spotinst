@@ -2974,6 +2974,11 @@ func expandAWSGroupLaunchSpecification(data interface{}, nullify bool) (*aws.Lau
 	return lc, nil
 }
 
+const (
+	loadBalanacerTypeTargetGroup     = "TARGET_GROUP"
+	loadBalanacerTypeMultaiTargetSet = "MULTAI_TARGET_SET"
+)
+
 // expandAWSGroupLoadBalancer expands the Load Balancer block.
 func expandAWSGroupLoadBalancer(data interface{}, nullify bool) ([]*aws.LoadBalancer, error) {
 	list := data.(*schema.Set).List()
@@ -2990,24 +2995,28 @@ func expandAWSGroupLoadBalancer(data interface{}, nullify bool) ([]*aws.LoadBala
 			lb.SetName(spotinst.String(v))
 		}
 
-		if v, ok := m["arn"].(string); ok && v != "" {
-			lb.SetArn(spotinst.String(v))
+		if spotinst.StringValue(lb.Type) == loadBalanacerTypeTargetGroup {
+			if v, ok := m["arn"].(string); ok && v != "" {
+				lb.SetArn(spotinst.String(v))
+			}
 		}
 
-		if v, ok := m["balancer_id"].(string); ok && v != "" {
-			lb.SetBalancerId(spotinst.String(v))
-		}
+		if spotinst.StringValue(lb.Type) == loadBalanacerTypeMultaiTargetSet {
+			if v, ok := m["balancer_id"].(string); ok && v != "" {
+				lb.SetBalancerId(spotinst.String(v))
+			}
 
-		if v, ok := m["target_set_id"].(string); ok && v != "" {
-			lb.SetTargetSetId(spotinst.String(v))
-		}
+			if v, ok := m["target_set_id"].(string); ok && v != "" {
+				lb.SetTargetSetId(spotinst.String(v))
+			}
 
-		if v, ok := m["zone_awareness"].(bool); ok {
-			lb.SetZoneAwareness(spotinst.Bool(v))
-		}
+			if v, ok := m["zone_awareness"].(bool); ok {
+				lb.SetZoneAwareness(spotinst.Bool(v))
+			}
 
-		if v, ok := m["auto_weight"].(bool); ok {
-			lb.SetAutoWeight(spotinst.Bool(v))
+			if v, ok := m["auto_weight"].(bool); ok {
+				lb.SetAutoWeight(spotinst.Bool(v))
+			}
 		}
 
 		log.Printf("[DEBUG] Group load balancer configuration: %s", stringutil.Stringify(lb))
