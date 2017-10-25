@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
 
@@ -52,13 +53,28 @@ func resourceSpotinstMultaiDeploymentCreate(d *schema.ResourceData, meta interfa
 	return resourceSpotinstMultaiDeploymentRead(d, meta)
 }
 
+// ErrCodeDeploymentNotFound for service response error code
+// "FAILED_TO_GET_DEPLOYMENT".
+const ErrCodeDeploymentNotFound = "FAILED_TO_GET_DEPLOYMENT"
+
 func resourceSpotinstMultaiDeploymentRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client)
 	input := &multai.ReadDeploymentInput{
 		DeploymentID: spotinst.String(d.Id()),
 	}
-	resp, err := client.multai.ReadDeployment(context.Background(), input)
+	resp, err := meta.(*Client).multai.ReadDeployment(context.Background(), input)
 	if err != nil {
+		// If the group was not found, return nil so that we can show
+		// that the group is gone.
+		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+			for _, err := range errs {
+				if err.Code == ErrCodeDeploymentNotFound {
+					d.SetId("")
+					return nil
+				}
+			}
+		}
+
+		// Some other error, report it.
 		return fmt.Errorf("failed to read deployment: %s", err)
 	}
 

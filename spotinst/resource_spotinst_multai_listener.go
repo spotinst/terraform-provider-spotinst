@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
 
@@ -119,13 +120,28 @@ func resourceSpotinstMultaiListenerCreate(d *schema.ResourceData, meta interface
 	return resourceSpotinstMultaiListenerRead(d, meta)
 }
 
+// ErrCodeListenerNotFound for service response error code
+// "FAILED_TO_GET_LISTENER".
+const ErrCodeListenerNotFound = "FAILED_TO_GET_LISTENER"
+
 func resourceSpotinstMultaiListenerRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client)
 	input := &multai.ReadListenerInput{
 		ListenerID: spotinst.String(d.Id()),
 	}
-	resp, err := client.multai.ReadListener(context.Background(), input)
+	resp, err := meta.(*Client).multai.ReadListener(context.Background(), input)
 	if err != nil {
+		// If the group was not found, return nil so that we can show
+		// that the group is gone.
+		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+			for _, err := range errs {
+				if err.Code == ErrCodeListenerNotFound {
+					d.SetId("")
+					return nil
+				}
+			}
+		}
+
+		// Some other error, report it.
 		return fmt.Errorf("failed to read listener: %s", err)
 	}
 

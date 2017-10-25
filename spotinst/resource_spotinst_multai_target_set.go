@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
 
@@ -134,13 +135,28 @@ func resourceSpotinstMultaiTargetSetCreate(d *schema.ResourceData, meta interfac
 	return resourceSpotinstMultaiTargetSetRead(d, meta)
 }
 
+// ErrCodeTargetSetNotFound for service response error code
+// "FAILED_TO_GET_TARGET_SET".
+const ErrCodeTargetSetNotFound = "FAILED_TO_GET_TARGET_SET"
+
 func resourceSpotinstMultaiTargetSetRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client)
 	input := &multai.ReadTargetSetInput{
 		TargetSetID: spotinst.String(d.Id()),
 	}
-	resp, err := client.multai.ReadTargetSet(context.Background(), input)
+	resp, err := meta.(*Client).multai.ReadTargetSet(context.Background(), input)
 	if err != nil {
+		// If the group was not found, return nil so that we can show
+		// that the group is gone.
+		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+			for _, err := range errs {
+				if err.Code == ErrCodeTargetSetNotFound {
+					d.SetId("")
+					return nil
+				}
+			}
+		}
+
+		// Some other error, report it.
 		return fmt.Errorf("failed to read target set: %s", err)
 	}
 
