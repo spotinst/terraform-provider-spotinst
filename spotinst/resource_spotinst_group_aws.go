@@ -42,6 +42,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Required: true,
 			},
 
+			"target_capacity": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+
 			"capacity": &schema.Schema{
 				Type:     schema.TypeSet,
 				Required: true,
@@ -49,8 +54,9 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"target": &schema.Schema{
-							Type:     schema.TypeInt,
-							Required: true,
+							Type:          schema.TypeInt,
+							Optional:      true,
+							ConflictsWith: []string{"target_capacity"},
 						},
 
 						"minimum": &schema.Schema{
@@ -966,9 +972,23 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("elastic_ips", g.Compute.ElasticIPs)
 
 	// Set capacity.
+
 	if g.Capacity != nil {
-		if err := d.Set("capacity", flattenAWSGroupCapacity(g.Capacity)); err != nil {
+		targetCapacitySetInCapacity := true
+		if v, ok := d.GetOk("target_capacity"); ok && v != nil {
+			targetCapacitySetInCapacity = false
+		}
+		log.Printf("[DEBUG] READ - target_capacity set in capacity value is %s", stringutil.Stringify(targetCapacitySetInCapacity))
+		if err := d.Set("capacity", flattenAWSGroupCapacity(g.Capacity, targetCapacitySetInCapacity)); err != nil {
 			return fmt.Errorf("failed to set capacity onfiguration: %#v", err)
+		}
+	}
+
+	// Set Target Capacity.
+	if g.Capacity.Target != nil {
+		if v, ok := d.GetOk("target_capacity"); ok && v != nil {
+			log.Printf("[DEBUG] READ - populating target_capacity ")
+			d.Set("target_capacity", g.Capacity.Target)
 		}
 	}
 
@@ -1165,12 +1185,23 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 
 	if d.HasChange("capacity") {
 		if v, ok := d.GetOk("capacity"); ok {
-			if capacity, err := expandAWSGroupCapacity(v, nullify); err != nil {
+			if capacity, err := expandAWSGroupCapacity(v, nullify, true); err != nil {
 				return err
 			} else {
 				group.SetCapacity(capacity)
 				update = true
 			}
+		}
+	}
+
+	if d.HasChange("target_capacity") {
+		if v, ok := d.GetOk("target_capacity"); ok {
+			if group.Capacity == nil {
+				newCapacity := &aws.Capacity{}
+				group.SetCapacity(newCapacity)
+			}
+			group.Capacity.SetTarget(spotinst.Int(v.(int)))
+			update = true
 		}
 	}
 
@@ -1800,9 +1831,14 @@ func resourceSpotinstAWSGroupDelete(d *schema.ResourceData, meta interface{}) er
 
 //region Flatten methods
 
-func flattenAWSGroupCapacity(capacity *aws.Capacity) []interface{} {
+func flattenAWSGroupCapacity(capacity *aws.Capacity, targetCapacitySetInCapacity bool) []interface{} {
 	result := make(map[string]interface{})
-	result["target"] = spotinst.IntValue(capacity.Target)
+
+	if targetCapacitySetInCapacity {
+		log.Printf("[DEBUG] READ - populating target in capacity block ")
+		result["target"] = spotinst.IntValue(capacity.Target)
+	}
+
 	result["minimum"] = spotinst.IntValue(capacity.Minimum)
 	result["maximum"] = spotinst.IntValue(capacity.Maximum)
 	result["unit"] = spotinst.StringValue(capacity.Unit)
@@ -2109,11 +2145,15 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 	group.Compute.SetProduct(spotinst.String(d.Get("product").(string)))
 
 	if v, ok := d.GetOk("capacity"); ok {
-		if capacity, err := expandAWSGroupCapacity(v, nullify); err != nil {
+		if capacity, err := expandAWSGroupCapacity(v, nullify, false); err != nil {
 			return nil, err
 		} else {
 			group.SetCapacity(capacity)
 		}
+	}
+
+	if _, exists := d.GetOkExists("target_capacity"); exists {
+		group.Capacity.SetTarget(spotinst.Int(d.Get("target_capacity").(int)))
 	}
 
 	if v, ok := d.GetOk("strategy"); ok {
@@ -2347,7 +2387,7 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 //region Expand methods
 
 /* expandAWSGroupCapacity expands the Capacity block.*/
-func expandAWSGroupCapacity(data interface{}, nullify bool) (*aws.Capacity, error) {
+func expandAWSGroupCapacity(data interface{}, nullify bool, isUpdate bool) (*aws.Capacity, error) {
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
 	capacity := &aws.Capacity{}
@@ -2364,8 +2404,10 @@ func expandAWSGroupCapacity(data interface{}, nullify bool) (*aws.Capacity, erro
 		capacity.SetTarget(spotinst.Int(v))
 	}
 
-	if v, ok := m["unit"].(string); ok && v != "" {
-		capacity.SetUnit(spotinst.String(v))
+	if isUpdate == false {
+		if v, ok := m["unit"].(string); ok && v != "" {
+			capacity.SetUnit(spotinst.String(v))
+		}
 	}
 
 	log.Printf("[DEBUG] Group capacity configuration: %s", stringutil.Stringify(capacity))
