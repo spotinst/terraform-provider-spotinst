@@ -689,6 +689,20 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 								},
 							},
 						},
+
+						"autoscale_down": &schema.Schema{
+							Type:     schema.TypeSet,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"evaluation_periods": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -707,6 +721,54 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 						"token": &schema.Schema{
 							Type:     schema.TypeString,
 							Required: true,
+						},
+
+						"autoscale_is_enabled": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+
+						"autoscale_cooldown": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
+						"autoscale_headroom": &schema.Schema{
+							Type:     schema.TypeSet,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"cpu_per_unit": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"memory_per_unit": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"num_of_units": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+								},
+							},
+						},
+
+						"autoscale_down": &schema.Schema{
+							Type:     schema.TypeSet,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"evaluation_periods": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+								},
+							},
 						},
 					},
 				},
@@ -978,7 +1040,6 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 		if v, ok := d.GetOk("target_capacity"); ok && v != nil {
 			targetCapacitySetInCapacity = false
 		}
-		log.Printf("[DEBUG] READ - target_capacity set in capacity value is %s", stringutil.Stringify(targetCapacitySetInCapacity))
 		if err := d.Set("capacity", flattenAWSGroupCapacity(g.Capacity, targetCapacitySetInCapacity)); err != nil {
 			return fmt.Errorf("failed to set capacity onfiguration: %#v", err)
 		}
@@ -987,7 +1048,6 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 	// Set Target Capacity.
 	if g.Capacity.Target != nil {
 		if v, ok := d.GetOk("target_capacity"); ok && v != nil {
-			log.Printf("[DEBUG] READ - populating target_capacity ")
 			d.Set("target_capacity", g.Capacity.Target)
 		}
 	}
@@ -1124,15 +1184,6 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 			}
 		} else {
 			d.Set("elastic_beanstalk_integration", []*aws.ElasticBeanstalkIntegration{})
-		}
-
-		// Set Kubernetes integration.
-		if g.Integration.Kubernetes != nil {
-			if err := d.Set("kubernetes_integration", flattenAWSGroupKubernetesIntegration(g.Integration.Kubernetes)); err != nil {
-				return fmt.Errorf("failed to set Kubernetes configuration: %#v", err)
-			}
-		} else {
-			d.Set("kubernetes_integration", []*aws.KubernetesIntegration{})
 		}
 
 		// Set Mesosphere integration.
@@ -3173,7 +3224,7 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}, nullify bool
 	}
 
 	if v, ok := m["autoscale_headroom"]; ok {
-		headroom, err := expandAWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom(v, nullify)
+		headroom, err := expandAWSGroupAutoScaleHeadroom(v, nullify)
 		if err != nil {
 			return nil, err
 		}
@@ -3185,14 +3236,85 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}, nullify bool
 		}
 	}
 
+	if v, ok := m["autoscale_down"]; ok {
+		down, err := expandAWSGroupAutoScaleDown(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		if down != nil {
+			if i.AutoScale == nil {
+				i.SetAutoScale(&aws.AutoScale{})
+			}
+			i.AutoScale.SetDown(down)
+		}
+	}
+
 	log.Printf("[DEBUG] Group ECS integration configuration: %s", stringutil.Stringify(i))
 	return i, nil
 }
 
-func expandAWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom(data interface{}, nullify bool) (*aws.Headroom, error) {
+// expandAWSGroupKubernetesIntegration expands the Kubernetes Integration block.
+func expandAWSGroupKubernetesIntegration(data interface{}, nullify bool) (*aws.KubernetesIntegration, error) {
+	list := data.(*schema.Set).List()
+	m := list[0].(map[string]interface{})
+	i := &aws.KubernetesIntegration{}
+
+	if v, ok := m["api_server"].(string); ok && v != "" {
+		i.SetServer(spotinst.String(v))
+	}
+
+	if v, ok := m["token"].(string); ok && v != "" {
+		i.SetToken(spotinst.String(v))
+	}
+
+	if v, ok := m["autoscale_is_enabled"].(bool); ok {
+		if i.AutoScale == nil {
+			i.SetAutoScale(&aws.AutoScale{})
+		}
+		i.AutoScale.SetIsEnabled(spotinst.Bool(v))
+	}
+
+	if v, ok := m["autoscale_cooldown"].(int); ok && v > 0 {
+		if i.AutoScale == nil {
+			i.SetAutoScale(&aws.AutoScale{})
+		}
+		i.AutoScale.SetCooldown(spotinst.Int(v))
+	}
+
+	if v, ok := m["autoscale_headroom"]; ok {
+		headroom, err := expandAWSGroupAutoScaleHeadroom(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		if headroom != nil {
+			if i.AutoScale == nil {
+				i.SetAutoScale(&aws.AutoScale{})
+			}
+			i.AutoScale.SetHeadroom(headroom)
+		}
+	}
+
+	if v, ok := m["autoscale_down"]; ok {
+		down, err := expandAWSGroupAutoScaleDown(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		if down != nil {
+			if i.AutoScale == nil {
+				i.SetAutoScale(&aws.AutoScale{})
+			}
+			i.AutoScale.SetDown(down)
+		}
+	}
+
+	log.Printf("[DEBUG] Group Kubernetes integration configuration: %s", stringutil.Stringify(i))
+	return i, nil
+}
+
+func expandAWSGroupAutoScaleHeadroom(data interface{}, nullify bool) (*aws.AutoScaleHeadroom, error) {
 	if list := data.(*schema.Set).List(); len(list) > 0 {
 		m := list[0].(map[string]interface{})
-		i := &aws.Headroom{}
+		i := &aws.AutoScaleHeadroom{}
 
 		if v, ok := m["cpu_per_unit"].(int); ok && v > 0 {
 			i.SetCPUPerUnit(spotinst.Int(v))
@@ -3212,22 +3334,19 @@ func expandAWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom(data interfac
 	return nil, nil
 }
 
-// expandAWSGroupKubernetesIntegration expands the Kubernetes Integration block.
-func expandAWSGroupKubernetesIntegration(data interface{}, nullify bool) (*aws.KubernetesIntegration, error) {
-	list := data.(*schema.Set).List()
-	m := list[0].(map[string]interface{})
-	i := &aws.KubernetesIntegration{}
+func expandAWSGroupAutoScaleDown(data interface{}, nullify bool) (*aws.AutoScaleDown, error) {
+	if list := data.(*schema.Set).List(); len(list) > 0 {
+		m := list[0].(map[string]interface{})
+		i := &aws.AutoScaleDown{}
 
-	if v, ok := m["api_server"].(string); ok && v != "" {
-		i.SetServer(spotinst.String(v))
+		if v, ok := m["evaluation_periods"].(int); ok && v > 0 {
+			i.SetEvaluationPeriods(spotinst.Int(v))
+		}
+
+		return i, nil
 	}
 
-	if v, ok := m["token"].(string); ok && v != "" {
-		i.SetToken(spotinst.String(v))
-	}
-
-	log.Printf("[DEBUG] Group Kubernetes integration configuration: %s", stringutil.Stringify(i))
-	return i, nil
+	return nil, nil
 }
 
 // expandAWSGroupMesosphereIntegration expands the Mesosphere Integration block.
