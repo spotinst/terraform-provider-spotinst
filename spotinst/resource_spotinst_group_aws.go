@@ -3078,7 +3078,7 @@ func expandAWSGroupLoadBalancers(data interface{}, nullify bool) ([]*aws.LoadBal
 
 		fields := strings.Split(m, ",")
 		for _, field := range fields {
-			kv := strings.Split(field, ":")
+			kv := strings.Split(field, "=")
 			if len(kv) == 2 {
 				key := kv[0]
 				val := spotinst.String(kv[1])
