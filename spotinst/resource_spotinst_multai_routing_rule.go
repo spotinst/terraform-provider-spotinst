@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 )
 
@@ -86,13 +87,28 @@ func resourceSpotinstMultaiRoutingRuleCreate(d *schema.ResourceData, meta interf
 	return resourceSpotinstMultaiRoutingRuleRead(d, meta)
 }
 
+// ErrCodeRoutingRuleNotFound for service response error code
+// "FAILED_TO_GET_ROUTING_RULE".
+const ErrCodeRoutingRuleNotFound = "FAILED_TO_GET_ROUTING_RULE"
+
 func resourceSpotinstMultaiRoutingRuleRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client)
 	input := &multai.ReadRoutingRuleInput{
 		RoutingRuleID: spotinst.String(d.Id()),
 	}
-	resp, err := client.multai.ReadRoutingRule(context.Background(), input)
+	resp, err := meta.(*Client).multai.ReadRoutingRule(context.Background(), input)
 	if err != nil {
+		// If the group was not found, return nil so that we can show
+		// that the group is gone.
+		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+			for _, err := range errs {
+				if err.Code == ErrCodeRoutingRuleNotFound {
+					d.SetId("")
+					return nil
+				}
+			}
+		}
+
+		// Some other error, report it.
 		return fmt.Errorf("failed to read routing rule: %s", err)
 	}
 
