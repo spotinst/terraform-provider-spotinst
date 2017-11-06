@@ -3189,10 +3189,10 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}, nullify bool
 	return i, nil
 }
 
-func expandAWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom(data interface{}, nullify bool) (*aws.Headroom, error) {
+func expandAWSGroupEC2ContainerServiceIntegrationAutoScaleHeadroom(data interface{}, nullify bool) (*aws.AutoScaleHeadroom, error) {
 	if list := data.(*schema.Set).List(); len(list) > 0 {
 		m := list[0].(map[string]interface{})
-		i := &aws.Headroom{}
+		i := &aws.AutoScaleHeadroom{}
 
 		if v, ok := m["cpu_per_unit"].(int); ok && v > 0 {
 			i.SetCPUPerUnit(spotinst.Int(v))

@@ -108,18 +108,26 @@ type EC2ContainerServiceIntegration struct {
 }
 
 type AutoScale struct {
-	IsEnabled *bool     `json:"isEnabled,omitempty"`
-	Cooldown  *int      `json:"cooldown,omitempty"`
-	Headroom  *Headroom `json:"headroom,omitempty"`
+	IsEnabled *bool              `json:"isEnabled,omitempty"`
+	Cooldown  *int               `json:"cooldown,omitempty"`
+	Headroom  *AutoScaleHeadroom `json:"headroom,omitempty"`
+	Down      *AutoScaleDown     `json:"down,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
 }
 
-type Headroom struct {
+type AutoScaleHeadroom struct {
 	CPUPerUnit    *int `json:"cpuPerUnit,omitempty"`
 	MemoryPerUnit *int `json:"memoryPerUnit,omitempty"`
 	NumOfUnits    *int `json:"numOfUnits,omitempty"`
+
+	forceSendFields []string `json:"-"`
+	nullFields      []string `json:"-"`
+}
+
+type AutoScaleDown struct {
+	EvaluationPeriods *int `json:"evaluationPeriods,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -159,8 +167,9 @@ type RancherIntegration struct {
 }
 
 type KubernetesIntegration struct {
-	Server *string `json:"apiServer,omitempty"`
-	Token  *string `json:"token,omitempty"`
+	Server    *string    `json:"apiServer,omitempty"`
+	Token     *string    `json:"token,omitempty"`
+	AutoScale *AutoScale `json:"autoScale,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -511,6 +520,15 @@ type RollGroupInput struct {
 
 type RollGroupOutput struct{}
 
+type ImportBeanstalkInput struct {
+	EnvironmentName *string `json:"environmentName,omitempty"`
+	Region          *string `json:"region,omitempty"`
+}
+
+type ImportBeanstalkOutput struct {
+	Group *Group `json:"group,omitempty"`
+}
+
 func groupFromJSON(in []byte) (*Group, error) {
 	b := new(Group)
 	if err := json.Unmarshal(in, b); err != nil {
@@ -768,6 +786,32 @@ func (s *ServiceOp) Roll(ctx context.Context, input *RollGroupInput) (*RollGroup
 	return &RollGroupOutput{}, nil
 }
 
+func (s *ServiceOp) ImportBeanstalkEnv(ctx context.Context, input *ImportBeanstalkInput) (*ImportBeanstalkOutput, error) {
+	path := "/aws/ec2/group/beanstalk/import"
+	r := client.NewRequest(http.MethodGet, path)
+
+	r.Params["environmentName"] = []string{spotinst.StringValue(input.EnvironmentName)}
+	r.Params["region"] = []string{spotinst.StringValue(input.Region)}
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	gs, err := groupsFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ImportBeanstalkOutput)
+	if len(gs) > 0 {
+		output.Group = gs[0]
+	}
+
+	return output, nil
+}
+
 // region Group
 
 func (o *Group) MarshalJSON() ([]byte, error) {
@@ -994,40 +1038,64 @@ func (o *AutoScale) SetCooldown(v *int) *AutoScale {
 	return o
 }
 
-func (o *AutoScale) SetHeadroom(v *Headroom) *AutoScale {
+func (o *AutoScale) SetHeadroom(v *AutoScaleHeadroom) *AutoScale {
 	if o.Headroom = v; o.Headroom == nil {
 		o.nullFields = append(o.nullFields, "Headroom")
 	}
 	return o
 }
 
+func (o *AutoScale) SetDown(v *AutoScaleDown) *AutoScale {
+	if o.Down = v; o.Down == nil {
+		o.nullFields = append(o.nullFields, "Down")
+	}
+	return o
+}
+
 // endregion
 
-// region Headroom
+// region AutoScaleHeadroom
 
-func (o *Headroom) MarshalJSON() ([]byte, error) {
-	type noMethod Headroom
+func (o *AutoScaleHeadroom) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleHeadroom
 	raw := noMethod(*o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Headroom) SetCPUPerUnit(v *int) *Headroom {
+func (o *AutoScaleHeadroom) SetCPUPerUnit(v *int) *AutoScaleHeadroom {
 	if o.CPUPerUnit = v; o.CPUPerUnit == nil {
 		o.nullFields = append(o.nullFields, "CPUPerUnit")
 	}
 	return o
 }
 
-func (o *Headroom) SetMemoryPerUnit(v *int) *Headroom {
+func (o *AutoScaleHeadroom) SetMemoryPerUnit(v *int) *AutoScaleHeadroom {
 	if o.MemoryPerUnit = v; o.MemoryPerUnit == nil {
 		o.nullFields = append(o.nullFields, "MemoryPerUnit")
 	}
 	return o
 }
 
-func (o *Headroom) SetNumOfUnits(v *int) *Headroom {
+func (o *AutoScaleHeadroom) SetNumOfUnits(v *int) *AutoScaleHeadroom {
 	if o.NumOfUnits = v; o.NumOfUnits == nil {
 		o.nullFields = append(o.nullFields, "NumOfUnits")
+	}
+	return o
+}
+
+// endregion
+
+// region AutoScaleDown
+
+func (o *AutoScaleDown) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleDown
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *AutoScaleDown) SetEvaluationPeriods(v *int) *AutoScaleDown {
+	if o.EvaluationPeriods = v; o.EvaluationPeriods == nil {
+		o.nullFields = append(o.nullFields, "EvaluationPeriods")
 	}
 	return o
 }
@@ -1052,6 +1120,13 @@ func (o *KubernetesIntegration) SetServer(v *string) *KubernetesIntegration {
 func (o *KubernetesIntegration) SetToken(v *string) *KubernetesIntegration {
 	if o.Token = v; o.Token == nil {
 		o.nullFields = append(o.nullFields, "Token")
+	}
+	return o
+}
+
+func (o *KubernetesIntegration) SetAutoScale(v *AutoScale) *KubernetesIntegration {
+	if o.AutoScale = v; o.AutoScale == nil {
+		o.nullFields = append(o.nullFields, "AutoScale")
 	}
 	return o
 }

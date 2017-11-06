@@ -20,6 +20,7 @@ type Service interface {
 	Status(context.Context, *StatusGroupInput) (*StatusGroupOutput, error)
 	Detach(context.Context, *DetachGroupInput) (*DetachGroupOutput, error)
 	Roll(context.Context, *RollGroupInput) (*RollGroupOutput, error)
+	ImportBeanstalkEnv(context.Context, *ImportBeanstalkInput) (*ImportBeanstalkOutput, error)
 }
 
 type ServiceOp struct {
