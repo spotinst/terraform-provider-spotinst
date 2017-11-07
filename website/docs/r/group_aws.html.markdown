@@ -86,6 +86,17 @@ resource "spotinst_group_aws" "sidekiq" {
     cooldown           = 300
   }
 
+  instance_type_weights = [
+  {
+    instance_type = "c3.large"
+    weight        = 10
+  },
+  {
+    instance_type = "c4.xlarge"
+    weight        = 16
+  },
+  ]
+
   tags {
     "Env"     = "production"
     "Name"    = "sidekiq-production"
@@ -125,6 +136,11 @@ The following arguments are supported:
 
     * `ondemand` - (Required) The base instance type.
     * `spot` - (Required) One or more instance types.
+
+* `instance_type_weights` - (Optional) List of weights per instance type for weighted groups. Each object in the list should have the following attributes:
+
+    * `weight` - (Required) Weight per instance type (Integer).
+    * `instance_type` - (Required) Name of instance type (String).
 
 * `launch_specification` - (Required) Describes the launch specification for an instance.
 
