@@ -483,6 +483,24 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Set: hashAWSGroupTagKV,
 			},
 
+			"instance_type_weights": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"instance_type": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+
+						"weight": &schema.Schema{
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+					},
+				},
+			},
+
 			"ebs_block_device": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -1592,6 +1610,21 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
+	if d.HasChange("instance_type_weights") {
+		if v, ok := d.GetOk("instance_type_weights"); ok {
+			if weights, err := expandAWSGroupInstanceTypeWeights(v, nullify); err != nil {
+				return err
+			} else {
+				buildEmptyGroupInstanceTypes(group)
+				group.Compute.InstanceTypes.SetWeights(weights)
+			}
+		} else {
+			buildEmptyGroupInstanceTypes(group)
+			group.Compute.InstanceTypes.SetWeights(nil)
+		}
+		update = true
+	}
+
 	if d.HasChange("elastic_ips") {
 		if v, ok := d.GetOk("elastic_ips"); ok {
 			if eips, err := expandAWSGroupElasticIPs(v, nullify); err != nil {
@@ -1865,6 +1898,17 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	return resourceSpotinstAWSGroupRead(d, meta)
+}
+func buildEmptyGroupInstanceTypes(group *aws.Group) {
+	buildEmptyGroupCompute(group)
+	if group.Compute.InstanceTypes == nil {
+		group.Compute.SetInstanceTypes(&aws.InstanceTypes{})
+	}
+}
+func buildEmptyGroupCompute(group *aws.Group) {
+	if group.Compute == nil {
+		group.SetCompute(&aws.Compute{})
+	}
 }
 
 func resourceSpotinstAWSGroupDelete(d *schema.ResourceData, meta interface{}) error {
@@ -2342,6 +2386,15 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 			return nil, err
 		} else {
 			group.Compute.LaunchSpecification.SetTags(tags)
+		}
+	}
+
+	if v, ok := d.GetOkExists("instance_type_weights"); ok && v != "" {
+		if weights, err := expandAWSGroupInstanceTypeWeights(v, nullify); err != nil {
+			return nil, err
+		} else {
+			group.Compute.InstanceTypes.SetWeights(weights)
+			log.Printf("[DEBUG] Group instance type weights configuration: %s", stringutil.Stringify(weights))
 		}
 	}
 
@@ -3478,6 +3531,31 @@ func expandAWSGroupTagsKV(data interface{}, nullify bool) ([]*aws.Tag, error) {
 		tags = append(tags, tag)
 	}
 	return tags, nil
+}
+
+// expandAWSGroupInstanceTypeWeights expands the Instance type weights.
+func expandAWSGroupInstanceTypeWeights(data interface{}, nullify bool) ([]*aws.InstanceTypeWeight, error) {
+	list := data.(*schema.Set).List()
+	weights := make([]*aws.InstanceTypeWeight, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr["instance_type"]; !ok {
+			return nil, errors.New("invalid instance type weight: instance_type missing")
+		}
+
+		if _, ok := attr["weight"]; !ok {
+			return nil, errors.New("invalid instance type weight: weight missing")
+		}
+		instance_weight := &aws.InstanceTypeWeight{}
+		instance_weight.SetInstanceType(spotinst.String(attr["instance_type"].(string)))
+		instance_weight.SetWeight(spotinst.Int(attr["weight"].(int)))
+		log.Printf("[DEBUG] Group instance type weight configuration: %s", stringutil.Stringify(instance_weight))
+		weights = append(weights, instance_weight)
+	}
+	return weights, nil
 }
 
 // expandAWSGroupRollConfig expands the Group Roll Configuration block.
