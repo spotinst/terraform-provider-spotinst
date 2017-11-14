@@ -103,6 +103,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 							Computed: true,
 						},
 
+						"lifetime_period": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
 						"draining_timeout": &schema.Schema{
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -1950,6 +1955,7 @@ func flattenAWSGroupStrategy(strategy *aws.Strategy) []interface{} {
 	result["risk"] = spotinst.Float64Value(strategy.Risk)
 	result["ondemand_count"] = spotinst.IntValue(strategy.OnDemandCount)
 	result["availability_vs_cost"] = spotinst.StringValue(strategy.AvailabilityVsCost)
+	result["lifetime_period"] = spotinst.StringValue(strategy.LifetimePeriod)
 	result["draining_timeout"] = spotinst.IntValue(strategy.DrainingTimeout)
 	result["utilize_reserved_instances"] = spotinst.BoolValue(strategy.UtilizeReservedInstances)
 	result["fallback_to_ondemand"] = spotinst.BoolValue(strategy.FallbackToOnDemand)
@@ -2540,6 +2546,12 @@ func expandAWSGroupStrategy(data interface{}, nullify bool) (*aws.Strategy, erro
 
 	if v, ok := m["availability_vs_cost"].(string); ok && v != "" {
 		strategy.SetAvailabilityVsCost(spotinst.String(v))
+	}
+
+	if v, ok := m["lifetime_period"].(string); ok && v != "" {
+		strategy.SetLifetimePeriod(spotinst.String(v))
+	} else if nullify {
+		strategy.SetLifetimePeriod(nil)
 	}
 
 	if v, ok := m["draining_timeout"].(int); ok && v > 0 {
@@ -3608,6 +3620,8 @@ func hashAWSGroupStrategy(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%t-", m["utilize_reserved_instances"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["fallback_to_ondemand"].(bool)))
 	buf.WriteString(fmt.Sprintf("%d-", m["spin_up_time"].(int)))
+	buf.WriteString(fmt.Sprintf("%s-", m["availability_vs_cost"].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m["lifetime_period"].(string)))
 	return hashcode.String(buf.String())
 }
 

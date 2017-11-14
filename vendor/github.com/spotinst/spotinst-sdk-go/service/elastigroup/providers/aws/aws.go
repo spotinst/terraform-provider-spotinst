@@ -268,6 +268,7 @@ type Strategy struct {
 	OnDemandCount            *int         `json:"onDemandCount,omitempty"`
 	DrainingTimeout          *int         `json:"drainingTimeout,omitempty"`
 	AvailabilityVsCost       *string      `json:"availabilityVsCost,omitempty"`
+	LifetimePeriod           *string      `json:"lifetimePeriod,omitempty"`
 	UtilizeReservedInstances *bool        `json:"utilizeReservedInstances,omitempty"`
 	FallbackToOnDemand       *bool        `json:"fallbackToOd,omitempty"`
 	SpinUpTime               *int         `json:"spinUpTime,omitempty"`
@@ -1525,6 +1526,13 @@ func (o *Strategy) SetDrainingTimeout(v *int) *Strategy {
 func (o *Strategy) SetAvailabilityVsCost(v *string) *Strategy {
 	if o.AvailabilityVsCost = v; o.AvailabilityVsCost == nil {
 		o.nullFields = append(o.nullFields, "AvailabilityVsCost")
+	}
+	return o
+}
+
+func (o *Strategy) SetLifetimePeriod(v *string) *Strategy {
+	if o.LifetimePeriod = v; o.LifetimePeriod == nil {
+		o.nullFields = append(o.nullFields, "LifetimePeriod")
 	}
 	return o
 }

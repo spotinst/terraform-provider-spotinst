@@ -650,98 +650,98 @@
 		{
 			"checksumSHA1": "qMmQeinXDiAgXLKP1bBiuXkmXEs=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
-			"checksumSHA1": "G48liG7yfa+zRN12JZo9oWB7YHE=",
+			"checksumSHA1": "qktEtILkG0PQ/eEDpi2mGw9YvUk=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "uoqE179YKN5voGhu2pJJt6nKZ+Q=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "st+l2KkV7N/Zxne9ddo8tyEOC9c=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gce",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "RbiQckf4dn2fH9rr7Fym8vYob10=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/healthcheck",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "CWsFdGvMOqV/mZ/3eHksgRkFk60=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/mrscaler",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "FbS6Ji5ErmRoj5YQo9iaFsdQdrI=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/multai",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "CTsOnCLwLi9Yw6IDSCd1H1bcYBU=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/subscription",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "mhFcs2JarkPYRxbWplaxldsg1Gg=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "LJ3DuPkj7aCWtmJZKJtLmxf9UiM=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/client",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "0qTPZgz7mjSCrCZZDHvFZuHL/Nk=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/credentials",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "lQI5hFOaauIWcNAi31tJbKqBhKs=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/log",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "xfVQVqDHJxvX2FU4zKtOKAxhbtY=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/session",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "zljsLRUfGKtRMvdc6UhZEllYceg=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "/oApHzKZwKYrVFEosDhHV4y3sbQ=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "OACZIX4N533A38rq3grY/YIEYcw=",
 			"path": "github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates",
-			"revision": "24448a1d3540dcd5da27846881a4605e9e1f5f82",
-			"revisionTime": "2017-11-06T17:33:36Z"
+			"revision": "a0023ca25a6b7059f0ee5e63dd8566a89c5a1ab2",
+			"revisionTime": "2017-11-14T09:49:38Z"
 		},
 		{
 			"checksumSHA1": "z2kAtVle4NFV2OExI85fZoTcsI4=",
