@@ -415,6 +415,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 							Optional: true,
 						},
 
+						"health_check_unhealthy_duration_before_replacement": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
 						"security_group_ids": &schema.Schema{
 							Type:     schema.TypeList,
 							Required: true,
@@ -1955,6 +1960,7 @@ func flattenAWSGroupStrategy(strategy *aws.Strategy) []interface{} {
 func flattenAWSGroupLaunchSpecification(lspec *aws.LaunchSpecification, includeImageID bool) []interface{} {
 	result := make(map[string]interface{})
 	result["health_check_grace_period"] = spotinst.IntValue(lspec.HealthCheckGracePeriod)
+	result["health_check_unhealthy_duration_before_replacement"] = spotinst.IntValue(lspec.HealthCheckUnhealthyDurationBeforeReplacement)
 	result["health_check_type"] = spotinst.StringValue(lspec.HealthCheckType)
 	if includeImageID {
 		result["image_id"] = spotinst.StringValue(lspec.ImageID)
