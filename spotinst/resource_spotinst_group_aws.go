@@ -288,6 +288,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+
+						"placement_group_name": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 					},
 				},
 			},
@@ -2821,6 +2826,10 @@ func expandAWSGroupAvailabilityZones(data interface{}, nullify bool) ([]*aws.Ava
 			zone.SetSubnetId(spotinst.String(v))
 		}
 
+		if v, ok := m["placement_group_name"].(string); ok && v != "" {
+			zone.SetPlacementGroupName(spotinst.String(v))
+		}
+
 		log.Printf("[DEBUG] Group availability zone configuration: %s", stringutil.Stringify(zone))
 		zones = append(zones, zone)
 	}
@@ -2841,6 +2850,9 @@ func expandAWSGroupAvailabilityZonesSlice(data interface{}, nullify bool) ([]*aw
 			}
 			if len(parts) == 2 && parts[1] != "" {
 				zone.SetSubnetId(spotinst.String(parts[1]))
+			}
+			if len(parts) == 3 && parts[2] != "" {
+				zone.SetPlacementGroupName(spotinst.String(parts[2]))
 			}
 			log.Printf("[DEBUG] Group availability zone configuration: %s", stringutil.Stringify(zone))
 			zones = append(zones, zone)

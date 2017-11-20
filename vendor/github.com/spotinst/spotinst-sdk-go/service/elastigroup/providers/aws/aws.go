@@ -345,8 +345,9 @@ type InstanceTypeWeight struct {
 }
 
 type AvailabilityZone struct {
-	Name     *string `json:"name,omitempty"`
-	SubnetID *string `json:"subnetId,omitempty"`
+	Name               *string `json:"name,omitempty"`
+	SubnetID           *string `json:"subnetId,omitempty"`
+	PlacementGroupName *string `json:"placementGroupName,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1823,6 +1824,13 @@ func (o *AvailabilityZone) SetName(v *string) *AvailabilityZone {
 func (o *AvailabilityZone) SetSubnetId(v *string) *AvailabilityZone {
 	if o.SubnetID = v; o.SubnetID == nil {
 		o.nullFields = append(o.nullFields, "SubnetID")
+	}
+	return o
+}
+
+func (o *AvailabilityZone) SetPlacementGroupName(v *string) *AvailabilityZone {
+	if o.PlacementGroupName = v; o.PlacementGroupName == nil {
+		o.nullFields = append(o.nullFields, "PlacementGroupName")
 	}
 	return o
 }
