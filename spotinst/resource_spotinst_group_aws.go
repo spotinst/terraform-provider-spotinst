@@ -3155,6 +3155,7 @@ func expandAWSGroupLaunchSpecification(data interface{}, nullify bool) (*aws.Lau
 }
 
 const (
+	loadBalanacerTypeClassic         = "CLASSIC"
 	loadBalanacerTypeTargetGroup     = "TARGET_GROUP"
 	loadBalanacerTypeMultaiTargetSet = "MULTAI_TARGET_SET"
 )
