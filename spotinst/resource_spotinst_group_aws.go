@@ -187,6 +187,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 							Optional: true,
 						},
 
+						"target_capacity": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
 						"min_capacity": &schema.Schema{
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -2070,6 +2075,7 @@ func flattenAWSGroupScheduledTasks(tasks []*aws.Task) []interface{} {
 		m["scale_max_capacity"] = spotinst.IntValue(t.ScaleMaxCapacity)
 		m["batch_size_percentage"] = spotinst.IntValue(t.BatchSizePercentage)
 		m["grace_period"] = spotinst.IntValue(t.GracePeriod)
+		m["target_capacity"] = spotinst.IntValue(t.TargetCapacity)
 		m["min_capacity"] = spotinst.IntValue(t.MinCapacity)
 		m["max_capacity"] = spotinst.IntValue(t.MaxCapacity)
 		result = append(result, m)
@@ -2760,6 +2766,10 @@ func expandAWSGroupScheduledTasks(data interface{}, nullify bool) ([]*aws.Task, 
 		}
 
 		if spotinst.StringValue(task.Type) == taskTypeStatefulUpdateCapacity {
+			if v, ok := m["target_capacity"].(int); ok && v >= 0 {
+				task.SetTargetCapacity(spotinst.Int(v))
+			}
+
 			if v, ok := m["min_capacity"].(int); ok && v >= 0 {
 				task.SetMinCapacity(spotinst.Int(v))
 			}

@@ -206,6 +206,7 @@ type Task struct {
 	ScaleMaxCapacity    *int    `json:"scaleMaxCapacity,omitempty"`
 	BatchSizePercentage *int    `json:"batchSizePercentage,omitempty"`
 	GracePeriod         *int    `json:"gracePeriod,omitempty"`
+	TargetCapacity         *int    `json:"targetCapacity,omitempty"`
 	MinCapacity         *int    `json:"minCapacity,omitempty"`
 	MaxCapacity         *int    `json:"maxCapacity,omitempty"`
 
@@ -1253,6 +1254,13 @@ func (o *Task) SetBatchSizePercentage(v *int) *Task {
 func (o *Task) SetGracePeriod(v *int) *Task {
 	if o.GracePeriod = v; o.GracePeriod == nil {
 		o.nullFields = append(o.nullFields, "GracePeriod")
+	}
+	return o
+}
+
+func (o *Task) SetTargetCapacity(v *int) *Task {
+	if o.TargetCapacity = v; o.TargetCapacity == nil {
+		o.nullFields = append(o.nullFields, "TargetCapacity")
 	}
 	return o
 }
