@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -270,26 +269,28 @@ type DeleteScalerInput struct {
 
 type DeleteScalerOutput struct{}
 
-type StatusScalerInput struct {
+type ScalerCluster struct {
+	ScalerClusterId *string `json:"id,omitempty"`
+}
+
+type ScalerClusterStatusInput struct {
 	ScalerID *string `json:"mrScalerId,omitempty"`
 }
 
-type StatusScalerOutput struct {
-	Instances []*Instance `json:"instances,omitempty"`
-}
-
-type Instance struct {
-	ID               *string    `json:"instanceId,omitempty"`
-	SpotRequestID    *string    `json:"spotInstanceRequestId,omitempty"`
-	InstanceType     *string    `json:"instanceType,omitempty"`
-	Status           *string    `json:"status,omitempty"`
-	Product          *string    `json:"product,omitempty"`
-	AvailabilityZone *string    `json:"availabilityZone,omitempty"`
-	CreatedAt        *time.Time `json:"createdAt,omitempty"`
+type ScalerClusterStatusOutput struct {
+	ScalerClusterId *string `json:"id,omitempty"`
 }
 
 func scalerFromJSON(in []byte) (*Scaler, error) {
 	b := new(Scaler)
+	if err := json.Unmarshal(in, b); err != nil {
+		return nil, err
+	}
+	return b, nil
+}
+
+func scalerClusterFromJSON(in []byte) (*ScalerCluster, error) {
+	b := new(ScalerCluster)
 	if err := json.Unmarshal(in, b); err != nil {
 		return nil, err
 	}
@@ -315,12 +316,39 @@ func scalersFromJSON(in []byte) ([]*Scaler, error) {
 	return out, nil
 }
 
+func scalerClustersFromJSON(in []byte) ([]*ScalerCluster, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	out := make([]*ScalerCluster, len(rw.Response.Items))
+	if len(out) == 0 {
+		return out, nil
+	}
+	for i, rb := range rw.Response.Items {
+		b, err := scalerClusterFromJSON(rb)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = b
+	}
+	return out, nil
+}
+
 func scalersFromHttpResponse(resp *http.Response) ([]*Scaler, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 	return scalersFromJSON(body)
+}
+
+func scalerClustersFromHttpResponse(resp *http.Response) ([]*ScalerCluster, error) {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return scalerClustersFromJSON(body)
 }
 
 //region Scaler
@@ -1022,6 +1050,34 @@ func (s *ServiceOp) Read(ctx context.Context, input *ReadScalerInput) (*ReadScal
 	output := new(ReadScalerOutput)
 	if len(gs) > 0 {
 		output.Scaler = gs[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) ReadScalerCluster(ctx context.Context, input *ScalerClusterStatusInput) (*ScalerClusterStatusOutput, error) {
+	path, err := uritemplates.Expand("/aws/emr/mrScaler/{mrScalerId}/cluster", uritemplates.Values{
+		"mrScalerId": spotinst.StringValue(input.ScalerID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	gs, err := scalerClustersFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ScalerClusterStatusOutput)
+	if len(gs) > 0 {
+		output.ScalerClusterId = gs[0].ScalerClusterId
 	}
 
 	return output, nil

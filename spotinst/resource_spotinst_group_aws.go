@@ -500,7 +500,7 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 						},
 					},
 				},
-				Set: hashAWSGroupTagKV,
+				Set: hashKV,
 			},
 
 			"instance_type_weights": &schema.Schema{
@@ -812,6 +812,93 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				},
 			},
 
+			"nomad_integration": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"master_host": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+
+						"master_port": &schema.Schema{
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+
+						"autoscale_is_enabled": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+						},
+
+						"autoscale_cooldown": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+
+						"autoscale_headroom": &schema.Schema{
+							Type:     schema.TypeSet,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"cpu_per_unit": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"memory_per_unit": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+
+									"num_of_units": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+								},
+							},
+						},
+
+						"autoscale_down": &schema.Schema{
+							Type:     schema.TypeSet,
+							Optional: true,
+							MaxItems: 1,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"evaluation_periods": &schema.Schema{
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+								},
+							},
+						},
+
+						"autoscale_constraints": &schema.Schema{
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"key": &schema.Schema{
+										Type:      schema.TypeString,
+										Required:  true,
+										StateFunc: attrStateFunc,
+									},
+
+									"value": &schema.Schema{
+										Type:     schema.TypeString,
+										Required: true,
+									},
+								},
+							},
+							Set: hashKV,
+						},
+					},
+				},
+			},
+
 			"mesosphere_integration": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -1036,8 +1123,7 @@ func resourceSpotinstAWSGroupCreate(d *schema.ResourceData, meta interface{}) er
 	return resourceSpotinstAWSGroupRead(d, meta)
 }
 
-// ErrCodeGroupNotFound for service response error code
-// "GROUP_DOESNT_EXIST".
+// ErrCodeGroupNotFound for service response error code "GROUP_DOESNT_EXIST".
 const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
 
 func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) error {
@@ -1636,11 +1722,21 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 			if weights, err := expandAWSGroupInstanceTypeWeights(v, nullify); err != nil {
 				return err
 			} else {
-				buildEmptyGroupInstanceTypes(group)
+				if group.Compute == nil {
+					group.SetCompute(&aws.Compute{})
+				}
+				if group.Compute.InstanceTypes == nil {
+					group.Compute.SetInstanceTypes(&aws.InstanceTypes{})
+				}
 				group.Compute.InstanceTypes.SetWeights(weights)
 			}
 		} else {
-			buildEmptyGroupInstanceTypes(group)
+			if group.Compute == nil {
+				group.SetCompute(&aws.Compute{})
+			}
+			if group.Compute.InstanceTypes == nil {
+				group.Compute.SetInstanceTypes(&aws.InstanceTypes{})
+			}
 			group.Compute.InstanceTypes.SetWeights(nil)
 		}
 		update = true
@@ -1829,6 +1925,26 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
+	if d.HasChange("nomad_integration") {
+		if v, ok := d.GetOk("nomad_integration"); ok {
+			if integration, err := expandAWSGroupNomadIntegration(v, nullify); err != nil {
+				return err
+			} else {
+				if group.Integration == nil {
+					group.SetIntegration(&aws.Integration{})
+				}
+				group.Integration.SetNomad(integration)
+				update = true
+			}
+		} else {
+			if group.Integration == nil {
+				group.SetIntegration(&aws.Integration{})
+			}
+			group.Integration.SetNomad(nil)
+			update = true
+		}
+	}
+
 	if d.HasChange("mesosphere_integration") {
 		if v, ok := d.GetOk("mesosphere_integration"); ok {
 			if integration, err := expandAWSGroupMesosphereIntegration(v, nullify); err != nil {
@@ -1920,17 +2036,6 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 
 	return resourceSpotinstAWSGroupRead(d, meta)
 }
-func buildEmptyGroupInstanceTypes(group *aws.Group) {
-	buildEmptyGroupCompute(group)
-	if group.Compute.InstanceTypes == nil {
-		group.Compute.SetInstanceTypes(&aws.InstanceTypes{})
-	}
-}
-func buildEmptyGroupCompute(group *aws.Group) {
-	if group.Compute == nil {
-		group.SetCompute(&aws.Compute{})
-	}
-}
 
 func resourceSpotinstAWSGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Client)
@@ -1951,7 +2056,7 @@ func flattenAWSGroupCapacity(capacity *aws.Capacity, targetCapacitySetInCapacity
 	result := make(map[string]interface{})
 
 	if targetCapacitySetInCapacity {
-		log.Printf("[DEBUG] READ - populating target in capacity block ")
+		log.Print("[DEBUG] Populating target in capacity block")
 		result["target"] = spotinst.IntValue(capacity.Target)
 	}
 
@@ -2481,6 +2586,14 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 			return nil, err
 		} else {
 			group.Integration.SetKubernetes(integration)
+		}
+	}
+
+	if v, ok := d.GetOk("nomad_integration"); ok {
+		if integration, err := expandAWSGroupNomadIntegration(v, nullify); err != nil {
+			return nil, err
+		} else {
+			group.Integration.SetNomad(integration)
 		}
 	}
 
@@ -3409,6 +3522,77 @@ func expandAWSGroupKubernetesIntegration(data interface{}, nullify bool) (*aws.K
 	return i, nil
 }
 
+// expandAWSGroupNomadIntegration expands the Nomad Integration block.
+func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadIntegration, error) {
+	list := data.(*schema.Set).List()
+	m := list[0].(map[string]interface{})
+	i := &aws.NomadIntegration{}
+
+	if v, ok := m["master_host"].(string); ok && v != "" {
+		i.SetMasterHost(spotinst.String(v))
+	}
+
+	if v, ok := m["master_port"].(int); ok && v > 0 {
+		i.SetMasterPort(spotinst.Int(v))
+	}
+
+	if v, ok := m["autoscale_is_enabled"].(bool); ok {
+		if i.AutoScale == nil {
+			i.SetAutoScale(&aws.AutoScale{})
+		}
+		i.AutoScale.SetIsEnabled(spotinst.Bool(v))
+	}
+
+	if v, ok := m["autoscale_cooldown"].(int); ok && v > 0 {
+		if i.AutoScale == nil {
+			i.SetAutoScale(&aws.AutoScale{})
+		}
+		i.AutoScale.SetCooldown(spotinst.Int(v))
+	}
+
+	if v, ok := m["autoscale_headroom"]; ok {
+		headroom, err := expandAWSGroupAutoScaleHeadroom(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		if headroom != nil {
+			if i.AutoScale == nil {
+				i.SetAutoScale(&aws.AutoScale{})
+			}
+			i.AutoScale.SetHeadroom(headroom)
+		}
+	}
+
+	if v, ok := m["autoscale_down"]; ok {
+		down, err := expandAWSGroupAutoScaleDown(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		if down != nil {
+			if i.AutoScale == nil {
+				i.SetAutoScale(&aws.AutoScale{})
+			}
+			i.AutoScale.SetDown(down)
+		}
+	}
+
+	if v, ok := m["autoscale_constraints"]; ok {
+		consts, err := expandAWSGroupAutoScaleConstraints(v, nullify)
+		if err != nil {
+			return nil, err
+		}
+		if consts != nil {
+			if i.AutoScale == nil {
+				i.SetAutoScale(&aws.AutoScale{})
+			}
+			i.AutoScale.SetConstraints(consts)
+		}
+	}
+
+	log.Printf("[DEBUG] Group Nomad integration configuration: %s", stringutil.Stringify(i))
+	return i, nil
+}
+
 func expandAWSGroupAutoScaleHeadroom(data interface{}, nullify bool) (*aws.AutoScaleHeadroom, error) {
 	if list := data.(*schema.Set).List(); len(list) > 0 {
 		m := list[0].(map[string]interface{})
@@ -3445,6 +3629,31 @@ func expandAWSGroupAutoScaleDown(data interface{}, nullify bool) (*aws.AutoScale
 	}
 
 	return nil, nil
+}
+
+func expandAWSGroupAutoScaleConstraints(data interface{}, nullify bool) ([]*aws.AutoScaleConstraint, error) {
+	list := data.(*schema.Set).List()
+	out := make([]*aws.AutoScaleConstraint, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr["key"]; !ok {
+			return nil, errors.New("invalid constraint attributes: key missing")
+		}
+
+		if _, ok := attr["value"]; !ok {
+			return nil, errors.New("invalid constraint attributes: value missing")
+		}
+		c := &aws.AutoScaleConstraint{
+			Key:   spotinst.String(fmt.Sprintf("${%s}", attr["key"].(string))),
+			Value: spotinst.String(attr["value"].(string)),
+		}
+		log.Printf("[DEBUG] Group constraint configuration: %s", stringutil.Stringify(c))
+		out = append(out, c)
+	}
+	return out, nil
 }
 
 // expandAWSGroupMesosphereIntegration expands the Mesosphere Integration block.
@@ -3737,7 +3946,7 @@ func hashAWSGroupScalingPolicy(v interface{}) int {
 	return hashcode.String(buf.String())
 }
 
-func hashAWSGroupTagKV(v interface{}) int {
+func hashKV(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
 	buf.WriteString(fmt.Sprintf("%s-", m["key"].(string)))
@@ -3754,6 +3963,15 @@ func hexStateFunc(v interface{}) string {
 	case string:
 		hash := sha1.Sum([]byte(s))
 		return hex.EncodeToString(hash[:])
+	default:
+		return ""
+	}
+}
+
+func attrStateFunc(v interface{}) string {
+	switch s := v.(type) {
+	case string:
+		return fmt.Sprintf("${%s}", s)
 	default:
 		return ""
 	}

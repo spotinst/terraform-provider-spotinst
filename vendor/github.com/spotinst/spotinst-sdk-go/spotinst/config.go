@@ -112,7 +112,7 @@ func (c *Config) WithCredentials(creds *credentials.Credentials) *Config {
 
 // WithUserAgent defines the user agent.
 func (c *Config) WithUserAgent(ua string) *Config {
-	c.UserAgent = fmt.Sprintf("%s; %s", ua, c.UserAgent)
+	c.UserAgent = fmt.Sprintf("%s+%s", ua, c.UserAgent)
 	return c
 }
 

@@ -53,8 +53,7 @@ func resourceSpotinstMultaiDeploymentCreate(d *schema.ResourceData, meta interfa
 	return resourceSpotinstMultaiDeploymentRead(d, meta)
 }
 
-// ErrCodeDeploymentNotFound for service response error code
-// "FAILED_TO_GET_DEPLOYMENT".
+// ErrCodeDeploymentNotFound for service response error code "FAILED_TO_GET_DEPLOYMENT".
 const ErrCodeDeploymentNotFound = "FAILED_TO_GET_DEPLOYMENT"
 
 func resourceSpotinstMultaiDeploymentRead(d *schema.ResourceData, meta interface{}) error {

@@ -120,8 +120,7 @@ func resourceSpotinstMultaiListenerCreate(d *schema.ResourceData, meta interface
 	return resourceSpotinstMultaiListenerRead(d, meta)
 }
 
-// ErrCodeListenerNotFound for service response error code
-// "FAILED_TO_GET_LISTENER".
+// ErrCodeListenerNotFound for service response error code "FAILED_TO_GET_LISTENER".
 const ErrCodeListenerNotFound = "FAILED_TO_GET_LISTENER"
 
 func resourceSpotinstMultaiListenerRead(d *schema.ResourceData, meta interface{}) error {

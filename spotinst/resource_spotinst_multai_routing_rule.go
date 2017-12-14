@@ -87,8 +87,7 @@ func resourceSpotinstMultaiRoutingRuleCreate(d *schema.ResourceData, meta interf
 	return resourceSpotinstMultaiRoutingRuleRead(d, meta)
 }
 
-// ErrCodeRoutingRuleNotFound for service response error code
-// "FAILED_TO_GET_ROUTING_RULE".
+// ErrCodeRoutingRuleNotFound for service response error code "FAILED_TO_GET_ROUTING_RULE".
 const ErrCodeRoutingRuleNotFound = "FAILED_TO_GET_ROUTING_RULE"
 
 func resourceSpotinstMultaiRoutingRuleRead(d *schema.ResourceData, meta interface{}) error {

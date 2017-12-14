@@ -135,8 +135,7 @@ func resourceSpotinstMultaiTargetSetCreate(d *schema.ResourceData, meta interfac
 	return resourceSpotinstMultaiTargetSetRead(d, meta)
 }
 
-// ErrCodeTargetSetNotFound for service response error code
-// "FAILED_TO_GET_TARGET_SET".
+// ErrCodeTargetSetNotFound for service response error code "FAILED_TO_GET_TARGET_SET".
 const ErrCodeTargetSetNotFound = "FAILED_TO_GET_TARGET_SET"
 
 func resourceSpotinstMultaiTargetSetRead(d *schema.ResourceData, meta interface{}) error {
