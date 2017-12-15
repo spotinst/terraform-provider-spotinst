@@ -641,9 +641,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				},
 			},
 
-			"scaling_up_policy": scalingPolicySchema(),
+			"scaling_up_policy": upDownScalingPolicySchema(),
 
-			"scaling_down_policy": scalingPolicySchema(),
+			"scaling_down_policy": upDownScalingPolicySchema(),
+
+			"scaling_target_policy": targetScalingPolicySchema(),
 
 			"rancher_integration": &schema.Schema{
 				Type:     schema.TypeSet,
@@ -997,7 +999,7 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 	}
 }
 
-func scalingPolicySchema() *schema.Schema {
+func baseScalingPolicySchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeSet,
 		Optional: true,
@@ -1013,95 +1015,124 @@ func scalingPolicySchema() *schema.Schema {
 					Required: true,
 				},
 
-				"statistic": &schema.Schema{
-					Type:     schema.TypeString,
-					Required: true,
-				},
-
-				"unit": &schema.Schema{
-					Type:     schema.TypeString,
-					Required: true,
-				},
-
-				"threshold": &schema.Schema{
-					Type:     schema.TypeFloat,
-					Required: true,
-				},
-
-				"adjustment": &schema.Schema{
-					Type:     schema.TypeInt,
-					Optional: true,
-				},
-
-				"adjustment_expression": &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-				},
-
-				"min_target_capacity": &schema.Schema{
-					Type:     schema.TypeInt,
-					Optional: true,
-				},
-
-				"max_target_capacity": &schema.Schema{
-					Type:     schema.TypeInt,
-					Optional: true,
-				},
-
 				"namespace": &schema.Schema{
 					Type:     schema.TypeString,
 					Required: true,
 				},
 
-				"operator": &schema.Schema{
+				"source": &schema.Schema{
 					Type:     schema.TypeString,
 					Optional: true,
 					Computed: true,
 				},
 
-				"evaluation_periods": &schema.Schema{
-					Type:     schema.TypeInt,
-					Required: true,
+				"statistic": &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Computed: true,
 				},
 
-				"period": &schema.Schema{
-					Type:     schema.TypeInt,
-					Required: true,
+				"unit": &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Computed: true,
 				},
 
 				"cooldown": &schema.Schema{
 					Type:     schema.TypeInt,
-					Required: true,
+					Optional: true,
+					Computed: true,
 				},
 
 				"dimensions": &schema.Schema{
 					Type:     schema.TypeMap,
 					Optional: true,
 				},
-
-				"minimum": &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-				},
-
-				"maximum": &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-				},
-
-				"target": &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-				},
-
-				"action_type": &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-				},
 			},
 		},
-		Set: hashAWSGroupScalingPolicy,
 	}
+}
+
+func upDownScalingPolicySchema() *schema.Schema {
+	o := baseScalingPolicySchema()
+	s := o.Elem.(*schema.Resource).Schema
+
+	s["threshold"] = &schema.Schema{
+		Type:     schema.TypeFloat,
+		Required: true,
+	}
+
+	s["adjustment"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s["adjustment_expression"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
+	s["min_target_capacity"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s["max_target_capacity"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s["operator"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+		Computed: true,
+	}
+
+	s["evaluation_periods"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+		Computed: true,
+	}
+
+	s["period"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+		Computed: true,
+	}
+
+	s["minimum"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s["maximum"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s["target"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s["action_type"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
+	return o
+}
+
+func targetScalingPolicySchema() *schema.Schema {
+	o := baseScalingPolicySchema()
+	s := o.Elem.(*schema.Resource).Schema
+
+	s["target"] = &schema.Schema{
+		Type:     schema.TypeFloat,
+		Required: true,
+	}
+
+	return o
 }
 
 //region CRUD methods
@@ -1195,27 +1226,6 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 				return fmt.Errorf("failed to set persistence configuration: %#v", err)
 			}
 		}
-	}
-
-	if g.Scaling != nil {
-		// Set scaling up policies.
-		if g.Scaling.Up != nil {
-			if err := d.Set("scaling_up_policy", flattenAWSGroupScalingPolicies(g.Scaling.Up)); err != nil {
-				return fmt.Errorf("failed to set scaling up policies configuration: %#v", err)
-			}
-		} else {
-			d.Set("scaling_up_policy", []*aws.ScalingPolicy{})
-		}
-
-		// Set scaling down policies.
-		if g.Scaling.Down != nil {
-			if err := d.Set("scaling_down_policy", flattenAWSGroupScalingPolicies(g.Scaling.Down)); err != nil {
-				return fmt.Errorf("failed to set scaling down policies configuration: %#v", err)
-			}
-		} else {
-			d.Set("scaling_down_policy", []*aws.ScalingPolicy{})
-		}
-
 	}
 
 	if g.Scheduling != nil {
@@ -1845,6 +1855,26 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
+	if d.HasChange("scaling_target_policy") {
+		if v, ok := d.GetOk("scaling_target_policy"); ok {
+			if policies, err := expandAWSGroupScalingPolicies(v, nullify); err != nil {
+				return err
+			} else {
+				if group.Scaling == nil {
+					group.SetScaling(&aws.Scaling{})
+				}
+				group.Scaling.SetTarget(policies)
+				update = true
+			}
+		} else {
+			if group.Scaling == nil {
+				group.SetScaling(&aws.Scaling{})
+			}
+			group.Scaling.SetTarget(nil)
+			update = true
+		}
+	}
+
 	if d.HasChange("rancher_integration") {
 		if v, ok := d.GetOk("rancher_integration"); ok {
 			if integration, err := expandAWSGroupRancherIntegration(v, nullify); err != nil {
@@ -2197,59 +2227,6 @@ func flattenAWSGroupPersistence(persistence *aws.Persistence) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenAWSGroupScalingPolicies(policies []*aws.ScalingPolicy) []interface{} {
-	result := make([]interface{}, 0, len(policies))
-	for _, p := range policies {
-		m := make(map[string]interface{})
-
-		if p.Action != nil && p.Action.Type != nil {
-			m["action_type"] = spotinst.StringValue(p.Action.Type)
-
-			if adjInt, err := strconv.Atoi(spotinst.StringValue(p.Action.Adjustment)); err == nil {
-				m["adjustment"] = adjInt
-			} else {
-				m["adjustment_expression"] = spotinst.StringValue(p.Action.Adjustment)
-			}
-
-			if mintcInt, err := strconv.Atoi(spotinst.StringValue(p.Action.MinTargetCapacity)); err == nil {
-				m["min_target_capacity"] = mintcInt
-			}
-
-			if maxtcInt, err := strconv.Atoi(spotinst.StringValue(p.Action.MaxTargetCapacity)); err == nil {
-				m["max_target_capacity"] = maxtcInt
-			}
-
-			m["minimum"] = spotinst.StringValue(p.Action.Minimum)
-			m["maximum"] = spotinst.StringValue(p.Action.Maximum)
-			m["target"] = spotinst.StringValue(p.Action.Target)
-		} else {
-			m["adjustment"] = spotinst.IntValue(p.Adjustment)
-			m["min_target_capacity"] = spotinst.IntValue(p.MinTargetCapacity)
-			m["max_target_capacity"] = spotinst.IntValue(p.MaxTargetCapacity)
-		}
-
-		m["cooldown"] = spotinst.IntValue(p.Cooldown)
-		m["evaluation_periods"] = spotinst.IntValue(p.EvaluationPeriods)
-		m["metric_name"] = spotinst.StringValue(p.MetricName)
-		m["namespace"] = spotinst.StringValue(p.Namespace)
-		m["operator"] = spotinst.StringValue(p.Operator)
-		m["period"] = spotinst.IntValue(p.Period)
-		m["policy_name"] = spotinst.StringValue(p.PolicyName)
-		m["statistic"] = spotinst.StringValue(p.Statistic)
-		m["threshold"] = spotinst.Float64Value(p.Threshold)
-		m["unit"] = spotinst.StringValue(p.Unit)
-		if len(p.Dimensions) > 0 {
-			flatDims := make(map[string]interface{})
-			for _, d := range p.Dimensions {
-				flatDims[spotinst.StringValue(d.Name)] = *d.Value
-			}
-			m["dimensions"] = flatDims
-		}
-		result = append(result, m)
-	}
-	return result
-}
-
 func flattenAWSGroupNetworkInterfaces(ifaces []*aws.NetworkInterface) []interface{} {
 	result := make([]interface{}, 0, len(ifaces))
 	for _, iface := range ifaces {
@@ -2410,6 +2387,14 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 			return nil, err
 		} else {
 			group.Scaling.SetDown(policies)
+		}
+	}
+
+	if v, ok := d.GetOk("scaling_target_policy"); ok {
+		if policies, err := expandAWSGroupScalingPolicies(v, nullify); err != nil {
+			return nil, err
+		} else {
+			group.Scaling.SetTarget(policies)
 		}
 	}
 
@@ -2722,6 +2707,14 @@ func expandAWSGroupScalingPolicies(data interface{}, nullify bool) ([]*aws.Scali
 			policy.SetMetricName(spotinst.String(v))
 		}
 
+		if v, ok := m["namespace"].(string); ok && v != "" {
+			policy.SetNamespace(spotinst.String(v))
+		}
+
+		if v, ok := m["source"].(string); ok && v != "" {
+			policy.SetSource(spotinst.String(v))
+		}
+
 		if v, ok := m["statistic"].(string); ok && v != "" {
 			policy.SetStatistic(spotinst.String(v))
 		}
@@ -2732,10 +2725,6 @@ func expandAWSGroupScalingPolicies(data interface{}, nullify bool) ([]*aws.Scali
 
 		if v, ok := m["threshold"].(float64); ok && v > 0 {
 			policy.SetThreshold(spotinst.Float64(v))
-		}
-
-		if v, ok := m["namespace"].(string); ok && v != "" {
-			policy.SetNamespace(spotinst.String(v))
 		}
 
 		if v, ok := m["operator"].(string); ok && v != "" {
@@ -2766,32 +2755,29 @@ func expandAWSGroupScalingPolicies(data interface{}, nullify bool) ([]*aws.Scali
 			action.SetType(spotinst.String(v))
 
 			if v, ok := m["adjustment"].(int); ok && v > 0 {
-				vStr := strconv.Itoa(v)
-				action.SetAdjustment(spotinst.String(vStr))
+				action.SetAdjustment(spotinst.String(strconv.Itoa(v)))
 			} else if v, ok := m["adjustment_expression"].(string); ok && v != "" {
 				action.SetAdjustment(spotinst.String(v))
 			}
 
 			if v, ok := m["min_target_capacity"].(int); ok && v > 0 {
-				vStr := strconv.Itoa(v)
-				action.SetMinTargetCapacity(spotinst.String(vStr))
+				action.SetMinTargetCapacity(spotinst.Int(v))
 			}
 
 			if v, ok := m["max_target_capacity"].(int); ok && v > 0 {
-				vStr := strconv.Itoa(v)
-				action.SetMaxTargetCapacity(spotinst.String(vStr))
+				action.SetMaxTargetCapacity(spotinst.Int(v))
 			}
 
-			if v, ok := m["minimum"].(string); ok && v != "" {
-				action.SetMinimum(spotinst.String(v))
+			if v, ok := m["minimum"].(int); ok && v > 0 {
+				action.SetMinimum(spotinst.Int(v))
 			}
 
-			if v, ok := m["maximum"].(string); ok && v != "" {
-				action.SetMaximum(spotinst.String(v))
+			if v, ok := m["maximum"].(int); ok && v > 0 {
+				action.SetMaximum(spotinst.Int(v))
 			}
 
-			if v, ok := m["target"].(string); ok && v != "" {
-				action.SetTarget(spotinst.String(v))
+			if v, ok := m["target"].(int); ok && v > 0 {
+				action.SetTarget(spotinst.Int(v))
 			}
 
 			policy.SetAction(action)
@@ -2809,7 +2795,14 @@ func expandAWSGroupScalingPolicies(data interface{}, nullify bool) ([]*aws.Scali
 			}
 		}
 
-		if v, ok := m["namespace"].(string); ok && v != "" {
+		// Target scaling policy?
+		if policy.Threshold == nil {
+			if v, ok := m["target"].(float64); ok && v >= 0 {
+				policy.SetTarget(spotinst.Float64(v))
+			}
+		}
+
+		if policy.Namespace != nil {
 			log.Printf("[DEBUG] Group scaling policy configuration: %s", stringutil.Stringify(policy))
 			policies = append(policies, policy)
 		}
@@ -3905,44 +3898,6 @@ func hashAWSGroupEBSBlockDevice(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%t-", m["delete_on_termination"].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m["encrypted"].(bool)))
 	buf.WriteString(fmt.Sprintf("%d-", m["iops"].(int)))
-	return hashcode.String(buf.String())
-}
-
-func hashAWSGroupScalingPolicy(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-
-	buf.WriteString(fmt.Sprintf("%d-", m["cooldown"].(int)))
-	buf.WriteString(fmt.Sprintf("%d-", m["evaluation_periods"].(int)))
-	buf.WriteString(fmt.Sprintf("%s-", m["metric_name"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["namespace"].(string)))
-	buf.WriteString(fmt.Sprintf("%d-", m["period"].(int)))
-	buf.WriteString(fmt.Sprintf("%s-", m["policy_name"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["statistic"].(string)))
-	buf.WriteString(fmt.Sprintf("%f-", m["threshold"].(float64)))
-	buf.WriteString(fmt.Sprintf("%s-", m["unit"].(string)))
-	buf.WriteString(fmt.Sprintf("%d-", m["min_target_capacity"].(int)))
-	buf.WriteString(fmt.Sprintf("%d-", m["max_target_capacity"].(int)))
-	buf.WriteString(fmt.Sprintf("%s-", m["action_type"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["target"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["minimum"].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m["maximum"].(string)))
-
-	if v, ok := m["adjustment_expression"].(string); ok && v != "" {
-		buf.WriteString(fmt.Sprintf("%s-", m["adjustment_expression"].(string)))
-	} else {
-		buf.WriteString(fmt.Sprintf("%d-", m["adjustment"].(int)))
-	}
-
-	if d, ok := m["dimensions"]; ok {
-		if len(d.(map[string]interface{})) > 0 {
-			e := d.(map[string]interface{})
-			for k, v := range e {
-				buf.WriteString(fmt.Sprintf("%s:%s-", k, v.(string)))
-			}
-		}
-	}
-
 	return hashcode.String(buf.String())
 }
 

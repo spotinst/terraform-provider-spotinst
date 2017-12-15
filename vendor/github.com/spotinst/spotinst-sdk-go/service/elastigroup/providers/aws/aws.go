@@ -234,8 +234,9 @@ type Task struct {
 }
 
 type Scaling struct {
-	Up   []*ScalingPolicy `json:"up,omitempty"`
-	Down []*ScalingPolicy `json:"down,omitempty"`
+	Up     []*ScalingPolicy `json:"up,omitempty"`
+	Down   []*ScalingPolicy `json:"down,omitempty"`
+	Target []*ScalingPolicy `json:"target,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -244,19 +245,21 @@ type Scaling struct {
 type ScalingPolicy struct {
 	PolicyName        *string      `json:"policyName,omitempty"`
 	MetricName        *string      `json:"metricName,omitempty"`
+	Namespace         *string      `json:"namespace,omitempty"`
+	Source            *string      `json:"source,omitempty"`
 	Statistic         *string      `json:"statistic,omitempty"`
 	Unit              *string      `json:"unit,omitempty"`
 	Threshold         *float64     `json:"threshold,omitempty"`
 	Adjustment        *int         `json:"adjustment,omitempty"`
 	MinTargetCapacity *int         `json:"minTargetCapacity,omitempty"`
 	MaxTargetCapacity *int         `json:"maxTargetCapacity,omitempty"`
-	Namespace         *string      `json:"namespace,omitempty"`
 	EvaluationPeriods *int         `json:"evaluationPeriods,omitempty"`
 	Period            *int         `json:"period,omitempty"`
 	Cooldown          *int         `json:"cooldown,omitempty"`
 	Operator          *string      `json:"operator,omitempty"`
 	Dimensions        []*Dimension `json:"dimensions,omitempty"`
 	Action            *Action      `json:"action,omitempty"`
+	Target            *float64     `json:"target,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -265,11 +268,11 @@ type ScalingPolicy struct {
 type Action struct {
 	Type              *string `json:"type,omitempty"`
 	Adjustment        *string `json:"adjustment,omitempty"`
-	MinTargetCapacity *string `json:"minTargetCapacity,omitempty"`
-	MaxTargetCapacity *string `json:"maxTargetCapacity,omitempty"`
-	Maximum           *string `json:"maximum,omitempty"`
-	Minimum           *string `json:"minimum,omitempty"`
-	Target            *string `json:"target,omitempty"`
+	MinTargetCapacity *int    `json:"minTargetCapacity,omitempty"`
+	MaxTargetCapacity *int    `json:"maxTargetCapacity,omitempty"`
+	Maximum           *int    `json:"maximum,omitempty"`
+	Minimum           *int    `json:"minimum,omitempty"`
+	Target            *int    `json:"target,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1391,6 +1394,13 @@ func (o *Scaling) SetDown(v []*ScalingPolicy) *Scaling {
 	return o
 }
 
+func (o *Scaling) SetTarget(v []*ScalingPolicy) *Scaling {
+	if o.Target = v; o.Target == nil {
+		o.nullFields = append(o.nullFields, "Target")
+	}
+	return o
+}
+
 // endregion
 
 // region ScalingPolicy
@@ -1411,6 +1421,20 @@ func (o *ScalingPolicy) SetPolicyName(v *string) *ScalingPolicy {
 func (o *ScalingPolicy) SetMetricName(v *string) *ScalingPolicy {
 	if o.MetricName = v; o.MetricName == nil {
 		o.nullFields = append(o.nullFields, "MetricName")
+	}
+	return o
+}
+
+func (o *ScalingPolicy) SetNamespace(v *string) *ScalingPolicy {
+	if o.Namespace = v; o.Namespace == nil {
+		o.nullFields = append(o.nullFields, "Namespace")
+	}
+	return o
+}
+
+func (o *ScalingPolicy) SetSource(v *string) *ScalingPolicy {
+	if o.Source = v; o.Source == nil {
+		o.nullFields = append(o.nullFields, "Source")
 	}
 	return o
 }
@@ -1457,13 +1481,6 @@ func (o *ScalingPolicy) SetMaxTargetCapacity(v *int) *ScalingPolicy {
 	return o
 }
 
-func (o *ScalingPolicy) SetNamespace(v *string) *ScalingPolicy {
-	if o.Namespace = v; o.Namespace == nil {
-		o.nullFields = append(o.nullFields, "Namespace")
-	}
-	return o
-}
-
 func (o *ScalingPolicy) SetEvaluationPeriods(v *int) *ScalingPolicy {
 	if o.EvaluationPeriods = v; o.EvaluationPeriods == nil {
 		o.nullFields = append(o.nullFields, "EvaluationPeriods")
@@ -1506,6 +1523,13 @@ func (o *ScalingPolicy) SetAction(v *Action) *ScalingPolicy {
 	return o
 }
 
+func (o *ScalingPolicy) SetTarget(v *float64) *ScalingPolicy {
+	if o.Target = v; o.Target == nil {
+		o.nullFields = append(o.nullFields, "Target")
+	}
+	return o
+}
+
 // endregion
 
 // region Action
@@ -1530,35 +1554,35 @@ func (o *Action) SetAdjustment(v *string) *Action {
 	return o
 }
 
-func (o *Action) SetMinTargetCapacity(v *string) *Action {
+func (o *Action) SetMinTargetCapacity(v *int) *Action {
 	if o.MinTargetCapacity = v; o.MinTargetCapacity == nil {
 		o.nullFields = append(o.nullFields, "MinTargetCapacity")
 	}
 	return o
 }
 
-func (o *Action) SetMaxTargetCapacity(v *string) *Action {
+func (o *Action) SetMaxTargetCapacity(v *int) *Action {
 	if o.MaxTargetCapacity = v; o.MaxTargetCapacity == nil {
 		o.nullFields = append(o.nullFields, "MaxTargetCapacity")
 	}
 	return o
 }
 
-func (o *Action) SetMaximum(v *string) *Action {
+func (o *Action) SetMaximum(v *int) *Action {
 	if o.Maximum = v; o.Maximum == nil {
 		o.nullFields = append(o.nullFields, "Maximum")
 	}
 	return o
 }
 
-func (o *Action) SetMinimum(v *string) *Action {
+func (o *Action) SetMinimum(v *int) *Action {
 	if o.Minimum = v; o.Minimum == nil {
 		o.nullFields = append(o.nullFields, "Minimum")
 	}
 	return o
 }
 
-func (o *Action) SetTarget(v *string) *Action {
+func (o *Action) SetTarget(v *int) *Action {
 	if o.Target = v; o.Target == nil {
 		o.nullFields = append(o.nullFields, "Target")
 	}
