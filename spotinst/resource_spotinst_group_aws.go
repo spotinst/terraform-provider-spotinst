@@ -2671,13 +2671,13 @@ func expandAWSGroupStrategy(data interface{}, nullify bool) (*aws.Strategy, erro
 		strategy.SetDrainingTimeout(spotinst.Int(v))
 	}
 
-	if v, ok := m["utilize_reserved_instances"].(bool); ok {
+	if v, ok := m["utilize_reserved_instances"].(bool); ok && v {
 		strategy.SetUtilizeReservedInstances(spotinst.Bool(v))
 	} else if nullify {
 		strategy.SetUtilizeReservedInstances(nil)
 	}
 
-	if v, ok := m["fallback_to_ondemand"].(bool); ok {
+	if v, ok := m["fallback_to_ondemand"].(bool); ok && v {
 		strategy.SetFallbackToOnDemand(spotinst.Bool(v))
 	} else if nullify {
 		strategy.SetFallbackToOnDemand(nil)
