@@ -47,6 +47,12 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Optional: true,
 			},
 
+			"private_ips": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
 			"capacity": &schema.Schema{
 				Type:     schema.TypeSet,
 				Required: true,
@@ -1187,6 +1193,7 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("description", g.Description)
 	d.Set("product", g.Compute.Product)
 	d.Set("elastic_ips", g.Compute.ElasticIPs)
+	d.Set("private_ips", g.Compute.PrivateIPs)
 
 	// Set capacity.
 
@@ -1377,6 +1384,26 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 				group.SetCapacity(capacity)
 				update = true
 			}
+		}
+	}
+
+	if d.HasChange("private_ips") {
+		if v, ok := d.GetOk("private_ips"); ok {
+			if privateIPs, err := expandAWSGroupPrivateIPs(v); err != nil {
+				return err
+			} else {
+				if group.Compute == nil {
+					group.SetCompute(&aws.Compute{})
+				}
+				group.Compute.SetPrivateIPs(privateIPs)
+				update = true
+			}
+		} else {
+			if group.Compute == nil {
+				group.SetCompute(&aws.Compute{})
+			}
+			group.Compute.SetPrivateIPs(nil)
+			update = true
 		}
 	}
 
@@ -2344,6 +2371,14 @@ func buildAWSGroupOpts(d *schema.ResourceData, meta interface{}) (*aws.Group, er
 	group.SetName(spotinst.String(d.Get("name").(string)))
 	group.SetDescription(spotinst.String(d.Get("description").(string)))
 	group.Compute.SetProduct(spotinst.String(d.Get("product").(string)))
+
+	if tfPrivateIPs, ok := d.GetOk("private_ips"); ok {
+		if privateIPsArr, err := expandAWSGroupPrivateIPs(tfPrivateIPs); err != nil {
+			return nil, err
+		} else {
+			group.Compute.SetPrivateIPs(privateIPsArr)
+		}
+	}
 
 	if v, ok := d.GetOk("capacity"); ok {
 		_, exists := d.GetOkExists("target_capacity")
@@ -3725,6 +3760,19 @@ func expandAWSGroupCodeDeployIntegrationDeploymentGroups(data interface{}, nulli
 		deploymentGroups = append(deploymentGroups, deploymentGroup)
 	}
 	return deploymentGroups, nil
+}
+
+// expandAWSGroupElasticIPs expands the Elastic IPs block.
+func expandAWSGroupPrivateIPs(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+	for _, str := range list {
+		if privateIP, ok := str.(string); ok {
+			log.Printf("[DEBUG] Group private IP configuration: %s", stringutil.Stringify(privateIP))
+			result = append(result, privateIP)
+		}
+	}
+	return result, nil
 }
 
 // expandAWSGroupElasticIPs expands the Elastic IPs block.

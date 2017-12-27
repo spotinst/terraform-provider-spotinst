@@ -337,6 +337,7 @@ type Compute struct {
 	AvailabilityZones   []*AvailabilityZone  `json:"availabilityZones,omitempty"`
 	ElasticIPs          []string             `json:"elasticIps,omitempty"`
 	EBSVolumePool       []*EBSVolume         `json:"ebsVolumePool,omitempty"`
+	PrivateIPs          []string         	 `json:"privateIps,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1807,6 +1808,15 @@ func (o *Compute) SetProduct(v *string) *Compute {
 	if o.Product = v; o.Product == nil {
 		o.nullFields = append(o.nullFields, "Product")
 	}
+
+	return o
+}
+
+func (o *Compute) SetPrivateIPs(v []string) *Compute {
+	if o.PrivateIPs = v; o.PrivateIPs == nil {
+		o.nullFields = append(o.nullFields, "PrivateIPs")
+	}
+
 	return o
 }
 
