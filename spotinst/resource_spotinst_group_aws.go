@@ -47,6 +47,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Optional: true,
 			},
 
+			"should_resume_stateful": &schema.Schema {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+
 			"private_ips": &schema.Schema{
 				Type:     schema.TypeList,
 				Optional: true,
@@ -2063,8 +2068,21 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if update {
+		var shouldResumeStateful bool
+		var input *aws.UpdateGroupInput
+
+		if _, exist := d.GetOkExists("should_resume_stateful"); exist {
+			log.Print("[DEBUG] Resuming paused stateful instances on group if any exist")
+			shouldResumeStateful = d.Get("should_resume_stateful").(bool)
+		}
+
+		input = &aws.UpdateGroupInput{
+			Group: group,
+			ShouldResumeStateful: spotinst.Bool(shouldResumeStateful),
+		}
+
 		log.Printf("[DEBUG] Group update configuration: %s", stringutil.Stringify(group))
-		input := &aws.UpdateGroupInput{Group: group}
+
 		if _, err := client.elastigroup.CloudProviderAWS().Update(context.Background(), input); err != nil {
 			return fmt.Errorf("failed to update group %s: %s", d.Id(), err)
 		} else {

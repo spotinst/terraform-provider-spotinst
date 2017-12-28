@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+	"strconv"
 
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -506,6 +507,7 @@ type ReadGroupOutput struct {
 
 type UpdateGroupInput struct {
 	Group *Group `json:"group,omitempty"`
+	ShouldResumeStateful *bool `json:"-"`
 }
 
 type UpdateGroupOutput struct {
@@ -705,6 +707,11 @@ func (s *ServiceOp) Update(ctx context.Context, input *UpdateGroupInput) (*Updat
 
 	r := client.NewRequest(http.MethodPut, path)
 	r.Obj = input
+
+	if input.ShouldResumeStateful != nil {
+		r.Params.Set("shouldResumeStateful",
+			strconv.FormatBool(spotinst.BoolValue(input.ShouldResumeStateful)))
+	}
 
 	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
