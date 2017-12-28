@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"time"
 	"strconv"
+	"time"
 
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -338,7 +338,7 @@ type Compute struct {
 	AvailabilityZones   []*AvailabilityZone  `json:"availabilityZones,omitempty"`
 	ElasticIPs          []string             `json:"elasticIps,omitempty"`
 	EBSVolumePool       []*EBSVolume         `json:"ebsVolumePool,omitempty"`
-	PrivateIPs          []string         	 `json:"privateIps,omitempty"`
+	PrivateIPs          []string             `json:"privateIps,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -506,8 +506,8 @@ type ReadGroupOutput struct {
 }
 
 type UpdateGroupInput struct {
-	Group *Group `json:"group,omitempty"`
-	ShouldResumeStateful *bool `json:"-"`
+	Group                *Group `json:"group,omitempty"`
+	ShouldResumeStateful *bool  `json:"-"`
 }
 
 type UpdateGroupOutput struct {

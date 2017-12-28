@@ -47,7 +47,7 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				Optional: true,
 			},
 
-			"should_resume_stateful": &schema.Schema {
+			"should_resume_stateful": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
@@ -2077,7 +2077,7 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 		}
 
 		input = &aws.UpdateGroupInput{
-			Group: group,
+			Group:                group,
 			ShouldResumeStateful: spotinst.Bool(shouldResumeStateful),
 		}
 
