@@ -454,8 +454,8 @@ func resourceSpotinstAWSMrScalerRead(d *schema.ResourceData, meta interface{}) e
 		return nil
 	}
 
-	if exist := d.Get("expose_cluster_id").(bool) ; exist {
-		if err := exposeMrScalerClusterId(d, meta) ; err != nil {
+	if exist := d.Get("expose_cluster_id").(bool); exist {
+		if err := exposeMrScalerClusterId(d, meta); err != nil {
 			return err
 		}
 	}
