@@ -15,6 +15,7 @@ type Service interface {
 	List(context.Context, *ListScalersInput) (*ListScalersOutput, error)
 	Create(context.Context, *CreateScalerInput) (*CreateScalerOutput, error)
 	Read(context.Context, *ReadScalerInput) (*ReadScalerOutput, error)
+	ReadScalerCluster(context.Context, *ScalerClusterStatusInput) (*ScalerClusterStatusOutput, error)
 	Update(context.Context, *UpdateScalerInput) (*UpdateScalerOutput, error)
 	Delete(context.Context, *DeleteScalerInput) (*DeleteScalerOutput, error)
 }

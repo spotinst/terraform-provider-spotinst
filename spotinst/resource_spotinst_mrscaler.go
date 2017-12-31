@@ -58,6 +58,17 @@ func resourceSpotinstAWSMrScaler() *schema.Resource {
 				Required: true,
 			},
 
+			"output_cluster_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"expose_cluster_id": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+
 			"master_instance_types": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -414,6 +425,21 @@ func resourceSpotinstAWSMrScalerCreate(d *schema.ResourceData, meta interface{})
 	return resourceSpotinstAWSMrScalerRead(d, meta)
 }
 
+func exposeMrScalerClusterId(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*Client)
+	input := &mrscaler.ScalerClusterStatusInput{ScalerID: spotinst.String(d.Id())}
+	resp, err := client.mrscaler.ReadScalerCluster(context.Background(), input)
+
+	if err != nil {
+		return fmt.Errorf("failed reading cloned cluser id of mr scaler : %s", err)
+	}
+
+	if resp.ScalerClusterId != nil {
+		d.Set("output_cluster_id", resp.ScalerClusterId)
+	}
+	return nil
+}
+
 func resourceSpotinstAWSMrScalerRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Client)
 	input := &mrscaler.ReadScalerInput{ScalerID: spotinst.String(d.Id())}
@@ -428,6 +454,12 @@ func resourceSpotinstAWSMrScalerRead(d *schema.ResourceData, meta interface{}) e
 		return nil
 	}
 
+	if exist := d.Get("expose_cluster_id").(bool) ; exist {
+		if err := exposeMrScalerClusterId(d, meta) ; err != nil {
+			return err
+		}
+	}
+
 	ext := resp.Scaler
 	d.Set("name", ext.Name)
 	d.Set("description", ext.Description)
@@ -435,9 +467,9 @@ func resourceSpotinstAWSMrScalerRead(d *schema.ResourceData, meta interface{}) e
 
 	if ext.Strategy != nil {
 		if ext.Strategy.Wrapping != nil {
-			d.Set("clusterId", ext.Strategy.Wrapping.SourceClusterID)
+			d.Set("cluster_id", ext.Strategy.Wrapping.SourceClusterID)
 		} else {
-			d.Set("clusterId", ext.Strategy.Cloning.OriginClusterID)
+			d.Set("cluster_id", ext.Strategy.Cloning.OriginClusterID)
 		}
 	}
 
