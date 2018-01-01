@@ -2191,8 +2191,17 @@ func flattenAWSGroupLaunchSpecification(lspec *aws.LaunchSpecification, includeI
 }
 
 func flattenAWSGroupLoadBalancers(balancers []*aws.LoadBalancer) []interface{} {
+	if balancers == nil {
+		log.Print("[ERROR] Cannot expand AWS group load balancers due to <nil> value")
+		// Do not fail the terraform process
+		return nil
+	}
 	result := make([]interface{}, 0, len(balancers))
 	for _, b := range balancers {
+		if b == nil {
+			log.Print("[ERROR] Empty load balancer value, skipping creation")
+			continue
+		}
 		m := make(map[string]interface{})
 		m["type"] = strings.ToLower(spotinst.StringValue(b.Type))
 
@@ -3331,9 +3340,18 @@ const (
 
 // expandAWSGroupLoadBalancer expands the Load Balancer block.
 func expandAWSGroupLoadBalancer(data interface{}, nullify bool) ([]*aws.LoadBalancer, error) {
+	if data == nil {
+		log.Print("[ERROR] Cannot expand AWS group load balancers due to <nil> value")
+		// Do not fail the terraform process
+		return nil, nil
+	}
 	list := data.(*schema.Set).List()
 	lbs := make([]*aws.LoadBalancer, 0, len(list))
 	for _, item := range list {
+		if item == nil {
+			log.Print("[ERROR] Empty load balancer value, skipping creation")
+			continue
+		}
 		m := item.(map[string]interface{})
 		lb := &aws.LoadBalancer{}
 
@@ -3378,9 +3396,18 @@ func expandAWSGroupLoadBalancer(data interface{}, nullify bool) ([]*aws.LoadBala
 
 // expandAWSGroupLoadBalancers expands the Load Balancer block.
 func expandAWSGroupLoadBalancers(data interface{}, nullify bool) ([]*aws.LoadBalancer, error) {
+	if data == nil {
+		log.Print("[ERROR] Cannot expand AWS group load balancers due to <nil> value")
+		// Do not fail the terraform process
+		return nil, nil
+	}
 	list := data.([]interface{})
 	lbs := make([]*aws.LoadBalancer, 0, len(list))
 	for _, item := range list {
+		if item == nil {
+			log.Print("[ERROR] Empty load balancer value, skipping creation")
+			continue
+		}
 		m := item.(string)
 		lb := &aws.LoadBalancer{}
 
