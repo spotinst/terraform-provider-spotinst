@@ -3,8 +3,8 @@ package multai
 import "github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil"
 
 type Tag struct {
-	Key   *string `json:"tagKey,omitempty"`
-	Value *string `json:"tagValue,omitempty"`
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`

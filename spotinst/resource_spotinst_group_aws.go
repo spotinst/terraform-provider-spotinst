@@ -851,6 +851,11 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 							Optional: true,
 						},
 
+						"acl_token": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
 						"autoscale_headroom": &schema.Schema{
 							Type:     schema.TypeSet,
 							Optional: true,
@@ -3607,6 +3612,10 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 
 	if v, ok := m["master_port"].(int); ok && v > 0 {
 		i.SetMasterPort(spotinst.Int(v))
+	}
+
+	if v, ok := m["acl_token"].(string); ok && v != "" {
+		i.SetAclToken(spotinst.String(v))
 	}
 
 	if v, ok := m["autoscale_is_enabled"].(bool); ok {

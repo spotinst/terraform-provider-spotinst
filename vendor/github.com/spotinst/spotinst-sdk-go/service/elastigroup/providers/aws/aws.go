@@ -204,6 +204,7 @@ type NomadIntegration struct {
 	MasterHost *string    `json:"masterHost,omitempty"`
 	MasterPort *int       `json:"masterPort,omitempty"`
 	AutoScale  *AutoScale `json:"autoScale,omitempty"`
+	AclToken   *string    `json:"aclToken,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1256,6 +1257,13 @@ func (o *NomadIntegration) SetMasterHost(v *string) *NomadIntegration {
 func (o *NomadIntegration) SetMasterPort(v *int) *NomadIntegration {
 	if o.MasterPort = v; o.MasterPort == nil {
 		o.nullFields = append(o.nullFields, "MasterPort")
+	}
+	return o
+}
+
+func (o *NomadIntegration) SetAclToken(v *string) *NomadIntegration {
+	if o.AclToken = v; o.AclToken == nil {
+		o.nullFields = append(o.nullFields, "AclToken")
 	}
 	return o
 }
