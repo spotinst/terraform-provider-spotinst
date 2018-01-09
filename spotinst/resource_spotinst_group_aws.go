@@ -3616,6 +3616,8 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 
 	if v, ok := m["acl_token"].(string); ok && v != "" {
 		i.SetAclToken(spotinst.String(v))
+	} else if nullify {
+		i.SetAclToken(nil)
 	}
 
 	if v, ok := m["autoscale_is_enabled"].(bool); ok {
