@@ -37,7 +37,7 @@ const (
 	ProductSUSELinuxVPC
 )
 
-var Product_name = map[Product]string{
+var ProductName = map[Product]string{
 	ProductWindows:      "Windows",
 	ProductWindowsVPC:   "Windows (Amazon VPC)",
 	ProductLinuxUnix:    "Linux/UNIX",
@@ -46,7 +46,7 @@ var Product_name = map[Product]string{
 	ProductSUSELinuxVPC: "SUSE Linux (Amazon VPC)",
 }
 
-var Product_value = map[string]Product{
+var ProductValue = map[string]Product{
 	"Windows":                 ProductWindows,
 	"Windows (Amazon VPC)":    ProductWindowsVPC,
 	"Linux/UNIX":              ProductLinuxUnix,
@@ -56,7 +56,7 @@ var Product_value = map[string]Product{
 }
 
 func (p Product) String() string {
-	return Product_name[p]
+	return ProductName[p]
 }
 
 type Group struct {
@@ -204,7 +204,7 @@ type NomadIntegration struct {
 	MasterHost *string    `json:"masterHost,omitempty"`
 	MasterPort *int       `json:"masterPort,omitempty"`
 	AutoScale  *AutoScale `json:"autoScale,omitempty"`
-	AclToken   *string    `json:"aclToken,omitempty"`
+	ACLToken   *string    `json:"aclToken,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1262,8 +1262,8 @@ func (o *NomadIntegration) SetMasterPort(v *int) *NomadIntegration {
 }
 
 func (o *NomadIntegration) SetAclToken(v *string) *NomadIntegration {
-	if o.AclToken = v; o.AclToken == nil {
-		o.nullFields = append(o.nullFields, "AclToken")
+	if o.ACLToken = v; o.ACLToken == nil {
+		o.nullFields = append(o.nullFields, "ACLToken")
 	}
 	return o
 }

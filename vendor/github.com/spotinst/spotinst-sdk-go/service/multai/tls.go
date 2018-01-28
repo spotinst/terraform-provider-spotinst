@@ -5,21 +5,21 @@ import (
 	"fmt"
 )
 
-var TLSVersion_name = map[uint16]string{
+var TLSVersionName = map[uint16]string{
 	tls.VersionSSL30: "SSL30",
 	tls.VersionTLS10: "TLS10",
 	tls.VersionTLS11: "TLS11",
 	tls.VersionTLS12: "TLS12",
 }
 
-var TLSVersion_value = map[string]uint16{
+var TLSVersionValue = map[string]uint16{
 	"SSL30": tls.VersionSSL30,
 	"TLS10": tls.VersionTLS10,
 	"TLS11": tls.VersionTLS11,
 	"TLS12": tls.VersionTLS12,
 }
 
-var TLSCipherSuite_name = map[uint16]string{
+var TLSCipherSuiteName = map[uint16]string{
 	tls.TLS_RSA_WITH_RC4_128_SHA:                "TLS_RSA_WITH_RC4_128_SHA",
 	tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA:           "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
 	tls.TLS_RSA_WITH_AES_128_CBC_SHA:            "TLS_RSA_WITH_AES_128_CBC_SHA",
@@ -44,7 +44,7 @@ var TLSCipherSuite_name = map[uint16]string{
 	tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305:  "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",
 }
 
-var TLSCipherSuite_value = map[string]uint16{
+var TLSCipherSuiteValue = map[string]uint16{
 	"TLS_RSA_WITH_RC4_128_SHA":                tls.TLS_RSA_WITH_RC4_128_SHA,
 	"TLS_RSA_WITH_3DES_EDE_CBC_SHA":           tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
 	"TLS_RSA_WITH_AES_128_CBC_SHA":            tls.TLS_RSA_WITH_AES_128_CBC_SHA,
@@ -110,14 +110,14 @@ type TLSConfig struct {
 }
 
 func ParseTLSCipherSuite(suite string) (uint16, error) {
-	if s, ok := TLSCipherSuite_value[suite]; ok {
+	if s, ok := TLSCipherSuiteValue[suite]; ok {
 		return s, nil
 	}
 	return 0, fmt.Errorf("unsupported TLS cipher suite: %v", suite)
 }
 
 func ParseTLSVersion(version string) (uint16, error) {
-	if v, ok := TLSVersion_value[version]; ok {
+	if v, ok := TLSVersionValue[version]; ok {
 		return v, nil
 	}
 	return 0, fmt.Errorf("unsupported TLS version: %v", version)

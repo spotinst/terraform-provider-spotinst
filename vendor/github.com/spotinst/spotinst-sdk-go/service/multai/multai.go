@@ -13,12 +13,15 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates"
 )
 
-// A Protocol represents the type of an application protocol.
+// A Protocol represents the type of a L4 or L7 network protocol.
 type Protocol int
 
 const (
+	// ProtocolTCP represents the Transmission Control Protocol (TCP) protocol.
+	ProtocolTCP Protocol = iota
+
 	// ProtocolHTTP represents the Hypertext Transfer Protocol (HTTP) protocol.
-	ProtocolHTTP Protocol = iota
+	ProtocolHTTP
 
 	// ProtocolHTTPS represents the Hypertext Transfer Protocol (HTTP) within
 	// a connection encrypted by Transport Layer Security, or its predecessor,
@@ -30,20 +33,22 @@ const (
 	ProtocolHTTP2
 )
 
-var Protocol_name = map[Protocol]string{
+var ProtocolName = map[Protocol]string{
+	ProtocolTCP:   "TCP",
 	ProtocolHTTP:  "HTTP",
 	ProtocolHTTPS: "HTTPS",
 	ProtocolHTTP2: "HTTP2",
 }
 
-var Protocol_value = map[string]Protocol{
+var ProtocolValue = map[string]Protocol{
+	"TCP":   ProtocolTCP,
 	"HTTP":  ProtocolHTTP,
 	"HTTPS": ProtocolHTTPS,
 	"HTTP2": ProtocolHTTP2,
 }
 
 func (p Protocol) String() string {
-	return Protocol_name[p]
+	return ProtocolName[p]
 }
 
 // A ReadinessStatus represents the readiness status of a target.
@@ -57,18 +62,18 @@ const (
 	StatusMaintenance
 )
 
-var ReadinessStatus_name = map[ReadinessStatus]string{
+var ReadinessStatusName = map[ReadinessStatus]string{
 	StatusReady:       "READY",
 	StatusMaintenance: "MAINTENANCE",
 }
 
-var ReadinessStatus_value = map[string]ReadinessStatus{
+var ReadinessStatusValue = map[string]ReadinessStatus{
 	"READY":       StatusReady,
 	"MAINTENANCE": StatusMaintenance,
 }
 
 func (s ReadinessStatus) String() string {
-	return ReadinessStatus_name[s]
+	return ReadinessStatusName[s]
 }
 
 // A HealthinessStatus represents the healthiness status of a target.
@@ -85,20 +90,20 @@ const (
 	StatusUnhealthy
 )
 
-var HealthinessStatus_name = map[HealthinessStatus]string{
+var HealthinessStatusName = map[HealthinessStatus]string{
 	StatusUnknown:   "UNKNOWN",
 	StatusHealthy:   "HEALTHY",
 	StatusUnhealthy: "UNHEALTHY",
 }
 
-var HealthinessStatus_value = map[string]HealthinessStatus{
+var HealthinessStatusValue = map[string]HealthinessStatus{
 	"UNKNOWN":   StatusUnknown,
 	"HEALTHY":   StatusHealthy,
 	"UNHEALTHY": StatusUnhealthy,
 }
 
 func (s HealthinessStatus) String() string {
-	return HealthinessStatus_name[s]
+	return HealthinessStatusName[s]
 }
 
 // A Strategy represents the load balancing methods used to determine which
@@ -126,14 +131,14 @@ const (
 	StrategyIPHash
 )
 
-var Strategy_name = map[Strategy]string{
+var StrategyName = map[Strategy]string{
 	StrategyRandom:     "RANDOM",
 	StrategyRoundRobin: "ROUNDROBIN",
 	StrategyLeastConn:  "LEASTCONN",
 	StrategyIPHash:     "IPHASH",
 }
 
-var Strategy_value = map[string]Strategy{
+var StrategyValue = map[string]Strategy{
 	"RANDOM":     StrategyRandom,
 	"ROUNDROBIN": StrategyRoundRobin,
 	"LEASTCONN":  StrategyLeastConn,
@@ -141,7 +146,7 @@ var Strategy_value = map[string]Strategy{
 }
 
 func (s Strategy) String() string {
-	return Strategy_name[s]
+	return StrategyName[s]
 }
 
 type LoadBalancer struct {

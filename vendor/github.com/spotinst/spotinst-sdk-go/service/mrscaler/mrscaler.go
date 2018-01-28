@@ -26,20 +26,20 @@ const (
 	InstanceGroupTypeTask
 )
 
-var InstanceGroupType_name = map[InstanceGroupType]string{
+var InstanceGroupTypeName = map[InstanceGroupType]string{
 	InstanceGroupTypeMaster: "master",
 	InstanceGroupTypeCore:   "core",
 	InstanceGroupTypeTask:   "task",
 }
 
-var InstanceGroupType_value = map[string]InstanceGroupType{
+var InstanceGroupTypeValue = map[string]InstanceGroupType{
 	"master": InstanceGroupTypeMaster,
 	"core":   InstanceGroupTypeCore,
 	"task":   InstanceGroupTypeTask,
 }
 
 func (p InstanceGroupType) String() string {
-	return InstanceGroupType_name[p]
+	return InstanceGroupTypeName[p]
 }
 
 type Scaler struct {
