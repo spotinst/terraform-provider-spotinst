@@ -764,14 +764,24 @@ func resourceSpotinstAWSGroup() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"integration_mode": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"cluster_identifier": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
 						"api_server": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 
 						"token": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 
 						"autoscale_is_enabled": &schema.Schema{
@@ -3547,6 +3557,14 @@ func expandAWSGroupKubernetesIntegration(data interface{}, nullify bool) (*aws.K
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
 	i := &aws.KubernetesIntegration{}
+
+	if v, ok := m["integration_mode"].(string); ok && v != "" {
+		i.SetIntegrationMode(spotinst.String(v))
+	}
+
+	if v, ok := m["cluster_identifier"].(string); ok && v != "" {
+		i.SetClusterIdentifier(spotinst.String(v))
+	}
 
 	if v, ok := m["api_server"].(string); ok && v != "" {
 		i.SetServer(spotinst.String(v))

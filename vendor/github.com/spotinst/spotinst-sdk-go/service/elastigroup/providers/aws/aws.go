@@ -178,9 +178,11 @@ type RancherIntegration struct {
 }
 
 type KubernetesIntegration struct {
-	Server    *string    `json:"apiServer,omitempty"`
-	Token     *string    `json:"token,omitempty"`
-	AutoScale *AutoScale `json:"autoScale,omitempty"`
+	IntegrationMode   *string    `json:"integrationMode,omitempty"`
+	ClusterIdentifier *string    `json:"clusterIdentifier,omitempty"`
+	Server            *string    `json:"apiServer,omitempty"`
+	Token             *string    `json:"token,omitempty"`
+	AutoScale         *AutoScale `json:"autoScale,omitempty"`
 
 	forceSendFields []string `json:"-"`
 	nullFields      []string `json:"-"`
@@ -1180,6 +1182,20 @@ func (o *KubernetesIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod KubernetesIntegration
 	raw := noMethod(*o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *KubernetesIntegration) SetIntegrationMode(v *string) *KubernetesIntegration {
+	if o.IntegrationMode = v; o.IntegrationMode == nil {
+		o.nullFields = append(o.nullFields, "IntegrationMode")
+	}
+	return o
+}
+
+func (o *KubernetesIntegration) SetClusterIdentifier(v *string) *KubernetesIntegration {
+	if o.ClusterIdentifier = v; o.ClusterIdentifier == nil {
+		o.nullFields = append(o.nullFields, "ClusterIdentifier")
+	}
+	return o
 }
 
 func (o *KubernetesIntegration) SetServer(v *string) *KubernetesIntegration {
