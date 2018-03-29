@@ -12,8 +12,10 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/hashcode"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -1164,18 +1166,38 @@ func targetScalingPolicySchema() *schema.Schema {
 //region CRUD methods
 
 func resourceSpotinstAWSGroupCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Client)
-	newAWSGroup, err := buildAWSGroupOpts(d, meta)
+	group, err := buildAWSGroupOpts(d, meta)
 	if err != nil {
 		return err
 	}
-	log.Printf("[DEBUG] Group create configuration: %s", stringutil.Stringify(newAWSGroup))
-	input := &aws.CreateGroupInput{Group: newAWSGroup}
-	resp, err := client.elastigroup.CloudProviderAWS().Create(context.Background(), input)
+
+	log.Printf("[DEBUG] Group create configuration: %s", stringutil.Stringify(group))
+	input := &aws.CreateGroupInput{Group: group}
+
+	err = resource.Retry(time.Minute, func() *resource.RetryError {
+		resp, err := meta.(*Client).elastigroup.CloudProviderAWS().Create(context.Background(), input)
+		if err != nil {
+			// Checks whether we should retry the group creation.
+			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+				for _, err := range errs {
+					if err.Code == "InvalidParameterValue" &&
+						strings.Contains(err.Message, "Invalid IAM Instance Profile") {
+						return resource.RetryableError(err)
+					}
+				}
+			}
+
+			// Some other error, report it.
+			return resource.NonRetryableError(err)
+		}
+
+		d.SetId(spotinst.StringValue(resp.Group.ID))
+		return nil
+	})
 	if err != nil {
 		return fmt.Errorf("failed to create group: %s", err)
 	}
-	d.SetId(spotinst.StringValue(resp.Group.ID))
+
 	log.Printf("[INFO] AWSGroup created successfully: %s", d.Id())
 	return resourceSpotinstAWSGroupRead(d, meta)
 }
