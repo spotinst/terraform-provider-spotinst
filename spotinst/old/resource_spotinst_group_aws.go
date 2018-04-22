@@ -1271,9 +1271,12 @@ func resourceSpotinstAWSGroupRead(d *schema.ResourceData, meta interface{}) erro
 		}
 
 		if g.Strategy.Persistence != nil {
+			log.Printf("[ERROR] test123 - g.Strategy.Persistence != nil, %+v\n", g.Strategy.Persistence)
 			if err := d.Set("persistence", flattenAWSGroupPersistence(g.Strategy.Persistence)); err != nil {
 				return fmt.Errorf("failed to set persistence configuration: %#v", err)
 			}
+		} else {
+			log.Printf("[ERROR] test123 - g.Strategy.Persistence == nil")
 		}
 	}
 
@@ -1862,6 +1865,7 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if d.HasChange("persistence") {
+		log.Printf("[ERROR] test123 - d.HasChange(persistence) == true")
 		if v, ok := d.GetOk("persistence"); ok {
 			if persistence, err := expandAWSGroupPersistence(v, nullify); err != nil {
 				return err
@@ -1882,6 +1886,8 @@ func resourceSpotinstAWSGroupUpdate(d *schema.ResourceData, meta interface{}) er
 			group.Strategy.SetPersistence(nil)
 			update = true
 		}
+	} else {
+		log.Printf("[ERROR] test123 - d.HasChange(persistence) == false")
 	}
 
 	if d.HasChange("scaling_up_policy") {
