@@ -1,4 +1,4 @@
-package aws_elastigroup
+package elastigroup_aws
 
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 
@@ -9,9 +9,16 @@ const (
 	BalancerTypeMultaiTargetSet BalancerType = "MULTAI_TARGET_SET"
 )
 
+type TagField string
+const (
+	TagKey   TagField = "key"
+	TagValue TagField = "value"
+)
+
 const (
 	Name        commons.FieldName = "name"
 	Description commons.FieldName = "description"
+	Product     commons.FieldName = "product"
 
 	MaxSize         commons.FieldName = "max_size"
 	MinSize         commons.FieldName = "min_size"
@@ -29,8 +36,22 @@ const (
 	MultaiTargetSetIds   commons.FieldName = "multai_target_set_ids"
 	Tags                 commons.FieldName = "tags"
 
-	LaunchConfiguration  commons.FieldName = "launch_configuration"
-	InstanceTypes        commons.FieldName = "instance_types"
+	LaunchConfiguration  commons.FieldName = "elastigroup_launch_configuration"
+	Strategy             commons.FieldName = "strategy"
+	InstanceTypes        commons.FieldName = "elastigroup_instance_types"
 	EbsBlockDevice       commons.FieldName = "ebs_block_device"
 	EphemeralBlockDevice commons.FieldName = "ephemeral_block_device"
+
+	// ***********************************************************************
+	// ********************* Spotinst Unique Properties **********************
+	// ***********************************************************************
+
+	Signal        commons.FieldName = "signal"
+	SignalName    commons.FieldName = "name"
+	SignalTimeout commons.FieldName = "timeout"
+
+	UpdatePolicy         commons.FieldName = "update_policy"
+	ShouldResumeStateful commons.FieldName = "should_resume_stateful"
+	ShouldRoll           commons.FieldName = "should_roll"
+	RollConfig           commons.FieldName = "roll_config"
 )

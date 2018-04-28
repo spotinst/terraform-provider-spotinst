@@ -1,4 +1,4 @@
-package launch_configuration
+package elastigroup_launch_configuration
 
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 

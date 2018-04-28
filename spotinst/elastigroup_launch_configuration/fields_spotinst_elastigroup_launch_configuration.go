@@ -1,16 +1,16 @@
-package launch_configuration
+package elastigroup_launch_configuration
 
 import (
 	"fmt"
 	"encoding/base64"
 	"crypto/sha1"
 	"encoding/hex"
+	"regexp"
 
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"regexp"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -34,9 +34,12 @@ func SetupSpotinstLaunchConfigurationResource() {
 			Optional: true,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-			value := spotinst.StringValue(lc.ImageID)
-			if err := resourceData.Set(string(ImageId), value); err != nil {
+			var value *string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.ImageID != nil {
+				value = elastigroup.Compute.LaunchSpecification.ImageID
+			}
+			if err := resourceData.Set(string(ImageId), spotinst.StringValue(value)); err != nil {
 				return fmt.Errorf(readFailurePattern, string(ImageId), err)
 			}
 			return nil
@@ -63,17 +66,17 @@ func SetupSpotinstLaunchConfigurationResource() {
 			Optional: true,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-
 			var value = ""
-			if lc.IAMInstanceProfile != nil {
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.IAMInstanceProfile != nil {
+
+				lc := elastigroup.Compute.LaunchSpecification
 				if lc.IAMInstanceProfile.Arn != nil {
 					value = spotinst.StringValue(lc.IAMInstanceProfile.Arn)
-				} else {
+				} else if lc.IAMInstanceProfile.Name != nil {
 					value = spotinst.StringValue(lc.IAMInstanceProfile.Name)
 				}
 			}
-
 			if err := resourceData.Set(string(IamInstanceProfile), value); err != nil {
 				return fmt.Errorf(readFailurePattern, string(IamInstanceProfile), err)
 			}
@@ -115,9 +118,12 @@ func SetupSpotinstLaunchConfigurationResource() {
 			Optional: true,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-			value := spotinst.StringValue(lc.KeyPair)
-			if err := resourceData.Set(string(KeyName), value); err != nil {
+			var value *string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.KeyPair != nil {
+				value = elastigroup.Compute.LaunchSpecification.KeyPair
+			}
+			if err := resourceData.Set(string(KeyName), spotinst.StringValue(value)); err != nil {
 				return fmt.Errorf(readFailurePattern, string(KeyName), err)
 			}
 			return nil
@@ -145,8 +151,12 @@ func SetupSpotinstLaunchConfigurationResource() {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-			if err := resourceData.Set(string(SecurityGroups), lc.SecurityGroupIDs); err != nil {
+			var value []string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.SecurityGroupIDs != nil {
+				value = elastigroup.Compute.LaunchSpecification.SecurityGroupIDs
+			}
+			if err := resourceData.Set(string(SecurityGroups), value); err != nil {
 				return fmt.Errorf(readFailurePattern, string(SecurityGroups), err)
 			}
 			return nil
@@ -182,14 +192,16 @@ func SetupSpotinstLaunchConfigurationResource() {
 			StateFunc: hexStateFunc,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-
 			var value = ""
-			if lc.UserData != nil && spotinst.StringValue(lc.UserData) != "" {
-				decodedUserData, _ := base64.StdEncoding.DecodeString(spotinst.StringValue(lc.UserData))
-				value = string(decodedUserData)
-			}
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.UserData != nil {
 
+				userData := elastigroup.Compute.LaunchSpecification.UserData
+				if spotinst.StringValue(userData) != "" {
+					decodedUserData, _ := base64.StdEncoding.DecodeString(spotinst.StringValue(userData))
+					value = string(decodedUserData)
+				}
+			}
 			if err := resourceData.Set(string(UserData), value); err != nil {
 				return fmt.Errorf(readFailurePattern, string(UserData), err)
 			}
@@ -221,9 +233,12 @@ func SetupSpotinstLaunchConfigurationResource() {
 			Default:  false,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-			value := spotinst.BoolValue(lc.Monitoring)
-			if err := resourceData.Set(string(EnableMonitoring), value); err != nil {
+			var value *bool = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.Monitoring != nil {
+				value = elastigroup.Compute.LaunchSpecification.Monitoring
+			}
+			if err := resourceData.Set(string(EnableMonitoring), spotinst.BoolValue(value)); err != nil {
 				return fmt.Errorf(readFailurePattern, string(EnableMonitoring), err)
 			}
 			return nil
@@ -251,9 +266,12 @@ func SetupSpotinstLaunchConfigurationResource() {
 			Computed: true,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-			value := spotinst.BoolValue(lc.EBSOptimized)
-			if err := resourceData.Set(string(EbsOptimized), value); err != nil {
+			var value *bool = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.EBSOptimized != nil {
+				value = elastigroup.Compute.LaunchSpecification.EBSOptimized
+			}
+			if err := resourceData.Set(string(EbsOptimized), spotinst.BoolValue(value)); err != nil {
 				return fmt.Errorf(readFailurePattern, string(EbsOptimized), err)
 			}
 			return nil
@@ -280,9 +298,12 @@ func SetupSpotinstLaunchConfigurationResource() {
 			Optional: true,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			lc := elastigroup.Compute.LaunchSpecification
-			value := spotinst.StringValue(lc.Tenancy)
-			if err := resourceData.Set(string(PlacementTenancy), value); err != nil {
+			var value *string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.Tenancy != nil {
+				value = elastigroup.Compute.LaunchSpecification.Tenancy
+			}
+			if err := resourceData.Set(string(PlacementTenancy), spotinst.StringValue(value)); err != nil {
 				return fmt.Errorf(readFailurePattern, string(PlacementTenancy), err)
 			}
 			return nil
@@ -305,7 +326,9 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	commons.LaunchConfigurationRepo = commons.NewGenericCachedResource(fields)
+	commons.ElastigroupLaunchConfigurationResource = commons.NewGenericCachedResource(
+		string(commons.ElastigroupLaunchConfiguration),
+		fields)
 }
 
 
