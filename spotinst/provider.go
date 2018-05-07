@@ -26,10 +26,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"spotinst_elastigroup_aws":                  resourceSpotinstElastigroupAws(),
-			"spotinst_elastigroup_launch_configuration": resourceSpotinstElastigroupLaunchConfiguration(),
-			"spotinst_elastigroup_strategy":             resourceSpotinstElastigroupStrategy(),
-			"spotinst_elastigroup_instance_types":       resourceSpotinstInstanceTypes(),
+			"spotinst_elastigroup_aws": resourceSpotinstElastigroupAws(),
 		},
 
 		ConfigureFunc: providerConfigure,

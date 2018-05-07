@@ -15,16 +15,24 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_launch_configuration"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_instance_types"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_strategy"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_block_devices"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_network_interface"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_scaling_policies"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_scheduled_task"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_stateful"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_integrations"
 )
 
 func resourceSpotinstElastigroupAws() *schema.Resource {
-	elastigroup_aws.SetupAwsElastigroupResource()
-
+	setup()
 	return &schema.Resource{
-		Create: onSpotinstElastigroupCreateAws,
-		Read:   onSpotinstElastigroupReadAws,
-		Update: onSpotinstElastigroupUpdateAws,
-		Delete: onSpotinstElastigroupDeleteAws,
+		Create: resourceSpotinstElastigroupAwsCreate,
+		Read:   resourceSpotinstElastigroupAwsRead,
+		Update: resourceSpotinstElastigroupAwsUpdate,
+		Delete: resourceSpotinstElastigroupAwsDelete,
 
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -34,13 +42,34 @@ func resourceSpotinstElastigroupAws() *schema.Resource {
 	}
 }
 
+func setup() {
+	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
+
+	elastigroup_aws.Setup(fieldsMap)
+	elastigroup_launch_configuration.Setup(fieldsMap)
+	elastigroup_instance_types.Setup(fieldsMap)
+	elastigroup_strategy.Setup(fieldsMap)
+	elastigroup_block_devices.Setup(fieldsMap)
+	elastigroup_network_interface.Setup(fieldsMap)
+	elastigroup_scaling_policies.Setup(fieldsMap)
+	elastigroup_scheduled_task.Setup(fieldsMap)
+	elastigroup_stateful.Setup(fieldsMap)
+	elastigroup_integrations.Setup(fieldsMap)
+
+	commons.ElastigroupResource = commons.NewGenericResource(
+		string(commons.ElastigroupAWS),
+		fieldsMap)
+}
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Delete
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func onSpotinstElastigroupDeleteAws(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, meta interface{}) error {
+	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
-		commons.ElastigroupResource.GetName(), resourceData.Id())
-	input := &aws.DeleteGroupInput{GroupID: spotinst.String(resourceData.Id())}
+		commons.ElastigroupResource.GetName(), id)
+
+	input := &aws.DeleteGroupInput{GroupID: spotinst.String(id)}
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
 		return fmt.Errorf("failed to delete group: %s", err)
 	}
@@ -55,14 +84,7 @@ func onSpotinstElastigroupDeleteAws(resourceData *schema.ResourceData, meta inte
 // ErrCodeGroupNotFound for service response error code "GROUP_DOESNT_EXIST".
 const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
 
-// Read from the lowest resource to the Spotinst elastigroup
-// Since read is based on the group id, an API call is mandatory as the top down approach
-// This is the reason only on read method we are triggering all the related repositories
-func onSpotinstElastigroupReadAws(resourceData *schema.ResourceData, meta interface{}) error {
-	return readGroup(resourceData, meta, true)
-}
-
-func readGroup(resourceData *schema.ResourceData, meta interface{}, shouldCascade bool) error {
+func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.ElastigroupResource.GetName(), id)
@@ -98,27 +120,15 @@ func readGroup(resourceData *schema.ResourceData, meta interface{}, shouldCascad
 			Meta:         meta,
 		})
 
-	if shouldCascade {
-		cascadeGroupRead(groupResponse)
-	}
+	commons.ElastigroupResource.OnRead(groupResponse)
 	return nil
-}
-
-// We should cascade the group from parent to children only it we've initiated the elastigroup api resource
-// read method. Reason is that Terraform interpolation didn't take place to trigger the read method on
-// all the elastigroup cached resources
-func cascadeGroupRead(elastigroup *aws.Group) {
-	commons.ElastigroupResource.OnRead(elastigroup)
-	commons.ElastigroupLaunchConfigurationResource.OnRead(elastigroup)
-	commons.ElastigroupStrategyResource.OnRead(elastigroup)
-	commons.ElastigroupInstanceTypesResource.OnRead(elastigroup)
 }
 
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Create
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func onSpotinstElastigroupCreateAws(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupResource.GetName())
 
@@ -137,7 +147,7 @@ func onSpotinstElastigroupCreateAws(resourceData *schema.ResourceData, meta inte
 	resourceData.SetId(spotinst.StringValue(groupId))
 	log.Printf("AWSGroup created successfully: %s", resourceData.Id())
 
-	return readGroup(resourceData, meta, false)
+	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
 }
 
 func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
@@ -175,7 +185,7 @@ func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Update
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func onSpotinstElastigroupUpdateAws(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAwsUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.ElastigroupResource.GetName(), id)
@@ -187,11 +197,11 @@ func onSpotinstElastigroupUpdateAws(resourceData *schema.ResourceData, meta inte
 
 	if shouldUpdate {
 		elastigroup := commons.ElastigroupResource.GetElastigroup()
-		elastigroup.SetId(spotinst.String(resourceData.Id()))
+		elastigroup.SetId(spotinst.String(id))
 		updateGroup(elastigroup, resourceData, meta)
 	}
 
-	return readGroup(resourceData, meta, true)
+	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
 }
 
 func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
@@ -215,25 +225,56 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Update(context.Background(), input); err != nil {
 		return fmt.Errorf("failed to update group %s: %s", resourceData.Id(), err)
 	} else {
-		// On Update Success, roll if required.
-		//if rc, ok := resourceData.GetOk(string(elastigroup_aws.RollConfig)); ok {
-		//	list := rc.(*schema.Set).List()
-		//	m := list[0].(map[string]interface{})
-		//	if sr, ok := m["should_roll"].(bool); ok && sr != false {
-		//		log.Printf("[DEBUG] User has chosen to roll this group: %s", resourceData.Id())
-		//		if roll, err := expandAWSGroupRollConfig(rc, resourceData.Id()); err != nil {
-		//			log.Printf("[ERROR] Failed to expand roll configuration for group %s: %s", d.Id(), err)
-		//			return err
-		//		} else {
-		//			log.Printf("[DEBUG] Sending roll request to the Spotinst API...")
-		//			if _, err := client.elastigroup.CloudProviderAWS().Roll(context.Background(), roll); err != nil {
-		//				log.Printf("[ERROR] Failed to roll group: %s", err)
-		//			}
-		//		}
-		//	} else {
-		//		log.Printf("[DEBUG] User has chosen not to roll this group: %s", d.Id())
-		//	}
-		//}
+		// On Update Success, roll if required
+		return rollGroupIfRequired(resourceData, meta)
+	}
+}
+
+func rollGroupIfRequired(resourceData *schema.ResourceData, meta interface{}) error {
+	if rc, ok := resourceData.GetOk(string(elastigroup_aws.RollConfig)); ok {
+		id := resourceData.Id()
+		list := rc.(*schema.Set).List()
+		m := list[0].(map[string]interface{})
+		if sr, ok := m[string(elastigroup_aws.ShouldRoll)].(bool); ok && sr != false {
+			log.Printf(string(elastigroup_aws.ResourceOnRoll), id)
+			if rollGroupInput, err := expandAWSGroupRollConfig(rc, id); err != nil {
+				log.Printf("[ERROR] Failed to expand roll configuration for group %s: %s", id, err)
+				return err
+			} else {
+				log.Printf("onRoll() -> Rolling group %v...", id)
+				if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput); err != nil {
+					log.Printf("[ERROR] Failed to roll group: %s", err)
+				}
+				log.Printf("onRoll() -> Successfully rolled group %v", id)
+			}
+		} else {
+			log.Printf("onRoll() -> Field %v is false, skipping group roll", string(elastigroup_aws.ShouldRoll))
+		}
+	} else{
+		log.Printf("onRoll() -> Field %v missing, skipping group roll", string(elastigroup_aws.ShouldRoll))
 	}
 	return nil
+}
+
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//         Fields Expand
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func expandAWSGroupRollConfig(data interface{}, groupID string) (*aws.RollGroupInput, error) {
+	list := data.(*schema.Set).List()
+	m := list[0].(map[string]interface{})
+	i := &aws.RollGroupInput{GroupID: spotinst.String(groupID)}
+
+	if v, ok := m[string(elastigroup_aws.BatchSizePercentage)].(int); ok { // Required value
+		i.BatchSizePercentage = spotinst.Int(v)
+	}
+
+	if v, ok := m[string(elastigroup_aws.GracePeriod)].(int); ok && v != -1 { // Default value set to -1
+		i.GracePeriod = spotinst.Int(v)
+	}
+
+	if v, ok := m[string(elastigroup_aws.HealthCheckType)].(string); ok && v != "" { // Default value ""
+		i.HealthCheckType = spotinst.String(v)
+	}
+	return i, nil
 }

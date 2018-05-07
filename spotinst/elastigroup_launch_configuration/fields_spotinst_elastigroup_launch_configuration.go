@@ -16,18 +16,10 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func SetupSpotinstLaunchConfigurationResource() {
-	fields := make(map[commons.FieldName]*commons.GenericField)
-	var readFailurePattern = "launch configuration failed reading field %s - %#v"
+func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	//if lspec.ShutdownScript != nil && spotinst.StringValue(lspec.ShutdownScript) != "" {
-	//	decodedShutdownScript, _ := base64.StdEncoding.DecodeString(spotinst.StringValue(lspec.ShutdownScript))
-	//	result["shutdown_script"] = string(decodedShutdownScript)
-	//} else {
-	//	result["shutdown_script"] = ""
-	//}
-
-	fields[ImageId] = commons.NewGenericField(
+	fieldsMap[ImageId] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		ImageId,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -40,7 +32,7 @@ func SetupSpotinstLaunchConfigurationResource() {
 				value = elastigroup.Compute.LaunchSpecification.ImageID
 			}
 			if err := resourceData.Set(string(ImageId), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(ImageId), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ImageId), err)
 			}
 			return nil
 		},
@@ -59,7 +51,8 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	fields[IamInstanceProfile] = commons.NewGenericField(
+	fieldsMap[IamInstanceProfile] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		IamInstanceProfile,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -78,7 +71,7 @@ func SetupSpotinstLaunchConfigurationResource() {
 				}
 			}
 			if err := resourceData.Set(string(IamInstanceProfile), value); err != nil {
-				return fmt.Errorf(readFailurePattern, string(IamInstanceProfile), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IamInstanceProfile), err)
 			}
 			return nil
 		},
@@ -111,7 +104,8 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	fields[KeyName] = commons.NewGenericField(
+	fieldsMap[KeyName] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		KeyName,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -124,7 +118,7 @@ func SetupSpotinstLaunchConfigurationResource() {
 				value = elastigroup.Compute.LaunchSpecification.KeyPair
 			}
 			if err := resourceData.Set(string(KeyName), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(KeyName), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(KeyName), err)
 			}
 			return nil
 		},
@@ -143,7 +137,8 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	fields[SecurityGroups] = commons.NewGenericField(
+	fieldsMap[SecurityGroups] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		SecurityGroups,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -157,7 +152,7 @@ func SetupSpotinstLaunchConfigurationResource() {
 				value = elastigroup.Compute.LaunchSpecification.SecurityGroupIDs
 			}
 			if err := resourceData.Set(string(SecurityGroups), value); err != nil {
-				return fmt.Errorf(readFailurePattern, string(SecurityGroups), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SecurityGroups), err)
 			}
 			return nil
 		},
@@ -184,26 +179,29 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	fields[UserData] = commons.NewGenericField(
+	fieldsMap[UserData] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		UserData,
 		&schema.Schema{
 			Type:      schema.TypeString,
 			Optional:  true,
 			StateFunc: hexStateFunc,
 		},
+
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			var value = ""
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.UserData != nil {
 
 				userData := elastigroup.Compute.LaunchSpecification.UserData
-				if spotinst.StringValue(userData) != "" {
-					decodedUserData, _ := base64.StdEncoding.DecodeString(spotinst.StringValue(userData))
+				userDataValue := spotinst.StringValue(userData)
+				if userDataValue != "" {
+					decodedUserData, _ := base64.StdEncoding.DecodeString(userDataValue)
 					value = string(decodedUserData)
 				}
 			}
-			if err := resourceData.Set(string(UserData), value); err != nil {
-				return fmt.Errorf(readFailurePattern, string(UserData), err)
+			if err := resourceData.Set(string(UserData), hexStateFunc(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserData), err)
 			}
 			return nil
 		},
@@ -225,7 +223,8 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	fields[EnableMonitoring] = commons.NewGenericField(
+	fieldsMap[EnableMonitoring] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		EnableMonitoring,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -239,7 +238,7 @@ func SetupSpotinstLaunchConfigurationResource() {
 				value = elastigroup.Compute.LaunchSpecification.Monitoring
 			}
 			if err := resourceData.Set(string(EnableMonitoring), spotinst.BoolValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(EnableMonitoring), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EnableMonitoring), err)
 			}
 			return nil
 		},
@@ -258,7 +257,8 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	fields[EbsOptimized] = commons.NewGenericField(
+	fieldsMap[EbsOptimized] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		EbsOptimized,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -272,7 +272,7 @@ func SetupSpotinstLaunchConfigurationResource() {
 				value = elastigroup.Compute.LaunchSpecification.EBSOptimized
 			}
 			if err := resourceData.Set(string(EbsOptimized), spotinst.BoolValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(EbsOptimized), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EbsOptimized), err)
 			}
 			return nil
 		},
@@ -291,7 +291,8 @@ func SetupSpotinstLaunchConfigurationResource() {
 		nil,
 	)
 
-	fields[PlacementTenancy] = commons.NewGenericField(
+	fieldsMap[PlacementTenancy] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
 		PlacementTenancy,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -304,7 +305,7 @@ func SetupSpotinstLaunchConfigurationResource() {
 				value = elastigroup.Compute.LaunchSpecification.Tenancy
 			}
 			if err := resourceData.Set(string(PlacementTenancy), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(PlacementTenancy), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PlacementTenancy), err)
 			}
 			return nil
 		},
@@ -325,10 +326,6 @@ func SetupSpotinstLaunchConfigurationResource() {
 		},
 		nil,
 	)
-
-	commons.ElastigroupLaunchConfigurationResource = commons.NewGenericCachedResource(
-		string(commons.ElastigroupLaunchConfiguration),
-		fields)
 }
 
 

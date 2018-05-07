@@ -12,11 +12,10 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func SetupSpotinstElastigroupStrategyResource() {
-	fields := make(map[commons.FieldName]*commons.GenericField)
-	var readFailurePattern = "elastigroup strategy failed reading field %s - %#v"
+func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fields[SpotPercentage] = commons.NewGenericField(
+	fieldsMap[SpotPercentage] = commons.NewGenericField(
+		commons.ElastigroupStrategy,
 		SpotPercentage,
 		&schema.Schema{
 			Type:     schema.TypeFloat,
@@ -28,7 +27,7 @@ func SetupSpotinstElastigroupStrategyResource() {
 				value = elastigroup.Strategy.Risk
 			}
 			if err := resourceData.Set(string(SpotPercentage), spotinst.Float64Value(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(SpotPercentage), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
 			}
 			return nil
 		},
@@ -47,7 +46,8 @@ func SetupSpotinstElastigroupStrategyResource() {
 		nil,
 	)
 
-	fields[OnDemandCount] = commons.NewGenericField(
+	fieldsMap[OnDemandCount] = commons.NewGenericField(
+		commons.ElastigroupStrategy,
 		OnDemandCount,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -59,7 +59,7 @@ func SetupSpotinstElastigroupStrategyResource() {
 				value = elastigroup.Strategy.OnDemandCount
 			}
 			if err := resourceData.Set(string(OnDemandCount), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(OnDemandCount), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OnDemandCount), err)
 			}
 			return nil
 		},
@@ -78,7 +78,8 @@ func SetupSpotinstElastigroupStrategyResource() {
 		nil,
 	)
 
-	fields[Orientation] = commons.NewGenericField(
+	fieldsMap[Orientation] = commons.NewGenericField(
+		commons.ElastigroupStrategy,
 		Orientation,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -91,7 +92,7 @@ func SetupSpotinstElastigroupStrategyResource() {
 				value = elastigroup.Strategy.AvailabilityVsCost
 			}
 			if err := resourceData.Set(string(Orientation), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(Orientation), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Orientation), err)
 			}
 			return nil
 		},
@@ -110,7 +111,8 @@ func SetupSpotinstElastigroupStrategyResource() {
 		nil,
 	)
 
-	fields[LifetimePeriod] = commons.NewGenericField(
+	fieldsMap[LifetimePeriod] = commons.NewGenericField(
+		commons.ElastigroupStrategy,
 		LifetimePeriod,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -122,7 +124,7 @@ func SetupSpotinstElastigroupStrategyResource() {
 				value = elastigroup.Strategy.LifetimePeriod
 			}
 			if err := resourceData.Set(string(LifetimePeriod), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(LifetimePeriod), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LifetimePeriod), err)
 			}
 			return nil
 		},
@@ -144,7 +146,8 @@ func SetupSpotinstElastigroupStrategyResource() {
 		nil,
 	)
 
-	fields[DrainingTimeout] = commons.NewGenericField(
+	fieldsMap[DrainingTimeout] = commons.NewGenericField(
+		commons.ElastigroupStrategy,
 		DrainingTimeout,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -157,7 +160,7 @@ func SetupSpotinstElastigroupStrategyResource() {
 				value = elastigroup.Strategy.DrainingTimeout
 			}
 			if err := resourceData.Set(string(DrainingTimeout), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(DrainingTimeout), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DrainingTimeout), err)
 			}
 			return nil
 		},
@@ -176,7 +179,8 @@ func SetupSpotinstElastigroupStrategyResource() {
 		nil,
 	)
 
-	fields[UtilizeReservedInstances] = commons.NewGenericField(
+	fieldsMap[UtilizeReservedInstances] = commons.NewGenericField(
+		commons.ElastigroupStrategy,
 		UtilizeReservedInstances,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -189,7 +193,7 @@ func SetupSpotinstElastigroupStrategyResource() {
 				value = elastigroup.Strategy.UtilizeReservedInstances
 			}
 			if err := resourceData.Set(string(UtilizeReservedInstances), spotinst.BoolValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(UtilizeReservedInstances), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeReservedInstances), err)
 			}
 			return nil
 		},
@@ -211,7 +215,8 @@ func SetupSpotinstElastigroupStrategyResource() {
 		nil,
 	)
 
-	fields[FallbackToOnDemand] = commons.NewGenericField(
+	fieldsMap[FallbackToOnDemand] = commons.NewGenericField(
+		commons.ElastigroupStrategy,
 		FallbackToOnDemand,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -224,7 +229,7 @@ func SetupSpotinstElastigroupStrategyResource() {
 				value = elastigroup.Strategy.FallbackToOnDemand
 			}
 			if err := resourceData.Set(string(FallbackToOnDemand), spotinst.BoolValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(FallbackToOnDemand), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(FallbackToOnDemand), err)
 			}
 			return nil
 		},
@@ -245,10 +250,6 @@ func SetupSpotinstElastigroupStrategyResource() {
 		},
 		nil,
 	)
-
-	commons.ElastigroupStrategyResource = commons.NewGenericCachedResource(
-		string(commons.ElastigroupStrategy),
-		fields)
 }
 
 

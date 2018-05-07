@@ -2,23 +2,24 @@ package elastigroup_instance_types
 
 import (
 	"fmt"
+	"log"
+	"errors"
+
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"log"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
-	"errors"
+	"github.com/hashicorp/terraform/helper/hashcode"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func SetupSpotinstInstanceTypesResource() {
-	fields := make(map[commons.FieldName]*commons.GenericField)
-	var readFailurePattern = "instance types failed reading field %s - %#v"
+func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fields[OnDemand] = commons.NewGenericField(
+	fieldsMap[OnDemand] = commons.NewGenericField(
+		commons.ElastigroupInstanceType,
 		OnDemand,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -31,7 +32,7 @@ func SetupSpotinstInstanceTypesResource() {
 				value = elastigroup.Compute.InstanceTypes.OnDemand
 			}
 			if err := resourceData.Set(string(OnDemand), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(OnDemand), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OnDemand), err)
 			}
 			return nil
 		},
@@ -50,7 +51,8 @@ func SetupSpotinstInstanceTypesResource() {
 		nil,
 	)
 
-	fields[Spot] = commons.NewGenericField(
+	fieldsMap[Spot] = commons.NewGenericField(
+		commons.ElastigroupInstanceType,
 		Spot,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -64,7 +66,7 @@ func SetupSpotinstInstanceTypesResource() {
 				value = elastigroup.Compute.InstanceTypes.Spot
 			}
 			if err := resourceData.Set(string(Spot), spotinst.StringSlice(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(Spot), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Spot), err)
 			}
 			return nil
 		},
@@ -89,7 +91,8 @@ func SetupSpotinstInstanceTypesResource() {
 		nil,
 	)
 
-	fields[InstanceTypeWeights] = commons.NewGenericField(
+	fieldsMap[InstanceTypeWeights] = commons.NewGenericField(
+		commons.ElastigroupInstanceType,
 		InstanceTypeWeights,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -108,22 +111,31 @@ func SetupSpotinstInstanceTypesResource() {
 				},
 			},
 		},
+
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			var instanceWeights []map[string]interface{} = nil
+			var instanceWeightsSet *schema.Set = nil
+			var instanceWeights []interface{} = nil
+
 			if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
 				elastigroup.Compute.InstanceTypes.Weights != nil {
 
 				weights := elastigroup.Compute.InstanceTypes.Weights
-				instanceWeights := []map[string]interface{}{}
+				instanceWeights = make([]interface{}, 0, len(weights))
 				for _, t := range weights {
-					instanceWeight := make(map[string]interface{})
-					instanceWeight[string(InstanceType)] = spotinst.StringValue(t.InstanceType)
-					instanceWeight[string(Weight)] = spotinst.IntValue(t.Weight)
+					instanceWeight := &aws.InstanceTypeWeight{}
+					instanceWeight.SetInstanceType(t.InstanceType)
+					instanceWeight.SetWeight(t.Weight)
 					instanceWeights = append(instanceWeights, instanceWeight)
 				}
+
+				instanceWeightHashFunc := func(item interface{}) int {
+					iw := item.(*aws.InstanceTypeWeight)
+					return hashcode.String(spotinst.StringValue(iw.InstanceType) + stringutil.Stringify(spotinst.IntValue(iw.Weight)))
+				}
+				instanceWeightsSet = schema.NewSet(instanceWeightHashFunc, instanceWeights)
 			}
-			if err := resourceData.Set(string(InstanceTypeWeights), instanceWeights); err != nil {
-				return fmt.Errorf(readFailurePattern, string(InstanceTypeWeights), err)
+			if err := resourceData.Set(string(InstanceTypeWeights), instanceWeightsSet); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceTypeWeights), err)
 			}
 			return nil
 		},
@@ -146,22 +158,11 @@ func SetupSpotinstInstanceTypesResource() {
 					weightsToAdd = weights
 				}
 			}
-
-			if elastigroup.Compute == nil {
-				elastigroup.SetCompute(&aws.Compute{})
-			}
-			if elastigroup.Compute.InstanceTypes == nil {
-				elastigroup.Compute.SetInstanceTypes(&aws.InstanceTypes{})
-			}
 			elastigroup.Compute.InstanceTypes.SetWeights(weightsToAdd)
 			return nil
 		},
 		nil,
 	)
-
-	commons.ElastigroupInstanceTypesResource = commons.NewGenericCachedResource(
-		string(commons.ElastigroupInstanceType),
-		fields)
 }
 
 

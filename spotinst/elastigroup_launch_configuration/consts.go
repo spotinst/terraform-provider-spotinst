@@ -3,6 +3,10 @@ package elastigroup_launch_configuration
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 
 const (
+	Prefix = "launch_configuration_"
+)
+
+const (
 	ImageId            commons.FieldName = "image_id"
 	IamInstanceProfile commons.FieldName = "iam_instance_profile"
 	KeyName            commons.FieldName = "key_name"

@@ -25,10 +25,7 @@ func init() {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Variables
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-var ElastigroupResource *GenericApiResource
-var ElastigroupLaunchConfigurationResource *GenericCachedResource
-var ElastigroupStrategyResource *GenericCachedResource
-var ElastigroupInstanceTypesResource *GenericCachedResource
+var ElastigroupResource *GenericResource
 
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -44,7 +41,7 @@ type TerraformData struct {
 	Meta         interface{}
 }
 
-type GenericApiResource struct {
+type GenericResource struct {
 	// use interface{} to keep the generics between all Spotinst API resources
 	elastigroup *aws.Group
 	mux         sync.Mutex
@@ -55,22 +52,16 @@ type GenericApiResource struct {
 	terraformData *TerraformData
 }
 
-type GenericCachedResource struct {
-	fields *GenericFields
-	resourceName string
-
-	terraformData *TerraformData
-}
 
 type GenericField struct {
-	fieldNameStr    string
-	fieldName       FieldName
-	schema          *schema.Schema
-	onRead          onFieldRead
-	onCreate        onFieldCreate
-	onUpdate        onFieldUpdate
-	hasChangeCustom hasFieldChange
-	dirty           bool
+	resourceAffinity ResourceAffinity
+	fieldNameStr     string
+	fieldName        FieldName
+	schema           *schema.Schema
+	onRead           onFieldRead
+	onCreate         onFieldCreate
+	onUpdate         onFieldUpdate
+	hasChangeCustom  hasFieldChange
 }
 
 type GenericFields struct {
@@ -83,6 +74,7 @@ type GenericFields struct {
 //          Constructors
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func NewGenericField(
+	resourceAffinity ResourceAffinity,
 	fieldName FieldName,
 	schema *schema.Schema,
 	onRead onFieldRead,
@@ -91,13 +83,14 @@ func NewGenericField(
 	hasChangeCustom hasFieldChange) *GenericField {
 
 	return &GenericField{
-		fieldNameStr:    string(fieldName),
-		fieldName:       fieldName,
-		schema:          schema,
-		onRead:          onRead,
-		onCreate:        onCreate,
-		onUpdate:        onUpdate,
-		hasChangeCustom: hasChangeCustom,
+		resourceAffinity: resourceAffinity,
+		fieldNameStr:     string(fieldName),
+		fieldName:        fieldName,
+		schema:           schema,
+		onRead:           onRead,
+		onCreate:         onCreate,
+		onUpdate:         onUpdate,
+		hasChangeCustom:  hasChangeCustom,
 	}
 }
 
@@ -114,23 +107,12 @@ func NewGenericFields(fieldsMap map[FieldName]*GenericField) *GenericFields {
 	}
 }
 
-func NewGenericApiResource(
+func NewGenericResource(
 	resourceName string,
-	fieldsMap map[FieldName]*GenericField) *GenericApiResource {
+	fieldsMap map[FieldName]*GenericField) *GenericResource {
 
 	fields := NewGenericFields(fieldsMap)
-	return &GenericApiResource{
-		resourceName: resourceName,
-		fields: fields,
-	}
-}
-
-func NewGenericCachedResource(
-	resourceName string,
-	fieldsMap map[FieldName]*GenericField) *GenericCachedResource {
-
-	fields := NewGenericFields(fieldsMap)
-	return &GenericCachedResource{
+	return &GenericResource{
 		resourceName: resourceName,
 		fields: fields,
 	}
@@ -144,14 +126,6 @@ func (field *GenericField) GetSchema() *schema.Schema {
 	return field.schema
 }
 
-func (field *GenericField) Touch() {
-	field.dirty = true
-}
-
-func (field *GenericField) IsDirty() bool {
-	return field.dirty
-}
-
 func (field *GenericField) hasFieldChange(resourceData *schema.ResourceData, meta interface{}) bool {
 	if field.hasChangeCustom != nil {
 		return field.hasChangeCustom(resourceData, meta)
@@ -161,21 +135,19 @@ func (field *GenericField) hasFieldChange(resourceData *schema.ResourceData, met
 
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//   Methods: GenericApiResource
+//   Methods: GenericResource
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Read method relies on the parent resource to fetch the group and then trigger onRead()
-// on all other cached resources
-func (res *GenericApiResource) OnRead(
+func (res *GenericResource) OnRead(
 	elastigroup *aws.Group) error {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("api resource fields are nil or empty, cannot read")
+		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
 	resourceData := res.terraformData.ResourceData
 	meta := res.terraformData.Meta
 	for _, field := range res.fields.fieldsMap {
-		log.Printf(string(ResourceFieldOnRead), res.resourceName, field.fieldNameStr)
+		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
 		if err := field.onRead(elastigroup, resourceData, meta); err != nil {
 			return err
 		}
@@ -183,17 +155,17 @@ func (res *GenericApiResource) OnRead(
 	return nil
 }
 
-func (res *GenericApiResource) OnCreate(
+func (res *GenericResource) OnCreate(
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("api resource fields are nil or empty, cannot create")
+		return fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
 	egGroup := res.GetElastigroup()
 	for _, field := range res.fields.fieldsMap {
-		log.Printf(string(ResourceFieldOnCreate), res.resourceName, field.fieldNameStr)
+		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
 		if err := field.onCreate(egGroup, resourceData, meta); err != nil {
 			return err
 		}
@@ -201,19 +173,19 @@ func (res *GenericApiResource) OnCreate(
 	return nil
 }
 
-func (res *GenericApiResource) OnUpdate(
+func (res *GenericResource) OnUpdate(
 	resourceData *schema.ResourceData,
 	meta interface{}) (bool, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, fmt.Errorf("api resource fields are nil or empty, cannot update")
+		return false, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
 	var hasChanged = false
 	egGroup := res.GetElastigroup()
 	for _, field := range res.fields.fieldsMap {
 		if field.hasFieldChange(resourceData, meta) {
-			log.Printf(string(ResourceFieldOnUpdate), res.resourceName, field.fieldNameStr)
+			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(egGroup, resourceData, meta); err != nil {
 				return false, err
 			}
@@ -224,7 +196,7 @@ func (res *GenericApiResource) OnUpdate(
 	return hasChanged, nil
 }
 
-func (res *GenericApiResource) GetElastigroup() *aws.Group {
+func (res *GenericResource) GetElastigroup() *aws.Group {
 	if res.elastigroup == nil {
 		res.mux.Lock()
 		defer res.mux.Unlock()
@@ -240,7 +212,9 @@ func (res *GenericApiResource) GetElastigroup() *aws.Group {
 					InstanceTypes: &aws.InstanceTypes{},
 				},
 				Capacity: &aws.Capacity{},
-				Strategy: &aws.Strategy{},
+				Strategy: &aws.Strategy{
+					Persistence: &aws.Persistence{},
+				},
 			}
 		}
 		//res.mux.Unlock()
@@ -248,14 +222,14 @@ func (res *GenericApiResource) GetElastigroup() *aws.Group {
 	return res.elastigroup
 }
 
-func (res *GenericApiResource) GetField(fieldName FieldName) *GenericField {
+func (res *GenericResource) GetField(fieldName FieldName) *GenericField {
 	if res.fields != nil && res.fields.fieldsMap != nil {
 		return res.fields.fieldsMap[fieldName]
 	}
 	return nil
 }
 
-func (res *GenericApiResource) GetSchemaMap() map[string]*schema.Schema {
+func (res *GenericResource) GetSchemaMap() map[string]*schema.Schema {
 	if res.fields == nil || res.fields.schemaMap == nil || len(res.fields.schemaMap) == 0 {
 		log.Printf("[ERROR] Resource schema is nil or empty")
 		return nil
@@ -263,95 +237,14 @@ func (res *GenericApiResource) GetSchemaMap() map[string]*schema.Schema {
 	return res.fields.schemaMap
 }
 
-func (res *GenericApiResource) GetName() string {
+func (res *GenericResource) GetName() string {
 	return res.resourceName
 }
 
-func (res *GenericApiResource) GetTerraformData() *TerraformData {
+func (res *GenericResource) GetTerraformData() *TerraformData {
 	return res.terraformData
 }
 
-func (res *GenericApiResource) SetTerraformData(data *TerraformData) {
-	res.terraformData = data
-}
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Methods: GenericCachedResource
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func (res *GenericCachedResource) OnRead(
-	elastigroup *aws.Group) error {
-
-	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("cached resource fields are nil or empty, cannot read")
-	}
-
-	resourceData := res.terraformData.ResourceData
-	meta := res.terraformData.Meta
-	for _, field := range res.fields.fieldsMap {
-		log.Printf(string(ResourceFieldOnRead), res.resourceName, field.fieldNameStr)
-		if err := field.onRead(elastigroup, resourceData, meta); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (res *GenericCachedResource) OnCreate(
-	resourceData *schema.ResourceData,
-	meta interface{}) error {
-
-	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("cached resource fields are nil or empty, cannot create")
-	}
-
-	egGroup := ElastigroupResource.GetElastigroup()
-	for _, field := range res.fields.fieldsMap {
-		log.Printf(string(ResourceFieldOnCreate), res.resourceName, field.fieldNameStr)
-		if err := field.onCreate(egGroup, resourceData, meta); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (res *GenericCachedResource) OnUpdate(
-	resourceData *schema.ResourceData,
-	meta interface{}) (bool, error) {
-
-	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, fmt.Errorf("cached resource fields are nil or empty, cannot update")
-	}
-
-	var hasChanged = false
-	egGroup := ElastigroupResource.GetElastigroup()
-	for _, field := range res.fields.fieldsMap {
-		if field.hasFieldChange(resourceData, meta) {
-			log.Printf(string(ResourceFieldOnUpdate), res.resourceName, field.fieldNameStr)
-			if err := field.onUpdate(egGroup, resourceData, meta); err != nil {
-				return false, err
-			}
-			hasChanged = true
-		}
-	}
-	return hasChanged, nil
-}
-
-func (res *GenericCachedResource) GetSchemaMap() map[string]*schema.Schema {
-	if res.fields == nil || res.fields.schemaMap == nil || len(res.fields.schemaMap) == 0 {
-		log.Printf("[ERROR] Resource schema is nil or empty")
-		return nil
-	}
-	return res.fields.schemaMap
-}
-
-func (res *GenericCachedResource) GetName() string {
-	return res.resourceName
-}
-
-func (res *GenericCachedResource) GetTerraformData() *TerraformData {
-	return res.terraformData
-}
-
-func (res *GenericCachedResource) SetTerraformData(data *TerraformData) {
+func (res *GenericResource) SetTerraformData(data *TerraformData) {
 	res.terraformData = data
 }

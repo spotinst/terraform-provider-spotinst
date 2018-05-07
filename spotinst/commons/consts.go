@@ -1,14 +1,24 @@
 package commons
 
 type FieldName string
-type ResourceName string
+type ResourceAffinity string
 type LogFormat string
 
 const (
-	ElastigroupAWS                 ResourceName = "Elastigroup_AWS"
-	ElastigroupInstanceType        ResourceName = "Elastigroup_Instance_Type"
-	ElastigroupStrategy            ResourceName = "Elastigroup_Strategy"
-	ElastigroupLaunchConfiguration ResourceName = "Elastigroup_Launch_Configuration"
+	FailureFieldReadPattern   = "failed reading field %v - %#v"
+	FailureFieldCreatePattern = "failed creating field %v - %#v"
+	FailureFieldUpdatePattern = "failed updating field %v - %#v"
+
+	ElastigroupAWS                 ResourceAffinity = "Elastigroup_AWS"
+	ElastigroupInstanceType        ResourceAffinity = "Elastigroup_Instance_Type"
+	ElastigroupStrategy            ResourceAffinity = "Elastigroup_Strategy"
+	ElastigroupStateful            ResourceAffinity = "Elastigroup_Stateful"
+	ElastigroupLaunchConfiguration ResourceAffinity = "Elastigroup_Launch_Configuration"
+	ElastigroupNetworkInterface    ResourceAffinity = "Elastigroup_Network_Interface"
+	ElastigroupScheduledTask       ResourceAffinity = "Elastigroup_Scheduled_Task"
+	ElastigroupBlockDevices        ResourceAffinity = "Elastigroup_Block_Device"
+	ElastigroupScalingPolicies     ResourceAffinity = "Elastigroup_Scaling_Policies"
+	ElastigroupIntegrations        ResourceAffinity = "Elastigroup_Integrations"
 
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"

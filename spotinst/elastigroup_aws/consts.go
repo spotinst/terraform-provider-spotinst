@@ -16,6 +16,10 @@ const (
 )
 
 const (
+	ResourceOnRoll commons.LogFormat = "onRoll() -> started for group %v..."
+)
+
+const (
 	Name        commons.FieldName = "name"
 	Description commons.FieldName = "description"
 	Product     commons.FieldName = "product"
@@ -36,15 +40,11 @@ const (
 	MultaiTargetSetIds   commons.FieldName = "multai_target_set_ids"
 	Tags                 commons.FieldName = "tags"
 
-	LaunchConfiguration  commons.FieldName = "elastigroup_launch_configuration"
-	Strategy             commons.FieldName = "strategy"
-	InstanceTypes        commons.FieldName = "elastigroup_instance_types"
-	EbsBlockDevice       commons.FieldName = "ebs_block_device"
-	EphemeralBlockDevice commons.FieldName = "ephemeral_block_device"
-
 	// ***********************************************************************
 	// ********************* Spotinst Unique Properties **********************
 	// ***********************************************************************
+
+	ElasticIps commons.FieldName = "elastic_ips"
 
 	Signal        commons.FieldName = "signal"
 	SignalName    commons.FieldName = "name"
@@ -53,5 +53,8 @@ const (
 	UpdatePolicy         commons.FieldName = "update_policy"
 	ShouldResumeStateful commons.FieldName = "should_resume_stateful"
 	ShouldRoll           commons.FieldName = "should_roll"
-	RollConfig           commons.FieldName = "roll_config"
+
+	RollConfig          commons.FieldName = "roll_config"
+	BatchSizePercentage commons.FieldName = "batch_size_percentage"
+	GracePeriod         commons.FieldName = "grace_period"
 )

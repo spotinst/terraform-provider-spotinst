@@ -3,14 +3,12 @@ package elastigroup_aws
 import (
 	"fmt"
 	"strings"
-	"log"
 	"errors"
 	"bytes"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/hashcode"
 )
@@ -18,11 +16,10 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func SetupAwsElastigroupResource() {
-	fields := make(map[commons.FieldName]*commons.GenericField)
-	var readFailurePattern = "elastigroup failed reading field %s - %#v"
-
-	fields[Name] = commons.NewGenericField(
+func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
+	
+	fieldsMap[Name] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -34,7 +31,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Name
 			}
 			if err := resourceData.Set(string(Name), value); err != nil {
-				return fmt.Errorf(readFailurePattern, string(Name), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Name), err)
 			}
 			return nil
 		},
@@ -49,7 +46,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[Description] = commons.NewGenericField(
+	fieldsMap[Description] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		Description,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -61,7 +59,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Description
 			}
 			if err := resourceData.Set(string(Description), value); err != nil {
-				return fmt.Errorf(readFailurePattern, string(Description), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Description), err)
 			}
 			return nil
 		},
@@ -76,7 +74,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[Product] = commons.NewGenericField(
+	fieldsMap[Product] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		Product,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -89,7 +88,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Compute.Product
 			}
 			if err := resourceData.Set(string(Product), value); err != nil {
-				return fmt.Errorf(readFailurePattern, string(Product), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Product), err)
 			}
 			return nil
 		},
@@ -104,7 +103,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[MaxSize] = commons.NewGenericField(
+	fieldsMap[MaxSize] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		MaxSize,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -117,7 +117,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Capacity.Maximum
 			}
 			if err := resourceData.Set(string(MaxSize), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(MaxSize), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxSize), err)
 			}
 			return nil
 		},
@@ -136,7 +136,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[MinSize] = commons.NewGenericField(
+	fieldsMap[MinSize] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		MinSize,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -149,7 +150,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Capacity.Minimum
 			}
 			if err := resourceData.Set(string(MinSize), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(MinSize), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MinSize), err)
 			}
 			return nil
 		},
@@ -168,7 +169,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[DesiredCapacity] = commons.NewGenericField(
+	fieldsMap[DesiredCapacity] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		DesiredCapacity,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -180,7 +182,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Capacity.Target
 			}
 			if err := resourceData.Set(string(DesiredCapacity), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(DesiredCapacity), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DesiredCapacity), err)
 			}
 			return nil
 		},
@@ -199,7 +201,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[CapacityUnit] = commons.NewGenericField(
+	fieldsMap[CapacityUnit] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		CapacityUnit,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -212,7 +215,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Capacity.Unit
 			}
 			if err := resourceData.Set(string(CapacityUnit), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(CapacityUnit), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CapacityUnit), err)
 			}
 			return nil
 		},
@@ -229,7 +232,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[HealthCheckGracePeriod] = commons.NewGenericField(
+	fieldsMap[HealthCheckGracePeriod] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		HealthCheckGracePeriod,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -242,7 +246,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Compute.LaunchSpecification.HealthCheckGracePeriod
 			}
 			if err := resourceData.Set(string(HealthCheckGracePeriod), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(HealthCheckGracePeriod), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(HealthCheckGracePeriod), err)
 			}
 			return nil
 		},
@@ -263,7 +267,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[HealthCheckType] = commons.NewGenericField(
+	fieldsMap[HealthCheckType] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		HealthCheckType,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -276,7 +281,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Compute.LaunchSpecification.HealthCheckType
 			}
 			if err := resourceData.Set(string(HealthCheckType), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(HealthCheckType), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(HealthCheckType), err)
 			}
 			return nil
 		},
@@ -297,7 +302,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[HealthCheckUnhealthyDurationBeforeReplacement] = commons.NewGenericField(
+	fieldsMap[HealthCheckUnhealthyDurationBeforeReplacement] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		HealthCheckUnhealthyDurationBeforeReplacement,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -310,7 +316,7 @@ func SetupAwsElastigroupResource() {
 				value = elastigroup.Compute.LaunchSpecification.HealthCheckUnhealthyDurationBeforeReplacement
 			}
 			if err := resourceData.Set(string(HealthCheckUnhealthyDurationBeforeReplacement), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(readFailurePattern, string(HealthCheckUnhealthyDurationBeforeReplacement), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(HealthCheckUnhealthyDurationBeforeReplacement), err)
 			}
 			return nil
 		},
@@ -331,7 +337,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[SubnetIds] = commons.NewGenericField(
+	fieldsMap[SubnetIds] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		SubnetIds,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -339,21 +346,40 @@ func SetupAwsElastigroupResource() {
 			Optional: true,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// TODO: Complete when vpc_zone_identifier is implemented
+			var value []string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.SubnetIds != nil {
+				value = elastigroup.Compute.SubnetIds
+			}
+			if err := resourceData.Set(string(SubnetIds), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetIds), err)
+			}
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// TODO: Complete when vpc_zone_identifier is implemented
+			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
+				if subnetIds, err := expandSubnetIDs(value); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetSubnetIds(subnetIds)
+				}
+			}
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// TODO: Complete when vpc_zone_identifier is implemented
+			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
+				if subnetIds, err := expandSubnetIDs(value); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetSubnetIds(subnetIds)
+				}
+			}
 			return nil
 		},
 		nil,
 	)
 
-	fields[AvailabilityZones] = commons.NewGenericField(
+	fieldsMap[AvailabilityZones] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		AvailabilityZones,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -370,13 +396,13 @@ func SetupAwsElastigroupResource() {
 				}
 			}
 			if err := resourceData.Set(string(AvailabilityZones), zoneNames); err != nil {
-				return fmt.Errorf(readFailurePattern, string(AvailabilityZones), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AvailabilityZones), err)
 			}
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
-				if zones, err := expandAWSGroupAvailabilityZonesSlice(value); err != nil {
+				if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 					return err
 				} else {
 					elastigroup.Compute.SetAvailabilityZones(zones)
@@ -386,7 +412,7 @@ func SetupAwsElastigroupResource() {
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
-				if zones, err := expandAWSGroupAvailabilityZonesSlice(value); err != nil {
+				if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 					return err
 				} else {
 					elastigroup.Compute.SetAvailabilityZones(zones)
@@ -397,7 +423,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[ElasticLoadBalancers] = commons.NewGenericField(
+	fieldsMap[ElasticLoadBalancers] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		ElasticLoadBalancers,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -424,33 +451,37 @@ func SetupAwsElastigroupResource() {
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			if balIds, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
-				if balancers, err := expandAWSGroupBalancers(balIds); err == nil {
-					if elastigroup.Compute.LaunchSpecification.LoadBalancersConfig == nil {
-						elastigroup.Compute.LaunchSpecification.LoadBalancersConfig = &aws.LoadBalancersConfig{}
+				var fn = func(id string) *aws.LoadBalancer {
+					return &aws.LoadBalancer{
+						Type:       spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
+						BalancerID: spotinst.String(id),
 					}
-					elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(balancers)
+				}
+				if err := expandBalancersContent(elastigroup, balIds, fn); err != nil {
+					// Do not fail on group creation
 				}
 			}
-			// Do not fail on group creation
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			if elastigroup.Compute.LaunchSpecification.LoadBalancersConfig == nil {
-				elastigroup.Compute.LaunchSpecification.SetLoadBalancersConfig(&aws.LoadBalancersConfig{})
-			}
-
 			if balIds, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
-				if balancers, err := expandAWSGroupBalancers(balIds); err == nil {
-					elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(balancers)
+				var fn = func(id string) *aws.LoadBalancer {
+					return &aws.LoadBalancer{
+						Type:       spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
+						BalancerID: spotinst.String(id),
+					}
+				}
+				if err := expandBalancersContent(elastigroup, balIds, fn); err != nil {
+					// Do not fail on group update
 				}
 			}
-			// Do not fail on group update
 			return nil
 		},
 		nil,
 	)
 
-	fields[TargetGroupArns] = commons.NewGenericField(
+	fieldsMap[TargetGroupArns] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		TargetGroupArns,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -458,7 +489,7 @@ func SetupAwsElastigroupResource() {
 			Optional: true,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			var tarArns []string = nil
+			var tgArns []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
@@ -468,23 +499,46 @@ func SetupAwsElastigroupResource() {
 					balType := spotinst.StringValue(balancer.Type)
 					if balType == string(BalancerTypeTargetGroup) {
 						arn := spotinst.StringValue(balancer.Arn)
-						tarArns = append(tarArns, arn)
+						tgArns = append(tgArns, arn)
 					}
 				}
 			}
-			resourceData.Set(string(TargetGroupArns), tarArns)
+			resourceData.Set(string(TargetGroupArns), tgArns)
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+			if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok {
+				var fn = func(id string) *aws.LoadBalancer {
+					return &aws.LoadBalancer{
+						Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
+						Arn:  spotinst.String(id),
+					}
+				}
+				if err := expandBalancersContent(elastigroup, tgArns, fn); err != nil {
+					// Do not fail on group creation
+				}
+			}
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+			if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok {
+				var fn = func(id string) *aws.LoadBalancer {
+					return &aws.LoadBalancer{
+						Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
+						Arn:  spotinst.String(id),
+					}
+				}
+				if err := expandBalancersContent(elastigroup, tgArns, fn); err != nil {
+					// Do not fail on group update
+				}
+			}
 			return nil
 		},
 		nil,
 	)
 
-	fields[MultaiTargetSetIds] = commons.NewGenericField(
+	fieldsMap[MultaiTargetSetIds] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		MultaiTargetSetIds,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -510,15 +564,38 @@ func SetupAwsElastigroupResource() {
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+			if multaiTsIds, ok := resourceData.GetOk(string(MultaiTargetSetIds)); ok {
+				var fn = func(id string) *aws.LoadBalancer {
+					return &aws.LoadBalancer{
+						Type:        spotinst.String(strings.ToUpper(string(BalancerTypeMultaiTargetSet))),
+						TargetSetID: spotinst.String(id),
+					}
+				}
+				if err := expandBalancersContent(elastigroup, multaiTsIds, fn); err != nil {
+					// Do not fail on group creation
+				}
+			}
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+			if multaiTsIds, ok := resourceData.GetOk(string(MultaiTargetSetIds)); ok {
+				var fn = func(id string) *aws.LoadBalancer {
+					return &aws.LoadBalancer{
+						Type:        spotinst.String(strings.ToUpper(string(BalancerTypeMultaiTargetSet))),
+						TargetSetID: spotinst.String(id),
+					}
+				}
+				if err := expandBalancersContent(elastigroup, multaiTsIds, fn); err != nil {
+					// Do not fail on group update
+				}
+			}
 			return nil
 		},
 		nil,
 	)
 
-	fields[Tags] = commons.NewGenericField(
+	fieldsMap[Tags] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		Tags,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -539,18 +616,14 @@ func SetupAwsElastigroupResource() {
 			Set: hashKV,
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			//var tagsToAdd = make(map[string]interface{})
 			var tagsSet *schema.Set = nil
-			//var tagsToAdd []*aws.Tag = nil
 			var tagsToAdd []interface{} = nil
 
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.Tags != nil {
 
 				tags := elastigroup.Compute.LaunchSpecification.Tags
-				//tagsToAdd = make([]*aws.Tag, 0, len(tags))
 				tagsToAdd = make([]interface{}, 0, len(tags))
-				//result := make(map[string]interface{})
 				for _, tag := range tags {
 					tagToAdd := &aws.Tag{
 						Key: tag.Key,
@@ -566,13 +639,13 @@ func SetupAwsElastigroupResource() {
 				tagsSet = schema.NewSet(tagHashFunc, tagsToAdd)
 			}
 			if err := resourceData.Set(string(Tags), tagsSet); err != nil {
-				return fmt.Errorf(readFailurePattern, string(Tags), err)
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
 			}
 			return nil
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			if value, ok := resourceData.GetOk(string(Tags)); ok {
-				if tags, err := expandAWSGroupTags(value); err != nil {
+				if tags, err := expandTags(value); err != nil {
 					return err
 				} else {
 					elastigroup.Compute.LaunchSpecification.SetTags(tags)
@@ -583,7 +656,7 @@ func SetupAwsElastigroupResource() {
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			var tagsToAdd []*aws.Tag = nil
 			if value, ok := resourceData.GetOk(string(Tags)); ok {
-				if tags, err := expandAWSGroupTags(value); err != nil {
+				if tags, err := expandTags(value); err != nil {
 					return err
 				} else {
 					tagsToAdd = tags
@@ -595,57 +668,8 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[LaunchConfiguration] = commons.NewGenericField(
-		LaunchConfiguration,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// Read is being handled by Terraform interpolation
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// Create is being handled by Terraform interpolation
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// Update is being handled by Terraform interpolation
-			return nil
-		},
-		nil,
-	)
-
-	fields[Strategy] = commons.NewGenericField(
-		Strategy,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// Read is being handled by Terraform interpolation
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// Creation is being handled by Terraform interpolation
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			// Strategy update is being handled by Terraform interpolation
-			// Add strategy signal, if exists
-			if v, ok := resourceData.GetOk(string(Signal)); ok {
-				if signals, err := expandAWSGroupSignals(v); err != nil {
-					return err
-				} else {
-					elastigroup.Strategy.SetSignals(signals)
-				}
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fields[Signal] = commons.NewGenericField(
+	fieldsMap[Signal] = commons.NewGenericField(
+		commons.ElastigroupAWS,
 		Signal,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -685,7 +709,7 @@ func SetupAwsElastigroupResource() {
 		},
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			if v, ok := resourceData.Get(string(Signal)).(int); ok && v > 0 {
-				if signals, err := expandAWSGroupSignals(v); err != nil {
+				if signals, err := expandSignals(v); err != nil {
 					return err
 				} else {
 					elastigroup.Strategy.SetSignals(signals)
@@ -696,7 +720,7 @@ func SetupAwsElastigroupResource() {
 		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
 			var signalsToAdd []*aws.Signal = nil
 			if v, ok := resourceData.GetOk(string(Signal)); ok {
-				if signals, err := expandAWSGroupSignals(v); err != nil {
+				if signals, err := expandSignals(v); err != nil {
 					return err
 				} else {
 					signalsToAdd = signals
@@ -711,61 +735,7 @@ func SetupAwsElastigroupResource() {
 		nil,
 	)
 
-	fields[InstanceTypes] = commons.NewGenericField(
-		InstanceTypes,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fields[EbsBlockDevice] = commons.NewGenericField(
-		EbsBlockDevice,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fields[EphemeralBlockDevice] = commons.NewGenericField(
-		EphemeralBlockDevice,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	//fields[UpdatePolicy] = commons.NewGenericField(
+	//fieldsMap[UpdatePolicy] = commons.NewGenericField(
 	//	UpdatePolicy,
 	//	&schema.Schema{
 	//		Type:     schema.TypeSet,
@@ -807,7 +777,7 @@ func SetupAwsElastigroupResource() {
 	//		}
 	//
 	//		if err := resourceData.Set(string(Tags), tagsToAdd); err != nil {
-	//			return fmt.Errorf(readFailurePattern, string(Tags), err)
+	//			return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
 	//		}
 	//		return nil
 	//	},
@@ -835,17 +805,12 @@ func SetupAwsElastigroupResource() {
 	//	},
 	//	nil,
 	//)
-
-
-	commons.ElastigroupResource = commons.NewGenericApiResource(
-		string(commons.ElastigroupAWS),
-		fields)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Fields Expand
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandAWSGroupAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, error) {
+func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, error) {
 	list := data.([]interface{})
 	zones := make([]*aws.AvailabilityZone, 0, len(list))
 	for _, str := range list {
@@ -861,7 +826,6 @@ func expandAWSGroupAvailabilityZonesSlice(data interface{}) ([]*aws.Availability
 			if len(parts) == 3 && parts[2] != "" {
 				zone.SetPlacementGroupName(spotinst.String(parts[2]))
 			}
-			log.Printf("Group availability zone configuration: %s", stringutil.Stringify(zone))
 			zones = append(zones, zone)
 		}
 	}
@@ -869,7 +833,7 @@ func expandAWSGroupAvailabilityZonesSlice(data interface{}) ([]*aws.Availability
 	return zones, nil
 }
 
-func expandAWSGroupTags(data interface{}) ([]*aws.Tag, error) {
+func expandTags(data interface{}) ([]*aws.Tag, error) {
 	list := data.(*schema.Set).List()
 	tags := make([]*aws.Tag, 0, len(list))
 	for _, v := range list {
@@ -888,33 +852,34 @@ func expandAWSGroupTags(data interface{}) ([]*aws.Tag, error) {
 			Key:   spotinst.String(attr["key"].(string)),
 			Value: spotinst.String(attr["value"].(string)),
 		}
-		log.Printf("Group tag configuration: %s", stringutil.Stringify(tag))
 		tags = append(tags, tag)
 	}
 	return tags, nil
 }
 
-func expandAWSGroupBalancers(balancerIds interface{}) ([]*aws.LoadBalancer, error) {
+type CreateBalancerObjFunc func(id string) *aws.LoadBalancer
+
+func expandBalancersContent(elastigroup *aws.Group, ids interface{}, fn CreateBalancerObjFunc) error {
+	if ids == nil {
+		return nil
+	}
 	var balancers []*aws.LoadBalancer = nil
-	if balancerIds != nil {
-		list := balancerIds.([]interface{})
+	list := ids.([]interface{})
+	if elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
+		balancers = elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+	} else {
 		balancers = make([]*aws.LoadBalancer, 0, len(list))
-		for _, str := range list {
-			if balId, ok := str.(string); ok {
-				log.Printf("Balancer id configuration: %s", stringutil.Stringify(balId))
-				lb := &aws.LoadBalancer{
-					Type:       spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
-					BalancerID: spotinst.String(balId),
-				}
-				balancers = append(balancers, lb)
-			}
+	}
+	for _, str := range list {
+		if id, ok := str.(string); ok {
+			lb := fn(id)
+			balancers = append(balancers, lb)
 		}
 	}
-	return balancers, nil
+	return nil
 }
 
-// expandAWSGroupSignals expands the Signal block.
-func expandAWSGroupSignals(data interface{}) ([]*aws.Signal, error) {
+func expandSignals(data interface{}) ([]*aws.Signal, error) {
 	list := data.(*schema.Set).List()
 	signals := make([]*aws.Signal, 0, len(list))
 	for _, item := range list {
@@ -928,12 +893,22 @@ func expandAWSGroupSignals(data interface{}) ([]*aws.Signal, error) {
 		if v, ok := m[string(SignalTimeout)].(int); ok && v > 0 {
 			signal.SetTimeout(spotinst.Int(v))
 		}
-
-		log.Printf("Group signal configuration: %s", stringutil.Stringify(signal))
 		signals = append(signals, signal)
 	}
 
 	return signals, nil
+}
+
+func expandSubnetIDs(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if subnetID, ok := v.(string); ok && subnetID != "" {
+			result = append(result, subnetID)
+		}
+	}
+	return result, nil
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
