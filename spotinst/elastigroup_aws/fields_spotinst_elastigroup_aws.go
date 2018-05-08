@@ -25,7 +25,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *string = nil
 			if elastigroup.Name != nil {
 				value = elastigroup.Name
@@ -35,11 +36,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			elastigroup.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			elastigroup.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
 		},
@@ -53,9 +56,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeString,
 			Required: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *string = nil
-			if elastigroup.Description!= nil {
+			if elastigroup.Description != nil {
 				value = elastigroup.Description
 			}
 			if err := resourceData.Set(string(Description), value); err != nil {
@@ -63,11 +67,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			elastigroup.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			elastigroup.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
 			return nil
 		},
@@ -82,7 +88,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Required: true,
 			ForceNew: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.Product != nil {
 				value = elastigroup.Compute.Product
@@ -92,11 +99,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			elastigroup.Compute.SetProduct(spotinst.String(resourceData.Get(string(Product)).(string)))
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			elastigroup.Compute.SetProduct(spotinst.String(resourceData.Get(string(Product)).(string)))
 			return nil
 		},
@@ -111,7 +120,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Computed: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
 			if elastigroup.Capacity != nil && elastigroup.Capacity.Maximum != nil{
 				value = elastigroup.Capacity.Maximum
@@ -121,13 +131,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(MaxSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMaximum(spotinst.Int(v))
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(MaxSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMaximum(spotinst.Int(v))
 			}
@@ -144,7 +156,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Computed: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
 			if elastigroup.Capacity != nil && elastigroup.Capacity.Minimum != nil {
 				value = elastigroup.Capacity.Minimum
@@ -154,13 +167,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(MinSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMinimum(spotinst.Int(v))
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(MinSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMinimum(spotinst.Int(v))
 			}
@@ -176,7 +191,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeInt,
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
 			if elastigroup.Capacity != nil && elastigroup.Capacity.Target != nil {
 				value = elastigroup.Capacity.Target
@@ -186,13 +202,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(DesiredCapacity)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetTarget(spotinst.Int(v))
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(DesiredCapacity)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetTarget(spotinst.Int(v))
 			}
@@ -209,7 +227,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Computed: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *string = nil
 			if elastigroup.Capacity != nil && elastigroup.Capacity.Unit != nil {
 				value = elastigroup.Capacity.Unit
@@ -219,13 +238,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(CapacityUnit)).(string); ok && v != "" {
 				elastigroup.Capacity.SetUnit(spotinst.String(v))
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			// Do nothing
 			return nil
 		},
@@ -239,7 +259,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeInt,
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.HealthCheckGracePeriod != nil {
@@ -250,13 +271,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(HealthCheckGracePeriod)).(int); ok && v > 0 {
 				elastigroup.Compute.LaunchSpecification.SetHealthCheckGracePeriod(spotinst.Int(v))
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
 			if v, ok := resourceData.Get(string(HealthCheckGracePeriod)).(int); ok && v > 0 {
 				value = spotinst.Int(v)
@@ -274,7 +297,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeString,
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.HealthCheckType != nil {
@@ -285,13 +309,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(HealthCheckType)).(string); ok && v != "" {
 				elastigroup.Compute.LaunchSpecification.SetHealthCheckType(spotinst.String(v))
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *string = nil
 			if v, ok := resourceData.Get(string(HealthCheckType)).(string); ok && v != "" {
 				value = spotinst.String(v)
@@ -309,7 +335,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeInt,
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.HealthCheckUnhealthyDurationBeforeReplacement != nil {
@@ -320,13 +347,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(HealthCheckUnhealthyDurationBeforeReplacement)).(int); ok && v > 0 {
 				elastigroup.Compute.LaunchSpecification.SetHealthCheckUnhealthyDurationBeforeReplacement(spotinst.Int(v))
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
 			if v, ok := resourceData.Get(string(HealthCheckUnhealthyDurationBeforeReplacement)).(int); ok && v > 0 {
 				value = spotinst.Int(v)
@@ -345,7 +374,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.SubnetIds != nil {
 				value = elastigroup.Compute.SubnetIds
@@ -355,7 +385,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
@@ -365,7 +396,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
@@ -386,7 +418,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var zoneNames []string
 			if elastigroup.Compute != nil && elastigroup.Compute.AvailabilityZones != nil {
 				zones := elastigroup.Compute.AvailabilityZones
@@ -400,7 +433,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 				if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 					return err
@@ -410,7 +444,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 				if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 					return err
@@ -431,7 +466,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var balIds []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig != nil &&
@@ -449,7 +485,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			resourceData.Set(string(ElasticLoadBalancers), balIds)
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if balIds, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
 				var fn = func(id string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
@@ -463,7 +500,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if balIds, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
 				var fn = func(id string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
@@ -488,7 +526,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var tgArns []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig != nil &&
@@ -506,7 +545,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			resourceData.Set(string(TargetGroupArns), tgArns)
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok {
 				var fn = func(id string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
@@ -520,7 +560,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok {
 				var fn = func(id string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
@@ -545,7 +586,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var tsIds []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig != nil &&
@@ -563,7 +605,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			resourceData.Set(string(MultaiTargetSetIds), tsIds)
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if multaiTsIds, ok := resourceData.GetOk(string(MultaiTargetSetIds)); ok {
 				var fn = func(id string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
@@ -577,7 +620,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if multaiTsIds, ok := resourceData.GetOk(string(MultaiTargetSetIds)); ok {
 				var fn = func(id string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
@@ -615,7 +659,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 			Set: hashKV,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var tagsSet *schema.Set = nil
 			var tagsToAdd []interface{} = nil
 
@@ -643,7 +688,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if value, ok := resourceData.GetOk(string(Tags)); ok {
 				if tags, err := expandTags(value); err != nil {
 					return err
@@ -653,7 +699,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var tagsToAdd []*aws.Tag = nil
 			if value, ok := resourceData.GetOk(string(Tags)); ok {
 				if tags, err := expandTags(value); err != nil {
@@ -688,7 +735,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				},
 			},
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var signalsToAdd = []*aws.Signal{}
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Signals != nil {
 				signals := elastigroup.Strategy.Signals
@@ -707,7 +755,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.Get(string(Signal)).(int); ok && v > 0 {
 				if signals, err := expandSignals(v); err != nil {
 					return err
@@ -717,7 +766,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var signalsToAdd []*aws.Signal = nil
 			if v, ok := resourceData.GetOk(string(Signal)); ok {
 				if signals, err := expandSignals(v); err != nil {
@@ -765,7 +815,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	//			},
 	//		},
 	//	},
-	//	func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 	//		tags := elastigroup.Compute.LaunchSpecification.Tags
 	//		if tags == nil {
 	//			return nil
@@ -781,7 +831,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	//		}
 	//		return nil
 	//	},
-	//	func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 	//		if value, ok := resourceData.GetOk(string(Tags)); ok {
 	//			if tags, err := expandAWSGroupTags(value); err != nil {
 	//				return err
@@ -791,7 +841,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	//		}
 	//		return nil
 	//	},
-	//	func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 	//		var tagsToAdd []*aws.Tag = nil
 	//		if value, ok := resourceData.GetOk(string(Tags)); ok {
 	//			if tags, err := expandAWSGroupTags(value); err != nil {

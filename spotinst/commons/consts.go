@@ -1,13 +1,16 @@
 package commons
 
-type FieldName string
-type ResourceAffinity string
 type LogFormat string
+type FieldName string
+type ResourceName string
+type ResourceAffinity string
 
 const (
 	FailureFieldReadPattern   = "failed reading field %v - %#v"
 	FailureFieldCreatePattern = "failed creating field %v - %#v"
 	FailureFieldUpdatePattern = "failed updating field %v - %#v"
+
+	Subscription ResourceAffinity = "Subscription"
 
 	ElastigroupAWS                 ResourceAffinity = "Elastigroup_AWS"
 	ElastigroupInstanceType        ResourceAffinity = "Elastigroup_Instance_Type"

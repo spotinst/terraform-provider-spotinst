@@ -27,7 +27,7 @@ import (
 )
 
 func resourceSpotinstElastigroupAws() *schema.Resource {
-	setup()
+	setupElastigroup()
 	return &schema.Resource{
 		Create: resourceSpotinstElastigroupAwsCreate,
 		Read:   resourceSpotinstElastigroupAwsRead,
@@ -38,11 +38,11 @@ func resourceSpotinstElastigroupAws() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: commons.ElastigroupResource.GetSchemaMap(),
+		Schema: commons.SpotinstElastigroup.GetSchemaMap(),
 	}
 }
 
-func setup() {
+func setupElastigroup() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	elastigroup_aws.Setup(fieldsMap)
@@ -56,9 +56,7 @@ func setup() {
 	elastigroup_stateful.Setup(fieldsMap)
 	elastigroup_integrations.Setup(fieldsMap)
 
-	commons.ElastigroupResource = commons.NewGenericResource(
-		string(commons.ElastigroupAWS),
-		fieldsMap)
+	commons.SpotinstElastigroup = commons.NewElastigroupResource(fieldsMap)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -67,7 +65,7 @@ func setup() {
 func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
-		commons.ElastigroupResource.GetName(), id)
+		commons.SpotinstElastigroup.GetName(), id)
 
 	input := &aws.DeleteGroupInput{GroupID: spotinst.String(id)}
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
@@ -87,7 +85,7 @@ const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
 func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
-		commons.ElastigroupResource.GetName(), id)
+		commons.SpotinstElastigroup.GetName(), id)
 
 	input := &aws.ReadGroupInput{GroupID: spotinst.String(id)}
 	resp, err := meta.(*Client).elastigroup.CloudProviderAWS().Read(context.Background(), input)
@@ -114,13 +112,13 @@ func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta 
 		return nil
 	}
 
-	commons.ElastigroupResource.SetTerraformData(
+	commons.SpotinstElastigroup.SetTerraformData(
 		&commons.TerraformData{
 			ResourceData: resourceData,
 			Meta:         meta,
 		})
 
-	commons.ElastigroupResource.OnRead(groupResponse)
+	commons.SpotinstElastigroup.OnRead(groupResponse)
 	return nil
 }
 
@@ -130,16 +128,15 @@ func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
-		commons.ElastigroupResource.GetName())
+		commons.SpotinstElastigroup.GetName())
 
-	err := commons.ElastigroupResource.OnCreate(resourceData, meta)
+	err := commons.SpotinstElastigroup.OnCreate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
-	var groupId *string
-	group := commons.ElastigroupResource.GetElastigroup()
-	groupId, err = createGroup(group, meta.(*Client))
+	group := commons.SpotinstElastigroup.GetElastigroup()
+	groupId, err := createGroup(group, meta.(*Client))
 	if err != nil {
 		return err
 	}
@@ -188,15 +185,15 @@ func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
 func resourceSpotinstElastigroupAwsUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
-		commons.ElastigroupResource.GetName(), id)
+		commons.SpotinstElastigroup.GetName(), id)
 
-	shouldUpdate, err := commons.ElastigroupResource.OnUpdate(resourceData, meta)
+	shouldUpdate, err := commons.SpotinstElastigroup.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
-		elastigroup := commons.ElastigroupResource.GetElastigroup()
+		elastigroup := commons.SpotinstElastigroup.GetElastigroup()
 		elastigroup.SetId(spotinst.String(id))
 		updateGroup(elastigroup, resourceData, meta)
 	}

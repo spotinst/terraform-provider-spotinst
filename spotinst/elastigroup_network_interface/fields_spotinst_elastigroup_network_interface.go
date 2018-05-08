@@ -71,7 +71,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				},
 			},
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.NetworkInterfaces != nil {
@@ -89,7 +90,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(NetworkInterface)); ok {
 				if interfaces, err := expandAWSGroupNetworkInterfaces(v); err != nil {
 					return err
@@ -99,7 +101,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value []*aws.NetworkInterface = nil
 			if v, ok := resourceData.GetOk(string(NetworkInterface)); ok {
 				if interfaces, err := expandAWSGroupNetworkInterfaces(v); err != nil {

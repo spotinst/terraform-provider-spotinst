@@ -40,7 +40,8 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				},
 			},
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value []interface{} = nil
 			if elastigroup.Integration != nil && elastigroup.Integration.Rancher != nil {
 				value = flattenAWSGroupRancherIntegration(elastigroup.Integration.Rancher)
@@ -56,7 +57,8 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(IntegrationRancher)); ok {
 				if integration, err := expandAWSGroupRancherIntegration(v); err != nil {
 					return err
@@ -66,7 +68,8 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *aws.RancherIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationRancher)); ok {
 				if integration, err := expandAWSGroupRancherIntegration(v); err != nil {

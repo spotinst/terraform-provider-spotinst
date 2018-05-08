@@ -54,7 +54,8 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				},
 			},
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value []interface{} = nil
 			if elastigroup.Integration != nil && elastigroup.Integration.CodeDeploy != nil {
 				value = flattenAWSGroupCodeDeployIntegration(elastigroup.Integration.CodeDeploy)
@@ -70,7 +71,8 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(IntegrationCodeDeploy)); ok {
 				if integration, err := expandAWSGroupCodeDeployIntegration(v); err != nil {
 					return err
@@ -80,7 +82,8 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *aws.CodeDeployIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationCodeDeploy)); ok {
 				if integration, err := expandAWSGroupCodeDeployIntegration(v); err != nil {

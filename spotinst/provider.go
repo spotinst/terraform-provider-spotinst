@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 // Provider returns a terraform.ResourceProvider.
@@ -26,7 +27,8 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"spotinst_elastigroup_aws": resourceSpotinstElastigroupAws(),
+			string(commons.ElastigroupAwsResourceName): resourceSpotinstElastigroupAws(),
+			string(commons.SubscriptionResourceName):   resourceSpotinstSubscription(),
 		},
 
 		ConfigureFunc: providerConfigure,

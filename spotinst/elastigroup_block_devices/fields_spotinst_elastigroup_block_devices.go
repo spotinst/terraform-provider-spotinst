@@ -65,7 +65,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 			Set: hashAWSGroupEBSBlockDevice,
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var ebsBlock []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.BlockDeviceMappings != nil {
@@ -84,7 +85,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(EbsBlockDevice)); ok {
 				if ebsDevices, err := expandAWSGroupEBSBlockDevices(v); err != nil {
 					return err
@@ -94,7 +96,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value []*aws.BlockDeviceMapping = nil
 			if v, ok := resourceData.GetOk(string(EbsBlockDevice)); ok {
 				if newEbsDevices, err := expandAWSGroupEBSBlockDevices(v); err != nil {
@@ -133,7 +136,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				},
 			},
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var ephemeralBlock []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.BlockDeviceMappings != nil {
@@ -152,7 +156,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(EphemeralBlockDevice)); ok {
 				if ephemeralDevices, err := expandAWSGroupEphemeralBlockDevices(v); err != nil {
 					return err
@@ -168,7 +173,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(EphemeralBlockDevice)); ok {
 				if newEphemeralDevices, err := expandAWSGroupEphemeralBlockDevices(v); err != nil {
 					return err

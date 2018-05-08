@@ -30,7 +30,8 @@ func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				},
 			},
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value []interface{} = nil
 			if elastigroup.Integration != nil && elastigroup.Integration.Multai != nil {
 				value = flattenAWSGroupMultaiIntegration(elastigroup.Integration.Multai)
@@ -46,7 +47,8 @@ func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(IntegrationMultaiRuntime)); ok {
 				if integration, err := expandAWSGroupMultaiIntegration(v); err != nil {
 					return err
@@ -56,7 +58,8 @@ func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
 			var value *aws.MultaiIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationMultaiRuntime)); ok {
 				if integration, err := expandAWSGroupMultaiIntegration(v); err != nil {
