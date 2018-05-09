@@ -10,9 +10,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-)
 
-import (
 	subscriptionPackage "github.com/terraform-providers/terraform-provider-spotinst/spotinst/subscription"
 )
 
