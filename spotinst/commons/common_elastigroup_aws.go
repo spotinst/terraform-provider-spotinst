@@ -44,6 +44,9 @@ func (res *ElastigroupResource) OnCreate(
 
 	egGroup := res.GetElastigroup()
 	for _, field := range res.fields.fieldsMap {
+		if field.onCreate == nil {
+			continue
+		}
 		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
 		if err := field.onCreate(egGroup, resourceData, meta); err != nil {
 			return err
@@ -63,6 +66,9 @@ func (res *ElastigroupResource) OnUpdate(
 	var hasChanged = false
 	egGroup := res.GetElastigroup()
 	for _, field := range res.fields.fieldsMap {
+		if field.onUpdate == nil {
+			continue
+		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(egGroup, resourceData, meta); err != nil {

@@ -121,6 +121,9 @@ func (res *GenericResource) OnRead(
 	resourceData := res.terraformData.ResourceData
 	meta := res.terraformData.Meta
 	for _, field := range res.fields.fieldsMap {
+		if field.onRead == nil {
+			continue
+		}
 		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
 		if err := field.onRead(resourceObject, resourceData, meta); err != nil {
 			return err

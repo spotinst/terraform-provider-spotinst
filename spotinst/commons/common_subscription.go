@@ -46,6 +46,9 @@ func (res *SubscriptionResource) OnCreate(
 
 	egGroup := res.GetSubscription()
 	for _, field := range res.fields.fieldsMap {
+		if field.onCreate == nil {
+			continue
+		}
 		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
 		if err := field.onCreate(egGroup, resourceData, meta); err != nil {
 			return err
@@ -65,6 +68,9 @@ func (res *SubscriptionResource) OnUpdate(
 	var hasChanged = false
 	egGroup := res.GetSubscription()
 	for _, field := range res.fields.fieldsMap {
+		if field.onUpdate == nil {
+			continue
+		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(egGroup, resourceData, meta); err != nil {

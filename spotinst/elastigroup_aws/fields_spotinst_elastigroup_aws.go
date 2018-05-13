@@ -377,8 +377,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			var value []string = nil
-			if elastigroup.Compute != nil && elastigroup.Compute.SubnetIds != nil {
-				value = elastigroup.Compute.SubnetIds
+			if elastigroup.Compute != nil && elastigroup.Compute.SubnetIDs != nil {
+				value = elastigroup.Compute.SubnetIDs
 			}
 			if err := resourceData.Set(string(SubnetIds), value); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetIds), err)
@@ -391,7 +391,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.SetSubnetIds(subnetIds)
+					elastigroup.Compute.SetSubnetIDs(subnetIds)
 				}
 			}
 			return nil
@@ -402,7 +402,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.SetSubnetIds(subnetIds)
+					elastigroup.Compute.SetSubnetIDs(subnetIds)
 				}
 			}
 			return nil
@@ -785,81 +785,60 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	//fieldsMap[UpdatePolicy] = commons.NewGenericField(
-	//	UpdatePolicy,
-	//	&schema.Schema{
-	//		Type:     schema.TypeSet,
-	//		Optional: true,
-	//		Elem: &schema.Resource{
-	//			Schema: map[string]*schema.Schema{
-	//				"should_roll": &schema.Schema{
-	//					Type:     schema.TypeBool,
-	//					Required: true,
-	//				},
-	//
-	//				"batch_size_percentage": &schema.Schema{
-	//					Type:     schema.TypeInt,
-	//					Required: true,
-	//				},
-	//
-	//				"grace_period": &schema.Schema{
-	//					Type:     schema.TypeInt,
-	//					Optional: true,
-	//					Default:  -1,
-	//				},
-	//
-	//				"health_check_type": &schema.Schema{
-	//					Type:     schema.TypeString,
-	//					Optional: true,
-	//				},
-	//			},
-	//		},
-	//	},
-	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-	//		tags := elastigroup.Compute.LaunchSpecification.Tags
-	//		if tags == nil {
-	//			return nil
-	//		}
-	//
-	//		var tagsToAdd = make(map[string]interface{})
-	//		for _, tag := range tags {
-	//			tagsToAdd[spotinst.StringValue(tag.Key)] = tag.Value
-	//		}
-	//
-	//		if err := resourceData.Set(string(Tags), tagsToAdd); err != nil {
-	//			return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
-	//		}
-	//		return nil
-	//	},
-	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-	//		if value, ok := resourceData.GetOk(string(Tags)); ok {
-	//			if tags, err := expandAWSGroupTags(value); err != nil {
-	//				return err
-	//			} else {
-	//				elastigroup.Compute.LaunchSpecification.SetTags(tags)
-	//			}
-	//		}
-	//		return nil
-	//	},
-	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-	//		var tagsToAdd []*aws.Tag = nil
-	//		if value, ok := resourceData.GetOk(string(Tags)); ok {
-	//			if tags, err := expandAWSGroupTags(value); err != nil {
-	//				return err
-	//			} else {
-	//				tagsToAdd = tags
-	//			}
-	//		}
-	//		elastigroup.Compute.LaunchSpecification.SetTags(tagsToAdd)
-	//		return nil
-	//	},
-	//	nil,
-	//)
+	fieldsMap[UpdatePolicy] = commons.NewGenericField(
+		commons.ElastigroupAWS,
+		UpdatePolicy,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldResumeStateful): &schema.Schema{
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+
+					string(ShouldRoll): &schema.Schema{
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+
+					string(RollConfig): &schema.Schema{
+						Type:     schema.TypeSet,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(BatchSizePercentage): &schema.Schema{
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+
+								string(GracePeriod): &schema.Schema{
+									Type:     schema.TypeInt,
+									Optional: true,
+									Default:  -1,
+								},
+
+								string(HealthCheckType): &schema.Schema{
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+							},
+						},
+					},
+
+
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Fields Expand
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, error) {
 	list := data.([]interface{})
 	zones := make([]*aws.AvailabilityZone, 0, len(list))

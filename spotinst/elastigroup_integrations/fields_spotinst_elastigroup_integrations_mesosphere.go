@@ -18,8 +18,17 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupIntegrations,
 		IntegrationMesosphere,
 		&schema.Schema{
-			Type:     schema.TypeFloat,
+			Type:     schema.TypeSet,
 			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ApiServer): &schema.Schema{
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
