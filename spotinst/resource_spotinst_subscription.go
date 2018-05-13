@@ -79,7 +79,9 @@ func resourceSpotinstSubscriptionRead(resourceData *schema.ResourceData, meta in
 			Meta:         meta,
 		})
 
-	commons.SpotinstSubscription.OnRead(subResponse)
+	if err := commons.SpotinstSubscription.OnRead(subResponse); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -134,7 +136,9 @@ func resourceSpotinstSubscriptionUpdate(resourceData *schema.ResourceData, meta 
 	if shouldUpdate {
 		subObj := commons.SpotinstSubscription.GetSubscription()
 		subObj.SetId(spotinst.String(id))
-		updateSubscription(subObj, resourceData, meta)
+		if err := updateSubscription(subObj, resourceData, meta); err != nil {
+			return err
+		}
 	}
 
 	return resourceSpotinstSubscriptionRead(resourceData, meta)
