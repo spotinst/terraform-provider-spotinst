@@ -20,6 +20,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeFloat,
 			Optional: true,
+			ConflictsWith: []string{string(OnDemandCount)},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
@@ -55,6 +56,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
+			ConflictsWith: []string{string(SpotPercentage)},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
@@ -69,15 +71,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if v, ok := resourceData.Get(string(OnDemandCount)).(int); ok && v > 0 {
-				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(v))
+			if v, ok := resourceData.GetOkExists(string(OnDemandCount)); ok && v != nil {
+				value := v.(int)
+				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(value))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if v, ok := resourceData.Get(string(OnDemandCount)).(int); ok && v > 0 {
-				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(v))
+			if v, ok := resourceData.GetOkExists(string(OnDemandCount)); ok && v != nil {
+				value := v.(int)
+				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(value))
 			}
 			return nil
 		},
@@ -254,8 +258,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok && v {
-				fallback := spotinst.Bool(v)
+			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
+				ftod := v.(bool)
+				fallback := spotinst.Bool(ftod)
 				elastigroup.Strategy.SetFallbackToOnDemand(fallback)
 			}
 			return nil
@@ -263,8 +268,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			var fallback *bool = nil
-			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok && v {
-				fallback = spotinst.Bool(v)
+			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
+				ftod := v.(bool)
+				fallback = spotinst.Bool(ftod)
 			}
 			elastigroup.Strategy.SetFallbackToOnDemand(fallback)
 			return nil
