@@ -105,9 +105,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			elastigroup.Compute.SetProduct(spotinst.String(resourceData.Get(string(Product)).(string)))
-			return nil
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(Product))
+			return err
 		},
 		nil,
 	)
@@ -246,8 +246,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			// Do nothing
-			return nil
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(CapacityUnit))
+			return err
 		},
 		nil,
 	)

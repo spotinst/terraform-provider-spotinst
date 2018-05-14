@@ -89,7 +89,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ScalingTargetPolicy,
 		targetScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			// Skip
+			// Use Terraform default read behaviour
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

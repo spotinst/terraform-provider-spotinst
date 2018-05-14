@@ -88,7 +88,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(Spot)); ok {
-				spotTypes := v.([]string)
+				rawSpotTypes := v.([]interface{})
+				spotTypes := make([]string, len(rawSpotTypes))
+				for i, v := range rawSpotTypes {
+					spotTypes[i] = v.(string)
+				}
 				elastigroup.Compute.InstanceTypes.SetSpot(spotTypes)
 			}
 			return nil

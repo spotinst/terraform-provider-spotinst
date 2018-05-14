@@ -10,6 +10,8 @@ const (
 	FailureFieldCreatePattern = "failed creating field %v - %#v"
 	FailureFieldUpdatePattern = "failed updating field %v - %#v"
 
+	FieldUpdateNotAllowedPattern = "field [%v] is immutable, cannot be changed post group creation"
+
 	Subscription ResourceAffinity = "Subscription"
 
 	ElastigroupAWS                 ResourceAffinity = "Elastigroup_AWS"
