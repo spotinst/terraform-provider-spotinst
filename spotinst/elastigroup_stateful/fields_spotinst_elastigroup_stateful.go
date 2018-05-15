@@ -157,7 +157,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			var value *string = nil
-			if v, ok := resourceData.Get(string(BlockDevicesMode)).(string); ok {
+			if v, ok := resourceData.Get(string(BlockDevicesMode)).(string); ok && v != "" {
 				value = spotinst.String(v)
 			}
 			elastigroup.Strategy.Persistence.SetBlockDevicesMode(value)
