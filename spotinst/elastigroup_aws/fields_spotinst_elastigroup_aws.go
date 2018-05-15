@@ -86,7 +86,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
-			ForceNew: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
@@ -716,6 +715,55 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ElasticIps] = commons.NewGenericField(
+		commons.ElastigroupAWS,
+		ElasticIps,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			var result []string
+			if elastigroup.Compute != nil && elastigroup.Compute.ElasticIPs != nil {
+				elasticIps := elastigroup.Compute.ElasticIPs
+				for _, elasticIp := range elasticIps {
+					result = append(result, elasticIp)
+				}
+			}
+			if err := resourceData.Set(string(ElasticIps), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ElasticIps), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			if value, ok := resourceData.GetOk(string(ElasticIps)); ok {
+				if eips, err := expandAWSGroupElasticIPs(value); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetElasticIPs(eips)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			var result []string = nil
+			if value, ok := resourceData.GetOk(string(ElasticIps)); ok {
+				if eips, err := expandAWSGroupElasticIPs(value); err != nil {
+					return err
+				} else {
+					result = eips
+				}
+			}
+			elastigroup.Compute.SetElasticIPs(result)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[Signal] = commons.NewGenericField(
 		commons.ElastigroupAWS,
 		Signal,
@@ -758,7 +806,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if v, ok := resourceData.Get(string(Signal)).(int); ok && v > 0 {
+			if v, ok := resourceData.GetOk(string(Signal)); ok {
 				if signals, err := expandSignals(v); err != nil {
 					return err
 				} else {
@@ -861,6 +909,17 @@ func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, er
 	}
 
 	return zones, nil
+}
+
+func expandAWSGroupElasticIPs(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	eips := make([]string, 0, len(list))
+	for _, str := range list {
+		if eip, ok := str.(string); ok {
+			eips = append(eips, eip)
+		}
+	}
+	return eips, nil
 }
 
 func expandTags(data interface{}) ([]*aws.Tag, error) {
