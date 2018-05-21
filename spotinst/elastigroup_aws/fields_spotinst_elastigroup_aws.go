@@ -495,7 +495,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 				if err := expandBalancersContent(elastigroup, balIds, fn); err != nil {
-					// Do not fail on group creation
+					return err
 				}
 			}
 			return nil
@@ -510,7 +510,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 				if err := expandBalancersContent(elastigroup, balIds, fn); err != nil {
-					// Do not fail on group update
+					return err
 				}
 			}
 			return nil
@@ -555,7 +555,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 				if err := expandBalancersContent(elastigroup, tgArns, fn); err != nil {
-					// Do not fail on group creation
+					return err
 				}
 			}
 			return nil
@@ -570,7 +570,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 				if err := expandBalancersContent(elastigroup, tgArns, fn); err != nil {
-					// Do not fail on group update
+					return err
 				}
 			}
 			return nil
@@ -615,7 +615,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 				if err := expandBalancersContent(elastigroup, multaiTsIds, fn); err != nil {
-					// Do not fail on group creation
+					return err
 				}
 			}
 			return nil
@@ -630,7 +630,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 				if err := expandBalancersContent(elastigroup, multaiTsIds, fn); err != nil {
-					// Do not fail on group update
+					return err
 				}
 			}
 			return nil
@@ -964,6 +964,10 @@ func expandBalancersContent(elastigroup *aws.Group, ids interface{}, fn CreateBa
 			lb := fn(id)
 			balancers = append(balancers, lb)
 		}
+	}
+
+	if balancers != nil && len(balancers) > 0 {
+		elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(balancers)
 	}
 	return nil
 }
