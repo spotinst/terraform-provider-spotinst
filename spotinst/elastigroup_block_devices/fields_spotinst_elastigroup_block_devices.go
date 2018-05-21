@@ -2,12 +2,12 @@ package elastigroup_block_devices
 
 import (
 	"fmt"
+	"bytes"
 
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"bytes"
 	"github.com/hashicorp/terraform/helper/hashcode"
 )
 

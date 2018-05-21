@@ -187,31 +187,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			if v, ok := resourceData.GetOk(string(PrivateIps)); ok {
-				list := v.([]interface{})
-				result := make([]string, 0, len(list))
-				for _, v := range list {
-					if privateIP, ok := v.(string); ok && privateIP != "" {
-						result = append(result, privateIP)
-					}
+				if eips, err := expandAWSGroupPrivateIPs(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetPrivateIPs(eips)
 				}
-				elastigroup.Compute.SetPrivateIPs(result)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			var value []string = nil
+			var result []string = nil
 			if v, ok := resourceData.GetOk(string(PrivateIps)); ok {
-				list := v.([]interface{})
-				result := make([]string, 0, len(list))
-				for _, v := range list {
-					if privateIP, ok := v.(string); ok && privateIP != "" {
-						result = append(result, privateIP)
-					}
+				if eips, err := expandAWSGroupPrivateIPs(v); err != nil {
+					return err
+				} else {
+					result = eips
 				}
-				value = result
 			}
-			elastigroup.Compute.SetPrivateIPs(value)
+			elastigroup.Compute.SetPrivateIPs(result)
 			return nil
 		},
 		nil,
@@ -222,3 +216,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func expandAWSGroupPrivateIPs(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	pips := make([]string, 0, len(list))
+	for _, str := range list {
+		if pip, ok := str.(string); ok {
+			pips = append(pips, pip)
+		}
+	}
+	return pips, nil
+}

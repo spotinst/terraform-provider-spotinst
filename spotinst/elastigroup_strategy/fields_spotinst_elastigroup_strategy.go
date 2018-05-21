@@ -93,8 +93,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Orientation,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
@@ -168,7 +167,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
-			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
@@ -204,7 +202,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
-			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
@@ -242,8 +239,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		FallbackToOnDemand,
 		&schema.Schema{
 			Type:     schema.TypeBool,
-			Optional: true,
-			Computed: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)

@@ -291,6 +291,5 @@ func expandAWSGroupRollConfig(data interface{}, groupID string) (*aws.RollGroupI
 	if v, ok := m[string(elastigroup_aws.HealthCheckType)].(string); ok && v != "" { // Default value ""
 		i.HealthCheckType = spotinst.String(v)
 	}
-	log.Printf("zachi finished expanding roll config")
 	return i, nil
 }

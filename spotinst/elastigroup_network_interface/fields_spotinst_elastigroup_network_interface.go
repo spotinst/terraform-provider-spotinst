@@ -159,7 +159,7 @@ func expandAWSGroupNetworkInterfaces(data interface{}) ([]*aws.NetworkInterface,
 			networkInterface.SetDeviceIndex(spotinst.Int(v))
 		}
 
-		if v, ok := m[string(SecondaryPrivateIpAddressCount)].(int); ok && v > 0 {
+		if v, ok := m[string(SecondaryPrivateIpAddressCount)].(int); ok && v >= 0 {
 			networkInterface.SetSecondaryPrivateIPAddressCount(spotinst.Int(v))
 		}
 
