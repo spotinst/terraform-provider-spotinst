@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 )
@@ -28,7 +27,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupAutoScaleHeadroom(data interface{}) (*aws.AutoScaleHeadroom, error) {
-	if list := data.(*schema.Set).List(); len(list) > 0 {
+	if list := data.([]interface{}); len(list) > 0 {
 		m := list[0].(map[string]interface{})
 		i := &aws.AutoScaleHeadroom{}
 
@@ -51,7 +50,7 @@ func expandAWSGroupAutoScaleHeadroom(data interface{}) (*aws.AutoScaleHeadroom, 
 }
 
 func expandAWSGroupAutoScaleDown(data interface{}) (*aws.AutoScaleDown, error) {
-	if list := data.(*schema.Set).List(); len(list) > 0 {
+	if list := data.([]interface{}); len(list) > 0 {
 		m := list[0].(map[string]interface{})
 		i := &aws.AutoScaleDown{}
 
@@ -66,7 +65,7 @@ func expandAWSGroupAutoScaleDown(data interface{}) (*aws.AutoScaleDown, error) {
 }
 
 func expandAWSGroupAutoScaleConstraints(data interface{}) ([]*aws.AutoScaleConstraint, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	out := make([]*aws.AutoScaleConstraint, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})

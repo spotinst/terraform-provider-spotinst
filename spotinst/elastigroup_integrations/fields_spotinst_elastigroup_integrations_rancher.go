@@ -18,7 +18,7 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupIntegrations,
 		IntegrationRancher,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -98,7 +98,7 @@ func flattenAWSGroupRancherIntegration(integration *aws.RancherIntegration) []in
 }
 
 func expandAWSGroupRancherIntegration(data interface{}) (*aws.RancherIntegration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	m := list[0].(map[string]interface{})
 	i := &aws.RancherIntegration{}
 

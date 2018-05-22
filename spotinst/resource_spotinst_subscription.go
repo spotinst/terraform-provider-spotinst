@@ -64,7 +64,7 @@ func resourceSpotinstSubscriptionRead(resourceData *schema.ResourceData, meta in
 	input := &subscription.ReadSubscriptionInput{SubscriptionID: spotinst.String(resourceData.Id())}
 	subResponse, err := client.subscription.Read(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read subscription: %s", err)
+		return fmt.Errorf("[ERROR] failed to read subscription: %s", err)
 	}
 
 	// If nothing was found, then return no state.
@@ -114,7 +114,7 @@ func createSubscription(subObj *subscription.Subscription, spotinstClient *Clien
 	input := &subscription.CreateSubscriptionInput{Subscription: subObj}
 	resp, err := spotinstClient.subscription.Create(context.Background(), input)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create subscription: %s", err)
+		return nil, fmt.Errorf("[ERROR] failed to create subscription: %s", err)
 	}
 	return resp.Subscription.ID, nil
 }
@@ -154,7 +154,7 @@ func updateSubscription(subObj *subscription.Subscription, resourceData *schema.
 	log.Printf("Subscrption update configuration: %s", stringutil.Stringify(subObj))
 
 	if _, err := meta.(*Client).subscription.Update(context.Background(), input); err != nil {
-		return fmt.Errorf("failed to update subscription %s: %s", resourceData.Id(), err)
+		return fmt.Errorf("[ERROR] failed to update subscription %s: %s", resourceData.Id(), err)
 	}
 	return nil
 }

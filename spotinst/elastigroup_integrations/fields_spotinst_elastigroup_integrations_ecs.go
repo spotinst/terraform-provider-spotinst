@@ -16,7 +16,7 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupIntegrations,
 		IntegrationEcs,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -37,7 +37,7 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(AutoscaleHeadroom): &schema.Schema{
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -77,19 +77,6 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//var value []interface{} = nil
-			//if elastigroup.Integration != nil && elastigroup.Integration.EC2ContainerService != nil {
-			//	value = flattenAWSGroupEC2ContainerServiceIntegration(elastigroup.Integration.EC2ContainerService)
-			//}
-			//if value != nil {
-			//	if err := resourceData.Set(string(IntegrationEcs), value); err != nil {
-			//		return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationEcs), err)
-			//	}
-			//} else {
-			//	if err := resourceData.Set(string(IntegrationEcs), []*aws.EC2ContainerServiceIntegration{}); err != nil {
-			//		return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationEcs), err)
-			//	}
-			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -124,7 +111,7 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2ContainerServiceIntegration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	m := list[0].(map[string]interface{})
 	i := &aws.EC2ContainerServiceIntegration{}
 
@@ -173,19 +160,3 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 	}
 	return i, nil
 }
-
-//func flattenAWSGroupEC2ContainerServiceIntegration(integration *aws.EC2ContainerServiceIntegration) []interface{} {
-//	result := make(map[string]interface{})
-//	result[string(CleanupOnFailure)] = spotinst.BoolValue(integration.CleanUpOnFailure)
-//	result[string(TerminateInstanceOnFailure)] = spotinst.BoolValue(integration.TerminateInstanceOnFailure)
-//
-//	deploymentGroups := make([]interface{}, len(integration.DeploymentGroups))
-//	for i, dg := range integration.DeploymentGroups {
-//		m := make(map[string]interface{})
-//		m[string(ApplicationName)] = spotinst.StringValue(dg.ApplicationName)
-//		m[string(DeploymentGroupName)] = spotinst.StringValue(dg.DeploymentGroupName)
-//		deploymentGroups[i] = m
-//	}
-//
-//	return []interface{}{result}
-//}

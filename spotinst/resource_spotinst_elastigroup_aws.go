@@ -249,20 +249,20 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		updateGroupSchema := list[0].(map[string]interface{})
 
 		if rollConfig, ok := updateGroupSchema[string(elastigroup_aws.RollConfig)].(*schema.Set); !ok || rollConfig == nil {
-			errResult = fmt.Errorf("onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_aws.RollConfig), groupId)
+			errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_aws.RollConfig), groupId)
 		} else {
 			if rollGroupInput, err := expandAWSGroupRollConfig(rollConfig, groupId); err != nil {
-				errResult = fmt.Errorf("[ERROR] Failed expanding roll configuration for group [%v], error: %v", groupId, err)
+				errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for group [%v], error: %v", groupId, err)
 			} else {
 				log.Printf("onRoll() -> Rolling group [%v] with configuration %v...", groupId, stringutil.Stringify(rollConfig))
 				if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput); err != nil {
-					errResult = fmt.Errorf("[ERROR] Roll group [%v] API call failed, error: %v", groupId, err)
+					errResult = fmt.Errorf("[ERROR] onRoll() -> Roll group [%v] API call failed, error: %v", groupId, err)
 				}
 				log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
 			}
 		}
 	} else {
-		errResult = fmt.Errorf("[ERROR] Missig update policy for group [%v]", groupId)
+		errResult = fmt.Errorf("[ERROR] onRoll() -> Missig update policy for group [%v]", groupId)
 	}
 
 	if errResult != nil {

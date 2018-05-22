@@ -18,7 +18,7 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupIntegrations,
 		IntegrationMesosphere,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -79,7 +79,7 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupMesosphereIntegration(data interface{}) (*aws.MesosphereIntegration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	m := list[0].(map[string]interface{})
 	i := &aws.MesosphereIntegration{}
 

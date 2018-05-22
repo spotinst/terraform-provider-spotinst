@@ -19,7 +19,7 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupIntegrations,
 		IntegrationCodeDeploy,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -126,7 +126,7 @@ func expandAWSGroupCodeDeployIntegration(data interface{}) (*aws.CodeDeployInteg
 }
 
 func expandAWSGroupCodeDeployIntegrationDeploymentGroups(data interface{}) ([]*aws.DeploymentGroup, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	deploymentGroups := make([]*aws.DeploymentGroup, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})

@@ -20,7 +20,7 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupIntegrations,
 		IntegrationNomad,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -51,7 +51,7 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(AutoscaleHeadroom): &schema.Schema{
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -111,19 +111,6 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//var value []interface{} = nil
-			//if elastigroup.Integration != nil && elastigroup.Integration.Nomad != nil {
-			//	value = flattenAWSGroupRancherIntegration(elastigroup.Integration.Rancher)
-			//}
-			//if value != nil {
-			//	if err := resourceData.Set(string(IntegrationNomad), value); err != nil {
-			//		return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationNomad), err)
-			//	}
-			//} else {
-			//	if err := resourceData.Set(string(IntegrationNomad), []*aws.NomadIntegration{}); err != nil {
-			//		return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationNomad), err)
-			//	}
-			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -158,7 +145,7 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadIntegration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	m := list[0].(map[string]interface{})
 	i := &aws.NomadIntegration{}
 

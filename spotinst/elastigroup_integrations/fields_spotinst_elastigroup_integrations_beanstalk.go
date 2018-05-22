@@ -18,7 +18,7 @@ func SetupElasticBeanstalk(fieldsMap map[commons.FieldName]*commons.GenericField
 		commons.ElastigroupIntegrations,
 		IntegrationElasticBeanstalk,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -85,7 +85,7 @@ func flattenAWSGroupElasticBeanstalkIntegration(integration *aws.ElasticBeanstal
 }
 
 func expandAWSGroupElasticBeanstalkIntegration(data interface{}) (*aws.ElasticBeanstalkIntegration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	m := list[0].(map[string]interface{})
 	i := &aws.ElasticBeanstalkIntegration{}
 

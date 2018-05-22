@@ -1,8 +1,6 @@
 package elastigroup_integrations
 
 import (
-	"fmt"
-
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -18,7 +16,7 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupIntegrations,
 		IntegrationKubernetes,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -54,7 +52,7 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(AutoscaleHeadroom): &schema.Schema{
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -78,7 +76,7 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(AutoscaleDown): &schema.Schema{
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -94,20 +92,6 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			var value []interface{} = nil
-			if elastigroup.Integration != nil && elastigroup.Integration.Kubernetes != nil {
-				value = flattenAWSGroupKubernetesIntegration(elastigroup.Integration.Kubernetes)
-			}
-			if value != nil {
-				if err := resourceData.Set(string(IntegrationKubernetes), value); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationKubernetes), err)
-				}
-			} else {
-				if err := resourceData.Set(string(IntegrationKubernetes), []*aws.KubernetesIntegration{}); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationKubernetes), err)
-				}
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -141,15 +125,8 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func flattenAWSGroupKubernetesIntegration(integration *aws.KubernetesIntegration) []interface{} {
-	result := make(map[string]interface{})
-	result[string(ApiServer)] = spotinst.StringValue(integration.Server)
-	result[string(Token)] = spotinst.StringValue(integration.Token)
-	return []interface{}{result}
-}
-
 func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesIntegration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	m := list[0].(map[string]interface{})
 	i := &aws.KubernetesIntegration{}
 
