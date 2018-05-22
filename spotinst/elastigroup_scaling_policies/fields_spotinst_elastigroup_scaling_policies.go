@@ -1,8 +1,6 @@
 package elastigroup_scaling_policies
 
 import (
-	"strconv"
-
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -188,22 +186,17 @@ func upDownScalingPolicySchema() *schema.Schema {
 	}
 
 	s[string(Adjustment)] = &schema.Schema{
-		Type:     schema.TypeInt,
-		Optional: true,
-	}
-
-	s[string(AdjustmentExpression)] = &schema.Schema{
 		Type:     schema.TypeString,
 		Optional: true,
 	}
 
 	s[string(MinTargetCapacity)] = &schema.Schema{
-		Type:     schema.TypeInt,
+		Type:     schema.TypeString,
 		Optional: true,
 	}
 
 	s[string(MaxTargetCapacity)] = &schema.Schema{
-		Type:     schema.TypeInt,
+		Type:     schema.TypeString,
 		Optional: true,
 	}
 
@@ -214,29 +207,29 @@ func upDownScalingPolicySchema() *schema.Schema {
 	}
 
 	s[string(EvaluationPeriods)] = &schema.Schema{
-		Type:     schema.TypeInt,
+		Type:     schema.TypeString,
 		Optional: true,
 		Computed: true,
 	}
 
 	s[string(Period)] = &schema.Schema{
-		Type:     schema.TypeInt,
+		Type:     schema.TypeString,
 		Optional: true,
 		Computed: true,
 	}
 
 	s[string(Minimum)] = &schema.Schema{
-		Type:     schema.TypeInt,
+		Type:     schema.TypeString,
 		Optional: true,
 	}
 
 	s[string(Maximum)] = &schema.Schema{
-		Type:     schema.TypeInt,
+		Type:     schema.TypeString,
 		Optional: true,
 	}
 
 	s[string(Target)] = &schema.Schema{
-		Type:     schema.TypeInt,
+		Type:     schema.TypeString,
 		Optional: true,
 	}
 
@@ -325,30 +318,28 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			action := &aws.Action{}
 			action.SetType(spotinst.String(v))
 
-			if v, ok := m[string(Adjustment)].(int); ok && v > 0 {
-				action.SetAdjustment(spotinst.String(strconv.Itoa(v)))
-			} else if v, ok := m[string(AdjustmentExpression)].(string); ok && v != "" {
+			if v, ok := m[string(Adjustment)].(string); ok && v != "" {
 				action.SetAdjustment(spotinst.String(v))
 			}
 
-			if v, ok := m[string(MinTargetCapacity)].(int); ok && v > 0 {
-				action.SetMinTargetCapacity(spotinst.Int(v))
+			if v, ok := m[string(MinTargetCapacity)].(string); ok && v != "" {
+				action.SetMinTargetCapacity(spotinst.String(v))
 			}
 
-			if v, ok := m[string(MaxTargetCapacity)].(int); ok && v > 0 {
-				action.SetMaxTargetCapacity(spotinst.Int(v))
+			if v, ok := m[string(MaxTargetCapacity)].(string); ok && v != "" {
+				action.SetMaxTargetCapacity(spotinst.String(v))
 			}
 
-			if v, ok := m[string(Minimum)].(int); ok && v > 0 {
-				action.SetMinimum(spotinst.Int(v))
+			if v, ok := m[string(Minimum)].(string); ok && v != "" {
+				action.SetMinimum(spotinst.String(v))
 			}
 
-			if v, ok := m[string(Maximum)].(int); ok && v > 0 {
-				action.SetMaximum(spotinst.Int(v))
+			if v, ok := m[string(Maximum)].(string); ok && v != "" {
+				action.SetMaximum(spotinst.String(v))
 			}
 
-			if v, ok := m[string(Target)].(int); ok && v > 0 {
-				action.SetTarget(spotinst.Int(v))
+			if v, ok := m[string(Target)].(string); ok && v != "" {
+				action.SetTarget(spotinst.String(v))
 			}
 
 			policy.SetAction(action)

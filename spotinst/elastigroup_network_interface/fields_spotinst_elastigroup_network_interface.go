@@ -48,23 +48,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Computed: true,
 					},
 
-					string(SecurityGroupIds): &schema.Schema{
-						Type:     schema.TypeList,
-						Optional: true,
-						Elem:     &schema.Schema{Type: schema.TypeString},
-					},
-
 					string(NetworkInterfaceId): &schema.Schema{
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(PrivateIpAddress): &schema.Schema{
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-
-					string(SubnetId): &schema.Schema{
 						Type:     schema.TypeString,
 						Optional: true,
 					},
@@ -133,8 +122,6 @@ func flattenAWSGroupNetworkInterfaces(networkInterfaces []*aws.NetworkInterface)
 		m[string(NetworkInterfaceId)] = spotinst.StringValue(iface.ID)
 		m[string(PrivateIpAddress)] = spotinst.StringValue(iface.PrivateIPAddress)
 		m[string(SecondaryPrivateIpAddressCount)] = spotinst.IntValue(iface.SecondaryPrivateIPAddressCount)
-		m[string(SubnetId)] = spotinst.StringValue(iface.SubnetID)
-		m[string(SecurityGroupIds)] = iface.SecurityGroupsIDs
 		result = append(result, m)
 	}
 	return result
@@ -175,17 +162,6 @@ func expandAWSGroupNetworkInterfaces(data interface{}) ([]*aws.NetworkInterface,
 			networkInterface.SetPrivateIPAddress(spotinst.String(v))
 		}
 
-		if v, ok := m[string(SubnetId)].(string); ok && v != "" {
-			networkInterface.SetSubnetId(spotinst.String(v))
-		}
-
-		if v, ok := m[string(SecurityGroupIds)].([]interface{}); ok {
-			ids := make([]string, len(v))
-			for i, j := range v {
-				ids[i] = j.(string)
-			}
-			networkInterface.SetSecurityGroupsIDs(ids)
-		}
 		interfaces = append(interfaces, networkInterface)
 	}
 

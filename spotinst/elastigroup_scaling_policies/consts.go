@@ -22,7 +22,6 @@ const (
 
 	Threshold            commons.FieldName = "threshold"
 	Adjustment           commons.FieldName = "adjustment"
-	AdjustmentExpression commons.FieldName = "adjustment_expression"
 	MinTargetCapacity    commons.FieldName = "min_target_capacity"
 	MaxTargetCapacity    commons.FieldName = "max_target_capacity"
 	Operator             commons.FieldName = "operator"

@@ -13,8 +13,6 @@ const (
 	SecondaryPrivateIpAddressCount commons.FieldName = "secondary_private_ip_address_count"
 	AssociatePublicIpAddress       commons.FieldName = "associate_public_ip_address"
 	DeleteOnTermination            commons.FieldName = "delete_on_termination"
-	SecurityGroupIds               commons.FieldName = "security_group_ids"
 	NetworkInterfaceId             commons.FieldName = "network_interface_id"
 	PrivateIpAddress               commons.FieldName = "private_ip_address"
-	SubnetId                       commons.FieldName = "subnet_id"
 )
