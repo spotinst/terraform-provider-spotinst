@@ -468,7 +468,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			var balIds []string = nil
+			var balNames []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
@@ -477,24 +477,24 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				for _, balancer := range balancers {
 					balType := spotinst.StringValue(balancer.Type)
 					if strings.ToUpper(balType) == string(BalancerTypeClassic) {
-						balId := spotinst.StringValue(balancer.BalancerID)
-						balIds = append(balIds, balId)
+						balName := spotinst.StringValue(balancer.Name)
+						balNames = append(balNames, balName)
 					}
 				}
 			}
-			resourceData.Set(string(ElasticLoadBalancers), balIds)
+			resourceData.Set(string(ElasticLoadBalancers), balNames)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if balIds, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
-				var fn = func(id string) *aws.LoadBalancer {
+			if balNames, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
+				var fn = func(name string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
-						Type:       spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
-						BalancerID: spotinst.String(id),
+						Type: spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
+						Name: spotinst.String(name),
 					}
 				}
-				if err := expandBalancersContent(elastigroup, balIds, fn); err != nil {
+				if err := expandBalancersContent(elastigroup, balNames, fn); err != nil {
 					return err
 				}
 			}
@@ -502,14 +502,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if balIds, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
-				var fn = func(id string) *aws.LoadBalancer {
+			if balNames, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
+				var fn = func(name string) *aws.LoadBalancer {
 					return &aws.LoadBalancer{
-						Type:       spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
-						BalancerID: spotinst.String(id),
+						Type: spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
+						Name: spotinst.String(name),
 					}
 				}
-				if err := expandBalancersContent(elastigroup, balIds, fn); err != nil {
+				if err := expandBalancersContent(elastigroup, balNames, fn); err != nil {
 					return err
 				}
 			}
@@ -960,7 +960,7 @@ func expandBalancersContent(elastigroup *aws.Group, ids interface{}, fn CreateBa
 		balancers = make([]*aws.LoadBalancer, 0, len(list))
 	}
 	for _, str := range list {
-		if id, ok := str.(string); ok {
+		if id, ok := str.(string); ok && id != "" {
 			lb := fn(id)
 			balancers = append(balancers, lb)
 		}

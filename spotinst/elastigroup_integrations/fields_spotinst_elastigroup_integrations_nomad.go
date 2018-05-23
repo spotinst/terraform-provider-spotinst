@@ -75,7 +75,7 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(AutoscaleDown): &schema.Schema{
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{

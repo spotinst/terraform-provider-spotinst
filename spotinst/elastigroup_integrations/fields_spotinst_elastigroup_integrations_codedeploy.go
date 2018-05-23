@@ -103,7 +103,7 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupCodeDeployIntegration(data interface{}) (*aws.CodeDeployIntegration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	m := list[0].(map[string]interface{})
 	i := &aws.CodeDeployIntegration{}
 
@@ -126,7 +126,7 @@ func expandAWSGroupCodeDeployIntegration(data interface{}) (*aws.CodeDeployInteg
 }
 
 func expandAWSGroupCodeDeployIntegrationDeploymentGroups(data interface{}) ([]*aws.DeploymentGroup, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	deploymentGroups := make([]*aws.DeploymentGroup, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})

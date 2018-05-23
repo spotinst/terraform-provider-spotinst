@@ -7,6 +7,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -65,7 +66,7 @@ func expandAWSGroupAutoScaleDown(data interface{}) (*aws.AutoScaleDown, error) {
 }
 
 func expandAWSGroupAutoScaleConstraints(data interface{}) ([]*aws.AutoScaleConstraint, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	out := make([]*aws.AutoScaleConstraint, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
