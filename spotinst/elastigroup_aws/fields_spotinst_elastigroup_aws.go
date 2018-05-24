@@ -549,15 +549,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok {
 				var fn = func(arn string) (*aws.LoadBalancer, error) {
 					// Name should be removed as a mandatory field in the future
-					var tgName = TargetGroupArnRegex.FindStringSubmatch(arn)[1]
-					if tgName == "" {
-						return nil, fmt.Errorf("cannot determine targret group name from arn on create")
+					if name, err := extractTargetGroupFromArn(arn); err != nil {
+						return nil, err
+					} else {
+						return &aws.LoadBalancer{
+							Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
+							Arn:  spotinst.String(arn),
+							Name: spotinst.String(name),
+						}, nil
 					}
-					return &aws.LoadBalancer{
-						Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
-						Arn:  spotinst.String(arn),
-						Name: spotinst.String(tgName),
-					}, nil
 				}
 				// Existing balancers appended if needed inside expand method
 				if tgBalancers, err := expandBalancersContent(tgArns, fn); err != nil {
@@ -940,15 +940,15 @@ func extractBalancers(
 	if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok && balancerType == BalancerTypeTargetGroup {
 		var fn = func(arn string) (*aws.LoadBalancer, error) {
 			// Name should be removed as a mandatory field in the future
-			var tgName = TargetGroupArnRegex.FindStringSubmatch(arn)[1]
-			if tgName == "" {
-				return nil, fmt.Errorf("cannot determine targret group name from arn")
+			if name, err := extractTargetGroupFromArn(arn); err != nil {
+				return nil, err
+			} else {
+				return &aws.LoadBalancer{
+					Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
+					Arn:  spotinst.String(arn),
+					Name: spotinst.String(name),
+				}, nil
 			}
-			return &aws.LoadBalancer{
-				Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
-				Arn:  spotinst.String(arn),
-				Name: spotinst.String(tgName),
-			}, nil
 		}
 		if tfTargetGroups, err := expandBalancersContent(tgArns, fn); err != nil {
 			return nil, err
@@ -1192,4 +1192,18 @@ func hashKV(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
 	return hashcode.String(buf.String())
+}
+
+func extractTargetGroupFromArn(arn string) (string, error) {
+	name := ""
+	success := false
+	var match = TargetGroupArnRegex.FindStringSubmatch(arn)
+	if match != nil && len(match) == 2 {
+		name = match[1]
+		success = name != ""
+	}
+	if !success {
+		return "", fmt.Errorf("cannot determine targret group name from target group arn")
+	}
+	return name, nil
 }
