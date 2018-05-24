@@ -5,6 +5,7 @@ import (
 	"strings"
 	"errors"
 	"bytes"
+	"regexp"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -488,30 +489,28 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			if balNames, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
-				var fn = func(name string) *aws.LoadBalancer {
+				var fn = func(name string) (*aws.LoadBalancer, error) {
 					return &aws.LoadBalancer{
 						Type: spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
 						Name: spotinst.String(name),
-					}
+					}, nil
 				}
-				if err := expandBalancersContent(elastigroup, balNames, fn); err != nil {
+				if elbBalancers, err := expandBalancersContent(balNames, fn); err != nil {
 					return err
+				} else if elbBalancers != nil && len(elbBalancers) > 0 {
+					existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+					if existingBalancers != nil && len(existingBalancers) > 0 {
+						elbBalancers = append(existingBalancers, elbBalancers...)
+					}
+					elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(elbBalancers)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if balNames, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok {
-				var fn = func(name string) *aws.LoadBalancer {
-					return &aws.LoadBalancer{
-						Type: spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
-						Name: spotinst.String(name),
-					}
-				}
-				if err := expandBalancersContent(elastigroup, balNames, fn); err != nil {
-					return err
-				}
+			if err := onBalancersUpdate(elastigroup, resourceData); err != nil {
+				return err
 			}
 			return nil
 		},
@@ -548,90 +547,95 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok {
-				var fn = func(id string) *aws.LoadBalancer {
+				var fn = func(arn string) (*aws.LoadBalancer, error) {
+					// Name should be removed as a mandatory field in the future
+					var tgName = TargetGroupArnRegex.FindStringSubmatch(arn)[1]
+					if tgName == "" {
+						return nil, fmt.Errorf("cannot determine targret group name from arn on create")
+					}
 					return &aws.LoadBalancer{
 						Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
-						Arn:  spotinst.String(id),
-					}
+						Arn:  spotinst.String(arn),
+						Name: spotinst.String(tgName),
+					}, nil
 				}
-				if err := expandBalancersContent(elastigroup, tgArns, fn); err != nil {
+				// Existing balancers appended if needed inside expand method
+				if tgBalancers, err := expandBalancersContent(tgArns, fn); err != nil {
 					return err
+				} else {
+					if tgBalancers != nil && len(tgBalancers) > 0 {
+						existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+						if existingBalancers != nil && len(existingBalancers) > 0 {
+							tgBalancers = append(existingBalancers, tgBalancers...)
+						}
+						elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(tgBalancers)
+					}
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok {
-				var fn = func(id string) *aws.LoadBalancer {
-					return &aws.LoadBalancer{
-						Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
-						Arn:  spotinst.String(id),
-					}
-				}
-				if err := expandBalancersContent(elastigroup, tgArns, fn); err != nil {
-					return err
-				}
+			if err := onBalancersUpdate(elastigroup, resourceData); err != nil {
+				return err
 			}
 			return nil
 		},
 		nil,
 	)
 
-	fieldsMap[MultaiTargetSetIds] = commons.NewGenericField(
+	fieldsMap[MultaiTargetSets] = commons.NewGenericField(
 		commons.ElastigroupAWS,
-		MultaiTargetSetIds,
+		MultaiTargetSets,
 		&schema.Schema{
-			Type:     schema.TypeList,
-			Elem:     &schema.Schema{Type: schema.TypeString},
+			Type:     schema.TypeSet,
 			Optional: true,
+			Elem:     &schema.Resource{
+				Schema: map[string]*schema.Schema {
+					string(MultaiTargetSetId): &schema.Schema{
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(MultaiBalancerId): &schema.Schema{
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			var tsIds []string = nil
+			var targetSets []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig != nil &&
 				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
 
 				balancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-				for _, balancer := range balancers {
-					balType := spotinst.StringValue(balancer.Type)
-					if balType == string(BalancerTypeMultaiTargetSet) {
-						tsId := spotinst.StringValue(balancer.TargetSetID)
-						tsIds = append(tsIds, tsId)
-					}
-				}
+				targetSets = flattenAWSGroupMultaiTargetSets(balancers)
 			}
-			resourceData.Set(string(MultaiTargetSetIds), tsIds)
+			resourceData.Set(string(MultaiTargetSets), targetSets)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if multaiTsIds, ok := resourceData.GetOk(string(MultaiTargetSetIds)); ok {
-				var fn = func(id string) *aws.LoadBalancer {
-					return &aws.LoadBalancer{
-						Type:        spotinst.String(strings.ToUpper(string(BalancerTypeMultaiTargetSet))),
-						TargetSetID: spotinst.String(id),
-					}
-				}
-				if err := expandBalancersContent(elastigroup, multaiTsIds, fn); err != nil {
+			if multaiTs, ok := resourceData.GetOk(string(MultaiTargetSets)); ok {
+				if multaiBals, err := expandAWSGroupMultaiTargetSets(multaiTs); err != nil {
 					return err
+				} else {
+					existing := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+					if existing != nil && len(existing) > 0 {
+						multaiBals = append(existing, multaiBals...)
+					}
+					elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(multaiBals)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if multaiTsIds, ok := resourceData.GetOk(string(MultaiTargetSetIds)); ok {
-				var fn = func(id string) *aws.LoadBalancer {
-					return &aws.LoadBalancer{
-						Type:        spotinst.String(strings.ToUpper(string(BalancerTypeMultaiTargetSet))),
-						TargetSetID: spotinst.String(id),
-					}
-				}
-				if err := expandBalancersContent(elastigroup, multaiTsIds, fn); err != nil {
-					return err
-				}
+			if err := onBalancersUpdate(elastigroup, resourceData); err != nil {
+				return err
 			}
 			return nil
 		},
@@ -885,6 +889,153 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
+var TargetGroupArnRegex = regexp.MustCompile(`arn:aws:elasticloadbalancing:.*:\d{12}:targetgroup/(.*)/.*`)
+
+func extractBalancers(
+	balancerType BalancerType,
+	elastigroup *aws.Group,
+	resourceData *schema.ResourceData) ([]*aws.LoadBalancer, error) {
+
+	existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+
+	var elbBalancers []*aws.LoadBalancer = nil
+	var tgBalancers []*aws.LoadBalancer = nil
+	var mlbBalancers []*aws.LoadBalancer = nil
+
+	if existingBalancers != nil && len(existingBalancers) > 0 {
+		for _, balancer := range existingBalancers {
+			balTypeStr := spotinst.StringValue(balancer.Type)
+
+			switch balTypeStr {
+				case string(BalancerTypeClassic): {
+					elbBalancers = append(elbBalancers, balancer)
+					break
+				}
+				case string(BalancerTypeTargetGroup): {
+					tgBalancers = append(tgBalancers, balancer)
+					break
+				}
+				case string(BalancerTypeMultaiTargetSet): {
+					mlbBalancers = append(mlbBalancers, balancer)
+					break
+				}
+			}
+		}
+	}
+
+	if elbNames, ok := resourceData.GetOk(string(ElasticLoadBalancers)); ok && balancerType == BalancerTypeClassic {
+		var fn = func(name string) (*aws.LoadBalancer, error) {
+			return &aws.LoadBalancer{
+				Type: spotinst.String(strings.ToUpper(string(BalancerTypeClassic))),
+				Name: spotinst.String(name),
+			}, nil
+		}
+		if tfElbs, err := expandBalancersContent(elbNames, fn); err != nil {
+			return nil, err
+		} else {
+			elbBalancers = append(tfElbs, elbBalancers...)
+		}
+	}
+
+	if tgArns, ok := resourceData.GetOk(string(TargetGroupArns)); ok && balancerType == BalancerTypeTargetGroup {
+		var fn = func(arn string) (*aws.LoadBalancer, error) {
+			// Name should be removed as a mandatory field in the future
+			var tgName = TargetGroupArnRegex.FindStringSubmatch(arn)[1]
+			if tgName == "" {
+				return nil, fmt.Errorf("cannot determine targret group name from arn")
+			}
+			return &aws.LoadBalancer{
+				Type: spotinst.String(strings.ToUpper(string(BalancerTypeTargetGroup))),
+				Arn:  spotinst.String(arn),
+				Name: spotinst.String(tgName),
+			}, nil
+		}
+		if tfTargetGroups, err := expandBalancersContent(tgArns, fn); err != nil {
+			return nil, err
+		} else {
+			tgBalancers = append(tfTargetGroups, tgBalancers...)
+		}
+	}
+
+	if mlbTargetSets, ok := resourceData.GetOk(string(MultaiTargetSets)); ok && balancerType == BalancerTypeMultaiTargetSet {
+		if tfMlbBalancers, err := expandAWSGroupMultaiTargetSets(mlbTargetSets); err != nil {
+			return nil, err
+		} else {
+			mlbBalancers = append(tfMlbBalancers, mlbBalancers...)
+		}
+	}
+
+	var result []*aws.LoadBalancer = nil
+	if balancerType == BalancerTypeClassic {
+		result = elbBalancers
+	} else if balancerType == BalancerTypeTargetGroup {
+		result = tgBalancers
+	} else if balancerType == BalancerTypeMultaiTargetSet {
+		result = mlbBalancers
+	}
+	return result, nil
+}
+
+var elbUpdated = false
+var tgUpdated = false
+var mlbUpdated = false
+
+func onBalancersUpdate(elastigroup *aws.Group, resourceData *schema.ResourceData) error {
+	var elbNullify = false
+	var tgNullify = false
+	var mlbNullify = false
+
+	if !elbUpdated {
+		if elbBalancers, err := extractBalancers(BalancerTypeClassic, elastigroup, resourceData); err != nil {
+			return err
+		} else if elbBalancers != nil && len(elbBalancers) > 0 {
+			existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+			if existingBalancers != nil && len(existingBalancers) > 0 {
+				elbBalancers = append(existingBalancers, elbBalancers...)
+			}
+			elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(elbBalancers)
+		} else {
+			elbNullify = true
+		}
+		elbUpdated = true
+	}
+	if !tgUpdated {
+		if tgBalancers, err := extractBalancers(BalancerTypeTargetGroup, elastigroup, resourceData); err != nil {
+			return err
+		} else if tgBalancers != nil && len(tgBalancers) > 0 {
+			existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+			if existingBalancers != nil && len(existingBalancers) > 0 {
+				tgBalancers = append(existingBalancers, tgBalancers...)
+			}
+			elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(tgBalancers)
+		} else {
+			tgNullify = true
+		}
+		tgUpdated = true
+	}
+	if !mlbUpdated {
+		if mlbBalancers, err := extractBalancers(BalancerTypeMultaiTargetSet, elastigroup, resourceData); err != nil {
+			return err
+		} else if mlbBalancers != nil && len(mlbBalancers) > 0 {
+			existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
+			if existingBalancers != nil && len(existingBalancers) > 0 {
+				mlbBalancers = append(existingBalancers, mlbBalancers...)
+			}
+			elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(mlbBalancers)
+		} else {
+			mlbNullify = true
+		}
+		mlbUpdated = true
+	}
+
+	// All fields share the same object structure, we need to nullify if and only if there are no items
+	// from all types
+	if elbNullify && tgNullify && mlbNullify{
+		elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(nil)
+	}
+	return nil
+}
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Fields Expand
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -938,38 +1089,32 @@ func expandTags(data interface{}) ([]*aws.Tag, error) {
 			return nil, errors.New("invalid tag attributes: value missing")
 		}
 		tag := &aws.Tag{
-			Key:   spotinst.String(attr["key"].(string)),
-			Value: spotinst.String(attr["value"].(string)),
+			Key:   spotinst.String(attr[string(TagKey)].(string)),
+			Value: spotinst.String(attr[string(TagValue)].(string)),
 		}
 		tags = append(tags, tag)
 	}
 	return tags, nil
 }
 
-type CreateBalancerObjFunc func(id string) *aws.LoadBalancer
+type CreateBalancerObjFunc func(id string) (*aws.LoadBalancer, error)
 
-func expandBalancersContent(elastigroup *aws.Group, ids interface{}, fn CreateBalancerObjFunc) error {
-	if ids == nil {
-		return nil
+func expandBalancersContent(balancersIdentifiers interface{}, fn CreateBalancerObjFunc) ([]*aws.LoadBalancer, error) {
+	if balancersIdentifiers == nil {
+		return nil, nil
 	}
-	var balancers []*aws.LoadBalancer = nil
-	list := ids.([]interface{})
-	if elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
-		balancers = elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-	} else {
-		balancers = make([]*aws.LoadBalancer, 0, len(list))
-	}
+	list := balancersIdentifiers.([]interface{})
+	balancers := make([]*aws.LoadBalancer, 0, len(list))
 	for _, str := range list {
 		if id, ok := str.(string); ok && id != "" {
-			lb := fn(id)
-			balancers = append(balancers, lb)
+			if lb, err := fn(id); err != nil {
+				return nil, err
+			} else {
+				balancers = append(balancers, lb)
+			}
 		}
 	}
-
-	if balancers != nil && len(balancers) > 0 {
-		elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(balancers)
-	}
-	return nil
+	return balancers, nil
 }
 
 func expandSignals(data interface{}) ([]*aws.Signal, error) {
@@ -1003,6 +1148,40 @@ func expandSubnetIDs(data interface{}) ([]string, error) {
 	}
 	return result, nil
 }
+
+func expandAWSGroupMultaiTargetSets(data interface{}) ([]*aws.LoadBalancer, error) {
+	list := data.(*schema.Set).List()
+	balancers := make([]*aws.LoadBalancer, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		multaiBalancer := &aws.LoadBalancer{
+			Type: spotinst.String(strings.ToUpper(string(BalancerTypeMultaiTargetSet))),
+		}
+		if v, ok := m[string(MultaiTargetSetId)].(string); ok && v != "" {
+			multaiBalancer.SetTargetSetId(spotinst.String(v))
+		}
+		if v, ok := m[string(MultaiBalancerId)].(string); ok && v != "" {
+			multaiBalancer.SetBalancerId(spotinst.String(v))
+		}
+		balancers = append(balancers, multaiBalancer)
+	}
+	return balancers, nil
+}
+
+func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{} {
+	result := make([]interface{}, 0, len(balancers))
+	for _, balancer := range balancers {
+		balType := spotinst.StringValue(balancer.Type)
+		if balType == string(BalancerTypeMultaiTargetSet) {
+			m := make(map[string]interface{})
+			m[string(MultaiTargetSetId)] = spotinst.StringValue(balancer.TargetSetID)
+			m[string(MultaiBalancerId)] = spotinst.StringValue(balancer.BalancerID)
+			result = append(result, m)
+		}
+	}
+	return result
+}
+
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utilities

@@ -305,19 +305,19 @@ func extractBlockDevices(
 		}
 	}
 
-	if v, ok := resourceData.GetOk(string(EbsBlockDevice)); ok {
+	if v, ok := resourceData.GetOk(string(EbsBlockDevice)); ok && fieldName == EbsBlockDevice {
 		if tfEbsDevices, err := expandAWSGroupEBSBlockDevices(v); err != nil {
 			return nil, err
 		} else {
-			ebsDevices = append(ebsDevices, tfEbsDevices...)
+			ebsDevices = append(tfEbsDevices, ebsDevices...)
 		}
 	}
 
-	if v, ok := resourceData.GetOk(string(EphemeralBlockDevice)); ok {
+	if v, ok := resourceData.GetOk(string(EphemeralBlockDevice)); ok && fieldName == EphemeralBlockDevice {
 		if tfEphemeralDevices, err := expandAWSGroupEphemeralBlockDevices(v); err != nil {
 			return nil, err
 		} else {
-			ephemeralDevices = append(ephemeralDevices, tfEphemeralDevices...)
+			ephemeralDevices = append(tfEphemeralDevices, ephemeralDevices...)
 		}
 	}
 
@@ -328,30 +328,43 @@ func extractBlockDevices(
 	}
 }
 
+var ephemeralBlockDeviceUpdated = false
+var ebsBlockDeviceUpdated = false
+
 func onUpdateBlockDevice(elastigroup *aws.Group, resourceData *schema.ResourceData) error {
-	if v, ok := resourceData.GetOk(string(EphemeralBlockDevice)); ok {
-		if ephemeralDevices, err := expandAWSGroupEphemeralBlockDevices(v); err != nil {
+	var ebsNullify = false
+	var ephemeralNullify = false
+	if !ebsBlockDeviceUpdated {
+		if tfEBSDevices, err := extractBlockDevices(EbsBlockDevice, elastigroup, resourceData); err != nil {
 			return err
-		} else {
-			if existingEBSDevices, err := extractBlockDevices(EbsBlockDevice, elastigroup, resourceData); err != nil {
-				return err
-			} else if existingEBSDevices != nil && len(existingEBSDevices) > 0 {
-				ephemeralDevices = append(existingEBSDevices, ephemeralDevices...)
+		} else if tfEBSDevices != nil && len(tfEBSDevices) > 0 {
+			existingMappings := elastigroup.Compute.LaunchSpecification.BlockDeviceMappings
+			if existingMappings != nil && len(existingMappings) > 0 {
+				tfEBSDevices = append(existingMappings, tfEBSDevices...)
 			}
-			elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(ephemeralDevices)
+			elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(tfEBSDevices)
+		} else {
+			ebsNullify = true
 		}
-	} else if v, ok := resourceData.GetOk(string(EbsBlockDevice)); ok {
-		if ebsDevices, err := expandAWSGroupEBSBlockDevices(v); err != nil {
+		ebsBlockDeviceUpdated = true
+	}
+	if !ephemeralBlockDeviceUpdated {
+		if tfEphemeralDevices, err := extractBlockDevices(EphemeralBlockDevice, elastigroup, resourceData); err != nil {
 			return err
-		} else {
-			if existingEphemeralDevices, err := extractBlockDevices(EphemeralBlockDevice, elastigroup, resourceData); err != nil {
-				return err
-			} else if existingEphemeralDevices != nil && len(existingEphemeralDevices) > 0 {
-				ebsDevices = append(existingEphemeralDevices, ebsDevices...)
+		} else if tfEphemeralDevices != nil && len(tfEphemeralDevices) > 0 {
+			existingMappings := elastigroup.Compute.LaunchSpecification.BlockDeviceMappings
+			if existingMappings != nil && len(existingMappings) > 0 {
+				tfEphemeralDevices = append(existingMappings, tfEphemeralDevices...)
 			}
-			elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(ebsDevices)
+			elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(tfEphemeralDevices)
+		} else {
+			ephemeralNullify = true
 		}
-	}  else {
+		ephemeralBlockDeviceUpdated = true
+	}
+	// Both fields share the same object structure, we need to nullify if and only if there are no items
+	// from both types
+	if ebsNullify && ephemeralNullify {
 		elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(nil)
 	}
 	return nil

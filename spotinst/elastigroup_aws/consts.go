@@ -37,7 +37,9 @@ const (
 	AvailabilityZones    commons.FieldName = "availability_zones"
 	ElasticLoadBalancers commons.FieldName = "elastic_load_balancers"
 	TargetGroupArns      commons.FieldName = "target_group_arns"
-	MultaiTargetSetIds   commons.FieldName = "multai_target_set_ids"
+	MultaiTargetSets     commons.FieldName = "multai_target_sets"
+	MultaiTargetSetId    commons.FieldName = "target_set_id"
+	MultaiBalancerId     commons.FieldName = "balancer_id"
 	Tags                 commons.FieldName = "tags"
 
 	// ***********************************************************************
