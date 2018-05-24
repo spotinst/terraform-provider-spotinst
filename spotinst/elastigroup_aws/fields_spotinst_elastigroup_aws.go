@@ -367,12 +367,48 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Region] = commons.NewGenericField(
+		commons.ElastigroupAWS,
+		Region,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			var value *string = nil
+			if elastigroup.Region != nil {
+				value = elastigroup.Region
+			}
+			if err := resourceData.Set(string(Region), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Region), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			if v, ok := resourceData.GetOk(string(Region)); ok {
+				elastigroup.SetRegion(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			if v, ok := resourceData.GetOk(string(Region)); ok {
+				elastigroup.SetRegion(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[SubnetIds] = commons.NewGenericField(
 		commons.ElastigroupAWS,
 		SubnetIds,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Elem:     &schema.Schema{Type: schema.TypeString},
+			ConflictsWith: []string{string(AvailabilityZones)},
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -420,38 +456,31 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			var zoneNames []string
-			if elastigroup.Compute != nil && elastigroup.Compute.AvailabilityZones != nil {
-				zones := elastigroup.Compute.AvailabilityZones
-				for _, zone := range zones {
-					zoneName := spotinst.StringValue(zone.Name)
-					zoneNames = append(zoneNames, zoneName)
-				}
-			}
-			if err := resourceData.Set(string(AvailabilityZones), zoneNames); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AvailabilityZones), err)
-			}
+			// Skip
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
-				if zones, err := expandAvailabilityZonesSlice(value); err != nil {
-					return err
-				} else {
-					elastigroup.Compute.SetAvailabilityZones(zones)
+			if _, exists := resourceData.GetOkExists(string(SubnetIds)); !exists {
+				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
+					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
+						return err
+					} else {
+						elastigroup.Compute.SetAvailabilityZones(zones)
+					}
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
-				if zones, err := expandAvailabilityZonesSlice(value); err != nil {
-					return err
-				} else {
-					elastigroup.Compute.SetAvailabilityZones(zones)
+			if _, exists := resourceData.GetOkExists(string(SubnetIds)); !exists {
+				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
+					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
+						return err
+					} else {
+						elastigroup.Compute.SetAvailabilityZones(zones)
+					}
 				}
 			}
 			return nil
@@ -891,6 +920,87 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 var TargetGroupArnRegex = regexp.MustCompile(`arn:aws:elasticloadbalancing:.*:\d{12}:targetgroup/(.*)/.*`)
 
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//         Fields Expand
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, error) {
+	list := data.([]interface{})
+	zones := make([]*aws.AvailabilityZone, 0, len(list))
+	for _, str := range list {
+		if s, ok := str.(string); ok {
+			parts := strings.Split(s, ":")
+			zone := &aws.AvailabilityZone{}
+			if len(parts) >= 1 && parts[0] != "" {
+				zone.SetName(spotinst.String(parts[0]))
+			}
+			if len(parts) == 2 && parts[1] != "" {
+				zone.SetSubnetId(spotinst.String(parts[1]))
+			}
+			if len(parts) == 3 && parts[2] != "" {
+				zone.SetPlacementGroupName(spotinst.String(parts[2]))
+			}
+			zones = append(zones, zone)
+		}
+	}
+
+	return zones, nil
+}
+
+func expandAWSGroupElasticIPs(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	eips := make([]string, 0, len(list))
+	for _, str := range list {
+		if eip, ok := str.(string); ok {
+			eips = append(eips, eip)
+		}
+	}
+	return eips, nil
+}
+
+func expandTags(data interface{}) ([]*aws.Tag, error) {
+	list := data.(*schema.Set).List()
+	tags := make([]*aws.Tag, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(TagKey)]; !ok {
+			return nil, errors.New("invalid tag attributes: key missing")
+		}
+
+		if _, ok := attr[string(TagValue)]; !ok {
+			return nil, errors.New("invalid tag attributes: value missing")
+		}
+		tag := &aws.Tag{
+			Key:   spotinst.String(attr[string(TagKey)].(string)),
+			Value: spotinst.String(attr[string(TagValue)].(string)),
+		}
+		tags = append(tags, tag)
+	}
+	return tags, nil
+}
+
+type CreateBalancerObjFunc func(id string) (*aws.LoadBalancer, error)
+
+func expandBalancersContent(balancersIdentifiers interface{}, fn CreateBalancerObjFunc) ([]*aws.LoadBalancer, error) {
+	if balancersIdentifiers == nil {
+		return nil, nil
+	}
+	list := balancersIdentifiers.([]interface{})
+	balancers := make([]*aws.LoadBalancer, 0, len(list))
+	for _, str := range list {
+		if id, ok := str.(string); ok && id != "" {
+			if lb, err := fn(id); err != nil {
+				return nil, err
+			} else {
+				balancers = append(balancers, lb)
+			}
+		}
+	}
+	return balancers, nil
+}
+
 func extractBalancers(
 	balancerType BalancerType,
 	elastigroup *aws.Group,
@@ -907,18 +1017,18 @@ func extractBalancers(
 			balTypeStr := spotinst.StringValue(balancer.Type)
 
 			switch balTypeStr {
-				case string(BalancerTypeClassic): {
-					elbBalancers = append(elbBalancers, balancer)
-					break
-				}
-				case string(BalancerTypeTargetGroup): {
-					tgBalancers = append(tgBalancers, balancer)
-					break
-				}
-				case string(BalancerTypeMultaiTargetSet): {
-					mlbBalancers = append(mlbBalancers, balancer)
-					break
-				}
+			case string(BalancerTypeClassic): {
+				elbBalancers = append(elbBalancers, balancer)
+				break
+			}
+			case string(BalancerTypeTargetGroup): {
+				tgBalancers = append(tgBalancers, balancer)
+				break
+			}
+			case string(BalancerTypeMultaiTargetSet): {
+				mlbBalancers = append(mlbBalancers, balancer)
+				break
+			}
 			}
 		}
 	}
@@ -1036,87 +1146,6 @@ func onBalancersUpdate(elastigroup *aws.Group, resourceData *schema.ResourceData
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Fields Expand
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, error) {
-	list := data.([]interface{})
-	zones := make([]*aws.AvailabilityZone, 0, len(list))
-	for _, str := range list {
-		if s, ok := str.(string); ok {
-			parts := strings.Split(s, ":")
-			zone := &aws.AvailabilityZone{}
-			if len(parts) >= 1 && parts[0] != "" {
-				zone.SetName(spotinst.String(parts[0]))
-			}
-			if len(parts) == 2 && parts[1] != "" {
-				zone.SetSubnetId(spotinst.String(parts[1]))
-			}
-			if len(parts) == 3 && parts[2] != "" {
-				zone.SetPlacementGroupName(spotinst.String(parts[2]))
-			}
-			zones = append(zones, zone)
-		}
-	}
-
-	return zones, nil
-}
-
-func expandAWSGroupElasticIPs(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	eips := make([]string, 0, len(list))
-	for _, str := range list {
-		if eip, ok := str.(string); ok {
-			eips = append(eips, eip)
-		}
-	}
-	return eips, nil
-}
-
-func expandTags(data interface{}) ([]*aws.Tag, error) {
-	list := data.(*schema.Set).List()
-	tags := make([]*aws.Tag, 0, len(list))
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		if _, ok := attr[string(TagKey)]; !ok {
-			return nil, errors.New("invalid tag attributes: key missing")
-		}
-
-		if _, ok := attr[string(TagValue)]; !ok {
-			return nil, errors.New("invalid tag attributes: value missing")
-		}
-		tag := &aws.Tag{
-			Key:   spotinst.String(attr[string(TagKey)].(string)),
-			Value: spotinst.String(attr[string(TagValue)].(string)),
-		}
-		tags = append(tags, tag)
-	}
-	return tags, nil
-}
-
-type CreateBalancerObjFunc func(id string) (*aws.LoadBalancer, error)
-
-func expandBalancersContent(balancersIdentifiers interface{}, fn CreateBalancerObjFunc) ([]*aws.LoadBalancer, error) {
-	if balancersIdentifiers == nil {
-		return nil, nil
-	}
-	list := balancersIdentifiers.([]interface{})
-	balancers := make([]*aws.LoadBalancer, 0, len(list))
-	for _, str := range list {
-		if id, ok := str.(string); ok && id != "" {
-			if lb, err := fn(id); err != nil {
-				return nil, err
-			} else {
-				balancers = append(balancers, lb)
-			}
-		}
-	}
-	return balancers, nil
-}
-
 func expandSignals(data interface{}) ([]*aws.Signal, error) {
 	list := data.(*schema.Set).List()
 	signals := make([]*aws.Signal, 0, len(list))
@@ -1181,7 +1210,6 @@ func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{
 	}
 	return result
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utilities
