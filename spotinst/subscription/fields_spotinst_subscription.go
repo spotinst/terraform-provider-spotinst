@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -52,7 +52,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
-			StateFunc: func (v interface{}) string{
+			StateFunc: func(v interface{}) string {
 				value := v.(string)
 				return strings.ToUpper(value)
 			},
@@ -174,7 +174,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils

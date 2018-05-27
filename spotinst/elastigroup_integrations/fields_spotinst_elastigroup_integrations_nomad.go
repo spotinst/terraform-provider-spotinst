@@ -1,14 +1,14 @@
 package elastigroup_integrations
 
 import (
-	"fmt"
 	"bytes"
+	"fmt"
 
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/hashicorp/terraform/helper/hashcode"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

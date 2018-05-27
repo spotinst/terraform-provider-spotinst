@@ -29,7 +29,7 @@ func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupR
 	return &ElastigroupResource{
 		GenericResource: GenericResource{
 			resourceName: ElastigroupAwsResourceName,
-			fields: NewGenericFields(fieldsMap),
+			fields:       NewGenericFields(fieldsMap),
 		},
 	}
 }

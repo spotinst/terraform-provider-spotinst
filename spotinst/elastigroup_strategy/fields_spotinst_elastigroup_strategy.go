@@ -3,10 +3,10 @@ package elastigroup_strategy
 import (
 	"fmt"
 
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -18,8 +18,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupStrategy,
 		SpotPercentage,
 		&schema.Schema{
-			Type:     schema.TypeFloat,
-			Optional: true,
+			Type:          schema.TypeFloat,
+			Optional:      true,
 			ConflictsWith: []string{string(OnDemandCount)},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -54,8 +54,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupStrategy,
 		OnDemandCount,
 		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
+			Type:          schema.TypeInt,
+			Optional:      true,
 			ConflictsWith: []string{string(SpotPercentage)},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -274,7 +274,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils

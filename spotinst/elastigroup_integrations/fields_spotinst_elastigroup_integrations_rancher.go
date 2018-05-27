@@ -3,10 +3,10 @@ package elastigroup_integrations
 import (
 	"fmt"
 
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -84,7 +84,6 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils

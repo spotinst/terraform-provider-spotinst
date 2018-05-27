@@ -8,7 +8,7 @@ const (
 
 const (
 	// - COMMON -----------------------------------------------------
-	DeviceName          commons.FieldName = "device_name"
+	DeviceName commons.FieldName = "device_name"
 	// --------------------------------------------------------------
 
 	// - EBS --------------------------------------------------------

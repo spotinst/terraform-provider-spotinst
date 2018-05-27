@@ -42,7 +42,7 @@ func resourceSpotinstSubscriptionDelete(resourceData *schema.ResourceData, meta 
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.SpotinstSubscription.GetName(), id)
 
-	input := &subscription.DeleteSubscriptionInput{ SubscriptionID: spotinst.String(id)}
+	input := &subscription.DeleteSubscriptionInput{SubscriptionID: spotinst.String(id)}
 	if _, err := meta.(*Client).subscription.Delete(context.Background(), input); err != nil {
 		return fmt.Errorf("failed to delete subscription: %s", err)
 	}
@@ -50,7 +50,6 @@ func resourceSpotinstSubscriptionDelete(resourceData *schema.ResourceData, meta 
 	resourceData.SetId("")
 	return nil
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Read
@@ -85,7 +84,6 @@ func resourceSpotinstSubscriptionRead(resourceData *schema.ResourceData, meta in
 	return nil
 }
 
-
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Create
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -118,7 +116,6 @@ func createSubscription(subObj *subscription.Subscription, spotinstClient *Clien
 	}
 	return resp.Subscription.ID, nil
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Update

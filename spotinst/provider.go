@@ -11,14 +11,14 @@ import (
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"token": &schema.Schema{
+			string(commons.ProviderToken): &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(credentials.EnvCredentialsVarToken, ""),
 				Description: "Spotinst Personal API Access Token",
 			},
 
-			"account": &schema.Schema{
+			string(commons.ProviderAccount): &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(credentials.EnvCredentialsVarAccount, ""),
@@ -37,8 +37,8 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Token:   d.Get("token").(string),
-		Account: d.Get("account").(string),
+		Token:   d.Get(string(commons.ProviderToken)).(string),
+		Account: d.Get(string(commons.ProviderAccount)).(string),
 	}
 	if err := config.Validate(); err != nil {
 		return nil, err

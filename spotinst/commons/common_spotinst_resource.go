@@ -1,10 +1,10 @@
 package commons
 
 import (
-	"time"
-	"math/rand"
 	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -54,7 +54,6 @@ type GenericFields struct {
 	fieldsMap map[FieldName]*GenericField
 	schemaMap map[string]*schema.Schema
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //          Constructors
@@ -106,7 +105,6 @@ func (field *GenericField) hasFieldChange(resourceData *schema.ResourceData, met
 	}
 	return resourceData.HasChange(field.fieldNameStr)
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //   Methods: GenericResource

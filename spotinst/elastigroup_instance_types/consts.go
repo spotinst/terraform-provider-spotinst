@@ -7,8 +7,8 @@ const (
 )
 
 const (
-	OnDemand            commons.FieldName = Prefix + "ondemand"
-	Spot                commons.FieldName = Prefix + "spot"
+	OnDemand commons.FieldName = Prefix + "ondemand"
+	Spot     commons.FieldName = Prefix + "spot"
 
 	InstanceTypeWeights commons.FieldName = Prefix + "weights"
 	InstanceType        commons.FieldName = "instance_type"

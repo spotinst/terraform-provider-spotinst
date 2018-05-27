@@ -3,6 +3,7 @@ package elastigroup_aws
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 
 type BalancerType string
+
 const (
 	BalancerTypeClassic         BalancerType = "CLASSIC"
 	BalancerTypeTargetGroup     BalancerType = "TARGET_GROUP"
@@ -10,6 +11,7 @@ const (
 )
 
 type TagField string
+
 const (
 	TagKey   TagField = "key"
 	TagValue TagField = "value"

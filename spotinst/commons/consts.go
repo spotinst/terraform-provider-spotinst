@@ -12,6 +12,9 @@ const (
 
 	FieldUpdateNotAllowedPattern = "field [%v] is immutable, cannot be changed post group creation"
 
+	ProviderToken   FieldName = "token"
+	ProviderAccount FieldName = "account"
+
 	Subscription ResourceAffinity = "Subscription"
 
 	ElastigroupAWS                 ResourceAffinity = "Elastigroup_AWS"

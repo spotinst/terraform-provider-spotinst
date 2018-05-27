@@ -1,24 +1,24 @@
 package elastigroup_aws
 
 import (
-	"fmt"
-	"strings"
-	"errors"
 	"bytes"
+	"errors"
+	"fmt"
 	"regexp"
+	"strings"
 
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/hashicorp/terraform/helper/hashcode"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-	
+
 	fieldsMap[Name] = commons.NewGenericField(
 		commons.ElastigroupAWS,
 		Name,
@@ -123,7 +123,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			var value *int = nil
-			if elastigroup.Capacity != nil && elastigroup.Capacity.Maximum != nil{
+			if elastigroup.Capacity != nil && elastigroup.Capacity.Maximum != nil {
 				value = elastigroup.Capacity.Maximum
 			}
 			if err := resourceData.Set(string(MaxSize), spotinst.IntValue(value)); err != nil {
@@ -406,10 +406,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWS,
 		SubnetIds,
 		&schema.Schema{
-			Type:     schema.TypeList,
-			Elem:     &schema.Schema{Type: schema.TypeString},
+			Type:          schema.TypeList,
+			Elem:          &schema.Schema{Type: schema.TypeString},
 			ConflictsWith: []string{string(AvailabilityZones)},
-			Optional: true,
+			Optional:      true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
@@ -619,8 +619,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
-			Elem:     &schema.Resource{
-				Schema: map[string]*schema.Schema {
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
 					string(MultaiTargetSetId): &schema.Schema{
 						Type:     schema.TypeString,
 						Required: true,
@@ -704,7 +704,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				tagsToAdd = make([]interface{}, 0, len(tags))
 				for _, tag := range tags {
 					tagToAdd := &aws.Tag{
-						Key: tag.Key,
+						Key:   tag.Key,
 						Value: tag.Value,
 					}
 					tagsToAdd = append(tagsToAdd, tagToAdd)
@@ -972,8 +972,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
-
-
 				},
 			},
 		},
@@ -1080,18 +1078,21 @@ func extractBalancers(
 			balTypeStr := spotinst.StringValue(balancer.Type)
 
 			switch balTypeStr {
-			case string(BalancerTypeClassic): {
-				elbBalancers = append(elbBalancers, balancer)
-				break
-			}
-			case string(BalancerTypeTargetGroup): {
-				tgBalancers = append(tgBalancers, balancer)
-				break
-			}
-			case string(BalancerTypeMultaiTargetSet): {
-				mlbBalancers = append(mlbBalancers, balancer)
-				break
-			}
+			case string(BalancerTypeClassic):
+				{
+					elbBalancers = append(elbBalancers, balancer)
+					break
+				}
+			case string(BalancerTypeTargetGroup):
+				{
+					tgBalancers = append(tgBalancers, balancer)
+					break
+				}
+			case string(BalancerTypeMultaiTargetSet):
+				{
+					mlbBalancers = append(mlbBalancers, balancer)
+					break
+				}
 			}
 		}
 	}
@@ -1203,7 +1204,7 @@ func onBalancersUpdate(elastigroup *aws.Group, resourceData *schema.ResourceData
 
 	// All fields share the same object structure, we need to nullify if and only if there are no items
 	// from all types
-	if elbNullify && tgNullify && mlbNullify{
+	if elbNullify && tgNullify && mlbNullify {
 		elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(nil)
 	}
 	return nil
@@ -1300,7 +1301,6 @@ func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{
 	}
 	return result
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utilities

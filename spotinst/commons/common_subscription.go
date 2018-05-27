@@ -1,9 +1,9 @@
 package commons
 
 import (
-	"sync"
 	"fmt"
 	"log"
+	"sync"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
@@ -31,7 +31,7 @@ func NewSubscriptionResource(
 	return &SubscriptionResource{
 		GenericResource: GenericResource{
 			resourceName: SubscriptionResourceName,
-			fields: NewGenericFields(fieldsMap),
+			fields:       NewGenericFields(fieldsMap),
 		},
 	}
 }

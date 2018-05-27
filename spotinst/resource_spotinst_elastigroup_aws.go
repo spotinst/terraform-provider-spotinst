@@ -7,23 +7,23 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_launch_configuration"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_instance_types"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_strategy"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_block_devices"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_instance_types"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_integrations"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_launch_configuration"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_network_interface"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_scaling_policies"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_scheduled_task"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_stateful"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_integrations"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_strategy"
 )
 
 func resourceSpotinstElastigroupAws() *schema.Resource {
@@ -75,7 +75,6 @@ func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, met
 	return nil
 }
 
-
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Read
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -123,7 +122,6 @@ func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta 
 	}
 	return nil
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Create
@@ -178,7 +176,6 @@ func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
 	}
 	return resp.Group.ID, nil
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Update
@@ -270,7 +267,6 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	}
 	return nil
 }
-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Fields Expand
