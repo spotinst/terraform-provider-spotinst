@@ -43,6 +43,10 @@ const (
 	MultaiBalancerId     commons.FieldName = "balancer_id"
 	Tags                 commons.FieldName = "tags"
 
+	RevertToSpot commons.FieldName = "revert_to_spot"
+	PerformAt    commons.FieldName = "perform_at"
+	TimeWindow   commons.FieldName = "time_windows"
+
 	// ***********************************************************************
 	// ********************* Spotinst Unique Properties **********************
 	// ***********************************************************************

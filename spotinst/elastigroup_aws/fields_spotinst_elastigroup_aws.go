@@ -797,6 +797,69 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RevertToSpot] = commons.NewGenericField(
+		commons.ElastigroupAWS,
+		RevertToSpot,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(PerformAt): &schema.Schema{
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(TimeWindow): &schema.Schema{
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			if elastigroup.Strategy != nil && elastigroup.Strategy.RevertToSpot != nil {
+				rts := elastigroup.Strategy.RevertToSpot
+				result := make(map[string]interface{})
+				result[string(PerformAt)] = spotinst.StringValue(rts.PerformAt)
+				result[string(TimeWindow)] = rts.TimeWindows
+				revertToSpot := []interface{}{result}
+				if err := resourceData.Set(string(RevertToSpot), revertToSpot); err != nil {
+					return fmt.Errorf("failed to set revertToSpot configuration: %#v", err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			if v, ok := resourceData.GetOk(string(RevertToSpot)); ok {
+				if revertToSpot, err := expandAWSGroupRevertToSpot(v); err != nil {
+					return err
+				} else {
+					elastigroup.Strategy.SetRevertToSpot(revertToSpot)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			var revertToSpot *aws.RevertToSpot = nil
+			if v, ok := resourceData.GetOk(string(RevertToSpot)); ok {
+				if rts, err := expandAWSGroupRevertToSpot(v); err != nil {
+					return err
+				} else {
+					revertToSpot = rts
+				}
+			}
+			elastigroup.Strategy.SetRevertToSpot(revertToSpot)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[Signal] = commons.NewGenericField(
 		commons.ElastigroupAWS,
 		Signal,
@@ -1197,6 +1260,33 @@ func expandAWSGroupMultaiTargetSets(data interface{}) ([]*aws.LoadBalancer, erro
 	return balancers, nil
 }
 
+func expandAWSGroupRevertToSpot(data interface{}) (*aws.RevertToSpot, error) {
+	list := data.([]interface{})
+	m := list[0].(map[string]interface{})
+	revertToSpot := &aws.RevertToSpot{}
+
+	var performAt *string = nil
+	if v, ok := m[string(PerformAt)].(string); ok {
+		performAt = spotinst.String(v)
+	}
+	revertToSpot.SetPerformAt(performAt)
+
+	var timeWindows []string = nil
+	if v, ok := m[string(TimeWindow)].([]interface{}); ok && len(v) > 0 {
+		ids := make([]string, 0, len(v))
+		for _, id := range v {
+			if v, ok := id.(string); ok && len(v) > 0 {
+				ids = append(ids, v)
+			}
+		}
+		timeWindows = ids
+	}
+	revertToSpot.SetTimeWindows(timeWindows)
+
+	//log.Printf("[DEBUG] Group revert to spot configuration: %s", stringutil.Stringify(revertToSpot))
+	return revertToSpot, nil
+}
+
 func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{} {
 	result := make([]interface{}, 0, len(balancers))
 	for _, balancer := range balancers {
@@ -1210,6 +1300,7 @@ func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{
 	}
 	return result
 }
+
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utilities
