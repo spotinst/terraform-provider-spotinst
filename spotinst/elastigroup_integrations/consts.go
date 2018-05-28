@@ -10,12 +10,13 @@ const (
 	// - COMMON --------------------------
 	MasterHost commons.FieldName = "master_host"
 
-	AutoscaleIsEnabled commons.FieldName = "autoscale_is_enabled"
-	AutoscaleCooldown  commons.FieldName = "autoscale_cooldown"
-	AutoscaleHeadroom  commons.FieldName = "autoscale_headroom"
-	CpuPerUnit         commons.FieldName = "cpu_per_unit"
-	MemoryPerUnit      commons.FieldName = "memory_per_unit"
-	NumOfUnits         commons.FieldName = "num_of_units"
+	AutoscaleIsEnabled    commons.FieldName = "autoscale_is_enabled"
+	AutoscaleCooldown     commons.FieldName = "autoscale_cooldown"
+	AutoscaleHeadroom     commons.FieldName = "autoscale_headroom"
+	AutoscaleIsAutoConfig commons.FieldName = "autoscale_is_auto_config"
+	CpuPerUnit            commons.FieldName = "cpu_per_unit"
+	MemoryPerUnit         commons.FieldName = "memory_per_unit"
+	NumOfUnits            commons.FieldName = "num_of_units"
 
 	AutoscaleDown     commons.FieldName = "autoscale_down"
 	EvaluationPeriods commons.FieldName = "evaluation_periods"

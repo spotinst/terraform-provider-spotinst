@@ -51,6 +51,11 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 
+					string(AutoscaleIsAutoConfig): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+
 					string(AutoscaleHeadroom): &schema.Schema{
 						Type:     schema.TypeList,
 						Optional: true,
@@ -158,6 +163,13 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			i.SetAutoScale(&aws.AutoScale{})
 		}
 		i.AutoScale.SetCooldown(spotinst.Int(v))
+	}
+
+	if v, ok := m[string(AutoscaleIsAutoConfig)].(bool); ok {
+		if i.AutoScale == nil {
+			i.SetAutoScale(&aws.AutoScale{})
+		}
+		i.AutoScale.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {

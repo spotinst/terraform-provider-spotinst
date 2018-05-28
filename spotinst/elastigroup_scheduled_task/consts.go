@@ -14,6 +14,7 @@ const (
 	TaskType            commons.FieldName = "task_type"
 	Frequency           commons.FieldName = "frequency"
 	CronExpression      commons.FieldName = "cron_expression"
+	StartTime           commons.FieldName = "start_time"
 	ScaleTargetCapacity commons.FieldName = "scale_target_capacity"
 	ScaleMinCapacity    commons.FieldName = "scale_min_capacity"
 	ScaleMaxCapacity    commons.FieldName = "scale_max_capacity"

@@ -43,6 +43,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 
+					string(StartTime): &schema.Schema{
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
 					string(ScaleTargetCapacity): &schema.Schema{
 						Type:     schema.TypeInt,
 						Optional: true,
@@ -141,6 +146,7 @@ func flattenAWSGroupScheduledTasks(tasks []*aws.Task) []interface{} {
 		m[string(IsEnabled)] = spotinst.BoolValue(t.IsEnabled)
 		m[string(TaskType)] = spotinst.StringValue(t.Type)
 		m[string(CronExpression)] = spotinst.StringValue(t.CronExpression)
+		m[string(StartTime)] = spotinst.StringValue(t.StartTime)
 		m[string(Frequency)] = spotinst.StringValue(t.Frequency)
 		m[string(ScaleTargetCapacity)] = spotinst.IntValue(t.ScaleTargetCapacity)
 		m[string(ScaleMinCapacity)] = spotinst.IntValue(t.ScaleMinCapacity)
@@ -176,6 +182,10 @@ func expandAWSGroupScheduledTasks(data interface{}) ([]*aws.Task, error) {
 
 		if v, ok := m[string(CronExpression)].(string); ok && v != "" {
 			task.SetCronExpression(spotinst.String(v))
+		}
+
+		if v, ok := m[string(StartTime)].(string); ok && v != "" {
+			task.SetStartTime(spotinst.String(v))
 		}
 
 		if v, ok := m[string(BatchSizePercentage)].(int); ok && v > 0 {
