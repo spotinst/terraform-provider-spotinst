@@ -14,31 +14,31 @@ Provides a Spotinst AWS group resource.
 
 ```hcl
 # Create an Elastigroup
-resource "spotinst_elastigroup_aws" "sidekiq" {
+resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
-  name        = "sidekiq"
+  name        = "default-elastigroup"
   description = "created by Terraform"
   product     = "Linux/UNIX"
 
-  max_size = 0
-  min_size = 0
-  desired_capacity = 0
-  capacity_unit = "weight"
+  max_size          = 0
+  min_size          = 0
+  desired_capacity  = 0
+  capacity_unit     = "weight"
 
   region      = "us-west-2"
   subnet_ids  = ["sb-123456", "sb-456789"]
-
-  image_id = "ami-a27d8fda"
-  iam_instance_profile = "iam-profile"
-  key_name = "my-key.ssh"
-  security_groups = ["sg-123456"]
-  user_data = "echo hello world"
-  enable_monitoring = false
-  ebs_optimized = false
-  placement_tenancy = "default"
+  
+  image_id              = "ami-a27d8fda"
+  iam_instance_profile  = "iam-profile"
+  key_name              = "my-key.ssh"
+  security_groups       = ["sg-123456"]
+  user_data             = "echo hello world"
+  enable_monitoring     = false
+  ebs_optimized         = false
+  placement_tenancy     = "default"
 
   instance_types_ondemand = "m3.2xlarge"
-  instance_types_spot = ["m3.xlarge", "m3.2xlarge"]
+  instance_types_spot     = ["m3.xlarge", "m3.2xlarge"]
 
   instance_types_weights = [
     {
@@ -50,17 +50,17 @@ resource "spotinst_elastigroup_aws" "sidekiq" {
       weight        = 16
     }]
 
-  orientation = "balanced"
-  fallback_to_ondemand = false
+  orientation           = "balanced"
+  fallback_to_ondemand  = false
 
   ebs_block_device {
-    device_name = "/dev/sdb"
-    snapshot_id = ""
-    volume_type = "gp2"
-    volume_size = 8
-    iops = 1
+    device_name           = "/dev/sdb"
+    snapshot_id           = ""
+    volume_type           = "gp2"
+    volume_size           = 8
+    iops                  = 1
     delete_on_termination = true
-    encrypted = false
+    encrypted             = false
   }
 
   scaling_up_policy {
@@ -108,9 +108,10 @@ resource "spotinst_elastigroup_aws" "sidekiq" {
 
 The following arguments are supported:
 
-* `name` - (Optional) The group description.
-* `description` - (Optional) The group description.
-* `product` - (Required) Operation system type.
+* `name` - (Required) The group name.
+* `description` - (Required) The group description.
+* `product` - (Required) Operation system type. Valid Values: Linux/UNIX | SUSE Linux | Windows. 
+For EC2 Classic instances:  Linux/UNIX (Amazon VPC) | SUSE Linux (Amazon VPC) | Windows (Amazon VPC).    
 
 * `availability_zones` - (Optional) TBD
 Note: When this parameter is set, subnet_ids should be left unused.
@@ -121,13 +122,13 @@ Note: When this parameter is set, availability_zones should be left unused.
 
 * `max_size` - (Optional; Required if using scaling policies) The maximum number of instances the group should have at any time.
 * `min_size` - (Optional; Required if using scaling policies) The minimum number of instances the group should have at any time.
-* `desired_capacity` - (Required) The desired number of instances the group should have at any time.
-* `capacity_unit` - (Optional). The capacity unit to launch instances by. if not specified, when choosing the weight unit, each instance will weigh as the number of its vCPUs.
+* `desired_capacity` - (Optional) The desired number of instances the group should have at any time.
+* `capacity_unit` - (Optional) The capacity unit to launch instances by. if not specified, when choosing the weight unit, each instance will weigh as the number of its vCPUs.
 
-* `image_id` - (Required) The ID of the AMI used to launch the instance.
+* `image_id` - (Optional) The ID of the AMI used to launch the instance.
 * `iam_instance_profile` - (Optional) The ARN of an IAM instance profile to associate with launched instances.
 * `key_name` - (Optional) The key name that should be used for the instance.
-* `security_groups` - (Optional) A list of associated security group IDS.
+* `security_groups` - (Required) A list of associated security group IDS.
 * `enable_monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
 * `user_data` - (Optional) The user data to provide when launching the instance.
 * `ebs_optimized` - (Optional) TBD
@@ -142,9 +143,9 @@ Note: When this parameter is set, availability_zones should be left unused.
 
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the "risk" parameter is being ignored.
-* `orientation` - (Optional) The percentage of Spot instances that would spin up from the `desired_capacity` number.
+* `orientation` - (Required) TBD    
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
-* `fallback_to_ondemand` - (Optional) TBD
+* `fallback_to_ondemand` - (Required) TBD
 * `lifetime_period` - (Optional) TBD
 * `utilize_reserved_instances` - (Optional) TBD
 
@@ -158,12 +159,12 @@ Note: When this parameter is set, availability_zones should be left unused.
 * `elastic_load_balancers` - (Optional) Registers each instance with the specified Elastic Load Balancers (ELB).
 * `target_group_arns` - (Optional) TBD
 * `multai_target_sets` - (Optional) TBD
-    * `target_set_id` - TBD
-    * `balancer_id` - TBD
+    * `target_set_id` - (Required) TBD
+    * `balancer_id` - (Required) TBD
     
 * `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: never | always | timeWindow
-    * `perform_at` - TBD
-    * `time_windows` - TBD
+    * `perform_at` - (Required) TBD
+    * `time_windows` - (Optional) TBD
 
 <a id="signal"></a>
 ## Signals
@@ -180,6 +181,7 @@ Each `scheduled_task` supports the following:
 
 * `task_type` - (Required) The task type to run. Supported task types are: `scale`, `backup_ami`, `roll`, `scaleUp`, `percentageScaleUp`, `scaleDown`, `percentageScaleDown`, `statefulUpdateCapacity`.
 * `cron_expression` - (Optional; Required if not using `frequency`) A valid cron expression. The cron is running in UTC time zone and is in [Unix cron format](https://en.wikipedia.org/wiki/Cron).
+* `start_time` - (Optional; TBD
 * `frequency` - (Optional; Required if not using `cron_expression`) The recurrence frequency to run this task. Supported values are `hourly`, `daily`, `weekly` and `continuous`.
 * `scale_target_capacity` - (Optional) The desired number of instances the group should have.
 * `scale_min_capacity` - (Optional) The minimum number of instances the group should have.
@@ -197,12 +199,12 @@ Each `scheduled_task` supports the following:
 Each `scaling_*_policy` supports the following:
 
 * `namespace` - (Required) The namespace for the alarm's associated metric.
+* `source` - (Optional) TBD
 * `metric_name` - (Required) The name of the metric, with or without spaces.
 * `threshold` - (Required) The value against which the specified statistic is compared.
-* `policy_name` - (Optional) The name of the policy.
+* `policy_name` - (Required) The name of the policy.
 * `statistic` - (Optional) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
 * `unit` - (Optional) The unit for the alarm's associated metric.
-* `adjustment` - (Optional) The number of instances to add/remove to/from the target capacity when scale is needed.
 * `period` - (Optional) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
 * `evaluation_periods` - (Optional) The number of periods over which data is compared to the specified threshold.
 * `cooldown` - (Optional) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
@@ -216,11 +218,11 @@ Each `scaling_*_policy` supports the following:
 If you do not specify an action type, you can only use – adjustment, minTargetCapacity, maxTargetCapacity.
 While using action_type, please also set the following:
 
-- when using adjustment – set the field `adjustment`
-- when using percentageAdjustment- set the field `adjustment`
-- when using setMaxTarget – set the field `max_target_capacity`
-- when using setMinTarget – set the field `min_target_capacity`
-- when using updateCapacity – set the fields `minimum`, `maximum`, and `target`
+    - when using adjustment – set the field `adjustment`
+    - when using percentageAdjustment- set the field `adjustment`
+    - when using setMaxTarget – set the field `max_target_capacity`
+    - when using setMinTarget – set the field `min_target_capacity`
+    - when using updateCapacity – set the fields `minimum`, `maximum`, and `target`
 
 * `adjustment` - (Optional; if not using min_target_capacity or max_target_capacity;) The number of instances to add/remove to/from the target capacity when scale is needed. Can be used as advanced expression for scaling of instances to add/remove to/from the target capacity when scale is needed. You can see more information here: Advanced expression. Example value: “MAX(currCapacity / 5, value * 10)”
 * `min_target_capacity` - (Optional; if not using adjustment; available only for scale up). The number of the desired target (and minimum) capacity
@@ -239,8 +241,8 @@ Interfaces docs](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.ht
 to understand the implications of using these attributes.
 
 * `network_interface_id` - (Optional) The ID of the network interface.
-* `device_index` - (Optional) The index of the device on the instance for the network interface attachment.
-* `description` - (Optional) The description of the network interface.
+* `device_index` - (Required) The index of the device on the instance for the network interface attachment.
+* `description` - (Required) The description of the network interface.
 * `private_ip_address` - (Optional) The private IP address of the network interface.
 * `delete_on_termination` - (Optional) If set to true, the interface is deleted when the instance is terminated.
 * `secondary_private_ip_address_count` - (Optional) The number of secondary private IP addresses.
@@ -256,7 +258,7 @@ to understand the implications of using these attributes.
 
 Each `ebs_block_device` supports the following:
 
-* `device_name` - The name of the device to mount.
+* `device_name` - (Required) The name of the device to mount.
 * `snapshot_id` - (Optional) The Snapshot ID to mount.
 * `volume_type` - (Optional) The type of volume. Can be `"standard"`, `"gp2"`, or `"io1"`.
 * `volume_size` - (Optional) The size of the volume in gigabytes.
@@ -270,14 +272,9 @@ Modifying any `ebs_block_device` currently requires resource replacement.
 
 Each `ephemeral_block_device` supports the following:
 
-* `device_name` - The name of the block device to mount on the instance.
-* `virtual_name` - The [Instance Store Device Name](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html#InstanceStoreDeviceNames)
+* `device_name` - (Required) The name of the block device to mount on the instance.
+* `virtual_name` - (Required) The [Instance Store Device Name](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html#InstanceStoreDeviceNames)
   (e.g. `"ephemeral0"`).
-
-~> **NOTE:** Currently, changes to `*_block_device` configuration of _existing_
-resources cannot be automatically detected by Terraform. After making updates
-to block device configuration, resource recreation can be manually triggered by
-using the [`taint` command](/docs/commands/taint.html).
 
 <a id="stateful"></a>
 ## Stateful
@@ -376,6 +373,18 @@ For more information on instance persistence please see: [Stateful configuration
  
      * `deployment_id` - (Optional) TBD
      
+<a id="update-policy"></a>
+## Update Policy
+
+* `update_policy` - (Optional) Describes the [Rancher](http://rancherlabs.com/) integration.
+
+    * `should_resume_stateful` - (Required) Describes the [Rancher](http://rancherlabs.com/) integration.
+    * `should_roll` - (Required) Describes the [Rancher](http://rancherlabs.com/) integration.
+    * `roll_config` - (Required) Describes the [Rancher](http://rancherlabs.com/) integration.
+    
+        * `batch_size_percentage` - (Required) The URL of the Rancher Master host.
+        * `health_check_type` - (Optional) The secret key of the Rancher API.
+        * `grace_period` - (Optional) The access key of the Rancher API.
        
 ## Attributes Reference
 
