@@ -20,6 +20,7 @@ type Service interface {
 	Status(context.Context, *StatusGroupInput) (*StatusGroupOutput, error)
 	Detach(context.Context, *DetachGroupInput) (*DetachGroupOutput, error)
 	Roll(context.Context, *RollGroupInput) (*RollGroupOutput, error)
+	Scale(context.Context, *ScaleGroupInput) (*ScaleGroupOutput, error)
 	ImportBeanstalkEnv(context.Context, *ImportBeanstalkInput) (*ImportBeanstalkOutput, error)
 }
 

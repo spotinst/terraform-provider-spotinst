@@ -63,6 +63,7 @@ type Group struct {
 	ID          *string      `json:"id,omitempty"`
 	Name        *string      `json:"name,omitempty"`
 	Description *string      `json:"description,omitempty"`
+	Region      *string      `json:"region,omitempty"`
 	Capacity    *Capacity    `json:"capacity,omitempty"`
 	Compute     *Compute     `json:"compute,omitempty"`
 	Strategy    *Strategy    `json:"strategy,omitempty"`
@@ -76,7 +77,7 @@ type Group struct {
 	// non-interface field appearing in ForceSendFields will be sent to the
 	// server regardless of whether the field is empty or not. This may be
 	// used to include empty fields in Patch requests.
-	forceSendFields []string `json:"-"`
+	forceSendFields []string
 
 	// nullFields is a list of field names (e.g. "Keys") to include in API
 	// requests with the JSON null value. By default, fields with empty
@@ -84,40 +85,44 @@ type Group struct {
 	// empty value appearing in NullFields will be sent to the server as
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
-	nullFields []string `json:"-"`
+	nullFields []string
 }
 
 type Integration struct {
 	EC2ContainerService *EC2ContainerServiceIntegration `json:"ecs,omitempty"`
 	ElasticBeanstalk    *ElasticBeanstalkIntegration    `json:"elasticBeanstalk,omitempty"`
 	CodeDeploy          *CodeDeployIntegration          `json:"codeDeploy,omitempty"`
+	OpsWorks            *OpsWorksIntegration            `json:"opsWorks,omitempty"`
 	Rancher             *RancherIntegration             `json:"rancher,omitempty"`
 	Kubernetes          *KubernetesIntegration          `json:"kubernetes,omitempty"`
 	Mesosphere          *MesosphereIntegration          `json:"mesosphere,omitempty"`
 	Multai              *MultaiIntegration              `json:"mlbRuntime,omitempty"`
 	Nomad               *NomadIntegration               `json:"nomad,omitempty"`
+	Chef                *ChefIntegration                `json:"chef,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type EC2ContainerServiceIntegration struct {
 	ClusterName *string    `json:"clusterName,omitempty"`
 	AutoScale   *AutoScale `json:"autoScale,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type AutoScale struct {
-	IsEnabled   *bool                  `json:"isEnabled,omitempty"`
-	Cooldown    *int                   `json:"cooldown,omitempty"`
-	Headroom    *AutoScaleHeadroom     `json:"headroom,omitempty"`
-	Down        *AutoScaleDown         `json:"down,omitempty"`
-	Constraints []*AutoScaleConstraint `json:"constraints,omitempty"`
+	IsEnabled    *bool                  `json:"isEnabled,omitempty"`
+	IsAutoConfig *bool                  `json:"isAutoConfig,omitempty"`
+	Cooldown     *int                   `json:"cooldown,omitempty"`
+	Headroom     *AutoScaleHeadroom     `json:"headroom,omitempty"`
+	Down         *AutoScaleDown         `json:"down,omitempty"`
+	Constraints  []*AutoScaleConstraint `json:"constraints,omitempty"`
+	Labels       []*AutoScaleLabel      `json:"labels,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type AutoScaleHeadroom struct {
@@ -125,30 +130,38 @@ type AutoScaleHeadroom struct {
 	MemoryPerUnit *int `json:"memoryPerUnit,omitempty"`
 	NumOfUnits    *int `json:"numOfUnits,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type AutoScaleDown struct {
 	EvaluationPeriods *int `json:"evaluationPeriods,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type AutoScaleConstraint struct {
 	Key   *string `json:"key,omitempty"`
 	Value *string `json:"value,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
+}
+
+type AutoScaleLabel struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ElasticBeanstalkIntegration struct {
 	EnvironmentID *string `json:"environmentId,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type CodeDeployIntegration struct {
@@ -156,16 +169,24 @@ type CodeDeployIntegration struct {
 	CleanUpOnFailure           *bool              `json:"cleanUpOnFailure,omitempty"`
 	TerminateInstanceOnFailure *bool              `json:"terminateInstanceOnFailure,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type DeploymentGroup struct {
 	ApplicationName     *string `json:"applicationName,omitempty"`
 	DeploymentGroupName *string `json:"deploymentGroupName,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
+}
+
+type OpsWorksIntegration struct {
+	LayerID   *string `json:"layerId,omitempty"`
+	StackType *string `json:"stackType,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
 }
 
 type RancherIntegration struct {
@@ -173,8 +194,8 @@ type RancherIntegration struct {
 	AccessKey  *string `json:"accessKey,omitempty"`
 	SecretKey  *string `json:"secretKey,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type KubernetesIntegration struct {
@@ -184,22 +205,22 @@ type KubernetesIntegration struct {
 	Token             *string    `json:"token,omitempty"`
 	AutoScale         *AutoScale `json:"autoScale,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type MesosphereIntegration struct {
 	Server *string `json:"apiServer,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type MultaiIntegration struct {
 	DeploymentID *string `json:"deploymentId,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type NomadIntegration struct {
@@ -208,15 +229,26 @@ type NomadIntegration struct {
 	AutoScale  *AutoScale `json:"autoScale,omitempty"`
 	ACLToken   *string    `json:"aclToken,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
+}
+
+type ChefIntegration struct {
+	Server       *string `json:"chefServer,omitempty"`
+	Organization *string `json:"organization,omitempty"`
+	User         *string `json:"user,omitempty"`
+	PEMKey       *string `json:"pemKey,omitempty"`
+	Version      *string `json:"chefVersion,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Scheduling struct {
 	Tasks []*Task `json:"tasks,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Task struct {
@@ -224,6 +256,7 @@ type Task struct {
 	Type                *string `json:"taskType,omitempty"`
 	Frequency           *string `json:"frequency,omitempty"`
 	CronExpression      *string `json:"cronExpression,omitempty"`
+	StartTime           *string `json:"startTime,omitempty"`
 	ScaleTargetCapacity *int    `json:"scaleTargetCapacity,omitempty"`
 	ScaleMinCapacity    *int    `json:"scaleMinCapacity,omitempty"`
 	ScaleMaxCapacity    *int    `json:"scaleMaxCapacity,omitempty"`
@@ -233,8 +266,8 @@ type Task struct {
 	MinCapacity         *int    `json:"minCapacity,omitempty"`
 	MaxCapacity         *int    `json:"maxCapacity,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Scaling struct {
@@ -242,8 +275,8 @@ type Scaling struct {
 	Down   []*ScalingPolicy `json:"down,omitempty"`
 	Target []*ScalingPolicy `json:"target,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ScalingPolicy struct {
@@ -265,45 +298,46 @@ type ScalingPolicy struct {
 	Action            *Action      `json:"action,omitempty"`
 	Target            *float64     `json:"target,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Action struct {
 	Type              *string `json:"type,omitempty"`
 	Adjustment        *string `json:"adjustment,omitempty"`
-	MinTargetCapacity *int    `json:"minTargetCapacity,omitempty"`
-	MaxTargetCapacity *int    `json:"maxTargetCapacity,omitempty"`
-	Maximum           *int    `json:"maximum,omitempty"`
-	Minimum           *int    `json:"minimum,omitempty"`
-	Target            *int    `json:"target,omitempty"`
+	MinTargetCapacity *string `json:"minTargetCapacity,omitempty"`
+	MaxTargetCapacity *string `json:"maxTargetCapacity,omitempty"`
+	Maximum           *string `json:"maximum,omitempty"`
+	Minimum           *string `json:"minimum,omitempty"`
+	Target            *string `json:"target,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Dimension struct {
 	Name  *string `json:"name,omitempty"`
 	Value *string `json:"value,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Strategy struct {
-	Risk                     *float64     `json:"risk,omitempty"`
-	OnDemandCount            *int         `json:"onDemandCount,omitempty"`
-	DrainingTimeout          *int         `json:"drainingTimeout,omitempty"`
-	AvailabilityVsCost       *string      `json:"availabilityVsCost,omitempty"`
-	LifetimePeriod           *string      `json:"lifetimePeriod,omitempty"`
-	UtilizeReservedInstances *bool        `json:"utilizeReservedInstances,omitempty"`
-	FallbackToOnDemand       *bool        `json:"fallbackToOd,omitempty"`
-	SpinUpTime               *int         `json:"spinUpTime,omitempty"`
-	Signals                  []*Signal    `json:"signals,omitempty"`
-	Persistence              *Persistence `json:"persistence,omitempty"`
+	Risk                     *float64      `json:"risk,omitempty"`
+	OnDemandCount            *int          `json:"onDemandCount,omitempty"`
+	DrainingTimeout          *int          `json:"drainingTimeout,omitempty"`
+	AvailabilityVsCost       *string       `json:"availabilityVsCost,omitempty"`
+	LifetimePeriod           *string       `json:"lifetimePeriod,omitempty"`
+	UtilizeReservedInstances *bool         `json:"utilizeReservedInstances,omitempty"`
+	FallbackToOnDemand       *bool         `json:"fallbackToOd,omitempty"`
+	SpinUpTime               *int          `json:"spinUpTime,omitempty"`
+	Signals                  []*Signal     `json:"signals,omitempty"`
+	Persistence              *Persistence  `json:"persistence,omitempty"`
+	RevertToSpot             *RevertToSpot `json:"revertToSpot,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Persistence struct {
@@ -312,16 +346,24 @@ type Persistence struct {
 	ShouldPersistRootDevice   *bool   `json:"shouldPersistRootDevice,omitempty"`
 	BlockDevicesMode          *string `json:"blockDevicesMode,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
+}
+
+type RevertToSpot struct {
+	PerformAt   *string  `json:"performAt,omitempty"`
+	TimeWindows []string `json:"timeWindows,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Signal struct {
 	Name    *string `json:"name,omitempty"`
 	Timeout *int    `json:"timeout,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Capacity struct {
@@ -330,8 +372,8 @@ type Capacity struct {
 	Target  *int    `json:"target,omitempty"`
 	Unit    *string `json:"unit,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Compute struct {
@@ -342,17 +384,18 @@ type Compute struct {
 	ElasticIPs          []string             `json:"elasticIps,omitempty"`
 	EBSVolumePool       []*EBSVolume         `json:"ebsVolumePool,omitempty"`
 	PrivateIPs          []string             `json:"privateIps,omitempty"`
+	SubnetIDs           []string             `json:"subnetIds,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type EBSVolume struct {
 	DeviceName *string  `json:"deviceName,omitempty"`
 	VolumeIDs  []string `json:"volumeIds,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type InstanceTypes struct {
@@ -360,16 +403,16 @@ type InstanceTypes struct {
 	Spot     []string              `json:"spot,omitempty"`
 	Weights  []*InstanceTypeWeight `json:"weights,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type InstanceTypeWeight struct {
 	InstanceType *string `json:"instanceType,omitempty"`
 	Weight       *int    `json:"weightedCapacity,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type AvailabilityZone struct {
@@ -377,8 +420,8 @@ type AvailabilityZone struct {
 	SubnetID           *string `json:"subnetId,omitempty"`
 	PlacementGroupName *string `json:"placementGroupName,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type LaunchSpecification struct {
@@ -400,15 +443,15 @@ type LaunchSpecification struct {
 	NetworkInterfaces                             []*NetworkInterface   `json:"networkInterfaces,omitempty"`
 	Tags                                          []*Tag                `json:"tags,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type LoadBalancersConfig struct {
 	LoadBalancers []*LoadBalancer `json:"loadBalancers,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type LoadBalancer struct {
@@ -420,8 +463,8 @@ type LoadBalancer struct {
 	ZoneAwareness *bool   `json:"azAwareness,omitempty"`
 	AutoWeight    *bool   `json:"autoWeight,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type NetworkInterface struct {
@@ -435,8 +478,8 @@ type NetworkInterface struct {
 	PrivateIPAddress               *string  `json:"privateIpAddress,omitempty"`
 	SubnetID                       *string  `json:"subnetId,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type BlockDeviceMapping struct {
@@ -444,8 +487,8 @@ type BlockDeviceMapping struct {
 	VirtualName *string `json:"virtualName,omitempty"`
 	EBS         *EBS    `json:"ebs,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type EBS struct {
@@ -456,16 +499,16 @@ type EBS struct {
 	VolumeSize          *int    `json:"volumeSize,omitempty"`
 	IOPS                *int    `json:"iops,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type IAMInstanceProfile struct {
 	Name *string `json:"name,omitempty"`
 	Arn  *string `json:"arn,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Instance struct {
@@ -475,6 +518,8 @@ type Instance struct {
 	Status           *string    `json:"status,omitempty"`
 	Product          *string    `json:"product,omitempty"`
 	AvailabilityZone *string    `json:"availabilityZone,omitempty"`
+	PrivateIP        *string    `json:"privateIp,omitempty"`
+	PublicIP         *string    `json:"publicIp,omitempty"`
 	CreatedAt        *time.Time `json:"createdAt,omitempty"`
 }
 
@@ -482,8 +527,8 @@ type RollStrategy struct {
 	Action               *string `json:"action,omitempty"`
 	ShouldDrainInstances *bool   `json:"shouldDrainInstances,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListGroupsInput struct{}
@@ -919,6 +964,13 @@ func (o *Group) SetIntegration(v *Integration) *Group {
 	return o
 }
 
+func (o *Group) SetRegion(v *string) *Group {
+	if o.Region = v; o.Region == nil {
+		o.nullFields = append(o.nullFields, "Region")
+	}
+	return o
+}
+
 // endregion
 
 // region Integration
@@ -946,6 +998,13 @@ func (o *Integration) SetElasticBeanstalk(v *ElasticBeanstalkIntegration) *Integ
 func (o *Integration) SetCodeDeploy(v *CodeDeployIntegration) *Integration {
 	if o.CodeDeploy = v; o.CodeDeploy == nil {
 		o.nullFields = append(o.nullFields, "CodeDeploy")
+	}
+	return o
+}
+
+func (o *Integration) SetOpsWorks(v *OpsWorksIntegration) *Integration {
+	if o.OpsWorks = v; o.OpsWorks == nil {
+		o.nullFields = append(o.nullFields, "OpsWorks")
 	}
 	return o
 }
@@ -981,6 +1040,13 @@ func (o *Integration) SetMultai(v *MultaiIntegration) *Integration {
 func (o *Integration) SetNomad(v *NomadIntegration) *Integration {
 	if o.Nomad = v; o.Nomad == nil {
 		o.nullFields = append(o.nullFields, "Nomad")
+	}
+	return o
+}
+
+func (o *Integration) SetChef(v *ChefIntegration) *Integration {
+	if o.Chef = v; o.Chef == nil {
+		o.nullFields = append(o.nullFields, "Chef")
 	}
 	return o
 }
@@ -1074,6 +1140,13 @@ func (o *AutoScale) SetIsEnabled(v *bool) *AutoScale {
 	return o
 }
 
+func (o *AutoScale) SetIsAutoConfig(v *bool) *AutoScale {
+	if o.IsAutoConfig = v; o.IsAutoConfig == nil {
+		o.nullFields = append(o.nullFields, "IsAutoConfig")
+	}
+	return o
+}
+
 func (o *AutoScale) SetCooldown(v *int) *AutoScale {
 	if o.Cooldown = v; o.Cooldown == nil {
 		o.nullFields = append(o.nullFields, "Cooldown")
@@ -1098,6 +1171,13 @@ func (o *AutoScale) SetDown(v *AutoScaleDown) *AutoScale {
 func (o *AutoScale) SetConstraints(v []*AutoScaleConstraint) *AutoScale {
 	if o.Constraints = v; o.Constraints == nil {
 		o.nullFields = append(o.nullFields, "Constraints")
+	}
+	return o
+}
+
+func (o *AutoScale) SetLabels(v []*AutoScaleLabel) *AutoScale {
+	if o.Labels = v; o.Labels == nil {
+		o.nullFields = append(o.nullFields, "Labels")
 	}
 	return o
 }
@@ -1168,6 +1248,30 @@ func (o *AutoScaleConstraint) SetKey(v *string) *AutoScaleConstraint {
 }
 
 func (o *AutoScaleConstraint) SetValue(v *string) *AutoScaleConstraint {
+	if o.Value = v; o.Value == nil {
+		o.nullFields = append(o.nullFields, "Value")
+	}
+	return o
+}
+
+// endregion
+
+// region AutoScaleLabel
+
+func (o *AutoScaleLabel) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleLabel
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *AutoScaleLabel) SetKey(v *string) *AutoScaleLabel {
+	if o.Key = v; o.Key == nil {
+		o.nullFields = append(o.nullFields, "Key")
+	}
+	return o
+}
+
+func (o *AutoScaleLabel) SetValue(v *string) *AutoScaleLabel {
 	if o.Value = v; o.Value == nil {
 		o.nullFields = append(o.nullFields, "Value")
 	}
@@ -1293,6 +1397,51 @@ func (o *NomadIntegration) SetAutoScale(v *AutoScale) *NomadIntegration {
 
 // endregion
 
+// region ChefIntegration
+
+func (o *ChefIntegration) MarshalJSON() ([]byte, error) {
+	type noMethod ChefIntegration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *ChefIntegration) SetServer(v *string) *ChefIntegration {
+	if o.Server = v; o.Server == nil {
+		o.nullFields = append(o.nullFields, "Server")
+	}
+	return o
+}
+
+func (o *ChefIntegration) SetOrganization(v *string) *ChefIntegration {
+	if o.Organization = v; o.Organization == nil {
+		o.nullFields = append(o.nullFields, "Organization")
+	}
+	return o
+}
+
+func (o *ChefIntegration) SetUser(v *string) *ChefIntegration {
+	if o.User = v; o.User == nil {
+		o.nullFields = append(o.nullFields, "User")
+	}
+	return o
+}
+
+func (o *ChefIntegration) SetPEMKey(v *string) *ChefIntegration {
+	if o.PEMKey = v; o.PEMKey == nil {
+		o.nullFields = append(o.nullFields, "PEMKey")
+	}
+	return o
+}
+
+func (o *ChefIntegration) SetVersion(v *string) *ChefIntegration {
+	if o.Version = v; o.Version == nil {
+		o.nullFields = append(o.nullFields, "Version")
+	}
+	return o
+}
+
+// endregion
+
 // region Scheduling
 
 func (o *Scheduling) MarshalJSON() ([]byte, error) {
@@ -1342,6 +1491,13 @@ func (o *Task) SetFrequency(v *string) *Task {
 func (o *Task) SetCronExpression(v *string) *Task {
 	if o.CronExpression = v; o.CronExpression == nil {
 		o.nullFields = append(o.nullFields, "CronExpression")
+	}
+	return o
+}
+
+func (o *Task) SetStartTime(v *string) *Task {
+	if o.StartTime = v; o.StartTime== nil {
+		o.nullFields = append(o.nullFields, "StartTime")
 	}
 	return o
 }
@@ -1586,35 +1742,35 @@ func (o *Action) SetAdjustment(v *string) *Action {
 	return o
 }
 
-func (o *Action) SetMinTargetCapacity(v *int) *Action {
+func (o *Action) SetMinTargetCapacity(v *string) *Action {
 	if o.MinTargetCapacity = v; o.MinTargetCapacity == nil {
 		o.nullFields = append(o.nullFields, "MinTargetCapacity")
 	}
 	return o
 }
 
-func (o *Action) SetMaxTargetCapacity(v *int) *Action {
+func (o *Action) SetMaxTargetCapacity(v *string) *Action {
 	if o.MaxTargetCapacity = v; o.MaxTargetCapacity == nil {
 		o.nullFields = append(o.nullFields, "MaxTargetCapacity")
 	}
 	return o
 }
 
-func (o *Action) SetMaximum(v *int) *Action {
+func (o *Action) SetMaximum(v *string) *Action {
 	if o.Maximum = v; o.Maximum == nil {
 		o.nullFields = append(o.nullFields, "Maximum")
 	}
 	return o
 }
 
-func (o *Action) SetMinimum(v *int) *Action {
+func (o *Action) SetMinimum(v *string) *Action {
 	if o.Minimum = v; o.Minimum == nil {
 		o.nullFields = append(o.nullFields, "Minimum")
 	}
 	return o
 }
 
-func (o *Action) SetTarget(v *int) *Action {
+func (o *Action) SetTarget(v *string) *Action {
 	if o.Target = v; o.Target == nil {
 		o.nullFields = append(o.nullFields, "Target")
 	}
@@ -1725,6 +1881,13 @@ func (o *Strategy) SetPersistence(v *Persistence) *Strategy {
 	return o
 }
 
+func (o *Strategy) SetRevertToSpot(v *RevertToSpot) *Strategy {
+	if o.RevertToSpot = v; o.RevertToSpot == nil {
+		o.nullFields = append(o.nullFields, "RevertToSpot")
+	}
+	return o
+}
+
 // endregion
 
 // region Persistence
@@ -1759,6 +1922,30 @@ func (o *Persistence) SetShouldPersistRootDevice(v *bool) *Persistence {
 func (o *Persistence) SetBlockDevicesMode(v *string) *Persistence {
 	if o.BlockDevicesMode = v; o.BlockDevicesMode == nil {
 		o.nullFields = append(o.nullFields, "BlockDevicesMode")
+	}
+	return o
+}
+
+// endregion
+
+// region RevertToSpot
+
+func (o *RevertToSpot) MarshalJSON() ([]byte, error) {
+	type noMethod RevertToSpot
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *RevertToSpot) SetPerformAt(v *string) *RevertToSpot {
+	if o.PerformAt = v; o.PerformAt == nil {
+		o.nullFields = append(o.nullFields, "PerformAt")
+	}
+	return o
+}
+
+func (o *RevertToSpot) SetTimeWindows(v []string) *RevertToSpot {
+	if o.TimeWindows = v; o.TimeWindows == nil {
+		o.nullFields = append(o.nullFields, "TimeWindows")
 	}
 	return o
 }
@@ -1882,6 +2069,13 @@ func (o *Compute) SetElasticIPs(v []string) *Compute {
 func (o *Compute) SetEBSVolumePool(v []*EBSVolume) *Compute {
 	if o.EBSVolumePool = v; o.EBSVolumePool == nil {
 		o.nullFields = append(o.nullFields, "EBSVolumePool")
+	}
+	return o
+}
+
+func (o *Compute) SetSubnetIDs(v []string) *Compute {
+	if o.SubnetIDs = v; o.SubnetIDs == nil {
+		o.nullFields = append(o.nullFields, "SubnetIDs")
 	}
 	return o
 }
@@ -2461,3 +2655,136 @@ func (o *DeploymentGroup) SetDeploymentGroupName(v *string) *DeploymentGroup {
 }
 
 // endregion
+
+// region OpsWorksIntegration
+
+func (o *OpsWorksIntegration) MarshalJSON() ([]byte, error) {
+	type noMethod OpsWorksIntegration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *OpsWorksIntegration) SetLayerId(v *string) *OpsWorksIntegration {
+	if o.LayerID = v; o.LayerID == nil {
+		o.nullFields = append(o.nullFields, "LayerID")
+	}
+	return o
+}
+
+func (o *OpsWorksIntegration) SetStackType(v *string) *OpsWorksIntegration {
+	if o.StackType = v; o.StackType == nil {
+		o.nullFields = append(o.nullFields, "StackType")
+	}
+	return o
+}
+
+// endregion
+
+// region Scale Request
+
+type ScaleUpSpotItem struct {
+	SpotInstanceRequestID *string `json:"spotInstanceRequestId,omitempty"`
+	AvailabilityZone      *string `json:"availabilityZone,omitempty"`
+	InstanceType          *string `json:"instanceType,omitempty"`
+}
+
+type ScaleUpOnDemandItem struct {
+	InstanceID       *string `json:"instanceId,omitempty"`
+	AvailabilityZone *string `json:"availabilityZone,omitempty"`
+	InstanceType     *string `json:"instanceType,omitempty"`
+}
+
+type ScaleDownSpotItem struct {
+	SpotInstanceRequestID *string `json:"spotInstanceRequestId,omitempty"`
+}
+
+type ScaleDownOnDemandItem struct {
+	InstanceID *string `json:"instanceId,omitempty"`
+}
+
+type ScaleItem struct {
+	NewSpotRequests    []*ScaleUpSpotItem       `json:"newSpotRequests,omitempty"`
+	NewInstances       []*ScaleUpOnDemandItem   `json:"newInstances,omitempty"`
+	VictimSpotRequests []*ScaleDownSpotItem     `json:"victimSpotRequests,omitempty"`
+	VictimInstances    []*ScaleDownOnDemandItem `json:"victimInstances,omitempty"`
+}
+
+type ScaleGroupInput struct {
+	GroupID    *string `json:"groupId,omitempty"`
+	ScaleType  *string `json:"type,omitempty"`
+	Adjustment *int    `json:"adjustment,omitempty"`
+}
+
+type ScaleGroupOutput struct {
+	Items []*ScaleItem `json:"items"`
+}
+
+func scaleUpResponseFromJSON(in []byte) (*ScaleGroupOutput, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+
+	var retVal ScaleGroupOutput
+	retVal.Items = make([]*ScaleItem, len(rw.Response.Items))
+	for i, rb := range rw.Response.Items {
+		b, err := scaleUpItemFromJSON(rb)
+		if err != nil {
+			return nil, err
+		}
+		retVal.Items[i] = b
+	}
+
+	return &retVal, nil
+}
+
+func scaleUpItemFromJSON(in []byte) (*ScaleItem, error) {
+	var rw *ScaleItem
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	return rw, nil
+}
+
+func scaleFromHttpResponse(resp *http.Response) (*ScaleGroupOutput, error) {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return scaleUpResponseFromJSON(body)
+}
+
+func (s *ServiceOp) Scale(ctx context.Context, input *ScaleGroupInput) (*ScaleGroupOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/scale/{type}", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+		"type":    spotinst.StringValue(input.ScaleType),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.GroupID = nil
+
+	r := client.NewRequest(http.MethodPut, path)
+
+	if input.Adjustment != nil {
+		r.Params.Set("adjustment", strconv.Itoa(*input.Adjustment))
+	}
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	output, err := scaleFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return output, err
+}
+
+//endregion

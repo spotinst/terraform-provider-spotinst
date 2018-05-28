@@ -26,7 +26,7 @@ type HealthCheck struct {
 	// non-interface field appearing in ForceSendFields will be sent to the
 	// server regardless of whether the field is empty or not. This may be
 	// used to include empty fields in Patch requests.
-	forceSendFields []string `json:"-"`
+	forceSendFields []string
 
 	// nullFields is a list of field names (e.g. "Keys") to include in API
 	// requests with the JSON null value. By default, fields with empty
@@ -34,7 +34,7 @@ type HealthCheck struct {
 	// empty value appearing in NullFields will be sent to the server as
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
-	nullFields []string `json:"-"`
+	nullFields []string
 }
 
 type Check struct {
@@ -46,8 +46,8 @@ type Check struct {
 	Healthy   *int    `json:"healthyThreshold,omitempty"`
 	Unhealthy *int    `json:"unhealthyThreshold,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListHealthChecksInput struct{}

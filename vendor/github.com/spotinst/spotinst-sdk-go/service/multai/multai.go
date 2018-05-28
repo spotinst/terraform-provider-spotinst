@@ -160,16 +160,16 @@ type LoadBalancer struct {
 	CreatedAt       *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt       *time.Time `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Timeouts struct {
 	Idle     *int `json:"idle"`
 	Draining *int `json:"draining"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListLoadBalancersInput struct {
@@ -425,8 +425,8 @@ type Listener struct {
 	CreatedAt  *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt  *time.Time `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListListenersInput struct {
@@ -737,8 +737,8 @@ type RoutingRule struct {
 	CreatedAt     *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt     *time.Time `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListRoutingRulesInput struct {
@@ -1008,8 +1008,8 @@ type Middleware struct {
 	CreatedAt  *time.Time      `json:"createdAt,omitempty"`
 	UpdatedAt  *time.Time      `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListMiddlewaresInput struct {
@@ -1261,8 +1261,8 @@ type TargetSet struct {
 	CreatedAt    *time.Time            `json:"createdAt,omitempty"`
 	UpdatedAt    *time.Time            `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type TargetSetHealthCheck struct {
@@ -1274,8 +1274,8 @@ type TargetSetHealthCheck struct {
 	HealthyThresholdCount   *int    `json:"healthyThresholdCount,omitempty"`
 	UnhealthyThresholdCount *int    `json:"unhealthyThresholdCount,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListTargetSetsInput struct {
@@ -1607,16 +1607,16 @@ type Target struct {
 	CreatedAt   *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt   *time.Time `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Status struct {
 	Readiness   *string `json:"readiness"`
 	Healthiness *string `json:"healthiness"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListTargetsInput struct {
@@ -1897,8 +1897,8 @@ type Runtime struct {
 	CreatedAt      *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListRuntimesInput struct {
@@ -2046,8 +2046,8 @@ type Deployment struct {
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListDeploymentsInput struct{}
@@ -2267,8 +2267,8 @@ type Certificate struct {
 	CreatedAt    *time.Time `json:"createdAt,omitempty"`
 	UpdatedAt    *time.Time `json:"updatedAt,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 type ListCertificatesInput struct{}
