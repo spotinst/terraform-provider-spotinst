@@ -110,25 +110,25 @@ The following arguments are supported:
 
 * `name` - (Required) The group name.
 * `description` - (Required) The group description.
-* `product` - (Required) Operation system type. Valid Values: Linux/UNIX | SUSE Linux | Windows. 
-For EC2 Classic instances:  Linux/UNIX (Amazon VPC) | SUSE Linux (Amazon VPC) | Windows (Amazon VPC).    
+* `product` - (Required) Operation system type. Valid Values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
+For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
 
 * `availability_zones` - (Optional) TBD
-Note: When this parameter is set, subnet_ids should be left unused.
+Note: When this parameter is set, `subnet_ids` should be left unused.
 
 * `region` - (Optional) TBD
 * `subnet_ids` - (Optional) A comma-separated list of subnet identifiers.
-Note: When this parameter is set, availability_zones should be left unused.
+Note: When this parameter is set, `availability_zones` should be left unused.
 
 * `max_size` - (Optional; Required if using scaling policies) The maximum number of instances the group should have at any time.
 * `min_size` - (Optional; Required if using scaling policies) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Optional) The desired number of instances the group should have at any time.
-* `capacity_unit` - (Optional) The capacity unit to launch instances by. if not specified, when choosing the weight unit, each instance will weigh as the number of its vCPUs.
+* `capacity_unit` - (Optional, Default: `"instance"`) The capacity unit to launch instances by. If not specified, when choosing the weight unit, each instance will weight as the number of its vCPUs.
 
+* `security_groups` - (Required) A list of associated security group IDS.
 * `image_id` - (Optional) The ID of the AMI used to launch the instance.
 * `iam_instance_profile` - (Optional) The ARN of an IAM instance profile to associate with launched instances.
 * `key_name` - (Optional) The key name that should be used for the instance.
-* `security_groups` - (Required) A list of associated security group IDS.
 * `enable_monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
 * `user_data` - (Optional) The user data to provide when launching the instance.
 * `ebs_optimized` - (Optional) TBD
@@ -141,9 +141,9 @@ Note: When this parameter is set, availability_zones should be left unused.
     * `weight` - (Required) Weight per instance type (Integer).
     * `instance_type` - (Required) Name of instance type (String).
 
-* `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
-* `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the "risk" parameter is being ignored.
 * `orientation` - (Required) TBD    
+* `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
+* `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `fallback_to_ondemand` - (Required) TBD
 * `lifetime_period` - (Optional) TBD
@@ -162,7 +162,7 @@ Note: When this parameter is set, availability_zones should be left unused.
     * `target_set_id` - (Required) TBD
     * `balancer_id` - (Required) TBD
     
-* `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: never | always | timeWindow
+* `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
     * `perform_at` - (Required) TBD
     * `time_windows` - (Optional) TBD
 
@@ -171,7 +171,7 @@ Note: When this parameter is set, availability_zones should be left unused.
 
 Each `signal` supports the following:
 
-* `name` - (Required) The name of the signal defined for the group. Valid Values: INSTANCE_READY, INSTANCE_READY_TO_SHUTDOWN
+* `name` - (Required) The name of the signal defined for the group. Valid Values: `"INSTANCE_READY"`, `"INSTANCE_READY_TO_SHUTDOWN"`
 * `timeout` - (Optional) TBD
 
 <a id="scheduled-task"></a>
@@ -179,14 +179,14 @@ Each `signal` supports the following:
 
 Each `scheduled_task` supports the following:
 
-* `task_type` - (Required) The task type to run. Supported task types are: `scale`, `backup_ami`, `roll`, `scaleUp`, `percentageScaleUp`, `scaleDown`, `percentageScaleDown`, `statefulUpdateCapacity`.
+* `task_type` - (Required) The task type to run. Supported task types are: `"scale"`, `"backup_ami"`, `"roll"`, `"scaleUp"`, `"percentageScaleUp"`, `"scaleDown"`, `"percentageScaleDown"`, `"statefulUpdateCapacity"`.
 * `cron_expression` - (Optional; Required if not using `frequency`) A valid cron expression. The cron is running in UTC time zone and is in [Unix cron format](https://en.wikipedia.org/wiki/Cron).
 * `start_time` - (Optional; TBD
-* `frequency` - (Optional; Required if not using `cron_expression`) The recurrence frequency to run this task. Supported values are `hourly`, `daily`, `weekly` and `continuous`.
+* `frequency` - (Optional; Required if not using `cron_expression`) The recurrence frequency to run this task. Supported values are `"hourly"`, `"daily"`, `"weekly"` and `"continuous"`.
 * `scale_target_capacity` - (Optional) The desired number of instances the group should have.
 * `scale_min_capacity` - (Optional) The minimum number of instances the group should have.
 * `scale_max_capacity` - (Optional) The maximum number of instances the group should have.
-* `is_enabled` - (Optional) TBD
+* `is_enabled` - (Optional, Default: `false`) TBD
 * `batch_size_percentage` - (Optional) TBD
 * `grace_period` - (Optional) TBD
 * `target_capacity` - (Optional) TBD
@@ -199,38 +199,36 @@ Each `scheduled_task` supports the following:
 Each `scaling_*_policy` supports the following:
 
 * `namespace` - (Required) The namespace for the alarm's associated metric.
-* `source` - (Optional) TBD
 * `metric_name` - (Required) The name of the metric, with or without spaces.
 * `threshold` - (Required) The value against which the specified statistic is compared.
 * `policy_name` - (Required) The name of the policy.
-* `statistic` - (Optional) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
-* `unit` - (Optional) The unit for the alarm's associated metric.
-* `period` - (Optional) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
-* `evaluation_periods` - (Optional) The number of periods over which data is compared to the specified threshold.
-* `cooldown` - (Optional) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
+* `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
+* `unit` - (Optional, Default: `"percent"`) The unit for the alarm's associated metric.
+* `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
+* `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
+* `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
 * `dimensions` - (Optional) A mapping of dimensions describing qualities of the metric.
-* `operator` - (Optional) TBD
-* `evaluation_periods` - (Optional) TBD
-* `period` - (Optional) TBD
+* `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) TBD
+* `source` - (Optional) TBD
 
-* `action_type` - (Optional; if not using min_target_capacity or max_target_capacity) The type of action to perform for scaling. Possible values :adjustment | percentageAdjustment | setMaxTarget | setMinTarget | updateCapacity
+* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
 
-If you do not specify an action type, you can only use – adjustment, minTargetCapacity, maxTargetCapacity.
+If you do not specify an action type, you can only use – `adjustment`, `minTargetCapacity`, `maxTargetCapacity`.
 While using action_type, please also set the following:
 
-    - when using adjustment – set the field `adjustment`
-    - when using percentageAdjustment- set the field `adjustment`
-    - when using setMaxTarget – set the field `max_target_capacity`
-    - when using setMinTarget – set the field `min_target_capacity`
-    - when using updateCapacity – set the fields `minimum`, `maximum`, and `target`
+When using `adjustment`           – set the field `adjustment`
+When using `percentageAdjustment` - set the field `adjustment`
+When using `setMaxTarget`         – set the field `max_target_capacity`
+When using `setMinTarget`         – set the field `min_target_capacity`
+When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `target`
 
-* `adjustment` - (Optional; if not using min_target_capacity or max_target_capacity;) The number of instances to add/remove to/from the target capacity when scale is needed. Can be used as advanced expression for scaling of instances to add/remove to/from the target capacity when scale is needed. You can see more information here: Advanced expression. Example value: “MAX(currCapacity / 5, value * 10)”
-* `min_target_capacity` - (Optional; if not using adjustment; available only for scale up). The number of the desired target (and minimum) capacity
-* `max_target_capacity` - (Optional; if not using adjustment; available only for scale down). The number of the desired target (and maximum) capacity
+* `adjustment` - (Optional; if not using `min_target_capacity` or `max_target_capacity`;) The number of instances to add/remove to/from the target capacity when scale is needed. Can be used as advanced expression for scaling of instances to add/remove to/from the target capacity when scale is needed. You can see more information here: Advanced expression. Example value: `"MAX(currCapacity / 5, value * 10)"`
+* `min_target_capacity` - (Optional; if not using `adjustment`; available only for scale up). The number of the desired target (and minimum) capacity
+* `max_target_capacity` - (Optional; if not using `adjustment`; available only for scale down). The number of the desired target (and maximum) capacity
 
-* `minimum` - (Optional; if using updateCapacity) The minimal number of instances to have in the group.
-* `maximum` - (Optional; if using updateCapacity) The maximal number of instances to have in the group.
-* `target` - (Optional; if using updateCapacity) The target number of instances to have in the group.
+* `minimum` - (Optional; if using `updateCapacity`) The minimal number of instances to have in the group.
+* `maximum` - (Optional; if using `updateCapacity`) The maximal number of instances to have in the group.
+* `target` - (Optional; if using `updateCapacity`) The target number of instances to have in the group.
 
 <a id="network-interface"></a>
 ## Network Interfaces
@@ -260,11 +258,9 @@ Each `ebs_block_device` supports the following:
 
 * `device_name` - (Required) The name of the device to mount.
 * `snapshot_id` - (Optional) The Snapshot ID to mount.
-* `volume_type` - (Optional) The type of volume. Can be `"standard"`, `"gp2"`, or `"io1"`.
+* `volume_type` - (Optional, Default: `"standard"`) The type of volume. Can be `"standard"`, `"gp2"`, `"io1"`, `"st1"` or `"sc1"`.
 * `volume_size` - (Optional) The size of the volume in gigabytes.
-* `iops` - (Optional) The amount of provisioned
-  [IOPS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-io-characteristics.html).
-  This must be set with a `volume_type` of `"io1"`.
+* `iops` - (Optional) The amount of provisioned [IOPS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-io-characteristics.html). This must be set with a `volume_type` of `"io1"`.
 * `delete_on_termination` - (Optional) Whether the volume should be destroyed on instance termination.
 * `encrypted` - (Optional) Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
 
@@ -285,13 +281,13 @@ For more information on instance persistence please see: [Stateful configuration
 * `persist_root_device` - (Optional) Boolean, should the instance maintain its root device volumes
 * `persist_block_devices` - (Optional) Boolean, should the instance maintain its Data volumes
 * `persist_private_ip` - (Optional) Boolean, should the instance maintain its private IP
-* `block_devices_mode` - (Optional) String, determine the way we attach the data volumes to the data devices, possible values: ‘reattach’ and ‘onLaunch’ (default is onLaunch)
-* `private_ips` - (Optional) List of Private IPs to associate to the group instances.(e.g. “172.1.1.0”). Please note: This setting will only apply if persistence.persist_private_ip is set to true.
+* `block_devices_mode` - (Optional) String, determine the way we attach the data volumes to the data devices, possible values: `"reattach"` and `"onLaunch"` (default is onLaunch)
+* `private_ips` - (Optional) List of Private IPs to associate to the group instances.(e.g. "172.1.1.0"). Please note: This setting will only apply if persistence.persist_private_ip is set to true.
 
 <a id="health-check"></a>
 ## Health Check
 
-* `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : ELB | HCS | TARGET_GROUP | CUSTOM | K8S_NODE | MLB | EC2 | MULTAI_TARGET_SET | MLB_RUNTIME | K8S_NODE | NOMAD_NODE | ECS_CLUSTER_INSTANCE
+* `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health
 * `health_check_unhealthy_duration_before_replacement` - (Optional) The amount of time, in seconds, that we will wait before replacing an instance that is running and became unhealthy (this is only applicable for instances that were once healthy)
 
@@ -311,15 +307,14 @@ For more information on instance persistence please see: [Stateful configuration
 * `integration_ecs` - (Optional) Describes the [EC2 Container Service](https://aws.amazon.com/documentation/ecs/?id=docs_gateway) integration.
 
     * `cluster_name` - (Required) The name of the EC2 Container Service cluster.
-    * `autoscale_is_enabled` - (Optional) Specifies whether the auto scaling feature is enabled.
-    * `autoscale_cooldown` - (Optional) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
-    * `secret_key` - (Optional) TBD
+    * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
+    * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
     * `autoscale_headroom` - (Optional) TBD
-        * `cpu_per_unit` - (Optional) TBD
-        * `memory_per_unit` - (Optional) TBD
-        * `num_of_units` - (Optional) TBD
+        * `cpu_per_unit` - (Optional, Default: `0`) TBD
+        * `memory_per_unit` - (Optional, Default: `0`) TBD
+        * `num_of_units` - (Optional, Default: `0`) TBD
     * `autoscale_down` - (Optional) TBD
-        * `evaluation_periodsv` - (Optional) TBD
+        * `evaluation_periods` - (Optional, Default: `5`) TBD
 
 * `integration_codedeploy` - (Optional) Describes the [Code Deploy](https://aws.amazon.com/documentation/codedeploy/?id=docs_gateway) integration.
 
@@ -331,39 +326,33 @@ For more information on instance persistence please see: [Stateful configuration
 
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
 
-    * `integration_mode` - (Required) Possible values: saas | pod
+    * `integration_mode` - (Required) Valid values: `"saas"`, `"pod"`.
     * `cluster_identifier` - (Required; if using integration_mode as pod)
-    
     * `api_server` - (Required; if using integration_mode as saas)
     * `token` - (Required; if using integration_mode as saas) TBD
-    
-    * `autoscale_is_enabled` - (Optional) Specifies whether the auto scaling feature is enabled.
-    * `autoscale_cooldown` - (Optional) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
-    * `secret_key` - (Optional) TBD
+    * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
+    * `autoscale_is_auto_config` - (Optional, Default: `false`) TBD
+    * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
     * `autoscale_headroom` - (Optional) TBD
-        * `cpu_per_unit` - (Optional) TBD
-        * `memory_per_unit` - (Optional) TBD
-        * `num_of_units` - (Optional) TBD
+        * `cpu_per_unit` - (Optional, Default: `0`) TBD
+        * `memory_per_unit` - (Optional, Default: `0`) TBD
+        * `num_of_units` - (Optional, Default: `0`) TBD
     * `autoscale_down` - (Optional) TBD
-        * `evaluation_periodsv` - (Optional) TBD
+        * `evaluation_periods` - (Optional, Default: `5`) TBD
  
  * `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
  
      * `master_host` - (Required) TBD
-     * `master_port` - (Required; TBD
-     * `autoscale_is_enabled` - (Required; TBD
-     * `autoscale_cooldown` - (Required; TBD
-     * `acl_token` - (Required; TBD
-     
-     * `autoscale_is_enabled` - (Optional) Specifies whether the auto scaling feature is enabled.
-     * `autoscale_cooldown` - (Optional) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
-     * `secret_key` - (Optional) TBD
+     * `master_port` - (Required) TBD
+     * `acl_token` - (Required) TBD
+     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
+     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
      * `autoscale_headroom` - (Optional) TBD
-         * `cpu_per_unit` - (Optional) TBD
-         * `memory_per_unit` - (Optional) TBD
-         * `num_of_units` - (Optional) TBD
+         * `cpu_per_unit` - (Optional, Default: `0`) TBD
+         * `memory_per_unit` - (Optional, Default: `0`) TBD
+         * `num_of_units` - (Optional, Default: `0`) TBD
      * `autoscale_down` - (Optional) TBD
-         * `evaluation_periodsv` - (Optional) TBD
+         * `evaluation_periods` - (Optional, Default: `5`) TBD
          
  * `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
  
@@ -376,15 +365,15 @@ For more information on instance persistence please see: [Stateful configuration
 <a id="update-policy"></a>
 ## Update Policy
 
-* `update_policy` - (Optional) Describes the [Rancher](http://rancherlabs.com/) integration.
+* `update_policy` - (Optional) TBD
 
-    * `should_resume_stateful` - (Required) Describes the [Rancher](http://rancherlabs.com/) integration.
-    * `should_roll` - (Required) Describes the [Rancher](http://rancherlabs.com/) integration.
-    * `roll_config` - (Required) Describes the [Rancher](http://rancherlabs.com/) integration.
+    * `should_resume_stateful` - (Required) TBD
+    * `should_roll` - (Required) TBD
+    * `roll_config` - (Required) TBD
     
-        * `batch_size_percentage` - (Required) The URL of the Rancher Master host.
-        * `health_check_type` - (Optional) The secret key of the Rancher API.
-        * `grace_period` - (Optional) The access key of the Rancher API.
+        * `batch_size_percentage` - (Required) TBD
+        * `health_check_type` - (Optional) TBD
+        * `grace_period` - (Optional) TBD
        
 ## Attributes Reference
 
