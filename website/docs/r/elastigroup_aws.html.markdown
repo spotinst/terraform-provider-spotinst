@@ -64,8 +64,8 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   }
 
   scaling_up_policy {
-    policy_name        = "Sidkiq Scaling Up Policy"
-    metric_name        = "SidekiqQueuesDepth"
+    policy_name        = "Default Scaling Up Policy"
+    metric_name        = "DefaultQueuesDepth"
     statistic          = "average"
     unit               = "none"
     adjustment         = 1
@@ -77,8 +77,8 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   }
 
   scaling_down_policy {
-    policy_name        = "Sidkiq Scaling Down Policy"
-    metric_name        = "SidekiqQueuesDepth"
+    policy_name        = "Default Scaling Down Policy"
+    metric_name        = "Default QueuesDepth"
     statistic          = "average"
     unit               = "none"
     adjustment         = 1
@@ -89,12 +89,20 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     cooldown           = 300
   }
 
-  tags {
-    "Env"     = "production"
-    "Name"    = "sidekiq-production"
-    "Project" = "app_v2"
-    "Roles"   = "app;sidekiq"
+  tags = [
+  {
+     key = "Env"
+     value = "production"
+  }, 
+  {
+     key = "Name"
+     value = "default-production"
+  },
+  {
+     key = "Project"
+     value = "app_v2"
   }
+ ]
 
   lifecycle {
     ignore_changes = [
@@ -110,7 +118,7 @@ The following arguments are supported:
 
 * `name` - (Required) The group name.
 * `description` - (Required) The group description.
-* `product` - (Required) Operation system type. Valid Values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
+* `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
 For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
 
 * `availability_zones` - (Optional) TBD
@@ -141,11 +149,11 @@ Note: When this parameter is set, `availability_zones` should be left unused.
     * `weight` - (Required) Weight per instance type (Integer).
     * `instance_type` - (Required) Name of instance type (String).
 
-* `orientation` - (Required) TBD    
+* `fallback_to_ondemand` - (Required) TBD
+* `orientation` - (Required, Default: `balanced`) TBD. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
-* `fallback_to_ondemand` - (Required) TBD
 * `lifetime_period` - (Optional) TBD
 * `utilize_reserved_instances` - (Optional) TBD
 
@@ -366,11 +374,9 @@ For more information on instance persistence please see: [Stateful configuration
 ## Update Policy
 
 * `update_policy` - (Optional) TBD
-
     * `should_resume_stateful` - (Required) TBD
     * `should_roll` - (Required) TBD
     * `roll_config` - (Required) TBD
-    
         * `batch_size_percentage` - (Required) TBD
         * `health_check_type` - (Optional) TBD
         * `grace_period` - (Optional) TBD
