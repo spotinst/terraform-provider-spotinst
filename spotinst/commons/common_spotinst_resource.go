@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	"encoding/json"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -155,4 +156,12 @@ func (res *GenericResource) GetTerraformData() *TerraformData {
 
 func (res *GenericResource) SetTerraformData(data *TerraformData) {
 	res.terraformData = data
+}
+
+func ToJson(object interface{}) (string, error) {
+	if bytes, err := json.Marshal(object); err != nil {
+		return "", err
+	} else {
+		return string(bytes), nil
+	}
 }

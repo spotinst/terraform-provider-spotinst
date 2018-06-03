@@ -7,14 +7,17 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
-var testAccProviders map[string]terraform.ResourceProvider
+var TestAccProviders map[string]terraform.ResourceProvider
 var testAccProvider *schema.Provider
+
+var testProviders map[string]terraform.ResourceProvider
 
 func init() {
 	testAccProvider = Provider().(*schema.Provider)
-	testAccProviders = map[string]terraform.ResourceProvider{
+	TestAccProviders = map[string]terraform.ResourceProvider{
 		"spotinst": testAccProvider,
 	}
 }
@@ -29,11 +32,11 @@ func TestProvider_impl(t *testing.T) {
 	var _ terraform.ResourceProvider = Provider()
 }
 
-func testAccPreCheck(t *testing.T) {
+func TestAccPreCheck(t *testing.T) {
 	c := map[string]string{
-		"token": os.Getenv(credentials.EnvCredentialsVarToken),
+		string(commons.ProviderToken): os.Getenv(credentials.EnvCredentialsVarToken),
 	}
-	if c["token"] == "" {
+	if c[string(commons.ProviderToken)] == "" {
 		t.Fatal(ErrNoValidCredentials.Error())
 	}
 }

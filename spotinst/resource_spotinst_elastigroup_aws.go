@@ -71,6 +71,8 @@ func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, met
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
 		return fmt.Errorf("failed to delete group: %s", err)
 	}
+
+	log.Printf("===> Elastigroup Deleted Successfully: %s <===", resourceData.Id())
 	resourceData.SetId("")
 	return nil
 }
@@ -120,6 +122,7 @@ func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta 
 	if err := commons.SpotinstElastigroup.OnRead(groupResponse); err != nil {
 		return err
 	}
+	log.Printf("===> Elastigroup Read Successfully: %s <===", id)
 	return nil
 }
 
@@ -141,13 +144,18 @@ func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, met
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
-	log.Printf("AWSGroup created successfully: %s", resourceData.Id())
+	log.Printf("===> Elastigroup Created Successfully: %s <===", resourceData.Id())
 
 	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
 }
 
 func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
-	log.Printf("Group create configuration: %s", stringutil.Stringify(group))
+	if json, err := commons.ToJson(group); err != nil {
+		return nil, err
+	} else {
+		log.Printf("===> Group Create Configuration: %s", json)
+	}
+
 	input := &aws.CreateGroupInput{Group: group}
 
 	var resp *aws.CreateGroupOutput = nil
@@ -198,6 +206,8 @@ func resourceSpotinstElastigroupAwsUpdate(resourceData *schema.ResourceData, met
 		}
 	}
 
+	log.Printf("===> Elastigroup Updated Successfully: %s <===", id)
+
 	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
 }
 
@@ -222,7 +232,11 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	}
 
-	log.Printf("Group update configuration: %s", stringutil.Stringify(elastigroup))
+	if json, err := commons.ToJson(elastigroup); err != nil {
+		return err
+	} else {
+		log.Printf("===> Group Update Configuration: %s", json)
+	}
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Update(context.Background(), input); err != nil {
 		return fmt.Errorf("failed to update group [%v]: %v", groupId, err)
@@ -248,7 +262,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		if rollConfig, ok := updateGroupSchema[string(elastigroup_aws.RollConfig)].(*schema.Set); !ok || rollConfig == nil {
 			errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_aws.RollConfig), groupId)
 		} else {
-			if rollGroupInput, err := expandAWSGroupRollConfig(rollConfig, groupId); err != nil {
+			if rollGroupInput, err := expandElastigroupRollConfig(rollConfig, groupId); err != nil {
 				errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for group [%v], error: %v", groupId, err)
 			} else {
 				log.Printf("onRoll() -> Rolling group [%v] with configuration %v...", groupId, stringutil.Stringify(rollConfig))
@@ -271,7 +285,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Fields Expand
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandAWSGroupRollConfig(data interface{}, groupID string) (*aws.RollGroupInput, error) {
+func expandElastigroupRollConfig(data interface{}, groupID string) (*aws.RollGroupInput, error) {
 	list := data.(*schema.Set).List()
 	m := list[0].(map[string]interface{})
 	i := &aws.RollGroupInput{GroupID: spotinst.String(groupID)}

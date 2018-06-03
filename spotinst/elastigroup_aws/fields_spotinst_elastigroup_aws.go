@@ -461,7 +461,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if _, exists := resourceData.GetOkExists(string(SubnetIds)); !exists {
+			if _, exists := resourceData.GetOk(string(SubnetIds)); !exists {
 				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 						return err
@@ -474,7 +474,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			if _, exists := resourceData.GetOkExists(string(SubnetIds)); !exists {
+			if _, exists := resourceData.GetOk(string(SubnetIds)); !exists {
 				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 						return err

@@ -197,7 +197,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:      schema.TypeString,
 			Optional:  true,
-			StateFunc: hexStateFunc,
+			StateFunc: HexStateFunc,
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -213,7 +213,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = string(decodedUserData)
 				}
 			}
-			if err := resourceData.Set(string(UserData), hexStateFunc(value)); err != nil {
+			if err := resourceData.Set(string(UserData), HexStateFunc(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserData), err)
 			}
 			return nil
@@ -357,7 +357,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
 
-func hexStateFunc(v interface{}) string {
+func HexStateFunc(v interface{}) string {
 	switch s := v.(type) {
 	case string:
 		hash := sha1.Sum([]byte(s))
