@@ -693,32 +693,32 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			var tagsSet *schema.Set = nil
-			var tagsToAdd []interface{} = nil
-
-			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
-				elastigroup.Compute.LaunchSpecification.Tags != nil {
-
-				tags := elastigroup.Compute.LaunchSpecification.Tags
-				tagsToAdd = make([]interface{}, 0, len(tags))
-				for _, tag := range tags {
-					tagToAdd := &aws.Tag{
-						Key:   tag.Key,
-						Value: tag.Value,
-					}
-					tagsToAdd = append(tagsToAdd, tagToAdd)
-				}
-
-				tagHashFunc := func(item interface{}) int {
-					tag := item.(*aws.Tag)
-					return hashcode.String(spotinst.StringValue(tag.Key) + spotinst.StringValue(tag.Value))
-				}
-				tagsSet = schema.NewSet(tagHashFunc, tagsToAdd)
-			}
-			if err := resourceData.Set(string(Tags), tagsSet); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
-			}
+			//elastigroup := resourceObject.(*aws.Group)
+			//var tagsSet *schema.Set = nil
+			//var tagsToAdd []interface{} = nil
+			//
+			//if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+			//	elastigroup.Compute.LaunchSpecification.Tags != nil {
+			//
+			//	tags := elastigroup.Compute.LaunchSpecification.Tags
+			//	tagsToAdd = make([]interface{}, 0, len(tags))
+			//	for _, tag := range tags {
+			//		tagToAdd := &aws.Tag{
+			//			Key:   tag.Key,
+			//			Value: tag.Value,
+			//		}
+			//		tagsToAdd = append(tagsToAdd, tagToAdd)
+			//	}
+			//
+			//	tagHashFunc := func(item interface{}) int {
+			//		tag := item.(*aws.Tag)
+			//		return hashcode.String(spotinst.StringValue(tag.Key) + spotinst.StringValue(tag.Value))
+			//	}
+			//	tagsSet = schema.NewSet(tagHashFunc, tagsToAdd)
+			//}
+			//if err := resourceData.Set(string(Tags), tagsSet); err != nil {
+			//	return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

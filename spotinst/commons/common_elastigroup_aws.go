@@ -25,6 +25,10 @@ type ElastigroupResource struct {
 	elastigroup *aws.Group
 }
 
+func (res *ElastigroupResource) nullifyGroup() {
+	res.elastigroup = nil
+}
+
 func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupResource {
 	return &ElastigroupResource{
 		GenericResource: GenericResource{
@@ -41,6 +45,11 @@ func (res *ElastigroupResource) OnCreate(
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
+
+	// This is important for Terraform tests which execute 'apply' on the same process thread
+	// We need to nullify the elastigroup to prevent update failure due to illegal fields being updated
+	log.Printf("onCreate() -> nullifing cached elastigroup object...")
+	res.nullifyGroup()
 
 	egGroup := res.GetElastigroup()
 	for _, field := range res.fields.fieldsMap {
@@ -62,6 +71,11 @@ func (res *ElastigroupResource) OnUpdate(
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
+
+	// This is important for Terraform tests which execute 'apply' on the same process thread
+	// We need to nullify the elastigroup to prevent update failure due to illegal fields being updated
+	log.Printf("onUpdate() -> nullifing cached elastigroup object...")
+	res.nullifyGroup()
 
 	var hasChanged = false
 	egGroup := res.GetElastigroup()

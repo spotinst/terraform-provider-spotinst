@@ -121,12 +121,14 @@ The following arguments are supported:
 * `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
 For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
 
-* `availability_zones` - (Optional) TBD
+* `availability_zones` - (Optional) List of Strings of availability zones.
 Note: When this parameter is set, `subnet_ids` should be left unused.
 
-* `region` - (Optional) TBD
-* `subnet_ids` - (Optional) A comma-separated list of subnet identifiers.
+* `subnet_ids` - (Optional) List of Strings of subnet identifiers.
 Note: When this parameter is set, `availability_zones` should be left unused.
+
+* `region` - (Optional) The AWS region your group will be created in.
+Note: This parameter is required if you specify subnets (through subnet_ids). This parameter is optional if you specify Availability Zones (through availability_zones).
 
 * `max_size` - (Optional; Required if using scaling policies) The maximum number of instances the group should have at any time.
 * `min_size` - (Optional; Required if using scaling policies) The minimum number of instances the group should have at any time.
@@ -139,8 +141,8 @@ Note: When this parameter is set, `availability_zones` should be left unused.
 * `key_name` - (Optional) The key name that should be used for the instance.
 * `enable_monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
 * `user_data` - (Optional) The user data to provide when launching the instance.
-* `ebs_optimized` - (Optional) TBD
-* `placement_tenancy` - (Optional) TBD
+* `ebs_optimized` - (Optional) Enable high bandwidth connectivity between instances and AWS’s Elastic Block Store (EBS). For instance types that are EBS-optimized by default this parameter will be ignored.
+* `placement_tenancy` - (Optional) Enable dedicated tenancy. Note: There is a flat hourly fee for each region in which dedicated tenancy is used.
 
 * `instance_types_ondemand` - (Required) The type of instance determines your instance's CPU capacity, memory and storage (e.g., m1.small, c1.xlarge).
 * `instance_types_spot` - (Required) One or more instance types.
@@ -149,17 +151,16 @@ Note: When this parameter is set, `availability_zones` should be left unused.
     * `weight` - (Required) Weight per instance type (Integer).
     * `instance_type` - (Required) Name of instance type (String).
 
-* `fallback_to_ondemand` - (Required) TBD
-* `orientation` - (Required, Default: `balanced`) TBD. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
+* `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.
+* `orientation` - (Required, Default: `balanced`) Select a prediction strategy. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
-* `lifetime_period` - (Optional) TBD
-* `utilize_reserved_instances` - (Optional) TBD
+* `utilize_reserved_instances` - (Optional) In a case of any available reserved instances, Elastigroup will utilize them first before purchasing Spot instances.
 
-* `health_check_type` - (Optional) TBD
-* `health_check_grace_period` - (Optional) TBD
-* `health_check_unhealthy_duration_before_replacement` - (Optional) TBD
+* `health_check_type` - (Optional) The service that will perform health checks for the instance. Valid values: `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`.
+* `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health.
+* `health_check_unhealthy_duration_before_replacement` - (Optional) The amount of time, in seconds, that we will wait before replacing an instance that is running and became unhealthy (this is only applicable for instances that were once healthy).
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
@@ -167,8 +168,8 @@ Note: When this parameter is set, `availability_zones` should be left unused.
 * `elastic_load_balancers` - (Optional) Registers each instance with the specified Elastic Load Balancers (ELB).
 * `target_group_arns` - (Optional) TBD
 * `multai_target_sets` - (Optional) TBD
-    * `target_set_id` - (Required) TBD
-    * `balancer_id` - (Required) TBD
+    * `target_set_id` - (Required) Your Multai target set ID.
+    * `balancer_id` - (Required) Your Multai balancer ID.
     
 * `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
     * `perform_at` - (Required) TBD
@@ -180,7 +181,7 @@ Note: When this parameter is set, `availability_zones` should be left unused.
 Each `signal` supports the following:
 
 * `name` - (Required) The name of the signal defined for the group. Valid Values: `"INSTANCE_READY"`, `"INSTANCE_READY_TO_SHUTDOWN"`
-* `timeout` - (Optional) TBD
+* `timeout` - (Optional) The signals defined timeout- default is 40 minutes (1800 seconds).
 
 <a id="scheduled-task"></a>
 ## Scheduled Tasks
@@ -189,17 +190,15 @@ Each `scheduled_task` supports the following:
 
 * `task_type` - (Required) The task type to run. Supported task types are: `"scale"`, `"backup_ami"`, `"roll"`, `"scaleUp"`, `"percentageScaleUp"`, `"scaleDown"`, `"percentageScaleDown"`, `"statefulUpdateCapacity"`.
 * `cron_expression` - (Optional; Required if not using `frequency`) A valid cron expression. The cron is running in UTC time zone and is in [Unix cron format](https://en.wikipedia.org/wiki/Cron).
-* `start_time` - (Optional; TBD
+* `start_time` - (Optional; Format: ISO 8601) Set a start time for one time tasks.
 * `frequency` - (Optional; Required if not using `cron_expression`) The recurrence frequency to run this task. Supported values are `"hourly"`, `"daily"`, `"weekly"` and `"continuous"`.
 * `scale_target_capacity` - (Optional) The desired number of instances the group should have.
 * `scale_min_capacity` - (Optional) The minimum number of instances the group should have.
 * `scale_max_capacity` - (Optional) The maximum number of instances the group should have.
-* `is_enabled` - (Optional, Default: `false`) TBD
-* `batch_size_percentage` - (Optional) TBD
-* `grace_period` - (Optional) TBD
-* `target_capacity` - (Optional) TBD
-* `min_capacity` - (Optional) TBD
-* `max_capacity` - (Optional) TBD
+* `is_enabled` - (Optional, Default: `false`) Setting the task to being enabled or disabled. Valid values: true, false.
+* `target_capacity` - (Optional; Only valid for statefulUpdateCapacity) The desired number of instances the group should have.
+* `min_capacity` - (Optional; Only valid for statefulUpdateCapacity) The minimum number of instances the group should have.
+* `max_capacity` - (Optional; Only valid for statefulUpdateCapacity) The maximum number of instances the group should have.
 
 <a id="scaling-policy"></a>
 ## Scaling Policies
@@ -216,7 +215,7 @@ Each `scaling_*_policy` supports the following:
 * `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
 * `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
 * `dimensions` - (Optional) A mapping of dimensions describing qualities of the metric.
-* `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) TBD
+* `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) The operator to use in order to determine if the scaling policy is applicable. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
 * `source` - (Optional) TBD
 
 * `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
@@ -317,50 +316,50 @@ For more information on instance persistence please see: [Stateful configuration
     * `cluster_name` - (Required) The name of the EC2 Container Service cluster.
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
-    * `autoscale_headroom` - (Optional) TBD
-        * `cpu_per_unit` - (Optional, Default: `0`) TBD
-        * `memory_per_unit` - (Optional, Default: `0`) TBD
-        * `num_of_units` - (Optional, Default: `0`) TBD
-    * `autoscale_down` - (Optional) TBD
-        * `evaluation_periods` - (Optional, Default: `5`) TBD
+    * `autoscale_headroom` - (Optional) Headroom for the cluster.
+        * `cpu_per_unit` - (Optional, Default: `0`) Cpu units for compute.
+        * `memory_per_unit` - (Optional, Default: `0`) RAM units for compute.
+        * `num_of_units` - (Optional, Default: `0`) Amount of units for compute.
+    * `autoscale_down` - (Optional) Enabling scale down.
+        * `evaluation_periods` - (Optional, Default: `5`) Amount of cooldown evaluation periods for scale down.
 
 * `integration_codedeploy` - (Optional) Describes the [Code Deploy](https://aws.amazon.com/documentation/codedeploy/?id=docs_gateway) integration.
 
-    * `cleanup_on_failure` - (Optional) TBD
-    * `terminate_instance_on_failure` - (Optional) TBD
-    * `deployment_groups` - (Optional) TBD
-        * `application_name` - (Optional) TBD
-        * `deployment_group_name` - (Optional) TBD
+    * `cleanup_on_failure` - (Optional) Cleanup automatically after a failed deploy.
+    * `terminate_instance_on_failure` - (Optional) Terminate the instance automatically after a failed deploy.
+    * `deployment_groups` - (Optional) Specify the deployment groups details.
+        * `application_name` - (Optional) The application name.
+        * `deployment_group_name` - (Optional) The deployment group name.
 
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
 
     * `integration_mode` - (Required) Valid values: `"saas"`, `"pod"`.
     * `cluster_identifier` - (Required; if using integration_mode as pod)
     * `api_server` - (Required; if using integration_mode as saas)
-    * `token` - (Required; if using integration_mode as saas) TBD
+    * `token` - (Required; if using integration_mode as saas) Kubernetes Token
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
-    * `autoscale_is_auto_config` - (Optional, Default: `false`) TBD
+    * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic k8s auto-scaler functionality. For more information please see: [Kubernetes auto scaler](https://help.spotinst.com/hc/en-us/articles/360000280405-Kubernetes-Event-Based-Auto-Scaler-).
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
-    * `autoscale_headroom` - (Optional) TBD
-        * `cpu_per_unit` - (Optional, Default: `0`) TBD
-        * `memory_per_unit` - (Optional, Default: `0`) TBD
-        * `num_of_units` - (Optional, Default: `0`) TBD
-    * `autoscale_down` - (Optional) TBD
-        * `evaluation_periods` - (Optional, Default: `5`) TBD
+    * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
+        * `cpu_per_unit` - (Optional, Default: `0`) How much CPU to allocate for headroom unit.
+        * `memory_per_unit` - (Optional, Default: `0`) How much Memory allocate for headroom unit.
+        * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
+    * `autoscale_down` - (Optional) Setting for scale down actions.
+        * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
  
  * `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
  
      * `master_host` - (Required) TBD
      * `master_port` - (Required) TBD
-     * `acl_token` - (Required) TBD
+     * `acl_token` - (Required) Nomad ACL Token
      * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
      * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
-     * `autoscale_headroom` - (Optional) TBD
-         * `cpu_per_unit` - (Optional, Default: `0`) TBD
-         * `memory_per_unit` - (Optional, Default: `0`) TBD
-         * `num_of_units` - (Optional, Default: `0`) TBD
-     * `autoscale_down` - (Optional) TBD
-         * `evaluation_periods` - (Optional, Default: `5`) TBD
+     * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
+         * `cpu_per_unit` - (Optional, Default: `0`) How much CPU (MHz) to allocate for headroom unit.
+         * `memory_per_unit` - (Optional, Default: `0`) How much Memory allocate for headroom unit.
+         * `num_of_units` - (Optional, Default: `0`) How many units of headroom to allocate.
+     * `autoscale_down` - (Optional) Settings for scale down actions.
+         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
          
  * `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
  
@@ -373,13 +372,13 @@ For more information on instance persistence please see: [Stateful configuration
 <a id="update-policy"></a>
 ## Update Policy
 
-* `update_policy` - (Optional) TBD
-    * `should_resume_stateful` - (Required) TBD
-    * `should_roll` - (Required) TBD
-    * `roll_config` - (Required) TBD
-        * `batch_size_percentage` - (Required) TBD
-        * `health_check_type` - (Optional) TBD
-        * `grace_period` - (Optional) TBD
+* `update_policy` - (Optional)
+    * `should_resume_stateful` - (Required) This will apply resuming action for Stateful instances in the Elastigroup upon scale up or capacity changes. Example usage will be for Elastigroups that will have scheduling rules to set a target capacity of 0 instances in the night and automatically restore the same state of the instances in the morning.
+    * `should_roll` - (Required) Sets the enablement of the roll option.
+    * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
+        * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
+        * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"K8S_NODE"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"MLB"`, `"MLB_RUNTIME"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`, `"NOMAD_NODE"`.
+        * `grace_period` - (Optional) Sets the grace period for new instances to become healthy.
        
 ## Attributes Reference
 

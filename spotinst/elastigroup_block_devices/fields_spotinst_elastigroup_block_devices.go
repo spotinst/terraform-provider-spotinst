@@ -3,7 +3,6 @@ package elastigroup_block_devices
 import (
 	"bytes"
 	"fmt"
-	"log"
 
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"

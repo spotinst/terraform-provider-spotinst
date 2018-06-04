@@ -25,6 +25,10 @@ type SubscriptionResource struct {
 	subscription *subscription.Subscription
 }
 
+func (res *SubscriptionResource) nullifySubscription() {
+	res.subscription = nil
+}
+
 func NewSubscriptionResource(
 	fieldsMap map[FieldName]*GenericField) *SubscriptionResource {
 
@@ -43,6 +47,11 @@ func (res *SubscriptionResource) OnCreate(
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
+
+	// This is important for Terraform tests which execute 'apply' on the same process thread
+	// We need to nullify the subscription to prevent update failure due to illegal fields being updated
+	log.Printf("onCreate() -> nullifing cached subscription object...")
+	res.nullifySubscription()
 
 	egGroup := res.GetSubscription()
 	for _, field := range res.fields.fieldsMap {
@@ -64,6 +73,11 @@ func (res *SubscriptionResource) OnUpdate(
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
+
+	// This is important for Terraform tests which execute 'apply' on the same process thread
+	// We need to nullify the subscription to prevent update failure due to illegal fields being updated
+	log.Printf("onUpdate() -> nullifing cached subscription object...")
+	res.nullifySubscription()
 
 	var hasChanged = false
 	egGroup := res.GetSubscription()

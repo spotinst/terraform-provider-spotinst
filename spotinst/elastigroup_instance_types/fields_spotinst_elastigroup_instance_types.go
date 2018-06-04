@@ -3,12 +3,10 @@ package elastigroup_instance_types
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
@@ -200,7 +198,7 @@ func expandAWSGroupInstanceTypeWeights(data interface{}) ([]*aws.InstanceTypeWei
 		instanceWeight := &aws.InstanceTypeWeight{}
 		instanceWeight.SetInstanceType(spotinst.String(attr[string(InstanceType)].(string)))
 		instanceWeight.SetWeight(spotinst.Int(attr[string(Weight)].(int)))
-		log.Printf("Group instance type weight configuration: %s", stringutil.Stringify(instanceWeight))
+		//log.Printf("Group instance type weight configuration: %s", stringutil.Stringify(instanceWeight))
 		weights = append(weights, instanceWeight)
 	}
 	return weights, nil
