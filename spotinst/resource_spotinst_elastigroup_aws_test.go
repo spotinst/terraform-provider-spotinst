@@ -446,6 +446,346 @@ const testStrategyGroupConfig_Update = `
 
 // endregion
 
+// region Elastigroup: Load Balancers
+func TestElastigroupLoadBalancers(t *testing.T) {
+	groupName := "eg-load-balancers"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testLoadBalancersGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.0", "bal1"),
+					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.1", "bal2"),
+					resource.TestCheckResourceAttr(resourceName, "target_group_arns.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "target_group_arns.0", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.2753680074.target_set_id", "ts-123"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.2753680074.balancer_id", "bal-123"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.979814926.target_set_id", "ts-234"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.979814926.balancer_id", "bal-234"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testLoadBalancersGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.0", "bal1"),
+					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.1", "bal3"),
+					resource.TestCheckResourceAttr(resourceName, "target_group_arns.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "target_group_arns.0", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
+					resource.TestCheckResourceAttr(resourceName, "target_group_arns.1", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testNewTargetGroup/1234567890123456"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.2753680074.target_set_id", "ts-123"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.2753680074.balancer_id", "bal-123"),
+				),
+			},
+		},
+	})
+}
+
+const testLoadBalancersGroupConfig_Create = `
+ // --- LOAD BALANCERS --------------------
+ elastic_load_balancers = ["bal1", "bal2"]
+ target_group_arns = ["arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"]
+ multai_target_sets = [{
+    target_set_id = "ts-123",
+    balancer_id = "bal-123"
+  },
+  {
+    target_set_id = "ts-234",
+    balancer_id = "bal-234"
+  }]
+ // ---------------------------------------
+`
+
+const testLoadBalancersGroupConfig_Update = `
+ // --- LOAD BALANCERS --------------------
+ elastic_load_balancers = ["bal1", "bal3"]
+ target_group_arns = ["arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testNewTargetGroup/1234567890123456"]
+ multai_target_sets = [{
+    target_set_id = "ts-123",
+    balancer_id = "bal-123"
+  }]
+ // ---------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Health Checks
+func TestElastigroupHealthChecks(t *testing.T) {
+	groupName := "eg-health-checks"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testHealthChecksGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "health_check_type", "ELB"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_grace_period", "100"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement", "60"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testHealthChecksGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "health_check_type", "TARGET_GROUP"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_grace_period", "50"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement", "120"),
+				),
+			},
+		},
+	})
+}
+
+const testHealthChecksGroupConfig_Create = `
+ // --- HEALTH-CHECKS ------------------------------------
+ health_check_type = "ELB" 
+ health_check_grace_period = 100
+ health_check_unhealthy_duration_before_replacement = 60
+ // ------------------------------------------------------
+`
+
+const testHealthChecksGroupConfig_Update = `
+ // --- HEALTH-CHECKS ------------------------------------
+ health_check_type = "TARGET_GROUP" 
+ health_check_grace_period = 50
+ health_check_unhealthy_duration_before_replacement = 120
+ // ------------------------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Elastic IPs
+func TestElastigroupElasticIPs(t *testing.T) {
+	groupName := "eg-elastic-ips"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testElasticIPsGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ips.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ips.0", "eipalloc-123456"),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ips.1", "eipalloc-987654"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testElasticIPsGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ips.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ips.0", "eipalloc-123456"),
+				),
+			},
+		},
+	})
+}
+
+const testElasticIPsGroupConfig_Create = `
+ // --- ELASTIC IPs --------------------------------------
+  elastic_ips = ["eipalloc-123456", "eipalloc-987654"]
+  // ------------------------------------------------------
+`
+
+const testElasticIPsGroupConfig_Update = `
+ // --- ELASTIC IPs --------------------------------------
+  elastic_ips = ["eipalloc-123456"]
+  // ------------------------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Subnet Ids
+func TestElastigroupSubnetIDs(t *testing.T) {
+	groupName := "eg-subnet-ids"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testSubnetIDsGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-west-1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "sub-123"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "sub-456"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testSubnetIDsGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "sub-123"),
+				),
+			},
+		},
+	})
+}
+
+const testSubnetIDsGroupConfig_Create = `
+ // --- SUBNET IDS -------------------
+ region      = "us-west-1"
+ subnet_ids  = ["sub-123", "sub-456"]
+ // ----------------------------------
+`
+
+const testSubnetIDsGroupConfig_Update = `
+ // --- SUBNET IDS -------------------
+ region      = "us-west-2"
+ subnet_ids  = ["sub-123"]
+ // ----------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Signals
+func TestElastigroupSignals(t *testing.T) {
+	groupName := "eg-signals"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testSignalsGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "signal.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.name", "INSTANCE_READY_TO_SHUTDOWN"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.timeout", "100"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testSignalsGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "signal.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.name", "INSTANCE_READY_TO_SHUTDOWN"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.timeout", "100"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1.name", "INSTANCE_READY"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1.timeout", "200"),
+				),
+			},
+		},
+	})
+}
+
+const testSignalsGroupConfig_Create = `
+ // --- SIGNAL -----
+  signal = {
+    name = "INSTANCE_READY_TO_SHUTDOWN"
+    timeout = 100
+  }
+  // ----------------
+`
+
+const testSignalsGroupConfig_Update = `
+ // --- SIGNAL -----
+  signal = [{
+    name = "INSTANCE_READY_TO_SHUTDOWN"
+    timeout = 100
+  },
+  {
+    name = "INSTANCE_READY"
+    timeout = 200
+  }]
+  // ----------------
+`
+
+// endregion
+
 // region Elastigroup: Network Interfaces
 func TestElastigroupNetworkInterfaces(t *testing.T) {
 	groupName := "eg-network-interfaces"
@@ -577,39 +917,39 @@ func TestElastigroupScaleUpPolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.target", ""),
 				),
 			},
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName:      groupName,
-					fieldsToAppend: testScaleUpPolicyGroupConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupExists(&group, resourceName),
-					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.policy_name", "policy-name-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.source", "spectrum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.unit", "bytes"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.cooldown", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.value", "value-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.threshold", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.operator", "lt"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.evaluation_periods", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.period", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.action_type", "adjustment"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.adjustment", "MAX(5,10)"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.min_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.max_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.maximum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.minimum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.target", ""),
-				),
-			},
+			//{
+			//	ResourceName: resourceName,
+			//	Config: createElastigroupTerraform(&GroupConfigMetadata{
+			//		groupName:      groupName,
+			//		fieldsToAppend: testScaleUpPolicyGroupConfig_Update,
+			//	}),
+			//	Check: resource.ComposeTestCheckFunc(
+			//		testCheckElastigroupExists(&group, resourceName),
+			//		testCheckElastigroupAttributes(&group, groupName),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.policy_name", "policy-name-update"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.metric_name", "CPUUtilization"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.namespace", "AWS/EC2"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.source", "spectrum"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.statistic", "sum"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.unit", "bytes"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.cooldown", "120"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.%", "2"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.name", "name-1-update"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.value", "value-1-update"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.threshold", "5"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.operator", "lt"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.evaluation_periods", "5"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.period", "120"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.action_type", "adjustment"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.adjustment", "MAX(5,10)"),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.min_target_capacity", ""),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.max_target_capacity", ""),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.maximum", ""),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.minimum", ""),
+			//		resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.target", ""),
+			//	),
+			//},
 		},
 	})
 }
