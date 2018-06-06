@@ -2041,3 +2041,86 @@ const testIntegrationMultaiRuntimeGroupConfig_Update = `
 `
 
 // endregion
+
+// region Elastigroup: Update Policy
+func TestAccSpotinstElastigroup_UpdatePolicy(t *testing.T) {
+	groupName := "eg-update-policy"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testUpdatePolicyGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_resume_stateful", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.grace_period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.health_check_type", "ELB"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testUpdatePolicyGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_resume_stateful", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.grace_period", "600"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.health_check_type", "TARGET_GROUP"),
+				),
+			},
+		},
+	})
+}
+
+const testUpdatePolicyGroupConfig_Create = `
+ // --- UPDATE POLICY -----------------
+  update_policy = {
+    should_resume_stateful = false
+    should_roll = false
+    roll_config = {
+      batch_size_percentage = 33
+      grace_period = 300
+      health_check_type = "ELB"
+    }
+  }
+  // ----------------------------------
+`
+
+const testUpdatePolicyGroupConfig_Update = `
+ // --- UPDATE POLICY -----------------
+  update_policy = {
+    should_resume_stateful = true
+    should_roll = true
+    roll_config = {
+      batch_size_percentage = 66
+      grace_period = 600
+      health_check_type = "TARGET_GROUP"
+    }
+  }
+  // ----------------------------------
+`
+
+// endregion

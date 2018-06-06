@@ -932,8 +932,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWS,
 		UpdatePolicy,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
+			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(ShouldResumeStateful): &schema.Schema{
@@ -947,7 +948,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(RollConfig): &schema.Schema{
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
