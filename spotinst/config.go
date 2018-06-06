@@ -67,7 +67,7 @@ func (c *Config) Client() (*Client, error) {
 	creds := credentials.NewChainCredentials(providers...)
 
 	if _, err := creds.Get(); err != nil {
-		stdlog.Printf("failed to instantiate Spotinst client: %v", err)
+		stdlog.Printf("[ERROR] Failed to instantiate Spotinst client: %v", err)
 		return nil, ErrNoValidCredentials
 	}
 	config.WithCredentials(creds)

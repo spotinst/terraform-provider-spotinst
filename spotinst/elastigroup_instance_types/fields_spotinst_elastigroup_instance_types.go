@@ -189,11 +189,11 @@ func expandAWSGroupInstanceTypeWeights(data interface{}) ([]*aws.InstanceTypeWei
 			continue
 		}
 		if _, ok := attr[string(InstanceType)]; !ok {
-			return nil, errors.New("invalid instance type weight: instance_type missing")
+			return nil, errors.New("[ERROR] Invalid instance type weight: instance_type missing")
 		}
 
 		if _, ok := attr[string(Weight)]; !ok {
-			return nil, errors.New("invalid instance type weight: weight missing")
+			return nil, errors.New("[ERROR] Invalid instance type weight: weight missing")
 		}
 		instanceWeight := &aws.InstanceTypeWeight{}
 		instanceWeight.SetInstanceType(spotinst.String(attr[string(InstanceType)].(string)))

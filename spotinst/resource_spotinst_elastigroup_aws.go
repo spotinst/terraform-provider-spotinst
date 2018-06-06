@@ -69,7 +69,7 @@ func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, met
 
 	input := &aws.DeleteGroupInput{GroupID: spotinst.String(id)}
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("failed to delete group: %s", err)
+		return fmt.Errorf("[ERROR] Failed to delete group: %s", err)
 	}
 
 	log.Printf("===> Elastigroup Deleted Successfully: %s <===", resourceData.Id())
@@ -239,7 +239,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 	}
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Update(context.Background(), input); err != nil {
-		return fmt.Errorf("failed to update group [%v]: %v", groupId, err)
+		return fmt.Errorf("[ERROR] Failed to update group [%v]: %v", groupId, err)
 	} else if shouldRoll {
 		if err := rollGroup(resourceData, meta); err != nil {
 			log.Printf("[ERROR] Group [%v] roll failed, error: %v", groupId, err)
