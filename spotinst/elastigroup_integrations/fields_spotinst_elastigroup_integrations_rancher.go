@@ -97,20 +97,22 @@ func flattenAWSGroupRancherIntegration(integration *aws.RancherIntegration) []in
 }
 
 func expandAWSGroupRancherIntegration(data interface{}) (*aws.RancherIntegration, error) {
+	integration := &aws.RancherIntegration{}
 	list := data.([]interface{})
-	m := list[0].(map[string]interface{})
-	i := &aws.RancherIntegration{}
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(MasterHost)].(string); ok && v != "" {
-		i.SetMasterHost(spotinst.String(v))
-	}
+		if v, ok := m[string(MasterHost)].(string); ok && v != "" {
+			integration.SetMasterHost(spotinst.String(v))
+		}
 
-	if v, ok := m[string(AccessKey)].(string); ok && v != "" {
-		i.SetAccessKey(spotinst.String(v))
-	}
+		if v, ok := m[string(AccessKey)].(string); ok && v != "" {
+			integration.SetAccessKey(spotinst.String(v))
+		}
 
-	if v, ok := m[string(SecretKey)].(string); ok && v != "" {
-		i.SetSecretKey(spotinst.String(v))
+		if v, ok := m[string(SecretKey)].(string); ok && v != "" {
+			integration.SetSecretKey(spotinst.String(v))
+		}
 	}
-	return i, nil
+	return integration, nil
 }

@@ -166,14 +166,14 @@ Note: This parameter is required if you specify subnets (through subnet_ids). Th
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
 
 * `elastic_load_balancers` - (Optional) Registers each instance with the specified Elastic Load Balancers (ELB).
-* `target_group_arns` - (Optional) TBD
-* `multai_target_sets` - (Optional) TBD
-    * `target_set_id` - (Required) Your Multai target set ID.
-    * `balancer_id` - (Required) Your Multai balancer ID.
+* `target_group_arns` - (Optional) List of Target Group ARNs to register the instances to.
+* `multai_target_sets` - (Optional) Set of targets to register. 
+    * `target_set_id` - (Required) ID of Multai target set.
+    * `balancer_id` - (Required) ID of Multai Load Balancer.
     
 * `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
-    * `perform_at` - (Required) TBD
-    * `time_windows` - (Optional) TBD
+    * `perform_at` - (Required) In the event of a fallback to On-Demand instances, select the time period to revert back to Spot. Supported Arguments – always (default), timeWindow, never. For timeWindow or never to be valid the group must have availabilityOriented OR persistence defined.
+    * `time_windows` - (Optional) Specify a list of time windows for to execute revertToSpot strategy. Time window format: `ddd:hh:mm-ddd:hh:mm`. Example: `Mon:03:00-Wed:02:30`
 
 <a id="signal"></a>
 ## Signals
@@ -216,7 +216,7 @@ Each `scaling_*_policy` supports the following:
 * `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
 * `dimensions` - (Optional) A mapping of dimensions describing qualities of the metric.
 * `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) The operator to use in order to determine if the scaling policy is applicable. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
-* `source` - (Optional) TBD
+* `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
 
 * `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
 
@@ -307,10 +307,6 @@ For more information on instance persistence please see: [Stateful configuration
     * `access_key` - (Required) The access key of the Rancher API.
     * `secret_key` - (Required) The secret key of the Rancher API.
 
-* `elastic_beanstalk_integration` - (Optional) Describes the [Elastic Beanstalk](https://aws.amazon.com/documentation/elastic-beanstalk/?id=docs_gateway) integration.
-
-    * `environment_id` - (Required) The ID of the Elastic Beanstalk environment.
-
 * `integration_ecs` - (Optional) Describes the [EC2 Container Service](https://aws.amazon.com/documentation/ecs/?id=docs_gateway) integration.
 
     * `cluster_name` - (Required) The name of the EC2 Container Service cluster.
@@ -363,11 +359,11 @@ For more information on instance persistence please see: [Stateful configuration
          
  * `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
  
-     * `api_server` - (Optional) TBD
+     * `api_server` - (Optional) The public IP of the DC/OS Master. 
 
  * `integration_multai_runtime` - (Optional) Describes the [Multai Runtime](https://spotinst.com/) integration.
  
-     * `deployment_id` - (Optional) TBD
+     * `deployment_id` - (Optional) The deployment id you want to get
      
 <a id="update-policy"></a>
 ## Update Policy

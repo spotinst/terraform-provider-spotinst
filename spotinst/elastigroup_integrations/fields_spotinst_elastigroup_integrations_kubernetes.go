@@ -131,45 +131,48 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesIntegration, error) {
+	integration := &aws.KubernetesIntegration{}
 	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return integration, nil
+	}
 	m := list[0].(map[string]interface{})
-	i := &aws.KubernetesIntegration{}
 
 	if v, ok := m[string(IntegrationMode)].(string); ok && v != "" {
-		i.SetIntegrationMode(spotinst.String(v))
+		integration.SetIntegrationMode(spotinst.String(v))
 	}
 
 	if v, ok := m[string(ClusterIdentifier)].(string); ok && v != "" {
-		i.SetClusterIdentifier(spotinst.String(v))
+		integration.SetClusterIdentifier(spotinst.String(v))
 	}
 
 	if v, ok := m[string(ApiServer)].(string); ok && v != "" {
-		i.SetServer(spotinst.String(v))
+		integration.SetServer(spotinst.String(v))
 	}
 
 	if v, ok := m[string(Token)].(string); ok && v != "" {
-		i.SetToken(spotinst.String(v))
+		integration.SetToken(spotinst.String(v))
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if i.AutoScale == nil {
-			i.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScale{})
 		}
-		i.AutoScale.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if i.AutoScale == nil {
-			i.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScale{})
 		}
-		i.AutoScale.SetCooldown(spotinst.Int(v))
+		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleIsAutoConfig)].(bool); ok {
-		if i.AutoScale == nil {
-			i.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScale{})
 		}
-		i.AutoScale.SetIsAutoConfig(spotinst.Bool(v))
+		integration.AutoScale.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -178,10 +181,10 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			return nil, err
 		}
 		if headroom != nil {
-			if i.AutoScale == nil {
-				i.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScale{})
 			}
-			i.AutoScale.SetHeadroom(headroom)
+			integration.AutoScale.SetHeadroom(headroom)
 		}
 	}
 
@@ -191,11 +194,11 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			return nil, err
 		}
 		if down != nil {
-			if i.AutoScale == nil {
-				i.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScale{})
 			}
-			i.AutoScale.SetDown(down)
+			integration.AutoScale.SetDown(down)
 		}
 	}
-	return i, nil
+	return integration, nil
 }

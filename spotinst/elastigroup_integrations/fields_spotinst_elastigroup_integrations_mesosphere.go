@@ -79,14 +79,16 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupMesosphereIntegration(data interface{}) (*aws.MesosphereIntegration, error) {
+	integration := &aws.MesosphereIntegration{}
 	list := data.([]interface{})
-	m := list[0].(map[string]interface{})
-	i := &aws.MesosphereIntegration{}
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(ApiServer)].(string); ok && v != "" {
-		i.SetServer(spotinst.String(v))
+		if v, ok := m[string(ApiServer)].(string); ok && v != "" {
+			integration.SetServer(spotinst.String(v))
+		}
 	}
-	return i, nil
+	return integration, nil
 }
 
 func flattenAWSGroupMesosphereIntegration(integration *aws.MesosphereIntegration) []interface{} {

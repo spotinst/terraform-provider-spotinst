@@ -30,11 +30,6 @@ const (
 	SecretKey          commons.FieldName = "secret_key"
 	// -----------------------------------
 
-	// - BEANSTALK -----------------------
-	IntegrationElasticBeanstalk commons.FieldName = "elastic_beanstalk_integration"
-	EnvironmentId               commons.FieldName = "environment_id"
-	// -----------------------------------
-
 	// - ECS -----------------------------
 	IntegrationEcs commons.FieldName = "integration_ecs"
 	ClusterName    commons.FieldName = "cluster_name"

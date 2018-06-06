@@ -117,7 +117,7 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 }
 
 // region Elastigroup: Baseline
-func TestElastigroupBaseline(t *testing.T) {
+func TestAccSpotinstElastigroup_Baseline(t *testing.T) {
 	groupName := "eg-baseline"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -205,7 +205,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 // endregion
 
 // region Elastigroup: Instance Types
-func TestElastigroupInstanceTypes(t *testing.T) {
+func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 	groupName := "eg-instance-types"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -288,7 +288,7 @@ const testInstanceTypesGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Launch Configuration
-func TestElastigroupLaunchConfiguration(t *testing.T) {
+func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 	groupName := "eg-launch-configuration"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -309,7 +309,7 @@ func TestElastigroupLaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-a27d8fda"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
@@ -328,7 +328,7 @@ func TestElastigroupLaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-a27d8fda"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
@@ -345,7 +345,7 @@ func TestElastigroupLaunchConfiguration(t *testing.T) {
 
 const testLaunchConfigurationGroupConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
- image_id             = "ami-a27d8fda"
+ image_id             = "ami-e251209a"
  iam_instance_profile = "iam-profile"
  key_name             = "my-key.ssh"
  security_groups      = ["sg-123456"]
@@ -358,7 +358,7 @@ const testLaunchConfigurationGroupConfig_Create = `
 
 const testLaunchConfigurationGroupConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
- image_id             = "ami-a27d8fda"
+ image_id             = "ami-31394949"
  iam_instance_profile = "iam-profile updated"
  key_name             = "my-key-updated.ssh"
  security_groups      = ["sg-123456", "sg-987654"]
@@ -372,7 +372,7 @@ const testLaunchConfigurationGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Strategy
-func TestElastigroupStrategy(t *testing.T) {
+func TestAccSpotinstElastigroup_Strategy(t *testing.T) {
 	groupName := "eg-strategy"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -447,7 +447,7 @@ const testStrategyGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Load Balancers
-func TestElastigroupLoadBalancers(t *testing.T) {
+func TestAccSpotinstElastigroup_LoadBalancers(t *testing.T) {
 	groupName := "eg-load-balancers"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -533,7 +533,7 @@ const testLoadBalancersGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Health Checks
-func TestElastigroupHealthChecks(t *testing.T) {
+func TestAccSpotinstElastigroup_HealthChecks(t *testing.T) {
 	groupName := "eg-health-checks"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -596,7 +596,7 @@ const testHealthChecksGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Elastic IPs
-func TestElastigroupElasticIPs(t *testing.T) {
+func TestAccSpotinstElastigroup_ElasticIPs(t *testing.T) {
 	groupName := "eg-elastic-ips"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -654,7 +654,7 @@ const testElasticIPsGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Subnet Ids
-func TestElastigroupSubnetIDs(t *testing.T) {
+func TestAccSpotinstElastigroup_SubnetIDs(t *testing.T) {
 	groupName := "eg-subnet-ids"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -716,7 +716,7 @@ const testSubnetIDsGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Signals
-func TestElastigroupSignals(t *testing.T) {
+func TestAccSpotinstElastigroup_Signals(t *testing.T) {
 	groupName := "eg-signals"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -738,8 +738,8 @@ func TestElastigroupSignals(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "signal.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "signal.0.name", "INSTANCE_READY_TO_SHUTDOWN"),
-					resource.TestCheckResourceAttr(resourceName, "signal.0.timeout", "100"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.name", "INSTANCE_READY_TO_SHUTDOWN"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.timeout", "100"),
 				),
 			},
 			{
@@ -752,10 +752,10 @@ func TestElastigroupSignals(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "signal.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "signal.0.name", "INSTANCE_READY_TO_SHUTDOWN"),
-					resource.TestCheckResourceAttr(resourceName, "signal.0.timeout", "100"),
-					resource.TestCheckResourceAttr(resourceName, "signal.1.name", "INSTANCE_READY"),
-					resource.TestCheckResourceAttr(resourceName, "signal.1.timeout", "200"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.name", "INSTANCE_READY_TO_SHUTDOWN"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.timeout", "100"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1735739494.name", "INSTANCE_READY"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1735739494t.timeout", "200"),
 				),
 			},
 		},
@@ -786,8 +786,71 @@ const testSignalsGroupConfig_Update = `
 
 // endregion
 
+// region Elastigroup: Revert To Spot (Maintenance Window)
+func TestAccSpotinstElastigroup_RevertToSpot(t *testing.T) {
+	groupName := "eg-revert-to-spot"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testRevertToSpotGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_spot.0.perform_at", "always"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testRevertToSpotGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_spot.0.perform_at", "timeWindow"),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_spot.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_spot.0.time_windows.0", "Mon:12:00-Tue:12:00"),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_spot.0.time_windows.1", "Fri:12:00-Sat:12:00"),
+				),
+			},
+		},
+	})
+}
+
+const testRevertToSpotGroupConfig_Create = `
+ // --- REVERT TO SPOT -------------------------------------------
+ revert_to_spot {
+  perform_at    = "always"
+ }
+ // -------------------------------------------------------------
+`
+
+const testRevertToSpotGroupConfig_Update = `
+ // --- REVERT TO SPOT -------------------------------------------
+ revert_to_spot {
+  perform_at    = "timeWindow"
+  time_windows  = ["Mon:12:00-Tue:12:00", "Fri:12:00-Sat:12:00"]
+ }
+ // -------------------------------------------------------------
+`
+
+// endregion
+
 // region Elastigroup: Network Interfaces
-func TestElastigroupNetworkInterfaces(t *testing.T) {
+func TestAccSpotinstElastigroup_NetworkInterfaces(t *testing.T) {
 	groupName := "eg-network-interfaces"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -872,7 +935,7 @@ const testNetworkInterfacesGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Scaling Policies
-func TestElastigroupScaleUpPolicy(t *testing.T) {
+func TestAccSpotinstElastigroup_ScaleUpPolicy(t *testing.T) {
 	groupName := "eg-scale-up-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -1041,7 +1104,7 @@ const testScaleUpPolicyGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Scheduled Tasks
-func TestElastigroupScheduledTask(t *testing.T) {
+func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 	groupName := "eg-scheduled-task"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -1132,7 +1195,7 @@ const testScheduledTaskGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Stateful
-func TestElastigroupStateful(t *testing.T) {
+func TestAccSpotinstElastigroup_Stateful(t *testing.T) {
 	groupName := "eg-stateful"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -1206,7 +1269,7 @@ const testStatefulGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Block Devices
-func TestElastigroupBlockDevices(t *testing.T) {
+func TestAccSpotinstElastigroup_BlockDevices(t *testing.T) {
 	groupName := "eg-block-devices"
 	resourceName := createElastigroupResourceName(groupName)
 
@@ -1317,6 +1380,664 @@ const testElastigroupBlockDevices_Update = `
   virtual_name = "ephemeral1"
  }]
  // -------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Tags
+func TestAccSpotinstElastigroup_Tags(t *testing.T) {
+	groupName := "eg-tags"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testTagsGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2594194374.key", "explicit1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2594194374.value", "value1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2281712832.key", "explicit2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2281712832.value", "value2"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testTagsGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2916442246.key", "explicit1-update"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2916442246.value", "value1-update"),
+				),
+			},
+		},
+	})
+}
+
+const testTagsGroupConfig_Create = `
+ // --- TAGS ---------
+  tags = [
+   {
+     key = "explicit1"
+     value = "value1"
+   },
+   {
+     key = "explicit2"
+     value = "value2"
+   }
+ ]
+ // ------------------
+`
+
+const testTagsGroupConfig_Update = `
+ // --- TAGS ---------
+  tags = [
+   {
+     key = "explicit1-update"
+     value = "value1-update"
+   }
+ ]
+ // ------------------
+`
+
+// endregion
+
+// region Elastigroup: Rancher Integration
+func TestAccSpotinstElastigroup_IntegrationRancher(t *testing.T) {
+	groupName := "eg-integration-rancher"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRancherGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.master_host", "master-host"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.access_key", "access-key"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.secret_key", "secret-key"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRancherGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.master_host", "master-host-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.access_key", "access-key-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.secret_key", "secret-key-update"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationRancherGroupConfig_Create = `
+// --- INTEGRATION: RANCHER ---
+integration_rancher = {
+   master_host = "master-host"
+   access_key = "access-key"
+   secret_key = "secret-key"
+}
+// ----------------------------
+`
+
+const testIntegrationRancherGroupConfig_Update = `
+ // --- INTEGRATION: RANCHER ---
+ integration_rancher = {
+    master_host = "master-host-update"
+    access_key = "access-key-update"
+    secret_key = "secret-key-update"
+ }
+ // ----------------------------
+`
+
+// endregion
+
+// region Elastigroup: Code Deploy Integration
+func TestAccSpotinstElastigroup_IntegrationCodeDeploy(t *testing.T) {
+	groupName := "eg-integration-code-deploy"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationCodeDeployGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.cleanup_on_failure", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.terminate_instance_on_failure", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.deployment_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.deployment_groups.699338831.application_name", "code-deploy-application"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.deployment_groups.699338831.deployment_group_name", "code-deploy-deployment"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationCodeDeployGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.cleanup_on_failure", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.terminate_instance_on_failure", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.deployment_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.deployment_groups.2845984724.application_name", "code-deploy-application-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_codedeploy.0.deployment_groups.2845984724.deployment_group_name", "code-deploy-deployment-update"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationCodeDeployGroupConfig_Create = `
+ // --- INTEGRATION: CODE-DEPLOY ----------
+ integration_codedeploy = {
+    cleanup_on_failure = false
+    terminate_instance_on_failure = false
+    deployment_groups = {
+      application_name = "code-deploy-application"
+      deployment_group_name = "code-deploy-deployment"
+    }
+  }
+ // ---------------------------------------
+`
+
+const testIntegrationCodeDeployGroupConfig_Update = `
+ // --- INTEGRATION: CODE-DEPLOY ----------
+ integration_codedeploy = {
+    cleanup_on_failure = true
+    terminate_instance_on_failure = true
+    deployment_groups = {
+      application_name = "code-deploy-application-update"
+      deployment_group_name = "code-deploy-deployment-update"
+    }
+  }
+ // ---------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: ECS Integration
+func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
+	groupName := "eg-integration-ecs"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationECSGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "300"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationECSGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "180"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationECSGroupConfig_Create = `
+ // --- INTEGRATION: ECS ------------
+ integration_ecs = { 
+    cluster_name = "ecs-cluster-name"
+    autoscale_is_enabled = false
+    autoscale_cooldown = 300
+
+    autoscale_headroom = {
+      cpu_per_unit = 1024
+      memory_per_unit = 512
+      num_of_units = 2
+    }
+
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+  }
+ // --------------------------------
+`
+
+const testIntegrationECSGroupConfig_Update = `
+ // --- INTEGRATION: ECS ------------
+ integration_ecs = { 
+    cluster_name = "ecs-cluster-name-update"
+    autoscale_is_enabled = true
+    autoscale_cooldown = 180
+
+    autoscale_headroom = {
+      cpu_per_unit = 2048
+      memory_per_unit = 1024
+      num_of_units = 1
+    }
+
+    autoscale_down = {
+      evaluation_periods = 150
+    }
+  }
+ // --------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Kubernetes Integration
+func TestAccSpotinstElastigroup_IntegrationKubernetes(t *testing.T) {
+	groupName := "eg-integration-kubernetes"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationKubernetesGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.integration_mode", "pod"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.cluster_identifier", "k8s-cluster-id"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_is_auto_config", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.evaluation_periods", "300"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationKubernetesGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.integration_mode", "saas"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.api_server", "k8s-server"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.token", "k8s-token"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_is_auto_config", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_cooldown", "180"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.cpu_per_unit", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.memory_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.evaluation_periods", "150"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationKubernetesGroupConfig_Create = `
+ // --- INTEGRATION: KUBERNETES --------------
+ integration_kubernetes = {
+    integration_mode = "pod"
+    cluster_identifier = "k8s-cluster-id"
+
+    autoscale_is_enabled = false
+    autoscale_is_auto_config = false
+    autoscale_cooldown = 300
+
+    autoscale_headroom = {
+      cpu_per_unit = 1024
+      memory_per_unit = 512
+      num_of_units = 2
+    }
+
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+  }
+ // ------------------------------------------
+`
+
+const testIntegrationKubernetesGroupConfig_Update = `
+ // --- INTEGRATION: KUBERNETES --------------
+ integration_kubernetes = {
+	integration_mode = "saas"
+    api_server = "k8s-server"
+    token = "k8s-token"
+
+    autoscale_is_enabled = true
+    autoscale_is_auto_config = true
+    autoscale_cooldown = 180
+
+    autoscale_headroom = {
+      cpu_per_unit = 2048
+      memory_per_unit = 1024
+      num_of_units = 1
+    }
+
+    autoscale_down = {
+      evaluation_periods = 150
+    }
+  }
+ // ------------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Nomad Integration
+func TestAccSpotinstElastigroup_IntegrationNomad(t *testing.T) {
+	groupName := "eg-integration-nomad"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationNomadGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.master_host", "nomad-master-host"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.master_port", "8000"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "300"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationNomadGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.master_host", "nomad-master-host-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.master_port", "9000"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_cooldown", "180"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.cpu_per_unit", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "150"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationNomadGroupConfig_Create = `
+ // --- INTEGRATION: NOMAD --------------
+ integration_nomad = {
+    master_host = "nomad-master-host"
+    master_port = 8000
+
+    autoscale_is_enabled = false
+    autoscale_cooldown = 300
+
+    autoscale_headroom = {
+      cpu_per_unit = 1024
+      memory_per_unit = 512
+      num_of_units = 2
+    }
+
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+  }
+ // ------------------------------------------
+`
+
+const testIntegrationNomadGroupConfig_Update = `
+ // --- INTEGRATION: NOMAD --------------
+ integration_nomad = {
+	master_host = "nomad-master-host-update"
+    master_port = 9000
+
+    autoscale_is_enabled = true
+    autoscale_cooldown = 180
+
+    autoscale_headroom = {
+      cpu_per_unit = 2048
+      memory_per_unit = 1024
+      num_of_units = 1
+    }
+
+    autoscale_down = {
+      evaluation_periods = 150
+    }
+  }
+ // ------------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Mesosphere Integration
+func TestAccSpotinstElastigroup_IntegrationMesosphere(t *testing.T) {
+	groupName := "eg-integration-mesosphere"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationMesosphereGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_mesosphere.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_mesosphere.0.api_server", "mesosphere-api-server"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationMesosphereGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_mesosphere.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_mesosphere.0.api_server", "mesosphere-api-server-update"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationMesosphereGroupConfig_Create = `
+ // --- INTEGRATION: MESOSPHERE --------------
+ integration_mesosphere = {
+    api_server = "mesosphere-api-server"
+ }
+ // --------------------------------------------
+`
+
+const testIntegrationMesosphereGroupConfig_Update = `
+ // --- INTEGRATION: MESOSPHERE --------------
+ integration_mesosphere = {
+	api_server = "mesosphere-api-server-update"
+ }
+ // --------------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Multai Runtime Integration
+func TestAccSpotinstElastigroup_IntegrationMultaiRuntime(t *testing.T) {
+	groupName := "eg-integration-multai-runtime"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { TestAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationMultaiRuntimeGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.0.deployment_id", "multai-deployment-id"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationMultaiRuntimeGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.0.deployment_id", "multai-deployment-id-update"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationMultaiRuntimeGroupConfig_Create = `
+ // --- INTEGRATION: MULTAI-RUNTIME ------
+ integration_multai_runtime = {
+    deployment_id = "multai-deployment-id"
+  }
+ // --------------------------------------
+`
+
+const testIntegrationMultaiRuntimeGroupConfig_Update = `
+ // --- INTEGRATION: MULTAI-RUNTIME ------
+ integration_multai_runtime = {
+    deployment_id = "multai-deployment-id-update"
+  }
+ // --------------------------------------
 `
 
 // endregion

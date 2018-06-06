@@ -2,8 +2,6 @@ package elastigroup_integrations
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -55,20 +53,6 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			var value []interface{} = nil
-			if elastigroup.Integration != nil && elastigroup.Integration.CodeDeploy != nil {
-				value = flattenAWSGroupCodeDeployIntegration(elastigroup.Integration.CodeDeploy)
-			}
-			if value != nil {
-				if err := resourceData.Set(string(IntegrationCodeDeploy), value); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationCodeDeploy), err)
-				}
-			} else {
-				if err := resourceData.Set(string(IntegrationCodeDeploy), []*aws.CodeDeployIntegration{}); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationCodeDeploy), err)
-				}
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -103,26 +87,28 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupCodeDeployIntegration(data interface{}) (*aws.CodeDeployIntegration, error) {
+	integration := &aws.CodeDeployIntegration{}
 	list := data.([]interface{})
-	m := list[0].(map[string]interface{})
-	i := &aws.CodeDeployIntegration{}
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(CleanupOnFailure)].(bool); ok {
-		i.SetCleanUpOnFailure(spotinst.Bool(v))
-	}
-
-	if v, ok := m[string(TerminateInstanceOnFailure)].(bool); ok {
-		i.SetTerminateInstanceOnFailure(spotinst.Bool(v))
-	}
-
-	if v, ok := m[string(DeploymentGroups)]; ok {
-		deploymentGroups, err := expandAWSGroupCodeDeployIntegrationDeploymentGroups(v)
-		if err != nil {
-			return nil, err
+		if v, ok := m[string(CleanupOnFailure)].(bool); ok {
+			integration.SetCleanUpOnFailure(spotinst.Bool(v))
 		}
-		i.SetDeploymentGroups(deploymentGroups)
+
+		if v, ok := m[string(TerminateInstanceOnFailure)].(bool); ok {
+			integration.SetTerminateInstanceOnFailure(spotinst.Bool(v))
+		}
+
+		if v, ok := m[string(DeploymentGroups)]; ok {
+			deploymentGroups, err := expandAWSGroupCodeDeployIntegrationDeploymentGroups(v)
+			if err != nil {
+				return nil, err
+			}
+			integration.SetDeploymentGroups(deploymentGroups)
+		}
 	}
-	return i, nil
+	return integration, nil
 }
 
 func expandAWSGroupCodeDeployIntegrationDeploymentGroups(data interface{}) ([]*aws.DeploymentGroup, error) {
@@ -147,20 +133,4 @@ func expandAWSGroupCodeDeployIntegrationDeploymentGroups(data interface{}) ([]*a
 		deploymentGroups = append(deploymentGroups, deploymentGroup)
 	}
 	return deploymentGroups, nil
-}
-
-func flattenAWSGroupCodeDeployIntegration(integration *aws.CodeDeployIntegration) []interface{} {
-	result := make(map[string]interface{})
-	result[string(CleanupOnFailure)] = spotinst.BoolValue(integration.CleanUpOnFailure)
-	result[string(TerminateInstanceOnFailure)] = spotinst.BoolValue(integration.TerminateInstanceOnFailure)
-
-	deploymentGroups := make([]interface{}, len(integration.DeploymentGroups))
-	for i, dg := range integration.DeploymentGroups {
-		m := make(map[string]interface{})
-		m[string(ApplicationName)] = spotinst.StringValue(dg.ApplicationName)
-		m[string(DeploymentGroupName)] = spotinst.StringValue(dg.DeploymentGroupName)
-		deploymentGroups[i] = m
-	}
-
-	return []interface{}{result}
 }

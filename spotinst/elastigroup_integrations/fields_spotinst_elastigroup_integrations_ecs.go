@@ -111,26 +111,29 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2ContainerServiceIntegration, error) {
+	integration := &aws.EC2ContainerServiceIntegration{}
 	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return integration, nil
+	}
 	m := list[0].(map[string]interface{})
-	i := &aws.EC2ContainerServiceIntegration{}
 
 	if v, ok := m[string(ClusterName)].(string); ok && v != "" {
-		i.SetClusterName(spotinst.String(v))
+		integration.SetClusterName(spotinst.String(v))
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if i.AutoScale == nil {
-			i.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScale{})
 		}
-		i.AutoScale.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if i.AutoScale == nil {
-			i.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScale{})
 		}
-		i.AutoScale.SetCooldown(spotinst.Int(v))
+		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -139,10 +142,10 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			return nil, err
 		}
 		if headroom != nil {
-			if i.AutoScale == nil {
-				i.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScale{})
 			}
-			i.AutoScale.SetHeadroom(headroom)
+			integration.AutoScale.SetHeadroom(headroom)
 		}
 	}
 
@@ -152,11 +155,11 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			return nil, err
 		}
 		if down != nil {
-			if i.AutoScale == nil {
-				i.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScale{})
 			}
-			i.AutoScale.SetDown(down)
+			integration.AutoScale.SetDown(down)
 		}
 	}
-	return i, nil
+	return integration, nil
 }

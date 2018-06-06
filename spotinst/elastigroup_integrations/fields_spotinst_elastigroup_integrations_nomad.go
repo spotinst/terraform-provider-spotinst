@@ -145,36 +145,39 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadIntegration, error) {
+	integration := &aws.NomadIntegration{}
 	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return integration, nil
+	}
 	m := list[0].(map[string]interface{})
-	i := &aws.NomadIntegration{}
 
 	if v, ok := m[string(MasterHost)].(string); ok && v != "" {
-		i.SetMasterHost(spotinst.String(v))
+		integration.SetMasterHost(spotinst.String(v))
 	}
 
 	if v, ok := m[string(MasterPort)].(int); ok && v > 0 {
-		i.SetMasterPort(spotinst.Int(v))
+		integration.SetMasterPort(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AclToken)].(string); ok && v != "" {
-		i.SetAclToken(spotinst.String(v))
+		integration.SetAclToken(spotinst.String(v))
 	} else if nullify {
-		i.SetAclToken(nil)
+		integration.SetAclToken(nil)
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if i.AutoScale == nil {
-			i.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScale{})
 		}
-		i.AutoScale.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if i.AutoScale == nil {
-			i.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScale{})
 		}
-		i.AutoScale.SetCooldown(spotinst.Int(v))
+		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -183,10 +186,10 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if headroom != nil {
-			if i.AutoScale == nil {
-				i.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScale{})
 			}
-			i.AutoScale.SetHeadroom(headroom)
+			integration.AutoScale.SetHeadroom(headroom)
 		}
 	}
 
@@ -196,10 +199,10 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if down != nil {
-			if i.AutoScale == nil {
-				i.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScale{})
 			}
-			i.AutoScale.SetDown(down)
+			integration.AutoScale.SetDown(down)
 		}
 	}
 
@@ -209,13 +212,13 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if consts != nil {
-			if i.AutoScale == nil {
-				i.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScale{})
 			}
-			i.AutoScale.SetConstraints(consts)
+			integration.AutoScale.SetConstraints(consts)
 		}
 	}
-	return i, nil
+	return integration, nil
 }
 
 func attrStateFunc(v interface{}) string {

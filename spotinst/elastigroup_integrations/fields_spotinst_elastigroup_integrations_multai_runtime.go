@@ -79,14 +79,16 @@ func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupMultaiIntegration(data interface{}) (*aws.MultaiIntegration, error) {
+	integration := &aws.MultaiIntegration{}
 	list := data.([]interface{})
-	m := list[0].(map[string]interface{})
-	i := &aws.MultaiIntegration{}
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(DeploymentId)].(string); ok && v != "" {
-		i.SetDeploymentId(spotinst.String(v))
+		if v, ok := m[string(DeploymentId)].(string); ok && v != "" {
+			integration.SetDeploymentId(spotinst.String(v))
+		}
 	}
-	return i, nil
+	return integration, nil
 }
 
 func flattenAWSGroupMultaiIntegration(integration *aws.MultaiIntegration) []interface{} {

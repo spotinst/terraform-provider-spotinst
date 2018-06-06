@@ -882,17 +882,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
-			var signalsToAdd = []*aws.Signal{}
+			var signalsToAdd []interface{} = nil
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Signals != nil {
 				signals := elastigroup.Strategy.Signals
-				if signals != nil {
-					signalsToAdd := make([]interface{}, 0, len(signals))
-					for _, s := range signals {
-						m := make(map[string]interface{})
-						m[string(SignalName)] = strings.ToLower(spotinst.StringValue(s.Name))
-						m[string(SignalTimeout)] = spotinst.IntValue(s.Timeout)
-						signalsToAdd = append(signalsToAdd, m)
-					}
+				signalsToAdd = make([]interface{}, 0, len(signals))
+				for _, s := range signals {
+					m := make(map[string]interface{})
+					m[string(SignalName)] = spotinst.StringValue(s.Name)
+					m[string(SignalTimeout)] = spotinst.IntValue(s.Timeout)
+					signalsToAdd = append(signalsToAdd, m)
 				}
 			}
 			if err := resourceData.Set(string(Signal), signalsToAdd); err != nil {
@@ -1262,28 +1260,29 @@ func expandAWSGroupMultaiTargetSets(data interface{}) ([]*aws.LoadBalancer, erro
 }
 
 func expandAWSGroupRevertToSpot(data interface{}) (*aws.RevertToSpot, error) {
-	list := data.([]interface{})
-	m := list[0].(map[string]interface{})
 	revertToSpot := &aws.RevertToSpot{}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-	var performAt *string = nil
-	if v, ok := m[string(PerformAt)].(string); ok {
-		performAt = spotinst.String(v)
-	}
-	revertToSpot.SetPerformAt(performAt)
-
-	var timeWindows []string = nil
-	if v, ok := m[string(TimeWindow)].([]interface{}); ok && len(v) > 0 {
-		ids := make([]string, 0, len(v))
-		for _, id := range v {
-			if v, ok := id.(string); ok && len(v) > 0 {
-				ids = append(ids, v)
-			}
+		var performAt *string = nil
+		if v, ok := m[string(PerformAt)].(string); ok {
+			performAt = spotinst.String(v)
 		}
-		timeWindows = ids
-	}
-	revertToSpot.SetTimeWindows(timeWindows)
+		revertToSpot.SetPerformAt(performAt)
 
+		var timeWindows []string = nil
+		if v, ok := m[string(TimeWindow)].([]interface{}); ok && len(v) > 0 {
+			ids := make([]string, 0, len(v))
+			for _, id := range v {
+				if v, ok := id.(string); ok && len(v) > 0 {
+					ids = append(ids, v)
+				}
+			}
+			timeWindows = ids
+		}
+		revertToSpot.SetTimeWindows(timeWindows)
+	}
 	//log.Printf("[DEBUG] Group revert to spot configuration: %s", stringutil.Stringify(revertToSpot))
 	return revertToSpot, nil
 }
