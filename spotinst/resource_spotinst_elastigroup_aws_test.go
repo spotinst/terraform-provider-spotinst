@@ -123,7 +123,7 @@ func TestAccSpotinstElastigroup_Baseline(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { TestAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
@@ -211,7 +211,7 @@ func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { TestAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
@@ -294,7 +294,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -378,7 +378,7 @@ func TestAccSpotinstElastigroup_Strategy(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -453,7 +453,7 @@ func TestAccSpotinstElastigroup_LoadBalancers(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -539,7 +539,7 @@ func TestAccSpotinstElastigroup_HealthChecks(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -602,7 +602,7 @@ func TestAccSpotinstElastigroup_ElasticIPs(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -660,7 +660,7 @@ func TestAccSpotinstElastigroup_SubnetIDs(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -722,7 +722,7 @@ func TestAccSpotinstElastigroup_Signals(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -793,7 +793,7 @@ func TestAccSpotinstElastigroup_RevertToSpot(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -856,7 +856,7 @@ func TestAccSpotinstElastigroup_NetworkInterfaces(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -941,7 +941,7 @@ func TestAccSpotinstElastigroup_ScaleUpPolicy(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1110,7 +1110,7 @@ func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1201,7 +1201,7 @@ func TestAccSpotinstElastigroup_Stateful(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1275,7 +1275,7 @@ func TestAccSpotinstElastigroup_BlockDevices(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { TestAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
@@ -1391,7 +1391,7 @@ func TestAccSpotinstElastigroup_Tags(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1466,7 +1466,7 @@ func TestAccSpotinstElastigroup_IntegrationRancher(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1533,7 +1533,7 @@ func TestAccSpotinstElastigroup_IntegrationCodeDeploy(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1612,7 +1612,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1711,7 +1711,7 @@ func TestAccSpotinstElastigroup_IntegrationKubernetes(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1822,7 +1822,7 @@ func TestAccSpotinstElastigroup_IntegrationNomad(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1927,7 +1927,7 @@ func TestAccSpotinstElastigroup_IntegrationMesosphere(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1988,7 +1988,7 @@ func TestAccSpotinstElastigroup_IntegrationMultaiRuntime(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2049,7 +2049,7 @@ func TestAccSpotinstElastigroup_UpdatePolicy(t *testing.T) {
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { TestAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t) },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,

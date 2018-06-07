@@ -32,7 +32,7 @@ func TestProvider_impl(t *testing.T) {
 	var _ terraform.ResourceProvider = Provider()
 }
 
-func TestAccPreCheck(t *testing.T) {
+func testAccPreCheck(t *testing.T) {
 	c := map[string]string{
 		string(commons.ProviderToken): os.Getenv(credentials.EnvCredentialsVarToken),
 	}
