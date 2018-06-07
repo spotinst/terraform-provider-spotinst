@@ -14,14 +14,15 @@ Provides a Spotinst subscription resource.
 
 ```hcl
 resource "spotinst_subscription" "foo" {
-	resource_id = "sig-foo"
-	event_type = "aws_ec2_instance_launch"
-	protocol = "http"
-	endpoint = "http://endpoint.com"
-	format = {
-		instance_id = "%instance-id%"
-		tags = "foo,baz,baz"
-	}
+  resource_id = "sig-foo"
+  event_type  = "aws_ec2_instance_launch"
+  protocol    = "http"
+  endpoint    = "http://endpoint.com"
+
+  format = {
+    instance_id = "%instance-id%"
+    tags        = "foo,baz,baz"
+  }
 }
 ```
 

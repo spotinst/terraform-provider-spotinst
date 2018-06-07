@@ -54,15 +54,17 @@ func escape(s string, allowReserved bool) (escaped string) {
 	return escaped
 }
 
-// A UriTemplate is a parsed representation of a URI template.
-type UriTemplate struct {
+type Values map[string]interface{}
+
+// A Template is a parsed representation of a URI template.
+type Template struct {
 	raw   string
 	parts []templatePart
 }
 
-// Parse parses a URI template string into a UriTemplate object.
-func Parse(rawtemplate string) (template *UriTemplate, err error) {
-	template = new(UriTemplate)
+// Parse parses a URI template string into a Template object.
+func Parse(rawtemplate string) (template *Template, err error) {
+	template = new(Template)
 	template.raw = rawtemplate
 	split := strings.Split(rawtemplate, "{")
 	template.parts = make([]templatePart, len(split)*2-1)
@@ -185,11 +187,11 @@ func parseTerm(term string) (result templateTerm, err error) {
 }
 
 // Expand expands a URI template with a set of values to produce a string.
-func (self *UriTemplate) Expand(value interface{}) (string, error) {
-	values, ismap := value.(map[string]interface{})
+func (self *Template) Expand(value interface{}) (string, error) {
+	values, ismap := value.(Values)
 	if !ismap {
 		if m, ismap := struct2map(value); !ismap {
-			return "", errors.New("expected map[string]interface{}, struct, or pointer to struct.")
+			return "", errors.New("expected Values, struct, or pointer to struct")
 		} else {
 			return self.Expand(m)
 		}
@@ -204,7 +206,7 @@ func (self *UriTemplate) Expand(value interface{}) (string, error) {
 	return buf.String(), nil
 }
 
-func (self *templatePart) expand(buf *bytes.Buffer, values map[string]interface{}) error {
+func (self *templatePart) expand(buf *bytes.Buffer, values Values) error {
 	if len(self.raw) > 0 {
 		buf.WriteString(self.raw)
 		return nil
