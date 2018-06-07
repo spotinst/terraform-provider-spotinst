@@ -72,6 +72,7 @@ type GroupConfigMetadata struct {
 	strategy             string
 	fieldsToAppend       string
 	updateBaselineFields bool
+	useSubnetIDs         bool
 }
 
 func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
@@ -93,7 +94,11 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 
 	template := ""
 	if gcm.updateBaselineFields {
-		template = fmt.Sprintf(testBaselineGroupConfig_Update,
+		format := testBaselineGroupConfig_Update
+		if gcm.useSubnetIDs {
+			format = testBaselineSubnetIdsGroupConfig_Update
+		}
+		template = fmt.Sprintf(format,
 			gcm.groupName,
 			gcm.groupName,
 			gcm.instanceTypes,
@@ -102,7 +107,11 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 			gcm.fieldsToAppend,
 		)
 	} else {
-		template = fmt.Sprintf(testBaselineGroupConfig_Create,
+		format := testBaselineGroupConfig_Create
+		if gcm.useSubnetIDs {
+			format = testBaselineSubnetIdsGroupConfig_Create
+		}
+		template = fmt.Sprintf(format,
 			gcm.groupName,
 			gcm.groupName,
 			gcm.instanceTypes,
@@ -186,6 +195,60 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
  description 		= "created by Terraform"
  product 			= "Linux/UNIX"
  availability_zones = ["us-west-2a"]
+
+ // --- CAPACITY ------------
+ max_size 		  = 0
+ min_size 		  = 0
+ desired_capacity = 0
+ capacity_unit 	  = "weight"
+ // -------------------------
+ 
+ %v
+ %v
+ %v
+ %v
+}
+
+`
+
+const testBaselineSubnetIdsGroupConfig_Create = `
+resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+
+ name 				= "%v"
+ description 		= "created by Terraform"
+ product 			= "Linux/UNIX"
+
+ // --- SUBNET IDS -------------------
+ region      = "us-west-2"
+ subnet_ids  = ["subnet-79da021e", "subnet-03b7ed5b"]
+ // ----------------------------------
+
+ // --- CAPACITY ------------
+ max_size 		  = 0
+ min_size 		  = 0
+ desired_capacity = 0
+ capacity_unit 	  = "weight"
+ // -------------------------
+ 
+ %v
+ %v
+ %v
+ %v
+}
+
+`
+
+const testBaselineSubnetIdsGroupConfig_Update = `
+resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+
+ name 				= "%v"
+ description 		= "created by Terraform"
+ product 			= "Linux/UNIX"
+
+ // --- SUBNET IDS -------------------
+ region      = "us-west-2"
+ subnet_ids  = ["subnet-79da021e"]
+ // ----------------------------------
 
  // --- CAPACITY ------------
  max_size 		  = 0
@@ -446,6 +509,55 @@ const testStrategyGroupConfig_Update = `
 
 // endregion
 
+// region Elastigroup: Subnet IDs
+func TestAccSpotinstElastigroup_SubnetIDs(t *testing.T) {
+	groupName := "eg-subnet-ids"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:    groupName,
+					useSubnetIDs: true,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:            groupName,
+					useSubnetIDs:         true,
+					updateBaselineFields: true,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
+				),
+			},
+		},
+	})
+}
+
+// endregion
+
 // region Elastigroup: Load Balancers
 func TestAccSpotinstElastigroup_LoadBalancers(t *testing.T) {
 	groupName := "eg-load-balancers"
@@ -653,68 +765,6 @@ const testElasticIPsGroupConfig_Update = `
 
 // endregion
 
-// region Elastigroup: Subnet Ids
-func TestAccSpotinstElastigroup_SubnetIDs(t *testing.T) {
-	groupName := "eg-subnet-ids"
-	resourceName := createElastigroupResourceName(groupName)
-
-	var group aws.Group
-	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
-		Providers:     TestAccProviders,
-		CheckDestroy:  testElastigroupDestroy,
-		IDRefreshName: resourceName,
-
-		Steps: []resource.TestStep{
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName:      groupName,
-					fieldsToAppend: testSubnetIDsGroupConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupExists(&group, resourceName),
-					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "region", "us-west-1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "sub-123"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "sub-456"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName:      groupName,
-					fieldsToAppend: testSubnetIDsGroupConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupExists(&group, resourceName),
-					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "sub-123"),
-				),
-			},
-		},
-	})
-}
-
-const testSubnetIDsGroupConfig_Create = `
- // --- SUBNET IDS -------------------
- region      = "us-west-1"
- subnet_ids  = ["sub-123", "sub-456"]
- // ----------------------------------
-`
-
-const testSubnetIDsGroupConfig_Update = `
- // --- SUBNET IDS -------------------
- region      = "us-west-2"
- subnet_ids  = ["sub-123"]
- // ----------------------------------
-`
-
-// endregion
-
 // region Elastigroup: Signals
 func TestAccSpotinstElastigroup_Signals(t *testing.T) {
 	groupName := "eg-signals"
@@ -755,7 +805,7 @@ func TestAccSpotinstElastigroup_Signals(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.name", "INSTANCE_READY_TO_SHUTDOWN"),
 					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.timeout", "100"),
 					resource.TestCheckResourceAttr(resourceName, "signal.1735739494.name", "INSTANCE_READY"),
-					resource.TestCheckResourceAttr(resourceName, "signal.1735739494t.timeout", "200"),
+					resource.TestCheckResourceAttr(resourceName, "signal.1735739494.timeout", "200"),
 				),
 			},
 		},
