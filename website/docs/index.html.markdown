@@ -19,13 +19,13 @@ Use the navigation to the left to read about the available resources.
 ```hcl
 # Configure the Spotinst provider
 provider "spotinst" {
-    token   = "${var.spotinst_token}"
-    account = "${var.spotinst_account}"
+   token   = "${var.spotinst_token}"
+   account = "${var.spotinst_account}"
 }
 
 # Create an Elastigroup
 resource "spotinst_group_aws" "foo" {
-    ...
+   # ...
 }
 ```
 
