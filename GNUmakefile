@@ -1,5 +1,7 @@
-TEST?=$$(go list ./... |grep -v 'vendor')
+TEST?=./...
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
+PKG_NAME=spotinst
+WEBSITE_REPO=github.com/hashicorp/terraform-website
 
 default: build
 
@@ -42,8 +44,6 @@ test-compile:
 		exit 1; \
 	fi
 	go test -c $(TEST) $(TESTARGS)
-
-.PHONY: build test testacc vet fmt fmtcheck errcheck vendor-status test-compile
 
 website:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
