@@ -377,14 +377,15 @@ type Capacity struct {
 }
 
 type Compute struct {
-	Product             *string              `json:"product,omitempty"`
-	InstanceTypes       *InstanceTypes       `json:"instanceTypes,omitempty"`
-	LaunchSpecification *LaunchSpecification `json:"launchSpecification,omitempty"`
-	AvailabilityZones   []*AvailabilityZone  `json:"availabilityZones,omitempty"`
-	ElasticIPs          []string             `json:"elasticIps,omitempty"`
-	EBSVolumePool       []*EBSVolume         `json:"ebsVolumePool,omitempty"`
-	PrivateIPs          []string             `json:"privateIps,omitempty"`
-	SubnetIDs           []string             `json:"subnetIds,omitempty"`
+	Product                    *string              `json:"product,omitempty"`
+	InstanceTypes              *InstanceTypes       `json:"instanceTypes,omitempty"`
+	LaunchSpecification        *LaunchSpecification `json:"launchSpecification,omitempty"`
+	AvailabilityZones          []*AvailabilityZone  `json:"availabilityZones,omitempty"`
+	PreferredAvailabilityZones []string             `json:"preferredAvailabilityZones,omitempty"`
+	ElasticIPs                 []string             `json:"elasticIps,omitempty"`
+	EBSVolumePool              []*EBSVolume         `json:"ebsVolumePool,omitempty"`
+	PrivateIPs                 []string             `json:"privateIps,omitempty"`
+	SubnetIDs                  []string             `json:"subnetIds,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -2055,6 +2056,13 @@ func (o *Compute) SetLaunchSpecification(v *LaunchSpecification) *Compute {
 func (o *Compute) SetAvailabilityZones(v []*AvailabilityZone) *Compute {
 	if o.AvailabilityZones = v; o.AvailabilityZones == nil {
 		o.nullFields = append(o.nullFields, "AvailabilityZones")
+	}
+	return o
+}
+
+func (o *Compute) SetPreferredAvailabilityZones(v []string) *Compute {
+	if o.PreferredAvailabilityZones = v; o.PreferredAvailabilityZones == nil {
+		o.nullFields = append(o.nullFields, "PreferredAvailabilityZones")
 	}
 	return o
 }

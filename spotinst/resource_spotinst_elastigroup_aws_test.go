@@ -558,6 +558,64 @@ func TestAccSpotinstElastigroup_SubnetIDs(t *testing.T) {
 
 // endregion
 
+// region Elastigroup: Preferred Availability Zones
+func TestAccSpotinstElastigroup_PreferredAvailabilityZones(t *testing.T) {
+	groupName := "eg-preferred-availability-zones"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testPreferredAvailabilityZonesGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.0", "us-west-2b"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.1", "us-west-2c"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testPreferredAvailabilityZonesGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.0", "us-west-2b"),
+				),
+			},
+		},
+	})
+}
+
+const testPreferredAvailabilityZonesGroupConfig_Create = `
+  // --- PREFERRED AVAILABILITY ZONES -------------------------
+  preferred_availability_zones = ["us-west-2b", "us-west-2c"]
+  // ----------------------------------------------------------
+`
+
+const testPreferredAvailabilityZonesGroupConfig_Update = `
+  // --- PREFERRED AVAILABILITY ZONES -------------------------
+  preferred_availability_zones = ["us-west-2b"]
+  // ----------------------------------------------------------
+`
+
+// endregion
+
 // region Elastigroup: Load Balancers
 func TestAccSpotinstElastigroup_LoadBalancers(t *testing.T) {
 	groupName := "eg-load-balancers"

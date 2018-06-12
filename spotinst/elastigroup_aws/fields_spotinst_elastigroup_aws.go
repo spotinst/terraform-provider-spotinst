@@ -447,6 +447,45 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[PreferredAvailabilityZones] = commons.NewGenericField(
+		commons.ElastigroupAWS,
+		PreferredAvailabilityZones,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			// Skip
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			if value, ok := resourceData.GetOk(string(PreferredAvailabilityZones)); ok {
+				if preferredAZs, err := expandAWSGroupPreferredAvailabilityZones(value); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetPreferredAvailabilityZones(preferredAZs)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			elastigroup := resourceObject.(*aws.Group)
+			var result []string = nil
+			if value, ok := resourceData.GetOk(string(PreferredAvailabilityZones)); ok {
+				if preferredAZs, err := expandAWSGroupPreferredAvailabilityZones(value); err != nil {
+					return err
+				} else {
+					result = preferredAZs
+				}
+			}
+			elastigroup.Compute.SetPreferredAvailabilityZones(result)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[AvailabilityZones] = commons.NewGenericField(
 		commons.ElastigroupAWS,
 		AvailabilityZones,
@@ -1015,6 +1054,18 @@ func expandAWSGroupElasticIPs(data interface{}) ([]string, error) {
 		}
 	}
 	return eips, nil
+}
+
+func expandAWSGroupPreferredAvailabilityZones(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if preferredAZ, ok := v.(string); ok && preferredAZ != "" {
+			result = append(result, preferredAZ)
+		}
+	}
+	return result, nil
 }
 
 func expandTags(data interface{}) ([]*aws.Tag, error) {
