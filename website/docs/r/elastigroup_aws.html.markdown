@@ -130,6 +130,9 @@ Note: When this parameter is set, `availability_zones` should be left unused.
 * `region` - (Optional) The AWS region your group will be created in.
 Note: This parameter is required if you specify subnets (through subnet_ids). This parameter is optional if you specify Availability Zones (through availability_zones).
 
+* `preferred_availability_zones` - The AZs to prioritize when launching Spot instances. If no markets are available in the Preferred AZs, Spot instances are launched in the non-preferred AZs. 
+Note: Must be a sublist of `availability_zones` and `orientation` value must not be `"equalAzDistribution"`.
+
 * `max_size` - (Optional; Required if using scaling policies) The maximum number of instances the group should have at any time.
 * `min_size` - (Optional; Required if using scaling policies) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Optional) The desired number of instances the group should have at any time.
