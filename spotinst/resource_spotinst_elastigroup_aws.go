@@ -67,13 +67,56 @@ func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, met
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.SpotinstElastigroup.GetName(), id)
 
-	input := &aws.DeleteGroupInput{GroupID: spotinst.String(id)}
-	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to delete group: %s", err)
+	if err := deleteGroup(resourceData, meta); err != nil {
+		return err
 	}
 
 	log.Printf("===> Elastigroup Deleted Successfully: %s <===", resourceData.Id())
 	resourceData.SetId("")
+	return nil
+}
+
+func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
+	groupId := resourceData.Id()
+	input := &aws.DeleteGroupInput{
+		GroupID: spotinst.String(groupId),
+	}
+
+	if statefulDeallocation, exists := resourceData.GetOkExists(string(elastigroup_stateful.StatefulDeallocation)); exists {
+		list := statefulDeallocation.([]interface{})
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			var result = &aws.StatefulDeallocation{}
+			if shouldDeleteImage, ok := m[string(elastigroup_stateful.ShouldDeleteImages)].(bool); ok && shouldDeleteImage {
+				result.ShouldDeleteImages = spotinst.Bool(shouldDeleteImage)
+			}
+
+			if shouldDeleteNetworkInterfaces, ok := m[string(elastigroup_stateful.ShouldDeleteNetworkInterfaces)].(bool); ok && shouldDeleteNetworkInterfaces {
+				result.ShouldDeleteNetworkInterfaces = spotinst.Bool(shouldDeleteNetworkInterfaces)
+			}
+
+			if shouldDeleteSnapshots, ok := m[string(elastigroup_stateful.ShouldDeleteSnapshots)].(bool); ok && shouldDeleteSnapshots {
+				result.ShouldDeleteSnapshots = spotinst.Bool(shouldDeleteSnapshots)
+			}
+
+			if shouldDeleteVolumes, ok := m[string(elastigroup_stateful.ShouldDeleteVolumes)].(bool); ok && shouldDeleteVolumes {
+				result.ShouldDeleteVolumes = spotinst.Bool(shouldDeleteVolumes)
+			}
+
+			if json, err := commons.ToJson(result); err != nil {
+				return err
+			} else {
+				log.Printf("===> Group Delete Configuration: %s", json)
+			}
+
+			input.StatefulDeallocation = result
+		}
+	}
+
+	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
+		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete group: %s", err)
+	}
 	return nil
 }
 
