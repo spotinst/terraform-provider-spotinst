@@ -327,13 +327,10 @@ func extractBlockDevices(
 	}
 }
 
-var ephemeralBlockDeviceUpdated = false
-var ebsBlockDeviceUpdated = false
-
 func onUpdateBlockDevice(elastigroup *aws.Group, resourceData *schema.ResourceData) error {
 	var ebsNullify = false
 	var ephemeralNullify = false
-	if !ebsBlockDeviceUpdated {
+	if !commons.StatusEbsBlockDeviceUpdated {
 		if tfEBSDevices, err := extractBlockDevices(EbsBlockDevice, elastigroup, resourceData); err != nil {
 			return err
 		} else if tfEBSDevices != nil && len(tfEBSDevices) > 0 {
@@ -345,9 +342,9 @@ func onUpdateBlockDevice(elastigroup *aws.Group, resourceData *schema.ResourceDa
 		} else {
 			ebsNullify = true
 		}
-		ebsBlockDeviceUpdated = true
+		commons.StatusEbsBlockDeviceUpdated = true
 	}
-	if !ephemeralBlockDeviceUpdated {
+	if !commons.StatusEphemeralBlockDeviceUpdated {
 		if tfEphemeralDevices, err := extractBlockDevices(EphemeralBlockDevice, elastigroup, resourceData); err != nil {
 			return err
 		} else if tfEphemeralDevices != nil && len(tfEphemeralDevices) > 0 {
@@ -359,7 +356,7 @@ func onUpdateBlockDevice(elastigroup *aws.Group, resourceData *schema.ResourceDa
 		} else {
 			ephemeralNullify = true
 		}
-		ephemeralBlockDeviceUpdated = true
+		commons.StatusEphemeralBlockDeviceUpdated = true
 	}
 	// Both fields share the same object structure, we need to nullify if and only if there are no items
 	// from both types

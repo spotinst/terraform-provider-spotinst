@@ -12,7 +12,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_block_devices"
@@ -262,16 +261,17 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 	var shouldRoll = false
 	groupId := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_aws.UpdatePolicy)); exists {
-		list := updatePolicy.(*schema.Set).List()
-		m := list[0].(map[string]interface{})
+		list := updatePolicy.([]interface{})
+		if list != nil && len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if resumeStateful, ok := m[string(elastigroup_aws.ShouldResumeStateful)].(bool); ok && resumeStateful {
+				log.Printf("Resuming paused stateful instances on group [%v]...", groupId)
+				input.ShouldResumeStateful = spotinst.Bool(resumeStateful)
+			}
 
-		if resumeStateful, ok := m[string(elastigroup_aws.ShouldResumeStateful)].(bool); ok && resumeStateful {
-			log.Printf("Resuming paused stateful instances on group [%v]...", groupId)
-			input.ShouldResumeStateful = spotinst.Bool(resumeStateful)
-		}
-
-		if roll, ok := m[string(elastigroup_aws.ShouldRoll)].(bool); ok && roll {
-			shouldRoll = roll
+			if roll, ok := m[string(elastigroup_aws.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
 		}
 	}
 
@@ -299,20 +299,25 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	groupId := resourceData.Id()
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_aws.UpdatePolicy)); exists {
-		list := updatePolicy.(*schema.Set).List()
-		updateGroupSchema := list[0].(map[string]interface{})
-
-		if rollConfig, ok := updateGroupSchema[string(elastigroup_aws.RollConfig)].(*schema.Set); !ok || rollConfig == nil {
-			errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_aws.RollConfig), groupId)
-		} else {
-			if rollGroupInput, err := expandElastigroupRollConfig(rollConfig, groupId); err != nil {
-				errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for group [%v], error: %v", groupId, err)
+		list := updatePolicy.([]interface{})
+		if list != nil && len(list) > 0 && list[0] != nil {
+			updateGroupSchema := list[0].(map[string]interface{})
+			if rollConfig, ok := updateGroupSchema[string(elastigroup_aws.RollConfig)]; !ok || rollConfig == nil {
+				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_aws.RollConfig), groupId)
 			} else {
-				log.Printf("onRoll() -> Rolling group [%v] with configuration %v...", groupId, stringutil.Stringify(rollConfig))
-				if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput); err != nil {
-					errResult = fmt.Errorf("[ERROR] onRoll() -> Roll group [%v] API call failed, error: %v", groupId, err)
+				if rollGroupInput, err := expandElastigroupRollConfig(rollConfig, groupId); err != nil {
+					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for group [%v], error: %v", groupId, err)
+				} else {
+					if json, err := commons.ToJson(rollConfig); err != nil {
+						return err
+					} else {
+						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
+						if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput); err != nil {
+							errResult = fmt.Errorf("[ERROR] onRoll() -> Roll group [%v] API call failed, error: %v", groupId, err)
+						}
+						log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
+					}
 				}
-				log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
 			}
 		}
 	} else {
@@ -329,20 +334,22 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 //         Fields Expand
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandElastigroupRollConfig(data interface{}, groupID string) (*aws.RollGroupInput, error) {
-	list := data.(*schema.Set).List()
-	m := list[0].(map[string]interface{})
 	i := &aws.RollGroupInput{GroupID: spotinst.String(groupID)}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(elastigroup_aws.BatchSizePercentage)].(int); ok { // Required value
-		i.BatchSizePercentage = spotinst.Int(v)
-	}
+		if v, ok := m[string(elastigroup_aws.BatchSizePercentage)].(int); ok { // Required value
+			i.BatchSizePercentage = spotinst.Int(v)
+		}
 
-	if v, ok := m[string(elastigroup_aws.GracePeriod)].(int); ok && v != -1 { // Default value set to -1
-		i.GracePeriod = spotinst.Int(v)
-	}
+		if v, ok := m[string(elastigroup_aws.GracePeriod)].(int); ok && v != -1 { // Default value set to -1
+			i.GracePeriod = spotinst.Int(v)
+		}
 
-	if v, ok := m[string(elastigroup_aws.HealthCheckType)].(string); ok && v != "" { // Default value ""
-		i.HealthCheckType = spotinst.String(v)
+		if v, ok := m[string(elastigroup_aws.HealthCheckType)].(string); ok && v != "" { // Default value ""
+			i.HealthCheckType = spotinst.String(v)
+		}
 	}
 	return i, nil
 }

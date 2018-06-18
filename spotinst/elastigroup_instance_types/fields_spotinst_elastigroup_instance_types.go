@@ -60,15 +60,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//elastigroup := resourceObject.(*aws.Group)
-			//var value []string = nil
-			//if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
-			//	elastigroup.Compute.InstanceTypes.Spot != nil {
-			//	value = elastigroup.Compute.InstanceTypes.Spot
-			//}
-			//if err := resourceData.Set(string(Spot), spotinst.StringSlice(value)); err != nil {
-			//	return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Spot), err)
-			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -119,34 +110,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//elastigroup := resourceObject.(*aws.Group)
-			//var instanceWeightsSet *schema.Set = nil
-			//var instanceWeights []interface{} = nil
-			////var instanceWeights map[string]interface{} = nil
-			//
-			//if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
-			//	elastigroup.Compute.InstanceTypes.Weights != nil {
-			//
-			//	weights := elastigroup.Compute.InstanceTypes.Weights
-			//	instanceWeights = make([]interface{}, 0, len(weights))
-			//	//instanceWeights = make(map[string]interface{}, len(weights))
-			//	for _, t := range weights {
-			//		instanceWeight := &aws.InstanceTypeWeight{}
-			//		instanceWeight.SetInstanceType(t.InstanceType)
-			//		instanceWeight.SetWeight(t.Weight)
-			//		instanceWeights = append(instanceWeights, instanceWeight)
-			//	}
-			//
-			//	instanceWeightHashFunc := func(item interface{}) int {
-			//		iw := item.(*aws.InstanceTypeWeight)
-			//		return hashcode.String(spotinst.StringValue(iw.InstanceType) + stringutil.Stringify(spotinst.IntValue(iw.Weight)))
-			//	}
-			//	instanceWeightsSet = schema.NewSet(instanceWeightHashFunc, instanceWeights)
-			//
-			//}
-			//if err := resourceData.Set(string(InstanceTypeWeights), instanceWeightsSet); err != nil {
-			//	return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceTypeWeights), err)
-			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

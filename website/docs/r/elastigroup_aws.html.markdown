@@ -213,7 +213,7 @@ Each `scaling_*_policy` supports the following:
 * `threshold` - (Required) The value against which the specified statistic is compared.
 * `policy_name` - (Required) The name of the policy.
 * `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
-* `unit` - (Optional, Default: `"percent"`) The unit for the alarm's associated metric.
+* `unit` - (Required, Default: `"percent"`) The unit for the alarm's associated metric.
 * `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
 * `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
 * `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
