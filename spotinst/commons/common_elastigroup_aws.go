@@ -27,6 +27,8 @@ type ElastigroupResource struct {
 
 func (res *ElastigroupResource) nullifyGroup() {
 	res.elastigroup = nil
+	// Nullify static update status variables
+	NullifyStates()
 }
 
 func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupResource {
@@ -118,4 +120,22 @@ func (res *ElastigroupResource) GetElastigroup() *aws.Group {
 		}
 	}
 	return res.elastigroup
+}
+
+// Load Balancers
+var StatusElbUpdated = false
+var StatusTgUpdated = false
+var StatusMlbUpdated = false
+
+// Block Devices
+var StatusEphemeralBlockDeviceUpdated = false
+var StatusEbsBlockDeviceUpdated = false
+
+func NullifyStates() {
+	StatusElbUpdated = false
+	StatusTgUpdated = false
+	StatusMlbUpdated = false
+
+	StatusEphemeralBlockDeviceUpdated = false
+	StatusEbsBlockDeviceUpdated = false
 }

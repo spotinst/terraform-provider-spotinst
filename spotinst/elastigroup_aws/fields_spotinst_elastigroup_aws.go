@@ -732,32 +732,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//elastigroup := resourceObject.(*aws.Group)
-			//var tagsSet *schema.Set = nil
-			//var tagsToAdd []interface{} = nil
-			//
-			//if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
-			//	elastigroup.Compute.LaunchSpecification.Tags != nil {
-			//
-			//	tags := elastigroup.Compute.LaunchSpecification.Tags
-			//	tagsToAdd = make([]interface{}, 0, len(tags))
-			//	for _, tag := range tags {
-			//		tagToAdd := &aws.Tag{
-			//			Key:   tag.Key,
-			//			Value: tag.Value,
-			//		}
-			//		tagsToAdd = append(tagsToAdd, tagToAdd)
-			//	}
-			//
-			//	tagHashFunc := func(item interface{}) int {
-			//		tag := item.(*aws.Tag)
-			//		return hashcode.String(spotinst.StringValue(tag.Key) + spotinst.StringValue(tag.Value))
-			//	}
-			//	tagsSet = schema.NewSet(tagHashFunc, tagsToAdd)
-			//}
-			//if err := resourceData.Set(string(Tags), tagsSet); err != nil {
-			//	return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
-			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -1200,16 +1174,12 @@ func extractBalancers(
 	return result, nil
 }
 
-var elbUpdated = false
-var tgUpdated = false
-var mlbUpdated = false
-
 func onBalancersUpdate(elastigroup *aws.Group, resourceData *schema.ResourceData) error {
 	var elbNullify = false
 	var tgNullify = false
 	var mlbNullify = false
 
-	if !elbUpdated {
+	if !commons.StatusElbUpdated {
 		if elbBalancers, err := extractBalancers(BalancerTypeClassic, elastigroup, resourceData); err != nil {
 			return err
 		} else if elbBalancers != nil && len(elbBalancers) > 0 {
@@ -1221,9 +1191,9 @@ func onBalancersUpdate(elastigroup *aws.Group, resourceData *schema.ResourceData
 		} else {
 			elbNullify = true
 		}
-		elbUpdated = true
+		commons.StatusElbUpdated = true
 	}
-	if !tgUpdated {
+	if !commons.StatusTgUpdated {
 		if tgBalancers, err := extractBalancers(BalancerTypeTargetGroup, elastigroup, resourceData); err != nil {
 			return err
 		} else if tgBalancers != nil && len(tgBalancers) > 0 {
@@ -1235,9 +1205,9 @@ func onBalancersUpdate(elastigroup *aws.Group, resourceData *schema.ResourceData
 		} else {
 			tgNullify = true
 		}
-		tgUpdated = true
+		commons.StatusTgUpdated = true
 	}
-	if !mlbUpdated {
+	if !commons.StatusMlbUpdated {
 		if mlbBalancers, err := extractBalancers(BalancerTypeMultaiTargetSet, elastigroup, resourceData); err != nil {
 			return err
 		} else if mlbBalancers != nil && len(mlbBalancers) > 0 {
@@ -1249,7 +1219,7 @@ func onBalancersUpdate(elastigroup *aws.Group, resourceData *schema.ResourceData
 		} else {
 			mlbNullify = true
 		}
-		mlbUpdated = true
+		commons.StatusMlbUpdated = true
 	}
 
 	// All fields share the same object structure, we need to nullify if and only if there are no items

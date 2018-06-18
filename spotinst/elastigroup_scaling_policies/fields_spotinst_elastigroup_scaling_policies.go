@@ -1,6 +1,8 @@
 package elastigroup_scaling_policies
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -17,7 +19,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ScalingUpPolicy,
 		upDownScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			// Skip
+			elastigroup := resourceObject.(*aws.Group)
+			var policiesResult []interface{} = nil
+			if elastigroup.Scaling != nil && elastigroup.Scaling.Up != nil {
+				scaleUpPolicies := elastigroup.Scaling.Up
+				policiesResult = flattenAWSGroupScalingPolicy(scaleUpPolicies)
+			}
+			if err := resourceData.Set(string(ScalingUpPolicy), policiesResult); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingUpPolicy), err)
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -34,14 +44,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			var value []*aws.ScalingPolicy = nil
-			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok {
+			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok && v != nil {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
 					return err
 				} else {
 					value = policies
 				}
 			}
-			elastigroup.Scaling.SetUp(value)
+			if value != nil && len(value) > 0 {
+				elastigroup.Scaling.SetUp(value)
+			} else {
+				elastigroup.Scaling.SetUp(nil)
+			}
 			return nil
 		},
 		nil,
@@ -52,7 +66,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ScalingDownPolicy,
 		upDownScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			// Skip
+			elastigroup := resourceObject.(*aws.Group)
+			var policiesResult []interface{} = nil
+			if elastigroup.Scaling != nil && elastigroup.Scaling.Down != nil {
+				scaleDownPolicies := elastigroup.Scaling.Down
+				policiesResult = flattenAWSGroupScalingPolicy(scaleDownPolicies)
+			}
+			if err := resourceData.Set(string(ScalingDownPolicy), policiesResult); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingDownPolicy), err)
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -69,14 +91,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			var value []*aws.ScalingPolicy = nil
-			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok {
+			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok && v != nil {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
 					return err
 				} else {
 					value = policies
 				}
 			}
-			elastigroup.Scaling.SetDown(value)
+			if value != nil && len(value) > 0 {
+				elastigroup.Scaling.SetDown(value)
+			} else {
+				elastigroup.Scaling.SetDown(nil)
+			}
 			return nil
 		},
 		nil,
@@ -87,7 +113,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ScalingTargetPolicy,
 		targetScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			// Use Terraform default read behaviour
+			elastigroup := resourceObject.(*aws.Group)
+			var policiesResult []interface{} = nil
+			if elastigroup.Scaling != nil && elastigroup.Scaling.Target != nil {
+				scaleTargetPolicies := elastigroup.Scaling.Target
+				policiesResult = flattenAWSGroupScalingPolicy(scaleTargetPolicies)
+			}
+			if err := resourceData.Set(string(ScalingTargetPolicy), policiesResult); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingTargetPolicy), err)
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -104,14 +138,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			elastigroup := resourceObject.(*aws.Group)
 			var value []*aws.ScalingPolicy = nil
-			if v, ok := resourceData.GetOk(string(ScalingTargetPolicy)); ok {
+			if v, ok := resourceData.GetOk(string(ScalingTargetPolicy)); ok && v != nil {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
 					return err
 				} else {
 					value = policies
 				}
 			}
-			elastigroup.Scaling.SetTarget(value)
+			if value != nil && len(value) > 0 {
+				elastigroup.Scaling.SetTarget(value)
+			} else {
+				elastigroup.Scaling.SetTarget(nil)
+			}
 			return nil
 		},
 		nil,
@@ -156,8 +194,7 @@ func baseScalingPolicySchema() *schema.Schema {
 
 				string(Unit): &schema.Schema{
 					Type:     schema.TypeString,
-					Optional: true,
-					Computed: true,
+					Required: true,
 				},
 
 				string(Cooldown): &schema.Schema{
@@ -206,13 +243,13 @@ func upDownScalingPolicySchema() *schema.Schema {
 	}
 
 	s[string(EvaluationPeriods)] = &schema.Schema{
-		Type:     schema.TypeString,
+		Type:     schema.TypeInt,
 		Optional: true,
 		Computed: true,
 	}
 
 	s[string(Period)] = &schema.Schema{
-		Type:     schema.TypeString,
+		Type:     schema.TypeInt,
 		Optional: true,
 		Computed: true,
 	}
@@ -380,4 +417,48 @@ func expandAWSGroupScalingPolicyDimensions(list map[string]interface{}) []*aws.D
 		dimensions = append(dimensions, dimension)
 	}
 	return dimensions
+}
+
+func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
+	result := make([]interface{}, 0, len(policies))
+	for _, policy := range policies {
+		m := make(map[string]interface{})
+		m[string(PolicyName)] = spotinst.StringValue(policy.PolicyName)
+		m[string(MetricName)] = spotinst.StringValue(policy.MetricName)
+		m[string(Namespace)] = spotinst.StringValue(policy.Namespace)
+		m[string(Source)] = spotinst.StringValue(policy.Source)
+		m[string(Statistic)] = spotinst.StringValue(policy.Statistic)
+		m[string(Unit)] = spotinst.StringValue(policy.Unit)
+		m[string(Cooldown)] = spotinst.IntValue(policy.Cooldown)
+
+		if policy.Dimensions != nil && len(policy.Dimensions) > 0 {
+			dimMap := make(map[string]interface{})
+			for _, dimension := range policy.Dimensions {
+				dimMap[spotinst.StringValue(dimension.Name)] = spotinst.StringValue(dimension.Value)
+			}
+			m[string(Dimensions)] = dimMap
+		}
+
+		if policy.Action != nil && policy.Action.Type != nil {
+			m[string(ActionType)] = spotinst.StringValue(policy.Action.Type)
+			m[string(Adjustment)] = spotinst.StringValue(policy.Action.Adjustment)
+			m[string(MinTargetCapacity)] = spotinst.StringValue(policy.Action.MinTargetCapacity)
+			m[string(MaxTargetCapacity)] = spotinst.StringValue(policy.Action.MaxTargetCapacity)
+			m[string(Minimum)] = spotinst.StringValue(policy.Action.Minimum)
+			m[string(Maximum)] = spotinst.StringValue(policy.Action.Maximum)
+			m[string(Target)] = spotinst.StringValue(policy.Action.Target)
+			m[string(EvaluationPeriods)] = spotinst.IntValue(policy.EvaluationPeriods)
+			m[string(Period)] = spotinst.IntValue(policy.Period)
+			m[string(Threshold)] = spotinst.Float64Value(policy.Threshold)
+			m[string(Operator)] = spotinst.StringValue(policy.Operator)
+		}
+
+		// Target scaling policy?
+		if policy.Threshold == nil {
+			m[string(Target)] = spotinst.Float64Value(policy.Target)
+		}
+
+		result = append(result, m)
+	}
+	return result
 }
