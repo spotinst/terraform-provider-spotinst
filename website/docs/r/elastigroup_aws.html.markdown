@@ -213,7 +213,7 @@ Each `scaling_*_policy` supports the following:
 * `threshold` - (Required) The value against which the specified statistic is compared.
 * `policy_name` - (Required) The name of the policy.
 * `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
-* `unit` - (Required, Default: `"percent"`) The unit for the alarm's associated metric.
+* `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
 * `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
 * `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
 * `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
@@ -288,12 +288,21 @@ Each `ephemeral_block_device` supports the following:
 We support instance persistence via the following configurations. all values are boolean.
 For more information on instance persistence please see: [Stateful configuration](https://help.spotinst.com/hc/en-us/articles/115002899285)
 
-* `persist_root_device` - (Optional) Boolean, should the instance maintain its root device volumes
-* `persist_block_devices` - (Optional) Boolean, should the instance maintain its Data volumes
-* `persist_private_ip` - (Optional) Boolean, should the instance maintain its private IP
-* `block_devices_mode` - (Optional) String, determine the way we attach the data volumes to the data devices, possible values: `"reattach"` and `"onLaunch"` (default is onLaunch)
+* `persist_root_device` - (Optional) Boolean, should the instance maintain its root device volumes.
+* `persist_block_devices` - (Optional) Boolean, should the instance maintain its Data volumes.
+* `persist_private_ip` - (Optional) Boolean, should the instance maintain its private IP.
+* `block_devices_mode` - (Optional) String, determine the way we attach the data volumes to the data devices, possible values: `"reattach"` and `"onLaunch"` (default is onLaunch).
 * `private_ips` - (Optional) List of Private IPs to associate to the group instances.(e.g. "172.1.1.0"). Please note: This setting will only apply if persistence.persist_private_ip is set to true.
 
+<a id="stateful-deallocation"></a>
+## Stateful Deallocation
+
+* `stateful_deallocation` - (Optional)
+    * `should_delete_images` - (Optional) For stateful groups: remove persistent images.
+    * `should_delete_network_interfaces` - (Optional) For stateful groups: remove network interfaces.
+    * `should_delete_volumes` - (Optional) For stateful groups: remove persistent volumes.
+    * `should_delete_snapshots` - (Optional) For stateful groups: remove snapshots.
+    
 <a id="health-check"></a>
 ## Health Check
 
