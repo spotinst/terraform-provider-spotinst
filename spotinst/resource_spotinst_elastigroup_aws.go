@@ -83,7 +83,7 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 
 	if statefulDeallocation, exists := resourceData.GetOkExists(string(elastigroup_stateful.StatefulDeallocation)); exists {
 		list := statefulDeallocation.([]interface{})
-		if list != nil && list[0] != nil {
+		if list != nil && len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
 			var result = &aws.StatefulDeallocation{}
@@ -103,14 +103,14 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 				result.ShouldDeleteVolumes = spotinst.Bool(shouldDeleteVolumes)
 			}
 
-			if json, err := commons.ToJson(result); err != nil {
-				return err
-			} else {
-				log.Printf("===> Group Delete Configuration: %s", json)
-			}
-
 			input.StatefulDeallocation = result
 		}
+	}
+
+	if json, err := commons.ToJson(input); err != nil {
+		return err
+	} else {
+		log.Printf("===> Group Delete Configuration: %s", json)
 	}
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {

@@ -1910,6 +1910,152 @@ const testStatefulGroupConfig_EmptyFields = `
  // -----------------------------------
 `
 
+func TestAccSpotinstElastigroup_DeallocationStateful_DeleteNetworkInterfacesAndSnapshots(t *testing.T) {
+	groupName := "eg-stateful-deallocation-network-interfaces-snapshots"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testDeallocationStatefulGroupConfig_DeleteNetworkInterfacesAndSnapshots,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "persist_root_device", "true"),
+					resource.TestCheckResourceAttr(resourceName, "persist_block_devices", "true"),
+					resource.TestCheckResourceAttr(resourceName, "persist_private_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_devices_mode", "reattach"),
+					resource.TestCheckResourceAttr(resourceName, "private_ips.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "private_ips.0", "1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "private_ips.1", "2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_images", "false"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_network_interfaces", "true"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_volumes", "false"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_snapshots", "true"),
+				),
+			},
+		},
+	})
+}
+
+const testDeallocationStatefulGroupConfig_DeleteNetworkInterfacesAndSnapshots = `
+ // --- DEALLOCATION STATEFUL ---------
+ persist_root_device = true
+ persist_block_devices = true
+ persist_private_ip = true
+ block_devices_mode = "reattach"
+ private_ips = ["1.1.1.1", "2.2.2.2"]
+ stateful_deallocation = {
+   should_delete_images              = false
+   should_delete_network_interfaces  = true
+   should_delete_volumes             = false
+   should_delete_snapshots           = true
+ }
+ // -----------------------------------
+`
+
+func TestAccSpotinstElastigroup_DeallocationStateful_DeleteVolumesAndImages(t *testing.T) {
+	groupName := "eg-stateful-deallocation-volumes-images"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testDeallocationStatefulGroupConfig_DeleteVolumesAndImages,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "persist_root_device", "true"),
+					resource.TestCheckResourceAttr(resourceName, "persist_block_devices", "true"),
+					resource.TestCheckResourceAttr(resourceName, "persist_private_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_devices_mode", "reattach"),
+					resource.TestCheckResourceAttr(resourceName, "private_ips.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "private_ips.0", "1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "private_ips.1", "2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_images", "true"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_network_interfaces", "false"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_volumes", "true"),
+					resource.TestCheckResourceAttr(resourceName, "stateful_deallocation.0.should_delete_snapshots", "false"),
+				),
+			},
+		},
+	})
+}
+
+const testDeallocationStatefulGroupConfig_DeleteVolumesAndImages = `
+ // --- DEALLOCATION STATEFUL ---------
+ persist_root_device = true
+ persist_block_devices = true
+ persist_private_ip = true
+ block_devices_mode = "reattach"
+ private_ips = ["1.1.1.1", "2.2.2.2"]
+ stateful_deallocation = {
+   should_delete_images              = true
+   should_delete_network_interfaces  = false
+   should_delete_volumes             = true
+   should_delete_snapshots           = false
+ }
+ // -----------------------------------
+`
+
+func TestAccSpotinstElastigroup_DeallocationStateful_DeleteWithoutStatefulResources(t *testing.T) {
+	groupName := "eg-stateful-deallocation-empty"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testDeallocationStatefulGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "persist_root_device", "false"),
+					resource.TestCheckResourceAttr(resourceName, "persist_block_devices", "false"),
+					resource.TestCheckResourceAttr(resourceName, "persist_private_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_devices_mode", ""),
+				),
+			},
+		},
+	})
+}
+
+const testDeallocationStatefulGroupConfig_EmptyFields = `
+ // --- DEALLOCATION STATEFUL ---------
+ // -----------------------------------
+`
+
 // endregion
 
 // region Elastigroup: Block Devices
