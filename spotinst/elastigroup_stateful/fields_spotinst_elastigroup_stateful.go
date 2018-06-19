@@ -210,6 +210,39 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[StatefulDeallocation] = commons.NewGenericField(
+		commons.ElastigroupStateful,
+		StatefulDeallocation,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			MaxItems: 1,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldDeleteImages): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+
+					string(ShouldDeleteNetworkInterfaces): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+
+					string(ShouldDeleteVolumes): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldDeleteSnapshots): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

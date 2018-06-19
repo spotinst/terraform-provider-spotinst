@@ -564,7 +564,15 @@ type UpdateGroupOutput struct {
 }
 
 type DeleteGroupInput struct {
-	GroupID *string `json:"groupId,omitempty"`
+	GroupID              *string               `json:"groupId,omitempty"`
+	StatefulDeallocation *StatefulDeallocation `json:"statefulDeallocation,omitempty"`
+}
+
+type StatefulDeallocation struct {
+	ShouldDeleteImages            *bool `json:"shouldDeleteImages,omitempty"`
+	ShouldDeleteNetworkInterfaces *bool `json:"shouldDeleteNetworkInterfaces,omitempty"`
+	ShouldDeleteVolumes           *bool `json:"shouldDeleteVolumes,omitempty"`
+	ShouldDeleteSnapshots         *bool `json:"shouldDeleteSnapshots,omitempty"`
 }
 
 type DeleteGroupOutput struct{}
@@ -790,6 +798,13 @@ func (s *ServiceOp) Delete(ctx context.Context, input *DeleteGroupInput) (*Delet
 	}
 
 	r := client.NewRequest(http.MethodDelete, path)
+
+	if input.StatefulDeallocation != nil {
+		r.Obj = &DeleteGroupInput{
+			StatefulDeallocation: input.StatefulDeallocation,
+		}
+	}
+
 	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
@@ -1497,7 +1512,7 @@ func (o *Task) SetCronExpression(v *string) *Task {
 }
 
 func (o *Task) SetStartTime(v *string) *Task {
-	if o.StartTime = v; o.StartTime== nil {
+	if o.StartTime = v; o.StartTime == nil {
 		o.nullFields = append(o.nullFields, "StartTime")
 	}
 	return o
