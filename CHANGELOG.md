@@ -1,6 +1,8 @@
 ## 1.0.0 (Unreleased)
 
-NOTES:
+BREAKING CHANGES / NOTES
+
+Introduced a new API schema to support the latest Spotinst API additions while using similar AWS terminology.
 
 * resource/spotinst_group_aws: Resource name changed to `spotinst_elastigroup_aws`
 * resource/spotinst_elastigroup_aws: Removed `capacity` and flattened its fields on the resource
