@@ -1,3 +1,4 @@
+## 1.0.1 (Unreleased)
 ## 1.0.0 (June 21, 2018)
 
 BREAKING CHANGES / NOTES
