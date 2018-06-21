@@ -40,4 +40,8 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: Kubernetes integration now contain cluster controller support under `integration_mode` and `cluster_identifier`
 * resource/spotinst_elastigroup_aws: Flattened previous objects `capacity`, `launch_specification`, `persistence`, `strategy`
 
-BUG FIXES:
+## 0.1.0 (June 21, 2017)
+
+NOTES:
+
+* Same functionality as that of Terraform 0.9.8. Repacked as part of [Provider Splitout](https://www.hashicorp.com/blog/upcoming-provider-changes-in-terraform-0-10/)
