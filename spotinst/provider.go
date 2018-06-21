@@ -3,52 +3,32 @@ package spotinst
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"email": &schema.Schema{
+			string(commons.ProviderToken): &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("SPOTINST_EMAIL", ""),
-				Description: "Spotinst Email",
-			},
-
-			"password": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("SPOTINST_PASSWORD", ""),
-				Description: "Spotinst Password",
-			},
-
-			"client_id": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("SPOTINST_CLIENT_ID", ""),
-				Description: "Spotinst OAuth Client ID",
-			},
-
-			"client_secret": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("SPOTINST_CLIENT_SECRET", ""),
-				Description: "Spotinst OAuth Client Secret",
-			},
-
-			"token": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("SPOTINST_TOKEN", ""),
+				DefaultFunc: schema.EnvDefaultFunc(credentials.EnvCredentialsVarToken, ""),
 				Description: "Spotinst Personal API Access Token",
+			},
+
+			string(commons.ProviderAccount): &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc(credentials.EnvCredentialsVarAccount, ""),
+				Description: "Spotinst Account ID",
 			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"spotinst_aws_group":    resourceSpotinstAwsGroup(),
-			"spotinst_subscription": resourceSpotinstSubscription(),
-			"spotinst_healthcheck":  resourceSpotinstHealthCheck(),
+			string(commons.ElastigroupAwsResourceName): resourceSpotinstElastigroupAws(),
+			string(commons.SubscriptionResourceName):   resourceSpotinstSubscription(),
 		},
 
 		ConfigureFunc: providerConfigure,
@@ -57,11 +37,8 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Email:        d.Get("email").(string),
-		Password:     d.Get("password").(string),
-		ClientID:     d.Get("client_id").(string),
-		ClientSecret: d.Get("client_secret").(string),
-		Token:        d.Get("token").(string),
+		Token:   d.Get(string(commons.ProviderToken)).(string),
+		Account: d.Get(string(commons.ProviderAccount)).(string),
 	}
 	if err := config.Validate(); err != nil {
 		return nil, err
