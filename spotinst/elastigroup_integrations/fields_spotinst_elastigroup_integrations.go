@@ -21,6 +21,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupMesosphere(fieldsMap)
 	SetupCodeDeploy(fieldsMap)
 	SetupMultaiRuntime(fieldsMap)
+	SetupGitlab(fieldsMap)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
