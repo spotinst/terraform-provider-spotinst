@@ -132,12 +132,6 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
 
   protocol="http"
   endpoint="http://test.me"
-
-  # protocol="https"
-  # endpoint="https://test.me"
-
-  # protocol="email"
-  # endpoint="test@me.com"
 }
 `
 
@@ -152,12 +146,6 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
 
   protocol="http"
   endpoint="http://test.that"
-
-  # protocol="https"
-  # endpoint="https://test.me"
-
-  # protocol="email"
-  # endpoint="test@me.com"
 }
 `
 
