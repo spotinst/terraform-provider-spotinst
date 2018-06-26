@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -22,7 +21,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Persistence != nil &&
 				elastigroup.Strategy.Persistence.ShouldPersistRootDevice != nil {
@@ -34,14 +34,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(PersistRootDevice)).(bool); ok {
 				elastigroup.Strategy.Persistence.SetShouldPersistRootDevice(spotinst.Bool(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if v, ok := resourceData.Get(string(PersistRootDevice)).(bool); ok {
 				value = spotinst.Bool(v)
@@ -60,7 +62,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Persistence != nil &&
 				elastigroup.Strategy.Persistence.ShouldPersistBlockDevices != nil {
@@ -72,14 +75,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(PersistBlockDevices)).(bool); ok {
 				elastigroup.Strategy.Persistence.SetShouldPersistBlockDevices(spotinst.Bool(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if v, ok := resourceData.Get(string(PersistBlockDevices)).(bool); ok {
 				value = spotinst.Bool(v)
@@ -98,7 +103,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Persistence != nil &&
 				elastigroup.Strategy.Persistence.ShouldPersistPrivateIP != nil {
@@ -110,14 +116,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(PersistPrivateIp)).(bool); ok {
 				elastigroup.Strategy.Persistence.SetShouldPersistPrivateIP(spotinst.Bool(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if v, ok := resourceData.Get(string(PersistPrivateIp)).(bool); ok {
 				value = spotinst.Bool(v)
@@ -136,7 +144,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *string = nil
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Persistence != nil &&
 				elastigroup.Strategy.Persistence.BlockDevicesMode != nil {
@@ -148,14 +157,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(BlockDevicesMode)).(string); ok && v != "" {
 				elastigroup.Strategy.Persistence.SetBlockDevicesMode(spotinst.String(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *string = nil
 			if v, ok := resourceData.Get(string(BlockDevicesMode)).(string); ok && v != "" {
 				value = spotinst.String(v)
@@ -175,7 +186,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if elastigroup.Compute != nil && elastigroup.Compute.PrivateIPs != nil {
 				value := elastigroup.Compute.PrivateIPs
 				if err := resourceData.Set(string(PrivateIps), value); err != nil {
@@ -185,7 +197,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(PrivateIps)); ok {
 				if eips, err := expandAWSGroupPrivateIPs(v); err != nil {
 					return err
@@ -196,7 +209,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var result []string = nil
 			if v, ok := resourceData.GetOk(string(PrivateIps)); ok {
 				if eips, err := expandAWSGroupPrivateIPs(v); err != nil {

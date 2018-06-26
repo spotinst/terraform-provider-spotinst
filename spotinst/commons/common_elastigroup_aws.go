@@ -3,7 +3,6 @@ package commons
 import (
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -16,23 +15,27 @@ const (
 	ElastigroupAwsResourceName ResourceName = "spotinst_elastigroup_aws"
 )
 
-var SpotinstElastigroup *ElastigroupResource
+var ElastigroupResource *ElastigroupTerraformResource
 
-type ElastigroupResource struct {
+type ElastigroupTerraformResource struct {
 	GenericResource // embedding
+}
 
-	mux         sync.Mutex
+type ElastigroupWrapper struct {
 	elastigroup *aws.Group
+
+	// Load balancer states
+	StatusElbUpdated bool
+	StatusTgUpdated  bool
+	StatusMlbUpdated bool
+
+	// Block devices states
+	StatusEphemeralBlockDeviceUpdated bool
+	StatusEbsBlockDeviceUpdated       bool
 }
 
-func (res *ElastigroupResource) nullifyGroup() {
-	res.elastigroup = nil
-	// Nullify static update status variables
-	NullifyStates()
-}
-
-func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupResource {
-	return &ElastigroupResource{
+func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupTerraformResource {
+	return &ElastigroupTerraformResource{
 		GenericResource: GenericResource{
 			resourceName: ElastigroupAwsResourceName,
 			fields:       NewGenericFields(fieldsMap),
@@ -40,102 +43,106 @@ func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupR
 	}
 }
 
-func (res *ElastigroupResource) OnCreate(
+func (res *ElastigroupTerraformResource) OnRead(
+	elastigroup *aws.Group,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("resource fields are nil or empty, cannot create")
+		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	// This is important for Terraform tests which execute 'apply' on the same process thread
-	// We need to nullify the elastigroup to prevent update failure due to illegal fields being updated
-	log.Printf("onCreate() -> nullifing cached elastigroup object...")
-	res.nullifyGroup()
+	egWrapper := NewElastigroupWrapper()
+	egWrapper.SetElastigroup(elastigroup)
 
-	egGroup := res.GetElastigroup()
 	for _, field := range res.fields.fieldsMap {
-		if field.onCreate == nil {
+		if field.onRead == nil {
 			continue
 		}
-		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(egGroup, resourceData, meta); err != nil {
+		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
+		if err := field.onRead(egWrapper, resourceData, meta); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (res *ElastigroupResource) OnUpdate(
+func (res *ElastigroupTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, error) {
+	meta interface{}) (*aws.Group, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, fmt.Errorf("resource fields are nil or empty, cannot update")
+		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	// This is important for Terraform tests which execute 'apply' on the same process thread
-	// We need to nullify the elastigroup to prevent update failure due to illegal fields being updated
-	log.Printf("onUpdate() -> nullifing cached elastigroup object...")
-	res.nullifyGroup()
+	egWrapper := NewElastigroupWrapper()
 
-	var hasChanged = false
-	egGroup := res.GetElastigroup()
+	for _, field := range res.fields.fieldsMap {
+		if field.onCreate == nil {
+			continue
+		}
+		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
+		if err := field.onCreate(egWrapper, resourceData, meta); err != nil {
+			return nil, err
+		}
+	}
+	return egWrapper.GetElastigroup(), nil
+}
+
+func (res *ElastigroupTerraformResource) OnUpdate(
+	resourceData *schema.ResourceData,
+	meta interface{}) (bool, *aws.Group, error) {
+
+	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
+		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
+	}
+
+	egWrapper := NewElastigroupWrapper()
+	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
-			if err := field.onUpdate(egGroup, resourceData, meta); err != nil {
-				return false, err
+			if err := field.onUpdate(egWrapper, resourceData, meta); err != nil {
+				return false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, nil
+	return hasChanged, egWrapper.GetElastigroup(), nil
 }
 
-func (res *ElastigroupResource) GetElastigroup() *aws.Group {
-	if res.elastigroup == nil {
-		res.mux.Lock()
-		defer res.mux.Unlock()
-		if res.elastigroup == nil {
-			res.elastigroup = &aws.Group{
-				Scaling:     &aws.Scaling{},
-				Scheduling:  &aws.Scheduling{},
-				Integration: &aws.Integration{},
-				Compute: &aws.Compute{
-					LaunchSpecification: &aws.LaunchSpecification{
-						LoadBalancersConfig: &aws.LoadBalancersConfig{},
-					},
-					InstanceTypes: &aws.InstanceTypes{},
+// Spotinst elastigroup must have a wrapper struct.
+// Reason is that there are multiple fields who share the same elastigroup API object
+// e.g. LoadBalancersConfig fields and BlockDeviceMapping fields
+// Wrapper struct intended to help reflecting these fields state properly into the elastigroup object.
+func NewElastigroupWrapper() *ElastigroupWrapper {
+	return &ElastigroupWrapper{
+		elastigroup: &aws.Group{
+			Scaling:     &aws.Scaling{},
+			Scheduling:  &aws.Scheduling{},
+			Integration: &aws.Integration{},
+			Compute: &aws.Compute{
+				LaunchSpecification: &aws.LaunchSpecification{
+					LoadBalancersConfig: &aws.LoadBalancersConfig{},
 				},
-				Capacity: &aws.Capacity{},
-				Strategy: &aws.Strategy{
-					Persistence: &aws.Persistence{},
-				},
-			}
-		}
+				InstanceTypes: &aws.InstanceTypes{},
+			},
+			Capacity: &aws.Capacity{},
+			Strategy: &aws.Strategy{
+				Persistence: &aws.Persistence{},
+			},
+		},
 	}
-	return res.elastigroup
 }
 
-// Load Balancers
-var StatusElbUpdated = false
-var StatusTgUpdated = false
-var StatusMlbUpdated = false
+func (egWrapper *ElastigroupWrapper) GetElastigroup() *aws.Group {
+	return egWrapper.elastigroup
+}
 
-// Block Devices
-var StatusEphemeralBlockDeviceUpdated = false
-var StatusEbsBlockDeviceUpdated = false
-
-func NullifyStates() {
-	StatusElbUpdated = false
-	StatusTgUpdated = false
-	StatusMlbUpdated = false
-
-	StatusEphemeralBlockDeviceUpdated = false
-	StatusEbsBlockDeviceUpdated = false
+func (egWrapper *ElastigroupWrapper) SetElastigroup(elastigroup *aws.Group) {
+	egWrapper.elastigroup = elastigroup
 }

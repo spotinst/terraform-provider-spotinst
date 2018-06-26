@@ -80,7 +80,8 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(IntegrationEcs)); ok {
 				if integration, err := expandAWSGroupEC2ContainerServiceIntegration(v); err != nil {
 					return err
@@ -91,7 +92,8 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *aws.EC2ContainerServiceIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationEcs)); ok {
 				if integration, err := expandAWSGroupEC2ContainerServiceIntegration(v); err != nil {

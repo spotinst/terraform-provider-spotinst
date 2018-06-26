@@ -91,7 +91,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value []interface{} = nil
 			if elastigroup.Scheduling != nil && elastigroup.Scheduling.Tasks != nil {
 				tasks := elastigroup.Scheduling.Tasks
@@ -109,7 +110,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(ScheduledTask)); ok {
 				if tasks, err := expandAWSGroupScheduledTasks(v); err != nil {
 					return err
@@ -120,7 +122,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value []*aws.Task = nil
 			if v, ok := resourceData.GetOk(string(ScheduledTask)); ok {
 				if interfaces, err := expandAWSGroupScheduledTasks(v); err != nil {

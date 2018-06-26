@@ -1,4 +1,19 @@
-## 1.0.0 (Unreleased)
+## 1.0.1 (Unreleased)
+
+NOTES
+
+* resource/spotinst_subscription: Added a new subscription resource for creating Spotinst subscriptions that gets triggered by an elastigroup event type
+
+FEATURES:
+
+* **New Resource:** `spotinst_subscription`
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws: Resource now properly create multiple elastigroups using the count parameter and/or using parallelism on terraform apply
+* resource/spotinst_subscription: Added acceptance tests coverage for http, https, email & email-json subscriptions
+
+## 1.0.0 (June 21, 2018)
 
 BREAKING CHANGES / NOTES
 
