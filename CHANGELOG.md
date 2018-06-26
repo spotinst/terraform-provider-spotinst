@@ -1,4 +1,4 @@
-## 1.0.1 (Unreleased)
+## 1.1.0 (Unreleased)
 
 NOTES
 
@@ -10,8 +10,9 @@ FEATURES:
 
 ENHANCEMENTS:
 
-* resource/spotinst_elastigroup_aws: Resource now properly create multiple elastigroups using the count parameter and/or using parallelism on terraform apply
-* resource/spotinst_subscription: Added acceptance tests coverage for http, https, email & email-json subscriptions
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: Resource now properly create multiple elastigroups using the count parameter and/or using parallelism via terraform apply
 
 ## 1.0.0 (June 21, 2018)
 

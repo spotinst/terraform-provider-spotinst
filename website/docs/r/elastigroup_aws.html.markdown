@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: elastigroup_aws"
-sidebar_current: "docs-do-resource-group_aws"
+sidebar_current: "docs-do-resource-elastigroup_aws"
 description: |-
   Provides a Spotinst AWS group resource.
 ---
