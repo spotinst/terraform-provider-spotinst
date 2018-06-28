@@ -41,7 +41,8 @@ func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(IntegrationGitlab)); ok {
 				if integration, err := expandAWSGroupGitlabIntegration(v); err != nil {
 					return err
@@ -52,7 +53,8 @@ func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *aws.GitlabIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationGitlab)); ok {
 				if integration, err := expandAWSGroupGitlabIntegration(v); err != nil {
