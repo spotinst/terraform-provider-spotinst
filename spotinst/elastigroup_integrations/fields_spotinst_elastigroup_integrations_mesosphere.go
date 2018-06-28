@@ -31,7 +31,8 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value []interface{} = nil
 			if elastigroup.Integration != nil && elastigroup.Integration.Mesosphere != nil {
 				value = flattenAWSGroupMesosphereIntegration(elastigroup.Integration.Mesosphere)
@@ -48,7 +49,8 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(IntegrationMesosphere)); ok {
 				if integration, err := expandAWSGroupMesosphereIntegration(v); err != nil {
 					return err
@@ -59,7 +61,8 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *aws.MesosphereIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationMesosphere)); ok {
 				if integration, err := expandAWSGroupMesosphereIntegration(v); err != nil {

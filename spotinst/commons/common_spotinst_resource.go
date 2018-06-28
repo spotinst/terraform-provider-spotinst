@@ -1,7 +1,6 @@
 package commons
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"time"
@@ -28,16 +27,9 @@ type onFieldRead func(resourceObject interface{}, resourceData *schema.ResourceD
 type onFieldCreate func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
 type onFieldUpdate func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
 
-type TerraformData struct {
-	ResourceData *schema.ResourceData
-	Meta         interface{}
-}
-
 type GenericResource struct {
 	fields       *GenericFields
 	resourceName ResourceName
-
-	terraformData *TerraformData
 }
 
 type GenericField struct {
@@ -110,27 +102,6 @@ func (field *GenericField) hasFieldChange(resourceData *schema.ResourceData, met
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //   Methods: GenericResource
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func (res *GenericResource) OnRead(
-	resourceObject interface{}) error {
-
-	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("resource fields are nil or empty, cannot read")
-	}
-
-	resourceData := res.terraformData.ResourceData
-	meta := res.terraformData.Meta
-	for _, field := range res.fields.fieldsMap {
-		if field.onRead == nil {
-			continue
-		}
-		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onRead(resourceObject, resourceData, meta); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (res *GenericResource) GetField(fieldName FieldName) *GenericField {
 	if res.fields != nil && res.fields.fieldsMap != nil {
 		return res.fields.fieldsMap[fieldName]
@@ -148,14 +119,6 @@ func (res *GenericResource) GetSchemaMap() map[string]*schema.Schema {
 
 func (res *GenericResource) GetName() string {
 	return string(res.resourceName)
-}
-
-func (res *GenericResource) GetTerraformData() *TerraformData {
-	return res.terraformData
-}
-
-func (res *GenericResource) SetTerraformData(data *TerraformData) {
-	res.terraformData = data
 }
 
 func ToJson(object interface{}) (string, error) {

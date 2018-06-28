@@ -59,7 +59,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			sub := resourceObject.(*subscription.Subscription)
-			if err := resourceData.Set(string(EventType), sub.ResourceID); err != nil {
+			if err := resourceData.Set(string(EventType), sub.EventType); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EventType), err)
 			}
 			return nil
@@ -90,7 +90,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			sub := resourceObject.(*subscription.Subscription)
-			if err := resourceData.Set(string(Protocol), sub.ResourceID); err != nil {
+			if err := resourceData.Set(string(Protocol), sub.Protocol); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Protocol), err)
 			}
 			return nil
@@ -121,7 +121,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			sub := resourceObject.(*subscription.Subscription)
-			if err := resourceData.Set(string(Endpoint), sub.ResourceID); err != nil {
+			if err := resourceData.Set(string(Endpoint), sub.Endpoint); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Endpoint), err)
 			}
 			return nil
@@ -152,7 +152,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			sub := resourceObject.(*subscription.Subscription)
-			if err := resourceData.Set(string(Format), sub.ResourceID); err != nil {
+			if err := resourceData.Set(string(Format), sub.Format); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Format), err)
 			}
 			return nil

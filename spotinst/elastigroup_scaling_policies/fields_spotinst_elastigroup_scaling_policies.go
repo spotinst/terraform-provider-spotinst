@@ -19,7 +19,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ScalingUpPolicy,
 		upDownScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var policiesResult []interface{} = nil
 			if elastigroup.Scaling != nil && elastigroup.Scaling.Up != nil {
 				scaleUpPolicies := elastigroup.Scaling.Up
@@ -31,7 +32,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
 					return err
@@ -42,7 +44,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value []*aws.ScalingPolicy = nil
 			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok && v != nil {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
@@ -66,7 +69,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ScalingDownPolicy,
 		upDownScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var policiesResult []interface{} = nil
 			if elastigroup.Scaling != nil && elastigroup.Scaling.Down != nil {
 				scaleDownPolicies := elastigroup.Scaling.Down
@@ -78,7 +82,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
 					return err
@@ -89,7 +94,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value []*aws.ScalingPolicy = nil
 			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok && v != nil {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
@@ -113,7 +119,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ScalingTargetPolicy,
 		targetScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var policiesResult []interface{} = nil
 			if elastigroup.Scaling != nil && elastigroup.Scaling.Target != nil {
 				scaleTargetPolicies := elastigroup.Scaling.Target
@@ -125,7 +132,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(ScalingTargetPolicy)); ok {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {
 					return err
@@ -136,7 +144,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value []*aws.ScalingPolicy = nil
 			if v, ok := resourceData.GetOk(string(ScalingTargetPolicy)); ok && v != nil {
 				if policies, err := expandAWSGroupScalingPolicies(v); err != nil {

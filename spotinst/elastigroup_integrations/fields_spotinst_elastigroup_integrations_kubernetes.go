@@ -100,7 +100,8 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(IntegrationKubernetes)); ok {
 				if integration, err := expandAWSGroupKubernetesIntegration(v); err != nil {
 					return err
@@ -111,7 +112,8 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *aws.KubernetesIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationKubernetes)); ok {
 				if integration, err := expandAWSGroupKubernetesIntegration(v); err != nil {
