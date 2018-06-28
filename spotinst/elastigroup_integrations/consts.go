@@ -69,9 +69,9 @@ const (
 	DeploymentGroupName        commons.FieldName = "deployment_group_name"
 	// -----------------------------------
 
-	// - Gitlab ----------------------
-	IntegrationGitlab commons.FieldName = "integration_gitlab"
-	GitlabIsEnabled   commons.FieldName = "gitlab_is_enabled"
-
+	// - GITLAB ----------------------
+	IntegrationGitlab     commons.FieldName = "integration_gitlab"
+	GitlabRunner          commons.FieldName = "runner"
+	GitlabRunnerIsEnabled commons.FieldName = "is_enabled"
 	// -----------------------------------
 )

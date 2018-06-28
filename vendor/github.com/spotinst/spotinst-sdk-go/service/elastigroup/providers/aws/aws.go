@@ -99,6 +99,7 @@ type Integration struct {
 	Multai              *MultaiIntegration              `json:"mlbRuntime,omitempty"`
 	Nomad               *NomadIntegration               `json:"nomad,omitempty"`
 	Chef                *ChefIntegration                `json:"chef,omitempty"`
+	Gitlab              *GitlabIntegration              `json:"gitlab,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -239,6 +240,20 @@ type ChefIntegration struct {
 	User         *string `json:"user,omitempty"`
 	PEMKey       *string `json:"pemKey,omitempty"`
 	Version      *string `json:"chefVersion,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type GitlabIntegration struct {
+	Runner *GitlabRunner `json:"runner,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type GitlabRunner struct {
+	IsEnabled *bool `json:"isEnabled,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1067,6 +1082,13 @@ func (o *Integration) SetChef(v *ChefIntegration) *Integration {
 	return o
 }
 
+func (o *Integration) SetGitlab(v *GitlabIntegration) *Integration {
+	if o.Gitlab = v; o.Gitlab == nil {
+		o.nullFields = append(o.nullFields, "Gitlab")
+	}
+	return o
+}
+
 // endregion
 
 // region RancherIntegration
@@ -1457,6 +1479,35 @@ func (o *ChefIntegration) SetVersion(v *string) *ChefIntegration {
 }
 
 // endregion
+
+//region Gitlab
+func (o *GitlabIntegration) MarshalJSON() ([]byte, error) {
+	type noMethod GitlabIntegration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *GitlabIntegration) SetRunner(v *GitlabRunner) *GitlabIntegration {
+	if o.Runner = v; o.Runner == nil {
+		o.nullFields = append(o.nullFields, "Runner")
+	}
+	return o
+}
+
+func (o *GitlabRunner) MarshalJSON() ([]byte, error) {
+	type noMethod GitlabRunner
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *GitlabRunner) SetIsEnabled(v *bool) *GitlabRunner {
+	if o.IsEnabled = v; o.IsEnabled == nil {
+		o.nullFields = append(o.nullFields, "IsEnabled")
+	}
+	return o
+}
+
+//endregion
 
 // region Scheduling
 

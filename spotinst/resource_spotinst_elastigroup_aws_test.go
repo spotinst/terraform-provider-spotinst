@@ -2834,6 +2834,88 @@ const testIntegrationNomadGroupConfig_EmptyFields = `
 
 // endregion
 
+// region Elastigroup: Gitlab Integration
+func TestAccSpotinstElastigroup_IntegrationGitlab(t *testing.T) {
+	groupName := "eg-integration-gitlab"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationGitlabGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.0.runner.0.is_enabled", "true"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationGitlabGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.0.runner.0.is_enabled", "false"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationGitlabGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationGitlabGroupConfig_Create = `
+ // --- INTEGRATION: GITLAB ---
+ integration_gitlab = {
+	runner = {
+		is_enabled = true
+	}
+ }
+ // ----------------------------
+`
+
+const testIntegrationGitlabGroupConfig_Update = `
+ // --- INTEGRATION: GITLAB ---
+ integration_gitlab = {
+    runner = {
+		is_enabled = false
+	}
+ }
+ // ----------------------------
+`
+
+const testIntegrationGitlabGroupConfig_EmptyFields = `
+ // --- INTEGRATION: GITLAB --------------
+ // -------------------------------------
+`
+
+// endregion
+
 // region Elastigroup: Mesosphere Integration
 func TestAccSpotinstElastigroup_IntegrationMesosphere(t *testing.T) {
 	groupName := "eg-integration-mesosphere"

@@ -377,6 +377,10 @@ For more information on instance persistence please see: [Stateful configuration
  
      * `deployment_id` - (Optional) The deployment id you want to get
      
+ * `integration_gitlab` - (Optional) Describes the [Gitlab](https://api.spotinst.com/integration-docs/gitlab/) integration.
+     * `runner` - (Optional) Settings for Gitlab runner. 
+         * `is_enabled` - (Optional, Default: `false`) Specifies whether the integration is enabled.
+     
 <a id="update-policy"></a>
 ## Update Policy
 

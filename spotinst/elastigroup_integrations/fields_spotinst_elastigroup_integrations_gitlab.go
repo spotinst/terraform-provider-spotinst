@@ -1,8 +1,6 @@
 package elastigroup_integrations
 
 import (
-	"fmt"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -23,28 +21,23 @@ func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(GitlabIsEnabled): &schema.Schema{
-						Type:     schema.TypeBool,
+					string(GitlabRunner): &schema.Schema{
+						Type:     schema.TypeList,
 						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(GitlabRunnerIsEnabled): &schema.Schema{
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+							},
+						},
 					},
 				},
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			var value []interface{} = nil
-			if elastigroup.Integration != nil && elastigroup.Integration.Gitlab != nil {
-				value = flattenAWSGroupGitlabIntegration(elastigroup.Integration.Gitlab)
-			}
-			if value != nil {
-				if err := resourceData.Set(string(IntegrationGitlab), value); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationGitlab), err)
-				}
-			} else {
-				if err := resourceData.Set(string(IntegrationGitlab), []*aws.GitlabIntegration{}); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationGitlab), err)
-				}
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -78,21 +71,35 @@ func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func flattenAWSGroupGitlabIntegration(integration *aws.GitlabIntegration) []interface{} {
-	result := make(map[string]interface{})
-	result[string(GitlabIsEnabled)] = spotinst.BoolValue(integration.IsEnabled)
-	return []interface{}{result}
-}
-
 func expandAWSGroupGitlabIntegration(data interface{}) (*aws.GitlabIntegration, error) {
 	integration := &aws.GitlabIntegration{}
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(GitlabIsEnabled)].(bool); ok {
-			integration.SetIsEnabled(spotinst.Bool(v))
+		if v, ok := m[string(GitlabRunner)]; ok {
+			runner, err := expandAWSGroupGitlabRunner(v)
+			if err != nil {
+				return nil, err
+			}
+			if runner != nil {
+				integration.SetRunner(runner)
+			}
 		}
 	}
 	return integration, nil
+}
+
+func expandAWSGroupGitlabRunner(data interface{}) (*aws.GitlabRunner, error) {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		runner := &aws.GitlabRunner{}
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(GitlabRunnerIsEnabled)].(bool); ok {
+			runner.SetIsEnabled(spotinst.Bool(v))
+		}
+		return runner, nil
+	}
+
+	return nil, nil
 }
