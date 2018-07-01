@@ -10,6 +10,8 @@ FEATURES:
 
 ENHANCEMENTS:
 
+* resource/spotinst_elastigroup_aws: Added a new Gitlab runner integration
+
 BUG FIXES:
 
 * resource/spotinst_elastigroup_aws: Resource now properly create multiple elastigroups using the count parameter and/or using parallelism via terraform apply
