@@ -101,7 +101,7 @@ func expandAWSGroupGitlabRunner(data interface{}) (*aws.GitlabRunner, error) {
 		m := list[0].(map[string]interface{})
 
 		var isEnabled = spotinst.Bool(false)
-		if v, ok := m["is_enabled"].(bool); ok {
+		if v, ok := m[string(GitlabRunnerIsEnabled)].(bool); ok {
 			isEnabled = spotinst.Bool(v)
 		}
 
