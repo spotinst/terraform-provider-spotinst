@@ -79,15 +79,18 @@ func expandAWSGroupGitlabIntegration(data interface{}) (*aws.GitlabIntegration, 
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
 
+		var runnerResult *aws.GitlabRunner = nil
 		if v, ok := m[string(GitlabRunner)]; ok {
 			runner, err := expandAWSGroupGitlabRunner(v)
 			if err != nil {
 				return nil, err
 			}
 			if runner != nil {
-				integration.SetRunner(runner)
+				runnerResult = runner
 			}
 		}
+
+		integration.SetRunner(runnerResult)
 	}
 	return integration, nil
 }
@@ -97,9 +100,12 @@ func expandAWSGroupGitlabRunner(data interface{}) (*aws.GitlabRunner, error) {
 		runner := &aws.GitlabRunner{}
 		m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(GitlabRunnerIsEnabled)].(bool); ok {
-			runner.SetIsEnabled(spotinst.Bool(v))
+		var isEnabled = spotinst.Bool(false)
+		if v, ok := m["is_enabled"].(bool); ok {
+			isEnabled = spotinst.Bool(v)
 		}
+
+		runner.SetIsEnabled(isEnabled)
 		return runner, nil
 	}
 
