@@ -26,7 +26,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.ImageID != nil {
@@ -38,14 +39,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(ImageId)).(string); ok && v != "" {
 				elastigroup.Compute.LaunchSpecification.SetImageId(spotinst.String(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(ImageId)).(string); ok && v != "" {
 				elastigroup.Compute.LaunchSpecification.SetImageId(spotinst.String(v))
 			}
@@ -62,7 +65,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value = ""
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.IAMInstanceProfile != nil {
@@ -80,7 +84,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(IamInstanceProfile)).(string); ok && v != "" {
 				iamInstanceProf := &aws.IAMInstanceProfile{}
 				if InstanceProfileArnRegex.MatchString(v) {
@@ -93,7 +98,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(IamInstanceProfile)).(string); ok && v != "" {
 				iamInstanceProf := &aws.IAMInstanceProfile{}
 				if InstanceProfileArnRegex.MatchString(v) {
@@ -118,7 +124,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.KeyPair != nil {
@@ -130,14 +137,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(KeyName)).(string); ok && v != "" {
 				elastigroup.Compute.LaunchSpecification.SetKeyPair(spotinst.String(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(KeyName)).(string); ok && v != "" {
 				elastigroup.Compute.LaunchSpecification.SetKeyPair(spotinst.String(v))
 			}
@@ -155,7 +164,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.SecurityGroupIDs != nil {
@@ -167,7 +177,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
 				ids := make([]string, len(v))
 				for i, j := range v {
@@ -178,7 +189,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
 				ids := make([]string, len(v))
 				for i, j := range v {
@@ -201,7 +213,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value = ""
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.UserData != nil {
@@ -219,7 +232,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
 				userData := spotinst.String(base64Encode(v))
 				elastigroup.Compute.LaunchSpecification.SetUserData(userData)
@@ -227,7 +241,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var userData *string = nil
 			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
 				userData = spotinst.String(base64Encode(v))
@@ -247,7 +262,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Default:  false,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.Monitoring != nil {
@@ -259,14 +275,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(EnableMonitoring)).(bool); ok {
 				elastigroup.Compute.LaunchSpecification.SetMonitoring(spotinst.Bool(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(EnableMonitoring)).(bool); ok {
 				elastigroup.Compute.LaunchSpecification.SetMonitoring(spotinst.Bool(v))
 			}
@@ -284,7 +302,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.EBSOptimized != nil {
@@ -296,14 +315,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(EbsOptimized)).(bool); ok {
 				elastigroup.Compute.LaunchSpecification.SetEBSOptimized(spotinst.Bool(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(EbsOptimized)).(bool); ok {
 				elastigroup.Compute.LaunchSpecification.SetEBSOptimized(spotinst.Bool(v))
 			}
@@ -320,7 +341,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.Tenancy != nil {
@@ -332,7 +354,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(PlacementTenancy)).(string); ok && v != "" {
 				tenancy := spotinst.String(v)
 				elastigroup.Compute.LaunchSpecification.SetTenancy(tenancy)
@@ -340,7 +363,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var tenancy *string = nil
 			if v, ok := resourceData.Get(string(PlacementTenancy)).(string); ok && v != "" {
 				tenancy = spotinst.String(v)

@@ -66,7 +66,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashAWSGroupEBSBlockDevice,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var ebsBlock []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.BlockDeviceMappings != nil {
@@ -86,7 +87,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(EbsBlockDevice)); ok {
 				if ebsDevices, err := expandAWSGroupEBSBlockDevices(v); err != nil {
 					return err
@@ -102,8 +104,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			if err := onUpdateBlockDevice(elastigroup, resourceData); err != nil {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			if err := onUpdateBlockDevice(egWrapper, resourceData); err != nil {
 				return err
 			}
 			return nil
@@ -132,7 +134,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var ephemeralBlock []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.BlockDeviceMappings != nil {
@@ -152,7 +155,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(EphemeralBlockDevice)); ok {
 				if ephemeralDevices, err := expandAWSGroupEphemeralBlockDevices(v); err != nil {
 					return err
@@ -168,8 +172,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
-			if err := onUpdateBlockDevice(elastigroup, resourceData); err != nil {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			if err := onUpdateBlockDevice(egWrapper, resourceData); err != nil {
 				return err
 			}
 			return nil
@@ -327,10 +331,13 @@ func extractBlockDevices(
 	}
 }
 
-func onUpdateBlockDevice(elastigroup *aws.Group, resourceData *schema.ResourceData) error {
+func onUpdateBlockDevice(egWrapper *commons.ElastigroupWrapper, resourceData *schema.ResourceData) error {
 	var ebsNullify = false
 	var ephemeralNullify = false
-	if !commons.StatusEbsBlockDeviceUpdated {
+
+	elastigroup := egWrapper.GetElastigroup()
+
+	if !egWrapper.StatusEbsBlockDeviceUpdated {
 		if tfEBSDevices, err := extractBlockDevices(EbsBlockDevice, elastigroup, resourceData); err != nil {
 			return err
 		} else if tfEBSDevices != nil && len(tfEBSDevices) > 0 {
@@ -342,9 +349,9 @@ func onUpdateBlockDevice(elastigroup *aws.Group, resourceData *schema.ResourceDa
 		} else {
 			ebsNullify = true
 		}
-		commons.StatusEbsBlockDeviceUpdated = true
+		egWrapper.StatusEbsBlockDeviceUpdated = true
 	}
-	if !commons.StatusEphemeralBlockDeviceUpdated {
+	if !egWrapper.StatusEphemeralBlockDeviceUpdated {
 		if tfEphemeralDevices, err := extractBlockDevices(EphemeralBlockDevice, elastigroup, resourceData); err != nil {
 			return err
 		} else if tfEphemeralDevices != nil && len(tfEphemeralDevices) > 0 {
@@ -356,7 +363,7 @@ func onUpdateBlockDevice(elastigroup *aws.Group, resourceData *schema.ResourceDa
 		} else {
 			ephemeralNullify = true
 		}
-		commons.StatusEphemeralBlockDeviceUpdated = true
+		egWrapper.StatusEphemeralBlockDeviceUpdated = true
 	}
 	// Both fields share the same object structure, we need to nullify if and only if there are no items
 	// from both types

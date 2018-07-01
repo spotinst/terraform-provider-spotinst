@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: elastigroup_aws"
-sidebar_current: "docs-do-resource-group_aws"
+sidebar_current: "docs-do-resource-elastigroup_aws"
 description: |-
   Provides a Spotinst AWS group resource.
 ---
@@ -168,7 +168,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
 
-* `elastic_load_balancers` - (Optional) Registers each instance with the specified Elastic Load Balancers (ELB).
+* `elastic_load_balancers` - (Optional) List of Elastic Load Balancers names (ELB).
 * `target_group_arns` - (Optional) List of Target Group ARNs to register the instances to.
 * `multai_target_sets` - (Optional) Set of targets to register. 
     * `target_set_id` - (Required) ID of Multai target set.
@@ -313,7 +313,7 @@ For more information on instance persistence please see: [Stateful configuration
 <a id="third-party-integrations"></a>
 ## Third-Party Integrations
 
-* `rancher_integration` - (Optional) Describes the [Rancher](http://rancherlabs.com/) integration.
+* `integration_rancher` - (Optional) Describes the [Rancher](http://rancherlabs.com/) integration.
 
     * `master_host` - (Required) The URL of the Rancher Master host.
     * `access_key` - (Required) The access key of the Rancher API.
@@ -355,32 +355,38 @@ For more information on instance persistence please see: [Stateful configuration
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
  
- * `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
- 
-     * `master_host` - (Required) TBD
-     * `master_port` - (Required) TBD
-     * `acl_token` - (Required) Nomad ACL Token
-     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
-     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
-     * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
-         * `cpu_per_unit` - (Optional, Default: `0`) How much CPU (MHz) to allocate for headroom unit.
-         * `memory_per_unit` - (Optional, Default: `0`) How much Memory allocate for headroom unit.
-         * `num_of_units` - (Optional, Default: `0`) How many units of headroom to allocate.
-     * `autoscale_down` - (Optional) Settings for scale down actions.
-         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
-         
- * `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
- 
-     * `api_server` - (Optional) The public IP of the DC/OS Master. 
+* `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
 
- * `integration_multai_runtime` - (Optional) Describes the [Multai Runtime](https://spotinst.com/) integration.
+    * `master_host` - (Required) TBD
+    * `master_port` - (Required) TBD
+    * `acl_token` - (Required) Nomad ACL Token
+    * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
+    * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
+    * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
+        * `cpu_per_unit` - (Optional, Default: `0`) How much CPU (MHz) to allocate for headroom unit.
+        * `memory_per_unit` - (Optional, Default: `0`) How much Memory allocate for headroom unit.
+        * `num_of_units` - (Optional, Default: `0`) How many units of headroom to allocate.
+    * `autoscale_down` - (Optional) Settings for scale down actions.
+        * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
+         
+* `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
  
-     * `deployment_id` - (Optional) The deployment id you want to get
+    * `api_server` - (Optional) The public IP of the DC/OS Master. 
+
+* `integration_multai_runtime` - (Optional) Describes the [Multai Runtime](https://spotinst.com/) integration.
+ 
+    * `deployment_id` - (Optional) The deployment id you want to get
+     
+* `integration_gitlab` - (Optional) Describes the [Gitlab](https://api.spotinst.com/integration-docs/gitlab/) integration.
+ 
+    * `runner` - (Optional) Settings for Gitlab runner. 
+        * `is_enabled` - (Optional, Default: `false`) Specifies whether the integration is enabled.
      
 <a id="update-policy"></a>
 ## Update Policy
 
 * `update_policy` - (Optional)
+
     * `should_resume_stateful` - (Required) This will apply resuming action for Stateful instances in the Elastigroup upon scale up or capacity changes. Example usage will be for Elastigroups that will have scheduling rules to set a target capacity of 0 instances in the night and automatically restore the same state of the instances in the morning.
     * `should_roll` - (Required) Sets the enablement of the roll option.
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.

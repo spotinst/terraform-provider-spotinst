@@ -68,4 +68,10 @@ const (
 	ApplicationName            commons.FieldName = "application_name"
 	DeploymentGroupName        commons.FieldName = "deployment_group_name"
 	// -----------------------------------
+
+	// - GITLAB ----------------------
+	IntegrationGitlab     commons.FieldName = "integration_gitlab"
+	GitlabRunner          commons.FieldName = "runner"
+	GitlabRunnerIsEnabled commons.FieldName = "is_enabled"
+	// -----------------------------------
 )

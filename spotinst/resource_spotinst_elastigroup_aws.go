@@ -26,7 +26,8 @@ import (
 )
 
 func resourceSpotinstElastigroupAws() *schema.Resource {
-	setupElastigroup()
+	setupElastigroupResource()
+
 	return &schema.Resource{
 		Create: resourceSpotinstElastigroupAwsCreate,
 		Read:   resourceSpotinstElastigroupAwsRead,
@@ -37,11 +38,11 @@ func resourceSpotinstElastigroupAws() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: commons.SpotinstElastigroup.GetSchemaMap(),
+		Schema: commons.ElastigroupResource.GetSchemaMap(),
 	}
 }
 
-func setupElastigroup() {
+func setupElastigroupResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	elastigroup_aws.Setup(fieldsMap)
@@ -55,7 +56,7 @@ func setupElastigroup() {
 	elastigroup_stateful.Setup(fieldsMap)
 	elastigroup_strategy.Setup(fieldsMap)
 
-	commons.SpotinstElastigroup = commons.NewElastigroupResource(fieldsMap)
+	commons.ElastigroupResource = commons.NewElastigroupResource(fieldsMap)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -64,13 +65,13 @@ func setupElastigroup() {
 func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
-		commons.SpotinstElastigroup.GetName(), id)
+		commons.ElastigroupResource.GetName(), id)
 
 	if err := deleteGroup(resourceData, meta); err != nil {
 		return err
 	}
 
-	log.Printf("===> Elastigroup Deleted Successfully: %s <===", resourceData.Id())
+	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())
 	resourceData.SetId("")
 	return nil
 }
@@ -110,7 +111,7 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	if json, err := commons.ToJson(input); err != nil {
 		return err
 	} else {
-		log.Printf("===> Group Delete Configuration: %s", json)
+		log.Printf("===> Group delete configuration: %s", json)
 	}
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
@@ -128,7 +129,7 @@ const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
 func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
-		commons.SpotinstElastigroup.GetName(), id)
+		commons.ElastigroupResource.GetName(), id)
 
 	input := &aws.ReadGroupInput{GroupID: spotinst.String(id)}
 	resp, err := meta.(*Client).elastigroup.CloudProviderAWS().Read(context.Background(), input)
@@ -155,16 +156,10 @@ func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta 
 		return nil
 	}
 
-	commons.SpotinstElastigroup.SetTerraformData(
-		&commons.TerraformData{
-			ResourceData: resourceData,
-			Meta:         meta,
-		})
-
-	if err := commons.SpotinstElastigroup.OnRead(groupResponse); err != nil {
+	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
 		return err
 	}
-	log.Printf("===> Elastigroup Read Successfully: %s <===", id)
+	log.Printf("===> Elastigroup read successfully: %s <===", id)
 	return nil
 }
 
@@ -173,20 +168,20 @@ func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
-		commons.SpotinstElastigroup.GetName())
+		commons.ElastigroupResource.GetName())
 
-	if err := commons.SpotinstElastigroup.OnCreate(resourceData, meta); err != nil {
+	elastigroup, err := commons.ElastigroupResource.OnCreate(resourceData, meta)
+	if err != nil {
 		return err
 	}
 
-	group := commons.SpotinstElastigroup.GetElastigroup()
-	groupId, err := createGroup(group, meta.(*Client))
+	groupId, err := createGroup(elastigroup, meta.(*Client))
 	if err != nil {
 		return err
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
-	log.Printf("===> Elastigroup Created Successfully: %s <===", resourceData.Id())
+	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 
 	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
 }
@@ -195,7 +190,7 @@ func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(group); err != nil {
 		return nil, err
 	} else {
-		log.Printf("===> Group Create Configuration: %s", json)
+		log.Printf("===> Group create configuration: %s", json)
 	}
 
 	input := &aws.CreateGroupInput{Group: group}
@@ -222,7 +217,7 @@ func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to create group: %s", err)
+		return nil, fmt.Errorf("[ERROR] failed to create group: %s", err)
 	}
 	return resp.Group.ID, nil
 }
@@ -233,23 +228,21 @@ func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
 func resourceSpotinstElastigroupAwsUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
-		commons.SpotinstElastigroup.GetName(), id)
+		commons.ElastigroupResource.GetName(), id)
 
-	shouldUpdate, err := commons.SpotinstElastigroup.OnUpdate(resourceData, meta)
+	shouldUpdate, elastigroup, err := commons.ElastigroupResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
-		elastigroup := commons.SpotinstElastigroup.GetElastigroup()
 		elastigroup.SetId(spotinst.String(id))
 		if err := updateGroup(elastigroup, resourceData, meta); err != nil {
 			return err
 		}
 	}
 
-	log.Printf("===> Elastigroup Updated Successfully: %s <===", id)
-
+	log.Printf("===> Elastigroup updated successfully: %s <===", id)
 	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
 }
 
@@ -278,7 +271,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 	if json, err := commons.ToJson(elastigroup); err != nil {
 		return err
 	} else {
-		log.Printf("===> Group Update Configuration: %s", json)
+		log.Printf("===> Group update configuration: %s", json)
 	}
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Update(context.Background(), input); err != nil {

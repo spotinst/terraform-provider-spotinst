@@ -46,7 +46,7 @@ func testCheckElastigroupExists(group *aws.Group, resourceName string) resource.
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
-			return fmt.Errorf("not found: %s", resourceName)
+			return fmt.Errorf("resource not found: %s", resourceName)
 		}
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("no resource ID is set")
@@ -66,6 +66,7 @@ func testCheckElastigroupExists(group *aws.Group, resourceName string) resource.
 }
 
 type GroupConfigMetadata struct {
+	variables            string
 	groupName            string
 	instanceTypes        string
 	launchConfig         string
@@ -119,6 +120,10 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 			gcm.strategy,
 			gcm.fieldsToAppend,
 		)
+	}
+
+	if gcm.variables != "" {
+		template = gcm.variables + "\n" + template
 	}
 
 	log.Printf("Terraform [%v] template:\n%v", gcm.groupName, template)
@@ -944,6 +949,117 @@ const testElasticIPsGroupConfig_Update = `
 const testElasticIPsGroupConfig_EmptyFields = `
  // --- ELASTIC IPs --------------------------------------
   // ------------------------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Elastic IPs with Terraform Count Parallelism
+func TestAccSpotinstElastigroup_ElasticIPs_Count_Parallelism(t *testing.T) {
+	groupName := "eg-elastic-ips-tf-count-parallelism"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					variables:      testElasticIPsGroupConfig_Count_Variables,
+					groupName:      groupName,
+					fieldsToAppend: testElasticIPsGroupConfig_Count_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName+".0"),
+					testCheckElastigroupExists(&group, resourceName+".1"),
+					testCheckElastigroupExists(&group, resourceName+".2"),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName+".0", "elastic_ips.#", "1"),
+					resource.TestCheckResourceAttr(resourceName+".0", "elastic_ips.0", "eipalloc-123"),
+					resource.TestCheckResourceAttr(resourceName+".1", "elastic_ips.#", "1"),
+					resource.TestCheckResourceAttr(resourceName+".1", "elastic_ips.0", "eipalloc-456"),
+					resource.TestCheckResourceAttr(resourceName+".2", "elastic_ips.#", "1"),
+					resource.TestCheckResourceAttr(resourceName+".2", "elastic_ips.0", "eipalloc-789"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					variables:      testElasticIPsGroupConfig_Count_Variables,
+					groupName:      groupName,
+					fieldsToAppend: testElasticIPsGroupConfig_Count_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName+".0"),
+					testCheckElastigroupExists(&group, resourceName+".1"),
+					testCheckElastigroupExists(&group, resourceName+".2"),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName+".0", "elastic_ips.#", "1"),
+					resource.TestCheckResourceAttr(resourceName+".0", "elastic_ips.0", "eipalloc-111"),
+					resource.TestCheckResourceAttr(resourceName+".1", "elastic_ips.#", "1"),
+					resource.TestCheckResourceAttr(resourceName+".1", "elastic_ips.0", "eipalloc-444"),
+					resource.TestCheckResourceAttr(resourceName+".2", "elastic_ips.#", "1"),
+					resource.TestCheckResourceAttr(resourceName+".2", "elastic_ips.0", "eipalloc-777"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					variables:      testElasticIPsGroupConfig_Count_Variables,
+					groupName:      groupName,
+					fieldsToAppend: testElasticIPsGroupConfig_Count_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName+".0"),
+					testCheckElastigroupExists(&group, resourceName+".1"),
+					testCheckElastigroupExists(&group, resourceName+".2"),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName+".0", "elastic_ips.#", "0"),
+					resource.TestCheckResourceAttr(resourceName+".1", "elastic_ips.#", "0"),
+					resource.TestCheckResourceAttr(resourceName+".2", "elastic_ips.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testElasticIPsGroupConfig_Count_Variables = `
+// --- VARIABLES --------------------------------------------
+variable "elastic_ips" {
+  description = "List with the Elastic IPs for elastigroups"
+  type        = "list"
+  default     = ["eipalloc-123", "eipalloc-456", "eipalloc-789"]
+}
+
+variable "elastic_ips_update" {
+  description = "List with the Elastic IPs for elastigroups"
+  type        = "list"
+  default     = ["eipalloc-111", "eipalloc-444", "eipalloc-777"]
+}
+// ----------------------------------------------------------
+`
+
+const testElasticIPsGroupConfig_Count_Create = `
+ // --- ELASTIC IPs --------------------------------------
+ count = 3
+ elastic_ips = ["${element(var.elastic_ips, count.index)}"]
+ // ------------------------------------------------------
+`
+
+const testElasticIPsGroupConfig_Count_Update = `
+ // --- ELASTIC IPs --------------------------------------
+ count = 3
+ elastic_ips = ["${element(var.elastic_ips_update, count.index)}"]
+ // ------------------------------------------------------
+`
+
+const testElasticIPsGroupConfig_Count_EmptyFields = `
+ // --- ELASTIC IPs --------------------------------------
+ count = 3
+ // ------------------------------------------------------
 `
 
 // endregion
@@ -2829,6 +2945,88 @@ const testIntegrationNomadGroupConfig_Update = `
 
 const testIntegrationNomadGroupConfig_EmptyFields = `
  // --- INTEGRATION: NOMAD --------------
+ // -------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Gitlab Integration
+func TestAccSpotinstElastigroup_IntegrationGitlab(t *testing.T) {
+	groupName := "eg-integration-gitlab"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationGitlabGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.0.runner.0.is_enabled", "true"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationGitlabGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.0.runner.0.is_enabled", "false"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationGitlabGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_gitlab.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationGitlabGroupConfig_Create = `
+ // --- INTEGRATION: GITLAB ---
+ integration_gitlab = {
+	runner = {
+		is_enabled = true
+	}
+ }
+ // ----------------------------
+`
+
+const testIntegrationGitlabGroupConfig_Update = `
+ // --- INTEGRATION: GITLAB ---
+ integration_gitlab = {
+    runner = {
+		is_enabled = false
+	}
+ }
+ // ----------------------------
+`
+
+const testIntegrationGitlabGroupConfig_EmptyFields = `
+ // --- INTEGRATION: GITLAB --------------
  // -------------------------------------
 `
 

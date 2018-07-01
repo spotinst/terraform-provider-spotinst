@@ -114,7 +114,8 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(IntegrationNomad)); ok {
 				if integration, err := expandAWSGroupNomadIntegration(v, false); err != nil {
 					return err
@@ -125,7 +126,8 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			elastigroup := resourceObject.(*aws.Group)
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			var value *aws.NomadIntegration = nil
 			if v, ok := resourceData.GetOk(string(IntegrationNomad)); ok {
 				if integration, err := expandAWSGroupNomadIntegration(v, true); err != nil {

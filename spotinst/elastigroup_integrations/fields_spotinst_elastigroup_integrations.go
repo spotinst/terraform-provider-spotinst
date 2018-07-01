@@ -16,6 +16,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupEcs(fieldsMap)
 	SetupNomad(fieldsMap)
+	SetupGitlab(fieldsMap)
 	SetupRancher(fieldsMap)
 	SetupKubernetes(fieldsMap)
 	SetupMesosphere(fieldsMap)

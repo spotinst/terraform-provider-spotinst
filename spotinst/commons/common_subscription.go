@@ -3,7 +3,6 @@ package commons
 import (
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
@@ -16,23 +15,16 @@ const (
 	SubscriptionResourceName ResourceName = "spotinst_subscription"
 )
 
-var SpotinstSubscription *SubscriptionResource
+var SubscriptionResource *SubscriptionTerraformResource
 
-type SubscriptionResource struct {
+type SubscriptionTerraformResource struct {
 	GenericResource // embedding
-
-	mux          sync.Mutex
-	subscription *subscription.Subscription
-}
-
-func (res *SubscriptionResource) nullifySubscription() {
-	res.subscription = nil
 }
 
 func NewSubscriptionResource(
-	fieldsMap map[FieldName]*GenericField) *SubscriptionResource {
+	fieldsMap map[FieldName]*GenericField) *SubscriptionTerraformResource {
 
-	return &SubscriptionResource{
+	return &SubscriptionTerraformResource{
 		GenericResource: GenericResource{
 			resourceName: SubscriptionResourceName,
 			fields:       NewGenericFields(fieldsMap),
@@ -40,70 +32,75 @@ func NewSubscriptionResource(
 	}
 }
 
-func (res *SubscriptionResource) OnCreate(
+func (res *SubscriptionTerraformResource) OnRead(
+	subscription *subscription.Subscription,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("resource fields are nil or empty, cannot create")
+		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	// This is important for Terraform tests which execute 'apply' on the same process thread
-	// We need to nullify the subscription to prevent update failure due to illegal fields being updated
-	log.Printf("onCreate() -> nullifing cached subscription object...")
-	res.nullifySubscription()
-
-	egGroup := res.GetSubscription()
 	for _, field := range res.fields.fieldsMap {
-		if field.onCreate == nil {
+		if field.onRead == nil {
 			continue
 		}
-		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(egGroup, resourceData, meta); err != nil {
+		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
+		if err := field.onRead(subscription, resourceData, meta); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (res *SubscriptionResource) OnUpdate(
+func (res *SubscriptionTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, error) {
+	meta interface{}) (*subscription.Subscription, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, fmt.Errorf("resource fields are nil or empty, cannot update")
+		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	// This is important for Terraform tests which execute 'apply' on the same process thread
-	// We need to nullify the subscription to prevent update failure due to illegal fields being updated
-	log.Printf("onUpdate() -> nullifing cached subscription object...")
-	res.nullifySubscription()
+	sub := NewSubscription()
 
-	var hasChanged = false
-	egGroup := res.GetSubscription()
+	for _, field := range res.fields.fieldsMap {
+		if field.onCreate == nil {
+			continue
+		}
+		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
+		if err := field.onCreate(sub, resourceData, meta); err != nil {
+			return nil, err
+		}
+	}
+	return sub, nil
+}
+
+func (res *SubscriptionTerraformResource) OnUpdate(
+	resourceData *schema.ResourceData,
+	meta interface{}) (bool, *subscription.Subscription, error) {
+
+	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
+		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
+	}
+
+	sub := NewSubscription()
+	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
-			if err := field.onUpdate(egGroup, resourceData, meta); err != nil {
-				return false, err
+			if err := field.onUpdate(sub, resourceData, meta); err != nil {
+				return false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, nil
+	return hasChanged, sub, nil
 }
 
-func (res *SubscriptionResource) GetSubscription() *subscription.Subscription {
-	if res.subscription == nil {
-		res.mux.Lock()
-		defer res.mux.Unlock()
-		if res.subscription == nil {
-			res.subscription = &subscription.Subscription{}
-		}
-	}
-	return res.subscription
+func NewSubscription() *subscription.Subscription {
+	return &subscription.Subscription{}
 }
