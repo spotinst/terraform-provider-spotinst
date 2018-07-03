@@ -2,6 +2,7 @@ package elastigroup_scheduled_task
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -49,42 +50,42 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(ScaleTargetCapacity): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(ScaleMinCapacity): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(ScaleMaxCapacity): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(BatchSizePercentage): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(GracePeriod): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(TargetCapacity): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(MinCapacity): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(MaxCapacity): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 				},
@@ -151,14 +152,31 @@ func flattenAWSGroupScheduledTasks(tasks []*aws.Task) []interface{} {
 		m[string(CronExpression)] = spotinst.StringValue(t.CronExpression)
 		m[string(StartTime)] = spotinst.StringValue(t.StartTime)
 		m[string(Frequency)] = spotinst.StringValue(t.Frequency)
-		m[string(ScaleTargetCapacity)] = spotinst.IntValue(t.ScaleTargetCapacity)
-		m[string(ScaleMinCapacity)] = spotinst.IntValue(t.ScaleMinCapacity)
-		m[string(ScaleMaxCapacity)] = spotinst.IntValue(t.ScaleMaxCapacity)
-		m[string(BatchSizePercentage)] = spotinst.IntValue(t.BatchSizePercentage)
-		m[string(GracePeriod)] = spotinst.IntValue(t.GracePeriod)
-		m[string(TargetCapacity)] = spotinst.IntValue(t.TargetCapacity)
-		m[string(MinCapacity)] = spotinst.IntValue(t.MinCapacity)
-		m[string(MaxCapacity)] = spotinst.IntValue(t.MaxCapacity)
+
+		if t.ScaleTargetCapacity != nil {
+			m[string(ScaleTargetCapacity)] = strconv.Itoa(spotinst.IntValue(t.ScaleTargetCapacity))
+		}
+		if t.ScaleMinCapacity != nil {
+			m[string(ScaleMinCapacity)] = strconv.Itoa(spotinst.IntValue(t.ScaleMinCapacity))
+		}
+		if t.ScaleMaxCapacity != nil {
+			m[string(ScaleMaxCapacity)] = strconv.Itoa(spotinst.IntValue(t.ScaleMaxCapacity))
+		}
+		if t.BatchSizePercentage != nil {
+			m[string(BatchSizePercentage)] = strconv.Itoa(spotinst.IntValue(t.BatchSizePercentage))
+		}
+		if t.GracePeriod != nil {
+			m[string(GracePeriod)] = strconv.Itoa(spotinst.IntValue(t.GracePeriod))
+		}
+		if t.TargetCapacity != nil {
+			m[string(TargetCapacity)] = strconv.Itoa(spotinst.IntValue(t.TargetCapacity))
+		}
+		if t.MinCapacity != nil {
+			m[string(MinCapacity)] = strconv.Itoa(spotinst.IntValue(t.MinCapacity))
+		}
+		if t.MaxCapacity != nil {
+			m[string(MaxCapacity)] = strconv.Itoa(spotinst.IntValue(t.MaxCapacity))
+		}
 		result = append(result, m)
 	}
 	return result
@@ -191,39 +209,71 @@ func expandAWSGroupScheduledTasks(data interface{}) ([]*aws.Task, error) {
 			task.SetStartTime(spotinst.String(v))
 		}
 
-		if v, ok := m[string(BatchSizePercentage)].(int); ok && v > 0 {
-			task.SetBatchSizePercentage(spotinst.Int(v))
+		if v, ok := m[string(BatchSizePercentage)].(string); ok && v != "" {
+			if intVal, err := strconv.Atoi(v); err != nil {
+				return nil, err
+			} else {
+				task.SetBatchSizePercentage(spotinst.Int(intVal))
+			}
 		}
 
-		if v, ok := m[string(GracePeriod)].(int); ok && v > 0 {
-			task.SetGracePeriod(spotinst.Int(v))
+		if v, ok := m[string(GracePeriod)].(string); ok && v != "" {
+			if intVal, err := strconv.Atoi(v); err != nil {
+				return nil, err
+			} else {
+				task.SetGracePeriod(spotinst.Int(intVal))
+			}
 		}
 
 		if spotinst.StringValue(task.Type) != TaskTypeStatefulUpdateCapacity {
-			if v, ok := m[string(ScaleTargetCapacity)].(int); ok && v >= 0 {
-				task.SetScaleTargetCapacity(spotinst.Int(v))
+			if v, ok := m[string(ScaleTargetCapacity)].(string); ok && v != "" {
+				if intVal, err := strconv.Atoi(v); err != nil {
+					return nil, err
+				} else {
+					task.SetScaleTargetCapacity(spotinst.Int(intVal))
+				}
 			}
 
-			if v, ok := m[string(ScaleMinCapacity)].(int); ok && v >= 0 {
-				task.SetScaleMinCapacity(spotinst.Int(v))
+			if v, ok := m[string(ScaleMinCapacity)].(string); ok && v != "" {
+				if intVal, err := strconv.Atoi(v); err != nil {
+					return nil, err
+				} else {
+					task.SetScaleMinCapacity(spotinst.Int(intVal))
+				}
 			}
 
-			if v, ok := m[string(ScaleMaxCapacity)].(int); ok && v >= 0 {
-				task.SetScaleMaxCapacity(spotinst.Int(v))
+			if v, ok := m[string(ScaleMaxCapacity)].(string); ok && v != "" {
+				if intVal, err := strconv.Atoi(v); err != nil {
+					return nil, err
+				} else {
+					task.SetScaleMaxCapacity(spotinst.Int(intVal))
+				}
 			}
 		}
 
 		if spotinst.StringValue(task.Type) == TaskTypeStatefulUpdateCapacity {
-			if v, ok := m[string(TargetCapacity)].(int); ok && v >= 0 {
-				task.SetTargetCapacity(spotinst.Int(v))
+			if v, ok := m[string(TargetCapacity)].(string); ok && v != "" {
+				if intVal, err := strconv.Atoi(v); err != nil {
+					return nil, err
+				} else {
+					task.SetTargetCapacity(spotinst.Int(intVal))
+				}
 			}
 
-			if v, ok := m[string(MinCapacity)].(int); ok && v >= 0 {
-				task.SetMinCapacity(spotinst.Int(v))
+			if v, ok := m[string(MinCapacity)].(string); ok && v != "" {
+				if intVal, err := strconv.Atoi(v); err != nil {
+					return nil, err
+				} else {
+					task.SetMinCapacity(spotinst.Int(intVal))
+				}
 			}
 
-			if v, ok := m[string(MaxCapacity)].(int); ok && v >= 0 {
-				task.SetMaxCapacity(spotinst.Int(v))
+			if v, ok := m[string(MaxCapacity)].(string); ok && v != "" {
+				if intVal, err := strconv.Atoi(v); err != nil {
+					return nil, err
+				} else {
+					task.SetMaxCapacity(spotinst.Int(intVal))
+				}
 			}
 		}
 		tasks = append(tasks, task)
