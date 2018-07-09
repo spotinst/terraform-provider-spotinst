@@ -3,7 +3,7 @@
 
 BUG FIXES:
 
-* resource/spotinst_elastigroup_aws: Scheduled Tasks & Network Interfaces now properly address fields not specified on TF file as nil instead of their default values
+* resource/spotinst_elastigroup_aws: scheduled_task & network_interface now properly address fields not specified on TF file as nil instead of their default values
 
 ## 1.1.0 (July 02, 2018)
 
