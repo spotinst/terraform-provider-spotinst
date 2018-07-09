@@ -1,9 +1,75 @@
-## 1.2.0 (Unreleased)
+## 1.6.0 (Unreleased)
+
+NOTES:
+* resource/spotinst_elastigroup_azure: Added a new spotinst_elastigroup_azure resource for creating Spotinst elastigroups using Microsoft Azure
+* resource/spotinst_elastigroup_gcp: Added a new spotinst_elastigroup_gcp resource for creating Spotinst elastigroups using Google Cloud
+* resource/spotinst_elastigroup_gke: Added a new spotinst_elastigroup_gke resource for creating Spotinst elastigroups using Google Kubernetes Engine
+
+FEATURES:
+
+* *New Resource*: `spotinst_elastigroup_azure`
+* *New Resource*: `spotinst_elastigroup_gcp`
+* *New Resource*: `spotinst_elastigroup_gke`
+
+
+## 1.5.0 (December 28, 2018)
+
+NOTES:
+
+* resource/spotinst_elastigroup_aws_beanstalk: Added a new `elastigroup_aws_beanstalk` resource for creating Spotinst elastigroups that are managed by an existing AWS Elastic Beanstalk
+
+FEATURES:
+
+* *New Resource*: `spotinst_elastigroup_aws_beanstalk`
+* *New Feature*: spotinst provider version added to the User-Agent header
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws_beanstalk: Added a the ability to transition in and out of maintenance modes by setting `maintenance` mode to `START` or `END`
+* resource/spotinst_elastigroup_aws: Added the ability to wait for a minimum number of healthy instances for a certain period of time
+* resource/spotinst_elastigroup_aws: Added ability to maintain scaling policy configuration when disabled
+* resource/spotinst_elastigroup_aws: Scheduled tasks now support `adjustment` field
+* resource/spotinst_elastigroup_aws: Rancher integration now supports `version` field
+* resource/spotinst_elastigroup_aws: Use new `wait_for_capacity` field to indicate the minimum number of healthy instances required before continuing plan execution
+* resource/spotinst_elastigroup_aws: Use new `wait_for_capacity_timeout` to indicate how long to wait for minimum number of instances to become healthy
+* resource/spotinst_elastigroup_aws: Use new `is_enabled` field in scaling policies to indicate if that policy is active
+* resource/spotinst_elastigroup_aws: Use new `adjustment` field in `scheduled_tasks` to indicate the number of instances to add or remove when scaling
+
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: `user_data` and `shutdown_script` no longer updates to empty string SHA
+* resource/spotinst_elastigroup_aws: Fixed an issue of `tags`, `instance_types_spot` and `instance_types_preferred_spot` not being imported properly 
+* resource/spotinst_elastigroup_aws: Fixed an issue where `associate_public_ip` incorrectly defaulting to `false` when undefined
+
+## 1.4.0 (September 13, 2018)
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws: Shutdown script is now supported under `shutdown_script`
+* resource/spotinst_elastigroup_aws: ECS integration support for `autoscale_is_autoconfig`
+* resource/spotinst_elastigroup_aws: Docker Swarm integration as `integration_docker_swarm`
+
+## 1.3.0 (August 13, 2018)
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws: Added a new Route53 integration as `integration_route53`
+* resource/spotinst_elastigroup_aws: Added support for preferred spot instances as `instance_types_preferred_spot`
+
+## 1.2.0 (July 26, 2018)
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws: Added `kms_key_id` support for `ebs_block_device`
+* resource/spotinst_elastigroup_aws: Added `autoscale_attributes` support for `integration_ecs`
+* resource/spotinst_elastigroup_aws: Added `autoscale_labels` support for `integration_kubernetes`
+* resource/spotinst_elastigroup_aws: Added `autoscale_constraints` support for `integration_nomad`
+
 ## 1.1.1 (July 09, 2018)
 
 BUG FIXES:
 
-* resource/spotinst_elastigroup_aws: scheduled_task & network_interface now properly address fields not specified on TF file as nil instead of their default values
+* resource/spotinst_elastigroup_aws: `scheduled_task` & `network_interface` now properly address fields not specified on TF file as nil instead of their default values
 
 ## 1.1.0 (July 02, 2018)
 
