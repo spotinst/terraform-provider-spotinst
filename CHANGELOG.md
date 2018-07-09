@@ -1,4 +1,10 @@
 ## 1.2.0 (Unreleased)
+## 1.1.1 (July 09, 2018)
+
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: scheduled_task & network_interface now properly address fields not specified on TF file as nil instead of their default values
+
 ## 1.1.0 (July 02, 2018)
 
 NOTES

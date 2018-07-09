@@ -2,6 +2,7 @@ package elastigroup_network_interface
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -28,12 +29,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(DeviceIndex): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Required: true,
 					},
 
 					string(SecondaryPrivateIpAddressCount): &schema.Schema{
-						Type:     schema.TypeInt,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
@@ -120,10 +121,17 @@ func flattenAWSGroupNetworkInterfaces(networkInterfaces []*aws.NetworkInterface)
 		m[string(AssociatePublicIpAddress)] = spotinst.BoolValue(iface.AssociatePublicIPAddress)
 		m[string(DeleteOnTermination)] = spotinst.BoolValue(iface.DeleteOnTermination)
 		m[string(Description)] = spotinst.StringValue(iface.Description)
-		m[string(DeviceIndex)] = spotinst.IntValue(iface.DeviceIndex)
 		m[string(NetworkInterfaceId)] = spotinst.StringValue(iface.ID)
 		m[string(PrivateIpAddress)] = spotinst.StringValue(iface.PrivateIPAddress)
-		m[string(SecondaryPrivateIpAddressCount)] = spotinst.IntValue(iface.SecondaryPrivateIPAddressCount)
+
+		if iface.DeviceIndex != nil {
+			m[string(DeviceIndex)] = strconv.Itoa(spotinst.IntValue(iface.DeviceIndex))
+		}
+
+		if iface.SecondaryPrivateIPAddressCount != nil {
+			m[string(SecondaryPrivateIpAddressCount)] = strconv.Itoa(spotinst.IntValue(iface.SecondaryPrivateIPAddressCount))
+		}
+
 		result = append(result, m)
 	}
 	return result
@@ -144,12 +152,20 @@ func expandAWSGroupNetworkInterfaces(data interface{}) ([]*aws.NetworkInterface,
 			networkInterface.SetDescription(spotinst.String(v))
 		}
 
-		if v, ok := m[string(DeviceIndex)].(int); ok && v >= 0 {
-			networkInterface.SetDeviceIndex(spotinst.Int(v))
+		if v, ok := m[string(DeviceIndex)].(string); ok && v != "" {
+			if intVal, err := strconv.Atoi(v); err != nil {
+				return nil, err
+			} else {
+				networkInterface.SetDeviceIndex(spotinst.Int(intVal))
+			}
 		}
 
-		if v, ok := m[string(SecondaryPrivateIpAddressCount)].(int); ok && v >= 0 {
-			networkInterface.SetSecondaryPrivateIPAddressCount(spotinst.Int(v))
+		if v, ok := m[string(SecondaryPrivateIpAddressCount)].(string); ok && v != "" {
+			if intVal, err := strconv.Atoi(v); err != nil {
+				return nil, err
+			} else {
+				networkInterface.SetSecondaryPrivateIPAddressCount(spotinst.Int(intVal))
+			}
 		}
 
 		if v, ok := m[string(AssociatePublicIpAddress)].(bool); ok {
