@@ -510,6 +510,7 @@ type BlockDeviceMapping struct {
 type EBS struct {
 	DeleteOnTermination *bool   `json:"deleteOnTermination,omitempty"`
 	Encrypted           *bool   `json:"encrypted,omitempty"`
+	KmsKeyId            *string `json:"kmsKeyId,omitempty"`
 	SnapshotID          *string `json:"snapshotId,omitempty"`
 	VolumeType          *string `json:"volumeType,omitempty"`
 	VolumeSize          *int    `json:"volumeSize,omitempty"`
@@ -2593,6 +2594,13 @@ func (o *EBS) SetDeleteOnTermination(v *bool) *EBS {
 func (o *EBS) SetEncrypted(v *bool) *EBS {
 	if o.Encrypted = v; o.Encrypted == nil {
 		o.nullFields = append(o.nullFields, "Encrypted")
+	}
+	return o
+}
+
+func (o *EBS) SetKmsKeyId(v *string) *EBS {
+	if o.KmsKeyId = v; o.KmsKeyId == nil {
+		o.nullFields = append(o.nullFields, "KmsKeyId")
 	}
 	return o
 }

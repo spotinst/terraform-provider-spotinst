@@ -41,6 +41,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Computed: true,
 					},
 
+					string(KmsKeyId): &schema.Schema{
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
 					string(Iops): &schema.Schema{
 						Type:     schema.TypeInt,
 						Optional: true,
@@ -205,6 +210,7 @@ func flattenAWSGroupEBSBlockDevices(devices []*aws.BlockDeviceMapping) []interfa
 			m[string(DeviceName)] = spotinst.StringValue(dev.DeviceName)
 			m[string(DeleteOnTermination)] = spotinst.BoolValue(dev.EBS.DeleteOnTermination)
 			m[string(Encrypted)] = spotinst.BoolValue(dev.EBS.Encrypted)
+			m[string(KmsKeyId)] = spotinst.StringValue(dev.EBS.KmsKeyId)
 			m[string(Iops)] = spotinst.IntValue(dev.EBS.IOPS)
 			m[string(SnapshotId)] = spotinst.StringValue(dev.EBS.SnapshotID)
 			m[string(VolumeType)] = spotinst.StringValue(dev.EBS.VolumeType)
@@ -245,6 +251,10 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 
 		if v, ok := m[string(Encrypted)].(bool); ok && v != false {
 			device.EBS.SetEncrypted(spotinst.Bool(v))
+		}
+
+		if v, ok := m[string(KmsKeyId)].(string); ok && v != "" {
+			device.EBS.SetKmsKeyId(spotinst.String(v))
 		}
 
 		if v, ok := m[string(SnapshotId)].(string); ok && v != "" {
