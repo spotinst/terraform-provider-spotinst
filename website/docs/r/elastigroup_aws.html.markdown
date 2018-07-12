@@ -273,6 +273,7 @@ Each `ebs_block_device` supports the following:
 * `iops` - (Optional) The amount of provisioned [IOPS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-io-characteristics.html). This must be set with a `volume_type` of `"io1"`.
 * `delete_on_termination` - (Optional) Whether the volume should be destroyed on instance termination.
 * `encrypted` - (Optional) Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
+* `kms_key_id` - (Optional) ID for a user managed CMK under which the EBS Volume is encrypted
 
 Modifying any `ebs_block_device` currently requires resource replacement.
 
