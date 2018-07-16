@@ -140,7 +140,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 
 * `security_groups` - (Required) A list of associated security group IDS.
 * `image_id` - (Optional) The ID of the AMI used to launch the instance.
-* `iam_instance_profile` - (Optional) The ARN of an IAM instance profile to associate with launched instances.
+* `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `key_name` - (Optional) The key name that should be used for the instance.
 * `enable_monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
 * `user_data` - (Optional) The user data to provide when launching the instance.
