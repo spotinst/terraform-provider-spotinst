@@ -1,9 +1,9 @@
 package elastigroup_integrations
 
 import (
-	"fmt"
 	"bytes"
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"

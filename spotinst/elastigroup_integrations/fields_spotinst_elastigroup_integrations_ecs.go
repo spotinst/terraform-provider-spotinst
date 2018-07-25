@@ -1,9 +1,9 @@
 package elastigroup_integrations
 
 import (
-	"fmt"
 	"bytes"
 	"errors"
+	"fmt"
 
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -90,8 +90,8 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Key): &schema.Schema{
-									Type:      schema.TypeString,
-									Required:  true,
+									Type:     schema.TypeString,
+									Required: true,
 								},
 
 								string(Value): &schema.Schema{
