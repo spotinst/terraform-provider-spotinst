@@ -2616,6 +2616,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "false"),
 				),
 			},
 			{
@@ -2636,6 +2637,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
 				),
 			},
 			{
@@ -2660,6 +2662,7 @@ const testIntegrationECSGroupConfig_Create = `
     cluster_name = "ecs-cluster-name"
     autoscale_is_enabled = false
     autoscale_cooldown = 300
+    autoscale_scale_down_non_service_tasks = false
 
     autoscale_headroom = {
       cpu_per_unit = 1024
@@ -2680,6 +2683,7 @@ const testIntegrationECSGroupConfig_Update = `
     cluster_name = "ecs-cluster-name-update"
     autoscale_is_enabled = true
     autoscale_cooldown = 180
+    autoscale_scale_down_non_service_tasks = true
 
     autoscale_headroom = {
       cpu_per_unit = 2048
@@ -2861,6 +2865,8 @@ func TestAccSpotinstElastigroup_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.57655626.key", "test.key.nomad"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.57655626.value", "test-value"),
 				),
 			},
 			{
@@ -2882,6 +2888,8 @@ func TestAccSpotinstElastigroup_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.776001663.key", "test.other.key.nomad"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.776001663.value", "test-other-value"),
 				),
 			},
 			{
@@ -2918,6 +2926,11 @@ const testIntegrationNomadGroupConfig_Create = `
     autoscale_down = {
       evaluation_periods = 300
     }
+
+    autoscale_constraints = [{
+      key = "test.key.nomad"
+      value = "test-value"
+    }]
   }
  // --------------------------------------
 `
@@ -2940,6 +2953,11 @@ const testIntegrationNomadGroupConfig_Update = `
     autoscale_down = {
       evaluation_periods = 150
     }
+
+    autoscale_constraints = [{
+      key = "test.other.key.nomad"
+      value = "test-other-value"
+    }]
   }
  // --------------------------------------
 `
