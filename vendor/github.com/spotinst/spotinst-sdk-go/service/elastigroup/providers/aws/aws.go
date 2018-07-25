@@ -1199,7 +1199,7 @@ func (o *EC2ContainerServiceIntegration) SetAutoScaleECS(v *AutoScaleECS) *EC2Co
 	return o
 }
 
-func (o *AutoScaleECS) SetLabels(v []*AutoScaleAttributes) *AutoScaleECS {
+func (o *AutoScaleECS) SetAttributes(v []*AutoScaleAttributes) *AutoScaleECS {
 	if o.Attributes = v; o.Attributes == nil {
 		o.nullFields = append(o.nullFields, "Attributes")
 	}

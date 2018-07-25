@@ -654,7 +654,7 @@
 			"revisionTime": "2018-07-12T08:48:13Z"
 		},
 		{
-			"checksumSHA1": "li5Yw4Rz8PNgjECO+e1PVCNtrGQ=",
+			"checksumSHA1": "f9xgLc+OKG3syw4qRgmpMLrQo9k=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws",
 			"revision": "c87eb695fbe5256bcf7340aadd308a8bd86b290a",
 			"revisionTime": "2018-07-12T08:48:13Z"

@@ -201,15 +201,15 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 	}
 
 	if v, ok := m[string(AutoscaleAttributes)]; ok {
-		labels, err := expandECSAutoScaleAttributes(v)
+		attributes, err := expandECSAutoScaleAttributes(v)
 		if err != nil {
 			return nil, err
 		}
-		if labels != nil {
+		if attributes != nil {
 			if integration.AutoScaleECS == nil {
 				integration.SetAutoScaleECS(&aws.AutoScaleECS{})
 			}
-			integration.AutoScaleECS.SetLabels(labels)
+			integration.AutoScaleECS.SetAttributes(attributes)
 		}
 	}
 	return integration, nil
