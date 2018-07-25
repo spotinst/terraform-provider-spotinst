@@ -165,7 +165,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health.
 * `health_check_unhealthy_duration_before_replacement` - (Optional) The amount of time, in seconds, that we will wait before replacing an instance that is running and became unhealthy (this is only applicable for instances that were once healthy).
 
-* `tags` - (Optional) A mapping of tags to assign to the resource.
+* `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
 
 * `elastic_load_balancers` - (Optional) List of Elastic Load Balancers names (ELB).
@@ -331,6 +331,7 @@ For more information on instance persistence please see: [Stateful configuration
         * `num_of_units` - (Optional, Default: `0`) Amount of units for compute.
     * `autoscale_down` - (Optional) Enabling scale down.
         * `evaluation_periods` - (Optional, Default: `5`) Amount of cooldown evaluation periods for scale down.
+    * `autoscale_attributes` - (Optional) A key/value mapping of tags to assign to the resource.
 
 * `integration_codedeploy` - (Optional) Describes the [Code Deploy](https://aws.amazon.com/documentation/codedeploy/?id=docs_gateway) integration.
 
@@ -355,6 +356,7 @@ For more information on instance persistence please see: [Stateful configuration
         * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
+    * `autoscale_labels` - (Optional) A key/value mapping of tags to assign to the resource.
  
 * `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
 
@@ -369,6 +371,7 @@ For more information on instance persistence please see: [Stateful configuration
         * `num_of_units` - (Optional, Default: `0`) How many units of headroom to allocate.
     * `autoscale_down` - (Optional) Settings for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
+    * `autoscale_constraints` - (Optional) A key/value mapping of tags to assign to the resource.
          
 * `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
  
