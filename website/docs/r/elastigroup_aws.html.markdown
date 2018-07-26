@@ -41,27 +41,17 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   instance_types_spot     = ["m3.xlarge", "m3.2xlarge"]
 
   instance_types_weights = [
-    {
-      instance_type = "c3.large"
-      weight        = 10
-    },
-    {
-      instance_type = "c4.xlarge"
-      weight        = 16
-    }]
+  {
+    instance_type = "c3.large"
+    weight        = 10
+  },
+  {
+    instance_type = "c4.xlarge"
+    weight        = 16
+  }]
 
   orientation           = "balanced"
   fallback_to_ondemand  = false
-
-  ebs_block_device {
-    device_name           = "/dev/sdb"
-    snapshot_id           = ""
-    volume_type           = "gp2"
-    volume_size           = 8
-    iops                  = 1
-    delete_on_termination = true
-    encrypted             = false
-  }
 
   scaling_up_policy {
     policy_name        = "Default Scaling Up Policy"
@@ -78,7 +68,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   scaling_down_policy {
     policy_name        = "Default Scaling Down Policy"
-    metric_name        = "Default QueuesDepth"
+    metric_name        = "DefaultQueuesDepth"
     statistic          = "average"
     unit               = "none"
     adjustment         = 1
@@ -91,15 +81,15 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   tags = [
   {
-     key = "Env"
+     key   = "Env"
      value = "production"
   }, 
   {
-     key = "Name"
+     key   = "Name"
      value = "default-production"
   },
   {
-     key = "Project"
+     key   = "Project"
      value = "app_v2"
   }
  ]
@@ -167,16 +157,34 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
+    
+* `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
+    * `perform_at` - (Required) In the event of a fallback to On-Demand instances, select the time period to revert back to Spot. Supported Arguments – always (default), timeWindow, never. For timeWindow or never to be valid the group must have availabilityOriented OR persistence defined.
+    * `time_windows` - (Optional) Specify a list of time windows for to execute revertToSpot strategy. Time window format: `ddd:hh:mm-ddd:hh:mm`. Example: `Mon:03:00-Wed:02:30`
 
+<a id="load-balancers"></a>
+## Load Balancers
+    
 * `elastic_load_balancers` - (Optional) List of Elastic Load Balancers names (ELB).
 * `target_group_arns` - (Optional) List of Target Group ARNs to register the instances to.
 * `multai_target_sets` - (Optional) Set of targets to register. 
     * `target_set_id` - (Required) ID of Multai target set.
     * `balancer_id` - (Required) ID of Multai Load Balancer.
     
-* `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
-    * `perform_at` - (Required) In the event of a fallback to On-Demand instances, select the time period to revert back to Spot. Supported Arguments – always (default), timeWindow, never. For timeWindow or never to be valid the group must have availabilityOriented OR persistence defined.
-    * `time_windows` - (Optional) Specify a list of time windows for to execute revertToSpot strategy. Time window format: `ddd:hh:mm-ddd:hh:mm`. Example: `Mon:03:00-Wed:02:30`
+Usage:
+
+```hcl
+  elastic_load_balancers = ["bal5", "bal2"]
+  target_group_arns = ["tg-arn"]
+  multai_target_sets = [{
+    target_set_id = "ts-123",
+    balancer_id = "bal-123"
+  },
+  {
+    target_set_id = "ts-234",
+    balancer_id = "bal-234"
+  }]
+```
 
 <a id="signal"></a>
 ## Signals
@@ -185,6 +193,15 @@ Each `signal` supports the following:
 
 * `name` - (Required) The name of the signal defined for the group. Valid Values: `"INSTANCE_READY"`, `"INSTANCE_READY_TO_SHUTDOWN"`
 * `timeout` - (Optional) The signals defined timeout- default is 40 minutes (1800 seconds).
+
+Usage:
+
+```hcl
+  signal = {
+    name    = "INSTANCE_READY_TO_SHUTDOWN"
+    timeout = 100
+  }
+```
 
 <a id="scheduled-task"></a>
 ## Scheduled Tasks
@@ -202,6 +219,28 @@ Each `scheduled_task` supports the following:
 * `target_capacity` - (Optional; Only valid for statefulUpdateCapacity) The desired number of instances the group should have.
 * `min_capacity` - (Optional; Only valid for statefulUpdateCapacity) The minimum number of instances the group should have.
 * `max_capacity` - (Optional; Only valid for statefulUpdateCapacity) The maximum number of instances the group should have.
+* `batch_size_percentage` - (Optional; Required when the `taskType` is `roll`.) The percentage size of each batch in the scheduled deployment roll.
+* `grace_period` - (Optional) The period of time (seconds) to wait before checking a batch's health after it's deployment. 
+
+Usage:
+
+```hcl
+  scheduled_task = [{
+    task_type             = "backup_ami"
+    cron_expression       = ""
+    start_time            = "1970-01-01T01:00:00Z"
+    frequency             = "hourly"
+    scale_target_capacity = 5
+    scale_min_capacity    = 0
+    scale_max_capacity    = 10
+    is_enabled            = false
+    target_capacity       = 5
+    min_capacity          = 0
+    max_capacity          = 10
+    batch_size_percentage = 33
+    grace_period          = 300
+  }]
+```
 
 <a id="scaling-policy"></a>
 ## Scaling Policies
@@ -240,6 +279,67 @@ When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `
 * `maximum` - (Optional; if using `updateCapacity`) The maximal number of instances to have in the group.
 * `target` - (Optional; if using `updateCapacity`) The target number of instances to have in the group.
 
+Usage:
+
+```hcl
+  scaling_up_policy = [{
+    policy_name = "policy-name"
+    metric_name = "CPUUtilization"
+    namespace   = "AWS/EC2"
+    source      = ""
+    statistic   = "average"
+    unit        = ""
+    cooldown    = 60
+    
+    dimensions = {
+        name  = "name-1"
+        value = "value-1"
+    }
+    
+    threshold          = 10
+    operator           = "gt"
+    evaluation_periods = 10
+    period             = 60
+  
+    // === MIN TARGET ===================
+    action_type         = "setMinTarget"
+    min_target_capacity = 1
+    // ==================================
+  
+    // === ADJUSTMENT ===================
+    # action_type = "adjustment"
+    # action_type = "percentageAdjustment"
+    # adjustment  = "MAX(5,10)"
+    // ==================================
+  
+    // === UPDATE CAPACITY ==============
+    # action_type = "updateCapacity"
+    # minimum     = 0
+    # maximum     = 10
+    # target      = 5
+    // ==================================
+  
+  }]
+```
+
+```hcl
+  scaling_target_policy = [{
+      policy_name = ""
+      metric_name = ""
+      namespace   = ""
+      source      = ""
+      statistic   = ""
+      unit        = ""
+      cooldown    = 10
+      target      = 1
+      
+      dimensions = [{
+        name  = ""
+        value = ""
+      }]
+  }]
+```
+
 <a id="network-interface"></a>
 ## Network Interfaces
 
@@ -255,6 +355,20 @@ to understand the implications of using these attributes.
 * `delete_on_termination` - (Optional) If set to true, the interface is deleted when the instance is terminated.
 * `secondary_private_ip_address_count` - (Optional) The number of secondary private IP addresses.
 * `associate_public_ip_address` - (Optional) Indicates whether to assign a public IP address to an instance you launch in a VPC. The public IP address can only be assigned to a network interface for eth0, and can only be assigned to a new network interface, not an existing one.
+
+Usage:
+
+```hcl
+  network_interface = [{ 
+    network_interface_id               = "" 
+    device_index                       = 1
+    description                        = "nic description in here"
+    private_ip_address                 = "1.1.1.1"
+    delete_on_termination              = false
+    secondary_private_ip_address_count = 1
+    associate_public_ip_address        = true
+  }]
+```
 
 <a id="block-devices"></a>
 ## Block Devices
@@ -277,11 +391,45 @@ Each `ebs_block_device` supports the following:
 
 Modifying any `ebs_block_device` currently requires resource replacement.
 
+Usage:
+
+```hcl
+  ebs_block_device = [{
+     device_name           = "/dev/sdb" 
+     snapshot_id           = "" 
+     volume_type           = "gp2"  
+     volume_size           = 8
+     iops                  = 1
+     delete_on_termination = true
+     encrypted             = false
+     kms_key_id            = "kms-key-01"
+   },
+   {
+     device_name           = "/dev/sdc" 
+     snapshot_id           = "" 
+     volume_type           = "gp2"  
+     volume_size           = 8  
+     iops                  = 1
+     delete_on_termination = true
+     encrypted             = true
+     kms_key_id            = "kms-key-02"
+  }]
+```
+
 Each `ephemeral_block_device` supports the following:
 
 * `device_name` - (Required) The name of the block device to mount on the instance.
 * `virtual_name` - (Required) The [Instance Store Device Name](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html#InstanceStoreDeviceNames)
   (e.g. `"ephemeral0"`).
+  
+Usage:
+
+```hcl
+  ephemeral_block_device = [{
+    device_name  = "/dev/xvdc"
+    virtual_name = "ephemeral0"
+  }]
+```
 
 <a id="stateful"></a>
 ## Stateful
@@ -295,6 +443,16 @@ For more information on instance persistence please see: [Stateful configuration
 * `block_devices_mode` - (Optional) String, determine the way we attach the data volumes to the data devices, possible values: `"reattach"` and `"onLaunch"` (default is onLaunch).
 * `private_ips` - (Optional) List of Private IPs to associate to the group instances.(e.g. "172.1.1.0"). Please note: This setting will only apply if persistence.persist_private_ip is set to true.
 
+Usage:
+
+```hcl
+  persist_root_device   = false
+  persist_block_devices = false
+  persist_private_ip    = true
+  block_devices_mode    = "onLaunch"
+  private_ips           = ["1.1.1.1", "2.2.2.2"]
+```
+
 <a id="stateful-deallocation"></a>
 ## Stateful Deallocation
 
@@ -304,12 +462,31 @@ For more information on instance persistence please see: [Stateful configuration
     * `should_delete_volumes` - (Optional) For stateful groups: remove persistent volumes.
     * `should_delete_snapshots` - (Optional) For stateful groups: remove snapshots.
     
+Usage:
+
+```hcl
+  stateful_deallocation = {
+     should_delete_images              = false
+     should_delete_network_interfaces  = false
+     should_delete_volumes             = false
+     should_delete_snapshots           = false
+   }
+```    
+
 <a id="health-check"></a>
 ## Health Check
 
 * `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health
 * `health_check_unhealthy_duration_before_replacement` - (Optional) The amount of time, in seconds, that we will wait before replacing an instance that is running and became unhealthy (this is only applicable for instances that were once healthy)
+
+Usage:
+
+```hcl
+  health_check_type                                  = "ELB" 
+  health_check_grace_period                          = 100
+  health_check_unhealthy_duration_before_replacement = 120
+```
 
 <a id="third-party-integrations"></a>
 ## Third-Party Integrations
@@ -319,6 +496,16 @@ For more information on instance persistence please see: [Stateful configuration
     * `master_host` - (Required) The URL of the Rancher Master host.
     * `access_key` - (Required) The access key of the Rancher API.
     * `secret_key` - (Required) The secret key of the Rancher API.
+
+Usage:
+
+```hcl
+  integration_rancher = {
+    master_host = "master_host"
+    access_key  = "access_key"
+    secret_key  = "secret_key"
+  }
+```
 
 * `integration_ecs` - (Optional) Describes the [EC2 Container Service](https://aws.amazon.com/documentation/ecs/?id=docs_gateway) integration.
 
@@ -333,6 +520,31 @@ For more information on instance persistence please see: [Stateful configuration
         * `evaluation_periods` - (Optional, Default: `5`) Amount of cooldown evaluation periods for scale down.
     * `autoscale_attributes` - (Optional) A key/value mapping of tags to assign to the resource.
 
+Usage:
+
+```hcl
+  integration_ecs = { 
+    cluster_name         = "ecs-cluster"
+    autoscale_is_enabled = false
+    autoscale_cooldown   = 300
+    
+    autoscale_headroom = {
+      cpu_per_unit    = 1024
+      memory_per_unit = 512
+      num_of_units    = 2
+    }
+    
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+    
+    autoscale_attributes = [{
+      key   = "test.ecs.key"
+      value = "test.ecs.value"
+    }]
+  }
+```
+
 * `integration_codedeploy` - (Optional) Describes the [Code Deploy](https://aws.amazon.com/documentation/codedeploy/?id=docs_gateway) integration.
 
     * `cleanup_on_failure` - (Optional) Cleanup automatically after a failed deploy.
@@ -340,6 +552,20 @@ For more information on instance persistence please see: [Stateful configuration
     * `deployment_groups` - (Optional) Specify the deployment groups details.
         * `application_name` - (Optional) The application name.
         * `deployment_group_name` - (Optional) The deployment group name.
+
+Usage:
+
+```hcl
+  integration_codedeploy = {
+    cleanup_on_failure            = false
+    terminate_instance_on_failure = false
+    
+    deployment_groups = {
+      application_name      = "my-app"
+      deployment_group_name = "my-group"
+    }
+  }
+```
 
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
 
@@ -357,6 +583,40 @@ For more information on instance persistence please see: [Stateful configuration
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
     * `autoscale_labels` - (Optional) A key/value mapping of tags to assign to the resource.
+
+Usage:
+
+```hcl
+  integration_kubernetes = {
+    integration_mode   = "pod"
+    cluster_identifier = "my-identifier.ek8s.com"
+    
+    // === SAAS ===================
+    # integration_mode = "saas"
+    # api_server       = "https://api.my-identifier.ek8s.com/api/v1/namespaces/kube-system/services/..."
+    # token            = "top-secret"
+    // ============================
+    
+    autoscale_is_enabled     = false
+    autoscale_is_auto_config = false
+    autoscale_cooldown       = 300
+    
+    autoscale_headroom = {
+      cpu_per_unit    = 1024
+      memory_per_unit = 512
+      num_of_units    = 1
+    }
+    
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+    
+    autoscale_labels = [{
+      key   = "test.k8s.key"
+      value = "test.k8s.value"
+    }]
+  }
+```
  
 * `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
 
@@ -372,19 +632,72 @@ For more information on instance persistence please see: [Stateful configuration
     * `autoscale_down` - (Optional) Settings for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
     * `autoscale_constraints` - (Optional) A key/value mapping of tags to assign to the resource.
+
+Usage:
+
+```hcl
+  integration_nomad = {
+    master_host          = "my-nomad-host"
+    master_port          = 9000
+    acl_token            = "top-secret"
+    autoscale_is_enabled = false
+    autoscale_cooldown   = 300
+    
+    autoscale_headroom = {
+      cpu_per_unit    = 1024
+      memory_per_unit = 512
+      num_of_units    = 2
+    }
+    
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+    
+    autoscale_constraints = [{
+      key   = "test.nomad.key"
+      value = "test.nomad.value"
+    }]
+  }
+```
          
 * `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
  
     * `api_server` - (Optional) The public IP of the DC/OS Master. 
 
+Usage:
+
+```hcl
+  integration_mesosphere = {
+    api_server = ""
+  }
+```
+
 * `integration_multai_runtime` - (Optional) Describes the [Multai Runtime](https://spotinst.com/) integration.
  
     * `deployment_id` - (Optional) The deployment id you want to get
+
+Usage:
+
+```hcl
+  integration_multai_runtime = {
+    deployment_id = ""
+  }
+```
      
 * `integration_gitlab` - (Optional) Describes the [Gitlab](https://api.spotinst.com/integration-docs/gitlab/) integration.
  
     * `runner` - (Optional) Settings for Gitlab runner. 
         * `is_enabled` - (Optional, Default: `false`) Specifies whether the integration is enabled.
+  
+Usage:
+
+```hcl
+  integration_gitlab = {
+    runner = {
+      is_enabled = true
+    }
+  }
+```  
      
 <a id="update-policy"></a>
 ## Update Policy
@@ -397,6 +710,19 @@ For more information on instance persistence please see: [Stateful configuration
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"K8S_NODE"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"MLB"`, `"MLB_RUNTIME"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`, `"NOMAD_NODE"`.
         * `grace_period` - (Optional) Sets the grace period for new instances to become healthy.
+       
+```hcl
+  update_policy = {
+    should_resume_stateful = false
+    should_roll            = false
+    
+    roll_config = {
+      batch_size_percentage = 33
+      health_check_type     = "ELB"
+      grace_period          = 300
+    }
+  }
+```       
        
 ## Attributes Reference
 
