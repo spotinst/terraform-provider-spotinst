@@ -113,7 +113,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Endpoint] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.Subscription,
 		Endpoint,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -144,7 +144,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Format] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.Subscription,
 		Format,
 		&schema.Schema{
 			Type:     schema.TypeMap,

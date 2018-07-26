@@ -1,10 +1,6 @@
 package elastigroup_integrations
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -65,28 +61,4 @@ func expandAWSGroupAutoScaleDown(data interface{}) (*aws.AutoScaleDown, error) {
 	}
 
 	return nil, nil
-}
-
-func expandAWSGroupAutoScaleConstraints(data interface{}) ([]*aws.AutoScaleConstraint, error) {
-	list := data.(*schema.Set).List()
-	out := make([]*aws.AutoScaleConstraint, 0, len(list))
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		if _, ok := attr[string(Key)]; !ok {
-			return nil, errors.New("invalid constraint attributes: key missing")
-		}
-
-		if _, ok := attr[string(Value)]; !ok {
-			return nil, errors.New("invalid constraint attributes: value missing")
-		}
-		c := &aws.AutoScaleConstraint{
-			Key:   spotinst.String(fmt.Sprintf("${%s}", attr[string(Key)].(string))),
-			Value: spotinst.String(attr[string(Value)].(string)),
-		}
-		out = append(out, c)
-	}
-	return out, nil
 }

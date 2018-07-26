@@ -19,6 +19,7 @@ const (
 	Iops                commons.FieldName = "iops"
 	DeleteOnTermination commons.FieldName = "delete_on_termination"
 	Encrypted           commons.FieldName = "encrypted"
+	KmsKeyId            commons.FieldName = "kms_key_id"
 	NoDevice            commons.FieldName = "nodevice"
 	// --------------------------------------------------------------
 

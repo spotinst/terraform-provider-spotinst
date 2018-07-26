@@ -22,6 +22,9 @@ const (
 	EvaluationPeriods commons.FieldName = "evaluation_periods"
 
 	ApiServer commons.FieldName = "api_server"
+
+	Key   commons.FieldName = "key"
+	Value commons.FieldName = "value"
 	// -----------------------------------
 
 	// - RANCHER -------------------------
@@ -31,8 +34,10 @@ const (
 	// -----------------------------------
 
 	// - ECS -----------------------------
-	IntegrationEcs commons.FieldName = "integration_ecs"
-	ClusterName    commons.FieldName = "cluster_name"
+	ShouldScaleDownNonServiceTasks commons.FieldName = "autoscale_scale_down_non_service_tasks"
+	IntegrationEcs                 commons.FieldName = "integration_ecs"
+	ClusterName                    commons.FieldName = "cluster_name"
+	AutoscaleAttributes            commons.FieldName = "autoscale_attributes"
 	// -----------------------------------
 
 	// - KUBERNETES ----------------------
@@ -40,6 +45,7 @@ const (
 	IntegrationMode       commons.FieldName = "integration_mode"
 	ClusterIdentifier     commons.FieldName = "cluster_identifier"
 	Token                 commons.FieldName = "token"
+	AutoscaleLabels       commons.FieldName = "autoscale_labels"
 	// -----------------------------------
 
 	// - NOMAD ---------------------------
@@ -47,8 +53,6 @@ const (
 	MasterPort           commons.FieldName = "master_port"
 	AclToken             commons.FieldName = "acl_token"
 	AutoscaleConstraints commons.FieldName = "autoscale_constraints"
-	Key                  commons.FieldName = "key"
-	Value                commons.FieldName = "value"
 	// -----------------------------------
 
 	// - MESOSPHERE ----------------------

@@ -2,6 +2,7 @@ package elastigroup_integrations
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 
 	"github.com/hashicorp/terraform/helper/hashcode"
@@ -105,7 +106,7 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 							},
 						},
-						Set: hashKV,
+						Set: constraintHashKV,
 					},
 				},
 			},
@@ -169,17 +170,17 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScaleNomad == nil {
+			integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
 		}
-		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScaleNomad.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScaleNomad == nil {
+			integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
 		}
-		integration.AutoScale.SetCooldown(spotinst.Int(v))
+		integration.AutoScaleNomad.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -188,10 +189,10 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if headroom != nil {
-			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScaleNomad == nil {
+				integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
 			}
-			integration.AutoScale.SetHeadroom(headroom)
+			integration.AutoScaleNomad.SetHeadroom(headroom)
 		}
 	}
 
@@ -201,26 +202,50 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if down != nil {
-			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScaleNomad == nil {
+				integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
 			}
-			integration.AutoScale.SetDown(down)
+			integration.AutoScaleNomad.SetDown(down)
 		}
 	}
 
 	if v, ok := m[string(AutoscaleConstraints)]; ok {
-		consts, err := expandAWSGroupAutoScaleConstraints(v)
+		consts, err := expandNomadAutoScaleConstraints(v)
 		if err != nil {
 			return nil, err
 		}
 		if consts != nil {
-			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScaleNomad == nil {
+				integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
 			}
-			integration.AutoScale.SetConstraints(consts)
+			integration.AutoScaleNomad.SetConstraints(consts)
 		}
 	}
 	return integration, nil
+}
+
+func expandNomadAutoScaleConstraints(data interface{}) ([]*aws.AutoScaleConstraint, error) {
+	list := data.(*schema.Set).List()
+	out := make([]*aws.AutoScaleConstraint, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(Key)]; !ok {
+			return nil, errors.New("invalid Nomad constraint: key missing")
+		}
+
+		if _, ok := attr[string(Value)]; !ok {
+			return nil, errors.New("invalid Nomad constraint: value missing")
+		}
+		c := &aws.AutoScaleConstraint{
+			Key:   spotinst.String(fmt.Sprintf("${%s}", attr[string(Key)].(string))),
+			Value: spotinst.String(attr[string(Value)].(string)),
+		}
+		out = append(out, c)
+	}
+	return out, nil
 }
 
 func attrStateFunc(v interface{}) string {
@@ -232,7 +257,7 @@ func attrStateFunc(v interface{}) string {
 	}
 }
 
-func hashKV(v interface{}) int {
+func constraintHashKV(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
 	buf.WriteString(fmt.Sprintf("%s-", m[string(Key)].(string)))

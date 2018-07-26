@@ -2289,6 +2289,7 @@ const testElastigroupBlockDevices_Update = `
    iops 					= 1
    delete_on_termination 	= true
    encrypted 				= true
+   kms_key_id 				= "acceptance-kms-key"
  }]
  // --------------------------------------
 
@@ -2615,6 +2616,9 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.key", "test.key.ecs"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.value", "test.value.ecs"),
 				),
 			},
 			{
@@ -2635,6 +2639,9 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.key", "test.key.ecs.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.value", "test.value.ecs.update"),
 				),
 			},
 			{
@@ -2659,6 +2666,7 @@ const testIntegrationECSGroupConfig_Create = `
     cluster_name = "ecs-cluster-name"
     autoscale_is_enabled = false
     autoscale_cooldown = 300
+    autoscale_scale_down_non_service_tasks = false
 
     autoscale_headroom = {
       cpu_per_unit = 1024
@@ -2669,6 +2677,11 @@ const testIntegrationECSGroupConfig_Create = `
     autoscale_down = {
       evaluation_periods = 300
     }
+
+    autoscale_attributes = [{
+      key   = "test.key.ecs"
+      value = "test.value.ecs"
+    }]
   }
  // --------------------------------
 `
@@ -2679,6 +2692,7 @@ const testIntegrationECSGroupConfig_Update = `
     cluster_name = "ecs-cluster-name-update"
     autoscale_is_enabled = true
     autoscale_cooldown = 180
+    autoscale_scale_down_non_service_tasks = true
 
     autoscale_headroom = {
       cpu_per_unit = 2048
@@ -2689,6 +2703,11 @@ const testIntegrationECSGroupConfig_Update = `
     autoscale_down = {
       evaluation_periods = 150
     }
+
+    autoscale_attributes = [{
+      key   = "test.key.ecs.update"
+      value = "test.value.ecs.update"
+    }]
   }
  // --------------------------------
 `
@@ -2733,6 +2752,8 @@ func TestAccSpotinstElastigroup_IntegrationKubernetes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.3445854412.key", "test.key.k8s"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.3445854412.value", "test.value.k8s"),
 				),
 			},
 			{
@@ -2756,6 +2777,8 @@ func TestAccSpotinstElastigroup_IntegrationKubernetes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.208193869.key", "test.key.k8s.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.208193869.value", "test.value.k8s.update"),
 				),
 			},
 			{
@@ -2793,6 +2816,11 @@ const testIntegrationKubernetesGroupConfig_Create = `
     autoscale_down = {
       evaluation_periods = 300
     }
+
+    autoscale_labels = [{
+      key   = "test.key.k8s"
+      value = "test.value.k8s"
+    }]
   }
  // ------------------------------------------
 `
@@ -2817,6 +2845,11 @@ const testIntegrationKubernetesGroupConfig_Update = `
     autoscale_down = {
       evaluation_periods = 150
     }
+
+    autoscale_labels = [{
+      key   = "test.key.k8s.update"
+      value = "test.value.k8s.update"
+    }]
   }
  // ------------------------------------------
 `
@@ -2860,6 +2893,8 @@ func TestAccSpotinstElastigroup_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.3420361780.key", "test.key.nomad"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.3420361780.value", "test.value.nomad"),
 				),
 			},
 			{
@@ -2881,6 +2916,8 @@ func TestAccSpotinstElastigroup_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.1137182518.key", "test.key.nomad.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.1137182518.value", "test.value.nomad.update"),
 				),
 			},
 			{
@@ -2917,6 +2954,11 @@ const testIntegrationNomadGroupConfig_Create = `
     autoscale_down = {
       evaluation_periods = 300
     }
+
+    autoscale_constraints = [{
+      key   = "test.key.nomad"
+      value = "test.value.nomad"
+    }]
   }
  // --------------------------------------
 `
@@ -2939,6 +2981,11 @@ const testIntegrationNomadGroupConfig_Update = `
     autoscale_down = {
       evaluation_periods = 150
     }
+
+    autoscale_constraints = [{
+      key   = "test.key.nomad.update"
+      value = "test.value.nomad.update"
+    }]
   }
  // --------------------------------------
 `

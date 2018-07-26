@@ -1,6 +1,11 @@
 package elastigroup_integrations
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
+
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -93,6 +98,25 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+
+					string(AutoscaleLabels): &schema.Schema{
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Key): &schema.Schema{
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(Value): &schema.Schema{
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+						Set: labelHashKV,
+					},
 				},
 			},
 		},
@@ -157,24 +181,24 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScaleKubernetes == nil {
+			integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
 		}
-		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScaleKubernetes.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScaleKubernetes == nil {
+			integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
 		}
-		integration.AutoScale.SetCooldown(spotinst.Int(v))
+		integration.AutoScaleKubernetes.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleIsAutoConfig)].(bool); ok {
-		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScaleKubernetes == nil {
+			integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
 		}
-		integration.AutoScale.SetIsAutoConfig(spotinst.Bool(v))
+		integration.AutoScaleKubernetes.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -183,10 +207,10 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			return nil, err
 		}
 		if headroom != nil {
-			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScaleKubernetes == nil {
+				integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
 			}
-			integration.AutoScale.SetHeadroom(headroom)
+			integration.AutoScaleKubernetes.SetHeadroom(headroom)
 		}
 	}
 
@@ -196,11 +220,56 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			return nil, err
 		}
 		if down != nil {
-			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScaleKubernetes == nil {
+				integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
 			}
-			integration.AutoScale.SetDown(down)
+			integration.AutoScaleKubernetes.SetDown(down)
+		}
+	}
+
+	if v, ok := m[string(AutoscaleLabels)]; ok {
+		labels, err := expandKubernetesAutoScaleLabels(v)
+		if err != nil {
+			return nil, err
+		}
+		if labels != nil {
+			if integration.AutoScaleKubernetes == nil {
+				integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
+			}
+			integration.AutoScaleKubernetes.SetLabels(labels)
 		}
 	}
 	return integration, nil
+}
+
+func expandKubernetesAutoScaleLabels(data interface{}) ([]*aws.AutoScaleLabel, error) {
+	list := data.(*schema.Set).List()
+	out := make([]*aws.AutoScaleLabel, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(Key)]; !ok {
+			return nil, errors.New("invalid Kubernetes label: key missing")
+		}
+
+		if _, ok := attr[string(Value)]; !ok {
+			return nil, errors.New("invalid Kubernetes label: value missing")
+		}
+		c := &aws.AutoScaleLabel{
+			Key:   spotinst.String(attr[string(Key)].(string)),
+			Value: spotinst.String(attr[string(Value)].(string)),
+		}
+		out = append(out, c)
+	}
+	return out, nil
+}
+
+func labelHashKV(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(fmt.Sprintf("%s-", m[string(Key)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(Value)].(string)))
+	return hashcode.String(buf.String())
 }

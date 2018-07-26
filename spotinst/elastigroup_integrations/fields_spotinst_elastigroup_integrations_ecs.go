@@ -1,6 +1,11 @@
 package elastigroup_integrations
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
+
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -24,6 +29,11 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ClusterName): &schema.Schema{
 						Type:     schema.TypeString,
 						Required: true,
+					},
+
+					string(ShouldScaleDownNonServiceTasks): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
 					},
 
 					string(AutoscaleIsEnabled): &schema.Schema{
@@ -72,6 +82,25 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 							},
 						},
+					},
+
+					string(AutoscaleAttributes): &schema.Schema{
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Key): &schema.Schema{
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(Value): &schema.Schema{
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+						Set: attributeHashKV,
 					},
 				},
 			},
@@ -125,17 +154,24 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScaleECS == nil {
+			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
 		}
-		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScaleECS.SetIsEnabled(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(ShouldScaleDownNonServiceTasks)].(bool); ok {
+		if integration.AutoScaleECS == nil {
+			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+		}
+		integration.AutoScaleECS.SetShouldScaleDownNonServiceTasks(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScale{})
+		if integration.AutoScaleECS == nil {
+			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
 		}
-		integration.AutoScale.SetCooldown(spotinst.Int(v))
+		integration.AutoScaleECS.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -144,10 +180,10 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			return nil, err
 		}
 		if headroom != nil {
-			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScaleECS == nil {
+				integration.SetAutoScaleECS(&aws.AutoScaleECS{})
 			}
-			integration.AutoScale.SetHeadroom(headroom)
+			integration.AutoScaleECS.SetHeadroom(headroom)
 		}
 	}
 
@@ -157,11 +193,56 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			return nil, err
 		}
 		if down != nil {
-			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScale{})
+			if integration.AutoScaleECS == nil {
+				integration.SetAutoScaleECS(&aws.AutoScaleECS{})
 			}
-			integration.AutoScale.SetDown(down)
+			integration.AutoScaleECS.SetDown(down)
+		}
+	}
+
+	if v, ok := m[string(AutoscaleAttributes)]; ok {
+		attributes, err := expandECSAutoScaleAttributes(v)
+		if err != nil {
+			return nil, err
+		}
+		if attributes != nil {
+			if integration.AutoScaleECS == nil {
+				integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+			}
+			integration.AutoScaleECS.SetAttributes(attributes)
 		}
 	}
 	return integration, nil
+}
+
+func expandECSAutoScaleAttributes(data interface{}) ([]*aws.AutoScaleAttributes, error) {
+	list := data.(*schema.Set).List()
+	out := make([]*aws.AutoScaleAttributes, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(Key)]; !ok {
+			return nil, errors.New("invalid ECS attribute: key missing")
+		}
+
+		if _, ok := attr[string(Value)]; !ok {
+			return nil, errors.New("invalid ECS attribute: value missing")
+		}
+		c := &aws.AutoScaleAttributes{
+			Key:   spotinst.String(attr[string(Key)].(string)),
+			Value: spotinst.String(attr[string(Value)].(string)),
+		}
+		out = append(out, c)
+	}
+	return out, nil
+}
+
+func attributeHashKV(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(fmt.Sprintf("%s-", m[string(Key)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(Value)].(string)))
+	return hashcode.String(buf.String())
 }

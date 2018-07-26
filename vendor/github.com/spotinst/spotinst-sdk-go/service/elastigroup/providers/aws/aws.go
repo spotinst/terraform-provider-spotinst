@@ -105,22 +105,37 @@ type Integration struct {
 	nullFields      []string
 }
 
-type EC2ContainerServiceIntegration struct {
-	ClusterName *string    `json:"clusterName,omitempty"`
-	AutoScale   *AutoScale `json:"autoScale,omitempty"`
+type AutoScale struct {
+	IsEnabled    *bool              `json:"isEnabled,omitempty"`
+	IsAutoConfig *bool              `json:"isAutoConfig,omitempty"`
+	Cooldown     *int               `json:"cooldown,omitempty"`
+	Headroom     *AutoScaleHeadroom `json:"headroom,omitempty"`
+	Down         *AutoScaleDown     `json:"down,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
 }
 
-type AutoScale struct {
-	IsEnabled    *bool                  `json:"isEnabled,omitempty"`
-	IsAutoConfig *bool                  `json:"isAutoConfig,omitempty"`
-	Cooldown     *int                   `json:"cooldown,omitempty"`
-	Headroom     *AutoScaleHeadroom     `json:"headroom,omitempty"`
-	Down         *AutoScaleDown         `json:"down,omitempty"`
-	Constraints  []*AutoScaleConstraint `json:"constraints,omitempty"`
-	Labels       []*AutoScaleLabel      `json:"labels,omitempty"`
+type AutoScaleECS struct {
+	AutoScale                                             // embedding
+	Attributes                     []*AutoScaleAttributes `json:"attributes,omitempty"`
+	ShouldScaleDownNonServiceTasks *bool                  `json:"shouldScaleDownNonServiceTasks,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type AutoScaleKubernetes struct {
+	AutoScale                   // embedding
+	Labels    []*AutoScaleLabel `json:"labels,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type AutoScaleNomad struct {
+	AutoScale                          // embedding
+	Constraints []*AutoScaleConstraint `json:"constraints,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -151,6 +166,14 @@ type AutoScaleConstraint struct {
 }
 
 type AutoScaleLabel struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type AutoScaleAttributes struct {
 	Key   *string `json:"key,omitempty"`
 	Value *string `json:"value,omitempty"`
 
@@ -199,12 +222,20 @@ type RancherIntegration struct {
 	nullFields      []string
 }
 
+type EC2ContainerServiceIntegration struct {
+	ClusterName  *string       `json:"clusterName,omitempty"`
+	AutoScaleECS *AutoScaleECS `json:"autoScale,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
 type KubernetesIntegration struct {
-	IntegrationMode   *string    `json:"integrationMode,omitempty"`
-	ClusterIdentifier *string    `json:"clusterIdentifier,omitempty"`
-	Server            *string    `json:"apiServer,omitempty"`
-	Token             *string    `json:"token,omitempty"`
-	AutoScale         *AutoScale `json:"autoScale,omitempty"`
+	IntegrationMode     *string              `json:"integrationMode,omitempty"`
+	ClusterIdentifier   *string              `json:"clusterIdentifier,omitempty"`
+	Server              *string              `json:"apiServer,omitempty"`
+	Token               *string              `json:"token,omitempty"`
+	AutoScaleKubernetes *AutoScaleKubernetes `json:"autoScale,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -225,10 +256,10 @@ type MultaiIntegration struct {
 }
 
 type NomadIntegration struct {
-	MasterHost *string    `json:"masterHost,omitempty"`
-	MasterPort *int       `json:"masterPort,omitempty"`
-	AutoScale  *AutoScale `json:"autoScale,omitempty"`
-	ACLToken   *string    `json:"aclToken,omitempty"`
+	MasterHost     *string         `json:"masterHost,omitempty"`
+	MasterPort     *int            `json:"masterPort,omitempty"`
+	ACLToken       *string         `json:"aclToken,omitempty"`
+	AutoScaleNomad *AutoScaleNomad `json:"autoScale,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -510,6 +541,7 @@ type BlockDeviceMapping struct {
 type EBS struct {
 	DeleteOnTermination *bool   `json:"deleteOnTermination,omitempty"`
 	Encrypted           *bool   `json:"encrypted,omitempty"`
+	KmsKeyId            *string `json:"kmsKeyId,omitempty"`
 	SnapshotID          *string `json:"snapshotId,omitempty"`
 	VolumeType          *string `json:"volumeType,omitempty"`
 	VolumeSize          *int    `json:"volumeSize,omitempty"`
@@ -1154,9 +1186,29 @@ func (o *EC2ContainerServiceIntegration) SetClusterName(v *string) *EC2Container
 	return o
 }
 
-func (o *EC2ContainerServiceIntegration) SetAutoScale(v *AutoScale) *EC2ContainerServiceIntegration {
-	if o.AutoScale = v; o.AutoScale == nil {
-		o.nullFields = append(o.nullFields, "AutoScale")
+func (o *AutoScaleECS) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleECS
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *EC2ContainerServiceIntegration) SetAutoScaleECS(v *AutoScaleECS) *EC2ContainerServiceIntegration {
+	if o.AutoScaleECS = v; o.AutoScaleECS == nil {
+		o.nullFields = append(o.nullFields, "AutoScaleECS")
+	}
+	return o
+}
+
+func (o *AutoScaleECS) SetAttributes(v []*AutoScaleAttributes) *AutoScaleECS {
+	if o.Attributes = v; o.Attributes == nil {
+		o.nullFields = append(o.nullFields, "Attributes")
+	}
+	return o
+}
+
+func (o *AutoScaleECS) SetShouldScaleDownNonServiceTasks(v *bool) *AutoScaleECS {
+	if o.ShouldScaleDownNonServiceTasks = v; o.ShouldScaleDownNonServiceTasks == nil {
+		o.nullFields = append(o.nullFields, "ShouldScaleDownNonServiceTasks")
 	}
 	return o
 }
@@ -1202,20 +1254,6 @@ func (o *AutoScale) SetHeadroom(v *AutoScaleHeadroom) *AutoScale {
 func (o *AutoScale) SetDown(v *AutoScaleDown) *AutoScale {
 	if o.Down = v; o.Down == nil {
 		o.nullFields = append(o.nullFields, "Down")
-	}
-	return o
-}
-
-func (o *AutoScale) SetConstraints(v []*AutoScaleConstraint) *AutoScale {
-	if o.Constraints = v; o.Constraints == nil {
-		o.nullFields = append(o.nullFields, "Constraints")
-	}
-	return o
-}
-
-func (o *AutoScale) SetLabels(v []*AutoScaleLabel) *AutoScale {
-	if o.Labels = v; o.Labels == nil {
-		o.nullFields = append(o.nullFields, "Labels")
 	}
 	return o
 }
@@ -1354,9 +1392,22 @@ func (o *KubernetesIntegration) SetToken(v *string) *KubernetesIntegration {
 	return o
 }
 
-func (o *KubernetesIntegration) SetAutoScale(v *AutoScale) *KubernetesIntegration {
-	if o.AutoScale = v; o.AutoScale == nil {
-		o.nullFields = append(o.nullFields, "AutoScale")
+func (o *KubernetesIntegration) SetAutoScaleKubernetes(v *AutoScaleKubernetes) *KubernetesIntegration {
+	if o.AutoScaleKubernetes = v; o.AutoScaleKubernetes == nil {
+		o.nullFields = append(o.nullFields, "AutoScaleKubernetes")
+	}
+	return o
+}
+
+func (o *AutoScaleKubernetes) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleKubernetes
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *AutoScaleKubernetes) SetLabels(v []*AutoScaleLabel) *AutoScaleKubernetes {
+	if o.Labels = v; o.Labels == nil {
+		o.nullFields = append(o.nullFields, "Labels")
 	}
 	return o
 }
@@ -1426,9 +1477,22 @@ func (o *NomadIntegration) SetAclToken(v *string) *NomadIntegration {
 	return o
 }
 
-func (o *NomadIntegration) SetAutoScale(v *AutoScale) *NomadIntegration {
-	if o.AutoScale = v; o.AutoScale == nil {
-		o.nullFields = append(o.nullFields, "AutoScale")
+func (o *NomadIntegration) SetAutoScaleNomad(v *AutoScaleNomad) *NomadIntegration {
+	if o.AutoScaleNomad = v; o.AutoScaleNomad == nil {
+		o.nullFields = append(o.nullFields, "AutoScaleNomad")
+	}
+	return o
+}
+
+func (o *AutoScaleNomad) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleNomad
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *AutoScaleNomad) SetConstraints(v []*AutoScaleConstraint) *AutoScaleNomad {
+	if o.Constraints = v; o.Constraints == nil {
+		o.nullFields = append(o.nullFields, "Constraints")
 	}
 	return o
 }
@@ -2593,6 +2657,13 @@ func (o *EBS) SetDeleteOnTermination(v *bool) *EBS {
 func (o *EBS) SetEncrypted(v *bool) *EBS {
 	if o.Encrypted = v; o.Encrypted == nil {
 		o.nullFields = append(o.nullFields, "Encrypted")
+	}
+	return o
+}
+
+func (o *EBS) SetKmsKeyId(v *string) *EBS {
+	if o.KmsKeyId = v; o.KmsKeyId == nil {
+		o.nullFields = append(o.nullFields, "KmsKeyId")
 	}
 	return o
 }
