@@ -1,4 +1,12 @@
 ## 1.1.2 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws: Added kms_key_id support for ebs_block_device
+* resource/spotinst_elastigroup_aws: Added autoscale_attributes support for integration_ecs
+* resource/spotinst_elastigroup_aws: Added autoscale_labels support for integration_kubernetes
+* resource/spotinst_elastigroup_aws: Added autoscale_constraints support for integration_nomad
+
 ## 1.1.1 (July 09, 2018)
 
 BUG FIXES:
