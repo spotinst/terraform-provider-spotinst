@@ -39,6 +39,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   instance_types_ondemand = "m3.2xlarge"
   instance_types_spot     = ["m3.xlarge", "m3.2xlarge"]
+  instance_tpyes_preferred_spot = ["m3.xlarge"]
 
   instance_types_weights = [
   {
@@ -565,6 +566,27 @@ Usage:
       deployment_group_name = "my-group"
     }
   }
+```
+
+* `integration_route53` - (Optional) Describes the [Route53](https://aws.amazon.com/documentation/route53/?id=docs_gateway) integration.
+
+    * `domains` - (Required) Collection of one or more domains to register.
+        * `hosted_zone_id` - (Required) The id associated with a hosted zone.
+        * `record_sets` - (Required) Collection of records containing authoritative DNS information for the specified domain name.
+            * `name` - (Required) The record set name.
+            * `use_public_ip` - (Optional, Default: `false`) - Designates if the IP address should be exposed to connections outside the VPC.
+
+Usage:
+```hcl
+    integration_route53 = {
+      domains = {
+        hosted_zone_id = "zone-id"
+        record_sets    = {
+          name = "foo.example.com"
+          use_public_ip = true
+        }
+      }
+    }
 ```
 
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
