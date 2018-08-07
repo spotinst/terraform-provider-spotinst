@@ -140,8 +140,8 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 
 * `instance_types_ondemand` - (Required) The type of instance determines your instance's CPU capacity, memory and storage (e.g., m1.small, c1.xlarge).
 * `instance_types_spot` - (Required) One or more instance types.
+* `instance_types_preferred_spot` - (Optional) Prioritize a subset of spot instance types. Must be a subset of the selected spot instance types.
 * `instance_types_weights` - (Optional) List of weights per instance type for weighted groups. Each object in the list should have the following attributes:
-
     * `weight` - (Required) Weight per instance type (Integer).
     * `instance_type` - (Required) Name of instance type (String).
 
