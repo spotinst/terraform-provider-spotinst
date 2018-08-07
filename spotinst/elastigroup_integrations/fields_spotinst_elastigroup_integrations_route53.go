@@ -38,7 +38,7 @@ func SetupRoute53(fieldsMap map[commons.FieldName]*commons.GenericField) {
 										Schema: map[string]*schema.Schema{
 											string(UsePublicIP): {
 												Type:     schema.TypeBool,
-												Required: true,
+												Optional: true,
 											},
 
 											string(Name): {
@@ -114,7 +114,7 @@ func expandAWSGroupRoute53Integration(data interface{}) (*aws.Route53Integration
 }
 
 func expandAWSGroupRoute53IntegrationDomains(data interface{}) ([]*aws.Domain, error) {
-	domain := &aws.Domain{}
+	//domain := &aws.Domain{}
 	list := data.(*schema.Set).List()
 	domains := make([]*aws.Domain, 0, len(list))
 
@@ -136,10 +136,13 @@ func expandAWSGroupRoute53IntegrationDomains(data interface{}) ([]*aws.Domain, e
 				return nil, err
 			}
 
-			domain.HostedZoneID = spotinst.String(attr[string(HostedZoneId)].(string))
+			domain := &aws.Domain{
+				HostedZoneID: spotinst.String(attr[string(HostedZoneId)].(string)),
+			}
+
 			domain.SetRecordSets(recordSets)
+			domains = append(domains, domain)
 		}
-		domains = append(domains, domain)
 	}
 	return domains, nil
 }

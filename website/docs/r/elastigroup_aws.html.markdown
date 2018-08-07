@@ -577,6 +577,7 @@ Usage:
             * `use_public_ip` - (Optional, Default: `false`) - Designates if the IP address should be exposed to connections outside the VPC.
 
 Usage:
+
 ```hcl
     integration_route53 = {
       domains = {
