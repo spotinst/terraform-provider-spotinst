@@ -383,6 +383,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("echo hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 				),
@@ -403,6 +404,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-987654"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("echo hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world updated")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 				),
@@ -422,6 +424,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("cannot set empty user data")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("cannot set empty shutdown script")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 				),
@@ -437,6 +440,7 @@ const testLaunchConfigurationGroupConfig_Create = `
  key_name             = "my-key.ssh"
  security_groups      = ["sg-123456"]
  user_data            = "echo hello world"
+ shutdown_script      = "echo goodbye world"
  enable_monitoring    = false
  ebs_optimized        = false
  placement_tenancy    = "default"
@@ -450,16 +454,19 @@ const testLaunchConfigurationGroupConfig_Update = `
  key_name             = "my-key-updated.ssh"
  security_groups      = ["sg-123456", "sg-987654"]
  user_data            = "echo hello world updated"
+ shutdown_script      = "echo goodbye world updated"
  enable_monitoring    = true
  ebs_optimized        = true
  placement_tenancy    = "default"
  // ---------------------------------------
 `
 
+//todo: cannot set empty shutdown_script?
 const testLaunchConfigurationGroupConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
  image_id        = "ami-31394949"
  user_data       = "cannot set empty user data"
+ shutdown_script = "cannot set empty shutdown script"
  key_name        = "cannot set empty key name"
  security_groups = ["sg-123456"]
  // ---------------------------------------
@@ -2709,7 +2716,6 @@ func TestAccSpotinstElastigroup_IntegrationRoute53(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.567353526.use_public_ip", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.241835256.name", "test_update_three"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.241835256.use_public_ip", "false"),
-
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.hosted_zone_id", "new_domain_on_update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.2523873097.name", "new_set"),
@@ -2747,6 +2753,7 @@ integration_route53 = {
 		}
 	]
 }
+// ------------------------------------
 `
 const testIntegrationRoute53GroupConfig_Update = `
 // --- INTEGRATION: ROUTE53 ----------
@@ -2783,6 +2790,7 @@ integration_route53 = {
 		},
 	]
 }
+// ------------------------------------
 `
 const testIntegrationRoute53GroupConfig_EmptyFields = `
 // --- INTEGRATION: ROUTE53 ----------
