@@ -11,12 +11,14 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"log"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
+	fmt.Println("alex hello")
 
 	fieldsMap[ImageId] = commons.NewGenericField(
 		commons.ElastigroupLaunchConfiguration,
@@ -213,6 +215,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			log.Printf("alex onRead")
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value = ""
@@ -221,9 +224,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 				userData := elastigroup.Compute.LaunchSpecification.UserData
 				userDataValue := spotinst.StringValue(userData)
+				log.Printf("alex read userDataValue: %v", userDataValue)
 				if userDataValue != "" {
 					decodedUserData, _ := base64.StdEncoding.DecodeString(userDataValue)
 					value = string(decodedUserData)
+					log.Printf("alex read: %v", value)
 				}
 			}
 			if err := resourceData.Set(string(UserData), HexStateFunc(value)); err != nil {
@@ -232,19 +237,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			log.Printf("alex onCreate")
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
+				log.Printf("alex create: %v", v)
 				userData := spotinst.String(base64Encode(v))
 				elastigroup.Compute.LaunchSpecification.SetUserData(userData)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			log.Printf("alex onUpdate")
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var userData *string = nil
 			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
+				log.Printf("alex update: %v", v)
 				userData = spotinst.String(base64Encode(v))
 			}
 			elastigroup.Compute.LaunchSpecification.SetUserData(userData)
@@ -382,11 +391,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
 
 func HexStateFunc(v interface{}) string {
+	log.Printf("alex inside hex state")
 	switch s := v.(type) {
 	case string:
+		log.Printf("alex hex case string %v", v)
 		hash := sha1.Sum([]byte(s))
 		return hex.EncodeToString(hash[:])
 	default:
+		log.Printf("alex hex default")
 		return ""
 	}
 }

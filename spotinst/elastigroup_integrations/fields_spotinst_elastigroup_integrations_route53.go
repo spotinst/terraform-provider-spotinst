@@ -114,7 +114,6 @@ func expandAWSGroupRoute53Integration(data interface{}) (*aws.Route53Integration
 }
 
 func expandAWSGroupRoute53IntegrationDomains(data interface{}) ([]*aws.Domain, error) {
-	//domain := &aws.Domain{}
 	list := data.(*schema.Set).List()
 	domains := make([]*aws.Domain, 0, len(list))
 
