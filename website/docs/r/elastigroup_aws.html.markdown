@@ -37,9 +37,9 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   ebs_optimized         = false
   placement_tenancy     = "default"
 
-  instance_types_ondemand = "m3.2xlarge"
-  instance_types_spot     = ["m3.xlarge", "m3.2xlarge"]
-  instance_tpyes_preferred_spot = ["m3.xlarge"]
+  instance_types_ondemand       = "m3.2xlarge"
+  instance_types_spot           = ["m3.xlarge", "m3.2xlarge"]
+  instance_types_preferred_spot = ["m3.xlarge"]
 
   instance_types_weights = [
   {
