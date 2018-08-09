@@ -296,6 +296,8 @@ func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "m4.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1650831227.instance_type", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1650831227.weight", "1"),
@@ -316,6 +318,9 @@ func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "c4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "c4.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.2", "c4.4xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.0", "c4.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.1", "c4.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.3291405167.instance_type", "c4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.3291405167.weight", "3"),
@@ -327,9 +332,10 @@ func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 
 const testInstanceTypesGroupConfig_Create = `
  // --- INSTANCE TYPES --------------------------------
- instance_types_ondemand = "m4.2xlarge"
- instance_types_spot 	 = ["m4.xlarge", "m4.2xlarge"]
- instance_types_weights  = [
+ instance_types_ondemand 	   = "m4.2xlarge"
+ instance_types_spot 	 	   = ["m4.xlarge", "m4.2xlarge"]
+ instance_types_preferred_spot = ["m4.xlarge"]
+ instance_types_weights        = [
   {
     instance_type = "m4.xlarge"
     weight        = 1
@@ -345,6 +351,7 @@ const testInstanceTypesGroupConfig_Update = `
  // --- INSTANCE TYPES --------------------------------
  instance_types_ondemand = "c4.4xlarge"
  instance_types_spot 	 = ["c4.xlarge", "c4.2xlarge", "c4.4xlarge"]
+ instance_types_preferred_spot = ["c4.xlarge", "c4.2xlarge"]
  instance_types_weights  = [
   {
     instance_type = "c4.xlarge"
@@ -2581,6 +2588,137 @@ const testIntegrationCodeDeployGroupConfig_Update = `
 const testIntegrationCodeDeployGroupConfig_EmptyFields = `
  // --- INTEGRATION: CODE-DEPLOY ----------
  // ---------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Route53 integration
+func TestAccSpotinstElastigroup_IntegrationRoute53(t *testing.T) {
+	groupName := "eg-integration-route53"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRoute53GroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2288160025.hosted_zone_id", "id_create"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2288160025.record_sets.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2288160025.record_sets.3654964686.name", "test_create"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2288160025.record_sets.3654964686.use_public_ip", "false"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRoute53GroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.hosted_zone_id", "id_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.2650004135.name", "test_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.2650004135.use_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.567353526.name", "test_update_two"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.567353526.use_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.241835256.name", "test_update_three"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.241835256.use_public_ip", "false"),
+
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.hosted_zone_id", "new_domain_on_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.2523873097.name", "new_set"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.2523873097.use_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.981666619.name", "test_update_default_ip"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.981666619.use_public_ip", "false"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRoute53GroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationRoute53GroupConfig_Create = `
+// --- INTEGRATION: ROUTE53 ----------
+integration_route53 = {
+	domains = [
+		{
+			hosted_zone_id = "id_create"
+			record_sets = {
+				name = "test_create"
+				use_public_ip = false
+			}
+		}
+	]
+}
+`
+const testIntegrationRoute53GroupConfig_Update = `
+// --- INTEGRATION: ROUTE53 ----------
+integration_route53 = {
+	domains = [
+		{
+			hosted_zone_id = "id_update"
+			record_sets = [
+				{
+					name = "test_update"
+					use_public_ip = true
+				},
+				{
+					name = "test_update_two"
+					use_public_ip = false
+				},
+				{
+					name = "test_update_three"
+					use_public_ip = false
+				},
+			]
+		},
+		{
+			hosted_zone_id = "new_domain_on_update"
+			record_sets = [
+				{
+					name = "new_set"
+					use_public_ip = true
+				},
+				{
+					name = "test_update_default_ip"
+				},
+			]
+		},
+	]
+}
+`
+const testIntegrationRoute53GroupConfig_EmptyFields = `
+// --- INTEGRATION: ROUTE53 ----------
+// ------------------------------------
 `
 
 // endregion

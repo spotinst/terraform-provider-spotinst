@@ -100,6 +100,7 @@ type Integration struct {
 	Nomad               *NomadIntegration               `json:"nomad,omitempty"`
 	Chef                *ChefIntegration                `json:"chef,omitempty"`
 	Gitlab              *GitlabIntegration              `json:"gitlab,omitempty"`
+	Route53             *Route53Integration             `json:"route53,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -276,6 +277,29 @@ type ChefIntegration struct {
 	nullFields      []string
 }
 
+type Route53Integration struct {
+	Domains []*Domain `json:"domains,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Domain struct {
+	HostedZoneID *string      `json:"hostedZoneId,omitempty"`
+	RecordSets   []*RecordSet `json:"recordSets,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type RecordSet struct {
+	UsePublicIP *bool   `json:"usePublicIp,omitempty"`
+	Name        *string `json:"name,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
 type GitlabIntegration struct {
 	Runner *GitlabRunner `json:"runner,omitempty"`
 
@@ -446,9 +470,10 @@ type EBSVolume struct {
 }
 
 type InstanceTypes struct {
-	OnDemand *string               `json:"ondemand,omitempty"`
-	Spot     []string              `json:"spot,omitempty"`
-	Weights  []*InstanceTypeWeight `json:"weights,omitempty"`
+	OnDemand      *string               `json:"ondemand,omitempty"`
+	Spot          []string              `json:"spot,omitempty"`
+	PreferredSpot []string              `json:"preferredSpot,omitempty"`
+	Weights       []*InstanceTypeWeight `json:"weights,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1044,6 +1069,13 @@ func (o *Integration) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
+func (o *Integration) SetRoute53(v *Route53Integration) *Integration {
+	if o.Route53 = v; o.Route53 == nil {
+		o.nullFields = append(o.nullFields, "Route53")
+	}
+	return o
+}
+
 func (o *Integration) SetEC2ContainerService(v *EC2ContainerServiceIntegration) *Integration {
 	if o.EC2ContainerService = v; o.EC2ContainerService == nil {
 		o.nullFields = append(o.nullFields, "EC2ContainerService")
@@ -1209,6 +1241,72 @@ func (o *AutoScaleECS) SetAttributes(v []*AutoScaleAttributes) *AutoScaleECS {
 func (o *AutoScaleECS) SetShouldScaleDownNonServiceTasks(v *bool) *AutoScaleECS {
 	if o.ShouldScaleDownNonServiceTasks = v; o.ShouldScaleDownNonServiceTasks == nil {
 		o.nullFields = append(o.nullFields, "ShouldScaleDownNonServiceTasks")
+	}
+	return o
+}
+
+// endregion
+
+// todo: implement Route53 functions
+// region Route53
+
+func (o *Route53Integration) MarshalJSON() ([]byte, error) {
+	type noMethod Route53Integration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Route53Integration) SetDomains(v []*Domain) *Route53Integration {
+	if o.Domains = v; o.Domains == nil {
+		o.nullFields = append(o.nullFields, "Domains")
+	}
+	return o
+}
+
+// endregion
+
+// region Domain
+
+func (o *Domain) MarshalJSON() ([]byte, error) {
+	type noMethod Domain
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Domain) SetHostedZoneID(v *string) *Domain {
+	if o.HostedZoneID = v; o.HostedZoneID == nil {
+		o.nullFields = append(o.nullFields, "HostedZoneID")
+	}
+	return o
+}
+
+func (o *Domain) SetRecordSets(v []*RecordSet) *Domain {
+	if o.RecordSets = v; o.RecordSets == nil {
+		o.nullFields = append(o.nullFields, "RecordSets")
+	}
+	return o
+}
+
+// endregion
+
+// region RecordSets
+
+func (o *RecordSet) MarshalJSON() ([]byte, error) {
+	type noMethod RecordSet
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *RecordSet) SetUsePublicIP(v *bool) *RecordSet {
+	if o.UsePublicIP = v; o.UsePublicIP == nil {
+		o.nullFields = append(o.nullFields, "UsePublicIP")
+	}
+	return o
+}
+
+func (o *RecordSet) SetName(v *string) *RecordSet {
+	if o.Name = v; o.Name == nil {
+		o.nullFields = append(o.nullFields, "Name")
 	}
 	return o
 }
@@ -2262,6 +2360,13 @@ func (o *InstanceTypes) SetOnDemand(v *string) *InstanceTypes {
 func (o *InstanceTypes) SetSpot(v []string) *InstanceTypes {
 	if o.Spot = v; o.Spot == nil {
 		o.nullFields = append(o.nullFields, "Spot")
+	}
+	return o
+}
+
+func (o *InstanceTypes) SetPreferredSpot(v []string) *InstanceTypes {
+	if o.PreferredSpot = v; o.PreferredSpot == nil {
+		o.nullFields = append(o.nullFields, "PreferredSpot")
 	}
 	return o
 }
