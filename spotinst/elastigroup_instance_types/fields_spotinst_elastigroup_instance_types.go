@@ -121,14 +121,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var spotTypes []string = nil
 			if v, ok := resourceData.GetOk(string(PreferredSpot)); ok {
 				rawSpotTypes := v.([]interface{})
-				spotTypes := make([]string, len(rawSpotTypes))
+				spotTypes = make([]string, len(rawSpotTypes))
 				for i, v := range rawSpotTypes {
 					spotTypes[i] = v.(string)
 				}
-				elastigroup.Compute.InstanceTypes.SetPreferredSpot(spotTypes)
 			}
+			elastigroup.Compute.InstanceTypes.SetPreferredSpot(spotTypes)
 			return nil
 		},
 		nil,

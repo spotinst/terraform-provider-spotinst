@@ -296,8 +296,6 @@ func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "m4.2xlarge"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1650831227.instance_type", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1650831227.weight", "1"),
@@ -318,9 +316,6 @@ func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "c4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "c4.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.2", "c4.4xlarge"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.0", "c4.xlarge"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.1", "c4.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.3291405167.instance_type", "c4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.3291405167.weight", "3"),
@@ -332,10 +327,9 @@ func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
 
 const testInstanceTypesGroupConfig_Create = `
  // --- INSTANCE TYPES --------------------------------
- instance_types_ondemand 	   = "m4.2xlarge"
- instance_types_spot 	 	   = ["m4.xlarge", "m4.2xlarge"]
- instance_types_preferred_spot = ["m4.xlarge"]
- instance_types_weights        = [
+ instance_types_ondemand = "m4.2xlarge"
+ instance_types_spot 	 = ["m4.xlarge", "m4.2xlarge"]
+ instance_types_weights  = [
   {
     instance_type = "m4.xlarge"
     weight        = 1
@@ -351,7 +345,6 @@ const testInstanceTypesGroupConfig_Update = `
  // --- INSTANCE TYPES --------------------------------
  instance_types_ondemand = "c4.4xlarge"
  instance_types_spot 	 = ["c4.xlarge", "c4.2xlarge", "c4.4xlarge"]
- instance_types_preferred_spot = ["c4.xlarge", "c4.2xlarge"]
  instance_types_weights  = [
   {
     instance_type = "c4.xlarge"
@@ -473,6 +466,81 @@ const testLaunchConfigurationGroupConfig_EmptyFields = `
 `
 
 // endregion
+
+// region Elastigroup: Preferred Spot
+func TestAccSpotinstElastigroup_PreferredSpot(t *testing.T) {
+	groupName := "eg-preferred-spot"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					instanceTypes:  testInstanceTypesGroupConfig_Create,
+					fieldsToAppend: testPreferredSpotGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.0", "m4.xlarge"),
+				),
+			},
+			{
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					instanceTypes:  testInstanceTypesGroupConfig_Update,
+					fieldsToAppend: testPreferredSpotGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.0", "c4.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.1", "c4.2xlarge"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					instanceTypes:  testInstanceTypesGroupConfig_Update,
+					fieldsToAppend: testPreferredSpotGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_preferred_spot.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testPreferredSpotGroupConfig_Create = `
+ // --- PREFERRED SPOT --------------------------------
+ instance_types_preferred_spot = ["m4.xlarge"]
+ // ---------------------------------------------------
+`
+
+const testPreferredSpotGroupConfig_Update = `
+ // --- PREFERRED SPOT --------------------------------
+ instance_types_preferred_spot = ["c4.xlarge", "c4.2xlarge"]
+ // ---------------------------------------------------
+`
+
+const testPreferredSpotGroupConfig_EmptyFields = `
+ // --- PREFERRED SPOT --------------------
+ // ---------------------------------------
+`
+
+// end region
 
 // region Elastigroup: Strategy
 func TestAccSpotinstElastigroup_Strategy(t *testing.T) {
