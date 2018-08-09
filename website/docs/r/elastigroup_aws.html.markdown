@@ -582,8 +582,9 @@ Usage:
     integration_route53 = {
       domains = {
         hosted_zone_id = "zone-id"
-        record_sets    = {
-          name = "foo.example.com"
+        
+        record_sets = {
+          name          = "foo.example.com"
           use_public_ip = true
         }
       }
