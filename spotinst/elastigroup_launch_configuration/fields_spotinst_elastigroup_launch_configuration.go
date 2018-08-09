@@ -17,7 +17,6 @@ import (
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-
 	fieldsMap[ImageId] = commons.NewGenericField(
 		commons.ElastigroupLaunchConfiguration,
 		ImageId,
