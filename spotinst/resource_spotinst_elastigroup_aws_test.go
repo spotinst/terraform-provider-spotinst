@@ -540,7 +540,7 @@ const testPreferredSpotGroupConfig_EmptyFields = `
  // ---------------------------------------
 `
 
-// end region
+// endregion
 
 // region Elastigroup: Strategy
 func TestAccSpotinstElastigroup_Strategy(t *testing.T) {
