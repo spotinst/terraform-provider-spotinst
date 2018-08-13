@@ -1,18 +1,24 @@
-## 1.2.1 (Unreleased)
+## 1.3.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws: Added a new Route53 integration as `integration_route53`
+* resource/spotinst_elastigroup_aws: Added support for preferred spot instances as `instance_types_preferred_spot`
+
 ## 1.2.0 (July 26, 2018)
 
 ENHANCEMENTS:
 
-* resource/spotinst_elastigroup_aws: Added kms_key_id support for ebs_block_device
-* resource/spotinst_elastigroup_aws: Added autoscale_attributes support for integration_ecs
-* resource/spotinst_elastigroup_aws: Added autoscale_labels support for integration_kubernetes
-* resource/spotinst_elastigroup_aws: Added autoscale_constraints support for integration_nomad
+* resource/spotinst_elastigroup_aws: Added `kms_key_id` support for `ebs_block_device`
+* resource/spotinst_elastigroup_aws: Added `autoscale_attributes` support for `integration_ecs`
+* resource/spotinst_elastigroup_aws: Added `autoscale_labels` support for `integration_kubernetes`
+* resource/spotinst_elastigroup_aws: Added `autoscale_constraints` support for `integration_nomad`
 
 ## 1.1.1 (July 09, 2018)
 
 BUG FIXES:
 
-* resource/spotinst_elastigroup_aws: scheduled_task & network_interface now properly address fields not specified on TF file as nil instead of their default values
+* resource/spotinst_elastigroup_aws: `scheduled_task` & `network_interface` now properly address fields not specified on TF file as nil instead of their default values
 
 ## 1.1.0 (July 02, 2018)
 
