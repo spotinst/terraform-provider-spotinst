@@ -94,6 +94,47 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[PreferredSpot] = commons.NewGenericField(
+		commons.ElastigroupInstanceType,
+		PreferredSpot,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(PreferredSpot)); ok {
+				spots := v.([]interface{})
+				spotTypes := make([]string, len(spots))
+				for i, j := range spots {
+					spotTypes[i] = j.(string)
+				}
+				elastigroup.Compute.InstanceTypes.SetPreferredSpot(spotTypes)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var spotTypes []string = nil
+			if v, ok := resourceData.GetOk(string(PreferredSpot)); ok {
+				rawSpotTypes := v.([]interface{})
+				spotTypes = make([]string, len(rawSpotTypes))
+				for i, v := range rawSpotTypes {
+					spotTypes[i] = v.(string)
+				}
+			}
+			elastigroup.Compute.InstanceTypes.SetPreferredSpot(spotTypes)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[InstanceTypeWeights] = commons.NewGenericField(
 		commons.ElastigroupInstanceType,
 		InstanceTypeWeights,
