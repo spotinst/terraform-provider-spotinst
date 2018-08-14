@@ -24,7 +24,7 @@ provider "spotinst" {
 }
 
 # Create an Elastigroup
-resource "spotinst_group_aws" "foo" {
+resource "spotinst_elastigroup_aws" "foo" {
    # ...
 }
 ```
