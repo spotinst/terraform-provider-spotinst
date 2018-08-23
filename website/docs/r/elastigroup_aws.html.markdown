@@ -135,6 +135,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `key_name` - (Optional) The key name that should be used for the instance.
 * `enable_monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
 * `user_data` - (Optional) The user data to provide when launching the instance.
+* `shutdown_script` - (Optional) The Base64-encoded shutdown script that executes prior to instance termination, for more information please see: [Shutdown Script](https://api.spotinst.com/integration-docs/elastigroup/concepts/compute-concepts/shutdown-scripts/)
 * `ebs_optimized` - (Optional) Enable high bandwidth connectivity between instances and AWS’s Elastic Block Store (EBS). For instance types that are EBS-optimized by default this parameter will be ignored.
 * `placement_tenancy` - (Optional) Enable dedicated tenancy. Note: There is a flat hourly fee for each region in which dedicated tenancy is used.
 
@@ -436,7 +437,7 @@ Usage:
 ## Stateful
 
 We support instance persistence via the following configurations. all values are boolean.
-For more information on instance persistence please see: [Stateful configuration](https://help.spotinst.com/hc/en-us/articles/115002899285)
+For more information on instance persistence please see: [Stateful configuration](https://api.spotinst.com/integration-docs/elastigroup/concepts/stateful-concepts/introduction/)
 
 * `persist_root_device` - (Optional) Boolean, should the instance maintain its root device volumes.
 * `persist_block_devices` - (Optional) Boolean, should the instance maintain its Data volumes.
@@ -598,7 +599,7 @@ Usage:
     * `api_server` - (Required; if using integration_mode as saas)
     * `token` - (Required; if using integration_mode as saas) Kubernetes Token
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
-    * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic k8s auto-scaler functionality. For more information please see: [Kubernetes auto scaler](https://help.spotinst.com/hc/en-us/articles/360000280405-Kubernetes-Event-Based-Auto-Scaler-).
+    * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic k8s auto-scaler functionality. For more information please see: [Kubernetes auto scaler](https://api.spotinst.com/integration-docs/elastigroup/container-management/kubernetes/autoscaler/).
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
     * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
         * `cpu_per_unit` - (Optional, Default: `0`) How much CPU to allocate for headroom unit.
