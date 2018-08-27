@@ -592,6 +592,44 @@ Usage:
     }
 ```
 
+* `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
+
+    * `master_host` - (Required) IP or FQDN of one of your swarm managers.
+    * `master_port` - (Required) Network port used by your swarm.
+    * `autoscale` - (Optional) Describes the [autoscaler](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-auto-scaler/) configuration.
+        * `is_enabled` - (Optional, Default: `false`) Designates if the autoscale feature should be used.
+        * `cooldown` - (Optional, Default `300`) Amount of time between scaling triggers, in seconds. Minimum 180, must be a multiple of 60.
+        * `headroom` - (Optional) Describes configuration for headroom resources kept in reserve to handle peak tasks.
+            * `cpu_per_unit` - (Optional, Default: `0`) Total amount of CPU units in each headroom unit.
+            * `memory_per_unit` - (Optional, Default: `0`) Total amount of memory in each headroom unit.
+            * `number_of_units` - (Optional, Default: `0`) Total number of units across the cluster to keep in reserve.
+        * `down` - (Optional) Describes scale down configuration.
+            * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared to the specific threshold. Minimum 3.
+            
+Usage:
+
+```hcl
+integration_docker_swarm = {
+    master_host = "10.10.10.10"
+    master_port = 1234
+    
+    autoscale = {
+        is_enabled: = true 
+        cooldown    = 300
+        
+        headroom = {
+            cpu_per_unit    = 1024
+            memory_per_unit = 512
+            number_of_units = 3
+        }
+        
+        down = {
+            evaluation_periods = 3
+        }
+    }
+}
+```
+
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
 
     * `integration_mode` - (Required) Valid values: `"saas"`, `"pod"`.

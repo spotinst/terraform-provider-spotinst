@@ -19,6 +19,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupCodeDeploy(fieldsMap)
 	SetupMultaiRuntime(fieldsMap)
 	SetupRoute53(fieldsMap)
+	SetupDockerSwarm(fieldsMap)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

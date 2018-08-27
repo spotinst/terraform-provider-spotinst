@@ -9,6 +9,7 @@ const (
 const (
 	// - COMMON --------------------------
 	MasterHost commons.FieldName = "master_host"
+	MasterPort commons.FieldName = "master_port"
 
 	AutoscaleIsEnabled    commons.FieldName = "autoscale_is_enabled"
 	AutoscaleCooldown     commons.FieldName = "autoscale_cooldown"
@@ -50,7 +51,6 @@ const (
 
 	// - NOMAD ---------------------------
 	IntegrationNomad     commons.FieldName = "integration_nomad"
-	MasterPort           commons.FieldName = "master_port"
 	AclToken             commons.FieldName = "acl_token"
 	AutoscaleConstraints commons.FieldName = "autoscale_constraints"
 	// -----------------------------------
@@ -86,5 +86,9 @@ const (
 	RecordSets         commons.FieldName = "record_sets"
 	UsePublicIP        commons.FieldName = "use_public_ip"
 	Name               commons.FieldName = "name"
+	// -----------------------------------
+
+	// - DOCKER-SWARM --------------------
+	IntegrationDockerSwarm commons.FieldName = "integration_docker_swarm"
 	// -----------------------------------
 )
