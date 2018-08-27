@@ -592,6 +592,40 @@ Usage:
     }
 ```
 
+* `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
+
+    * `master_host` - (Required) IP or FQDN of one of your swarm managers.
+    * `master_port` - (Required) Network port used by your swarm.
+    * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
+    * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start. Minimum 180, must be a multiple of 60.
+    * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
+        * `cpu_per_unit` - (Optional, Default: `0`) How much CPU to allocate for headroom unit.
+        * `memory_per_unit` - (Optional, Default: `0`) The amount of memory in each headroom unit. Measured in MiB.
+        * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
+    * `autoscale_down` - (Optional) Setting for scale down actions.
+        * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared. Minimum 3, Measured in consecutive minutes.
+            
+Usage:
+
+```hcl
+integration_docker_swarm = {
+    master_host          = "10.10.10.10"
+    master_port          = 2376
+    autoscale_is_enabled = true
+    autoscale_cooldown   = 180
+    
+    autoscale_headroom = {
+        cpu_per_unit    = 2048
+        memory_per_unit = 2048
+        num_of_units    = 1
+    }
+    
+    autoscale_down = {
+        evaluation_periods = 3
+    } 
+}
+```
+
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
 
     * `integration_mode` - (Required) Valid values: `"saas"`, `"pod"`.
