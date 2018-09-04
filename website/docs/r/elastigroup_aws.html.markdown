@@ -596,37 +596,33 @@ Usage:
 
     * `master_host` - (Required) IP or FQDN of one of your swarm managers.
     * `master_port` - (Required) Network port used by your swarm.
-    * `autoscale` - (Optional) Describes the [autoscaler](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-auto-scaler/) configuration.
-        * `is_enabled` - (Optional, Default: `false`) Designates if the autoscale feature should be used.
-        * `cooldown` - (Optional, Default `300`) Amount of time between scaling triggers, in seconds. Minimum 180, must be a multiple of 60.
-        * `headroom` - (Optional) Describes configuration for headroom resources kept in reserve to handle peak tasks.
-            * `cpu_per_unit` - (Optional, Default: `0`) Total amount of CPU units in each headroom unit.
-            * `memory_per_unit` - (Optional, Default: `0`) Total amount of memory in each headroom unit.
-            * `number_of_units` - (Optional, Default: `0`) Total number of units across the cluster to keep in reserve.
-        * `down` - (Optional) Describes scale down configuration.
-            * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared to the specific threshold. Minimum 3.
+    * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
+    * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start. Minimum 180, must be a multiple of 60.
+    * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
+        * `cpu_per_unit` - (Optional, Default: `0`) How much CPU to allocate for headroom unit.
+        * `memory_per_unit` - (Optional, Default: `0`) How much Memory allocate for headroom unit.
+        * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
+    * `autoscale_down` - (Optional) Setting for scale down actions.
+        * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place. Minimum 3.
             
 Usage:
 
 ```hcl
 integration_docker_swarm = {
-    master_host = "10.10.10.10"
-    master_port = 1234
+    master_host          = "10.10.10.10"
+    master_port          = 2376
+    autoscale_is_enabled = true
+    autoscale_cooldown   = 180
     
-    autoscale = {
-        is_enabled: = true 
-        cooldown    = 300
-        
-        headroom = {
-            cpu_per_unit    = 1024
-            memory_per_unit = 512
-            number_of_units = 3
-        }
-        
-        down = {
-            evaluation_periods = 3
-        }
+    autoscale_headroom = {
+        cpu_per_unit    = 2048
+        memory_per_unit = 2048
+        num_of_units    = 1
     }
+    
+    autoscale_down = {
+        evaluation_periods = 3
+    } 
 }
 ```
 
