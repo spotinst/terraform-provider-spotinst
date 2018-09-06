@@ -2825,6 +2825,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
@@ -2847,6 +2848,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name-update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "180"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "2048"),
@@ -2879,6 +2881,7 @@ const testIntegrationECSGroupConfig_Create = `
  integration_ecs = { 
     cluster_name = "ecs-cluster-name"
     autoscale_is_enabled = false
+	autoscale_is_auto_config = false
     autoscale_cooldown = 300
     autoscale_scale_down_non_service_tasks = false
 
@@ -2905,6 +2908,7 @@ const testIntegrationECSGroupConfig_Update = `
  integration_ecs = { 
     cluster_name = "ecs-cluster-name-update"
     autoscale_is_enabled = true
+	autoscale_is_auto_config = true
     autoscale_cooldown = 180
     autoscale_scale_down_non_service_tasks = true
 

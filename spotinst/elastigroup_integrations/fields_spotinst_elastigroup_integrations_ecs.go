@@ -46,6 +46,11 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 
+					string(AutoscaleIsAutoConfig): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+
 					string(AutoscaleHeadroom): &schema.Schema{
 						Type:     schema.TypeList,
 						Optional: true,
@@ -172,6 +177,13 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
 		}
 		integration.AutoScaleECS.SetCooldown(spotinst.Int(v))
+	}
+
+	if v, ok := m[string(AutoscaleIsAutoConfig)].(bool); ok {
+		if integration.AutoScaleECS == nil {
+			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+		}
+		integration.AutoScaleECS.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
