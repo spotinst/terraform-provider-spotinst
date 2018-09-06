@@ -3211,6 +3211,129 @@ const testIntegrationNomadGroupConfig_EmptyFields = `
 
 // endregion
 
+// region Docker Swarm integration
+
+func TestAccSpotinstElastigroup_IntegrationDockerSwarm(t *testing.T) {
+	groupName := "eg-integration-docker-swarm"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationDockerSwarmGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_host", "docker-swarm-master-host"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_port", "8000"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "300"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationDockerSwarmGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_host", "docker-swarm-master-host-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_port", "9000"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_cooldown", "180"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.cpu_per_unit", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "150"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationDockerSwarmGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationDockerSwarmGroupConfig_Create = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ integration_docker_swarm = {
+    master_host = "docker-swarm-master-host"
+    master_port = 8000
+
+    autoscale_is_enabled = false
+    autoscale_cooldown = 300
+
+    autoscale_headroom = {
+      cpu_per_unit = 1024
+      memory_per_unit = 512
+      num_of_units = 2
+    }
+
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+ }
+ // -------------------------------------
+`
+
+const testIntegrationDockerSwarmGroupConfig_Update = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ integration_docker_swarm = {
+	master_host = "docker-swarm-master-host-update"
+    master_port = 9000
+
+    autoscale_is_enabled = true
+    autoscale_cooldown = 180
+
+    autoscale_headroom = {
+      cpu_per_unit = 2048
+      memory_per_unit = 1024
+      num_of_units = 1
+    }
+
+    autoscale_down = {
+      evaluation_periods = 150
+    }
+  }
+ // -------------------------------------
+`
+
+const testIntegrationDockerSwarmGroupConfig_EmptyFields = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ // -------------------------------------
+`
+
+// endregion
+
 // region Elastigroup: Gitlab Integration
 func TestAccSpotinstElastigroup_IntegrationGitlab(t *testing.T) {
 	groupName := "eg-integration-gitlab"
