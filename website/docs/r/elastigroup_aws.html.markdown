@@ -514,6 +514,7 @@ Usage:
     * `cluster_name` - (Required) The name of the EC2 Container Service cluster.
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
+    * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic auto-scaler functionality. For more information please see: [ECS auto scaler](https://api.spotinst.com/container-management/amazon-ecs/elastigroup-for-ecs-concepts/autoscaling/).
     * `autoscale_headroom` - (Optional) Headroom for the cluster.
         * `cpu_per_unit` - (Optional, Default: `0`) Cpu units for compute.
         * `memory_per_unit` - (Optional, Default: `0`) RAM units for compute.
@@ -604,6 +605,7 @@ Usage:
         * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared. Minimum 3, Measured in consecutive minutes.
+
             
 Usage:
 
