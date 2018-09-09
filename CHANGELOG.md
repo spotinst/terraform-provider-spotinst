@@ -1,4 +1,11 @@
 ## 1.4.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws: Shutdown script is now supported under `shutdown_script`
+* resource/spotinst_elastigroup_aws: ECS integration support for `autoscale_is_autoconfig`
+* resource/spotinst_elastigroup_aws: Docker Swarm integration as `integration_docker_swarm`
+
 ## 1.3.0 (August 13, 2018)
 
 ENHANCEMENTS:
