@@ -461,7 +461,6 @@ const testLaunchConfigurationGroupConfig_Update = `
  // ---------------------------------------
 `
 
-//todo: cannot set empty shutdown_script?
 const testLaunchConfigurationGroupConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
  image_id        = "ami-31394949"
