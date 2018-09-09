@@ -101,7 +101,6 @@ type Integration struct {
 	Chef                *ChefIntegration                `json:"chef,omitempty"`
 	Gitlab              *GitlabIntegration              `json:"gitlab,omitempty"`
 	Route53             *Route53Integration             `json:"route53,omitempty"`
-	DockerSwarm         *DockerSwarmIntegration         `json:"dockerSwarm,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -138,13 +137,6 @@ type AutoScaleKubernetes struct {
 type AutoScaleNomad struct {
 	AutoScale                          // embedding
 	Constraints []*AutoScaleConstraint `json:"constraints,omitempty"`
-
-	forceSendFields []string
-	nullFields      []string
-}
-
-type AutoScaleDockerSwarm struct {
-	AutoScale // embedding
 
 	forceSendFields []string
 	nullFields      []string
@@ -280,15 +272,6 @@ type ChefIntegration struct {
 	User         *string `json:"user,omitempty"`
 	PEMKey       *string `json:"pemKey,omitempty"`
 	Version      *string `json:"chefVersion,omitempty"`
-
-	forceSendFields []string
-	nullFields      []string
-}
-
-type DockerSwarmIntegration struct {
-	MasterHost           *string               `json:"masterHost,omitempty"`
-	MasterPort           *int                  `json:"masterPort,omitempty"`
-	AutoScaleDockerSwarm *AutoScaleDockerSwarm `json:"autoScale,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1093,13 +1076,6 @@ func (o *Integration) SetRoute53(v *Route53Integration) *Integration {
 	return o
 }
 
-func (o *Integration) SetDockerSwarm(v *DockerSwarmIntegration) *Integration {
-	if o.DockerSwarm = v; o.DockerSwarm == nil {
-		o.nullFields = append(o.nullFields, "DockerSwarm")
-	}
-	return o
-}
-
 func (o *Integration) SetEC2ContainerService(v *EC2ContainerServiceIntegration) *Integration {
 	if o.EC2ContainerService = v; o.EC2ContainerService == nil {
 		o.nullFields = append(o.nullFields, "EC2ContainerService")
@@ -1270,43 +1246,6 @@ func (o *AutoScaleECS) SetShouldScaleDownNonServiceTasks(v *bool) *AutoScaleECS 
 }
 
 // endregion
-
-// region Docker Swarm
-
-func (o *DockerSwarmIntegration) MarshalJSON() ([]byte, error) {
-	type noMethod DockerSwarmIntegration
-	raw := noMethod(*o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
-func (o *DockerSwarmIntegration) SetMasterHost(v *string) *DockerSwarmIntegration {
-	if o.MasterHost = v; o.MasterHost == nil {
-		o.nullFields = append(o.nullFields, "MasterHost")
-	}
-	return o
-}
-
-func (o *DockerSwarmIntegration) SetMasterPort(v *int) *DockerSwarmIntegration {
-	if o.MasterPort = v; o.MasterPort == nil {
-		o.nullFields = append(o.nullFields, "MasterPort")
-	}
-	return o
-}
-
-func (o *DockerSwarmIntegration) SetAutoScaleDockerSwarm(v *AutoScaleDockerSwarm) *DockerSwarmIntegration {
-	if o.AutoScaleDockerSwarm = v; o.AutoScaleDockerSwarm == nil {
-		o.nullFields = append(o.nullFields, "AutoScaleDockerSwarm")
-	}
-	return o
-}
-
-func (o *AutoScaleDockerSwarm) MarshalJSON() ([]byte, error) {
-	type noMethod AutoScaleDockerSwarm
-	raw := noMethod(*o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
-// end region
 
 // region Route53
 

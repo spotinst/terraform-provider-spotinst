@@ -60,16 +60,21 @@ const (
 
 	// StatusMaintenance represents a maintenance state.
 	StatusMaintenance
+
+	// StatusDraining represents a draining state.
+	StatusDraining
 )
 
 var ReadinessStatusName = map[ReadinessStatus]string{
 	StatusReady:       "READY",
 	StatusMaintenance: "MAINTENANCE",
+	StatusDraining:    "DRAINING",
 }
 
 var ReadinessStatusValue = map[string]ReadinessStatus{
 	"READY":       StatusReady,
 	"MAINTENANCE": StatusMaintenance,
+	"DRAINING":    StatusDraining,
 }
 
 func (s ReadinessStatus) String() string {
