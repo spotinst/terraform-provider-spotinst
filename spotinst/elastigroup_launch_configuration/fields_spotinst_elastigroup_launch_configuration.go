@@ -252,6 +252,56 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ShutdownScript] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
+		ShutdownScript,
+		&schema.Schema{
+			Type:      schema.TypeString,
+			Optional:  true,
+			StateFunc: HexStateFunc,
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value = ""
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.ShutdownScript != nil {
+
+				shutdownScript := elastigroup.Compute.LaunchSpecification.ShutdownScript
+				shutdownScriptValue := spotinst.StringValue(shutdownScript)
+				if shutdownScriptValue != "" {
+					decodedShutdownScript, _ := base64.StdEncoding.DecodeString(shutdownScriptValue)
+					value = string(decodedShutdownScript)
+				}
+			}
+			if err := resourceData.Set(string(ShutdownScript), HexStateFunc(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShutdownScript), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(ShutdownScript)).(string); ok && v != "" {
+				shutdownScript := spotinst.String(base64Encode(v))
+				elastigroup.Compute.LaunchSpecification.SetShutdownScript(shutdownScript)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var shutdownScript *string = nil
+			if v, ok := resourceData.Get(string(ShutdownScript)).(string); ok && v != "" {
+				shutdownScript = spotinst.String(base64Encode(v))
+			}
+			elastigroup.Compute.LaunchSpecification.SetShutdownScript(shutdownScript)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[EnableMonitoring] = commons.NewGenericField(
 		commons.ElastigroupLaunchConfiguration,
 		EnableMonitoring,

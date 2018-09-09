@@ -12,6 +12,7 @@ const (
 	KeyName            commons.FieldName = "key_name"
 	SecurityGroups     commons.FieldName = "security_groups"
 	UserData           commons.FieldName = "user_data"
+	ShutdownScript     commons.FieldName = "shutdown_script"
 	EnableMonitoring   commons.FieldName = "enable_monitoring"
 	EbsOptimized       commons.FieldName = "ebs_optimized"
 	PlacementTenancy   commons.FieldName = "placement_tenancy"

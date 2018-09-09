@@ -383,6 +383,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("echo hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 				),
@@ -403,6 +404,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-987654"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("echo hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world updated")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 				),
@@ -422,6 +424,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("cannot set empty user data")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("cannot set empty shutdown script")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 				),
@@ -437,6 +440,7 @@ const testLaunchConfigurationGroupConfig_Create = `
  key_name             = "my-key.ssh"
  security_groups      = ["sg-123456"]
  user_data            = "echo hello world"
+ shutdown_script      = "echo goodbye world"
  enable_monitoring    = false
  ebs_optimized        = false
  placement_tenancy    = "default"
@@ -450,6 +454,7 @@ const testLaunchConfigurationGroupConfig_Update = `
  key_name             = "my-key-updated.ssh"
  security_groups      = ["sg-123456", "sg-987654"]
  user_data            = "echo hello world updated"
+ shutdown_script      = "echo goodbye world updated"
  enable_monitoring    = true
  ebs_optimized        = true
  placement_tenancy    = "default"
@@ -460,6 +465,7 @@ const testLaunchConfigurationGroupConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
  image_id        = "ami-31394949"
  user_data       = "cannot set empty user data"
+ shutdown_script = "cannot set empty shutdown script"
  key_name        = "cannot set empty key name"
  security_groups = ["sg-123456"]
  // ---------------------------------------
@@ -2709,7 +2715,6 @@ func TestAccSpotinstElastigroup_IntegrationRoute53(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.567353526.use_public_ip", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.241835256.name", "test_update_three"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3911548355.record_sets.241835256.use_public_ip", "false"),
-
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.hosted_zone_id", "new_domain_on_update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.712241011.record_sets.2523873097.name", "new_set"),
@@ -2747,6 +2752,7 @@ integration_route53 = {
 		}
 	]
 }
+// ------------------------------------
 `
 const testIntegrationRoute53GroupConfig_Update = `
 // --- INTEGRATION: ROUTE53 ----------
@@ -2783,6 +2789,7 @@ integration_route53 = {
 		},
 	]
 }
+// ------------------------------------
 `
 const testIntegrationRoute53GroupConfig_EmptyFields = `
 // --- INTEGRATION: ROUTE53 ----------
@@ -2817,6 +2824,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
@@ -2839,6 +2847,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name-update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "180"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "2048"),
@@ -2871,6 +2880,7 @@ const testIntegrationECSGroupConfig_Create = `
  integration_ecs = { 
     cluster_name = "ecs-cluster-name"
     autoscale_is_enabled = false
+	autoscale_is_auto_config = false
     autoscale_cooldown = 300
     autoscale_scale_down_non_service_tasks = false
 
@@ -2897,6 +2907,7 @@ const testIntegrationECSGroupConfig_Update = `
  integration_ecs = { 
     cluster_name = "ecs-cluster-name-update"
     autoscale_is_enabled = true
+	autoscale_is_auto_config = true
     autoscale_cooldown = 180
     autoscale_scale_down_non_service_tasks = true
 
@@ -3198,6 +3209,129 @@ const testIntegrationNomadGroupConfig_Update = `
 
 const testIntegrationNomadGroupConfig_EmptyFields = `
  // --- INTEGRATION: NOMAD --------------
+ // -------------------------------------
+`
+
+// endregion
+
+// region Docker Swarm integration
+
+func TestAccSpotinstElastigroup_IntegrationDockerSwarm(t *testing.T) {
+	groupName := "eg-integration-docker-swarm"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationDockerSwarmGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_host", "docker-swarm-master-host"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_port", "8000"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "300"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationDockerSwarmGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_host", "docker-swarm-master-host-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_port", "9000"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_cooldown", "180"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.cpu_per_unit", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "150"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationDockerSwarmGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testIntegrationDockerSwarmGroupConfig_Create = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ integration_docker_swarm = {
+    master_host = "docker-swarm-master-host"
+    master_port = 8000
+
+    autoscale_is_enabled = false
+    autoscale_cooldown = 300
+
+    autoscale_headroom = {
+      cpu_per_unit = 1024
+      memory_per_unit = 512
+      num_of_units = 2
+    }
+
+    autoscale_down = {
+      evaluation_periods = 300
+    }
+ }
+ // -------------------------------------
+`
+
+const testIntegrationDockerSwarmGroupConfig_Update = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ integration_docker_swarm = {
+	master_host = "docker-swarm-master-host-update"
+    master_port = 9000
+
+    autoscale_is_enabled = true
+    autoscale_cooldown = 180
+
+    autoscale_headroom = {
+      cpu_per_unit = 2048
+      memory_per_unit = 1024
+      num_of_units = 1
+    }
+
+    autoscale_down = {
+      evaluation_periods = 150
+    }
+  }
+ // -------------------------------------
+`
+
+const testIntegrationDockerSwarmGroupConfig_EmptyFields = `
+ // --- INTEGRATION: DOCKER SWARM -------
  // -------------------------------------
 `
 

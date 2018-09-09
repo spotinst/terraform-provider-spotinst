@@ -135,6 +135,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `key_name` - (Optional) The key name that should be used for the instance.
 * `enable_monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.
 * `user_data` - (Optional) The user data to provide when launching the instance.
+* `shutdown_script` - (Optional) The Base64-encoded shutdown script that executes prior to instance termination, for more information please see: [Shutdown Script](https://api.spotinst.com/integration-docs/elastigroup/concepts/compute-concepts/shutdown-scripts/)
 * `ebs_optimized` - (Optional) Enable high bandwidth connectivity between instances and AWS’s Elastic Block Store (EBS). For instance types that are EBS-optimized by default this parameter will be ignored.
 * `placement_tenancy` - (Optional) Enable dedicated tenancy. Note: There is a flat hourly fee for each region in which dedicated tenancy is used.
 
@@ -146,7 +147,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
     * `instance_type` - (Required) Name of instance type (String).
 
 * `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.
-* `orientation` - (Required, Default: `balanced`) Select a prediction strategy. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
+* `orientation` - (Required, Default: `"balanced"`) Select a prediction strategy. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
@@ -179,11 +180,11 @@ Usage:
   target_group_arns = ["tg-arn"]
   multai_target_sets = [{
     target_set_id = "ts-123",
-    balancer_id = "bal-123"
+    balancer_id   = "bal-123"
   },
   {
     target_set_id = "ts-234",
-    balancer_id = "bal-234"
+    balancer_id   = "bal-234"
   }]
 ```
 
@@ -220,7 +221,7 @@ Each `scheduled_task` supports the following:
 * `target_capacity` - (Optional; Only valid for statefulUpdateCapacity) The desired number of instances the group should have.
 * `min_capacity` - (Optional; Only valid for statefulUpdateCapacity) The minimum number of instances the group should have.
 * `max_capacity` - (Optional; Only valid for statefulUpdateCapacity) The maximum number of instances the group should have.
-* `batch_size_percentage` - (Optional; Required when the `taskType` is `roll`.) The percentage size of each batch in the scheduled deployment roll.
+* `batch_size_percentage` - (Optional; Required when the `task_type` is `"roll"`.) The percentage size of each batch in the scheduled deployment roll.
 * `grace_period` - (Optional) The period of time (seconds) to wait before checking a batch's health after it's deployment. 
 
 Usage:
@@ -436,7 +437,7 @@ Usage:
 ## Stateful
 
 We support instance persistence via the following configurations. all values are boolean.
-For more information on instance persistence please see: [Stateful configuration](https://help.spotinst.com/hc/en-us/articles/115002899285)
+For more information on instance persistence please see: [Stateful configuration](https://api.spotinst.com/integration-docs/elastigroup/concepts/stateful-concepts/introduction/)
 
 * `persist_root_device` - (Optional) Boolean, should the instance maintain its root device volumes.
 * `persist_block_devices` - (Optional) Boolean, should the instance maintain its Data volumes.
@@ -513,6 +514,7 @@ Usage:
     * `cluster_name` - (Required) The name of the EC2 Container Service cluster.
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
+    * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic auto-scaler functionality. For more information please see: [ECS auto scaler](https://api.spotinst.com/container-management/amazon-ecs/elastigroup-for-ecs-concepts/autoscaling/).
     * `autoscale_headroom` - (Optional) Headroom for the cluster.
         * `cpu_per_unit` - (Optional, Default: `0`) Cpu units for compute.
         * `memory_per_unit` - (Optional, Default: `0`) RAM units for compute.
@@ -591,6 +593,41 @@ Usage:
     }
 ```
 
+* `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
+
+    * `master_host` - (Required) IP or FQDN of one of your swarm managers.
+    * `master_port` - (Required) Network port used by your swarm.
+    * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
+    * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start. Minimum 180, must be a multiple of 60.
+    * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
+        * `cpu_per_unit` - (Optional, Default: `0`) How much CPU to allocate for headroom unit.
+        * `memory_per_unit` - (Optional, Default: `0`) The amount of memory in each headroom unit. Measured in MiB.
+        * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
+    * `autoscale_down` - (Optional) Setting for scale down actions.
+        * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared. Minimum 3, Measured in consecutive minutes.
+
+            
+Usage:
+
+```hcl
+integration_docker_swarm = {
+    master_host          = "10.10.10.10"
+    master_port          = 2376
+    autoscale_is_enabled = true
+    autoscale_cooldown   = 180
+    
+    autoscale_headroom = {
+        cpu_per_unit    = 2048
+        memory_per_unit = 2048
+        num_of_units    = 1
+    }
+    
+    autoscale_down = {
+        evaluation_periods = 3
+    } 
+}
+```
+
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
 
     * `integration_mode` - (Required) Valid values: `"saas"`, `"pod"`.
@@ -598,7 +635,7 @@ Usage:
     * `api_server` - (Required; if using integration_mode as saas)
     * `token` - (Required; if using integration_mode as saas) Kubernetes Token
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
-    * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic k8s auto-scaler functionality. For more information please see: [Kubernetes auto scaler](https://help.spotinst.com/hc/en-us/articles/360000280405-Kubernetes-Event-Based-Auto-Scaler-).
+    * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic k8s auto-scaler functionality. For more information please see: [Kubernetes auto scaler](https://api.spotinst.com/integration-docs/elastigroup/container-management/kubernetes/autoscaler/).
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
     * `autoscale_headroom` - (Optional) An option to set compute reserve for the cluster.
         * `cpu_per_unit` - (Optional, Default: `0`) How much CPU to allocate for headroom unit.
@@ -644,8 +681,8 @@ Usage:
  
 * `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
 
-    * `master_host` - (Required) TBD
-    * `master_port` - (Required) TBD
+    * `master_host` - (Required) The URL for the Nomad master host.
+    * `master_port` - (Required) The network port for the master host.
     * `acl_token` - (Required) Nomad ACL Token
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
@@ -732,7 +769,7 @@ Usage:
     * `should_roll` - (Required) Sets the enablement of the roll option.
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
-        * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"K8S_NODE"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"MLB"`, `"MLB_RUNTIME"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`, `"NOMAD_NODE"`.
+        * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"MLB"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`, `"NONE"`.
         * `grace_period` - (Optional) Sets the grace period for new instances to become healthy.
        
 ```hcl
