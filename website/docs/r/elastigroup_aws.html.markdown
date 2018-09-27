@@ -498,6 +498,7 @@ Usage:
     * `master_host` - (Required) The URL of the Rancher Master host.
     * `access_key` - (Required) The access key of the Rancher API.
     * `secret_key` - (Required) The secret key of the Rancher API.
+    * `version` - (Optional) The Rancher version. Must be "1" or "2". If this field is omitted, it is assumed that the Rancher cluster is the older version. Please note that the Kubernetes integration is required when using Rancher version 2.
 
 Usage:
 
@@ -506,6 +507,7 @@ Usage:
     master_host = "master_host"
     access_key  = "access_key"
     secret_key  = "secret_key"
+    version     = "2"
   }
 ```
 

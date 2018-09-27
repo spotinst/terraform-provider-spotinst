@@ -2510,6 +2510,7 @@ func TestAccSpotinstElastigroup_IntegrationRancher(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.master_host", "master-host"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.access_key", "access-key"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.secret_key", "secret-key"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.version", "1"),
 				),
 			},
 			{
@@ -2525,6 +2526,7 @@ func TestAccSpotinstElastigroup_IntegrationRancher(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.master_host", "master-host-update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.access_key", "access-key-update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.secret_key", "secret-key-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.version", "2"),
 				),
 			},
 			{
@@ -2549,6 +2551,7 @@ integration_rancher = {
    master_host = "master-host"
    access_key = "access-key"
    secret_key = "secret-key"
+   version = "1"
 }
 // ----------------------------
 `
@@ -2559,6 +2562,11 @@ const testIntegrationRancherGroupConfig_Update = `
     master_host = "master-host-update"
     access_key = "access-key-update"
     secret_key = "secret-key-update"
+    version = "2"
+ }
+
+integration_kubernetes = {
+	autoscale_is_enabled = true
  }
  // ----------------------------
 `

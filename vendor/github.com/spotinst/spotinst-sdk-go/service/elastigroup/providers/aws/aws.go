@@ -226,6 +226,7 @@ type RancherIntegration struct {
 	MasterHost *string `json:"masterHost,omitempty"`
 	AccessKey  *string `json:"accessKey,omitempty"`
 	SecretKey  *string `json:"secretKey,omitempty"`
+	Version    *string `json:"version,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1204,6 +1205,13 @@ func (o *RancherIntegration) SetAccessKey(v *string) *RancherIntegration {
 func (o *RancherIntegration) SetSecretKey(v *string) *RancherIntegration {
 	if o.SecretKey = v; o.SecretKey == nil {
 		o.nullFields = append(o.nullFields, "SecretKey")
+	}
+	return o
+}
+
+func (o *RancherIntegration) SetVersion(v *string) *RancherIntegration {
+	if o.Version = v; o.Version == nil {
+		o.nullFields = append(o.nullFields, "Version")
 	}
 	return o
 }
