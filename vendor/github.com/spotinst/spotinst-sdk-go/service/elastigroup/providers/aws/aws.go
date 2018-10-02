@@ -191,7 +191,7 @@ type AutoScaleAttributes struct {
 }
 
 type ElasticBeanstalkIntegration struct {
-	EnvironmentID         *string                `json:"environmentId,omitempty"`
+	EnvironmentID *string `json:"environmentId,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string

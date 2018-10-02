@@ -498,8 +498,7 @@ Usage:
     * `master_host` - (Required) The URL of the Rancher Master host.
     * `access_key` - (Required) The access key of the Rancher API.
     * `secret_key` - (Required) The secret key of the Rancher API.
-    * `version` - (Optional) The Rancher version. Must be "1" or "2". If this field is omitted, it is assumed that the Rancher cluster is the older version. Please note that the Kubernetes integration is required when using Rancher version 2.
-
+    * `version` - (Optional) The Rancher version. Must be `"1"` or `"2"`. If this field is omitted, it’s assumed that the Rancher cluster is version 1. Note that Kubernetes is required when using Rancher version 2^.
 Usage:
 
 ```hcl
@@ -607,7 +606,6 @@ Usage:
         * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared. Minimum 3, Measured in consecutive minutes.
-
             
 Usage:
 

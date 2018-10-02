@@ -27,8 +27,9 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			string(commons.ElastigroupAwsResourceName): resourceSpotinstElastigroupAws(),
-			string(commons.SubscriptionResourceName):   resourceSpotinstSubscription(),
+			string(commons.ElastigroupAwsResourceName):       resourceSpotinstElastigroupAws(),
+			string(commons.SubscriptionResourceName):         resourceSpotinstSubscription(),
+			string(commons.BeanstalkElastigroupResourceName): resourceSpotinstBeanstalkElastigroup(),
 		},
 
 		ConfigureFunc: providerConfigure,

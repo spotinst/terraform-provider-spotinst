@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"errors"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -85,6 +86,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(NetworkInterface)); ok {
+
 				if interfaces, err := expandAWSGroupNetworkInterfaces(v); err != nil {
 					return err
 				} else {
@@ -145,7 +147,15 @@ func expandAWSGroupNetworkInterfaces(data interface{}) ([]*aws.NetworkInterface,
 		networkInterface := &aws.NetworkInterface{}
 
 		if v, ok := m[string(NetworkInterfaceId)].(string); ok && v != "" {
+			if v, ok := m[string(AssociatePublicIpAddress)].(bool); ok && v {
+				return nil, errors.New("invalid Network interface: associate_public_ip_address must be undefined when using network_interface_id")
+			}
 			networkInterface.SetId(spotinst.String(v))
+		} else {
+			// AssociatePublicIp cannot be set at all when NetworkInterfaceId is specified
+			if v, ok := m[string(AssociatePublicIpAddress)].(bool); ok {
+				networkInterface.SetAssociatePublicIPAddress(spotinst.Bool(v))
+			}
 		}
 
 		if v, ok := m[string(Description)].(string); ok && v != "" {
@@ -166,10 +176,6 @@ func expandAWSGroupNetworkInterfaces(data interface{}) ([]*aws.NetworkInterface,
 			} else {
 				networkInterface.SetSecondaryPrivateIPAddressCount(spotinst.Int(intVal))
 			}
-		}
-
-		if v, ok := m[string(AssociatePublicIpAddress)].(bool); ok {
-			networkInterface.SetAssociatePublicIPAddress(spotinst.Bool(v))
 		}
 
 		if v, ok := m[string(DeleteOnTermination)].(bool); ok {

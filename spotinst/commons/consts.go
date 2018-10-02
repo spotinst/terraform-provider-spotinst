@@ -15,7 +15,8 @@ const (
 	ProviderToken   FieldName = "token"
 	ProviderAccount FieldName = "account"
 
-	Subscription ResourceAffinity = "Subscription"
+	Subscription         ResourceAffinity = "Subscription"
+	BeanstalkElastigroup ResourceAffinity = "BeanstalkElastigroup"
 
 	ElastigroupAWS                 ResourceAffinity = "Elastigroup_AWS"
 	ElastigroupInstanceType        ResourceAffinity = "Elastigroup_Instance_Type"

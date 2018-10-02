@@ -1,6 +1,5 @@
 package spotinst
 
-// SDKVersion is the current version of the SDK.
 const SDKVersion = "3.2.22"
 
 // SDKName is the name of the SDK.

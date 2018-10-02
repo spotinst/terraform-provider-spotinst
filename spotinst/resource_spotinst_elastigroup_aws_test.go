@@ -12,6 +12,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_launch_configuration"
+	"regexp"
 )
 
 func createElastigroupResourceName(name string) string {
@@ -1355,14 +1356,21 @@ func TestAccSpotinstElastigroup_NetworkInterfaces(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.associate_public_ip_address", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.delete_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.description", "network interface description updated"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.device_index", "2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.network_interface_id", "n-987654"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.private_ip_address", "2.2.2.2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.secondary_private_ip_address_count", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.associate_public_ip_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.description", "network interface description updated"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.device_index", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.private_ip_address", "2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.secondary_private_ip_address_count", "2"),
 				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRoute53GroupConfig_ShouldFail,
+				}),
+				ExpectError: regexp.MustCompile("invalid Network interface: associate_public_ip_address must be undefined when using network_interface_id"),
 			},
 			{
 				ResourceName: resourceName,
@@ -1402,7 +1410,20 @@ const testNetworkInterfacesGroupConfig_Update = `
     secondary_private_ip_address_count = 2
     associate_public_ip_address = true
     delete_on_termination = true
-    network_interface_id = "n-987654"
+    private_ip_address = "2.2.2.2"
+  }]
+ // ----------------------------------------
+`
+
+const testIntegrationRoute53GroupConfig_ShouldFail = `
+ // --- NETWORK INTERFACE ------------------
+ network_interface = [{ 
+    description = "network interface description updated"
+    device_index = 2
+    secondary_private_ip_address_count = 2
+    associate_public_ip_address = true
+    network_interface_id = "n-123456"
+    delete_on_termination = true
     private_ip_address = "2.2.2.2"
   }]
  // ----------------------------------------
@@ -2831,6 +2852,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),

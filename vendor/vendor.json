@@ -648,6 +648,13 @@
 			"revisionTime": "2016-09-27T10:08:44Z"
 		},
 		{
+			"checksumSHA1": "mo+c1CVlMUbvjU9s/eni4U2WiwY=",
+			"origin": "github.com/terraform-providers/terraform-provider-spotinst/vendor/github.com/spotinst/spotinst-sdk-go",
+			"path": "github.com/spotinst/spotinst-sdk-go",
+			"revision": "afdebc7c7c75616a0375f8ffdf1f7b25735bc8ec",
+			"revisionTime": "2018-10-01T18:40:49Z"
+		},
+		{
 			"checksumSHA1": "qMmQeinXDiAgXLKP1bBiuXkmXEs=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup",
 			"revision": "ca73d11e32adb15161aa0eecba6f9b41cc3cc02b",

@@ -45,7 +45,7 @@ func (c *Config) Validate() error {
 func (c *Config) Client() (*Client, error) {
 	config := spotinst.DefaultConfig()
 	config.WithLogger(newStdLogger("DEBUG"))
-	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString())
+	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString() + ",spotinst-provider/v2")
 
 	// Set user credentials.
 	providers := []credentials.Provider{
