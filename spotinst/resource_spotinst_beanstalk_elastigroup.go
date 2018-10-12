@@ -68,6 +68,56 @@ func importBeanstalkGroup(resourceData *schema.ResourceData, meta interface{}) (
 	return resp.Group, err
 }
 
+func toggleMaintenanceMode(resourceData *schema.ResourceData, meta interface{}, op string) error {
+	id := resourceData.Id()
+	input := &aws.BeanstalkMaintenanceInput{GroupID: spotinst.String(id)}
+
+	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		if status, err := meta.(*Client).elastigroup.CloudProviderAWS().GetBeanstalkMaintenanceStatus(context.Background(), input); err == nil {
+			if op == "START" {
+				if *status == "AWAIT_USER_UPDATE" {
+					err = fmt.Errorf("===> Unable to start maintenance, already in maintenance mode")
+					return resource.NonRetryableError(err)
+				} else if *status == "ACTIVE" {
+					_, err := meta.(*Client).elastigroup.CloudProviderAWS().StartBeanstalkMaintenance(context.Background(), input)
+					if err != nil {
+						return resource.NonRetryableError(err)
+					}
+					log.Printf("===> Sending request to begin Beanstalk Maintenance Mode <===")
+				} else {
+					err = fmt.Errorf("===> Unable to start maintenance, group status is: %s <===", *status)
+					return resource.RetryableError(err)
+				}
+				return nil
+			} else if op == "END" {
+				if *status == "ACTIVE" {
+					err = fmt.Errorf("===> Unable to end maintenance, your beanstalk elastigroup is already active")
+					return resource.NonRetryableError(err)
+				} else if *status == "AWAIT_USER_UPDATE" {
+					_, err := meta.(*Client).elastigroup.CloudProviderAWS().FinishBeanstalkMaintenance(context.Background(), input)
+					if err != nil {
+						return resource.NonRetryableError(err)
+					}
+					log.Printf("===> Sending request to end Beanstalk Maintenance Mode <===")
+				} else {
+					err = fmt.Errorf("===> Unable to end Mmaintenance state, group status is: %s <===", *status)
+					return resource.RetryableError(err)
+				}
+				return nil
+			} else if op == "STATUS" {
+				log.Printf("===> Beanstalk Maintenance Status: %s <===", *status)
+				return nil
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("BEANSTALK:MaintenanceMode failed to resolve Maintenance Mode %s", err)
+	}
+	return nil
+}
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Create
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -182,6 +232,16 @@ func resourceSpotinstAWSBeanstalkGroupUpdate(resourceData *schema.ResourceData, 
 	shouldUpdate, beanstalkElastigroup, err := commons.ElasticBeanstalkResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
+	}
+
+	maint, err := commons.ElasticBeanstalkResource.MaintenanceState(resourceData, meta)
+	if err != nil {
+		return err
+	}
+
+	maintErr := toggleMaintenanceMode(resourceData, meta, maint)
+	if maintErr != nil {
+		return maintErr
 	}
 
 	if shouldUpdate {

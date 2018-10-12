@@ -304,6 +304,35 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[Maintenance] = commons.NewGenericField(
+		commons.BeanstalkElastigroup,
+		Maintenance,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if v, ok := resourceData.GetOk(string(Maintenance)); ok && v != nil {
+				if v != "START" && v != "END" && v != "STATUS" {
+					return fmt.Errorf("Error: Maintenace mode must be START, END, or STATUS")
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if v, ok := resourceData.GetOk(string(Maintenance)); ok && v != nil {
+				if v != "START" && v != "END" && v != "STATUS" {
+					return fmt.Errorf("Error: Maintenace mode must be START or END, or STATUS")
+				}
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

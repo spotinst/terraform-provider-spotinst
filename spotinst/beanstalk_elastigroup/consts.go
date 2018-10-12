@@ -15,4 +15,5 @@ const (
 	Target                   commons.FieldName = "desired_capacity"
 	BeanstalkEnvironmentName commons.FieldName = "beanstalk_environment_name"
 	SpotInstanceTypes        commons.FieldName = "instance_types_spot"
+	Maintenance              commons.FieldName = "maintenance"
 )

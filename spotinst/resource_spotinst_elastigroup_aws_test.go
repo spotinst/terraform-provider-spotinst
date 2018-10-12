@@ -1950,14 +1950,15 @@ func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.task_type", "backup_ami"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.scale_min_capacity", "0"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.scale_max_capacity", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.frequency", "hourly"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.scale_target_capacity", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.batch_size_percentage", "33"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.grace_period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.task_type", "backup_ami"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_min_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_max_capacity", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.adjustment", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.frequency", "hourly"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_target_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.grace_period", "300"),
 				),
 			},
 			{
@@ -1970,15 +1971,15 @@ func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.task_type", "statefulUpdateCapacity"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.target_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.min_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.max_capacity", "3"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.start_time", "2100-01-01T00:00:00Z"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.cron_expression", "0 0 12 1/1 * ? *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.batch_size_percentage", "66"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.grace_period", "150"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.task_type", "statefulUpdateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.target_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.min_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.max_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.start_time", "2100-01-01T00:00:00Z"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.cron_expression", "0 0 12 1/1 * ? *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.batch_size_percentage", "66"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.grace_period", "150"),
 				),
 			},
 			{
@@ -2004,6 +2005,7 @@ const testScheduledTaskGroupConfig_Create = `
     task_type = "backup_ami"
     scale_min_capacity = 0
     scale_max_capacity = 10
+    adjustment = 1
     frequency = "hourly"
     scale_target_capacity = 5
     batch_size_percentage = 33

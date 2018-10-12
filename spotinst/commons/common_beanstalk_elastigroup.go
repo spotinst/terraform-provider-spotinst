@@ -121,6 +121,18 @@ func (res *ElasticBeanstalkTerraformResource) OnUpdate(
 	return hasChanged, beanstalkWrapper.GetBeanstalkElastigroup(), nil
 }
 
+func (res *ElasticBeanstalkTerraformResource) MaintenanceState(
+	resourceData *schema.ResourceData,
+	meta interface{}) (string, error) {
+	op := "NONE"
+
+	if res.fields.fieldsMap["maintenance"] != nil {
+		op = resourceData.Get("maintenance").(string)
+		return op, nil
+	}
+	return op, nil
+}
+
 // Spotinst elastigroup must have a wrapper struct.
 // Reason is that there are multiple fields who share the same elastigroup API object
 // e.g. LoadBalancersConfig fields and BlockDeviceMapping fields

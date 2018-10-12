@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"fmt"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil"
@@ -353,6 +354,7 @@ type Task struct {
 	TargetCapacity      *int    `json:"targetCapacity,omitempty"`
 	MinCapacity         *int    `json:"minCapacity,omitempty"`
 	MaxCapacity         *int    `json:"maxCapacity,omitempty"`
+	Adjustment          *int    `json:"adjustment,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -695,15 +697,6 @@ type RollGroupInput struct {
 
 type RollGroupOutput struct{}
 
-type ImportBeanstalkInput struct {
-	EnvironmentName *string `json:"environmentName,omitempty"`
-	Region          *string `json:"region,omitempty"`
-}
-
-type ImportBeanstalkOutput struct {
-	Group *Group `json:"group,omitempty"`
-}
-
 func groupFromJSON(in []byte) (*Group, error) {
 	b := new(Group)
 	if err := json.Unmarshal(in, b); err != nil {
@@ -973,6 +966,65 @@ func (s *ServiceOp) Roll(ctx context.Context, input *RollGroupInput) (*RollGroup
 	return &RollGroupOutput{}, nil
 }
 
+// region: Elastic Beanstalk
+
+type ImportBeanstalkInput struct {
+	EnvironmentName *string `json:"environmentName,omitempty"`
+	Region          *string `json:"region,omitempty"`
+}
+
+type ImportBeanstalkOutput struct {
+	Group *Group `json:"group,omitempty"`
+}
+
+type BeanstalkMaintenanceInput struct {
+	GroupID *string `json:"groupId,omitempty"`
+}
+
+type BeanstalkMaintenanceItem struct {
+	Status *string `json:"status,omitempty"`
+}
+
+type BeanstalkMaintenanceOutput struct {
+	Items  []*BeanstalkMaintenanceItem `json:"items,omitempty"`
+	Status *string                     `json:"status,omitempty"`
+}
+
+func beanstalkMaintResponseFromJSON(in []byte) (*BeanstalkMaintenanceOutput, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+
+	var retVal BeanstalkMaintenanceOutput
+	retVal.Items = make([]*BeanstalkMaintenanceItem, len(rw.Response.Items))
+	for i, rb := range rw.Response.Items {
+		b, err := beanstalkMaintItemFromJSON(rb)
+		if err != nil {
+			return nil, err
+		}
+		retVal.Items[i] = b
+		retVal.Status = b.Status
+	}
+	return &retVal, nil
+}
+
+func beanstalkMaintItemFromJSON(in []byte) (*BeanstalkMaintenanceItem, error) {
+	var rw *BeanstalkMaintenanceItem
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	return rw, nil
+}
+
+func beanstalkMaintFromHttpResponse(resp *http.Response) (*BeanstalkMaintenanceOutput, error) {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return beanstalkMaintResponseFromJSON(body)
+}
+
 func (s *ServiceOp) ImportBeanstalkEnv(ctx context.Context, input *ImportBeanstalkInput) (*ImportBeanstalkOutput, error) {
 	path := "/aws/ec2/group/beanstalk/import"
 	r := client.NewRequest(http.MethodGet, path)
@@ -998,6 +1050,72 @@ func (s *ServiceOp) ImportBeanstalkEnv(ctx context.Context, input *ImportBeansta
 
 	return output, nil
 }
+
+func (s *ServiceOp) StartBeanstalkMaintenance(ctx context.Context, input *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupID}/beanstalk/maintenance/start", uritemplates.Values{
+		"groupID": spotinst.StringValue(input.GroupID),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodPut, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	fmt.Printf("Status: %v\n", resp.Status)
+
+	return &BeanstalkMaintenanceOutput{}, nil
+}
+
+func (s *ServiceOp) GetBeanstalkMaintenanceStatus(ctx context.Context, input *BeanstalkMaintenanceInput) (*string, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupID}/beanstalk/maintenance/status", uritemplates.Values{
+		"groupID": spotinst.StringValue(input.GroupID),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	output, err := beanstalkMaintFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return output.Status, nil
+}
+
+func (s *ServiceOp) FinishBeanstalkMaintenance(ctx context.Context, input *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupID}/beanstalk/maintenance/finish", uritemplates.Values{
+		"groupID": spotinst.StringValue(input.GroupID),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodPut, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	fmt.Printf("Status: %v\n", resp.Status)
+
+	return &BeanstalkMaintenanceOutput{}, nil
+}
+
+// endregion
 
 // region Group
 
@@ -1851,6 +1969,13 @@ func (o *Task) SetMinCapacity(v *int) *Task {
 func (o *Task) SetMaxCapacity(v *int) *Task {
 	if o.MaxCapacity = v; o.MaxCapacity == nil {
 		o.nullFields = append(o.nullFields, "MaxCapacity")
+	}
+	return o
+}
+
+func (o *Task) SetAdjustment(v *int) *Task {
+	if o.Adjustment = v; o.Adjustment == nil {
+		o.nullFields = append(o.nullFields, "Adjustment")
 	}
 	return o
 }

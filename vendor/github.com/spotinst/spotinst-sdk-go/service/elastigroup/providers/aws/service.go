@@ -22,6 +22,9 @@ type Service interface {
 	Roll(context.Context, *RollGroupInput) (*RollGroupOutput, error)
 	Scale(context.Context, *ScaleGroupInput) (*ScaleGroupOutput, error)
 	ImportBeanstalkEnv(context.Context, *ImportBeanstalkInput) (*ImportBeanstalkOutput, error)
+	StartBeanstalkMaintenance(context.Context, *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error)
+	FinishBeanstalkMaintenance(context.Context, *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error)
+	GetBeanstalkMaintenanceStatus(context.Context, *BeanstalkMaintenanceInput) (*string, error)
 }
 
 type ServiceOp struct {
