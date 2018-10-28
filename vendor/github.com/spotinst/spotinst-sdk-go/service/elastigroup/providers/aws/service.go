@@ -21,6 +21,7 @@ type Service interface {
 	Detach(context.Context, *DetachGroupInput) (*DetachGroupOutput, error)
 	Roll(context.Context, *RollGroupInput) (*RollGroupOutput, error)
 	Scale(context.Context, *ScaleGroupInput) (*ScaleGroupOutput, error)
+	GetInstanceHealthiness(context.Context, *GetInstanceHealthinessInput) (*GetInstanceHealthinessOutput, error)
 	ImportBeanstalkEnv(context.Context, *ImportBeanstalkInput) (*ImportBeanstalkOutput, error)
 	StartBeanstalkMaintenance(context.Context, *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error)
 	FinishBeanstalkMaintenance(context.Context, *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error)

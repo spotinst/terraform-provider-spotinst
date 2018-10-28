@@ -166,13 +166,13 @@ func (egWrapper *BeanStalkElastigroupWrapper) SetBeanstalkElastigroup(elastigrou
 }
 
 func buildEmptyElastigroupCompute(group *aws.Group) {
-	if group.Compute == nil {
+	if group != nil && group.Compute == nil {
 		group.SetCompute(&aws.Compute{})
 	}
 }
 
 func buildEmptyElastigroupCapacity(group *aws.Group) {
-	if group.Capacity == nil {
+	if group != nil && group.Capacity == nil {
 		group.SetCapacity(&aws.Capacity{})
 	}
 }

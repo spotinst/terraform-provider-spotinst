@@ -283,6 +283,11 @@ func upDownScalingPolicySchema() *schema.Schema {
 		Optional: true,
 	}
 
+	s[string(IsEnabled)] = &schema.Schema{
+		Type:     schema.TypeBool,
+		Optional: true,
+	}
+
 	return o
 }
 
@@ -352,6 +357,10 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			policy.SetCooldown(spotinst.Int(v))
 		}
 
+		if v, ok := m[string(IsEnabled)].(bool); ok {
+			policy.SetIsEnabled(spotinst.Bool(v))
+		}
+
 		if v, ok := m[string(Dimensions)]; ok {
 			dimensions := expandAWSGroupScalingPolicyDimensions(v.(map[string]interface{}))
 			if len(dimensions) > 0 {
@@ -407,6 +416,7 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			if v, ok := m[string(Target)].(float64); ok && v >= 0 {
 				policy.SetTarget(spotinst.Float64(v))
 			}
+
 		}
 
 		if policy.Namespace != nil {
@@ -465,6 +475,8 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 		// Target scaling policy?
 		if policy.Threshold == nil {
 			m[string(Target)] = spotinst.Float64Value(policy.Target)
+		} else {
+			m[string(IsEnabled)] = spotinst.BoolValue(policy.IsEnabled)
 		}
 
 		result = append(result, m)

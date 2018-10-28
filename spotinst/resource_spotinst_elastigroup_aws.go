@@ -181,6 +181,12 @@ func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, met
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
+	if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForInstanceTimeout)); ok {
+		err := awaitReady(spotinst.String(spotinst.StringValue(groupId)), timeout.(int), meta.(*Client))
+		if err != nil {
+			return fmt.Errorf("[ERROR] Instances not ready: %s", err)
+		}
+	}
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 
 	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
@@ -283,6 +289,12 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping group roll", string(elastigroup_aws.ShouldRoll))
+		if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForInstanceTimeout)); ok {
+			err := awaitReady(spotinst.String(groupId), timeout.(int), meta.(*Client))
+			if err != nil {
+				return fmt.Errorf("[ERROR] Instances not ready: %s", err)
+			}
+		}
 	}
 	return nil
 }
@@ -320,6 +332,33 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	if errResult != nil {
 		return errResult
 	}
+	return nil
+}
+
+func awaitReady(groupId *string, timeout int, client *Client) error {
+	input := &aws.GetInstanceHealthinessInput{GroupID: spotinst.String(*groupId)}
+
+	err := resource.Retry(time.Second*time.Duration(timeout), func() *resource.RetryError {
+		status, err := client.elastigroup.CloudProviderAWS().GetInstanceHealthiness(context.Background(), input)
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("[ERROR] awaitReady() -> getInstanceHealthiness [%v] API call failed, error: %v", groupId, err))
+		}
+
+		for _, item := range status.Instances {
+			if *item.HealthStatus != "HEALTHY" {
+				err = fmt.Errorf("===> waiting, instance %s status is: %s <===", *item.InstanceID, *item.HealthStatus)
+				return resource.RetryableError(err)
+			}
+		}
+
+		log.Printf("awaitReady() -> All instances are healthy [%v]", groupId)
+		return nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] Instances not ready: %s", err)
+	}
+
 	return nil
 }
 

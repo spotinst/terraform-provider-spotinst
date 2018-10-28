@@ -67,4 +67,6 @@ const (
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
 	GracePeriod         commons.FieldName = "grace_period"
+
+	WaitForInstanceTimeout commons.FieldName = "wait_for_instance_timeout"
 )

@@ -100,7 +100,7 @@ func toggleMaintenanceMode(resourceData *schema.ResourceData, meta interface{}, 
 					}
 					log.Printf("===> Sending request to end Beanstalk Maintenance Mode <===")
 				} else {
-					err = fmt.Errorf("===> Unable to end Mmaintenance state, group status is: %s <===", *status)
+					err = fmt.Errorf("===> Unable to end Maintenance state, group status is: %s <===", *status)
 					return resource.RetryableError(err)
 				}
 				return nil
@@ -243,7 +243,6 @@ func resourceSpotinstAWSBeanstalkGroupUpdate(resourceData *schema.ResourceData, 
 	if maintErr != nil {
 		return maintErr
 	}
-
 	if shouldUpdate {
 		beanstalkElastigroup.SetId(spotinst.String(id))
 		if err := updateGroup(beanstalkElastigroup, resourceData, meta); err != nil {

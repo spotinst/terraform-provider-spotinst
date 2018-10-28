@@ -1044,6 +1044,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+
+	fieldsMap[WaitForInstanceTimeout] = commons.NewGenericField(
+		commons.ElastigroupAWS,
+		WaitForInstanceTimeout,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		nil, nil, nil, nil,
+	)
 }
 
 var TargetGroupArnRegex = regexp.MustCompile(`arn:aws:elasticloadbalancing:.*:\d{12}:targetgroup/(.*)/.*`)

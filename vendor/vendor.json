@@ -649,7 +649,6 @@
 		},
 		{
 			"checksumSHA1": "mo+c1CVlMUbvjU9s/eni4U2WiwY=",
-			"origin": "github.com/terraform-providers/terraform-provider-spotinst/vendor/github.com/spotinst/spotinst-sdk-go",
 			"path": "github.com/spotinst/spotinst-sdk-go",
 			"revision": "afdebc7c7c75616a0375f8ffdf1f7b25735bc8ec",
 			"revisionTime": "2018-10-01T18:40:49Z"
@@ -661,10 +660,10 @@
 			"revisionTime": "2018-09-09T07:29:26Z"
 		},
 		{
-			"checksumSHA1": "/n+/Gg9ookOzT3yYo5J7vhZBalU=",
+			"checksumSHA1": "bzwlxjcSxAmHMXl87pjGfnENWFw=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws",
-			"revision": "ca73d11e32adb15161aa0eecba6f9b41cc3cc02b",
-			"revisionTime": "2018-09-09T07:29:26Z"
+			"revision": "ec4436a13d406cbb820329962ab5e08550147c7f",
+			"revisionTime": "2018-10-24T22:01:07Z"
 		},
 		{
 			"checksumSHA1": "3zPuD/4VD76JnjSTjPwVHdXntz4=",

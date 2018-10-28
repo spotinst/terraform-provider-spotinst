@@ -31,4 +31,5 @@ const (
 	Maximum           commons.FieldName = "maximum"
 	Target            commons.FieldName = "target"
 	ActionType        commons.FieldName = "action_type"
+	IsEnabled         commons.FieldName = "is_enabled"
 )
