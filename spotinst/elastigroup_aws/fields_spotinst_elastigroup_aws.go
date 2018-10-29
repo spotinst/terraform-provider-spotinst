@@ -776,6 +776,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []interface{} = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.Tags != nil {
+				tags := elastigroup.Compute.LaunchSpecification.Tags
+				result = flattenTags(tags)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Tags), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+				}
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -1105,6 +1118,18 @@ func expandAWSGroupPreferredAvailabilityZones(data interface{}) ([]string, error
 		}
 	}
 	return result, nil
+}
+
+func flattenTags(tags []*aws.Tag) []interface{} {
+	result := make([]interface{}, 0, len(tags))
+	for _, tag := range tags {
+		m := make(map[string]interface{})
+		m[string(TagKey)] = spotinst.StringValue(tag.Key)
+		m[string(TagValue)] = spotinst.StringValue(tag.Value)
+
+		result = append(result, m)
+	}
+	return result
 }
 
 func expandTags(data interface{}) ([]*aws.Tag, error) {
