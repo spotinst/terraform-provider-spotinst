@@ -130,6 +130,10 @@ func resourceSpotinstAWSBeanstalkGroupCreate(resourceData *schema.ResourceData, 
 		return err
 	}
 
+	if beanstalkGroup == nil {
+		return fmt.Errorf("[ERROR] Failed to import group. Does the Beanstalk environment exist?")
+	}
+
 	tempGroup, err := commons.ElasticBeanstalkResource.OnCreate(beanstalkGroup, resourceData, meta)
 	if err != nil {
 		return err

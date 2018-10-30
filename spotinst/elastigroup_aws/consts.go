@@ -68,5 +68,6 @@ const (
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
 	GracePeriod         commons.FieldName = "grace_period"
 
-	WaitForInstanceTimeout commons.FieldName = "wait_for_instance_timeout"
+	WaitForCapacity        commons.FieldName = "wait_for_capacity"
+	WaitForCapacityTimeout commons.FieldName = "wait_for_capacity_timeout"
 )

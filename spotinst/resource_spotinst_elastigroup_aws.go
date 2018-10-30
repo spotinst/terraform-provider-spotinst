@@ -181,12 +181,19 @@ func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, met
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
-	if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForInstanceTimeout)); ok {
-		err := awaitReady(spotinst.String(spotinst.StringValue(groupId)), timeout.(int), meta.(*Client))
-		if err != nil {
-			return fmt.Errorf("[ERROR] Instances not ready: %s", err)
+
+	if capacity, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacity)); ok {
+		if *elastigroup.Capacity.Target < capacity.(int) {
+			return fmt.Errorf("[ERROR] You've asked to wait for a healthy capacity that is above your desired capacity")
+		}
+		if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
+			err := awaitReady(groupId, timeout.(int), capacity.(int), meta.(*Client))
+			if err != nil {
+				return fmt.Errorf("[ERROR] Timed out when creating group: %s", err)
+			}
 		}
 	}
+
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 
 	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
@@ -289,10 +296,16 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping group roll", string(elastigroup_aws.ShouldRoll))
-		if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForInstanceTimeout)); ok {
-			err := awaitReady(spotinst.String(groupId), timeout.(int), meta.(*Client))
-			if err != nil {
-				return fmt.Errorf("[ERROR] Instances not ready: %s", err)
+		if capacity, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacity)); ok {
+			if *elastigroup.Capacity.Target < capacity.(int) {
+				return fmt.Errorf("[ERROR] You've asked to wait for a healthy capacity that is above your desired capacity")
+			}
+
+			if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
+				err := awaitReady(spotinst.String(groupId), timeout.(int), capacity.(int), meta.(*Client))
+				if err != nil {
+					return fmt.Errorf("[ERROR] Timed out when updating group: %s", err)
+				}
 			}
 		}
 	}
@@ -335,23 +348,31 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func awaitReady(groupId *string, timeout int, client *Client) error {
+func awaitReady(groupId *string, timeout int, capacity int, client *Client) error {
+	if capacity == 0 || timeout == 0 {
+		return nil
+	}
 	input := &aws.GetInstanceHealthinessInput{GroupID: spotinst.String(*groupId)}
-
 	err := resource.Retry(time.Second*time.Duration(timeout), func() *resource.RetryError {
+		numHealthy := 0
 		status, err := client.elastigroup.CloudProviderAWS().GetInstanceHealthiness(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("[ERROR] awaitReady() -> getInstanceHealthiness [%v] API call failed, error: %v", groupId, err))
 		}
 
 		for _, item := range status.Instances {
-			if *item.HealthStatus != "HEALTHY" {
-				err = fmt.Errorf("===> waiting, instance %s status is: %s <===", *item.InstanceID, *item.HealthStatus)
-				return resource.RetryableError(err)
+			if *item.HealthStatus == "HEALTHY" {
+				numHealthy += 1
 			}
 		}
 
-		log.Printf("awaitReady() -> All instances are healthy [%v]", groupId)
+		if numHealthy < capacity {
+			log.Printf("===> waiting for %d more healthy instances <===\n", capacity-numHealthy)
+			err = fmt.Errorf("===> waiting for %d more healthy instances <===", capacity-numHealthy)
+			return resource.RetryableError(err)
+		}
+
+		log.Printf("awaitReady() -> Target number of health instances reached [%v]", *groupId)
 		return nil
 	})
 
