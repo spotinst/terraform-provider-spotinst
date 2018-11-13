@@ -158,31 +158,31 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if integration.AutoScaleECS == nil {
-			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleECS{})
 		}
-		integration.AutoScaleECS.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(ShouldScaleDownNonServiceTasks)].(bool); ok {
-		if integration.AutoScaleECS == nil {
-			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleECS{})
 		}
-		integration.AutoScaleECS.SetShouldScaleDownNonServiceTasks(spotinst.Bool(v))
+		integration.AutoScale.SetShouldScaleDownNonServiceTasks(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if integration.AutoScaleECS == nil {
-			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleECS{})
 		}
-		integration.AutoScaleECS.SetCooldown(spotinst.Int(v))
+		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleIsAutoConfig)].(bool); ok {
-		if integration.AutoScaleECS == nil {
-			integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleECS{})
 		}
-		integration.AutoScaleECS.SetIsAutoConfig(spotinst.Bool(v))
+		integration.AutoScale.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -191,10 +191,10 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			return nil, err
 		}
 		if headroom != nil {
-			if integration.AutoScaleECS == nil {
-				integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleECS{})
 			}
-			integration.AutoScaleECS.SetHeadroom(headroom)
+			integration.AutoScale.SetHeadroom(headroom)
 		}
 	}
 
@@ -204,10 +204,10 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			return nil, err
 		}
 		if down != nil {
-			if integration.AutoScaleECS == nil {
-				integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleECS{})
 			}
-			integration.AutoScaleECS.SetDown(down)
+			integration.AutoScale.SetDown(down)
 		}
 	}
 
@@ -217,10 +217,10 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			return nil, err
 		}
 		if attributes != nil {
-			if integration.AutoScaleECS == nil {
-				integration.SetAutoScaleECS(&aws.AutoScaleECS{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleECS{})
 			}
-			integration.AutoScaleECS.SetAttributes(attributes)
+			integration.AutoScale.SetAttributes(attributes)
 		}
 	}
 	return integration, nil

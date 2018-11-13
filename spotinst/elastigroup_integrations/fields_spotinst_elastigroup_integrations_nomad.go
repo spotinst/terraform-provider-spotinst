@@ -170,17 +170,17 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if integration.AutoScaleNomad == nil {
-			integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleNomad{})
 		}
-		integration.AutoScaleNomad.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if integration.AutoScaleNomad == nil {
-			integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleNomad{})
 		}
-		integration.AutoScaleNomad.SetCooldown(spotinst.Int(v))
+		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -189,10 +189,10 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if headroom != nil {
-			if integration.AutoScaleNomad == nil {
-				integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleNomad{})
 			}
-			integration.AutoScaleNomad.SetHeadroom(headroom)
+			integration.AutoScale.SetHeadroom(headroom)
 		}
 	}
 
@@ -202,10 +202,10 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if down != nil {
-			if integration.AutoScaleNomad == nil {
-				integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleNomad{})
 			}
-			integration.AutoScaleNomad.SetDown(down)
+			integration.AutoScale.SetDown(down)
 		}
 	}
 
@@ -215,10 +215,10 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 			return nil, err
 		}
 		if consts != nil {
-			if integration.AutoScaleNomad == nil {
-				integration.SetAutoScaleNomad(&aws.AutoScaleNomad{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleNomad{})
 			}
-			integration.AutoScaleNomad.SetConstraints(consts)
+			integration.AutoScale.SetConstraints(consts)
 		}
 	}
 	return integration, nil

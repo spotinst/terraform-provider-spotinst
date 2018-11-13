@@ -1,21 +1,21 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: beanstalk_elastigroup"
-sidebar_current: "docs-do-resource-beanstalk_elastigroup"
+page_title: "Spotinst: elastigroup_aws_beanstalk"
+sidebar_current: "docs-do-resource-elastigroup_aws_beanstalk"
 description: |-
  Provides a Spotinst AWS group resource using Elastic Beanstalk.
 ---
 
-# spotinst\_beanstalk\_elastigroup
+# spotinst\_elastigroup\_aws\_beanstalk
 
 Provides a Spotinst AWS group resource using Elastic Beanstalk.
 
 ## Example Usage
 
 ```hcl
-resource "spotinst_beanstalk_elastigroup" "beanstalk-elastigoup" {
+resource "spotinst_elastigroup_aws_beanstalk" "elastigoup-aws=beanstalk" {
 
- name    = "beanstalk-elastigroup"
+ name    = "example-elastigroup-beanstalk"
  region  = "us-west-2"
  product = "Linux/UNIX"
 
@@ -34,7 +34,7 @@ The following arguments are supported:
 
 * `name` - (Required) The group name.
 * `region` - (Required) The AWS region your group will be created in. Cannot be changed after the group has been created.
-* `description` - (Required) The group description.
+* `description` - (Optional) The group description.
 * `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`.
 For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.   
 
@@ -43,5 +43,5 @@ For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VP
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
 
 * `beanstalk_environment_name` - (Required) The name of an existing Beanstalk environment.
-* `instance_types_spot` - (Required) One or more instance types.
+* `instance_types_spot` - (Required) One or more instance types. To maximize the availability of Spot instances, select as many instance types as possible.
 

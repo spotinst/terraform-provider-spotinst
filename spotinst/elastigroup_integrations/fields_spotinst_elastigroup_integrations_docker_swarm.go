@@ -138,17 +138,17 @@ func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if integration.AutoScaleDockerSwarm == nil {
-			integration.SetAutoScaleDockerSwarm(&aws.AutoScaleDockerSwarm{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
 		}
-		integration.AutoScaleDockerSwarm.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if integration.AutoScaleDockerSwarm == nil {
-			integration.SetAutoScaleDockerSwarm(&aws.AutoScaleDockerSwarm{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
 		}
-		integration.AutoScaleDockerSwarm.SetCooldown(spotinst.Int(v))
+		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -157,12 +157,12 @@ func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.
 			return nil, err
 		}
 		if headroom != nil {
-			if integration.AutoScaleDockerSwarm == nil {
-				integration.SetAutoScaleDockerSwarm(&aws.AutoScaleDockerSwarm{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
 			}
-			integration.AutoScaleDockerSwarm.SetHeadroom(headroom)
+			integration.AutoScale.SetHeadroom(headroom)
 		} else {
-			integration.AutoScaleDockerSwarm.Headroom = nil
+			integration.AutoScale.Headroom = nil
 		}
 	}
 
@@ -172,10 +172,10 @@ func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.
 			return nil, err
 		}
 		if down != nil {
-			if integration.AutoScaleDockerSwarm == nil {
-				integration.SetAutoScaleDockerSwarm(&aws.AutoScaleDockerSwarm{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
 			}
-			integration.AutoScaleDockerSwarm.SetDown(down)
+			integration.AutoScale.SetDown(down)
 		}
 	}
 
