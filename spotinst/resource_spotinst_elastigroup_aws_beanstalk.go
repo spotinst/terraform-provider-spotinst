@@ -11,13 +11,13 @@ import (
 
 	"context"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/beanstalk_elastigroup"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_beanstalk"
 	"strings"
 	"time"
 )
 
-func resourceSpotinstBeanstalkElastigroup() *schema.Resource {
-	setupElasticBeanstalk()
+func resourceSpotinstElastigroupAWSBeanstalk() *schema.Resource {
+	setupElastigroupAWSBeanstalk()
 	return &schema.Resource{
 		Create: resourceSpotinstAWSBeanstalkGroupCreate,
 		Read:   resourceSpotinstAWSBeanstalkGroupRead,
@@ -28,16 +28,16 @@ func resourceSpotinstBeanstalkElastigroup() *schema.Resource {
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: commons.ElasticBeanstalkResource.GetSchemaMap(),
+		Schema: commons.ElastigroupAWSBeanstalkResource.GetSchemaMap(),
 	}
 }
 
-func setupElasticBeanstalk() {
+func setupElastigroupAWSBeanstalk() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
-	beanstalk_elastigroup.Setup(fieldsMap)
+	elastigroup_aws_beanstalk.Setup(fieldsMap)
 
-	commons.ElasticBeanstalkResource = commons.NewElasticBeanstalkResource(fieldsMap)
+	commons.ElastigroupAWSBeanstalkResource = commons.NewElastigroupAWSBeanstalkResource(fieldsMap)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -123,7 +123,7 @@ func toggleMaintenanceMode(resourceData *schema.ResourceData, meta interface{}, 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstAWSBeanstalkGroupCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Print(string(commons.ResourceOnCreate),
-		commons.ElasticBeanstalkResource.GetName())
+		commons.ElastigroupAWSBeanstalkResource.GetName())
 
 	beanstalkGroup, err := importBeanstalkGroup(resourceData, meta.(*Client))
 	if err != nil {
@@ -134,7 +134,7 @@ func resourceSpotinstAWSBeanstalkGroupCreate(resourceData *schema.ResourceData, 
 		return fmt.Errorf("[ERROR] Failed to import group. Does the Beanstalk environment exist?")
 	}
 
-	tempGroup, err := commons.ElasticBeanstalkResource.OnCreate(beanstalkGroup, resourceData, meta)
+	tempGroup, err := commons.ElastigroupAWSBeanstalkResource.OnCreate(beanstalkGroup, resourceData, meta)
 	if err != nil {
 		return err
 	}
@@ -190,7 +190,7 @@ func createBeanstalkGroup(beanstalkGroup *aws.Group, spotinstClient *Client) (*s
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstAWSBeanstalkGroupRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
-	log.Printf(string(commons.ResourceOnRead), commons.ElasticBeanstalkResource.GetName(), id)
+	log.Printf(string(commons.ResourceOnRead), commons.ElastigroupAWSBeanstalkResource.GetName(), id)
 
 	input := &aws.ReadGroupInput{GroupID: spotinst.String(id)}
 	resp, err := meta.(*Client).elastigroup.CloudProviderAWS().Read(context.Background(), input)
@@ -217,7 +217,7 @@ func resourceSpotinstAWSBeanstalkGroupRead(resourceData *schema.ResourceData, me
 		return nil
 	}
 
-	if err := commons.ElasticBeanstalkResource.OnRead(groupResponse, resourceData, meta); err != nil {
+	if err := commons.ElastigroupAWSBeanstalkResource.OnRead(groupResponse, resourceData, meta); err != nil {
 		return err
 	}
 
@@ -231,14 +231,14 @@ func resourceSpotinstAWSBeanstalkGroupRead(resourceData *schema.ResourceData, me
 func resourceSpotinstAWSBeanstalkGroupUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
-		commons.ElasticBeanstalkResource.GetName(), id)
+		commons.ElastigroupAWSBeanstalkResource.GetName(), id)
 
-	shouldUpdate, beanstalkElastigroup, err := commons.ElasticBeanstalkResource.OnUpdate(resourceData, meta)
+	shouldUpdate, elastigroupBeanstalk, err := commons.ElastigroupAWSBeanstalkResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
-	maint, err := commons.ElasticBeanstalkResource.MaintenanceState(resourceData, meta)
+	maint, err := commons.ElastigroupAWSBeanstalkResource.MaintenanceState(resourceData, meta)
 	if err != nil {
 		return err
 	}
@@ -248,8 +248,8 @@ func resourceSpotinstAWSBeanstalkGroupUpdate(resourceData *schema.ResourceData, 
 		return maintErr
 	}
 	if shouldUpdate {
-		beanstalkElastigroup.SetId(spotinst.String(id))
-		if err := updateGroup(beanstalkElastigroup, resourceData, meta); err != nil {
+		elastigroupBeanstalk.SetId(spotinst.String(id))
+		if err := updateGroup(elastigroupBeanstalk, resourceData, meta); err != nil {
 			return err
 		}
 	}

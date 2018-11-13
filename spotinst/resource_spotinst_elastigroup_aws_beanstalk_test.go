@@ -13,14 +13,14 @@ import (
 	"log"
 )
 
-func createBeanstalkElastigroupResourceName(name string) string {
-	return fmt.Sprintf("%v.%v", string(commons.BeanstalkElastigroupResourceName), name)
+func createElastigroupAWSBeanstalkResourceName(name string) string {
+	return fmt.Sprintf("%v.%v", string(commons.ElastigroupAWSBeanstalkResourceName), name)
 }
 
-func testBeanstalkElastigroupDestroy(s *terraform.State) error {
+func testElastigroupAWSBeanstalkDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != string(commons.BeanstalkElastigroupResourceName) {
+		if rs.Type != string(commons.ElastigroupAWSBeanstalkResourceName) {
 			continue
 		}
 		input := &aws.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
@@ -32,7 +32,7 @@ func testBeanstalkElastigroupDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testCheckBeanstalkElastigroupAttributes(group *aws.Group, expectedName string) resource.TestCheckFunc {
+func testCheckElastigroupAWSBeanstalkAttributes(group *aws.Group, expectedName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if spotinst.StringValue(group.Name) != expectedName {
 			return fmt.Errorf("bad content: %v", group.Name)
@@ -41,7 +41,7 @@ func testCheckBeanstalkElastigroupAttributes(group *aws.Group, expectedName stri
 	}
 }
 
-func testCheckBeanstalkElastigroupExists(group *aws.Group, resourceName string) resource.TestCheckFunc {
+func testCheckElastigroupAWSBeanstalkExists(group *aws.Group, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -70,7 +70,7 @@ type BeanstalkGroupConfigMetadata struct {
 	updateBaselineFields bool
 }
 
-func createBeanstalkElastigroupTerraform(gcm *BeanstalkGroupConfigMetadata) string {
+func createElastigroupAWSBeanstalkTerraform(gcm *BeanstalkGroupConfigMetadata) string {
 	if gcm == nil {
 		return ""
 	}
@@ -96,22 +96,22 @@ func createBeanstalkElastigroupTerraform(gcm *BeanstalkGroupConfigMetadata) stri
 }
 
 // region Beanstalk Elastigroup: Baseline
-func TestAccSpotinstBeanstalkElastigroup_Baseline(t *testing.T) {
+func TestAccSpotinstElastigroupAWSBeanstalk_Baseline(t *testing.T) {
 	groupName := "beanstalk-baseline"
-	resourceName := createBeanstalkElastigroupResourceName(groupName)
+	resourceName := createElastigroupAWSBeanstalkResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    TestAccProviders,
-		CheckDestroy: testBeanstalkElastigroupDestroy,
+		CheckDestroy: testElastigroupAWSBeanstalkDestroy,
 
 		Steps: []resource.TestStep{
 			{
-				Config: createBeanstalkElastigroupTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName}),
+				Config: createElastigroupAWSBeanstalkTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName}),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckBeanstalkElastigroupExists(&group, resourceName),
-					testCheckBeanstalkElastigroupAttributes(&group, groupName),
+					testCheckElastigroupAWSBeanstalkExists(&group, resourceName),
+					testCheckElastigroupAWSBeanstalkAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
@@ -122,10 +122,10 @@ func TestAccSpotinstBeanstalkElastigroup_Baseline(t *testing.T) {
 				),
 			},
 			{
-				Config: createBeanstalkElastigroupTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName, updateBaselineFields: true}),
+				Config: createElastigroupAWSBeanstalkTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName, updateBaselineFields: true}),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckBeanstalkElastigroupExists(&group, resourceName),
-					testCheckBeanstalkElastigroupAttributes(&group, groupName),
+					testCheckElastigroupAWSBeanstalkExists(&group, resourceName),
+					testCheckElastigroupAWSBeanstalkAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "3"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "1"),
@@ -141,7 +141,7 @@ func TestAccSpotinstBeanstalkElastigroup_Baseline(t *testing.T) {
 }
 
 const testBaselineBeanstalkGroupConfig_Create = `
-resource "` + string(commons.BeanstalkElastigroupResourceName) + `" "%v" {
+resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
 
  name 	 = "%v"
  product = "Linux/UNIX"
@@ -159,7 +159,7 @@ resource "` + string(commons.BeanstalkElastigroupResourceName) + `" "%v" {
 `
 
 const testBaselineBeanstalkGroupConfig_Update = `
-resource "` + string(commons.BeanstalkElastigroupResourceName) + `" "%v" {
+resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
 
  name 	 = "%v"
  product = "Linux/UNIX"

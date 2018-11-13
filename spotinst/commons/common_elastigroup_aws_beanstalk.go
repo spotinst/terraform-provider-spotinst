@@ -11,16 +11,16 @@ import (
 //            Variables
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
-	BeanstalkElastigroupResourceName ResourceName = "spotinst_beanstalk_elastigroup"
+	ElastigroupAWSBeanstalkResourceName ResourceName = "spotinst_elastigroup_aws_beanstalk"
 )
 
-var ElasticBeanstalkResource *ElasticBeanstalkTerraformResource
+var ElastigroupAWSBeanstalkResource *ElastigroupAWSBeanstalkTerraformResource
 
-type ElasticBeanstalkTerraformResource struct {
+type ElastigroupAWSBeanstalkTerraformResource struct {
 	GenericResource // embedding
 }
 
-type BeanStalkElastigroupWrapper struct {
+type ElastigroupAWSBeanstalkWrapper struct {
 	elastigroup              *aws.Group
 	BeanstalkEnvironmentName string
 
@@ -34,16 +34,16 @@ type BeanStalkElastigroupWrapper struct {
 	StatusEbsBlockDeviceUpdated       bool
 }
 
-func NewElasticBeanstalkResource(fieldsMap map[FieldName]*GenericField) *ElasticBeanstalkTerraformResource {
-	return &ElasticBeanstalkTerraformResource{
+func NewElastigroupAWSBeanstalkResource(fieldsMap map[FieldName]*GenericField) *ElastigroupAWSBeanstalkTerraformResource {
+	return &ElastigroupAWSBeanstalkTerraformResource{
 		GenericResource: GenericResource{
-			resourceName: BeanstalkElastigroupResourceName,
+			resourceName: ElastigroupAWSBeanstalkResourceName,
 			fields:       NewGenericFields(fieldsMap),
 		},
 	}
 }
 
-func (res *ElasticBeanstalkTerraformResource) OnCreate(
+func (res *ElastigroupAWSBeanstalkTerraformResource) OnCreate(
 	importedGroup *aws.Group,
 	resourceData *schema.ResourceData,
 	meta interface{}) (*aws.Group, error) {
@@ -55,8 +55,8 @@ func (res *ElasticBeanstalkTerraformResource) OnCreate(
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	beanstalkGroupWrapper := NewBeanstalkElastigroupWrapper()
-	beanstalkGroupWrapper.SetBeanstalkElastigroup(importedGroup)
+	beanstalkGroupWrapper := NewElastigroupAWSBeanstalkWrapper()
+	beanstalkGroupWrapper.SetElastigroupAWSBeanstalk(importedGroup)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
@@ -68,10 +68,10 @@ func (res *ElasticBeanstalkTerraformResource) OnCreate(
 			return nil, err
 		}
 	}
-	return beanstalkGroupWrapper.GetBeanstalkElastigroup(), nil
+	return beanstalkGroupWrapper.GetElastigroupAWSBeanstalk(), nil
 }
 
-func (res *ElasticBeanstalkTerraformResource) OnRead(
+func (res *ElastigroupAWSBeanstalkTerraformResource) OnRead(
 	elastigroup *aws.Group,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
@@ -80,8 +80,8 @@ func (res *ElasticBeanstalkTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	beanstalkWrapper := NewBeanstalkElastigroupWrapper()
-	beanstalkWrapper.SetBeanstalkElastigroup(elastigroup)
+	beanstalkWrapper := NewElastigroupAWSBeanstalkWrapper()
+	beanstalkWrapper.SetElastigroupAWSBeanstalk(elastigroup)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
@@ -95,14 +95,14 @@ func (res *ElasticBeanstalkTerraformResource) OnRead(
 	return nil
 }
 
-func (res *ElasticBeanstalkTerraformResource) OnUpdate(
+func (res *ElastigroupAWSBeanstalkTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
 	meta interface{}) (bool, *aws.Group, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
-	beanstalkWrapper := NewBeanstalkElastigroupWrapper()
+	beanstalkWrapper := NewElastigroupAWSBeanstalkWrapper()
 	hasChanged := false
 
 	for _, field := range res.fields.fieldsMap {
@@ -118,10 +118,10 @@ func (res *ElasticBeanstalkTerraformResource) OnUpdate(
 		}
 	}
 
-	return hasChanged, beanstalkWrapper.GetBeanstalkElastigroup(), nil
+	return hasChanged, beanstalkWrapper.GetElastigroupAWSBeanstalk(), nil
 }
 
-func (res *ElasticBeanstalkTerraformResource) MaintenanceState(
+func (res *ElastigroupAWSBeanstalkTerraformResource) MaintenanceState(
 	resourceData *schema.ResourceData,
 	meta interface{}) (string, error) {
 	op := "NONE"
@@ -137,8 +137,8 @@ func (res *ElasticBeanstalkTerraformResource) MaintenanceState(
 // Reason is that there are multiple fields who share the same elastigroup API object
 // e.g. LoadBalancersConfig fields and BlockDeviceMapping fields
 // Wrapper struct intended to help reflecting these fields state properly into the elastigroup object.
-func NewBeanstalkElastigroupWrapper() *BeanStalkElastigroupWrapper {
-	return &BeanStalkElastigroupWrapper{
+func NewElastigroupAWSBeanstalkWrapper() *ElastigroupAWSBeanstalkWrapper {
+	return &ElastigroupAWSBeanstalkWrapper{
 		elastigroup: &aws.Group{
 			Scaling:     &aws.Scaling{},
 			Scheduling:  &aws.Scheduling{},
@@ -157,11 +157,11 @@ func NewBeanstalkElastigroupWrapper() *BeanStalkElastigroupWrapper {
 	}
 }
 
-func (egWrapper *BeanStalkElastigroupWrapper) GetBeanstalkElastigroup() *aws.Group {
+func (egWrapper *ElastigroupAWSBeanstalkWrapper) GetElastigroupAWSBeanstalk() *aws.Group {
 	return egWrapper.elastigroup
 }
 
-func (egWrapper *BeanStalkElastigroupWrapper) SetBeanstalkElastigroup(elastigroup *aws.Group) {
+func (egWrapper *ElastigroupAWSBeanstalkWrapper) SetElastigroupAWSBeanstalk(elastigroup *aws.Group) {
 	egWrapper.elastigroup = elastigroup
 }
 
