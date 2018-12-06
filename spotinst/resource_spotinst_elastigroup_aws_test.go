@@ -3719,3 +3719,76 @@ const testUpdatePolicyGroupConfig_EmptyFields = `
 `
 
 // endregion
+
+// region Wait for Capacity
+
+func TestAccSpotinstElastigroup_WaitForCapacity(t *testing.T) {
+	groupName := "eg-update-policy"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAwaitCapacity_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity_timeout", "30"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAwaitCapacity_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity_timeout", "0"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAwaitCapacity_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity_timeout", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAwaitCapacity_Create = `
+	wait_for_capacity = 0
+    wait_for_capacity_timeout = 30
+`
+
+const testAwaitCapacity_Update = `
+	wait_for_capacity = 0
+    wait_for_capacity_timeout = 0
+`
+
+const testAwaitCapacity_EmptyFields = `
+
+`
+
+// endregion

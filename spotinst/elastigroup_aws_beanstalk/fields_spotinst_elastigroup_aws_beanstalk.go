@@ -1,4 +1,4 @@
-package beanstalk_elastigroup
+package elastigroup_aws_beanstalk
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -21,8 +21,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		// onRead
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			var value *string = nil
 			if beanstalkGroup.Name != nil {
 				value = beanstalkGroup.Name
@@ -34,15 +34,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		// onCreate
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			beanstalkGroup.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
 		},
 		// onUpdate
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			beanstalkGroup.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
 		},
@@ -50,15 +50,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Region] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		Region,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			var value *string = nil
 			if beanstalkGroup.Region != nil {
 				value = beanstalkGroup.Region
@@ -69,8 +69,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			if v, ok := resourceData.GetOk(string(Region)); ok {
 				beanstalkGroup.SetRegion(spotinst.String(v.(string)))
 			}
@@ -85,15 +85,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Product] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		Product,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			var value *string = nil
 			if beanstalkGroup.Compute != nil && beanstalkGroup.Compute.Product != nil {
 				value = beanstalkGroup.Compute.Product
@@ -104,8 +104,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			beanstalkGroup.Compute.SetProduct(spotinst.String(resourceData.Get(string(Product)).(string)))
 			return nil
 		},
@@ -118,15 +118,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Minimum] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		Minimum,
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			var value *int = nil
 			if beanstalkGroup.Capacity != nil && beanstalkGroup.Capacity.Minimum != nil {
 				value = beanstalkGroup.Capacity.Minimum
@@ -137,16 +137,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			if v, ok := resourceData.Get(string(Minimum)).(int); ok && v >= 0 {
 				beanstalkGroup.Capacity.SetMinimum(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			if v, ok := resourceData.Get(string(Minimum)).(int); ok && v >= 0 {
 				beanstalkGroup.Capacity.SetMinimum(spotinst.Int(v))
 			}
@@ -156,15 +156,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Maximum] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		Maximum,
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			var value *int = nil
 			if beanstalkGroup.Capacity != nil && beanstalkGroup.Capacity.Maximum != nil {
 				value = beanstalkGroup.Capacity.Maximum
@@ -175,8 +175,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 
 			if v, ok := resourceData.Get(string(Maximum)).(int); ok && v >= 0 {
 				beanstalkGroup.Capacity.SetMaximum(spotinst.Int(v))
@@ -184,8 +184,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			if v, ok := resourceData.Get(string(Maximum)).(int); ok && v >= 0 {
 				beanstalkGroup.Capacity.SetMaximum(spotinst.Int(v))
 			}
@@ -195,15 +195,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Target] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		Target,
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			var value *int = nil
 			if beanstalkGroup.Capacity != nil && beanstalkGroup.Capacity.Target != nil {
 				value = beanstalkGroup.Capacity.Target
@@ -214,8 +214,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 
 			if v, ok := resourceData.Get(string(Target)).(int); ok && v >= 0 {
 				beanstalkGroup.Capacity.SetTarget(spotinst.Int(v))
@@ -223,8 +223,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 			if v, ok := resourceData.Get(string(Target)).(int); ok && v >= 0 {
 				beanstalkGroup.Capacity.SetTarget(spotinst.Int(v))
 			}
@@ -234,7 +234,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[BeanstalkEnvironmentName] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		BeanstalkEnvironmentName,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -255,7 +255,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[SpotInstanceTypes] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		SpotInstanceTypes,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -263,8 +263,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 
 			var value []string = nil
 			if beanstalkGroup.Compute != nil && beanstalkGroup.Compute.InstanceTypes != nil && beanstalkGroup.Compute.InstanceTypes.Spot != nil {
@@ -276,8 +276,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 
 			if v, ok := resourceData.GetOk(string(SpotInstanceTypes)); ok && v != nil {
 				if spotTypes, err := expandElastigroupInstanceTypesList(v); err != nil {
@@ -290,8 +290,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			beanstalkWrapper := resourceObject.(*commons.BeanStalkElastigroupWrapper)
-			beanstalkGroup := beanstalkWrapper.GetBeanstalkElastigroup()
+			beanstalkWrapper := resourceObject.(*commons.ElastigroupAWSBeanstalkWrapper)
+			beanstalkGroup := beanstalkWrapper.GetElastigroupAWSBeanstalk()
 
 			if v, ok := resourceData.GetOk(string(SpotInstanceTypes)); ok && v != nil {
 				if spotTypes, err := expandElastigroupInstanceTypesList(v); err != nil {
@@ -306,7 +306,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Maintenance] = commons.NewGenericField(
-		commons.BeanstalkElastigroup,
+		commons.ElastigroupAWSBeanstalk,
 		Maintenance,
 		&schema.Schema{
 			Type:     schema.TypeString,
