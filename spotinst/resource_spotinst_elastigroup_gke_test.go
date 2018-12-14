@@ -19,7 +19,7 @@ func createElastigroupGKEResourceName(name string) string {
 
 // testElastigroupGKEDestroy checks whether a group has been destroyed and returns an error if it still exists
 func testElastigroupGKEDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Client)
+	client := testAccProviderGCP.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != string(commons.ElastigroupGKEResourceName) {
 			continue
@@ -54,7 +54,7 @@ func testCheckElastigroupGKEExists(group *gcp.Group, resourceName string) resour
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("no resource ID is set")
 		}
-		client := testAccProvider.Meta().(*Client)
+		client := testAccProviderGCP.Meta().(*Client)
 		input := &gcp.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.elastigroup.CloudProviderGCP().Read(context.Background(), input)
 		if err != nil {
@@ -71,6 +71,7 @@ func testCheckElastigroupGKEExists(group *gcp.Group, resourceName string) resour
 // GKEGroupConfigMetadata holds blocks of attributes defined as strings that are used to build a Terraform resource
 type GKEGroupConfigMetadata struct {
 	variables            string
+	provider             string
 	groupName            string
 	instanceTypes        string
 	strategy             string
@@ -82,10 +83,12 @@ type GKEGroupConfigMetadata struct {
 // This function appends attribute blocks defined as string later in this file.
 // These blocks should have fields required for a bare-minimum group to be created.
 func createElastigroupGKETerraform(gcm *GKEGroupConfigMetadata) string {
-	//os.Setenv("SPOTINST_ACCOUNT", "act-cca49da4")
-	//os.Setenv("SPOTINST_TOKEN", "")
 	if gcm == nil {
 		return ""
+	}
+
+	if gcm.provider == "" {
+		gcm.provider = "gcp"
 	}
 
 	if gcm.instanceTypes == "" {
@@ -96,12 +99,18 @@ func createElastigroupGKETerraform(gcm *GKEGroupConfigMetadata) string {
 		gcm.strategy = testStrategyGKEGroupConfig_Create
 	}
 
-	template := ""
+	template :=
+		`provider "gcp" {
+	 token   = "fake"
+	 account = "fake"
+	}
+	`
 	if gcm.updateBaselineFields {
 		format := testBaselineGKEGroupConfig_Update
 
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.groupName,
+			gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.strategy,
@@ -110,8 +119,9 @@ func createElastigroupGKETerraform(gcm *GKEGroupConfigMetadata) string {
 	} else {
 		format := testBaselineGKEGroupConfig_Create
 
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.groupName,
+			gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.strategy,
@@ -134,7 +144,7 @@ func TestAccSpotinstElastigroupGKE_Baseline(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupGKEDestroy,
 
@@ -167,6 +177,7 @@ func TestAccSpotinstElastigroupGKE_Baseline(t *testing.T) {
 
 const testBaselineGKEGroupConfig_Create = `
 resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
+ provider = "%v"
 
  name = "%v"
  cluster_id = "terraform-acc-test-cluster"
@@ -188,6 +199,7 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
 
 const testBaselineGKEGroupConfig_Update = `
 resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
+ provider = "%v"
 
  name = "%v"
  cluster_id = "terraform-acc-test-cluster"
@@ -216,7 +228,7 @@ func TestAccSpotinstElastigroupGKE_InstanceTypes(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupGKEDestroy,
 
@@ -277,7 +289,7 @@ func TestAccSpotinstElastigroupGKE_Strategy(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGKEDestroy,
 		IDRefreshName: resourceName,

@@ -20,7 +20,7 @@ func createElastigroupGCPResourceName(name string) string {
 
 // testElastigroupGCPDestroy checks whether a group has been destroyed and returns an error if it still exists
 func testElastigroupGCPDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Client)
+	client := testAccProviderGCP.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != string(commons.ElastigroupGCPResourceName) {
 			continue
@@ -55,7 +55,7 @@ func testCheckElastigroupGCPExists(group *gcp.Group, resourceName string) resour
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("no resource ID is set")
 		}
-		client := testAccProvider.Meta().(*Client)
+		client := testAccProviderGCP.Meta().(*Client)
 		input := &gcp.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.elastigroup.CloudProviderGCP().Read(context.Background(), input)
 		if err != nil {
@@ -71,13 +71,13 @@ func testCheckElastigroupGCPExists(group *gcp.Group, resourceName string) resour
 
 // GCPGroupConfigMetadata holds blocks of attributes defined as strings that are used to build a Terraform resource
 type GCPGroupConfigMetadata struct {
-	variables     string
-	groupName     string
-	instanceTypes string
-	launchConfig  string
-	disk          string
-	strategy      string
-	//health               string
+	variables            string
+	provider             string
+	groupName            string
+	instanceTypes        string
+	launchConfig         string
+	disk                 string
+	strategy             string
 	fieldsToAppend       string
 	updateBaselineFields bool
 }
@@ -86,10 +86,12 @@ type GCPGroupConfigMetadata struct {
 // This function appends attribute blocks defined as string later in this file.
 // These blocks should have fields required for a bare-minimum group to be created.
 func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
-	//os.Setenv("SPOTINST_ACCOUNT", "act-cca49da4")
-	//os.Setenv("SPOTINST_TOKEN", "")
 	if gcm == nil {
 		return ""
+	}
+
+	if gcm.provider == "" {
+		gcm.provider = "gcp"
 	}
 
 	if gcm.instanceTypes == "" {
@@ -108,16 +110,18 @@ func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
 		gcm.strategy = testStrategyGCPGroupConfig_Create
 	}
 
-	//if gcm.health == "" {
-	//	gcm.health = testHealthChecksGCPGroupConfig_Create
-	//}
-
-	template := ""
+	template :=
+		`provider "gcp" {
+	 token   = "fake"
+	 account = "fake"
+	}
+	`
 	if gcm.updateBaselineFields {
 		format := testBaselineGCPGroupConfig_Update
 
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.groupName,
+			gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
@@ -128,8 +132,9 @@ func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
 	} else {
 		format := testBaselineGCPGroupConfig_Create
 
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.groupName,
+			gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
@@ -154,13 +159,15 @@ func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupGCPDestroy,
 
 		Steps: []resource.TestStep{
 			{
-				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{groupName: groupName}),
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName: groupName,
+				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
@@ -172,7 +179,10 @@ func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
 				),
 			},
 			{
-				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{groupName: groupName, updateBaselineFields: true}),
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName:            groupName,
+					updateBaselineFields: true,
+				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
@@ -189,6 +199,7 @@ func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
 
 const testBaselineGCPGroupConfig_Create = `
 resource "` + string(commons.ElastigroupGCPResourceName) + `" "%v" {
+ provider = "%v"
 
  name = "%v"
  description = "created by Terraform"
@@ -211,6 +222,7 @@ resource "` + string(commons.ElastigroupGCPResourceName) + `" "%v" {
 
 const testBaselineGCPGroupConfig_Update = `
 resource "` + string(commons.ElastigroupGCPResourceName) + `" "%v" {
+ provider = "%v"
 
  name = "%v"
  description = "created by Terraform"
@@ -240,7 +252,7 @@ func TestAccSpotinstElastigroupGCP_InstanceTypes(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupGCPDestroy,
 
@@ -301,7 +313,7 @@ func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -506,7 +518,7 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -644,7 +656,7 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -723,7 +735,7 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -801,7 +813,7 @@ func TestAccSpotinstElastigroupGCP_HealthChecks(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -877,7 +889,7 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -1024,7 +1036,7 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -1176,7 +1188,7 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
@@ -1328,7 +1340,7 @@ func TestAccSpotinstElastigroupGCP_Subnets(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupGCPDestroy,
 		IDRefreshName: resourceName,
