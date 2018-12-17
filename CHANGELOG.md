@@ -1,4 +1,32 @@
 ## 1.5.0 (Unreleased)
+
+NOTES:
+
+* resource/spotinst_elastigroup_aws_beanstalk: Added a new `elastigroup_aws_beanstalk` resource for creating Spotinst elastigroups that are managed by an existing AWS Elastic Beanstalk
+
+FEATURES:
+
+* *New Resource*: `spotinst_elastigroup_aws_beanstalk`
+* *New Feature*: spotinst provider version added to the User-Agent header
+
+ENHANCEMENTS:
+
+* resource/spotinst_elastigroup_aws_beanstalk: Added a the ability to transition in and out of maintenance modes by setting `maintenance` mode to `START` or `END`
+* resource/spotinst_elastigroup_aws: Added the ability to wait for a minimum number of healthy instances for a certain period of time
+* resource/spotinst_elastigroup_aws: Added ability to maintain scaling policy configuration when disabled
+* resource/spotinst_elastigroup_aws: Scheduled tasks now support `adjustment` field
+* resource/spotinst_elastigroup_aws: Rancher integration now supports `version` field
+* resource/spotinst_elastigroup_aws: Use new `wait_for_capacity` field to indicate the minimum number of healthy instances required before continuing plan execution
+* resource/spotinst_elastigroup_aws: Use new `wait_for_capacity_timeout` to indicate how long to wait for minimum number of instances to become healthy
+* resource/spotinst_elastigroup_aws: Use new `is_enabled` field in scaling policies to indicate if that policy is active
+* resource/spotinst_elastigroup_aws: Use new `adjustment` field in `scheduled_tasks` to indicate the number of instances to add or remove when scaling
+
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: `user_data` and `shutdown_script` no longer updates to empty string SHA
+* resource/spotinst_elastigroup_aws: Fixed an issue of `tags`, `instance_types_spot` and `instance_types_preferred_spot` not being imported properly 
+* resource/spotinst_elastigroup_aws: Fixed an issue where `associate_public_ip` incorrectly defaulting to `false` when undefined
+
 ## 1.4.0 (September 13, 2018)
 
 ENHANCEMENTS:
