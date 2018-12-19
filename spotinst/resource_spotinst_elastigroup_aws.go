@@ -184,7 +184,7 @@ func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, met
 
 	if capacity, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacity)); ok {
 		if *elastigroup.Capacity.Target < capacity.(int) {
-			return fmt.Errorf("[ERROR] You've asked to wait for a healthy capacity that is above your desired capacity")
+			return fmt.Errorf("[ERROR] Your target healthy capacity must be less than or equal to your desired capcity")
 		}
 		if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
 			err := awaitReady(groupId, timeout.(int), capacity.(int), meta.(*Client))

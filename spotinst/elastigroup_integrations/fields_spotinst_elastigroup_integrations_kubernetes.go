@@ -181,24 +181,24 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
-		if integration.AutoScaleKubernetes == nil {
-			integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleKubernetes{})
 		}
-		integration.AutoScaleKubernetes.SetIsEnabled(spotinst.Bool(v))
+		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
-		if integration.AutoScaleKubernetes == nil {
-			integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleKubernetes{})
 		}
-		integration.AutoScaleKubernetes.SetCooldown(spotinst.Int(v))
+		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
 
 	if v, ok := m[string(AutoscaleIsAutoConfig)].(bool); ok {
-		if integration.AutoScaleKubernetes == nil {
-			integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
+		if integration.AutoScale == nil {
+			integration.SetAutoScale(&aws.AutoScaleKubernetes{})
 		}
-		integration.AutoScaleKubernetes.SetIsAutoConfig(spotinst.Bool(v))
+		integration.AutoScale.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
@@ -207,10 +207,10 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			return nil, err
 		}
 		if headroom != nil {
-			if integration.AutoScaleKubernetes == nil {
-				integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleKubernetes{})
 			}
-			integration.AutoScaleKubernetes.SetHeadroom(headroom)
+			integration.AutoScale.SetHeadroom(headroom)
 		}
 	}
 
@@ -220,10 +220,10 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			return nil, err
 		}
 		if down != nil {
-			if integration.AutoScaleKubernetes == nil {
-				integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleKubernetes{})
 			}
-			integration.AutoScaleKubernetes.SetDown(down)
+			integration.AutoScale.SetDown(down)
 		}
 	}
 
@@ -233,10 +233,10 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 			return nil, err
 		}
 		if labels != nil {
-			if integration.AutoScaleKubernetes == nil {
-				integration.SetAutoScaleKubernetes(&aws.AutoScaleKubernetes{})
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleKubernetes{})
 			}
-			integration.AutoScaleKubernetes.SetLabels(labels)
+			integration.AutoScale.SetLabels(labels)
 		}
 	}
 	return integration, nil
