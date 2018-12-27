@@ -650,8 +650,8 @@
 		{
 			"checksumSHA1": "b9DlXMjXDI8h1DP4zlKxxFrj65M=",
 			"path": "github.com/spotinst/spotinst-sdk-go",
-			"revision": "ff6711c6b708499951f8895e641893cc3eb45d00",
-			"revisionTime": "2018-12-18T17:42:01Z"
+			"revision": "b03710cea58b3bb7e42acda2a99ff9fe9056801d",
+			"revisionTime": "2018-12-21T02:26:45Z"
 		},
 		{
 			"checksumSHA1": "JQyFEX8KOOlEDTEP5rG0JJt5TtE=",
@@ -672,10 +672,10 @@
 			"revisionTime": "2018-12-18T17:42:01Z"
 		},
 		{
-			"checksumSHA1": "g1C1fGutZs1MSvzHjrEUKFrNt34=",
+			"checksumSHA1": "WVEXdHju6DjQXn7+MIDbRvS/WuM=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp",
-			"revision": "533861944a7f7479411542e16282ce9e72fa613d",
-			"revisionTime": "2018-12-21T00:18:36Z"
+			"revision": "b03710cea58b3bb7e42acda2a99ff9fe9056801d",
+			"revisionTime": "2018-12-21T02:26:45Z"
 		},
 		{
 			"checksumSHA1": "KfARJ4Tsb0rNvxRMNgSVBG2yUag=",
