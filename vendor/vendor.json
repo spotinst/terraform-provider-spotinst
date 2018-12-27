@@ -672,11 +672,10 @@
 			"revisionTime": "2018-12-18T17:42:01Z"
 		},
 		{
-			"checksumSHA1": "UMcVGg6pUH3oKWfPHUJmY2EKI9Y=",
-			"origin": "github.com/terraform-providers/terraform-provider-spotinst/vendor/github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp",
+			"checksumSHA1": "g1C1fGutZs1MSvzHjrEUKFrNt34=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp",
-			"revision": "ff6711c6b708499951f8895e641893cc3eb45d00",
-			"revisionTime": "2018-12-18T17:42:01Z"
+			"revision": "533861944a7f7479411542e16282ce9e72fa613d",
+			"revisionTime": "2018-12-21T00:18:36Z"
 		},
 		{
 			"checksumSHA1": "KfARJ4Tsb0rNvxRMNgSVBG2yUag=",
