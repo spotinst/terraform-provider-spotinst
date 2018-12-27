@@ -1,9 +1,9 @@
-package beanstalk_elastigroup
+package elastigroup_aws_beanstalk
 
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	Prefix = "beanstalk_elastigroup_"
+	Prefix = "elastigroup_aws_beanstalk"
 )
 
 const (

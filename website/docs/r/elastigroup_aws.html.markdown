@@ -150,7 +150,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
     * `instance_type` - (Required) Name of instance type (String).
 
 * `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.
-* `wait_for_capacity` - (Optional) Minimum number of instances in a 'HEALTHY' status that is required before continuing.
+* `wait_for_capacity` - (Optional) Minimum number of instances in a 'HEALTHY' status that is required before continuing. Cannot exceed `desired_capacity`.
 * `wait_for_capacity_timeout` - (Optional) Time (seconds) to wait for instances to report a 'HEALTHY' status. Useful for plans with multiple dependencies that take some time to initialize. Leave undefined or set to `0` to indicate no wait.
 * `orientation` - (Required, Default: `"balanced"`) Select a prediction strategy. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
@@ -298,6 +298,7 @@ Usage:
     statistic   = "average"
     unit        = ""
     cooldown    = 60
+    is_enabled  = false
     
     dimensions = {
         name  = "name-1"
