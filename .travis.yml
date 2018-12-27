@@ -23,7 +23,6 @@ script:
 branches:
   only:
   - master
-  - develop-official
 matrix:
   fast_finish: true
   allow_failures:
