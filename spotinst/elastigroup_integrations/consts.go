@@ -32,6 +32,7 @@ const (
 	IntegrationRancher commons.FieldName = "integration_rancher"
 	AccessKey          commons.FieldName = "access_key"
 	SecretKey          commons.FieldName = "secret_key"
+	Version            commons.FieldName = "version"
 	// -----------------------------------
 
 	// - ECS -----------------------------

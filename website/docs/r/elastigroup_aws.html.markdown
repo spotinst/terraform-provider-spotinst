@@ -53,6 +53,9 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   orientation           = "balanced"
   fallback_to_ondemand  = false
+  
+  wait_for_capacity = 5
+  wait_for_capacity_timeout = 300
 
   scaling_up_policy {
     policy_name        = "Default Scaling Up Policy"
@@ -147,6 +150,8 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
     * `instance_type` - (Required) Name of instance type (String).
 
 * `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.
+* `wait_for_capacity` - (Optional) Minimum number of instances in a 'HEALTHY' status that is required before continuing. Cannot exceed `desired_capacity`.
+* `wait_for_capacity_timeout` - (Optional) Time (seconds) to wait for instances to report a 'HEALTHY' status. Useful for plans with multiple dependencies that take some time to initialize. Leave undefined or set to `0` to indicate no wait.
 * `orientation` - (Required, Default: `"balanced"`) Select a prediction strategy. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
@@ -255,6 +260,7 @@ Each `scaling_*_policy` supports the following:
 * `policy_name` - (Required) The name of the policy.
 * `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
 * `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
+* `is_enabled` - (Optional, Default: `true`) Specifies whether the scaling policy described in this block is enabled.
 * `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
 * `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
 * `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
@@ -292,6 +298,7 @@ Usage:
     statistic   = "average"
     unit        = ""
     cooldown    = 60
+    is_enabled  = false
     
     dimensions = {
         name  = "name-1"
@@ -498,7 +505,7 @@ Usage:
     * `master_host` - (Required) The URL of the Rancher Master host.
     * `access_key` - (Required) The access key of the Rancher API.
     * `secret_key` - (Required) The secret key of the Rancher API.
-
+    * `version` - (Optional) The Rancher version. Must be `"1"` or `"2"`. If this field is omitted, it’s assumed that the Rancher cluster is version 1. Note that Kubernetes is required when using Rancher version 2^.
 Usage:
 
 ```hcl
@@ -506,6 +513,7 @@ Usage:
     master_host = "master_host"
     access_key  = "access_key"
     secret_key  = "secret_key"
+    version     = "2"
   }
 ```
 
@@ -605,7 +613,6 @@ Usage:
         * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared. Minimum 3, Measured in consecutive minutes.
-
             
 Usage:
 

@@ -23,4 +23,5 @@ const (
 	TargetCapacity      commons.FieldName = "target_capacity"
 	MinCapacity         commons.FieldName = "min_capacity"
 	MaxCapacity         commons.FieldName = "max_capacity"
+	Adjustment          commons.FieldName = "adjustment"
 )

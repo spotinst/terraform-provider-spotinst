@@ -206,8 +206,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupLaunchConfiguration,
 		UserData,
 		&schema.Schema{
-			Type:      schema.TypeString,
-			Optional:  true,
+			Type:     schema.TypeString,
+			Optional: true,
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				// Sometimes the EC2 API responds with the equivalent, empty SHA1 sum
+				if (old == "da39a3ee5e6b4b0d3255bfef95601890afd80709" && new == "") ||
+					(old == "" && new == "da39a3ee5e6b4b0d3255bfef95601890afd80709") {
+					return true
+				}
+				return false
+			},
 			StateFunc: HexStateFunc,
 		},
 
@@ -256,8 +264,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupLaunchConfiguration,
 		ShutdownScript,
 		&schema.Schema{
-			Type:      schema.TypeString,
-			Optional:  true,
+			Type:     schema.TypeString,
+			Optional: true,
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				// Sometimes the EC2 API responds with the equivalent, empty SHA1 sum
+				if (old == "da39a3ee5e6b4b0d3255bfef95601890afd80709" && new == "") ||
+					(old == "" && new == "da39a3ee5e6b4b0d3255bfef95601890afd80709") {
+					return true
+				}
+				return false
+			},
 			StateFunc: HexStateFunc,
 		},
 

@@ -63,6 +63,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []string
+			if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
+				elastigroup.Compute.InstanceTypes.Spot != nil {
+				spotInstances := elastigroup.Compute.InstanceTypes.Spot
+				for _, spotInstance := range spotInstances {
+					result = append(result, spotInstance)
+				}
+			}
+			if err := resourceData.Set(string(Spot), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Spot), err)
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -103,6 +116,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []string
+			if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
+				elastigroup.Compute.InstanceTypes.PreferredSpot != nil {
+				prefSpots := elastigroup.Compute.InstanceTypes.PreferredSpot
+				for _, prefSpot := range prefSpots {
+					result = append(result, prefSpot)
+				}
+			}
+			if err := resourceData.Set(string(PreferredSpot), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredSpot), err)
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

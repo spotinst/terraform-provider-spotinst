@@ -12,6 +12,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_launch_configuration"
+	"regexp"
 )
 
 func createElastigroupResourceName(name string) string {
@@ -1355,14 +1356,21 @@ func TestAccSpotinstElastigroup_NetworkInterfaces(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.associate_public_ip_address", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.delete_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.description", "network interface description updated"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.device_index", "2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.network_interface_id", "n-987654"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.private_ip_address", "2.2.2.2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2833641110.secondary_private_ip_address_count", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.associate_public_ip_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.description", "network interface description updated"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.device_index", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.private_ip_address", "2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.secondary_private_ip_address_count", "2"),
 				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRoute53GroupConfig_ShouldFail,
+				}),
+				ExpectError: regexp.MustCompile("invalid Network interface: associate_public_ip_address must be undefined when using network_interface_id"),
 			},
 			{
 				ResourceName: resourceName,
@@ -1402,7 +1410,20 @@ const testNetworkInterfacesGroupConfig_Update = `
     secondary_private_ip_address_count = 2
     associate_public_ip_address = true
     delete_on_termination = true
-    network_interface_id = "n-987654"
+    private_ip_address = "2.2.2.2"
+  }]
+ // ----------------------------------------
+`
+
+const testIntegrationRoute53GroupConfig_ShouldFail = `
+ // --- NETWORK INTERFACE ------------------
+ network_interface = [{ 
+    description = "network interface description updated"
+    device_index = 2
+    secondary_private_ip_address_count = 2
+    associate_public_ip_address = true
+    network_interface_id = "n-123456"
+    delete_on_termination = true
     private_ip_address = "2.2.2.2"
   }]
  // ----------------------------------------
@@ -1438,27 +1459,28 @@ func TestAccSpotinstElastigroup_ScalingUpPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.policy_name", "policy-name"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.source", "cloudWatch"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.statistic", "average"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.unit", "percent"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.dimensions.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.dimensions.value", "value-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.threshold", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.operator", "gt"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.evaluation_periods", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.period", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.action_type", "setMinTarget"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.min_target_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.adjustment", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.max_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.maximum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.minimum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.37737847.target", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.source", "cloudWatch"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.dimensions.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.dimensions.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.dimensions.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.threshold", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.operator", "gt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.action_type", "setMinTarget"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.min_target_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.adjustment", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.max_target_capacity", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.maximum", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.minimum", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3175231635.target", ""),
 				),
 			},
 			{
@@ -1471,27 +1493,28 @@ func TestAccSpotinstElastigroup_ScalingUpPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.policy_name", "policy-name-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.source", "spectrum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.unit", "bytes"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.cooldown", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.dimensions.value", "value-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.threshold", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.operator", "lt"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.evaluation_periods", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.period", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.action_type", "adjustment"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.adjustment", "MAX(5,10)"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.min_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.max_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.maximum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.minimum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1565231540.target", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.source", "spectrum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.cooldown", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.dimensions.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.dimensions.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.dimensions.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.evaluation_periods", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.period", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.action_type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.adjustment", "MAX(5,10)"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.min_target_capacity", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.max_target_capacity", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.maximum", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.minimum", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1054340661.target", ""),
 				),
 			},
 			{
@@ -1520,6 +1543,7 @@ const testScalingUpPolicyGroupConfig_Create = `
   statistic = "average"
   unit = "percent"
   cooldown = 60
+  is_enabled = false
   dimensions = {
       name = "name-1"
       value = "value-1"
@@ -1561,6 +1585,7 @@ const testScalingUpPolicyGroupConfig_Update = `
   source = "spectrum"
   statistic = "sum"
   unit = "bytes"
+  is_enabled = true
   cooldown = 120
   dimensions = {
       name = "name-1-update"
@@ -1624,27 +1649,28 @@ func TestAccSpotinstElastigroup_ScalingDownPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.policy_name", "policy-name"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.source", "cloudWatch"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.statistic", "average"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.unit", "percent"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.dimensions.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.dimensions.value", "value-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.threshold", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.operator", "lt"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.evaluation_periods", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.period", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.action_type", "adjustment"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.adjustment", "MIN(5,10)"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.max_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.min_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.maximum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.minimum", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2395843640.target", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.source", "cloudWatch"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.dimensions.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.dimensions.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.dimensions.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.threshold", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.action_type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.adjustment", "MIN(5,10)"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.max_target_capacity", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.min_target_capacity", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.maximum", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.minimum", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2904745709.target", ""),
 				),
 			},
 			{
@@ -1657,26 +1683,27 @@ func TestAccSpotinstElastigroup_ScalingDownPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.policy_name", "policy-name-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.source", "spectrum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.unit", "bytes"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.cooldown", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.dimensions.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.dimensions.value", "value-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.threshold", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.operator", "lt"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.evaluation_periods", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.period", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.action_type", "updateCapacity"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.minimum", "0"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.maximum", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.target", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.max_target_capacity", ""),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.2154605041.min_target_capacity", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.source", "spectrum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.cooldown", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.dimensions.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.dimensions.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.dimensions.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.evaluation_periods", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.period", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.action_type", "updateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.minimum", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.maximum", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.target", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.max_target_capacity", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3328778696.min_target_capacity", ""),
 				),
 			},
 			{
@@ -1704,6 +1731,7 @@ const testScalingDownPolicyGroupConfig_Create = `
   source = "cloudWatch"
   statistic = "average"
   unit = "percent"
+  is_enabled = false
   cooldown = 60
   dimensions = {
       name = "name-1"
@@ -1746,6 +1774,7 @@ const testScalingDownPolicyGroupConfig_Update = `
   source = "spectrum"
   statistic = "sum"
   unit = "bytes"
+  is_enabled = true
   cooldown = 120
   dimensions = {
       name = "name-1-update"
@@ -1929,14 +1958,15 @@ func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.task_type", "backup_ami"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.scale_min_capacity", "0"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.scale_max_capacity", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.frequency", "hourly"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.scale_target_capacity", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.batch_size_percentage", "33"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3651636121.grace_period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.task_type", "backup_ami"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_min_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_max_capacity", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.adjustment", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.frequency", "hourly"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_target_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.grace_period", "300"),
 				),
 			},
 			{
@@ -1949,15 +1979,15 @@ func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.task_type", "statefulUpdateCapacity"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.target_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.min_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.max_capacity", "3"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.start_time", "2100-01-01T00:00:00Z"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.cron_expression", "0 0 12 1/1 * ? *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.batch_size_percentage", "66"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2343744208.grace_period", "150"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.task_type", "statefulUpdateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.target_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.min_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.max_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.start_time", "2100-01-01T00:00:00Z"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.cron_expression", "0 0 12 1/1 * ? *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.batch_size_percentage", "66"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.grace_period", "150"),
 				),
 			},
 			{
@@ -1983,6 +2013,7 @@ const testScheduledTaskGroupConfig_Create = `
     task_type = "backup_ami"
     scale_min_capacity = 0
     scale_max_capacity = 10
+    adjustment = 1
     frequency = "hourly"
     scale_target_capacity = 5
     batch_size_percentage = 33
@@ -2510,6 +2541,7 @@ func TestAccSpotinstElastigroup_IntegrationRancher(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.master_host", "master-host"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.access_key", "access-key"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.secret_key", "secret-key"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.version", "1"),
 				),
 			},
 			{
@@ -2525,6 +2557,7 @@ func TestAccSpotinstElastigroup_IntegrationRancher(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.master_host", "master-host-update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.access_key", "access-key-update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.secret_key", "secret-key-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_rancher.0.version", "2"),
 				),
 			},
 			{
@@ -2549,6 +2582,7 @@ integration_rancher = {
    master_host = "master-host"
    access_key = "access-key"
    secret_key = "secret-key"
+   version = "1"
 }
 // ----------------------------
 `
@@ -2559,6 +2593,11 @@ const testIntegrationRancherGroupConfig_Update = `
     master_host = "master-host-update"
     access_key = "access-key-update"
     secret_key = "secret-key-update"
+    version = "2"
+ }
+
+integration_kubernetes = {
+	autoscale_is_enabled = true
  }
  // ----------------------------
 `
@@ -2823,6 +2862,7 @@ func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
@@ -3676,6 +3716,79 @@ const testUpdatePolicyGroupConfig_EmptyFields = `
  // --- UPDATE POLICY ----------------
  description = "created by Terraform - trigger update policy 3"
  // ----------------------------------
+`
+
+// endregion
+
+// region Wait for Capacity
+
+func TestAccSpotinstElastigroup_WaitForCapacity(t *testing.T) {
+	groupName := "eg-update-policy"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t) },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAwaitCapacity_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity_timeout", "30"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAwaitCapacity_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity_timeout", "0"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAwaitCapacity_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "wait_for_capacity_timeout", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAwaitCapacity_Create = `
+	wait_for_capacity = 0
+    wait_for_capacity_timeout = 30
+`
+
+const testAwaitCapacity_Update = `
+	wait_for_capacity = 0
+    wait_for_capacity_timeout = 0
+`
+
+const testAwaitCapacity_EmptyFields = `
+
 `
 
 // endregion

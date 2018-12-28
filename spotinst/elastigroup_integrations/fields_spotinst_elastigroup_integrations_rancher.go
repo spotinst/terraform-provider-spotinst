@@ -37,6 +37,11 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeString,
 						Required: true,
 					},
+
+					string(Version): &schema.Schema{
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -96,6 +101,7 @@ func flattenAWSGroupRancherIntegration(integration *aws.RancherIntegration) []in
 	result[string(MasterHost)] = spotinst.StringValue(integration.MasterHost)
 	result[string(AccessKey)] = spotinst.StringValue(integration.AccessKey)
 	result[string(SecretKey)] = spotinst.StringValue(integration.SecretKey)
+	result[string(Version)] = spotinst.StringValue(integration.Version)
 	return []interface{}{result}
 }
 
@@ -115,6 +121,10 @@ func expandAWSGroupRancherIntegration(data interface{}) (*aws.RancherIntegration
 
 		if v, ok := m[string(SecretKey)].(string); ok && v != "" {
 			integration.SetSecretKey(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Version)].(string); ok && v != "" {
+			integration.SetVersion(spotinst.String(v))
 		}
 	}
 	return integration, nil
