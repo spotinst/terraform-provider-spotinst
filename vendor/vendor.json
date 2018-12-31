@@ -698,8 +698,8 @@
 		{
 			"checksumSHA1": "kRnRkxKByVy1PFm9c6HJNIHVCZk=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/ocean",
-			"revision": "533861944a7f7479411542e16282ce9e72fa613d",
-			"revisionTime": "2018-12-21T00:18:36Z"
+			"revision": "b03710cea58b3bb7e42acda2a99ff9fe9056801d",
+			"revisionTime": "2018-12-21T02:26:45Z"
 		},
 		{
 			"checksumSHA1": "+000132x7PimWSF7yxrOWrOdGqk=",

@@ -103,7 +103,6 @@ func createCluster(cluster *aws.Cluster, spotinstClient *Client) (*string, error
 		return nil, fmt.Errorf("[ERROR] failed to create cluster: %s", err)
 	}
 	return resp.Cluster.ID, nil
-	return nil, nil
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
