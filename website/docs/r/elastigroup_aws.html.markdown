@@ -53,8 +53,9 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   orientation           = "balanced"
   fallback_to_ondemand  = false
-  
-  wait_for_capacity = 5
+  cpu_credits           = "unlimited"
+
+  wait_for_capacity         = 5
   wait_for_capacity_timeout = 300
 
   scaling_up_policy {
@@ -111,7 +112,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 The following arguments are supported:
 
 * `name` - (Required) The group name.
-* `description` - (Required) The group description.
+* `description` - (Optional) The group description.
 * `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
 For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
 
@@ -149,6 +150,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
     * `weight` - (Required) Weight per instance type (Integer).
     * `instance_type` - (Required) Name of instance type (String).
 
+* `cpu_credits` - (Optional) Controls how T3 instances are launched. Valid values: `standard`, `unlimited`.
 * `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.
 * `wait_for_capacity` - (Optional) Minimum number of instances in a 'HEALTHY' status that is required before continuing. Cannot exceed `desired_capacity`.
 * `wait_for_capacity_timeout` - (Optional) Time (seconds) to wait for instances to report a 'HEALTHY' status. Useful for plans with multiple dependencies that take some time to initialize. Leave undefined or set to `0` to indicate no wait.
@@ -227,7 +229,9 @@ Each `scheduled_task` supports the following:
 * `min_capacity` - (Optional; Only valid for statefulUpdateCapacity) The minimum number of instances the group should have.
 * `max_capacity` - (Optional; Only valid for statefulUpdateCapacity) The maximum number of instances the group should have.
 * `batch_size_percentage` - (Optional; Required when the `task_type` is `"roll"`.) The percentage size of each batch in the scheduled deployment roll.
-* `grace_period` - (Optional) The period of time (seconds) to wait before checking a batch's health after it's deployment. 
+* `grace_period` - (Optional) The period of time (seconds) to wait before checking a batch's health after it's deployment.
+* `adjustment` - (Optional; Min 1) The number of instances to add or remove.
+* `adjustment_percentage` - (Optional; Min 1) The percentage of instances to add or remove.
 
 Usage:
 
@@ -364,6 +368,7 @@ to understand the implications of using these attributes.
 * `delete_on_termination` - (Optional) If set to true, the interface is deleted when the instance is terminated.
 * `secondary_private_ip_address_count` - (Optional) The number of secondary private IP addresses.
 * `associate_public_ip_address` - (Optional) Indicates whether to assign a public IP address to an instance you launch in a VPC. The public IP address can only be assigned to a network interface for eth0, and can only be assigned to a new network interface, not an existing one.
+* `associate_ipv6_address` - (Optional) Indicates whether to assign IPV6 addresses to your instance. Requires a subnet with IPV6 CIDR block ranges.
 
 Usage:
 
@@ -773,6 +778,7 @@ Usage:
 * `update_policy` - (Optional)
 
     * `should_resume_stateful` - (Required) This will apply resuming action for Stateful instances in the Elastigroup upon scale up or capacity changes. Example usage will be for Elastigroups that will have scheduling rules to set a target capacity of 0 instances in the night and automatically restore the same state of the instances in the morning.
+    * `auto_apply_tags` - (Optional) Enables updates to tags without rolling the group when set to `true`.
     * `should_roll` - (Required) Sets the enablement of the roll option.
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
@@ -783,6 +789,7 @@ Usage:
   update_policy = {
     should_resume_stateful = false
     should_roll            = false
+    auto_apply_tags        = false
     
     roll_config = {
       batch_size_percentage = 33

@@ -35,13 +35,19 @@ func New(sess *session.Session, cfgs ...*spotinst.Config) *ServiceOp {
 }
 
 func (s *ServiceOp) CloudProviderAWS() aws.Service {
-	return &aws.ServiceOp{s.Client}
+	return &aws.ServiceOp{
+		Client: s.Client,
+	}
 }
 
 func (s *ServiceOp) CloudProviderAzure() azure.Service {
-	return &azure.ServiceOp{s.Client}
+	return &azure.ServiceOp{
+		Client: s.Client,
+	}
 }
 
 func (s *ServiceOp) CloudProviderGCP() gcp.Service {
-	return &gcp.ServiceOp{s.Client}
+	return &gcp.ServiceOp{
+		Client: s.Client,
+	}
 }

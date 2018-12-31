@@ -578,6 +578,7 @@ type NetworkInterface struct {
 	DeviceIndex                    *int     `json:"deviceIndex,omitempty"`
 	SecondaryPrivateIPAddressCount *int     `json:"secondaryPrivateIpAddressCount,omitempty"`
 	AssociatePublicIPAddress       *bool    `json:"associatePublicIpAddress,omitempty"`
+	AssociateIPV6Address           *bool    `json:"associateIpv6Address,omitempty"`
 	DeleteOnTermination            *bool    `json:"deleteOnTermination,omitempty"`
 	SecurityGroupsIDs              []string `json:"groups,omitempty"`
 	PrivateIPAddress               *string  `json:"privateIpAddress,omitempty"`
@@ -2988,6 +2989,14 @@ func (o *NetworkInterface) SetSecondaryPrivateIPAddressCount(v *int) *NetworkInt
 func (o *NetworkInterface) SetAssociatePublicIPAddress(v *bool) *NetworkInterface {
 	if o.AssociatePublicIPAddress = v; o.AssociatePublicIPAddress == nil {
 		o.nullFields = append(o.nullFields, "AssociatePublicIPAddress")
+	}
+	return o
+}
+
+// SetAssociateIPV6Address sets the associite IPV6 value
+func (o *NetworkInterface) SetAssociateIPV6Address(v *bool) *NetworkInterface {
+	if o.AssociateIPV6Address = v; o.AssociateIPV6Address == nil {
+		o.nullFields = append(o.nullFields, "AssociateIPV6Address")
 	}
 	return o
 }

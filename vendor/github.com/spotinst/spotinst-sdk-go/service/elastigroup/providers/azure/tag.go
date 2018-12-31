@@ -6,8 +6,8 @@ type Tag struct {
 	Key   *string `json:"tagKey,omitempty"`
 	Value *string `json:"tagValue,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 func (o *Tag) MarshalJSON() ([]byte, error) {

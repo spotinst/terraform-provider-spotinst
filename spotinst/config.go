@@ -11,6 +11,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
@@ -34,6 +35,7 @@ type Client struct {
 	subscription subscription.Service
 	multai       multai.Service
 	mrscaler     mrscaler.Service
+	ocean        ocean.Service
 }
 
 // Validate returns an error in case of invalid configuration.
@@ -82,6 +84,7 @@ func (c *Config) Client() (*Client, error) {
 		subscription: subscription.New(sess),
 		multai:       multai.New(sess),
 		mrscaler:     mrscaler.New(sess),
+		ocean:        ocean.New(sess),
 	}
 	stdlog.Println("[INFO] Spotinst client configured")
 

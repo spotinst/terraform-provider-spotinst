@@ -439,6 +439,54 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[CPUCredits] = commons.NewGenericField(
+		commons.ElastigroupLaunchConfiguration,
+		CPUCredits,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.CreditSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.CreditSpecification.CPUCredits != nil {
+				value = elastigroup.Compute.LaunchSpecification.CreditSpecification.CPUCredits
+			}
+			if err := resourceData.Set(string(CPUCredits), spotinst.StringValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CPUCredits), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(CPUCredits)).(string); ok && v != "" {
+				if elastigroup.Compute.LaunchSpecification.CreditSpecification == nil {
+					elastigroup.Compute.LaunchSpecification.CreditSpecification = &aws.CreditSpecification{}
+				}
+				credits := spotinst.String(v)
+				elastigroup.Compute.LaunchSpecification.CreditSpecification.SetCPUCredits(credits)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			credSpec := &aws.CreditSpecification{}
+			if v, ok := resourceData.Get(string(CPUCredits)).(string); ok && v != "" {
+				credSpec.SetCPUCredits(spotinst.String(v))
+				elastigroup.Compute.LaunchSpecification.SetCreditSpecification(credSpec)
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetCreditSpecification(nil)
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
