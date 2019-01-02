@@ -18,6 +18,12 @@ const (
 	Subscription            ResourceAffinity = "Subscription"
 	ElastigroupAWSBeanstalk ResourceAffinity = "ElastigroupAWSBeanstalk"
 
+	OceanAWS                    ResourceAffinity = "Ocean_AWS"
+	OceanAWSInstanceTypes       ResourceAffinity = "Ocean_AWS_Instance_Types"
+	OceanAWSAutoScaling         ResourceAffinity = "Ocean_AWS_Auto_Scaling"
+	OceanAWSStrategy            ResourceAffinity = "Ocean_AWS_Strategy"
+	OceanAWSLaunchConfiguration ResourceAffinity = "Ocean_AWS_Launch_Configuration"
+
 	ElastigroupAWS                 ResourceAffinity = "Elastigroup_AWS"
 	ElastigroupInstanceType        ResourceAffinity = "Elastigroup_Instance_Type"
 	ElastigroupStrategy            ResourceAffinity = "Elastigroup_Strategy"

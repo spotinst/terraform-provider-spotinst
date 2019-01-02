@@ -62,6 +62,7 @@ const (
 
 	UpdatePolicy         commons.FieldName = "update_policy"
 	ShouldResumeStateful commons.FieldName = "should_resume_stateful"
+	AutoApplyTags        commons.FieldName = "auto_apply_tags"
 	ShouldRoll           commons.FieldName = "should_roll"
 
 	RollConfig          commons.FieldName = "roll_config"

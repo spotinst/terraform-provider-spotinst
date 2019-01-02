@@ -44,6 +44,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 
+					string(AssociateIPV6Address): &schema.Schema{
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+
 					string(DeleteOnTermination): &schema.Schema{
 						Type:     schema.TypeBool,
 						Optional: true,
@@ -121,6 +126,7 @@ func flattenAWSGroupNetworkInterfaces(networkInterfaces []*aws.NetworkInterface)
 	for _, iface := range networkInterfaces {
 		m := make(map[string]interface{})
 		m[string(AssociatePublicIpAddress)] = spotinst.BoolValue(iface.AssociatePublicIPAddress)
+		m[string(AssociateIPV6Address)] = spotinst.BoolValue(iface.AssociateIPV6Address)
 		m[string(DeleteOnTermination)] = spotinst.BoolValue(iface.DeleteOnTermination)
 		m[string(Description)] = spotinst.StringValue(iface.Description)
 		m[string(NetworkInterfaceId)] = spotinst.StringValue(iface.ID)
@@ -184,6 +190,10 @@ func expandAWSGroupNetworkInterfaces(data interface{}) ([]*aws.NetworkInterface,
 
 		if v, ok := m[string(PrivateIpAddress)].(string); ok && v != "" {
 			networkInterface.SetPrivateIPAddress(spotinst.String(v))
+		}
+
+		if v, ok := m[string(AssociateIPV6Address)].(bool); ok {
+			networkInterface.SetAssociateIPV6Address(spotinst.Bool(v))
 		}
 
 		interfaces = append(interfaces, networkInterface)

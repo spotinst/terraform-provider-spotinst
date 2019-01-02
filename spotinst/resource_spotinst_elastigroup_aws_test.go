@@ -387,6 +387,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "standard"),
 				),
 			},
 			{
@@ -408,6 +409,7 @@ func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world updated")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "unlimited"),
 				),
 			},
 			{
@@ -445,6 +447,7 @@ const testLaunchConfigurationGroupConfig_Create = `
  enable_monitoring    = false
  ebs_optimized        = false
  placement_tenancy    = "default"
+ cpu_credits          = "standard"
  // ---------------------------------------
 `
 
@@ -459,6 +462,7 @@ const testLaunchConfigurationGroupConfig_Update = `
  enable_monitoring    = true
  ebs_optimized        = true
  placement_tenancy    = "default"
+ cpu_credits          = "unlimited"
  // ---------------------------------------
 `
 
@@ -1337,13 +1341,14 @@ func TestAccSpotinstElastigroup_NetworkInterfaces(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1760224316.associate_public_ip_address", "false"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1760224316.delete_on_termination", "false"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1760224316.description", "network interface description"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1760224316.device_index", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1760224316.network_interface_id", "n-123456"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1760224316.private_ip_address", "1.1.1.1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1760224316.secondary_private_ip_address_count", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.associate_public_ip_address", "false"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.associate_ipv6_address", "false"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.delete_on_termination", "false"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.description", "network interface description"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.device_index", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.network_interface_id", "n-123456"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.private_ip_address", "1.1.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.4092817214.secondary_private_ip_address_count", "1"),
 				),
 			},
 			{
@@ -1356,12 +1361,13 @@ func TestAccSpotinstElastigroup_NetworkInterfaces(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.associate_public_ip_address", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.delete_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.description", "network interface description updated"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.device_index", "2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.private_ip_address", "2.2.2.2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.2372575726.secondary_private_ip_address_count", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3760037182.associate_public_ip_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3760037182.associate_ipv6_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3760037182.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3760037182.description", "network interface description updated"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3760037182.device_index", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3760037182.private_ip_address", "2.2.2.2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3760037182.secondary_private_ip_address_count", "2"),
 				),
 			},
 			{
@@ -1395,6 +1401,7 @@ const testNetworkInterfacesGroupConfig_Create = `
     device_index = 1
     secondary_private_ip_address_count = 1
     associate_public_ip_address = false
+    associate_ipv6_address = false
     delete_on_termination = false
     network_interface_id = "n-123456"
     private_ip_address = "1.1.1.1"
@@ -1409,6 +1416,7 @@ const testNetworkInterfacesGroupConfig_Update = `
     device_index = 2
     secondary_private_ip_address_count = 2
     associate_public_ip_address = true
+    associate_ipv6_address = true
     delete_on_termination = true
     private_ip_address = "2.2.2.2"
   }]
@@ -1958,15 +1966,15 @@ func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.task_type", "backup_ami"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_min_capacity", "0"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_max_capacity", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.adjustment", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.frequency", "hourly"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.scale_target_capacity", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.batch_size_percentage", "33"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2968393376.grace_period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.task_type", "backup_ami"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.scale_min_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.scale_max_capacity", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.adjustment", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.frequency", "hourly"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.scale_target_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.grace_period", "300"),
 				),
 			},
 			{
@@ -1979,15 +1987,36 @@ func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.task_type", "statefulUpdateCapacity"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.target_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.min_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.max_capacity", "3"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.start_time", "2100-01-01T00:00:00Z"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.cron_expression", "0 0 12 1/1 * ? *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.batch_size_percentage", "66"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2159606791.grace_period", "150"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.task_type", "backup_ami"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.scale_min_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.scale_max_capacity", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.adjustment_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.frequency", "hourly"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.scale_target_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.grace_period", "300"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testScheduledTaskGroupConfig_Update2,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.task_type", "statefulUpdateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.target_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.min_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.max_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.start_time", "2100-01-01T00:00:00Z"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.cron_expression", "0 0 12 1/1 * ? *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.batch_size_percentage", "66"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.grace_period", "150"),
 				),
 			},
 			{
@@ -2023,6 +2052,22 @@ const testScheduledTaskGroupConfig_Create = `
 `
 
 const testScheduledTaskGroupConfig_Update = `
+ // --- SCHEDULED TASK ------------------
+  scheduled_task = [{
+	is_enabled = false
+    task_type = "backup_ami"
+    scale_min_capacity = 0
+    scale_max_capacity = 10
+    adjustment_percentage = 50
+    frequency = "hourly"
+    scale_target_capacity = 5
+    batch_size_percentage = 33
+    grace_period = 300
+  }]
+ // -------------------------------------
+`
+
+const testScheduledTaskGroupConfig_Update2 = `
  // --- SCHEDULED TASK ------------------
   scheduled_task = [{
     is_enabled = true
@@ -3639,6 +3684,7 @@ func TestAccSpotinstElastigroup_UpdatePolicy(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_resume_stateful", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.auto_apply_tags", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
@@ -3657,6 +3703,7 @@ func TestAccSpotinstElastigroup_UpdatePolicy(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_resume_stateful", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.auto_apply_tags", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
@@ -3686,6 +3733,7 @@ const testUpdatePolicyGroupConfig_Create = `
 
   update_policy = {
     should_resume_stateful = false
+    auto_apply_tags = false
     should_roll = false
     roll_config = {
       batch_size_percentage = 33
@@ -3702,6 +3750,7 @@ const testUpdatePolicyGroupConfig_Update = `
 
   update_policy = {
     should_resume_stateful = true
+    auto_apply_tags = true
     should_roll = true
     roll_config = {
       batch_size_percentage = 66

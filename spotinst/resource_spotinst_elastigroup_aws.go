@@ -275,6 +275,11 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 				input.ShouldResumeStateful = spotinst.Bool(resumeStateful)
 			}
 
+			if autoApplyTags, ok := m[string(elastigroup_aws.AutoApplyTags)].(bool); ok && autoApplyTags {
+				log.Printf("Updating tags without rolling the group")
+				input.AutoApplyTags = spotinst.Bool(autoApplyTags)
+			}
+
 			if roll, ok := m[string(elastigroup_aws.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
 			}

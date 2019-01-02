@@ -93,6 +93,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
+					string(AdjustmentPercentage): &schema.Schema{
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -185,6 +189,9 @@ func flattenAWSGroupScheduledTasks(tasks []*aws.Task) []interface{} {
 		if t.Adjustment != nil {
 			m[string(Adjustment)] = strconv.Itoa(spotinst.IntValue(t.Adjustment))
 		}
+		if t.AdjustmentPercentage != nil {
+			m[string(AdjustmentPercentage)] = strconv.Itoa(spotinst.IntValue(t.AdjustmentPercentage))
+		}
 		result = append(result, m)
 	}
 	return result
@@ -263,6 +270,14 @@ func expandAWSGroupScheduledTasks(data interface{}) ([]*aws.Task, error) {
 					return nil, err
 				} else {
 					task.SetAdjustment(spotinst.Int(intVal))
+				}
+			}
+
+			if v, ok := m[string(AdjustmentPercentage)].(string); ok && v != "" {
+				if intVal, err := strconv.Atoi(v); err != nil {
+					return nil, err
+				} else {
+					task.SetAdjustmentPercentage(spotinst.Int(intVal))
 				}
 			}
 		}

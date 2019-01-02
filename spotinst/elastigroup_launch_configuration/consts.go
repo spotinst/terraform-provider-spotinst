@@ -16,4 +16,5 @@ const (
 	EnableMonitoring   commons.FieldName = "enable_monitoring"
 	EbsOptimized       commons.FieldName = "ebs_optimized"
 	PlacementTenancy   commons.FieldName = "placement_tenancy"
+	CPUCredits         commons.FieldName = "cpu_credits"
 )

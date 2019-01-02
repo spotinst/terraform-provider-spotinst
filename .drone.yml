@@ -1,0 +1,24 @@
+kind: pipeline
+name: default
+
+workspace:
+  base: /go
+  path: src/github.com/terraform-providers/terraform-provider-spotinst
+
+steps:
+  - name: install
+    image: golang:1.9.1
+    commands:
+      - bash scripts/gogetcookie.sh
+      - go get github.com/kardianos/govendor
+
+  - name: build
+    image: golang:1.9.1
+    commands:
+      - bash scripts/gogetcookie.sh
+      - go get github.com/kardianos/govendor
+      - make test
+      - make vendor-status
+      - make vet
+#      - make website-test
+
