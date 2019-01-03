@@ -1,13 +1,13 @@
 package spotinst
 
 import (
+	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 var TestAccProviders map[string]terraform.ResourceProvider

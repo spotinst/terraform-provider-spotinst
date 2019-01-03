@@ -1090,6 +1090,238 @@ func (s *ServiceOp) StopRoll(ctx context.Context, input *StopRollInput) (*StopRo
 		return nil, err
 	}
 
+	// We do not need the ID anymore so let's drop it.
+	input.GroupID = nil
+
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return &DetachGroupOutput{}, nil
+}
+
+func (s *ServiceOp) ListTasks(ctx context.Context, input *ListTasksInput) (*ListTasksOutput, error) {
+	r := client.NewRequest(http.MethodGet, "/azure/compute/task")
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	tasks, err := tasksFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ListTasksOutput{Tasks: tasks}, nil
+}
+
+func (s *ServiceOp) CreateTask(ctx context.Context, input *CreateTaskInput) (*CreateTaskOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/azure/compute/task")
+	r.Obj = input.Task
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	tasks, err := tasksFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(CreateTaskOutput)
+	if len(tasks) > 0 {
+		output.Task = tasks[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) ReadTask(ctx context.Context, input *ReadTaskInput) (*ReadTaskOutput, error) {
+	path, err := uritemplates.Expand("/azure/compute/task/{taskId}", uritemplates.Values{
+		"taskId": spotinst.StringValue(input.TaskID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	tasks, err := tasksFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ReadTaskOutput)
+	if len(tasks) > 0 {
+		output.Task = tasks[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) UpdateTask(ctx context.Context, input *UpdateTaskInput) (*UpdateTaskOutput, error) {
+	path, err := uritemplates.Expand("/azure/compute/task/{taskId}", uritemplates.Values{
+		"taskId": spotinst.StringValue(input.Task.ID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.Task.ID = nil
+
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input.Task
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	tasks, err := tasksFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(UpdateTaskOutput)
+	if len(tasks) > 0 {
+		output.Task = tasks[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) DeleteTask(ctx context.Context, input *DeleteTaskInput) (*DeleteTaskOutput, error) {
+	path, err := uritemplates.Expand("/azure/compute/task/{taskId}", uritemplates.Values{
+		"taskId": spotinst.StringValue(input.TaskID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodDelete, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return &DeleteTaskOutput{}, nil
+}
+
+func (s *ServiceOp) Roll(ctx context.Context, input *RollGroupInput) (*RollGroupOutput, error) {
+	path, err := uritemplates.Expand("/compute/azure/group/{groupId}/roll", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.GroupID = nil
+
+	r := client.NewRequest(http.MethodPut, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	output, err := rollFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) GetRollStatus(ctx context.Context, input *RollStatusInput) (*RollStatusOutput, error) {
+	path, err := uritemplates.Expand("/compute/azure/group/{groupId}/roll/{rollId}", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+		"rollId":  spotinst.StringValue(input.RollID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.GroupID = nil
+
+	r := client.NewRequest(http.MethodGet, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	rolls, err := rollStatusesFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(RollStatusOutput)
+	if len(rolls) > 0 {
+		output.RollStatus = rolls[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) ListRollStatus(ctx context.Context, input *ListRollStatusInput) (*ListRollStatusOutput, error) {
+	path, err := uritemplates.Expand("/compute/azure/group/{groupId}/roll", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.GroupID = nil
+
+	r := client.NewRequest(http.MethodGet, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	rolls, err := rollStatusesFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ListRollStatusOutput{Items: rolls}, nil
+}
+
+func (s *ServiceOp) StopRoll(ctx context.Context, input *StopRollInput) (*StopRollOutput, error) {
+	path, err := uritemplates.Expand("/compute/azure/group/{groupId}/roll/{rollId}", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+		"rollId":  spotinst.StringValue(input.RollID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	// We do not need the IDs anymore so let's drop them.
 	input.GroupID = nil
 	input.RollID = nil
@@ -1961,6 +2193,30 @@ func (o *CustomImage) MarshalJSON() ([]byte, error) {
 func (o *CustomImage) SetResourceGroupName(v *string) *CustomImage {
 	if o.ResourceGroupName = v; o.ResourceGroupName == nil {
 		o.nullFields = append(o.nullFields, "ResourceGroupName")
+	}
+	return o
+}
+
+func (o *CustomImage) SetImageName(v *string) *CustomImage {
+	if o.ImageName = v; o.ImageName == nil {
+		o.nullFields = append(o.nullFields, "ImageName")
+	}
+	return o
+}
+
+// endregion
+
+// region UserData
+
+func (o *UserData) MarshalJSON() ([]byte, error) {
+	type noMethod UserData
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *UserData) SetCommandLine(v *string) *UserData {
+	if o.CommandLine = v; o.CommandLine == nil {
+		o.nullFields = append(o.nullFields, "CommandLine")
 	}
 	return o
 }

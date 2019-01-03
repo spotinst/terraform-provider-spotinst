@@ -78,6 +78,8 @@ type GroupConfigMetadata struct {
 }
 
 func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
+	//os.Setenv("SPOTINST_ACCOUNT", "act-92d45673")
+	//os.Setenv("SPOTINST_TOKEN", "")
 	if gcm == nil {
 		return ""
 	}
