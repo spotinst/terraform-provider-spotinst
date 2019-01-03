@@ -1605,6 +1605,14 @@ func (o *ImportGKEGroup) SetPreemptiblePercentage(v *int) *ImportGKEGroup {
 	return o
 }
 
+// SetNodeImage sets the node image for the imported gke group.
+func (o *ImportGKEGroup) SetNodeImage(v *string) *ImportGKEGroup {
+	if o.NodeImage = v; o.NodeImage == nil {
+		o.nullFields = append(o.nullFields, "NodeImage")
+	}
+	return o
+}
+
 func (o *InstanceTypesGKE) MarshalJSON() ([]byte, error) {
 	type noMethod InstanceTypesGKE
 	raw := noMethod(*o)

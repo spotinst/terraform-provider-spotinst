@@ -15,7 +15,6 @@ const (
 	// defaultBaseURL is the default base URL of the Spotinst API.
 	// It is used e.g. when initializing a new Client without a specific address.
 	defaultBaseURL = "https://api.spotinst.io"
-	//defaultBaseURL = "http://localhost:8081"
 
 	// defaultContentType is the default content type to use when making HTTP
 	// calls.

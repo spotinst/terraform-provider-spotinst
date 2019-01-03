@@ -82,8 +82,8 @@ func createElastigroupAWSBeanstalkTerraform(gcm *BeanstalkGroupConfigMetadata) s
 
 	template :=
 		`provider "aws" {
-	 token   = "fake"
-	 account = "fake"
+	token   = "fake"
+	account = "fake"
 	}
 	`
 	if gcm.updateBaselineFields {

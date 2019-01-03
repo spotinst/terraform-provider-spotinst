@@ -57,12 +57,7 @@ func testCheckSubscriptionExists(sub *subscription.Subscription, resourceName st
 }
 
 func createSubscriptionTerraform(tfResource string, resourceName string, groupResourceId string, groupTerraform string) string {
-	template :=
-		`provider "aws" {
-	 token   = "fake"
-	 account = "fake"
-	}
-	`
+	template := ""
 
 	template += fmt.Sprintf(tfResource, resourceName, groupResourceId)
 	template = groupTerraform + "\n" + template
