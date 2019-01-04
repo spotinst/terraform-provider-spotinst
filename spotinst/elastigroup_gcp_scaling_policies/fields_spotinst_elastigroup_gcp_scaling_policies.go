@@ -1,0 +1,336 @@
+package elastigroup_gcp_scaling_policies
+
+import (
+	"fmt"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+)
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//            Setup
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
+
+	fieldsMap[ScalingUpPolicy] = commons.NewGenericField(
+		commons.ElastigroupGCPScalingPolicies,
+		ScalingUpPolicy,
+		upDownScalingPolicySchema(),
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var policiesResult []interface{} = nil
+			if elastigroup.Scaling != nil && elastigroup.Scaling.Up != nil {
+				scaleUpPolicies := elastigroup.Scaling.Up
+				policiesResult = flattenGCPGroupScalingPolicy(scaleUpPolicies)
+			}
+			if err := resourceData.Set(string(ScalingUpPolicy), policiesResult); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingUpPolicy), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok {
+				if policies, err := expandGCPGroupScalingPolicies(v); err != nil {
+					return err
+				} else {
+					elastigroup.Scaling.SetUp(policies)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []*gcp.ScalingPolicy = nil
+			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok && v != nil {
+				if policies, err := expandGCPGroupScalingPolicies(v); err != nil {
+					return err
+				} else {
+					value = policies
+				}
+			}
+			if value != nil && len(value) > 0 {
+				elastigroup.Scaling.SetUp(value)
+			} else {
+				elastigroup.Scaling.SetUp(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ScalingDownPolicy] = commons.NewGenericField(
+		commons.ElastigroupGCPScalingPolicies,
+		ScalingDownPolicy,
+		upDownScalingPolicySchema(),
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var policiesResult []interface{} = nil
+			if elastigroup.Scaling != nil && elastigroup.Scaling.Down != nil {
+				scaleDownPolicies := elastigroup.Scaling.Down
+				policiesResult = flattenGCPGroupScalingPolicy(scaleDownPolicies)
+			}
+			if err := resourceData.Set(string(ScalingDownPolicy), policiesResult); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingDownPolicy), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok {
+				if policies, err := expandGCPGroupScalingPolicies(v); err != nil {
+					return err
+				} else {
+					elastigroup.Scaling.SetDown(policies)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []*gcp.ScalingPolicy = nil
+			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok && v != nil {
+				if policies, err := expandGCPGroupScalingPolicies(v); err != nil {
+					return err
+				} else {
+					value = policies
+				}
+			}
+			if value != nil && len(value) > 0 {
+				elastigroup.Scaling.SetDown(value)
+			} else {
+				elastigroup.Scaling.SetDown(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+}
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//             Schema
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func baseScalingPolicySchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				string(Cooldown): &schema.Schema{
+					Type:     schema.TypeInt,
+					Optional: true,
+					Computed: true,
+				},
+
+				string(Dimensions): &schema.Schema{
+					Type:     schema.TypeMap,
+					Optional: true,
+				},
+
+				string(MetricName): &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+
+				string(Namespace): &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+
+				string(PolicyName): &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+
+				string(Source): &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Computed: true,
+				},
+
+				string(Statistic): &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Computed: true,
+				},
+
+				string(Unit): &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+			},
+		},
+	}
+}
+
+func upDownScalingPolicySchema() *schema.Schema {
+	o := baseScalingPolicySchema()
+	s := o.Elem.(*schema.Resource).Schema
+
+	s[string(ActionType)] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
+	s[string(Adjustment)] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s[string(EvaluationPeriods)] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+		Computed: true,
+	}
+
+	s[string(Operator)] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+		Computed: true,
+	}
+
+	s[string(Period)] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+		Computed: true,
+	}
+
+	s[string(Threshold)] = &schema.Schema{
+		Type:     schema.TypeFloat,
+		Required: true,
+	}
+
+	return o
+}
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//             Utils
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func expandGCPGroupScalingPolicies(data interface{}) ([]*gcp.ScalingPolicy, error) {
+	list := data.(*schema.Set).List()
+	policies := make([]*gcp.ScalingPolicy, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		policy := &gcp.ScalingPolicy{}
+
+		if v, ok := m[string(ActionType)].(string); ok && v != "" {
+			action := &gcp.Action{}
+			action.SetType(spotinst.String(v))
+
+			if v, ok := m[string(Adjustment)].(int); ok && v >= 0 {
+				action.SetAdjustment(spotinst.Int(v))
+			}
+
+			policy.SetAction(action)
+		}
+
+		if v, ok := m[string(Cooldown)].(int); ok && v > 0 {
+			policy.SetCooldown(spotinst.Int(v))
+		}
+
+		if v, ok := m[string(Dimensions)]; ok {
+			dimensions := expandGCPGroupScalingPolicyDimensions(v.(map[string]interface{}))
+			if len(dimensions) > 0 {
+				policy.SetDimensions(dimensions)
+			}
+		}
+
+		if v, ok := m[string(EvaluationPeriods)].(int); ok && v > 0 {
+			policy.SetEvaluationPeriods(spotinst.Int(v))
+		}
+
+		if v, ok := m[string(MetricName)].(string); ok && v != "" {
+			policy.SetMetricName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Namespace)].(string); ok && v != "" {
+			policy.SetNamespace(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Operator)].(string); ok && v != "" {
+			policy.SetOperator(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Period)].(int); ok && v > 0 {
+			policy.SetPeriod(spotinst.Int(v))
+		}
+
+		if v, ok := m[string(Source)].(string); ok && v != "" {
+			policy.SetSource(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Statistic)].(string); ok && v != "" {
+			policy.SetStatistic(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Threshold)].(float64); ok && v > 0 {
+			policy.SetThreshold(spotinst.Float64(v))
+		}
+
+		if v, ok := m[string(Unit)].(string); ok && v != "" {
+			policy.SetUnit(spotinst.String(v))
+		}
+
+		if v, ok := m[string(PolicyName)].(string); ok && v != "" {
+			policy.SetPolicyName(spotinst.String(v))
+		}
+
+		if policy.Namespace != nil {
+			policies = append(policies, policy)
+		}
+	}
+
+	return policies, nil
+}
+
+func expandGCPGroupScalingPolicyDimensions(list map[string]interface{}) []*gcp.Dimension {
+	dimensions := make([]*gcp.Dimension, 0, len(list))
+	for name, val := range list {
+		dimension := &gcp.Dimension{}
+		dimension.SetName(spotinst.String(name))
+		dimension.SetValue(spotinst.String(val.(string)))
+		dimensions = append(dimensions, dimension)
+	}
+	return dimensions
+}
+
+func flattenGCPGroupScalingPolicy(policies []*gcp.ScalingPolicy) []interface{} {
+	result := make([]interface{}, 0, len(policies))
+	for _, policy := range policies {
+		m := make(map[string]interface{})
+		m[string(Cooldown)] = spotinst.IntValue(policy.Cooldown)
+		m[string(MetricName)] = spotinst.StringValue(policy.MetricName)
+		m[string(Namespace)] = spotinst.StringValue(policy.Namespace)
+		m[string(PolicyName)] = spotinst.StringValue(policy.PolicyName)
+		m[string(Source)] = spotinst.StringValue(policy.Source)
+		m[string(Statistic)] = spotinst.StringValue(policy.Statistic)
+		m[string(Unit)] = spotinst.StringValue(policy.Unit)
+
+		if policy.Dimensions != nil && len(policy.Dimensions) > 0 {
+			dimMap := make(map[string]interface{})
+			for _, dimension := range policy.Dimensions {
+				dimMap[spotinst.StringValue(dimension.Name)] = spotinst.StringValue(dimension.Value)
+			}
+			m[string(Dimensions)] = dimMap
+		}
+
+		if policy.Action != nil && policy.Action.Type != nil {
+			m[string(ActionType)] = spotinst.StringValue(policy.Action.Type)
+			m[string(Adjustment)] = spotinst.IntValue(policy.Action.Adjustment)
+			m[string(EvaluationPeriods)] = spotinst.IntValue(policy.EvaluationPeriods)
+			m[string(Operator)] = spotinst.StringValue(policy.Operator)
+			m[string(Period)] = spotinst.IntValue(policy.Period)
+			m[string(Threshold)] = spotinst.Float64Value(policy.Threshold)
+		}
+
+		result = append(result, m)
+	}
+	return result
+}

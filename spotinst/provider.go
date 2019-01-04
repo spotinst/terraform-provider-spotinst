@@ -28,6 +28,8 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			string(commons.ElastigroupAwsResourceName):          resourceSpotinstElastigroupAws(),
+			string(commons.ElastigroupGCPResourceName):          resourceSpotinstElastigroupGCP(),
+			string(commons.ElastigroupGKEResourceName):          resourceSpotinstElastigroupGKE(),
 			string(commons.SubscriptionResourceName):            resourceSpotinstSubscription(),
 			string(commons.ElastigroupAWSBeanstalkResourceName): resourceSpotinstElastigroupAWSBeanstalk(),
 			string(commons.OceanAWSResourceName):                resourceSpotinstOceanAWS(),

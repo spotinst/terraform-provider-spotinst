@@ -18,7 +18,7 @@ func createOceanAWSResourceName(name string) string {
 }
 
 func testOceanAWSDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Client)
+	client := testAccProviderAWS.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != string(commons.OceanAWSResourceName) {
 			continue
@@ -50,7 +50,7 @@ func testCheckOceanAWSExists(cluster *aws.Cluster, resourceName string) resource
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("no resource ID is set")
 		}
-		client := testAccProvider.Meta().(*Client)
+		client := testAccProviderAWS.Meta().(*Client)
 		input := &aws.ReadClusterInput{ClusterID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.ocean.CloudProviderAWS().ReadCluster(context.Background(), input)
 		if err != nil {
@@ -65,11 +65,12 @@ func testCheckOceanAWSExists(cluster *aws.Cluster, resourceName string) resource
 }
 
 type ClusterConfigMetadata struct {
-	variables            string
+	provider             string
 	clusterName          string
 	instanceWhitelist    string
 	launchConfig         string
 	strategy             string
+	variables            string
 	fieldsToAppend       string
 	updateBaselineFields bool
 }
@@ -79,15 +80,27 @@ func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
 		return ""
 	}
 
+	if gcm.provider == "" {
+		gcm.provider = "aws"
+	}
+
 	if gcm.launchConfig == "" {
 		gcm.launchConfig = testLaunchConfigAWSConfig_Create
 	}
 
-	template := ""
+	//template := ""
+	template :=
+		`provider "aws" {
+	 token   = "fake"
+	 account = "fake"
+	}
+	`
+
 	if gcm.updateBaselineFields {
 		format := testBaselineAWSConfig_Update
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.clusterName,
+			gcm.provider,
 			gcm.clusterName,
 			gcm.instanceWhitelist,
 			gcm.launchConfig,
@@ -96,8 +109,9 @@ func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
 		)
 	} else {
 		format := testBaselineAWSConfig_Create
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.clusterName,
+			gcm.provider,
 			gcm.clusterName,
 			gcm.instanceWhitelist,
 			gcm.launchConfig,
@@ -121,7 +135,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAWSDestroy,
 
@@ -152,6 +166,8 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 
 const testBaselineAWSConfig_Create = `
 resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
+  provider = "%v"  
+  
   name = "%v"
   controller_id = "fakeClusterId"
   region = "us-west-2"
@@ -171,6 +187,8 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
 const testBaselineAWSConfig_Update = `
 resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
+  provider = "%v"
+
   name = "%v"
   controller_id = "fakeClusterId"
   region = "us-west-2"
@@ -197,7 +215,7 @@ func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
 
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAWSDestroy,
 
@@ -262,7 +280,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAWSDestroy,
 
@@ -372,7 +390,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAWSDestroy,
 
@@ -450,7 +468,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAWSDestroy,
 

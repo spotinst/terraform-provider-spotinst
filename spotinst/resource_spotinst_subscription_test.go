@@ -19,7 +19,7 @@ func createSubscriptionResourceName(name string) string {
 }
 
 func testSubscriptionDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Client)
+	client := testAccProviderAWS.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != string(commons.SubscriptionResourceName) {
 			continue
@@ -42,7 +42,7 @@ func testCheckSubscriptionExists(sub *subscription.Subscription, resourceName st
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("no resource ID is set")
 		}
-		client := testAccProvider.Meta().(*Client)
+		client := testAccProviderAWS.Meta().(*Client)
 		input := &subscription.ReadSubscriptionInput{SubscriptionID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.subscription.Read(context.Background(), input)
 		if err != nil {
@@ -57,7 +57,9 @@ func testCheckSubscriptionExists(sub *subscription.Subscription, resourceName st
 }
 
 func createSubscriptionTerraform(tfResource string, resourceName string, groupResourceId string, groupTerraform string) string {
-	template := fmt.Sprintf(tfResource, resourceName, groupResourceId)
+	template := ""
+
+	template += fmt.Sprintf(tfResource, resourceName, groupResourceId)
 	template = groupTerraform + "\n" + template
 
 	log.Printf("Terraform [%v] template:\n%v", resourceName, template)
@@ -77,7 +79,7 @@ func TestAccSpotinstSubscription_Http(t *testing.T) {
 	var group aws.Group
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testSubscriptionDestroy,
 
@@ -123,6 +125,7 @@ func TestAccSpotinstSubscription_Http(t *testing.T) {
 
 const testSubscription_Http_Create = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_LAUNCH"
   format={
@@ -137,6 +140,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
 
 const testSubscription_Http_Update = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATE"
   format={
@@ -164,7 +168,7 @@ func TestAccSpotinstSubscription_Https(t *testing.T) {
 	var group aws.Group
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testSubscriptionDestroy,
 
@@ -210,6 +214,7 @@ func TestAccSpotinstSubscription_Https(t *testing.T) {
 
 const testSubscription_Https_Create = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="CANT_SCALE_UP_GROUP_MAX_CAPACITY"
   format={
@@ -224,6 +229,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
 
 const testSubscription_Https_Update = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="GROUP_UPDATED"
   format={
@@ -251,7 +257,7 @@ func TestAccSpotinstSubscription_Email(t *testing.T) {
 	var group aws.Group
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testSubscriptionDestroy,
 
@@ -297,6 +303,7 @@ func TestAccSpotinstSubscription_Email(t *testing.T) {
 
 const testSubscription_Email_Create = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="GROUP_ROLL_FINISHED"
   format={
@@ -311,6 +318,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
 
 const testSubscription_Email_Update = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="GROUP_ROLL_FAILED"
   format={
@@ -338,7 +346,7 @@ func TestAccSpotinstSubscription_EmailJson(t *testing.T) {
 	var group aws.Group
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testSubscriptionDestroy,
 
@@ -384,6 +392,7 @@ func TestAccSpotinstSubscription_EmailJson(t *testing.T) {
 
 const testSubscription_EmailJson_Create = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"
   format={
@@ -398,6 +407,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
 
 const testSubscription_EmailJson_Update = `
 resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATED"
   format={

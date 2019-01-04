@@ -20,7 +20,7 @@ func createElastigroupResourceName(name string) string {
 }
 
 func testElastigroupDestroy(s *terraform.State) error {
-	client := testAccProvider.Meta().(*Client)
+	client := testAccProviderAWS.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != string(commons.ElastigroupAwsResourceName) {
 			continue
@@ -52,7 +52,7 @@ func testCheckElastigroupExists(group *aws.Group, resourceName string) resource.
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("no resource ID is set")
 		}
-		client := testAccProvider.Meta().(*Client)
+		client := testAccProviderAWS.Meta().(*Client)
 		input := &aws.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.elastigroup.CloudProviderAWS().Read(context.Background(), input)
 		if err != nil {
@@ -68,6 +68,7 @@ func testCheckElastigroupExists(group *aws.Group, resourceName string) resource.
 
 type GroupConfigMetadata struct {
 	variables            string
+	provider             string
 	groupName            string
 	instanceTypes        string
 	launchConfig         string
@@ -82,6 +83,10 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 		return ""
 	}
 
+	if gcm.provider == "" {
+		gcm.provider = "aws"
+	}
+
 	if gcm.instanceTypes == "" {
 		gcm.instanceTypes = testInstanceTypesGroupConfig_Create
 	}
@@ -94,14 +99,20 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 		gcm.strategy = testStrategyGroupConfig_Create
 	}
 
-	template := ""
+	template :=
+		`provider "aws" {
+	 token   = "fake"
+	 account = "fake"
+	}
+	`
 	if gcm.updateBaselineFields {
 		format := testBaselineGroupConfig_Update
 		if gcm.useSubnetIDs {
 			format = testBaselineSubnetIdsGroupConfig_Update
 		}
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.groupName,
+			gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
@@ -113,8 +124,9 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 		if gcm.useSubnetIDs {
 			format = testBaselineSubnetIdsGroupConfig_Create
 		}
-		template = fmt.Sprintf(format,
+		template += fmt.Sprintf(format,
 			gcm.groupName,
+			gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
@@ -132,19 +144,21 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 }
 
 // region Elastigroup: Baseline
-func TestAccSpotinstElastigroup_Baseline(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_Baseline(t *testing.T) {
 	groupName := "eg-baseline"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
 		Steps: []resource.TestStep{
 			{
-				Config: createElastigroupTerraform(&GroupConfigMetadata{groupName: groupName}),
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName: groupName,
+				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
@@ -156,7 +170,10 @@ func TestAccSpotinstElastigroup_Baseline(t *testing.T) {
 				),
 			},
 			{
-				Config: createElastigroupTerraform(&GroupConfigMetadata{groupName: groupName, updateBaselineFields: true}),
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:            groupName,
+					updateBaselineFields: true,
+				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
@@ -173,6 +190,7 @@ func TestAccSpotinstElastigroup_Baseline(t *testing.T) {
 
 const testBaselineGroupConfig_Create = `
 resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+ provider = "%v"
 
  name 				= "%v"
  description 		= "created by Terraform"
@@ -196,6 +214,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 
 const testBaselineGroupConfig_Update = `
 resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+ provider = "%v"
 
  name 				= "%v"
  description 		= "created by Terraform"
@@ -219,6 +238,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 
 const testBaselineSubnetIdsGroupConfig_Create = `
 resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+ provider = "%v"
 
  name 				= "%v"
  description 		= "created by Terraform"
@@ -246,6 +266,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 
 const testBaselineSubnetIdsGroupConfig_Update = `
 resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+ provider = "%v"
 
  name 				= "%v"
  description 		= "created by Terraform"
@@ -274,13 +295,13 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 // endregion
 
 // region Elastigroup: Instance Types
-func TestAccSpotinstElastigroup_InstanceTypes(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_InstanceTypes(t *testing.T) {
 	groupName := "eg-instance-types"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
@@ -357,13 +378,13 @@ const testInstanceTypesGroupConfig_Update = `
 // endregion
 
 // region Elastigroup: Launch Configuration
-func TestAccSpotinstElastigroup_LaunchConfiguration(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 	groupName := "eg-launch-configuration"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -479,13 +500,13 @@ const testLaunchConfigurationGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Preferred Spot
-func TestAccSpotinstElastigroup_PreferredSpot(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_PreferredSpot(t *testing.T) {
 	groupName := "eg-preferred-spot"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
@@ -554,13 +575,13 @@ const testPreferredSpotGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Strategy
-func TestAccSpotinstElastigroup_Strategy(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 	groupName := "eg-strategy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -654,13 +675,13 @@ const testStrategyGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Subnet IDs
-func TestAccSpotinstElastigroup_SubnetIDs(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 	groupName := "eg-subnet-ids"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -703,13 +724,13 @@ func TestAccSpotinstElastigroup_SubnetIDs(t *testing.T) {
 // endregion
 
 // region Elastigroup: Preferred Availability Zones
-func TestAccSpotinstElastigroup_PreferredAvailabilityZones(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_PreferredAvailabilityZones(t *testing.T) {
 	groupName := "eg-preferred-availability-zones"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -778,13 +799,13 @@ const testPreferredAvailabilityZonesGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Load Balancers
-func TestAccSpotinstElastigroup_LoadBalancers(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_LoadBalancers(t *testing.T) {
 	groupName := "eg-load-balancers"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -883,13 +904,13 @@ const testLoadBalancersGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Health Checks
-func TestAccSpotinstElastigroup_HealthChecks(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_HealthChecks(t *testing.T) {
 	groupName := "eg-health-checks"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -965,13 +986,13 @@ const testHealthChecksGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Elastic IPs
-func TestAccSpotinstElastigroup_ElasticIPs(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_ElasticIPs(t *testing.T) {
 	groupName := "eg-elastic-ips"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1040,13 +1061,13 @@ const testElasticIPsGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Elastic IPs with Terraform Count Parallelism
-func TestAccSpotinstElastigroup_ElasticIPs_Count_Parallelism(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_ElasticIPs_Count_Parallelism(t *testing.T) {
 	groupName := "eg-elastic-ips-tf-count-parallelism"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
@@ -1151,13 +1172,13 @@ const testElasticIPsGroupConfig_Count_EmptyFields = `
 // endregion
 
 // region Elastigroup: Signals
-func TestAccSpotinstElastigroup_Signals(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_Signals(t *testing.T) {
 	groupName := "eg-signals"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1239,13 +1260,13 @@ const testSignalsGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Revert To Spot (Maintenance Window)
-func TestAccSpotinstElastigroup_RevertToSpot(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_RevertToSpot(t *testing.T) {
 	groupName := "eg-revert-to-spot"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1319,13 +1340,13 @@ const testRevertToSpotGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Network Interfaces
-func TestAccSpotinstElastigroup_NetworkInterfaces(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_NetworkInterfaces(t *testing.T) {
 	groupName := "eg-network-interfaces"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1445,13 +1466,13 @@ const testNetworkInterfacesGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Scaling Up Policies
-func TestAccSpotinstElastigroup_ScalingUpPolicies(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_ScalingUpPolicies(t *testing.T) {
 	groupName := "eg-scaling-up-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1635,13 +1656,13 @@ const testScalingUpPolicyGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Scaling Down Policies
-func TestAccSpotinstElastigroup_ScalingDownPolicies(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_ScalingDownPolicies(t *testing.T) {
 	groupName := "eg-scaling-down-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1824,13 +1845,13 @@ const testScalingDownPolicyGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Scaling Target Policies
-func TestAccSpotinstElastigroup_ScalingTargetPolicies(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 	groupName := "eg-scaling-target-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -1944,13 +1965,13 @@ const testScalingTargetPolicyGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Scheduled Tasks
-func TestAccSpotinstElastigroup_ScheduledTask(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_ScheduledTask(t *testing.T) {
 	groupName := "eg-scheduled-task"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2091,13 +2112,13 @@ const testScheduledTaskGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Stateful
-func TestAccSpotinstElastigroup_Stateful(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_Stateful(t *testing.T) {
 	groupName := "eg-stateful"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2183,13 +2204,13 @@ const testStatefulGroupConfig_EmptyFields = `
  // -----------------------------------
 `
 
-func TestAccSpotinstElastigroup_DeallocationStateful_DeleteNetworkInterfacesAndSnapshots(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_DeallocationStateful_DeleteNetworkInterfacesAndSnapshots(t *testing.T) {
 	groupName := "eg-stateful-deallocation-network-interfaces-snapshots"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2238,13 +2259,13 @@ const testDeallocationStatefulGroupConfig_DeleteNetworkInterfacesAndSnapshots = 
  // -----------------------------------
 `
 
-func TestAccSpotinstElastigroup_DeallocationStateful_DeleteVolumesAndImages(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_DeallocationStateful_DeleteVolumesAndImages(t *testing.T) {
 	groupName := "eg-stateful-deallocation-volumes-images"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2293,13 +2314,13 @@ const testDeallocationStatefulGroupConfig_DeleteVolumesAndImages = `
  // -----------------------------------
 `
 
-func TestAccSpotinstElastigroup_DeallocationStateful_DeleteWithoutStatefulResources(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_DeallocationStateful_DeleteWithoutStatefulResources(t *testing.T) {
 	groupName := "eg-stateful-deallocation-empty"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2332,13 +2353,13 @@ const testDeallocationStatefulGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Block Devices
-func TestAccSpotinstElastigroup_BlockDevices(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 	groupName := "eg-block-devices"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testElastigroupDestroy,
 
@@ -2469,13 +2490,13 @@ const testElastigroupBlockDevices_EmptyFields = `
 // endregion
 
 // region Elastigroup: Tags
-func TestAccSpotinstElastigroup_Tags(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_Tags(t *testing.T) {
 	groupName := "eg-tags"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2561,13 +2582,13 @@ const testTagsGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Rancher Integration
-func TestAccSpotinstElastigroup_IntegrationRancher(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationRancher(t *testing.T) {
 	groupName := "eg-integration-rancher"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2655,13 +2676,13 @@ const testIntegrationRancherGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Code Deploy Integration
-func TestAccSpotinstElastigroup_IntegrationCodeDeploy(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationCodeDeploy(t *testing.T) {
 	groupName := "eg-integration-code-deploy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2751,13 +2772,13 @@ const testIntegrationCodeDeployGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Route53 integration
-func TestAccSpotinstElastigroup_IntegrationRoute53(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationRoute53(t *testing.T) {
 	groupName := "eg-integration-route53"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -2883,13 +2904,13 @@ const testIntegrationRoute53GroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: ECS Integration
-func TestAccSpotinstElastigroup_IntegrationECS(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 	groupName := "eg-integration-ecs"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3022,13 +3043,13 @@ const testIntegrationECSGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Kubernetes Integration
-func TestAccSpotinstElastigroup_IntegrationKubernetes(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationKubernetes(t *testing.T) {
 	groupName := "eg-integration-kubernetes"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3164,13 +3185,13 @@ const testIntegrationKubernetesGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Nomad Integration
-func TestAccSpotinstElastigroup_IntegrationNomad(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationNomad(t *testing.T) {
 	groupName := "eg-integration-nomad"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3301,13 +3322,13 @@ const testIntegrationNomadGroupConfig_EmptyFields = `
 
 // region Docker Swarm integration
 
-func TestAccSpotinstElastigroup_IntegrationDockerSwarm(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
 	groupName := "eg-integration-docker-swarm"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3423,13 +3444,13 @@ const testIntegrationDockerSwarmGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Gitlab Integration
-func TestAccSpotinstElastigroup_IntegrationGitlab(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationGitlab(t *testing.T) {
 	groupName := "eg-integration-gitlab"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3505,13 +3526,13 @@ const testIntegrationGitlabGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Mesosphere Integration
-func TestAccSpotinstElastigroup_IntegrationMesosphere(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationMesosphere(t *testing.T) {
 	groupName := "eg-integration-mesosphere"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3583,13 +3604,13 @@ const testIntegrationMesosphereGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Multai Runtime Integration
-func TestAccSpotinstElastigroup_IntegrationMultaiRuntime(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_IntegrationMultaiRuntime(t *testing.T) {
 	groupName := "eg-integration-multai-runtime"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3661,13 +3682,13 @@ const testIntegrationMultaiRuntimeGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Update Policy
-func TestAccSpotinstElastigroup_UpdatePolicy(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_UpdatePolicy(t *testing.T) {
 	groupName := "eg-update-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
@@ -3771,13 +3792,13 @@ const testUpdatePolicyGroupConfig_EmptyFields = `
 
 // region Wait for Capacity
 
-func TestAccSpotinstElastigroup_WaitForCapacity(t *testing.T) {
+func TestAccSpotinstElastigroupAWS_WaitForCapacity(t *testing.T) {
 	groupName := "eg-update-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t) },
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
 		Providers:     TestAccProviders,
 		CheckDestroy:  testElastigroupDestroy,
 		IDRefreshName: resourceName,
