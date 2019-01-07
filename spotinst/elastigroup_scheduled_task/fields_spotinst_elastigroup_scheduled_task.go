@@ -23,73 +23,73 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(IsEnabled): &schema.Schema{
+					string(IsEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
 						Default:  true,
 					},
 
-					string(TaskType): &schema.Schema{
+					string(TaskType): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(Frequency): &schema.Schema{
+					string(Frequency): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(CronExpression): &schema.Schema{
+					string(CronExpression): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(StartTime): &schema.Schema{
+					string(StartTime): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(ScaleTargetCapacity): &schema.Schema{
+					string(ScaleTargetCapacity): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(ScaleMinCapacity): &schema.Schema{
+					string(ScaleMinCapacity): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(ScaleMaxCapacity): &schema.Schema{
+					string(ScaleMaxCapacity): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(BatchSizePercentage): &schema.Schema{
+					string(BatchSizePercentage): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(GracePeriod): &schema.Schema{
+					string(GracePeriod): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(TargetCapacity): &schema.Schema{
+					string(TargetCapacity): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(MinCapacity): &schema.Schema{
+					string(MinCapacity): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(MaxCapacity): &schema.Schema{
+					string(MaxCapacity): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(Adjustment): &schema.Schema{
+					string(Adjustment): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},

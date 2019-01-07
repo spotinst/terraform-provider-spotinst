@@ -26,58 +26,58 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(IntegrationMode): &schema.Schema{
+					string(IntegrationMode): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(ClusterIdentifier): &schema.Schema{
+					string(ClusterIdentifier): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(ApiServer): &schema.Schema{
+					string(ApiServer): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(Token): &schema.Schema{
+					string(Token): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(AutoscaleIsEnabled): &schema.Schema{
+					string(AutoscaleIsEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(AutoscaleCooldown): &schema.Schema{
+					string(AutoscaleCooldown): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
 
-					string(AutoscaleIsAutoConfig): &schema.Schema{
+					string(AutoscaleIsAutoConfig): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(AutoscaleHeadroom): &schema.Schema{
+					string(AutoscaleHeadroom): {
 						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(CpuPerUnit): &schema.Schema{
+								string(CpuPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
 
-								string(MemoryPerUnit): &schema.Schema{
+								string(MemoryPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
 
-								string(NumOfUnits): &schema.Schema{
+								string(NumOfUnits): {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
@@ -85,13 +85,13 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(AutoscaleDown): &schema.Schema{
+					string(AutoscaleDown): {
 						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(EvaluationPeriods): &schema.Schema{
+								string(EvaluationPeriods): {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
@@ -99,17 +99,17 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(AutoscaleLabels): &schema.Schema{
+					string(AutoscaleLabels): {
 						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(Key): &schema.Schema{
+								string(Key): {
 									Type:     schema.TypeString,
 									Required: true,
 								},
 
-								string(Value): &schema.Schema{
+								string(Value): {
 									Type:     schema.TypeString,
 									Required: true,
 								},

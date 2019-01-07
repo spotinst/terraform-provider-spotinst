@@ -21,13 +21,13 @@ func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(GitlabRunner): &schema.Schema{
+					string(GitlabRunner): {
 						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(GitlabRunnerIsEnabled): &schema.Schema{
+								string(GitlabRunnerIsEnabled): {
 									Type:     schema.TypeBool,
 									Optional: true,
 								},

@@ -23,22 +23,22 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(MasterHost): &schema.Schema{
+					string(MasterHost): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(AccessKey): &schema.Schema{
+					string(AccessKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(SecretKey): &schema.Schema{
+					string(SecretKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(Version): &schema.Schema{
+					string(Version): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
