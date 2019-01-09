@@ -22,27 +22,27 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(CleanupOnFailure): &schema.Schema{
+					string(CleanupOnFailure): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
 
-					string(TerminateInstanceOnFailure): &schema.Schema{
+					string(TerminateInstanceOnFailure): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
 
-					string(DeploymentGroups): &schema.Schema{
+					string(DeploymentGroups): {
 						Type:     schema.TypeSet,
 						Required: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(ApplicationName): &schema.Schema{
+								string(ApplicationName): {
 									Type:     schema.TypeString,
 									Required: true,
 								},
 
-								string(DeploymentGroupName): &schema.Schema{
+								string(DeploymentGroupName): {
 									Type:     schema.TypeString,
 									Required: true,
 								},

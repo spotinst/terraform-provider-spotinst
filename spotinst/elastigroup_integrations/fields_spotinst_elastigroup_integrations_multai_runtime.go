@@ -23,7 +23,7 @@ func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(DeploymentId): &schema.Schema{
+					string(DeploymentId): {
 						Type:     schema.TypeString,
 						Required: true,
 					},

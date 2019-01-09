@@ -24,44 +24,44 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(DeleteOnTermination): &schema.Schema{
+					string(DeleteOnTermination): {
 						Type:     schema.TypeBool,
 						Optional: true,
 						Computed: true,
 					},
 
-					string(DeviceName): &schema.Schema{
+					string(DeviceName): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(Encrypted): &schema.Schema{
+					string(Encrypted): {
 						Type:     schema.TypeBool,
 						Optional: true,
 						Computed: true,
 					},
 
-					string(KmsKeyId): &schema.Schema{
+					string(KmsKeyId): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(Iops): &schema.Schema{
+					string(Iops): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
 
-					string(SnapshotId): &schema.Schema{
+					string(SnapshotId): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(VolumeSize): &schema.Schema{
+					string(VolumeSize): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
 
-					string(VolumeType): &schema.Schema{
+					string(VolumeType): {
 						Type:     schema.TypeString,
 						Optional: true,
 						Computed: true,
@@ -126,12 +126,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(DeviceName): &schema.Schema{
+					string(DeviceName): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(VirtualName): &schema.Schema{
+					string(VirtualName): {
 						Type:     schema.TypeString,
 						Required: true,
 					},

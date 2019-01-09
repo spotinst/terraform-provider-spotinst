@@ -174,45 +174,45 @@ func baseScalingPolicySchema() *schema.Schema {
 		Optional: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
-				string(PolicyName): &schema.Schema{
+				string(PolicyName): {
 					Type:     schema.TypeString,
 					Required: true,
 				},
 
-				string(MetricName): &schema.Schema{
+				string(MetricName): {
 					Type:     schema.TypeString,
 					Required: true,
 				},
 
-				string(Namespace): &schema.Schema{
+				string(Namespace): {
 					Type:     schema.TypeString,
 					Required: true,
 				},
 
-				string(Source): &schema.Schema{
+				string(Source): {
 					Type:     schema.TypeString,
 					Optional: true,
 					Computed: true,
 				},
 
-				string(Statistic): &schema.Schema{
+				string(Statistic): {
 					Type:     schema.TypeString,
 					Optional: true,
 					Computed: true,
 				},
 
-				string(Unit): &schema.Schema{
+				string(Unit): {
 					Type:     schema.TypeString,
 					Required: true,
 				},
 
-				string(Cooldown): &schema.Schema{
+				string(Cooldown): {
 					Type:     schema.TypeInt,
 					Optional: true,
 					Computed: true,
 				},
 
-				string(Dimensions): &schema.Schema{
+				string(Dimensions): {
 					Type:     schema.TypeMap,
 					Optional: true,
 				},

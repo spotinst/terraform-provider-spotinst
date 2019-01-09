@@ -23,7 +23,7 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(ApiServer): &schema.Schema{
+					string(ApiServer): {
 						Type:     schema.TypeString,
 						Required: true,
 					},

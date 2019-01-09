@@ -169,12 +169,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(InstanceType): &schema.Schema{
+					string(InstanceType): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(Weight): &schema.Schema{
+					string(Weight): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},

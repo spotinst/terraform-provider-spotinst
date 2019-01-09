@@ -234,21 +234,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(ShouldDeleteImages): &schema.Schema{
+					string(ShouldDeleteImages): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(ShouldDeleteNetworkInterfaces): &schema.Schema{
+					string(ShouldDeleteNetworkInterfaces): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(ShouldDeleteVolumes): &schema.Schema{
+					string(ShouldDeleteVolumes): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
-					string(ShouldDeleteSnapshots): &schema.Schema{
+					string(ShouldDeleteSnapshots): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},

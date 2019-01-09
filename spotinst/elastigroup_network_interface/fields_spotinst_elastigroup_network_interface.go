@@ -24,38 +24,38 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Description): &schema.Schema{
+					string(Description): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(DeviceIndex): &schema.Schema{
+					string(DeviceIndex): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(SecondaryPrivateIpAddressCount): &schema.Schema{
+					string(SecondaryPrivateIpAddressCount): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(AssociatePublicIpAddress): &schema.Schema{
+					string(AssociatePublicIpAddress): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(DeleteOnTermination): &schema.Schema{
+					string(DeleteOnTermination): {
 						Type:     schema.TypeBool,
 						Optional: true,
 						Computed: true,
 					},
 
-					string(NetworkInterfaceId): &schema.Schema{
+					string(NetworkInterfaceId): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(PrivateIpAddress): &schema.Schema{
+					string(PrivateIpAddress): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
