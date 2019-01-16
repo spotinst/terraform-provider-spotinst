@@ -17,6 +17,7 @@ install:
 
 script:
 - make test
+- make testacc spotinst
 - make vendor-status
 - make vet
 - make website-test
