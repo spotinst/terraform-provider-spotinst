@@ -4,12 +4,14 @@ NOTES:
 * resource/spotinst_elastigroup_azure: Added a new spotinst_elastigroup_azure resource for creating Spotinst elastigroups using Microsoft Azure
 * resource/spotinst_elastigroup_gcp: Added a new spotinst_elastigroup_gcp resource for creating Spotinst elastigroups using Google Cloud
 * resource/spotinst_elastigroup_gke: Added a new spotinst_elastigroup_gke resource for creating Spotinst elastigroups using Google Kubernetes Engine
+* resource/spotinst_ocean_aws: Added a new spotinst_ocean_aws resource for creating Spotinst Ocean clusters on AWS
 
 FEATURES:
 
 * *New Resource*: `spotinst_elastigroup_azure`
 * *New Resource*: `spotinst_elastigroup_gcp`
 * *New Resource*: `spotinst_elastigroup_gke`
+* *New Resource*: `spotinst_ocean_aws`
 
 
 ## 1.5.0 (December 28, 2018)
