@@ -20,37 +20,37 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(AutoDelete): &schema.Schema{
+					string(AutoDelete): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(Boot): &schema.Schema{
+					string(Boot): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(DeviceName): &schema.Schema{
+					string(DeviceName): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(InitializeParams): &schema.Schema{
+					string(InitializeParams): {
 						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(DiskSizeGB): &schema.Schema{
+								string(DiskSizeGB): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
 
-								string(DiskType): &schema.Schema{
+								string(DiskType): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
 
-								string(SourceImage): &schema.Schema{
+								string(SourceImage): {
 									Type:     schema.TypeString,
 									Required: true,
 								},
@@ -58,22 +58,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(Interface): &schema.Schema{
+					string(Interface): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(Mode): &schema.Schema{
+					string(Mode): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(Source): &schema.Schema{
+					string(Source): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
 
-					string(Type): &schema.Schema{
+					string(Type): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},

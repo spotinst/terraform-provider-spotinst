@@ -366,7 +366,7 @@ func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.0", "40"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.1", "4040"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".service_name", "terraform-acc-test-backend-service2"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".service_name", "terraform-acc-test-backend-service"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports."+NamedPortsHash2_update+".name", "https"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports."+NamedPortsHash2_update+".ports.#", "3"),
@@ -417,7 +417,7 @@ const (
 	MetaHash_update        = "284772212"
 	BackendSvcHash_create  = "2431595559"
 	BackendSvcHash1_update = "2963621724"
-	BackendSvcHash2_update = "3964818939"
+	BackendSvcHash2_update = "1192301944"
 	NamedPortsHash_create  = "571950593"
 	NamedPortsHash1_update = "981148154"
 	NamedPortsHash2_update = "1016050568"
@@ -492,7 +492,7 @@ const testLaunchConfigurationGCPGroupConfig_Update = `
    }
  },
  {
-   service_name = "terraform-acc-test-backend-service2"
+   service_name = "terraform-acc-test-backend-service"
    named_ports = {
      name = "https"
      ports = [50, 5050, 6060]

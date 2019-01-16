@@ -14,15 +14,15 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_block_devices"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_instance_types"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_integrations"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_launch_configuration"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_network_interface"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_scaling_policies"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_scheduled_task"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_stateful"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_strategy"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_block_devices"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_instance_types"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_integrations"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_network_interface"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_scaling_policies"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_scheduled_task"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_stateful"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_strategy"
 )
 
 func resourceSpotinstElastigroupAws() *schema.Resource {
@@ -46,15 +46,15 @@ func setupElastigroupResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	elastigroup_aws.Setup(fieldsMap)
-	elastigroup_block_devices.Setup(fieldsMap)
-	elastigroup_instance_types.Setup(fieldsMap)
-	elastigroup_integrations.Setup(fieldsMap)
-	elastigroup_launch_configuration.Setup(fieldsMap)
-	elastigroup_network_interface.Setup(fieldsMap)
-	elastigroup_scaling_policies.Setup(fieldsMap)
-	elastigroup_scheduled_task.Setup(fieldsMap)
-	elastigroup_stateful.Setup(fieldsMap)
-	elastigroup_strategy.Setup(fieldsMap)
+	elastigroup_aws_block_devices.Setup(fieldsMap)
+	elastigroup_aws_instance_types.Setup(fieldsMap)
+	elastigroup_aws_integrations.Setup(fieldsMap)
+	elastigroup_aws_launch_configuration.Setup(fieldsMap)
+	elastigroup_aws_network_interface.Setup(fieldsMap)
+	elastigroup_aws_scaling_policies.Setup(fieldsMap)
+	elastigroup_aws_scheduled_task.Setup(fieldsMap)
+	elastigroup_aws_stateful.Setup(fieldsMap)
+	elastigroup_aws_strategy.Setup(fieldsMap)
 
 	commons.ElastigroupResource = commons.NewElastigroupResource(fieldsMap)
 }
@@ -82,25 +82,25 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		GroupID: spotinst.String(groupId),
 	}
 
-	if statefulDeallocation, exists := resourceData.GetOkExists(string(elastigroup_stateful.StatefulDeallocation)); exists {
+	if statefulDeallocation, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulDeallocation)); exists {
 		list := statefulDeallocation.([]interface{})
 		if list != nil && len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
 			var result = &aws.StatefulDeallocation{}
-			if shouldDeleteImage, ok := m[string(elastigroup_stateful.ShouldDeleteImages)].(bool); ok && shouldDeleteImage {
+			if shouldDeleteImage, ok := m[string(elastigroup_aws_stateful.ShouldDeleteImages)].(bool); ok && shouldDeleteImage {
 				result.ShouldDeleteImages = spotinst.Bool(shouldDeleteImage)
 			}
 
-			if shouldDeleteNetworkInterfaces, ok := m[string(elastigroup_stateful.ShouldDeleteNetworkInterfaces)].(bool); ok && shouldDeleteNetworkInterfaces {
+			if shouldDeleteNetworkInterfaces, ok := m[string(elastigroup_aws_stateful.ShouldDeleteNetworkInterfaces)].(bool); ok && shouldDeleteNetworkInterfaces {
 				result.ShouldDeleteNetworkInterfaces = spotinst.Bool(shouldDeleteNetworkInterfaces)
 			}
 
-			if shouldDeleteSnapshots, ok := m[string(elastigroup_stateful.ShouldDeleteSnapshots)].(bool); ok && shouldDeleteSnapshots {
+			if shouldDeleteSnapshots, ok := m[string(elastigroup_aws_stateful.ShouldDeleteSnapshots)].(bool); ok && shouldDeleteSnapshots {
 				result.ShouldDeleteSnapshots = spotinst.Bool(shouldDeleteSnapshots)
 			}
 
-			if shouldDeleteVolumes, ok := m[string(elastigroup_stateful.ShouldDeleteVolumes)].(bool); ok && shouldDeleteVolumes {
+			if shouldDeleteVolumes, ok := m[string(elastigroup_aws_stateful.ShouldDeleteVolumes)].(bool); ok && shouldDeleteVolumes {
 				result.ShouldDeleteVolumes = spotinst.Bool(shouldDeleteVolumes)
 			}
 

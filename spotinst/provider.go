@@ -11,14 +11,14 @@ import (
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			string(commons.ProviderToken): &schema.Schema{
+			string(commons.ProviderToken): {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(credentials.EnvCredentialsVarToken, ""),
 				Description: "Spotinst Personal API Access Token",
 			},
 
-			string(commons.ProviderAccount): &schema.Schema{
+			string(commons.ProviderAccount): {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(credentials.EnvCredentialsVarAccount, ""),
@@ -33,6 +33,7 @@ func Provider() terraform.ResourceProvider {
 			string(commons.SubscriptionResourceName):            resourceSpotinstSubscription(),
 			string(commons.ElastigroupAWSBeanstalkResourceName): resourceSpotinstElastigroupAWSBeanstalk(),
 			string(commons.OceanAWSResourceName):                resourceSpotinstOceanAWS(),
+			string(commons.ElastigroupAzureResourceName):        resourceSpotinstElastigroupAzure(),
 		},
 
 		ConfigureFunc: providerConfigure,
