@@ -28,22 +28,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(ServiceName): &schema.Schema{
+					string(ServiceName): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(NamedPorts): &schema.Schema{
+					string(NamedPorts): {
 						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(Name): &schema.Schema{
+								string(Name): {
 									Type:     schema.TypeString,
 									Required: true,
 								},
 
-								string(Ports): &schema.Schema{
+								string(Ports): {
 									Type:     schema.TypeList,
 									Required: true,
 									Elem:     &schema.Schema{Type: schema.TypeString},
@@ -97,12 +97,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(LabelKey): &schema.Schema{
+					string(LabelKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(LabelValue): &schema.Schema{
+					string(LabelValue): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -163,12 +163,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(MetadataKey): &schema.Schema{
+					string(MetadataKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(MetadataValue): &schema.Schema{
+					string(MetadataValue): {
 						Type:     schema.TypeString,
 						Required: true,
 					},

@@ -702,12 +702,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(MultaiTargetSetId): &schema.Schema{
+					string(MultaiTargetSetId): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(MultaiBalancerId): &schema.Schema{
+					string(MultaiBalancerId): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -762,12 +762,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(TagKey): &schema.Schema{
+					string(TagKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(TagValue): &schema.Schema{
+					string(TagValue): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -881,12 +881,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(PerformAt): &schema.Schema{
+					string(PerformAt): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(TimeWindow): &schema.Schema{
+					string(TimeWindow): {
 						Type:     schema.TypeList,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
@@ -946,12 +946,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(SignalName): &schema.Schema{
+					string(SignalName): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(SignalTimeout): &schema.Schema{
+					string(SignalTimeout): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
@@ -1018,39 +1018,39 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(ShouldResumeStateful): &schema.Schema{
+					string(ShouldResumeStateful): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
 
-					string(AutoApplyTags): &schema.Schema{
+					string(AutoApplyTags): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
 
-					string(ShouldRoll): &schema.Schema{
+					string(ShouldRoll): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
 
-					string(RollConfig): &schema.Schema{
+					string(RollConfig): {
 						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(BatchSizePercentage): &schema.Schema{
+								string(BatchSizePercentage): {
 									Type:     schema.TypeInt,
 									Required: true,
 								},
 
-								string(GracePeriod): &schema.Schema{
+								string(GracePeriod): {
 									Type:     schema.TypeInt,
 									Optional: true,
 									Default:  -1,
 								},
 
-								string(HealthCheckType): &schema.Schema{
+								string(HealthCheckType): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},

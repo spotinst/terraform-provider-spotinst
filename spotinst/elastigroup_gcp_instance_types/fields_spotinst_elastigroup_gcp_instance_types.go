@@ -113,12 +113,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(MemoryGiB): &schema.Schema{
+					string(MemoryGiB): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},
 
-					string(VCPU): &schema.Schema{
+					string(VCPU): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},

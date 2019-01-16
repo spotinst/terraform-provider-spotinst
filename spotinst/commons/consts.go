@@ -48,6 +48,17 @@ const (
 	ElastigroupGKE             ResourceAffinity = "Elastigroup_GKE"
 	ElastigroupGKEInstanceType ResourceAffinity = "Elastigroup_GKE_Instance_Type"
 
+	ElastigroupAzure                    ResourceAffinity = "Elastigroup_Azure"
+	ElastigroupAzureStrategy            ResourceAffinity = "Elastigroup_Azure_Strategy"
+	ElastigroupAzureLogin               ResourceAffinity = "Elastigroup_Azure_Login"
+	ElastigroupAzureNetwork             ResourceAffinity = "Elastigroup_Azure_Network"
+	ElastigroupAzureLoadBalancers       ResourceAffinity = "Elastigroup_Azure_Load_Balancers"
+	ElastigroupAzureVMSizes             ResourceAffinity = "Elastigroup_Azure_VM_Sizes"
+	ElastigroupAzureImage               ResourceAffinity = "Elastigroup_Azure_Image"
+	ElastigroupAzureLaunchConfiguration ResourceAffinity = "Elastigroup_Azure_Launch_Configuration"
+	ElastigroupAzureHealthCheck         ResourceAffinity = "Elastigroup_Azure_Health_Check"
+	ElastigroupAzureScheduledTask       ResourceAffinity = "Elastigroup_Azure_Scheduled_Task"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

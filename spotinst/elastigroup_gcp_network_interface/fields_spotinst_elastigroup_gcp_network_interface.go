@@ -20,22 +20,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Network): &schema.Schema{
+					string(Network): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(AccessConfigs): &schema.Schema{
+					string(AccessConfigs): {
 						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(Name): &schema.Schema{
+								string(Name): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
 
-								string(Type): &schema.Schema{
+								string(Type): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
@@ -43,17 +43,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(AliasIPRanges): &schema.Schema{
+					string(AliasIPRanges): {
 						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(IPCIDRRange): &schema.Schema{
+								string(IPCIDRRange): {
 									Type:     schema.TypeString,
 									Required: true,
 								},
 
-								string(SubnetworkRangeName): &schema.Schema{
+								string(SubnetworkRangeName): {
 									Type:     schema.TypeString,
 									Required: true,
 								},
@@ -64,23 +64,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//egWrappger := resourceObject.(*commons.ElastigroupGCPWrapper)
-			//elastigroup := egWrappger.GetElastigroup()
-			//var value []interface{} = nil
-			//if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
-			//	elastigroup.Compute.LaunchSpecification.NetworkInterfaces != nil {
-			//	networkInterfaces := elastigroup.Compute.LaunchSpecification.NetworkInterfaces
-			//	value = flattenGCEGroupNetworkInterfaces(networkInterfaces)
-			//}
-			//if value != nil {
-			//	if err := resourceData.Set(string(NetworkInterface), value); err != nil {
-			//		return fmt.Errorf(string(commons.FailureFieldReadPattern), string(NetworkInterface), err)
-			//	}
-			//} else {
-			//	if err := resourceData.Set(string(NetworkInterface), []*gcp.NetworkInterface{}); err != nil {
-			//		return fmt.Errorf(string(commons.FailureFieldReadPattern), string(NetworkInterface), err)
-			//	}
-			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -111,10 +94,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Flatten Fields
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Expand Fields

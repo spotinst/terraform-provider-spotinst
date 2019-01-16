@@ -151,7 +151,7 @@ The following arguments are supported:
 * `health_check_grace_period` - (optional) Period of time (seconds) to wait for VM to reach healthiness before monitoring for unhealthiness.
 
 * `network_interface` - (Required, minimum 1) Array of objects representing the network configuration for the elastigroup.
-*`network` - (Required) Network resource for this group.
+* `network` - (Required) Network resource for this group.
 * `access_configs` - (Optional) Array of configurations.
 * `name` - (Optional) Name of this access configuration.
 * `type` - (Optional) Array of configurations for this interface. Currently, only ONE_TO_ONE_NAT is supported.

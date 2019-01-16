@@ -11,7 +11,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_launch_configuration"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration"
 	"regexp"
 )
 
@@ -404,8 +404,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("echo hello world")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world")),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.HexStateFunc("echo hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_aws_launch_configuration.HexStateFunc("echo goodbye world")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "standard"),
@@ -426,8 +426,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-987654"),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("echo hello world updated")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("echo goodbye world updated")),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.HexStateFunc("echo hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_aws_launch_configuration.HexStateFunc("echo goodbye world updated")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "unlimited"),
@@ -447,8 +447,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "key_name", "cannot set empty key name"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_launch_configuration.HexStateFunc("cannot set empty user data")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_launch_configuration.HexStateFunc("cannot set empty shutdown script")),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.HexStateFunc("cannot set empty user data")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_aws_launch_configuration.HexStateFunc("cannot set empty shutdown script")),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 				),
