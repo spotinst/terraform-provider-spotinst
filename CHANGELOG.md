@@ -1,4 +1,4 @@
-## 1.6.0 (Unreleased)
+## 1.6.0 (January 18, 2019)
 
 NOTES:
 * resource/spotinst_elastigroup_azure: Added a new spotinst_elastigroup_azure resource for creating Spotinst elastigroups using Microsoft Azure
