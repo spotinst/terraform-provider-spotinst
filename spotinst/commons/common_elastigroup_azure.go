@@ -112,8 +112,7 @@ func (res *ElastigroupAzureTerraformResource) OnUpdate(
 func NewElastigroupAzureWrapper() *ElastigroupAzureWrapper {
 	return &ElastigroupAzureWrapper{
 		elastigroup: &azure.Group{
-			Scaling:    &azure.Scaling{},
-			Scheduling: &azure.Scheduling{},
+			Scaling: &azure.Scaling{},
 			Compute: &azure.Compute{
 				LaunchSpecification: &azure.LaunchSpecification{
 					LoadBalancersConfig: &azure.LoadBalancersConfig{},
