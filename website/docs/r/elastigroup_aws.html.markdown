@@ -786,6 +786,8 @@ Usage:
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"MLB"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`, `"NONE"`.
         * `grace_period` - (Optional) Sets the grace period for new instances to become healthy.
+        * `wait_for_roll_percentage` - (Optional) For use with `should_roll`. Sets minimum % of roll required to complete before continuing the plan. Required if `wait_for_roll_timeout` is set.
+        * `wait_for_roll_timeout` - (Optional) For use with `should_roll`. Sets how long to wait for the deployed % of a roll to exceed `wait_for_roll_percentage` before continuing the plan. Required if `wait_for_roll_percentage` is set.
        
 ```hcl
   update_policy = {
@@ -799,6 +801,8 @@ Usage:
       batch_size_percentage = 33
       health_check_type     = "ELB"
       grace_period          = 300
+      wait_for_roll_percentage = 10
+      wait_for_roll_timeout    = 1500
     }
   }
 ```       
