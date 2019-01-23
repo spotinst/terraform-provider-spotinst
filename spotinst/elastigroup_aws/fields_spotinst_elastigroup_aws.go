@@ -1033,6 +1033,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Required: true,
 					},
 
+					string(WaitForPctComplete): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
+					string(WaitForPctTimeout): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
 					string(RollConfig): {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -1082,7 +1092,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
-
 }
 
 var TargetGroupArnRegex = regexp.MustCompile(`arn:aws:elasticloadbalancing:.*:\d{12}:targetgroup/(.*)/.*`)

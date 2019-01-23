@@ -717,6 +717,11 @@ type DetachGroupInput struct {
 
 type DetachGroupOutput struct{}
 
+type DeploymentStatusInput struct {
+	GroupID *string `json:"groupId,omitempty"`
+	RollID  *string `json:"id,omitempty"`
+}
+
 type RollGroupInput struct {
 	GroupID             *string       `json:"groupId,omitempty"`
 	BatchSizePercentage *int          `json:"batchSizePercentage,omitempty"`
@@ -725,7 +730,57 @@ type RollGroupInput struct {
 	Strategy            *RollStrategy `json:"strategy,omitempty"`
 }
 
-type RollGroupOutput struct{}
+type RollGroupOutput struct {
+	RollGroupStatus []*RollGroupStatus `json:"groupDeploymentStatus,omitempty"`
+}
+
+type RollGroupStatus struct {
+	RollID     *string   `json:"id,omitempty"`
+	RollStatus *string   `json:"status,omitempty"`
+	Progress   *Progress `json:"progress,omitempty"`
+	CreatedAt  *string   `json:"createdAt,omitempty"`
+	UpdatedAt  *string   `json:"updatedAt,omitempty"`
+}
+
+type Progress struct {
+	Unit  *string `json:"unit,omitempty"`
+	Value *int    `json:"value,omitempty"`
+}
+
+func deploymentStatusFromJSON(in []byte) (*RollGroupStatus, error) {
+	b := new(RollGroupStatus)
+	if err := json.Unmarshal(in, b); err != nil {
+		return nil, err
+	}
+	return b, nil
+}
+
+func deploymentStatusesFromJSON(in []byte) ([]*RollGroupStatus, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	out := make([]*RollGroupStatus, len(rw.Response.Items))
+	if len(out) == 0 {
+		return out, nil
+	}
+	for i, rb := range rw.Response.Items {
+		b, err := deploymentStatusFromJSON(rb)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = b
+	}
+	return out, nil
+}
+
+func deploymentStatusFromHttpResponse(resp *http.Response) ([]*RollGroupStatus, error) {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return deploymentStatusesFromJSON(body)
+}
 
 func groupFromJSON(in []byte) (*Group, error) {
 	b := new(Group)
@@ -990,6 +1045,31 @@ func (s *ServiceOp) Status(ctx context.Context, input *StatusGroupInput) (*Statu
 	return &StatusGroupOutput{Instances: is}, nil
 }
 
+func (s *ServiceOp) DeploymentStatus(ctx context.Context, input *DeploymentStatusInput) (*RollGroupOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/roll/{rollId}", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+		"rollId":  spotinst.StringValue(input.RollID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	deployments, err := deploymentStatusFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &RollGroupOutput{deployments}, nil
+}
+
 func (s *ServiceOp) Detach(ctx context.Context, input *DetachGroupInput) (*DetachGroupOutput, error) {
 	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/detachInstances", uritemplates.Values{
 		"groupId": spotinst.StringValue(input.GroupID),
@@ -1033,7 +1113,12 @@ func (s *ServiceOp) Roll(ctx context.Context, input *RollGroupInput) (*RollGroup
 	}
 	defer resp.Body.Close()
 
-	return &RollGroupOutput{}, nil
+	deployments, err := deploymentStatusFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &RollGroupOutput{deployments}, nil
 }
 
 func (s *ServiceOp) GetInstanceHealthiness(ctx context.Context, input *GetInstanceHealthinessInput) (*GetInstanceHealthinessOutput, error) {

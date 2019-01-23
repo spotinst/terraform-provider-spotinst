@@ -284,6 +284,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 			if roll, ok := m[string(elastigroup_aws.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
 			}
+
 		}
 	}
 
@@ -336,16 +337,58 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 						return err
 					} else {
 						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
-						if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput); err != nil {
+						if rollOut, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput); err != nil {
 							errResult = fmt.Errorf("[ERROR] onRoll() -> Roll group [%v] API call failed, error: %v", groupId, err)
+						} else {
+
+							var rollId *string
+							pctTimeout := 0
+							pctComplete := 0
+
+							if timeout, ok := updateGroupSchema[string(elastigroup_aws.WaitForPctTimeout)].(int); ok && timeout > 0 {
+								pctTimeout = timeout
+							}
+
+							if complete, ok := updateGroupSchema[string(elastigroup_aws.WaitForPctComplete)].(int); ok && complete > 0 {
+								pctComplete = complete
+							}
+
+							for item := range rollOut.RollGroupStatus {
+								rs := strings.ToUpper(spotinst.StringValue(rollOut.RollGroupStatus[item].RollStatus))
+								if rs == "IN_PROGRESS" || rs == "STARTING" {
+									rollId = rollOut.RollGroupStatus[item].RollID
+								}
+							}
+
+							log.Printf("timeout: %v, pct: %v", pctTimeout, pctComplete)
+							if pctTimeout > 0 && pctComplete > 0 && rollId != nil {
+								deployStatusInput := &aws.DeploymentStatusInput{GroupID: spotinst.String(groupId), RollID: rollId}
+								err := resource.Retry(time.Second*time.Duration(pctTimeout), func() *resource.RetryError {
+									if rollStatus, err := meta.(*Client).elastigroup.CloudProviderAWS().DeploymentStatus(context.Background(), deployStatusInput); err != nil {
+										errResult = fmt.Errorf("[ERROR] onRoll() -> Roll group status [%v] API call failed, error: %v", groupId, err)
+									} else {
+										if spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value) < pctComplete {
+											log.Printf("===> waiting for at least %d%% of batches to complete, currently %d%% <===\n", pctComplete, spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value))
+											err = fmt.Errorf("===> roll at %v%% complete <===", spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value))
+											return resource.RetryableError(err)
+										}
+									}
+									return nil
+								})
+								if err != nil {
+									return fmt.Errorf("[ERROR] Did not reach target deployment amount in time. Group is still updating. Message: %s", err)
+								}
+								log.Printf("awaitReadyRoll() -> Target deployment percentage reached [%v]", groupId)
+							}
 						}
+
 						log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
 					}
 				}
 			}
 		}
 	} else {
-		errResult = fmt.Errorf("[ERROR] onRoll() -> Missig update policy for group [%v]", groupId)
+		errResult = fmt.Errorf("[ERROR] onRoll() -> Missing update policy for group [%v]", groupId)
 	}
 
 	if errResult != nil {
@@ -388,6 +431,10 @@ func awaitReady(groupId *string, timeout int, capacity int, client *Client) erro
 
 	return nil
 }
+
+//func awaitReadyRoll(groupId *string, timeout int, capacity int, client *Client) error {
+//
+//}
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Fields Expand
