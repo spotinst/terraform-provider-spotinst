@@ -422,8 +422,6 @@ func awaitReadyRoll(groupId string, rollConfig interface{}, rollOut *aws.RollGro
 			}
 			log.Printf("awaitReadyRoll() -> Target deployment percentage reached [%v]", groupId)
 		}
-	} else {
-		return fmt.Errorf("[ERROR] Both wait_for_roll_percentage and wait_for_roll_timeout must be defined and greater than 0")
 	}
 	return nil
 }

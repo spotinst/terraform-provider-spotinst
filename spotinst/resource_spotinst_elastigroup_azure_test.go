@@ -752,3 +752,112 @@ const testAzureVMSizesGroupConfig_Update = `
 `
 
 // endregion
+
+// region Azure Elastigroup: Scheduled Task
+func TestAccSpotinstElastigroupAzure_ScheduledTask(t *testing.T) {
+	groupName := "eg-azure-scheduled-task"
+	resourceName := createElastigroupAzureResourceName(groupName)
+
+	var group azure.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScheduledTaskGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.task_type", "scale"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.scale_min_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.scale_max_capacity", "8"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.adjustment", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.scale_target_capacity", "6"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3930008834.grace_period", "300"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScheduledTaskGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.task_type", "scale"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.scale_min_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.scale_max_capacity", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.adjustment_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.scale_target_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.batch_size_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.705557774.grace_period", "360"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScheduledTaskGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureScheduledTaskGroupConfig_Create = `
+ // --- SCHEDULED TASK ------------------
+  scheduled_task = [{
+    is_enabled = true
+    cron_expression = "* * * * *"
+    task_type = "scale"
+    scale_min_capacity = 5
+    scale_max_capacity = 8
+    adjustment = 2
+    adjustment_percentage = 50
+    scale_target_capacity = 6
+    batch_size_percentage = 33
+    grace_period = 300
+  }]
+ // -------------------------------------
+`
+
+const testAzureScheduledTaskGroupConfig_Update = `
+ // --- SCHEDULED TASK ------------------
+  scheduled_task = [{
+    is_enabled = false
+    cron_expression = "* * * * *"
+    task_type = "scale"
+    scale_min_capacity = 0
+    scale_max_capacity = 10
+    adjustment_percentage = 50
+    scale_target_capacity = 5
+    batch_size_percentage = 50
+    grace_period = 360
+  }]
+ // -------------------------------------
+`
+
+const testAzureScheduledTaskGroupConfig_EmptyFields = `
+ // --- SCHEDULED TASK ------------------
+ // -------------------------------------
+`
+
+// endregion
