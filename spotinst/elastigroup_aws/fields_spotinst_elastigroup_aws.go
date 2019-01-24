@@ -75,13 +75,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			elastigroup.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
+			if v, ok := resourceData.GetOk(string(Description)); ok && v != "" {
+				elastigroup.SetDescription(spotinst.String(v.(string)))
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			elastigroup.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
+			if v, ok := resourceData.GetOk(string(Description)); ok && v != "" {
+				elastigroup.SetDescription(spotinst.String(v.(string)))
+			}
 			return nil
 		},
 		nil,

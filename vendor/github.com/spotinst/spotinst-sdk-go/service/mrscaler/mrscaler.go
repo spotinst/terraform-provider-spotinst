@@ -43,14 +43,16 @@ func (p InstanceGroupType) String() string {
 }
 
 type Scaler struct {
-	ID          *string   `json:"id,omitempty"`
-	Name        *string   `json:"name,omitempty"`
-	Description *string   `json:"description,omitempty"`
-	Region      *string   `json:"region,omitempty"`
-	Strategy    *Strategy `json:"strategy,omitempty"`
-	Compute     *Compute  `json:"compute,omitempty"`
-	Scaling     *Scaling  `json:"scaling,omitempty"`
-	CoreScaling *Scaling  `json:"coreScaling,omitempty"`
+	ID          *string     `json:"id,omitempty"`
+	Name        *string     `json:"name,omitempty"`
+	Description *string     `json:"description,omitempty"`
+	Region      *string     `json:"region,omitempty"`
+	Strategy    *Strategy   `json:"strategy,omitempty"`
+	Compute     *Compute    `json:"compute,omitempty"`
+	Cluster     *Cluster    `json:"cluster,omitempty"`
+	Scaling     *Scaling    `json:"scaling,omitempty"`
+	CoreScaling *Scaling    `json:"coreScaling,omitempty"`
+	Scheduling  *Scheduling `json:"scheduling,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -70,8 +72,10 @@ type Scaler struct {
 }
 
 type Strategy struct {
-	Cloning  *Cloning  `json:"cloning,omitempty"`
-	Wrapping *Wrapping `json:"wrapping,omitempty"`
+	Cloning             *Cloning             `json:"cloning,omitempty"`
+	Wrapping            *Wrapping            `json:"wrapping,omitempty"`
+	CreateNew           *CreateNew           `json:"new,omitempty"`
+	ProvisioningTimeout *ProvisioningTimeout `json:"provisioningTimeout,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -79,6 +83,7 @@ type Strategy struct {
 
 type Cloning struct {
 	OriginClusterID *string `json:"originClusterId,omitempty"`
+	Retries         *int    `json:"numberOfRetries,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -91,11 +96,53 @@ type Wrapping struct {
 	nullFields      []string
 }
 
+type CreateNew struct {
+	ReleaseLabel *string `json:"releaseLabel,omitempty"`
+	Retries      *int    `json:"numberOfRetries,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type ProvisioningTimeout struct {
+	Timeout       *int    `json:"timeout,omitempty"`
+	TimeoutAction *string `json:"timeoutAction,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
 type Compute struct {
-	AvailabilityZones []*AvailabilityZone `json:"availabilityZones,omitempty"`
-	Tags              []*Tag              `json:"tags,omitempty"`
-	InstanceGroups    *InstanceGroups     `json:"instanceGroups,omitempty"`
-	Configurations    *Configurations     `json:"configurations,omitempty"`
+	AvailabilityZones               []*AvailabilityZone `json:"availabilityZones,omitempty"`
+	Tags                            []*Tag              `json:"tags,omitempty"`
+	InstanceGroups                  *InstanceGroups     `json:"instanceGroups,omitempty"`
+	Configurations                  *Configurations     `json:"configurations,omitempty"`
+	EBSRootVolumeSize               *int                `json:"ebsRootVolumeSize,omitempty"`
+	ManagedPrimarySecurityGroup     *string             `json:"emrManagedMasterSecurityGroup,omitempty"`
+	ManagedReplicaSecurityGroup     *string             `json:"emrManagedSlaveSecurityGroup,omitempty"`
+	ServiceAccessSecurityGroup      *string             `json:"serviceAccessSecurityGroup,omitempty"`
+	AdditionalPrimarySecurityGroups []string            `json:"additionalMasterSecurityGroups,omitempty"`
+	AdditionalReplicaSecurityGroups []string            `json:"additionalSlaveSecurityGroups,omitempty"`
+	CustomAMIID                     *string             `json:"customAmiId,omitempty"`
+	RepoUpgradeOnBoot               *string             `json:"repoUpgradeOnBoot,omitempty"`
+	EC2KeyName                      *string             `json:"ec2KeyName,omitempty"`
+	Applications                    []*Application      `json:"applications,omitempty"`
+	BootstrapActions                *BootstrapActions   `json:"bootstrapActions,omitempty"`
+	Steps                           *Steps              `json:"steps,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Cluster struct {
+	LogURI                      *string `json:"logUri,omitempty"`
+	AdditionalInfo              *string `json:"additionalInfo,omitempty"`
+	JobFlowRole                 *string `json:"jobFlowRole,omitempty"`
+	SecurityConfiguration       *string `json:"securityConfiguration,omitempty"`
+	ServiceRole                 *string `json:"serviceRole,omitempty"`
+	VisibleToAllUsers           *bool   `json:"visibleToAllUsers,omitempty"`
+	TerminationProtected        *bool   `json:"terminationProtected,omitempty"`
+	KeepJobFlowAliveWhenNoSteps *bool   `json:"keepJobFlowAliveWhenNoSteps,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -112,6 +159,15 @@ type AvailabilityZone struct {
 type Tag struct {
 	Key   *string `json:"tagKey,omitempty"`
 	Value *string `json:"tagValue,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Application struct {
+	Args    []string `json:"args,omitempty"`
+	Name    *string  `json:"name,omitempty"`
+	Version *string  `json:"version,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -219,15 +275,49 @@ type Dimension struct {
 }
 
 type Configurations struct {
-	File *ConfigurationFile `json:"file,omitempty"`
+	File *S3File `json:"file,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
 }
 
-type ConfigurationFile struct {
+type BootstrapActions struct {
+	File *S3File `json:"file,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Steps struct {
+	File *S3File `json:"file,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type S3File struct {
 	Bucket *string `json:"bucket,omitempty"`
 	Key    *string `json:"key,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Scheduling struct {
+	Tasks []*Task `json:"tasks,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Task struct {
+	IsEnabled         *bool   `json:"isEnabled,omitempty"`
+	Type              *string `json:"taskType,omitempty"`
+	InstanceGroupType *string `json:"instanceGroupType"`
+	CronExpression    *string `json:"cronExpression,omitempty"`
+	TargetCapacity    *int    `json:"targetCapacity,omitempty"`
+	MinCapacity       *int    `json:"minCapacity,omitempty"`
+	MaxCapacity       *int    `json:"maxCapacity,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -401,6 +491,14 @@ func (o *Scaler) SetCompute(v *Compute) *Scaler {
 	return o
 }
 
+// SetCluster sets the Cluster object used when creating a new Scaler
+func (o *Scaler) SetCluster(v *Cluster) *Scaler {
+	if o.Cluster = v; o.Cluster == nil {
+		o.nullFields = append(o.nullFields, "Cluster")
+	}
+	return o
+}
+
 func (o *Scaler) SetScaling(v *Scaling) *Scaler {
 	if o.Scaling = v; v == nil {
 		o.nullFields = append(o.nullFields, "Scaling")
@@ -416,6 +514,157 @@ func (o *Scaler) SetCoreScaling(v *Scaling) *Scaler {
 }
 
 //endregion
+
+// region Cluster
+
+func (o *Cluster) MarshalJSON() ([]byte, error) {
+	type noMethod Cluster
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+// SetLogURI sets the log uri when creating a new cluster
+func (o *Cluster) SetLogURI(v *string) *Cluster {
+	if o.LogURI = v; o.LogURI == nil {
+		o.nullFields = append(o.nullFields, "LogURI")
+	}
+	return o
+}
+
+// SetAdditionalInfo sets the additional info field used by third party integrations when creating a new mrscaler
+func (o *Cluster) SetAdditionalInfo(v *string) *Cluster {
+	if o.AdditionalInfo = v; o.AdditionalInfo == nil {
+		o.nullFields = append(o.nullFields, "AdditionalInfo")
+	}
+	return o
+}
+
+// SetJobFlowRole sets the IAM role that will be adopted by the launched EC2 instances
+func (o *Cluster) SetJobFlowRole(v *string) *Cluster {
+	if o.JobFlowRole = v; o.JobFlowRole == nil {
+		o.nullFields = append(o.nullFields, "JobFlowRole")
+	}
+	return o
+}
+
+// SetSecurityConfiguration sets the name of the security configuration to be applied to the cluster
+func (o *Cluster) SetSecurityConfiguration(v *string) *Cluster {
+	if o.SecurityConfiguration = v; o.SecurityConfiguration == nil {
+		o.nullFields = append(o.nullFields, "SecurityConfiguration")
+	}
+	return o
+}
+
+// SetServiceRole sets the IAM role that the EMR will assume to access AWS resources on your behalf
+func (o *Cluster) SetServiceRole(v *string) *Cluster {
+	if o.ServiceRole = v; o.ServiceRole == nil {
+		o.nullFields = append(o.nullFields, "ServiceRole")
+	}
+	return o
+}
+
+// SetVisibleToAllUsers sets a flag indicating if the cluster is visibile to all IAM users
+func (o *Cluster) SetVisibleToAllUsers(v *bool) *Cluster {
+	if o.VisibleToAllUsers = v; o.VisibleToAllUsers == nil {
+		o.nullFields = append(o.nullFields, "VisibleToAllUsers")
+	}
+	return o
+}
+
+// SetTerminationProtected sets whether the EC2 instances in the cluster are protected from terminating API calls
+func (o *Cluster) SetTerminationProtected(v *bool) *Cluster {
+	if o.TerminationProtected = v; o.TerminationProtected == nil {
+		o.nullFields = append(o.nullFields, "TerminationProtected")
+	}
+	return o
+}
+
+// SetKeepJobFlowAliveWhenNoSteps sets KeepJobFlowAliveWhenNoSteps
+func (o *Cluster) SetKeepJobFlowAliveWhenNoSteps(v *bool) *Cluster {
+	if o.KeepJobFlowAliveWhenNoSteps = v; o.KeepJobFlowAliveWhenNoSteps == nil {
+		o.nullFields = append(o.nullFields, "KeepJobFlowAliveWhenNoSteps")
+	}
+	return o
+}
+
+// endregion
+
+// region Scheduling
+
+func (o *Scheduling) MarshalJSON() ([]byte, error) {
+	type noMethod Scheduling
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Scheduling) SetTasks(v []*Task) *Scheduling {
+	if o.Tasks = v; o.Tasks == nil {
+		o.nullFields = append(o.nullFields, "Tasks")
+	}
+	return o
+}
+
+// endregion
+
+// region Task
+
+func (o *Task) MarshalJSON() ([]byte, error) {
+	type noMethod Task
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Task) SetIsEnabled(v *bool) *Task {
+	if o.IsEnabled = v; o.IsEnabled == nil {
+		o.nullFields = append(o.nullFields, "IsEnabled")
+	}
+	return o
+}
+
+func (o *Task) SetType(v *string) *Task {
+	if o.Type = v; o.Type == nil {
+		o.nullFields = append(o.nullFields, "Type")
+	}
+	return o
+}
+
+// SetInstanceGroupType sets the instance group to apply the scheduled task to.
+func (o *Task) SetInstanceGroupType(v *string) *Task {
+	if o.InstanceGroupType = v; o.InstanceGroupType == nil {
+		o.nullFields = append(o.nullFields, "InstanceGroupType")
+	}
+	return o
+}
+
+func (o *Task) SetCronExpression(v *string) *Task {
+	if o.CronExpression = v; o.CronExpression == nil {
+		o.nullFields = append(o.nullFields, "CronExpression")
+	}
+	return o
+}
+
+func (o *Task) SetTargetCapacity(v *int) *Task {
+	if o.TargetCapacity = v; o.TargetCapacity == nil {
+		o.nullFields = append(o.nullFields, "TargetCapacity")
+	}
+	return o
+}
+
+func (o *Task) SetMinCapacity(v *int) *Task {
+	if o.MinCapacity = v; o.MinCapacity == nil {
+		o.nullFields = append(o.nullFields, "MinCapacity")
+	}
+	return o
+}
+
+func (o *Task) SetMaxCapacity(v *int) *Task {
+	if o.MaxCapacity = v; o.MaxCapacity == nil {
+		o.nullFields = append(o.nullFields, "MaxCapacity")
+	}
+	return o
+}
+
+// endregion
 
 //region Strategy
 
@@ -439,6 +688,22 @@ func (o *Strategy) SetWrapping(v *Wrapping) *Strategy {
 	return o
 }
 
+// SetCreateNew sets a new mrscaler object
+func (o *Strategy) SetCreateNew(v *CreateNew) *Strategy {
+	if o.CreateNew = v; o.CreateNew == nil {
+		o.nullFields = append(o.nullFields, "CreateNew")
+	}
+	return o
+}
+
+// SetProvisioningTimeout sets the timeout when creating or cloning a scaler
+func (o *Strategy) SetProvisioningTimeout(v *ProvisioningTimeout) *Strategy {
+	if o.ProvisioningTimeout = v; o.ProvisioningTimeout == nil {
+		o.nullFields = append(o.nullFields, "ProvisioningTimeout")
+	}
+	return o
+}
+
 //endregion
 
 //region Cloning
@@ -452,6 +717,14 @@ func (o *Cloning) MarshalJSON() ([]byte, error) {
 func (o *Cloning) SetOriginClusterId(v *string) *Cloning {
 	if o.OriginClusterID = v; v == nil {
 		o.nullFields = append(o.nullFields, "OriginClusterID")
+	}
+	return o
+}
+
+// SetRetries sets the number of retries to attempt when cloning a scaler
+func (o *Cloning) SetRetries(v *int) *Cloning {
+	if o.Retries = v; o.Retries == nil {
+		o.nullFields = append(o.nullFields, "Retries")
 	}
 	return o
 }
@@ -474,6 +747,62 @@ func (o *Wrapping) SetSourceClusterId(v *string) *Wrapping {
 }
 
 //endregion
+
+// region CreateNew
+
+func (o *CreateNew) MarshalJSON() ([]byte, error) {
+	type noMethod CreateNew
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+// SetReleaseLabel sets the release label for a new scaler
+func (o *CreateNew) SetReleaseLabel(v *string) *CreateNew {
+	if o.ReleaseLabel = v; o.ReleaseLabel == nil {
+		o.nullFields = append(o.nullFields, "ReleaseLabel")
+	}
+	return o
+}
+
+// SetRetries sets the number of retries to attempt when creating a new scaler
+func (o *CreateNew) SetRetries(v *int) *CreateNew {
+	if o.Retries = v; o.Retries == nil {
+		o.nullFields = append(o.nullFields, "Retries")
+	}
+	return o
+}
+
+// endregion
+
+// region ProvisioningTimeout
+
+func (o *ProvisioningTimeout) MarshalJSON() ([]byte, error) {
+	type noMethod ProvisioningTimeout
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+// SetTimeout sets the amount of time in seconds to wait for a scaler to be provisioned
+func (o *ProvisioningTimeout) SetTimeout(v *int) *ProvisioningTimeout {
+	if o.Timeout = v; o.Timeout == nil {
+		o.nullFields = append(o.nullFields, "Timeout")
+	}
+	return o
+}
+
+// SetTimeoutAction sets the action to take on timeout
+func (o *ProvisioningTimeout) SetTimeoutAction(v *string) *ProvisioningTimeout {
+	if o.TimeoutAction = v; o.TimeoutAction == nil {
+		o.nullFields = append(o.nullFields, "TimeoutAction")
+	}
+	return o
+}
+
+// endregion
+
+// region Scheduling
+
+// endregion
 
 //region Compute
 
@@ -511,7 +840,136 @@ func (o *Compute) SetConfigurations(v *Configurations) *Compute {
 	return o
 }
 
+// SetBootstrapActions sets the path for a bootstrap actions file stored in AWS S3
+func (o *Compute) SetBootstrapActions(v *BootstrapActions) *Compute {
+	if o.BootstrapActions = v; o.BootstrapActions == nil {
+		o.nullFields = append(o.nullFields, "BootstrapActions")
+	}
+	return o
+}
+
+// SetSteps sets the path for a steps file stored in AWS S3
+func (o *Compute) SetSteps(v *Steps) *Compute {
+	if o.Steps = v; o.Steps == nil {
+		o.nullFields = append(o.nullFields, "Steps")
+	}
+	return o
+}
+
+// SetEBSRootVolumeSize sets the ebs root volume size when creating a new scaler
+func (o *Compute) SetEBSRootVolumeSize(v *int) *Compute {
+	if o.EBSRootVolumeSize = v; o.EBSRootVolumeSize == nil {
+		o.nullFields = append(o.nullFields, "EBSRootVolumeSize")
+	}
+	return o
+}
+
+// SetManagedPrimarySecurityGroup sets the managed primary security group when creating a new scaler
+func (o *Compute) SetManagedPrimarySecurityGroup(v *string) *Compute {
+	if o.ManagedPrimarySecurityGroup = v; o.ManagedPrimarySecurityGroup == nil {
+		o.nullFields = append(o.nullFields, "ManagedPrimarySecurityGroup")
+	}
+	return o
+}
+
+// SetManagedReplicaSecurityGroup sets the managed replica security group when creating a new scaler
+func (o *Compute) SetManagedReplicaSecurityGroup(v *string) *Compute {
+	if o.ManagedReplicaSecurityGroup = v; o.ManagedReplicaSecurityGroup == nil {
+		o.nullFields = append(o.nullFields, "ManagedReplicaSecurityGroup")
+	}
+	return o
+}
+
+// SetServiceAccessSecurityGroup sets the service security group when creating a new scaler
+func (o *Compute) SetServiceAccessSecurityGroup(v *string) *Compute {
+	if o.ServiceAccessSecurityGroup = v; o.ServiceAccessSecurityGroup == nil {
+		o.nullFields = append(o.nullFields, "ServiceAccessSecurityGroup")
+	}
+	return o
+}
+
+// SetAdditionalPrimarySecurityGroups sets a list of additional primary security groups
+func (o *Compute) SetAdditionalPrimarySecurityGroups(v []string) *Compute {
+	if o.AdditionalPrimarySecurityGroups = v; o.AdditionalPrimarySecurityGroups == nil {
+		o.nullFields = append(o.nullFields, "AdditionalPrimarySecurityGroups")
+	}
+	return o
+}
+
+// SetAdditionalReplicaSecurityGroups sets a list of additional Replica security groups
+func (o *Compute) SetAdditionalReplicaSecurityGroups(v []string) *Compute {
+	if o.AdditionalReplicaSecurityGroups = v; o.AdditionalReplicaSecurityGroups == nil {
+		o.nullFields = append(o.nullFields, "AdditionalReplicaSecurityGroups")
+	}
+	return o
+}
+
+// SetCustomAMIID sets the custom AMI ID
+func (o *Compute) SetCustomAMIID(v *string) *Compute {
+	if o.CustomAMIID = v; o.CustomAMIID == nil {
+		o.nullFields = append(o.nullFields, "CustomAMIID")
+	}
+	return o
+}
+
+func (o *Compute) SetRepoUpgradeOnBoot(v *string) *Compute {
+	if o.RepoUpgradeOnBoot = v; o.RepoUpgradeOnBoot == nil {
+		o.nullFields = append(o.nullFields, "RepoUpgradeOnBoot")
+	}
+	return o
+}
+
+// SetEC2KeyName sets the EC2 key name
+func (o *Compute) SetEC2KeyName(v *string) *Compute {
+	if o.EC2KeyName = v; o.EC2KeyName == nil {
+		o.nullFields = append(o.nullFields, "EC2KeyName")
+	}
+	return o
+}
+
+// SetApplications sets the applications object
+func (o *Compute) SetApplications(v []*Application) *Compute {
+	if o.Applications = v; o.Applications == nil {
+		o.nullFields = append(o.nullFields, "Applications")
+	}
+	return o
+}
+
 //endregion
+
+// region Application
+
+func (o *Application) MarshalJSON() ([]byte, error) {
+	type noMethod Application
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+// SetArgs sets the list of args to use with the application
+func (o *Application) SetArgs(v []string) *Application {
+	if o.Args = v; o.Args == nil {
+		o.nullFields = append(o.nullFields, "Args")
+	}
+	return o
+}
+
+// SetName sets the name of the application
+func (o *Application) SetName(v *string) *Application {
+	if o.Name = v; o.Name == nil {
+		o.nullFields = append(o.nullFields, "Name")
+	}
+	return o
+}
+
+// SetVersion sets the application version
+func (o *Application) SetVersion(v *string) *Application {
+	if o.Version = v; o.Version == nil {
+		o.nullFields = append(o.nullFields, "Version")
+	}
+	return o
+}
+
+// endregion
 
 //region AvailabilityZone
 
@@ -956,7 +1414,7 @@ func (o *Configurations) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Configurations) SetFile(v *ConfigurationFile) *Configurations {
+func (o *Configurations) SetFile(v *S3File) *Configurations {
 	if o.File = v; v == nil {
 		o.nullFields = append(o.nullFields, "File")
 	}
@@ -965,21 +1423,55 @@ func (o *Configurations) SetFile(v *ConfigurationFile) *Configurations {
 
 //endregion
 
-//region ConfigurationFile
-func (o *ConfigurationFile) MarshalJSON() ([]byte, error) {
-	type noMethod ConfigurationFile
+//region Bootstrap Actions
+
+func (o *BootstrapActions) MarshalJSON() ([]byte, error) {
+	type noMethod BootstrapActions
 	raw := noMethod(*o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *ConfigurationFile) SetBucket(v *string) *ConfigurationFile {
+func (o *BootstrapActions) SetFile(v *S3File) *BootstrapActions {
+	if o.File = v; v == nil {
+		o.nullFields = append(o.nullFields, "File")
+	}
+	return o
+}
+
+//endregion
+
+//region Steps
+
+func (o *Steps) MarshalJSON() ([]byte, error) {
+	type noMethod Steps
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Steps) SetFile(v *S3File) *Steps {
+	if o.File = v; v == nil {
+		o.nullFields = append(o.nullFields, "File")
+	}
+	return o
+}
+
+//endregion
+
+//region S3File
+func (o *S3File) MarshalJSON() ([]byte, error) {
+	type noMethod S3File
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *S3File) SetBucket(v *string) *S3File {
 	if o.Bucket = v; v == nil {
 		o.nullFields = append(o.nullFields, "Bucket")
 	}
 	return o
 }
 
-func (o *ConfigurationFile) SetKey(v *string) *ConfigurationFile {
+func (o *S3File) SetKey(v *string) *S3File {
 	if o.Key = v; v == nil {
 		o.nullFields = append(o.nullFields, "Key")
 	}

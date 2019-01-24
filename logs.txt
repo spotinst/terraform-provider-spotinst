@@ -1,0 +1,1478 @@
+?   	github.com/terraform-providers/terraform-provider-spotinst	[no test files]
+=== RUN   TestAccSpotinstMRScalerAWSCloned_OptionalFields
+Terraform [mrscaler-new-cluster-optional-fields] template:
+provider "aws" {
+	 token   = "fake"
+	 account = "fake"
+	}
+	
+resource "spotinst_mrscaler_aws" "mrscaler-new-cluster-optional-fields" {
+ provider = "aws"
+
+ name               = "mrscaler-new-cluster-optional-fields"
+ description        = "test cloning a cluster"
+ availability_zones = ["us-west-2b:subnet-1ba25052"]
+ strategy           = "clone"
+ region             = "us-west-2"
+ cluster_id         = "j-40QKT56T5Q6W"
+
+ 
+// --- STRATEGY ------------
+ release_label = "emr-5.17.0"
+ //retries     = 1
+
+ provisioning_timeout = {
+   timeout        = 15
+   timeout_action = "terminate"
+ }
+// -------------------------
+
+ 
+// --- MASTER GROUP -------------
+  master_instance_types = ["c3.xlarge"]
+  master_lifecycle = "SPOT"
+  master_ebs_optimized = true
+  master_ebs_block_device = {
+    volumes_per_instance = 1
+    volume_type = "gp2"
+    size_in_gb = 30
+    //iops = 1
+  }
+// ------------------------------
+
+ 
+// --- CORE GROUP -------------
+  core_instance_types = ["c3.xlarge", "c4.xlarge"]
+  core_min_size         = 1
+  core_max_size         = 1
+  core_desired_capacity = 1
+  core_lifecycle = "ON_DEMAND"
+  core_ebs_optimized = false
+  core_ebs_block_device = {
+    volumes_per_instance = 2
+    volume_type = "gp2"
+    size_in_gb = 40
+    //iops = 1
+  }
+// ----------------------------
+
+ 
+// --- TASK GROUP -------------
+  task_instance_types = ["c3.xlarge", "c4.xlarge"]
+  task_min_size         = 0
+  task_max_size         = 30
+  task_desired_capacity = 1
+  task_lifecycle = "SPOT"
+  task_ebs_optimized = false
+  task_ebs_block_device = {
+    volumes_per_instance = 2
+    volume_type = "gp2"
+    size_in_gb = 40
+    //iops = 1
+  }
+// ----------------------------
+
+ 
+// --- OPTIONAL FIELDS --------------------
+//  ebs_root_volume_size = 10
+
+  steps_file = {
+    bucket = "terraform-emr-test"
+    key = "additional-steps-test.json"
+  }
+
+  configurations_file = {
+    bucket = "terraform-emr-test"
+    key = "configurations.json"
+  }
+
+  bootstrap_actions_file = {
+    bucket = "terraform-emr-test"
+    key = "bootstrap-actions-file.json"
+  }
+// ----------------------------------------
+
+}
+[DEBUG] Test: Executing step 0
+[DEBUG] New state was assigned lineage "48b1992f-483d-418c-bbbe-dcfb8e1d77f6"
+[INFO] terraform: building graph: GraphTypeValidate
+[DEBUG] Resource state not found for "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkValidate
+[DEBUG] Resource state not found for "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[INFO] terraform: building graph: GraphTypeRefresh
+[DEBUG] Starting graph walk: walkRefresh
+[INFO] terraform: building graph: GraphTypePlan
+[DEBUG] Resource state not found for "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkPlan
+[INFO] Spotinst client configured
+[DEBUG] Resource state not found for "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[WARN] Test: Step plan: DIFF:
+
+CREATE: spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields
+  availability_zones.#:                                    "0" => "1"
+  availability_zones.0:                                    "" => "us-west-2b:subnet-1ba25052"
+  bootstrap_actions_file.#:                                "0" => "1"
+  bootstrap_actions_file.3624379019.bucket:                "" => "terraform-emr-test"
+  bootstrap_actions_file.3624379019.key:                   "" => "bootstrap-actions-file.json"
+  cluster_id:                                              "" => "j-40QKT56T5Q6W"
+  configurations_file.#:                                   "0" => "1"
+  configurations_file.3778944667.bucket:                   "" => "terraform-emr-test"
+  configurations_file.3778944667.key:                      "" => "configurations.json"
+  core_desired_capacity:                                   "" => "1"
+  core_ebs_block_device.#:                                 "0" => "1"
+  core_ebs_block_device.3329897523.iops:                   "" => ""
+  core_ebs_block_device.3329897523.size_in_gb:             "" => "40"
+  core_ebs_block_device.3329897523.volume_type:            "" => "gp2"
+  core_ebs_block_device.3329897523.volumes_per_instance:   "" => "2"
+  core_ebs_optimized:                                      "" => "false"
+  core_instance_types.#:                                   "0" => "2"
+  core_instance_types.0:                                   "" => "c3.xlarge"
+  core_instance_types.1:                                   "" => "c4.xlarge"
+  core_lifecycle:                                          "" => "ON_DEMAND"
+  core_max_size:                                           "" => "1"
+  core_min_size:                                           "" => "1"
+  description:                                             "" => "test cloning a cluster"
+  expose_cluster_id:                                       "" => "false"
+  master_ebs_block_device.#:                               "0" => "1"
+  master_ebs_block_device.1008334328.iops:                 "" => ""
+  master_ebs_block_device.1008334328.size_in_gb:           "" => "30"
+  master_ebs_block_device.1008334328.volume_type:          "" => "gp2"
+  master_ebs_block_device.1008334328.volumes_per_instance: "" => "1"
+  master_ebs_optimized:                                    "" => "true"
+  master_instance_types.#:                                 "0" => "1"
+  master_instance_types.0:                                 "" => "c3.xlarge"
+  master_lifecycle:                                        "" => "SPOT"
+  name:                                                    "" => "mrscaler-new-cluster-optional-fields"
+  output_cluster_id:                                       "" => "<computed>"
+  provisioning_timeout.#:                                  "0" => "1"
+  provisioning_timeout.0.timeout:                          "" => "15"
+  provisioning_timeout.0.timeout_action:                   "" => "terminate"
+  region:                                                  "" => "us-west-2"
+  release_label:                                           "" => "emr-5.17.0"
+  steps_file.#:                                            "0" => "1"
+  steps_file.1986180246.bucket:                            "" => "terraform-emr-test"
+  steps_file.1986180246.key:                               "" => "additional-steps-test.json"
+  strategy:                                                "" => "clone"
+  task_desired_capacity:                                   "" => "1"
+  task_ebs_block_device.#:                                 "0" => "1"
+  task_ebs_block_device.3329897523.iops:                   "" => ""
+  task_ebs_block_device.3329897523.size_in_gb:             "" => "40"
+  task_ebs_block_device.3329897523.volume_type:            "" => "gp2"
+  task_ebs_block_device.3329897523.volumes_per_instance:   "" => "2"
+  task_ebs_optimized:                                      "" => "false"
+  task_instance_types.#:                                   "0" => "2"
+  task_instance_types.0:                                   "" => "c3.xlarge"
+  task_instance_types.1:                                   "" => "c4.xlarge"
+  task_lifecycle:                                          "" => "SPOT"
+  task_max_size:                                           "" => "30"
+  task_min_size:                                           "" => "0"
+
+STATE:
+
+<no state>
+[INFO] terraform: building graph: GraphTypeApply
+[DEBUG] Resource state not found for "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkApply
+[INFO] Spotinst client configured
+[DEBUG] apply: spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields: executing Apply
+onCreate() -> spotinst_mrscaler_aws -> started...
+onCreate() -> MRScaler_AWS -> expose_cluster_id
+onCreate() -> MRScaler_AWS_Strategy -> retries
+onCreate() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_up_policy
+onCreate() -> MRScaler_AWS -> availability_zones
+onCreate() -> MRScaler_AWS -> configurations_file
+onCreate() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_down_policy
+onCreate() -> MRScaler_AWS -> repo_upgrade_on_boot
+onCreate() -> MRScaler_AWS_Master_Group -> master_lifecycle
+onCreate() -> MRScaler_AWS_Master_Group -> master_instance_types
+onCreate() -> MRScaler_AWS_Cluster -> service_role
+onCreate() -> MRScaler_AWS -> name
+onCreate() -> MRScaler_AWS -> managed_primary_security_group
+onCreate() -> MRScaler_AWS -> additional_replica_security_groups
+onCreate() -> MRScaler_AWS_Core_Group -> core_min_size
+onCreate() -> MRScaler_AWS_Strategy -> strategy
+onCreate() -> MRScaler_AWS_Core_Group -> core_desired_capacity
+onCreate() -> MRScaler_AWS_Core_Group -> core_lifecycle
+onCreate() -> MRScaler_AWS_Task_Group -> task_desired_capacity
+onCreate() -> MRScaler_AWS_Task_Group -> task_instance_types
+onCreate() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_down_policy
+onCreate() -> MRScaler_AWS_Task_Group -> task_ebs_optimized
+onCreate() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_up_policy
+onCreate() -> MRScaler_AWS_Cluster -> termination_protected
+onCreate() -> MRScaler_AWS -> description
+onCreate() -> MRScaler_AWS -> region
+onCreate() -> MRScaler_AWS -> additional_primary_security_groups
+onCreate() -> MRScaler_AWS_Cluster -> keep_job_flow_alive
+onCreate() -> MRScaler_AWS -> bootstrap_actions_file
+onCreate() -> MRScaler_AWS -> steps_file
+onCreate() -> MRScaler_AWS -> ebs_root_volume_size
+onCreate() -> MRScaler_AWS -> custom_ami_id
+onCreate() -> MRScaler_AWS -> ec2_key_name
+onCreate() -> MRScaler_AWS_Cluster -> additional_info
+onCreate() -> MRScaler_AWS -> tags
+onCreate() -> MRScaler_AWS_Core_Group -> core_instance_types
+onCreate() -> MRScaler_AWS_Core_Group -> core_ebs_optimized
+onCreate() -> MRScaler_AWS_Task_Group -> task_lifecycle
+onCreate() -> MRScaler_AWS_Strategy -> release_label
+onCreate() -> MRScaler_AWS -> cluster_id
+onCreate() -> MRScaler_AWS -> output_cluster_id
+onCreate() -> MRScaler_AWS_Cluster -> security_config
+onCreate() -> MRScaler_AWS_Cluster -> visible_to_all_users
+onCreate() -> MRScaler_AWS_Core_Group -> core_max_size
+onCreate() -> MRScaler_AWS_Master_Group -> master_ebs_block_device
+onCreate() -> MRScaler_AWS_Strategy -> provisioning_timeout
+onCreate() -> MRScaler_AWS_Cluster -> log_uri
+onCreate() -> MRScaler_AWS_Cluster -> job_flow_role
+onCreate() -> MRScaler_AWS_Task_Group -> task_min_size
+onCreate() -> MRScaler_AWS_Task_Group -> task_ebs_block_device
+onCreate() -> MRScaler_AWS_Core_Group -> core_ebs_block_device
+onCreate() -> MRScaler_AWS_Master_Group -> master_ebs_optimized
+onCreate() -> MRScaler_AWS -> managed_replica_security_group
+onCreate() -> MRScaler_AWS -> service_access_security_group
+onCreate() -> MRScaler_AWS -> applications
+onCreate() -> MRScaler_AWS_Task_Group -> task_max_size
+===> Scaler create configuration: {"name":"mrscaler-new-cluster-optional-fields","description":"test cloning a cluster","region":"us-west-2","strategy":{"cloning":{"originClusterId":"j-40QKT56T5Q6W","numberOfRetries":0},"provisioningTimeout":{"timeout":15,"timeoutAction":"terminate"}},"compute":{"availabilityZones":[{"name":"us-west-2b","subnetId":"subnet-1ba25052"}],"instanceGroups":{"masterGroup":{"instanceTypes":["c3.xlarge"],"target":1,"lifeCycle":"SPOT","ebsConfiguration":{"ebsOptimized":true,"ebsBlockDeviceConfigs":[{"volumesPerInstance":1,"volumeSpecification":{"volumeType":"gp2","sizeInGB":30}}]}},"coreGroup":{"instanceTypes":["c3.xlarge","c4.xlarge"],"capacity":{"target":1,"minimum":1,"maximum":1},"lifeCycle":"ON_DEMAND","ebsConfiguration":{"ebsOptimized":false,"ebsBlockDeviceConfigs":[{"volumesPerInstance":2,"volumeSpecification":{"volumeType":"gp2","sizeInGB":40}}]}},"taskGroup":{"instanceTypes":["c3.xlarge","c4.xlarge"],"capacity":{"target":1,"minimum":0,"maximum":30},"lifeCycle":"SPOT","ebsConfiguration":{"ebsOptimized":false,"ebsBlockDeviceConfigs":[{"volumesPerInstance":2,"volumeSpecification":{"volumeType":"gp2","sizeInGB":40}}]}}},"configurations":{"file":{"bucket":"terraform-emr-test","key":"configurations.json"}},"bootstrapActions":{"file":{"bucket":"terraform-emr-test","key":"bootstrap-actions-file.json"}},"steps":{"file":{"bucket":"terraform-emr-test","key":"additional-steps-test.json"}}},"scaling":{},"coreScaling":{}}
+[DEBUG] Waiting for state to become: [success]
+[DEBUG] SPOTINST: Request "POST https://api.spotinst.io/aws/emr/mrScaler?accountId=act-92d45673" details:
+---[ REQUEST ]---------------------------------------
+POST /aws/emr/mrScaler?accountId=act-92d45673 HTTP/1.1
+Host: api.spotinst.io
+User-Agent: HashiCorp-Terraform/0.10.7,spotinst-provider/v2,spotinst-sdk-go/3.3.3
+Content-Length: 1443
+Accept: application/json
+Authorization: Bearer 0ad789e7ee5513493da989b7cf238626792e3c696bc2adb236fe4142bab19f8c
+Content-Type: application/json
+Accept-Encoding: gzip
+
+{"mrScaler":{"name":"mrscaler-new-cluster-optional-fields","description":"test cloning a cluster","region":"us-west-2","strategy":{"cloning":{"originClusterId":"j-40QKT56T5Q6W","numberOfRetries":0},"provisioningTimeout":{"timeout":15,"timeoutAction":"terminate"}},"compute":{"availabilityZones":[{"name":"us-west-2b","subnetId":"subnet-1ba25052"}],"instanceGroups":{"masterGroup":{"instanceTypes":["c3.xlarge"],"target":1,"lifeCycle":"SPOT","ebsConfiguration":{"ebsOptimized":true,"ebsBlockDeviceConfigs":[{"volumesPerInstance":1,"volumeSpecification":{"volumeType":"gp2","sizeInGB":30}}]}},"coreGroup":{"instanceTypes":["c3.xlarge","c4.xlarge"],"capacity":{"target":1,"minimum":1,"maximum":1},"lifeCycle":"ON_DEMAND","ebsConfiguration":{"ebsOptimized":false,"ebsBlockDeviceConfigs":[{"volumesPerInstance":2,"volumeSpecification":{"volumeType":"gp2","sizeInGB":40}}]}},"taskGroup":{"instanceTypes":["c3.xlarge","c4.xlarge"],"capacity":{"target":1,"minimum":0,"maximum":30},"lifeCycle":"SPOT","ebsConfiguration":{"ebsOptimized":false,"ebsBlockDeviceConfigs":[{"volumesPerInstance":2,"volumeSpecification":{"volumeType":"gp2","sizeInGB":40}}]}}},"configurations":{"file":{"bucket":"terraform-emr-test","key":"configurations.json"}},"bootstrapActions":{"file":{"bucket":"terraform-emr-test","key":"bootstrap-actions-file.json"}},"steps":{"file":{"bucket":"terraform-emr-test","key":"additional-steps-test.json"}}},"scaling":{},"coreScaling":{}}}
+
+-----------------------------------------------------
+[DEBUG] SPOTINST: Response "POST https://api.spotinst.io/aws/emr/mrScaler?accountId=act-92d45673" details:
+---[ RESPONSE ]----------------------------------------
+HTTP/2.0 200 OK
+Content-Length: 3729
+Access-Control-Allow-Headers: Origin,Accept,Content-Type,Authorization,X-CSRF-Token
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Date: Wed, 13 Feb 2019 20:20:57 GMT
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Ratelimit-Limit: 300
+X-Ratelimit-Remaining: 299
+X-Request-Id: 0515acf1-efdf-4b79-a19d-4f0fc413ad2a
+X-Response-Time: 8835ms
+
+{
+  "request": {
+    "id": "0515acf1-efdf-4b79-a19d-4f0fc413ad2a",
+    "url": "/aws/emr/mrScaler?accountId=act-92d45673",
+    "method": "POST",
+    "timestamp": "2019-02-13T20:20:57.488Z"
+  },
+  "response": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "kind": "spotinst:aws:emr:mrScaler",
+    "items": [
+      {
+        "id": "simrs-68ad7dfe",
+        "name": "mrscaler-new-cluster-optional-fields",
+        "description": "test cloning a cluster",
+        "region": "us-west-2",
+        "strategy": {
+          "cloning": {
+            "originClusterId": "j-40QKT56T5Q6W",
+            "numberOfRetries": 0,
+            "includeSteps": true
+          },
+          "provisioningTimeout": {
+            "timeout": 15,
+            "timeoutAction": "terminate"
+          }
+        },
+        "compute": {
+          "availabilityZones": [
+            {
+              "name": "us-west-2b",
+              "subnetId": "subnet-1ba25052"
+            }
+          ],
+          "instanceGroups": {
+            "masterGroup": {
+              "instanceTypes": [
+                "c3.xlarge"
+              ],
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 30
+                    },
+                    "volumesPerInstance": 1
+                  }
+                ],
+                "ebsOptimized": true
+              },
+              "target": 1
+            },
+            "coreGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "lifeCycle": "ON_DEMAND",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              },
+              "target": 1,
+              "capacity": {
+                "minimum": 1,
+                "maximum": 1,
+                "target": 1
+              }
+            },
+            "taskGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              },
+              "capacity": {
+                "minimum": 0,
+                "maximum": 30,
+                "target": 1
+              }
+            }
+          },
+          "configurations": {
+            "file": {
+              "bucket": "terraform-emr-test",
+              "key": "configurations.json"
+            }
+          },
+          "steps": {
+            "file": {
+              "bucket": "terraform-emr-test",
+              "key": "additional-steps-test.json"
+            }
+          },
+          "bootstrapsActions": {
+            "file": {
+              "bucket": "terraform-emr-test",
+              "key": "bootstrap-actions-file.json"
+            }
+          }
+        },
+        "scaling": {},
+        "coreScaling": {},
+        "createdAt": "2019-02-13T20:20:57.463Z",
+        "updatedAt": "2019-02-13T20:20:57.463Z"
+      }
+    ],
+    "count": 1
+  }
+}
+-------------------------------------------------------
+===> MRScaler created successfully: simrs-68ad7dfe <===
+onRead() -> spotinst_mrscaler_aws -> started for simrs-68ad7dfe...
+[DEBUG] SPOTINST: Request "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ REQUEST ]---------------------------------------
+GET /aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673 HTTP/1.1
+Host: api.spotinst.io
+User-Agent: HashiCorp-Terraform/0.10.7,spotinst-provider/v2,spotinst-sdk-go/3.3.3
+Accept: application/json
+Authorization: Bearer 0ad789e7ee5513493da989b7cf238626792e3c696bc2adb236fe4142bab19f8c
+Content-Type: application/json
+Accept-Encoding: gzip
+
+
+-----------------------------------------------------
+[DEBUG] SPOTINST: Response "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ RESPONSE ]----------------------------------------
+HTTP/2.0 200 OK
+Content-Length: 3398
+Access-Control-Allow-Headers: Origin,Accept,Content-Type,Authorization,X-CSRF-Token
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Date: Wed, 13 Feb 2019 20:20:57 GMT
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Ratelimit-Limit: 300
+X-Ratelimit-Remaining: 299
+X-Request-Id: f4710ec6-1ceb-4f40-a60f-3d00851c6a56
+X-Response-Time: 41ms
+
+{
+  "request": {
+    "id": "f4710ec6-1ceb-4f40-a60f-3d00851c6a56",
+    "url": "/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673",
+    "method": "GET",
+    "timestamp": "2019-02-13T20:20:57.599Z"
+  },
+  "response": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "kind": "spotinst:aws:emr:mrScaler",
+    "items": [
+      {
+        "id": "simrs-68ad7dfe",
+        "name": "mrscaler-new-cluster-optional-fields",
+        "description": "test cloning a cluster",
+        "region": "us-west-2",
+        "strategy": {
+          "cloning": {
+            "originClusterId": "j-40QKT56T5Q6W",
+            "numberOfRetries": 0,
+            "includeSteps": true
+          },
+          "provisioningTimeout": {
+            "timeout": 15,
+            "timeoutAction": "terminate"
+          }
+        },
+        "compute": {
+          "availabilityZones": [
+            {
+              "name": "us-west-2b",
+              "subnetId": "subnet-1ba25052"
+            }
+          ],
+          "instanceGroups": {
+            "masterGroup": {
+              "instanceTypes": [
+                "c3.xlarge"
+              ],
+              "target": 1,
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 30
+                    },
+                    "volumesPerInstance": 1
+                  }
+                ],
+                "ebsOptimized": true
+              }
+            },
+            "coreGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "lifeCycle": "ON_DEMAND",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              },
+              "target": 1,
+              "capacity": {
+                "minimum": 1,
+                "maximum": 1,
+                "target": 1
+              }
+            },
+            "taskGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "capacity": {
+                "minimum": 0,
+                "maximum": 30,
+                "target": 1
+              },
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              }
+            }
+          },
+          "configurations": {
+            "file": {
+              "bucket": "terraform-emr-test",
+              "key": "configurations.json"
+            }
+          }
+        },
+        "scaling": {},
+        "coreScaling": {},
+        "createdAt": "2019-02-13T20:20:57.000Z",
+        "updatedAt": "2019-02-13T20:20:57.000Z"
+      }
+    ],
+    "count": 1
+  }
+}
+-------------------------------------------------------
+onRead() -> MRScaler_AWS -> tags
+onRead() -> MRScaler_AWS_Core_Group -> core_instance_types
+onRead() -> MRScaler_AWS_Core_Group -> core_ebs_optimized
+onRead() -> MRScaler_AWS_Task_Group -> task_lifecycle
+onRead() -> MRScaler_AWS_Strategy -> release_label
+onRead() -> MRScaler_AWS -> cluster_id
+onRead() -> MRScaler_AWS -> output_cluster_id
+onRead() -> MRScaler_AWS_Cluster -> security_config
+onRead() -> MRScaler_AWS_Cluster -> job_flow_role
+onRead() -> MRScaler_AWS_Cluster -> visible_to_all_users
+onRead() -> MRScaler_AWS_Core_Group -> core_max_size
+onRead() -> MRScaler_AWS_Master_Group -> master_ebs_block_device
+onRead() -> MRScaler_AWS_Strategy -> provisioning_timeout
+onRead() -> MRScaler_AWS_Cluster -> log_uri
+onRead() -> MRScaler_AWS_Task_Group -> task_min_size
+onRead() -> MRScaler_AWS_Task_Group -> task_ebs_block_device
+onRead() -> MRScaler_AWS_Core_Group -> core_ebs_block_device
+onRead() -> MRScaler_AWS_Master_Group -> master_ebs_optimized
+onRead() -> MRScaler_AWS -> managed_replica_security_group
+onRead() -> MRScaler_AWS -> service_access_security_group
+onRead() -> MRScaler_AWS_Task_Group -> task_max_size
+onRead() -> MRScaler_AWS -> applications
+onRead() -> MRScaler_AWS -> expose_cluster_id
+onRead() -> MRScaler_AWS_Strategy -> retries
+onRead() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_up_policy
+onRead() -> MRScaler_AWS -> availability_zones
+onRead() -> MRScaler_AWS -> configurations_file
+onRead() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_down_policy
+onRead() -> MRScaler_AWS -> repo_upgrade_on_boot
+onRead() -> MRScaler_AWS_Master_Group -> master_lifecycle
+onRead() -> MRScaler_AWS_Master_Group -> master_instance_types
+onRead() -> MRScaler_AWS_Strategy -> strategy
+onRead() -> MRScaler_AWS_Cluster -> service_role
+onRead() -> MRScaler_AWS -> name
+onRead() -> MRScaler_AWS -> managed_primary_security_group
+onRead() -> MRScaler_AWS -> additional_replica_security_groups
+onRead() -> MRScaler_AWS_Core_Group -> core_min_size
+onRead() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_down_policy
+onRead() -> MRScaler_AWS_Core_Group -> core_desired_capacity
+onRead() -> MRScaler_AWS_Core_Group -> core_lifecycle
+onRead() -> MRScaler_AWS_Task_Group -> task_desired_capacity
+onRead() -> MRScaler_AWS_Task_Group -> task_instance_types
+onRead() -> MRScaler_AWS_Task_Group -> task_ebs_optimized
+onRead() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_up_policy
+onRead() -> MRScaler_AWS -> additional_primary_security_groups
+onRead() -> MRScaler_AWS_Cluster -> termination_protected
+onRead() -> MRScaler_AWS -> description
+onRead() -> MRScaler_AWS -> region
+onRead() -> MRScaler_AWS_Cluster -> keep_job_flow_alive
+onRead() -> MRScaler_AWS -> bootstrap_actions_file
+onRead() -> MRScaler_AWS -> steps_file
+onRead() -> MRScaler_AWS -> ebs_root_volume_size
+onRead() -> MRScaler_AWS -> custom_ami_id
+onRead() -> MRScaler_AWS -> ec2_key_name
+onRead() -> MRScaler_AWS_Cluster -> additional_info
+===> MRScaler read successfully: simrs-68ad7dfe <===
+[DEBUG] SPOTINST: Request "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ REQUEST ]---------------------------------------
+GET /aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673 HTTP/1.1
+Host: api.spotinst.io
+User-Agent: HashiCorp-Terraform/0.10.7,spotinst-provider/v2,spotinst-sdk-go/3.3.3
+Accept: application/json
+Authorization: Bearer 0ad789e7ee5513493da989b7cf238626792e3c696bc2adb236fe4142bab19f8c
+Content-Type: application/json
+Accept-Encoding: gzip
+
+
+-----------------------------------------------------
+[DEBUG] SPOTINST: Response "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ RESPONSE ]----------------------------------------
+HTTP/2.0 200 OK
+Content-Length: 3398
+Access-Control-Allow-Headers: Origin,Accept,Content-Type,Authorization,X-CSRF-Token
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Date: Wed, 13 Feb 2019 20:20:57 GMT
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Ratelimit-Limit: 300
+X-Ratelimit-Remaining: 299
+X-Request-Id: 823b6f75-46a6-411e-9d55-4c7b2b36bf3a
+X-Response-Time: 46ms
+
+{
+  "request": {
+    "id": "823b6f75-46a6-411e-9d55-4c7b2b36bf3a",
+    "url": "/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673",
+    "method": "GET",
+    "timestamp": "2019-02-13T20:20:57.712Z"
+  },
+  "response": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "kind": "spotinst:aws:emr:mrScaler",
+    "items": [
+      {
+        "id": "simrs-68ad7dfe",
+        "name": "mrscaler-new-cluster-optional-fields",
+        "description": "test cloning a cluster",
+        "region": "us-west-2",
+        "strategy": {
+          "cloning": {
+            "originClusterId": "j-40QKT56T5Q6W",
+            "numberOfRetries": 0,
+            "includeSteps": true
+          },
+          "provisioningTimeout": {
+            "timeout": 15,
+            "timeoutAction": "terminate"
+          }
+        },
+        "compute": {
+          "availabilityZones": [
+            {
+              "name": "us-west-2b",
+              "subnetId": "subnet-1ba25052"
+            }
+          ],
+          "instanceGroups": {
+            "masterGroup": {
+              "instanceTypes": [
+                "c3.xlarge"
+              ],
+              "target": 1,
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 30
+                    },
+                    "volumesPerInstance": 1
+                  }
+                ],
+                "ebsOptimized": true
+              }
+            },
+            "coreGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "lifeCycle": "ON_DEMAND",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              },
+              "target": 1,
+              "capacity": {
+                "minimum": 1,
+                "maximum": 1,
+                "target": 1
+              }
+            },
+            "taskGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "capacity": {
+                "minimum": 0,
+                "maximum": 30,
+                "target": 1
+              },
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              }
+            }
+          },
+          "configurations": {
+            "file": {
+              "bucket": "terraform-emr-test",
+              "key": "configurations.json"
+            }
+          }
+        },
+        "scaling": {},
+        "coreScaling": {},
+        "createdAt": "2019-02-13T20:20:57.000Z",
+        "updatedAt": "2019-02-13T20:20:57.000Z"
+      }
+    ],
+    "count": 1
+  }
+}
+-------------------------------------------------------
+[INFO] terraform: building graph: GraphTypePlan
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4203dadc0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkPlan
+[INFO] Spotinst client configured
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4203dadc0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] Instance Diff is nil in Diff()
+[INFO] terraform: building graph: GraphTypeRefresh
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc42048c190), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkRefresh
+[INFO] Spotinst client configured
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc42048c190), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+onRead() -> spotinst_mrscaler_aws -> started for simrs-68ad7dfe...
+[DEBUG] SPOTINST: Request "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ REQUEST ]---------------------------------------
+GET /aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673 HTTP/1.1
+Host: api.spotinst.io
+User-Agent: HashiCorp-Terraform/0.10.7,spotinst-provider/v2,spotinst-sdk-go/3.3.3
+Accept: application/json
+Authorization: Bearer 0ad789e7ee5513493da989b7cf238626792e3c696bc2adb236fe4142bab19f8c
+Content-Type: application/json
+Accept-Encoding: gzip
+
+
+-----------------------------------------------------
+[DEBUG] SPOTINST: Response "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ RESPONSE ]----------------------------------------
+HTTP/2.0 200 OK
+Content-Length: 3398
+Access-Control-Allow-Headers: Origin,Accept,Content-Type,Authorization,X-CSRF-Token
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Date: Wed, 13 Feb 2019 20:20:58 GMT
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Ratelimit-Limit: 300
+X-Ratelimit-Remaining: 299
+X-Request-Id: de6744b8-ef04-492a-8edd-d1b9b5ab48ac
+X-Response-Time: 52ms
+
+{
+  "request": {
+    "id": "de6744b8-ef04-492a-8edd-d1b9b5ab48ac",
+    "url": "/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673",
+    "method": "GET",
+    "timestamp": "2019-02-13T20:20:58.144Z"
+  },
+  "response": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "kind": "spotinst:aws:emr:mrScaler",
+    "items": [
+      {
+        "id": "simrs-68ad7dfe",
+        "name": "mrscaler-new-cluster-optional-fields",
+        "description": "test cloning a cluster",
+        "region": "us-west-2",
+        "strategy": {
+          "cloning": {
+            "originClusterId": "j-40QKT56T5Q6W",
+            "numberOfRetries": 0,
+            "includeSteps": true
+          },
+          "provisioningTimeout": {
+            "timeout": 15,
+            "timeoutAction": "terminate"
+          }
+        },
+        "compute": {
+          "availabilityZones": [
+            {
+              "name": "us-west-2b",
+              "subnetId": "subnet-1ba25052"
+            }
+          ],
+          "instanceGroups": {
+            "masterGroup": {
+              "instanceTypes": [
+                "c3.xlarge"
+              ],
+              "target": 1,
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 30
+                    },
+                    "volumesPerInstance": 1
+                  }
+                ],
+                "ebsOptimized": true
+              }
+            },
+            "coreGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "lifeCycle": "ON_DEMAND",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              },
+              "target": 1,
+              "capacity": {
+                "minimum": 1,
+                "maximum": 1,
+                "target": 1
+              }
+            },
+            "taskGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "capacity": {
+                "minimum": 0,
+                "maximum": 30,
+                "target": 1
+              },
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              }
+            }
+          },
+          "configurations": {
+            "file": {
+              "bucket": "terraform-emr-test",
+              "key": "configurations.json"
+            }
+          }
+        },
+        "scaling": {},
+        "coreScaling": {},
+        "createdAt": "2019-02-13T20:20:57.000Z",
+        "updatedAt": "2019-02-13T20:20:57.000Z"
+      }
+    ],
+    "count": 1
+  }
+}
+-------------------------------------------------------
+onRead() -> MRScaler_AWS_Cluster -> additional_info
+onRead() -> MRScaler_AWS -> custom_ami_id
+onRead() -> MRScaler_AWS -> ec2_key_name
+onRead() -> MRScaler_AWS -> tags
+onRead() -> MRScaler_AWS_Core_Group -> core_instance_types
+onRead() -> MRScaler_AWS_Strategy -> release_label
+onRead() -> MRScaler_AWS_Core_Group -> core_ebs_optimized
+onRead() -> MRScaler_AWS_Task_Group -> task_lifecycle
+onRead() -> MRScaler_AWS_Cluster -> security_config
+onRead() -> MRScaler_AWS -> cluster_id
+onRead() -> MRScaler_AWS -> output_cluster_id
+onRead() -> MRScaler_AWS_Strategy -> provisioning_timeout
+onRead() -> MRScaler_AWS_Cluster -> log_uri
+onRead() -> MRScaler_AWS_Cluster -> job_flow_role
+onRead() -> MRScaler_AWS_Cluster -> visible_to_all_users
+onRead() -> MRScaler_AWS_Core_Group -> core_max_size
+onRead() -> MRScaler_AWS_Master_Group -> master_ebs_block_device
+onRead() -> MRScaler_AWS_Task_Group -> task_ebs_block_device
+onRead() -> MRScaler_AWS_Task_Group -> task_min_size
+onRead() -> MRScaler_AWS -> managed_replica_security_group
+onRead() -> MRScaler_AWS -> service_access_security_group
+onRead() -> MRScaler_AWS_Core_Group -> core_ebs_block_device
+onRead() -> MRScaler_AWS_Master_Group -> master_ebs_optimized
+onRead() -> MRScaler_AWS -> applications
+onRead() -> MRScaler_AWS_Task_Group -> task_max_size
+onRead() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_up_policy
+onRead() -> MRScaler_AWS -> expose_cluster_id
+onRead() -> MRScaler_AWS_Strategy -> retries
+onRead() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_down_policy
+onRead() -> MRScaler_AWS -> availability_zones
+onRead() -> MRScaler_AWS -> configurations_file
+onRead() -> MRScaler_AWS_Master_Group -> master_instance_types
+onRead() -> MRScaler_AWS -> repo_upgrade_on_boot
+onRead() -> MRScaler_AWS_Master_Group -> master_lifecycle
+onRead() -> MRScaler_AWS -> additional_replica_security_groups
+onRead() -> MRScaler_AWS_Core_Group -> core_min_size
+onRead() -> MRScaler_AWS_Strategy -> strategy
+onRead() -> MRScaler_AWS_Cluster -> service_role
+onRead() -> MRScaler_AWS -> name
+onRead() -> MRScaler_AWS -> managed_primary_security_group
+onRead() -> MRScaler_AWS_Task_Group -> task_desired_capacity
+onRead() -> MRScaler_AWS_Task_Group -> task_instance_types
+onRead() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_down_policy
+onRead() -> MRScaler_AWS_Core_Group -> core_desired_capacity
+onRead() -> MRScaler_AWS_Core_Group -> core_lifecycle
+onRead() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_up_policy
+onRead() -> MRScaler_AWS_Task_Group -> task_ebs_optimized
+onRead() -> MRScaler_AWS -> additional_primary_security_groups
+onRead() -> MRScaler_AWS_Cluster -> termination_protected
+onRead() -> MRScaler_AWS -> description
+onRead() -> MRScaler_AWS -> region
+onRead() -> MRScaler_AWS_Cluster -> keep_job_flow_alive
+onRead() -> MRScaler_AWS -> ebs_root_volume_size
+onRead() -> MRScaler_AWS -> bootstrap_actions_file
+onRead() -> MRScaler_AWS -> steps_file
+===> MRScaler read successfully: simrs-68ad7dfe <===
+[INFO] terraform: building graph: GraphTypePlan
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc42048d360), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkPlan
+[INFO] Spotinst client configured
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc42048d360), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] Instance Diff is nil in Diff()
+[WARN] Test: Executing destroy step
+[INFO] terraform: building graph: GraphTypeValidate
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc42048d2c0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkValidate
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc42048d2c0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[INFO] terraform: building graph: GraphTypeRefresh
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4204060a0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkRefresh
+[INFO] Spotinst client configured
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4204060a0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+onRead() -> spotinst_mrscaler_aws -> started for simrs-68ad7dfe...
+[DEBUG] SPOTINST: Request "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ REQUEST ]---------------------------------------
+GET /aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673 HTTP/1.1
+Host: api.spotinst.io
+User-Agent: HashiCorp-Terraform/0.10.7,spotinst-provider/v2,spotinst-sdk-go/3.3.3
+Accept: application/json
+Authorization: Bearer 0ad789e7ee5513493da989b7cf238626792e3c696bc2adb236fe4142bab19f8c
+Content-Type: application/json
+Accept-Encoding: gzip
+
+
+-----------------------------------------------------
+[DEBUG] SPOTINST: Response "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ RESPONSE ]----------------------------------------
+HTTP/2.0 200 OK
+Content-Length: 3398
+Access-Control-Allow-Headers: Origin,Accept,Content-Type,Authorization,X-CSRF-Token
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Date: Wed, 13 Feb 2019 20:20:58 GMT
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Ratelimit-Limit: 300
+X-Ratelimit-Remaining: 299
+X-Request-Id: b7b452a3-9501-4663-979d-f47a2071ad92
+X-Response-Time: 46ms
+
+{
+  "request": {
+    "id": "b7b452a3-9501-4663-979d-f47a2071ad92",
+    "url": "/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673",
+    "method": "GET",
+    "timestamp": "2019-02-13T20:20:58.511Z"
+  },
+  "response": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "kind": "spotinst:aws:emr:mrScaler",
+    "items": [
+      {
+        "id": "simrs-68ad7dfe",
+        "name": "mrscaler-new-cluster-optional-fields",
+        "description": "test cloning a cluster",
+        "region": "us-west-2",
+        "strategy": {
+          "cloning": {
+            "originClusterId": "j-40QKT56T5Q6W",
+            "numberOfRetries": 0,
+            "includeSteps": true
+          },
+          "provisioningTimeout": {
+            "timeout": 15,
+            "timeoutAction": "terminate"
+          }
+        },
+        "compute": {
+          "availabilityZones": [
+            {
+              "name": "us-west-2b",
+              "subnetId": "subnet-1ba25052"
+            }
+          ],
+          "instanceGroups": {
+            "masterGroup": {
+              "instanceTypes": [
+                "c3.xlarge"
+              ],
+              "target": 1,
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 30
+                    },
+                    "volumesPerInstance": 1
+                  }
+                ],
+                "ebsOptimized": true
+              }
+            },
+            "coreGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "lifeCycle": "ON_DEMAND",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              },
+              "target": 1,
+              "capacity": {
+                "minimum": 1,
+                "maximum": 1,
+                "target": 1
+              }
+            },
+            "taskGroup": {
+              "instanceTypes": [
+                "c3.xlarge",
+                "c4.xlarge"
+              ],
+              "capacity": {
+                "minimum": 0,
+                "maximum": 30,
+                "target": 1
+              },
+              "lifeCycle": "SPOT",
+              "ebsConfiguration": {
+                "ebsBlockDeviceConfigs": [
+                  {
+                    "volumeSpecification": {
+                      "volumeType": "gp2",
+                      "sizeInGB": 40
+                    },
+                    "volumesPerInstance": 2
+                  }
+                ],
+                "ebsOptimized": false
+              }
+            }
+          },
+          "configurations": {
+            "file": {
+              "bucket": "terraform-emr-test",
+              "key": "configurations.json"
+            }
+          }
+        },
+        "scaling": {},
+        "coreScaling": {},
+        "createdAt": "2019-02-13T20:20:57.000Z",
+        "updatedAt": "2019-02-13T20:20:57.000Z"
+      }
+    ],
+    "count": 1
+  }
+}
+-------------------------------------------------------
+onRead() -> MRScaler_AWS -> additional_primary_security_groups
+onRead() -> MRScaler_AWS_Cluster -> termination_protected
+onRead() -> MRScaler_AWS -> description
+onRead() -> MRScaler_AWS -> region
+onRead() -> MRScaler_AWS_Cluster -> keep_job_flow_alive
+onRead() -> MRScaler_AWS -> bootstrap_actions_file
+onRead() -> MRScaler_AWS -> steps_file
+onRead() -> MRScaler_AWS -> ebs_root_volume_size
+onRead() -> MRScaler_AWS -> custom_ami_id
+onRead() -> MRScaler_AWS -> ec2_key_name
+onRead() -> MRScaler_AWS_Cluster -> additional_info
+onRead() -> MRScaler_AWS -> tags
+onRead() -> MRScaler_AWS_Core_Group -> core_instance_types
+onRead() -> MRScaler_AWS_Core_Group -> core_ebs_optimized
+onRead() -> MRScaler_AWS_Task_Group -> task_lifecycle
+onRead() -> MRScaler_AWS_Strategy -> release_label
+onRead() -> MRScaler_AWS -> cluster_id
+onRead() -> MRScaler_AWS -> output_cluster_id
+onRead() -> MRScaler_AWS_Cluster -> security_config
+onRead() -> MRScaler_AWS_Cluster -> job_flow_role
+onRead() -> MRScaler_AWS_Cluster -> visible_to_all_users
+onRead() -> MRScaler_AWS_Core_Group -> core_max_size
+onRead() -> MRScaler_AWS_Master_Group -> master_ebs_block_device
+onRead() -> MRScaler_AWS_Strategy -> provisioning_timeout
+onRead() -> MRScaler_AWS_Cluster -> log_uri
+onRead() -> MRScaler_AWS_Task_Group -> task_min_size
+onRead() -> MRScaler_AWS_Task_Group -> task_ebs_block_device
+onRead() -> MRScaler_AWS_Core_Group -> core_ebs_block_device
+onRead() -> MRScaler_AWS_Master_Group -> master_ebs_optimized
+onRead() -> MRScaler_AWS -> managed_replica_security_group
+onRead() -> MRScaler_AWS -> service_access_security_group
+onRead() -> MRScaler_AWS_Task_Group -> task_max_size
+onRead() -> MRScaler_AWS -> applications
+onRead() -> MRScaler_AWS -> expose_cluster_id
+onRead() -> MRScaler_AWS_Strategy -> retries
+onRead() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_up_policy
+onRead() -> MRScaler_AWS -> availability_zones
+onRead() -> MRScaler_AWS -> configurations_file
+onRead() -> MRScaler_Core_AWS_Scaling_Polices -> core_scaling_down_policy
+onRead() -> MRScaler_AWS -> repo_upgrade_on_boot
+onRead() -> MRScaler_AWS_Master_Group -> master_lifecycle
+onRead() -> MRScaler_AWS_Master_Group -> master_instance_types
+onRead() -> MRScaler_AWS_Strategy -> strategy
+onRead() -> MRScaler_AWS_Cluster -> service_role
+onRead() -> MRScaler_AWS -> name
+onRead() -> MRScaler_AWS -> managed_primary_security_group
+onRead() -> MRScaler_AWS -> additional_replica_security_groups
+onRead() -> MRScaler_AWS_Core_Group -> core_min_size
+onRead() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_down_policy
+onRead() -> MRScaler_AWS_Core_Group -> core_desired_capacity
+onRead() -> MRScaler_AWS_Core_Group -> core_lifecycle
+onRead() -> MRScaler_AWS_Task_Group -> task_desired_capacity
+onRead() -> MRScaler_AWS_Task_Group -> task_instance_types
+onRead() -> MRScaler_AWS_Task_Group -> task_ebs_optimized
+onRead() -> MRScaler_Task_AWS_Scaling_Polices -> task_scaling_up_policy
+===> MRScaler read successfully: simrs-68ad7dfe <===
+[INFO] terraform: building graph: GraphTypePlanDestroy
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4205dc0f0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields (destroy)": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4205dc0f0), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields (destroy)" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkPlanDestroy
+[WARN] Test: Step plan: DIFF:
+
+DESTROY: spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields
+
+STATE:
+
+spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields:
+  ID = simrs-68ad7dfe
+  provider = aws
+  additional_info = 
+  availability_zones.# = 1
+  availability_zones.0 = us-west-2b:subnet-1ba25052
+  bootstrap_actions_file.# = 1
+  bootstrap_actions_file.3624379019.bucket = terraform-emr-test
+  bootstrap_actions_file.3624379019.key = bootstrap-actions-file.json
+  cluster_id = j-40QKT56T5Q6W
+  configurations_file.# = 1
+  configurations_file.3778944667.bucket = terraform-emr-test
+  configurations_file.3778944667.key = configurations.json
+  core_desired_capacity = 1
+  core_ebs_block_device.# = 1
+  core_ebs_block_device.3329897523.iops = 0
+  core_ebs_block_device.3329897523.size_in_gb = 40
+  core_ebs_block_device.3329897523.volume_type = gp2
+  core_ebs_block_device.3329897523.volumes_per_instance = 2
+  core_ebs_optimized = false
+  core_instance_types.# = 2
+  core_instance_types.0 = c3.xlarge
+  core_instance_types.1 = c4.xlarge
+  core_lifecycle = ON_DEMAND
+  core_max_size = 1
+  core_min_size = 1
+  core_scaling_down_policy.# = 0
+  core_scaling_up_policy.# = 0
+  custom_ami_id = 
+  description = test cloning a cluster
+  ebs_root_volume_size = 0
+  ec2_key_name = 
+  expose_cluster_id = false
+  job_flow_role = 
+  keep_job_flow_alive = false
+  log_uri = 
+  managed_primary_security_group = 
+  managed_replica_security_group = 
+  master_ebs_block_device.# = 1
+  master_ebs_block_device.1008334328.iops = 0
+  master_ebs_block_device.1008334328.size_in_gb = 30
+  master_ebs_block_device.1008334328.volume_type = gp2
+  master_ebs_block_device.1008334328.volumes_per_instance = 1
+  master_ebs_optimized = true
+  master_instance_types.# = 1
+  master_instance_types.0 = c3.xlarge
+  master_lifecycle = SPOT
+  name = mrscaler-new-cluster-optional-fields
+  provisioning_timeout.# = 1
+  provisioning_timeout.0.timeout = 15
+  provisioning_timeout.0.timeout_action = terminate
+  region = us-west-2
+  release_label = emr-5.17.0
+  repo_upgrade_on_boot = 
+  security_config = 
+  service_access_security_group = 
+  service_role = 
+  steps_file.# = 1
+  steps_file.1986180246.bucket = terraform-emr-test
+  steps_file.1986180246.key = additional-steps-test.json
+  strategy = clone
+  task_desired_capacity = 1
+  task_ebs_block_device.# = 1
+  task_ebs_block_device.3329897523.iops = 0
+  task_ebs_block_device.3329897523.size_in_gb = 40
+  task_ebs_block_device.3329897523.volume_type = gp2
+  task_ebs_block_device.3329897523.volumes_per_instance = 2
+  task_ebs_optimized = false
+  task_instance_types.# = 2
+  task_instance_types.0 = c3.xlarge
+  task_instance_types.1 = c4.xlarge
+  task_lifecycle = SPOT
+  task_max_size = 30
+  task_min_size = 0
+  task_scaling_down_policy.# = 0
+  task_scaling_up_policy.# = 0
+  termination_protected = false
+  visible_to_all_users = false
+[INFO] terraform: building graph: GraphTypeApply
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields (destroy)": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4205dc640), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4205dc640), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] Attaching resource state to "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields (destroy)": &terraform.ResourceState{Type:"spotinst_mrscaler_aws", Dependencies:[]string{}, Primary:(*terraform.InstanceState)(0xc4205dc640), Deposed:[]*terraform.InstanceState{}, Provider:"aws", mu:sync.Mutex{state:0, sema:0x0}}
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields" references: []
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields (destroy)" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] ReferenceTransformer: "spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields (destroy)" references: []
+[DEBUG] ReferenceTransformer: "provider.aws" references: []
+[DEBUG] Starting graph walk: walkDestroy
+[INFO] Spotinst client configured
+[DEBUG] apply: spotinst_mrscaler_aws.mrscaler-new-cluster-optional-fields: executing Apply
+onDelete() -> spotinst_mrscaler_aws -> started for simrs-68ad7dfe...
+===> Scaler delete configuration: {"mrScalerId":"simrs-68ad7dfe"}
+[DEBUG] SPOTINST: Request "DELETE https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ REQUEST ]---------------------------------------
+DELETE /aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673 HTTP/1.1
+Host: api.spotinst.io
+User-Agent: HashiCorp-Terraform/0.10.7,spotinst-provider/v2,spotinst-sdk-go/3.3.3
+Accept: application/json
+Authorization: Bearer 0ad789e7ee5513493da989b7cf238626792e3c696bc2adb236fe4142bab19f8c
+Content-Type: application/json
+Accept-Encoding: gzip
+
+
+-----------------------------------------------------
+[DEBUG] SPOTINST: Response "DELETE https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ RESPONSE ]----------------------------------------
+HTTP/2.0 200 OK
+Content-Length: 294
+Access-Control-Allow-Headers: Origin,Accept,Content-Type,Authorization,X-CSRF-Token
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Date: Wed, 13 Feb 2019 20:20:59 GMT
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Ratelimit-Limit: 300
+X-Ratelimit-Remaining: 299
+X-Request-Id: 13534f5a-a9ab-47d4-8a77-c8cb9783d428
+X-Response-Time: 855ms
+
+{
+  "request": {
+    "id": "13534f5a-a9ab-47d4-8a77-c8cb9783d428",
+    "url": "/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673",
+    "method": "DELETE",
+    "timestamp": "2019-02-13T20:20:59.684Z"
+  },
+  "response": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    }
+  }
+}
+-------------------------------------------------------
+===> MRScaler deleted successfully: simrs-68ad7dfe <===
+[DEBUG] SPOTINST: Request "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ REQUEST ]---------------------------------------
+GET /aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673 HTTP/1.1
+Host: api.spotinst.io
+User-Agent: HashiCorp-Terraform/0.10.7,spotinst-provider/v2,spotinst-sdk-go/3.3.3
+Accept: application/json
+Authorization: Bearer 0ad789e7ee5513493da989b7cf238626792e3c696bc2adb236fe4142bab19f8c
+Content-Type: application/json
+Accept-Encoding: gzip
+
+
+-----------------------------------------------------
+[DEBUG] SPOTINST: Response "GET https://api.spotinst.io/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673" details:
+---[ RESPONSE ]----------------------------------------
+HTTP/2.0 200 OK
+Content-Length: 365
+Access-Control-Allow-Headers: Origin,Accept,Content-Type,Authorization,X-CSRF-Token
+Access-Control-Allow-Methods: GET,POST,DELETE,PUT
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Date: Wed, 13 Feb 2019 20:20:59 GMT
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Ratelimit-Limit: 300
+X-Ratelimit-Remaining: 299
+X-Request-Id: 52558a6c-9067-4080-b911-52250dd1d9e1
+X-Response-Time: 8ms
+
+{
+  "request": {
+    "id": "52558a6c-9067-4080-b911-52250dd1d9e1",
+    "url": "/aws/emr/mrScaler/simrs-68ad7dfe?accountId=act-92d45673",
+    "method": "GET",
+    "timestamp": "2019-02-13T20:20:59.840Z"
+  },
+  "response": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "kind": "spotinst:aws:emr:mrScaler",
+    "items": [],
+    "count": 0
+  }
+}
+-------------------------------------------------------
+[INFO] terraform: building graph: GraphTypePlanDestroy
+[DEBUG] Starting graph walk: walkPlanDestroy
+[INFO] terraform: building graph: GraphTypeRefresh
+[DEBUG] Starting graph walk: walkRefresh
+[INFO] terraform: building graph: GraphTypePlanDestroy
+[DEBUG] Starting graph walk: walkPlanDestroy
+--- PASS: TestAccSpotinstMRScalerAWSCloned_OptionalFields (11.68s)
+PASS
+ok  	github.com/terraform-providers/terraform-provider-spotinst/spotinst	(cached)
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_beanstalk	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_block_devices	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_instance_types	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_integrations	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_network_interface	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_scaling_policies	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_scheduled_task	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_stateful	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_strategy	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_health_check	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_image	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_launch_configuration	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_load_balancer	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_login	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_network	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_scheduled_task	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_strategy	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_vm_sizes	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_disk	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_gpu	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_instance_types	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_launch_configuration	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_network_interface	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_scaling_policies	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_strategy	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gke	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gke_instance_types	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_cluster	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_instance_groups	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_scaling_policies	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_auto_scaling	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_instance_types	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_cluster_aws_strategy	[no test files]
+?   	github.com/terraform-providers/terraform-provider-spotinst/spotinst/subscription	[no test files]

@@ -58,6 +58,16 @@ const (
 	ElastigroupAzureLaunchConfiguration ResourceAffinity = "Elastigroup_Azure_Launch_Configuration"
 	ElastigroupAzureHealthCheck         ResourceAffinity = "Elastigroup_Azure_Health_Check"
 
+	MRScalerAWS                    ResourceAffinity = "MRScaler_AWS"
+	MRScalerAWSTaskScalingPolicies ResourceAffinity = "MRScaler_Task_AWS_Scaling_Polices"
+	MRScalerAWSCoreScalingPolicies ResourceAffinity = "MRScaler_Core_AWS_Scaling_Polices"
+	MRScalerAWSCoreGroup           ResourceAffinity = "MRScaler_AWS_Core_Group"
+	MRScalerAWSMasterGroup         ResourceAffinity = "MRScaler_AWS_Master_Group"
+	MRScalerAWSTaskGroup           ResourceAffinity = "MRScaler_AWS_Task_Group"
+	MRScalerAWSStrategy            ResourceAffinity = "MRScaler_AWS_Strategy"
+	MRScalerAWSCluster             ResourceAffinity = "MRScaler_AWS_Cluster"
+	MRScalerAWSScheduledTask       ResourceAffinity = "MRScaler_AWS_Scheduled_Task"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

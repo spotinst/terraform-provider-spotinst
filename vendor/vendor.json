@@ -684,10 +684,10 @@
 			"revisionTime": "2018-12-21T00:18:36Z"
 		},
 		{
-			"checksumSHA1": "U6Dj4GlyX3+yZmQsJaEfg8ZA/7s=",
+			"checksumSHA1": "lNv/DBDbk3zL8NWj87ueRAENe2M=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/mrscaler",
-			"revision": "533861944a7f7479411542e16282ce9e72fa613d",
-			"revisionTime": "2018-12-21T00:18:36Z"
+			"revision": "f61d1064a7969fa0ccd10a8df8abf39f9ec2cb3e",
+			"revisionTime": "2019-02-02T00:38:11Z"
 		},
 		{
 			"checksumSHA1": "KOseQlljKBzijf3MqVUReAp9cMg=",
