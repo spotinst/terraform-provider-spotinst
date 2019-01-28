@@ -780,8 +780,6 @@ Usage:
     * `should_resume_stateful` - (Required) This will apply resuming action for Stateful instances in the Elastigroup upon scale up or capacity changes. Example usage will be for Elastigroups that will have scheduling rules to set a target capacity of 0 instances in the night and automatically restore the same state of the instances in the morning.
     * `auto_apply_tags` - (Optional) Enables updates to tags without rolling the group when set to `true`.
     * `should_roll` - (Required) Sets the enablement of the roll option.
-    * `wait_for_pct_complete` - (Optional) For use with `should_roll`. Sets minimum % of roll required to complete before continuing the plan.
-    * `wait_for_pct_timeout` - (Optional) For use with `should_roll`. Sets how long to wait for the deployed % of a roll to exceed `wait_for_pct_complete` before continuing the plan.
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"MLB"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`, `"NONE"`.
@@ -794,8 +792,6 @@ Usage:
     should_resume_stateful = false
     should_roll            = false
     auto_apply_tags        = false
-    wait_for_pct_complete  = 10
-    wait_for_pct_timeout   = 1500
     
     roll_config = {
       batch_size_percentage = 33
