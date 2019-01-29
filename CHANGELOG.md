@@ -1,4 +1,17 @@
 ## 1.6.1 (Unreleased)
+
+NOTES:
+* resource/spotinst_elastigroup_aws: Added `wait_for_roll_timeout` and `wait_for_roll_percentage` to `roll_config` in `update_policy`. Setting both of these fields enables users to wait for a minimum percent of their blue/green deployment to be completed before allowing the plan to continue execution.
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `wait_for_roll_timeout` and `wait_for_roll_percentage` to `roll_config` in `update_policy`.
+* resource/spotinst_elastigroup_azure: Added `scheduled_task`
+
+BUG FIXES:
+* resource/spotinst_ocean_aws: `min_size`, `max_size`, and `desired_capacity` now defaults to correct values when undefined
+* resource/spotinst_elastigroup_aws: configuring `wait_for_capacity` when updating crashed under certain conditions. This has been resolved.
+
+
 ## 1.6.0 (January 18, 2019)
 
 NOTES:

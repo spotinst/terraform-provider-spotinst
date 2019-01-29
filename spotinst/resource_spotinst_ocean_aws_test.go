@@ -145,9 +145,9 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "max_size", "0"),
+					resource.TestCheckResourceAttr(resourceName, "max_size", "1000"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
 			{
@@ -155,9 +155,9 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "max_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
+					resource.TestCheckResourceAttr(resourceName, "min_size", "2"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
 				),
 			},
 		},
@@ -172,9 +172,9 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   controller_id = "fakeClusterId"
   region = "us-west-2"
 
-  max_size         = 0
-  min_size         = 0
-  desired_capacity = 0
+  //max_size         = 0
+  //min_size         = 0
+  //desired_capacity = 0
 
   subnet_ids      = ["subnet-09d9755d9bdeca3c5"]
 
@@ -193,9 +193,9 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   controller_id = "fakeClusterId"
   region = "us-west-2"
 
-  max_size         = 0
-  min_size         = 0
-  desired_capacity = 0
+  max_size         = 10
+  min_size         = 2
+  desired_capacity = 2
 
   subnet_ids      = ["subnet-09d9755d9bdeca3c5"]
 
@@ -297,9 +297,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-042d658b3ee907848"),
-					resource.TestCheckResourceAttr(resourceName, "key_name", "fake key"),
+					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.HexStateFunc("echo hello world")),
-					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
+					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.key", "fakeKey"),
 					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.value", "fakeValue"),
@@ -317,9 +317,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-042d658b3ee907848"),
-					resource.TestCheckResourceAttr(resourceName, "key_name", "fake key updated"),
+					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.HexStateFunc("echo hello world updated")),
-					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
+					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.key", "fakeKeyUpdated"),
 					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.value", "fakeValueUpdated"),
@@ -348,9 +348,9 @@ const testLaunchConfigAWSConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
   image_id             = "ami-79826301"
   security_groups      = ["sg-042d658b3ee907848"]
-  key_name             = "fake key"
+  //key_name             = "my-key.ssh"
   user_data            = "echo hello world"
-  iam_instance_profile = "iam-profile"
+  //iam_instance_profile = "iam-profile"
 
   tags = [{
     key   = "fakeKey"
@@ -363,9 +363,9 @@ const testLaunchConfigAWSConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
   image_id             = "ami-79826301"
   security_groups      = ["sg-042d658b3ee907848"]
-  key_name             = "fake key updated"
+  //key_name             = "my-key-updated.ssh"
   user_data            = "echo hello world updated"
-  iam_instance_profile = "iam-profile updated"
+  //iam_instance_profile = "iam-profile updated"
 
   tags = [{
     key   = "fakeKeyUpdated"
@@ -474,6 +474,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
+				ResourceName: resourceName,
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
 					clusterName:    clusterName,
 					fieldsToAppend: testScalingConfig_Create,
@@ -497,6 +498,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 				),
 			},
 			{
+				ResourceName: resourceName,
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
 					clusterName:    clusterName,
 					fieldsToAppend: testScalingConfig_Update,
