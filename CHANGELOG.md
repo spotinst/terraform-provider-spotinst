@@ -1,3 +1,4 @@
+
 ## 1.7.0 (Unreleased)
 
 FEATURES:
@@ -19,8 +20,6 @@ ENHANCEMENTS:
 BUG FIXES:
 * resource/spotinst_ocean_aws: `min_size`, `max_size`, and `desired_capacity` now defaults to correct values when undefined
 * resource/spotinst_elastigroup_aws: configuring `wait_for_capacity` when updating crashed under certain conditions. This has been resolved.
-
-## 1.6.0 (January 18, 2019)
 
 NOTES:
 * resource/spotinst_elastigroup_azure: Added a new spotinst_elastigroup_azure resource for creating Spotinst elastigroups using Microsoft Azure
