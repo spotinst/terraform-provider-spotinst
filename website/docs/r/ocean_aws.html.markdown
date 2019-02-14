@@ -47,6 +47,7 @@ resource "spotinst_ocean_aws" "example" {
 
     autoscale_headroom = {
       cpu_per_unit    = 1024
+      gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
@@ -124,6 +125,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `autoscale_cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
 * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
 * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+* `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate the headroom.
 * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
 * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
 * `autoscale_down` - (Optional) Auto Scaling scale down operations.
@@ -140,6 +142,7 @@ whitelist = ["t1.micro", "m1.small"]
 
     autoscale_headroom = {
       cpu_per_unit    = 1024
+      gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
