@@ -5,7 +5,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
 	"strconv"
 )
 
@@ -97,7 +96,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if interfaces, err := expandAzureGroupScheduledTasks(v); err != nil {
 					return err
 				} else {
-					log.Printf("ALEX DEBUG setting value on update (something was there)")
 					value = interfaces
 				}
 			}
