@@ -11,6 +11,7 @@ const (
 	AutoscaleIsEnabled    commons.FieldName = "autoscale_is_enabled"
 	EvaluationPeriods     commons.FieldName = "evaluation_periods"
 	CPUPerUnit            commons.FieldName = "cpu_per_unit"
+	GPUPerUnit            commons.FieldName = "gpu_per_unit"
 	MaxVCPU               commons.FieldName = "max_vcpu"
 	MaxMemoryGIB          commons.FieldName = "max_memory_gib"
 	MemoryPerUnit         commons.FieldName = "memory_per_unit"
