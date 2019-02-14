@@ -57,6 +57,7 @@ const (
 	ElastigroupAzureImage               ResourceAffinity = "Elastigroup_Azure_Image"
 	ElastigroupAzureLaunchConfiguration ResourceAffinity = "Elastigroup_Azure_Launch_Configuration"
 	ElastigroupAzureHealthCheck         ResourceAffinity = "Elastigroup_Azure_Health_Check"
+	ElastigroupAzureScheduledTask       ResourceAffinity = "Elastigroup_Azure_Scheduled_Task"
 
 	MRScalerAWS                    ResourceAffinity = "MRScaler_AWS"
 	MRScalerAWSTaskScalingPolicies ResourceAffinity = "MRScaler_Task_AWS_Scaling_Polices"

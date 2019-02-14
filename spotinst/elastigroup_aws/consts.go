@@ -71,6 +71,6 @@ const (
 
 	WaitForCapacity        commons.FieldName = "wait_for_capacity"
 	WaitForCapacityTimeout commons.FieldName = "wait_for_capacity_timeout"
-	WaitForPctComplete     commons.FieldName = "wait_for_pct_complete"
-	WaitForPctTimeout      commons.FieldName = "wait_for_pct_timeout"
+	WaitForRollPct         commons.FieldName = "wait_for_roll_percentage"
+	WaitForRollTimeout     commons.FieldName = "wait_for_roll_timeout"
 )

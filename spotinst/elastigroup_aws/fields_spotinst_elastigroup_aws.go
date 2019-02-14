@@ -1037,12 +1037,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Required: true,
 					},
 
-					string(WaitForPctComplete): {
+					string(WaitForRollPct): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
 
-					string(WaitForPctTimeout): {
+					string(WaitForRollTimeout): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
@@ -1066,6 +1066,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 								string(HealthCheckType): {
 									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(WaitForRollPct): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(WaitForRollTimeout): {
+									Type:     schema.TypeInt,
 									Optional: true,
 								},
 							},

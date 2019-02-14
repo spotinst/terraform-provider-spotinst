@@ -67,6 +67,7 @@ func testCheckOceanAWSExists(cluster *aws.Cluster, resourceName string) resource
 type ClusterConfigMetadata struct {
 	provider             string
 	clusterName          string
+	controllerClusterID  string
 	instanceWhitelist    string
 	launchConfig         string
 	strategy             string
@@ -102,6 +103,7 @@ func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
 			gcm.clusterName,
 			gcm.provider,
 			gcm.clusterName,
+			gcm.controllerClusterID,
 			gcm.instanceWhitelist,
 			gcm.launchConfig,
 			gcm.strategy,
@@ -113,6 +115,7 @@ func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
 			gcm.clusterName,
 			gcm.provider,
 			gcm.clusterName,
+			gcm.controllerClusterID,
 			gcm.instanceWhitelist,
 			gcm.launchConfig,
 			gcm.strategy,
@@ -131,6 +134,7 @@ func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
 // region OceanAWS: Baseline
 func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 	clusterName := "cluster-baseline"
+	controllerClusterID := "baseline-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
 	var cluster aws.Cluster
@@ -141,7 +145,10 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{clusterName: clusterName}),
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
@@ -151,7 +158,10 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{clusterName: clusterName, updateBaselineFields: true}),
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:          clusterName,
+					controllerClusterID:  controllerClusterID,
+					updateBaselineFields: true}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
@@ -169,7 +179,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   provider = "%v"  
   
   name = "%v"
-  controller_id = "fakeClusterId"
+  controller_id = "%v"
   region = "us-west-2"
 
   //max_size         = 0
@@ -190,7 +200,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   provider = "%v"
 
   name = "%v"
-  controller_id = "fakeClusterId"
+  controller_id = "%v"
   region = "us-west-2"
 
   max_size         = 10
@@ -211,6 +221,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 // region OceanAWS: Instance Types Whitelist
 func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
 	clusterName := "cluster-instance-types-whitelist"
+	controllerClusterID := "whitelist-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
 	var cluster aws.Cluster
@@ -222,8 +233,9 @@ func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:       clusterName,
-					instanceWhitelist: testInstanceTypesWhitelistAWSConfig_Create,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -235,8 +247,9 @@ func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
 			},
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:       clusterName,
-					instanceWhitelist: testInstanceTypesWhitelistAWSConfig_Update,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_Update,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -247,8 +260,9 @@ func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
 			},
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:       clusterName,
-					instanceWhitelist: testInstanceTypesWhitelistAWSConfig_EmptyFields,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -276,6 +290,7 @@ const testInstanceTypesWhitelistAWSConfig_EmptyFields = `
 // region OceanAWS: Launch Configuration
 func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 	clusterName := "cluster-launch-configuration"
+	controllerClusterID := "launch-config-cluster-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
 	var cluster aws.Cluster
@@ -288,8 +303,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:  clusterName,
-					launchConfig: testLaunchConfigAWSConfig_Create,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					launchConfig:        testLaunchConfigAWSConfig_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -308,8 +324,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:  clusterName,
-					launchConfig: testLaunchConfigAWSConfig_Update,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					launchConfig:        testLaunchConfigAWSConfig_Update,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -328,8 +345,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:  clusterName,
-					launchConfig: testLaunchConfigAWSConfig_EmptyFields,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					launchConfig:        testLaunchConfigAWSConfig_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -386,6 +404,7 @@ const testLaunchConfigAWSConfig_EmptyFields = `
 // region OceanAWS: Strategy
 func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 	clusterName := "cluster-strategy"
+	controllerClusterID := "strategy-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
 	var cluster aws.Cluster
@@ -397,8 +416,9 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName: clusterName,
-					strategy:    testStrategyConfig_Create,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					strategy:            testStrategyConfig_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -410,8 +430,9 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 			},
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName: clusterName,
-					strategy:    testStrategyConfig_Update,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					strategy:            testStrategyConfig_Update,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -423,8 +444,9 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 			},
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName: clusterName,
-					strategy:    testStrategyConfig_EmptyFields,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					strategy:            testStrategyConfig_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -464,6 +486,7 @@ const testStrategyConfig_EmptyFields = `
 // region OceanAWS: Autoscaler
 func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 	clusterName := "cluster-autoscaler"
+	controllerClusterID := "autoscaler-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
 	var cluster aws.Cluster
@@ -476,8 +499,9 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:    clusterName,
-					fieldsToAppend: testScalingConfig_Create,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testScalingConfig_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
@@ -500,8 +524,9 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:    clusterName,
-					fieldsToAppend: testScalingConfig_Update,
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testScalingConfig_Update,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),

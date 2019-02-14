@@ -7,8 +7,7 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: `network_interface.description` is now Optional (was Required)
 * resource/spotinst_elastigroup_aws: `group.description` no longer sends an empty string when undefined
 
-
-## 1.6.1 (January , 2019)
+## 1.6.1 (January 30th, 2019)
 
 NOTES:
 * resource/spotinst_elastigroup_aws: Added `wait_for_roll_timeout` and `wait_for_roll_percentage` to `roll_config` in `update_policy`. Setting both of these fields enables users to wait for a minimum percent of their blue/green deployment to be completed before allowing the plan to continue execution.
