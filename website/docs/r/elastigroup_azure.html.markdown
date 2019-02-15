@@ -159,5 +159,3 @@ The following arguments are supported:
 * `adjustment_percentage` - (Optional) The percent of instances to add/remove to/from the target capacity when scale is needed.
 * `batch_size_percentage` - (Optional) The percentage size of each batch in the scheduled deployment roll. Required when the 'task_type' is 'roll'.
 * `grace_period` - (Optional) The time to allow instances to become healthy. 
-
-

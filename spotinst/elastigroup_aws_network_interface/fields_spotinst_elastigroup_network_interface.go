@@ -26,7 +26,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(Description): {
 						Type:     schema.TypeString,
-						Required: true,
+						Optional: true,
 					},
 
 					string(DeviceIndex): {
