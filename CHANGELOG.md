@@ -14,6 +14,10 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: `network_interface.description` is now Optional (was Required)
 * resource/spotinst_elastigroup_aws: `group.description` no longer sends an empty string when undefined
 * resource/spotinst_ocean_aws: `headroom` parameters can now be set to 0
+* resource/spotinst_ocean_aws: Added `load_balancers` and `load_balancer` objects to ocean parameters
+* resource/spotinst_ocean_aws: Added `associate_public_ip_address` to ocean parameters
+* resource/spotinst_elastigroup_aws: Added `deployment_preferences` and `managed_actions` to beanstalk integration
+* resource/spotinst_elastigroup_aws_beanstalk: Added `deployment_preferences` and `managed_actions` parameters
 * added version to user-agent header. 
 
 ## 1.6.1 (January 30th, 2019)
