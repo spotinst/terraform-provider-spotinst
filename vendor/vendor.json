@@ -690,10 +690,10 @@
 			"revisionTime": "2019-02-02T00:38:11Z"
 		},
 		{
-			"checksumSHA1": "KOseQlljKBzijf3MqVUReAp9cMg=",
+			"checksumSHA1": "TLbn/NudtQa0Mkx6Vp3uRhxVN0E=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/multai",
-			"revision": "533861944a7f7479411542e16282ce9e72fa613d",
-			"revisionTime": "2018-12-21T00:18:36Z"
+			"revision": "1380e9a16d82f578db3fe0aa55091ba53b4f8d7e",
+			"revisionTime": "2019-02-14T19:25:01Z"
 		},
 		{
 			"checksumSHA1": "kRnRkxKByVy1PFm9c6HJNIHVCZk=",

@@ -69,6 +69,13 @@ const (
 	MRScalerAWSCluster             ResourceAffinity = "MRScaler_AWS_Cluster"
 	MRScalerAWSScheduledTask       ResourceAffinity = "MRScaler_AWS_Scheduled_Task"
 
+	MultaiBalancer    ResourceAffinity = "Multai_Balancer"
+	MultaiDeployment  ResourceAffinity = "Multai_Deployment"
+	MultaiListener    ResourceAffinity = "Multai_Listener"
+	MultaiRoutingRule ResourceAffinity = "Multai_Routing_Rule"
+	MultaiTarget      ResourceAffinity = "Multai_Target"
+	MultaiTargetSet   ResourceAffinity = "Multai_Target_Set"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

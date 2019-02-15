@@ -3,11 +3,18 @@
 
 FEATURES:
 * *New Resource*: `spotinst_mrscaler_aws`
+* *New Resource*: `spotinst_multai_balancer`
+* *New Resource*: `spotinst_multai_deployment`
+* *New Resource*: `spotinst_multai_listener`
+* *New Resource*: `spotinst_multai_routing_rule`
+* *New Resource*: `spotinst_multai_target`
+* *New Resource*: `spotinst_multai_target_set`
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: `network_interface.description` is now Optional (was Required)
 * resource/spotinst_elastigroup_aws: `group.description` no longer sends an empty string when undefined
 * resource/spotinst_ocean_aws: `headroom` parameters can now be set to 0
+* added version to user-agent header. 
 
 ## 1.6.1 (January 30th, 2019)
 
