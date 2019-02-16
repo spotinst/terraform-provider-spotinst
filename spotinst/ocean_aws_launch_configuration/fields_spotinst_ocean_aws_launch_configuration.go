@@ -220,7 +220,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 			StateFunc: HexStateFunc,
 		},
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
@@ -261,6 +260,132 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[AssociatePublicIpAddress] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		AssociatePublicIpAddress,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var value *bool = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.AssociatePublicIpAddress != nil {
+
+				value = cluster.Compute.LaunchSpecification.AssociatePublicIpAddress
+			}
+
+			if err := resourceData.Set(string(AssociatePublicIpAddress), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AssociatePublicIpAddress), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(AssociatePublicIpAddress)); ok {
+				cluster.Compute.LaunchSpecification.SetAssociatePublicIpAddress(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(AssociatePublicIpAddress)); ok {
+				cluster.Compute.LaunchSpecification.SetAssociatePublicIpAddress(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[LoadBalancers] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		LoadBalancers,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Arn): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(Name): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(Type): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var balancerResults []interface{} = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil && cluster.Compute.LaunchSpecification.LoadBalancers != nil {
+				balancers := cluster.Compute.LaunchSpecification.LoadBalancers
+				balancerResults = flattenLoadBalancers(balancers)
+			}
+
+			if err := resourceData.Set(string(LoadBalancers), balancerResults); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LoadBalancers), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if value, ok := resourceData.GetOk(string(LoadBalancers)); ok {
+				if lb, err := expandLb(value); err != nil {
+					return err
+				} else {
+					cluster.Compute.LaunchSpecification.SetLoadBalancers(lb)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var result []*aws.LoadBalancer = nil
+			existingBalancers := cluster.Compute.LaunchSpecification.LoadBalancers
+
+			if existingBalancers != nil && len(existingBalancers) > 0 {
+				for _, balancer := range existingBalancers {
+					result = append(result, balancer)
+				}
+			}
+			if value, ok := resourceData.GetOk(string(LoadBalancers)); ok {
+				if lb, err := expandLb(value); err != nil {
+					return err
+				} else {
+					result = append(result, lb...)
+				}
+			}
+
+			cluster.Compute.LaunchSpecification.SetLoadBalancers(result)
+
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -293,4 +418,42 @@ func base64Encode(data string) string {
 func isBase64Encoded(data string) bool {
 	_, err := base64.StdEncoding.DecodeString(data)
 	return err == nil
+}
+
+func expandLb(lb interface{}) ([]*aws.LoadBalancer, error) {
+	list := lb.([]interface{})
+	lbOutput := make([]*aws.LoadBalancer, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		singleLb := &aws.LoadBalancer{}
+		if arn, ok := attr[string(Arn)]; ok && arn != "" {
+			singleLb.SetArn(spotinst.String(arn.(string)))
+		}
+		if name, ok := attr[string(Name)]; ok && name != "" {
+			singleLb.SetName(spotinst.String(name.(string)))
+		}
+		if typeIn, ok := attr[string(Type)]; ok && typeIn != "" {
+			singleLb.SetType(spotinst.String(typeIn.(string)))
+		}
+
+		lbOutput = append(lbOutput, singleLb)
+	}
+	return lbOutput, nil
+}
+
+func flattenLoadBalancers(balancers []*aws.LoadBalancer) []interface{} {
+	result := make([]interface{}, 0, len(balancers))
+	for _, balancer := range balancers {
+		m := make(map[string]interface{})
+		m[string(Arn)] = spotinst.StringValue(balancer.Arn)
+		m[string(Name)] = spotinst.StringValue(balancer.Name)
+		m[string(Type)] = spotinst.StringValue(balancer.Type)
+
+		result = append(result, m)
+	}
+	return result
 }

@@ -202,7 +202,43 @@ type AutoScaleAttributes struct {
 }
 
 type ElasticBeanstalkIntegration struct {
-	EnvironmentID *string `json:"environmentId,omitempty"`
+	EnvironmentID         *string                         `json:"environmentId,omitempty"`
+	ManagedActions        *BeanstalkManagedActions        `json:"managedActions,omitempty"`
+	DeploymentPreferences *BeanstalkDeploymentPreferences `json:"deploymentPreferences,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type BeanstalkManagedActions struct{
+	PlatformUpdate *BeanstalkPlatformUpdate `json:"platformUpdate,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type BeanstalkPlatformUpdate struct{
+	PerformAt   *string `json:"performAt,omitempty"`
+	TimeWindow  *string `json:"timeWindow,omitempty"`
+	UpdateLevel *string `json:"updateLevel,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type BeanstalkDeploymentPreferences struct{
+	AutomaticRoll       *bool                        `json:"automaticRoll,omitempty"`
+	BatchSizePercentage *int                         `json:"batchSizePercentage,omitempty"`
+	GracePeriod         *int                         `json:"gracePeriod,omitempty"`
+	Strategy            *BeanstalkDeploymentStrategy `json:"strategy,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type BeanstalkDeploymentStrategy struct{
+	Action               *string `json:"action,omitempty"`
+	ShouldDrainInstances *bool   `json:"shouldDrainInstances,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -652,6 +688,10 @@ type StatefulDeallocation struct {
 	ShouldDeleteSnapshots         *bool `json:"shouldDeleteSnapshots,omitempty"`
 }
 
+type BeanstalkDeleteOptions struct {
+	RollbackToAsg     *bool `json:"rollbackToAsg,omitempty"`
+}
+
 type GetInstanceHealthinessInput struct {
 	GroupID *string `json:"groupId,omitempty"`
 }
@@ -693,8 +733,9 @@ type UpdateGroupOutput struct {
 }
 
 type DeleteGroupInput struct {
-	GroupID              *string               `json:"groupId,omitempty"`
-	StatefulDeallocation *StatefulDeallocation `json:"statefulDeallocation,omitempty"`
+	GroupID                *string                 `json:"groupId,omitempty"`
+	StatefulDeallocation   *StatefulDeallocation   `json:"statefulDeallocation,omitempty"`
+	Beanstalk              *BeanstalkDeleteOptions `json:"beanstalk,omitempty"`
 }
 
 type DeleteGroupOutput struct{}
@@ -1013,6 +1054,12 @@ func (s *ServiceOp) Delete(ctx context.Context, input *DeleteGroupInput) (*Delet
 		}
 	}
 
+	if input.Beanstalk != nil{
+		r.Obj = &DeleteGroupInput{
+			Beanstalk: input.Beanstalk,
+		}
+	}
+
 	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err
@@ -1148,6 +1195,7 @@ func (s *ServiceOp) GetInstanceHealthiness(ctx context.Context, input *GetInstan
 // region Elastic Beanstalk
 
 type ImportBeanstalkInput struct {
+	EnvironmentId   *string `json:"environmentId,omitempty"`
 	EnvironmentName *string `json:"environmentName,omitempty"`
 	Region          *string `json:"region,omitempty"`
 }
@@ -1208,7 +1256,12 @@ func (s *ServiceOp) ImportBeanstalkEnv(ctx context.Context, input *ImportBeansta
 	path := "/aws/ec2/group/beanstalk/import"
 	r := client.NewRequest(http.MethodGet, path)
 
-	r.Params["environmentName"] = []string{spotinst.StringValue(input.EnvironmentName)}
+	if input.EnvironmentId != nil{
+		r.Params["environmentId"] = []string{spotinst.StringValue(input.EnvironmentId)}
+	}else if input.EnvironmentName != nil{
+		r.Params["environmentName"] = []string{spotinst.StringValue(input.EnvironmentName)}
+	}
+
 	r.Params["region"] = []string{spotinst.StringValue(input.Region)}
 
 	resp, err := client.RequireOK(s.Client.Do(ctx, r))
@@ -1530,6 +1583,123 @@ func (o *ElasticBeanstalkIntegration) SetEnvironmentID(v *string) *ElasticBeanst
 	return o
 }
 
+func (o *ElasticBeanstalkIntegration) SetManagedActions(v *BeanstalkManagedActions) *ElasticBeanstalkIntegration {
+	if o.ManagedActions = v; o.ManagedActions == nil{
+		o.nullFields = append(o.nullFields, "ManagedActions")
+	}
+	return o
+}
+
+func (o *ElasticBeanstalkIntegration) SetDeploymentPreferences(v *BeanstalkDeploymentPreferences) *ElasticBeanstalkIntegration {
+	if o.DeploymentPreferences = v; o.DeploymentPreferences == nil{
+		o.nullFields = append(o.nullFields, "DeploymentPreferences")
+	}
+	return o
+}
+
+// endregion
+
+// region BeanstalkManagedActions
+func (o *BeanstalkManagedActions) MarshalJSON() ([]byte, error) {
+	type noMethod BeanstalkManagedActions
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *BeanstalkManagedActions) SetPlatformUpdate(v *BeanstalkPlatformUpdate) *BeanstalkManagedActions {
+	if o.PlatformUpdate = v; o.PlatformUpdate == nil{
+		o.nullFields = append(o.nullFields, "PlatformUpdate")
+	}
+	return o
+}
+// endregion
+
+// region BeanstalkPlatformUpdate
+func (o *BeanstalkPlatformUpdate) MarshalJSON() ([]byte, error) {
+	type noMethod BeanstalkPlatformUpdate
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *BeanstalkPlatformUpdate) SetPerformAt(v *string) *BeanstalkPlatformUpdate {
+	if o.PerformAt = v; o.PerformAt == nil{
+		o.nullFields = append(o.nullFields, "PerformAt")
+	}
+	return o
+}
+
+func (o *BeanstalkPlatformUpdate) SetTimeWindow(v *string) *BeanstalkPlatformUpdate {
+	if o.TimeWindow = v; o.TimeWindow == nil{
+		o.nullFields = append(o.nullFields, "TimeWindow")
+	}
+	return o
+}
+
+func (o *BeanstalkPlatformUpdate) SetUpdateLevel(v *string) *BeanstalkPlatformUpdate {
+	if o.UpdateLevel = v; o.UpdateLevel == nil{
+		o.nullFields = append(o.nullFields, "UpdateLevel")
+	}
+	return o
+}
+
+// endregion
+
+// region BeanstalkDeploymentPreferences
+func (o *BeanstalkDeploymentPreferences) MarshalJSON() ([]byte, error) {
+	type noMethod BeanstalkDeploymentPreferences
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *BeanstalkDeploymentPreferences) SetAutomaticRoll(v *bool) *BeanstalkDeploymentPreferences {
+	if o.AutomaticRoll = v; o.AutomaticRoll == nil{
+		o.nullFields = append(o.nullFields, "AutomaticRoll")
+	}
+	return o
+}
+
+func (o *BeanstalkDeploymentPreferences) SetBatchSizePercentage(v *int) *BeanstalkDeploymentPreferences {
+	if o.BatchSizePercentage = v; o.BatchSizePercentage == nil{
+		o.nullFields = append(o.nullFields, "BatchSizePercentage")
+	}
+	return o
+}
+
+func (o *BeanstalkDeploymentPreferences) SetGracePeriod(v *int) *BeanstalkDeploymentPreferences {
+	if o.GracePeriod = v; o.GracePeriod == nil{
+		o.nullFields = append(o.nullFields, "GracePeriod")
+	}
+	return o
+}
+
+func (o *BeanstalkDeploymentPreferences) SetStrategy(v *BeanstalkDeploymentStrategy) *BeanstalkDeploymentPreferences {
+	if o.Strategy = v; o.Strategy == nil{
+		o.nullFields = append(o.nullFields, "Strategy")
+	}
+	return o
+}
+// endregion
+
+// region BeanstalkDeploymentStrategy
+func (o *BeanstalkDeploymentStrategy) MarshalJSON() ([]byte, error) {
+	type noMethod BeanstalkDeploymentStrategy
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *BeanstalkDeploymentStrategy) SetAction(v *string) *BeanstalkDeploymentStrategy {
+	if o.Action = v; o.Action == nil{
+		o.nullFields = append(o.nullFields, "Action")
+	}
+	return o
+}
+
+func (o *BeanstalkDeploymentStrategy) SetShouldDrainInstances(v *bool) *BeanstalkDeploymentStrategy {
+	if o.ShouldDrainInstances = v; o.ShouldDrainInstances == nil{
+		o.nullFields = append(o.nullFields, "ShouldDrainInstances")
+	}
+	return o
+}
 // endregion
 
 // region EC2ContainerServiceIntegration
@@ -1611,7 +1781,7 @@ func (o *AutoScaleDockerSwarm) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-// end region
+// endregion
 
 // region Route53
 

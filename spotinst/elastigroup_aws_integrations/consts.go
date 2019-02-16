@@ -92,4 +92,21 @@ const (
 	// - DOCKER-SWARM --------------------
 	IntegrationDockerSwarm commons.FieldName = "integration_docker_swarm"
 	// -----------------------------------
+
+	// - ELASTIC_BEANSTALK ---------------
+	IntegrationBeanstalk  commons.FieldName = "integration_beanstalk"
+	EnvironmentId         commons.FieldName = "environment_id"
+	DeploymentPreferences commons.FieldName = "deployment_preferences"
+	AutomaticRoll         commons.FieldName = "automatic_roll"
+	BatchSizePercentage   commons.FieldName = "batch_size_percentage"
+	GracePeriod           commons.FieldName = "grace_period"
+	Strategy              commons.FieldName = "strategy"
+	Action                commons.FieldName = "action"
+	ShouldDrainInstances  commons.FieldName = "should_drain_instances"
+	ManagedActions        commons.FieldName = "managed_actions"
+	PlatformUpdate        commons.FieldName = "platform_update"
+	PerformAt             commons.FieldName = "perform_at"
+	TimeWindow            commons.FieldName = "time_window"
+	UpdateLevel           commons.FieldName = "update_level"
+	// -----------------------------------
 )

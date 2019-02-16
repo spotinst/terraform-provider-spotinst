@@ -770,8 +770,50 @@ Usage:
       is_enabled = true
     }
   }
-```  
+```
+
+* `integration_beanstalk` - (Optional) Describes the [Beanstalk](https://api.spotinst.com/provisioning-ci-cd-sdk/provisioning-tools/terraform/resources/terraform-v-2/elastic-beanstalk/) integration.
      
+    * `deployment_preferences` - (Optional) Preferences when performing a roll
+        * `automatic_roll` - (Required) Should roll perform automatically
+        * `batch_size_percentage` - (Required) Percent size of each batch
+        * `grace_period` - (Required) Amount of time to wait between batches
+        * `strategy` - (Optional) Strategy parameters
+            * `action` - (Required) Action to take
+            * `should_drain_instances` - (Required) Bool value if to wait to drain instance 
+    
+    * `managed_actions` - (Optional) Managed Actions parameters
+        * `platform_update` - (Optional) Platform Update parameters
+            * `perform_at` - (Required) Actions to perform (options: timeWindow, never)
+            * `time_window` - (Required) Time Window for when action occurs ex. Mon:23:50-Tue:00:20
+            * `update_level` - (Required) - Level to update
+            
+Usage:
+
+```hcl
+  integration_beanstalk = {
+    environment_id         = "e-3tkmbj7hzc"
+  
+    deployment_preferences = {
+      automatic_roll        = true
+      batch_size_percentage = 100
+      grace_period          = 90
+      strategy              = {
+        action                = "REPLACE_SERVER"
+        should_drain_instance = true
+      }
+    }
+  
+    managed_actions       = {
+      platform_update = {
+        perform_at   = "timeWindow"
+        field_name   = "Mon:23:50-Tue:00:20"
+        update_level = "minorAndPatch"
+      }
+    }
+ }
+```
+
 <a id="update-policy"></a>
 ## Update Policy
 
