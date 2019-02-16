@@ -1,4 +1,3 @@
-
 ## 1.7.0 (Unreleased)
 
 FEATURES:
@@ -20,7 +19,7 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws_beanstalk: Added `deployment_preferences` and `managed_actions` parameters
 * added version to user-agent header. 
 
-## 1.6.1 (January 30th, 2019)
+## 1.6.1 (January 31, 2019)
 
 NOTES:
 * resource/spotinst_elastigroup_aws: Added `wait_for_roll_timeout` and `wait_for_roll_percentage` to `roll_config` in `update_policy`. Setting both of these fields enables users to wait for a minimum percent of their blue/green deployment to be completed before allowing the plan to continue execution.
