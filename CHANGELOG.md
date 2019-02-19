@@ -1,4 +1,4 @@
-## 1.7.0 (Unreleased)
+## 1.7.0 (February 19, 2019)
 
 FEATURES:
 * *New Resource*: `spotinst_mrscaler_aws`
