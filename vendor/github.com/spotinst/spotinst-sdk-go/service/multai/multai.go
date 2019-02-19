@@ -157,6 +157,7 @@ func (s Strategy) String() string {
 type LoadBalancer struct {
 	ID              *string    `json:"id,omitempty"`
 	Name            *string    `json:"name,omitempty"`
+	Scheme          *string    `json:"scheme,omitempty"`
 	DNSRRType       *string    `json:"dnsRrType,omitempty"`
 	DNSRRName       *string    `json:"dnsRrName,omitempty"`
 	DNSCNAMEAliases []string   `json:"dnsCnameAliases,omitempty"`
@@ -379,6 +380,13 @@ func (o *LoadBalancer) SetId(v *string) *LoadBalancer {
 func (o *LoadBalancer) SetName(v *string) *LoadBalancer {
 	if o.Name = v; o.Name == nil {
 		o.nullFields = append(o.nullFields, "Name")
+	}
+	return o
+}
+
+func (o *LoadBalancer) SetScheme(v *string) *LoadBalancer {
+	if o.Scheme = v; o.Scheme == nil {
+		o.nullFields = append(o.nullFields, "Scheme")
 	}
 	return o
 }

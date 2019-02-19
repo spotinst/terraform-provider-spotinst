@@ -660,10 +660,10 @@
 			"revisionTime": "2019-01-02T18:18:36Z"
 		},
 		{
-			"checksumSHA1": "vH/8gcAFVTetYdUJ7tJhoGz18sw=",
+			"checksumSHA1": "Lfx3TZWTWM2rP7su7K8rca6nXGc=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws",
-			"revision": "5987af1ca5c77539f178b91a1541f8acd783755b",
-			"revisionTime": "2019-01-07T23:18:48Z"
+			"revision": "39fba1d83364d6c591ad6522d06a25f3fbb0ef19",
+			"revisionTime": "2019-02-12T23:01:19Z"
 		},
 		{
 			"checksumSHA1": "NJXPqLq1Golbi3URZL+iYYI3rIo=",
@@ -684,16 +684,16 @@
 			"revisionTime": "2018-12-21T00:18:36Z"
 		},
 		{
-			"checksumSHA1": "U6Dj4GlyX3+yZmQsJaEfg8ZA/7s=",
+			"checksumSHA1": "lNv/DBDbk3zL8NWj87ueRAENe2M=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/mrscaler",
-			"revision": "533861944a7f7479411542e16282ce9e72fa613d",
-			"revisionTime": "2018-12-21T00:18:36Z"
+			"revision": "4c478f323b82f30d7524d10f4af2641bbf338c39",
+			"revisionTime": "2019-02-02T00:38:11Z"
 		},
 		{
-			"checksumSHA1": "KOseQlljKBzijf3MqVUReAp9cMg=",
+			"checksumSHA1": "TLbn/NudtQa0Mkx6Vp3uRhxVN0E=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/multai",
-			"revision": "533861944a7f7479411542e16282ce9e72fa613d",
-			"revisionTime": "2018-12-21T00:18:36Z"
+			"revision": "1380e9a16d82f578db3fe0aa55091ba53b4f8d7e",
+			"revisionTime": "2019-02-14T19:25:01Z"
 		},
 		{
 			"checksumSHA1": "kRnRkxKByVy1PFm9c6HJNIHVCZk=",
@@ -702,10 +702,10 @@
 			"revisionTime": "2018-12-21T02:26:45Z"
 		},
 		{
-			"checksumSHA1": "+000132x7PimWSF7yxrOWrOdGqk=",
+			"checksumSHA1": "Z/f8lKO7skzE0QddxPhunVeTM9E=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws",
-			"revision": "b03710cea58b3bb7e42acda2a99ff9fe9056801d",
-			"revisionTime": "2018-12-21T02:26:45Z"
+			"revision": "39fba1d83364d6c591ad6522d06a25f3fbb0ef19",
+			"revisionTime": "2019-02-12T23:01:19Z"
 		},
 		{
 			"checksumSHA1": "/EaPIiGHapTeeaqwRiZ3lTjb7+o=",

@@ -31,6 +31,17 @@ resource "spotinst_ocean_aws" "example" {
   key_name             = "fake key"
   user_data            = "echo hello world"
   iam_instance_profile = "iam-profile"
+  associate_public_ip_address = true
+  load_balancers = [
+    {
+      arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
+      type = "TARGET_GROUP"
+    },
+    {
+      name = "AntonK"
+      type = "CLASSIC"
+    }
+  ]
   // ---------------------------------------
 
   // --- STRATEGY --------------------
@@ -47,6 +58,7 @@ resource "spotinst_ocean_aws" "example" {
 
     autoscale_headroom = {
       cpu_per_unit    = 1024
+      gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
@@ -99,6 +111,11 @@ whitelist = ["t1.micro", "m1.small"]
 * `security_groups` - (Required) One or more security group ids.
 * `key_name` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
+* `associate_public_ip_address` - (Optional)
+* `load_balancers` - (Optional) - Array of load balancer objects to add to ocean cluster
+    * `arn` - (Optional) Required if type is set to TARGET_GROUP
+    * `name` - (Optional) Required if type is set to CLASSIC
+    * `type` - (Required) Can be set to CLASSIC or TARGET_GROUP
 
 ```hcl
   image_id             = "ami-79826301"
@@ -106,6 +123,17 @@ whitelist = ["t1.micro", "m1.small"]
   key_name             = "fake key"
   user_data            = "echo hello world"
   iam_instance_profile = "iam-profile"
+  associate_public_ip_address = true
+  load_balancers = [
+    {
+      arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
+      type = "TARGET_GROUP"
+    },
+    {
+      name = "AntonK"
+      type = "CLASSIC"
+    }
+  ]
 ```
 
 * `fallback_to_ondemand` - (Optional, Default: `true`) If not Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
@@ -124,6 +152,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `autoscale_cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
 * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
 * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+* `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate the headroom.
 * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
 * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
 * `autoscale_down` - (Optional) Auto Scaling scale down operations.
@@ -140,6 +169,7 @@ whitelist = ["t1.micro", "m1.small"]
 
     autoscale_headroom = {
       cpu_per_unit    = 1024
+      gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }

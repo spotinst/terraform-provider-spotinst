@@ -347,7 +347,6 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 								return fmt.Errorf("[ERROR] Timed out when waiting for minimum roll %%: %s", err)
 							}
 						}
-
 						log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
 					}
 				}

@@ -44,9 +44,18 @@ func setupElastigroupAWSBeanstalk() {
 //     Import Beanstalk Group
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func importBeanstalkGroup(resourceData *schema.ResourceData, meta interface{}) (*aws.Group, error) {
-	input := &aws.ImportBeanstalkInput{
-		EnvironmentName: spotinst.String(resourceData.Get("beanstalk_environment_name").(string)),
-		Region:          spotinst.String(resourceData.Get("region").(string))}
+	var input *aws.ImportBeanstalkInput
+
+	if environmentId, ok := resourceData.GetOk("beanstalk_environment_id"); ok {
+		input = &aws.ImportBeanstalkInput{
+			EnvironmentId: spotinst.String(environmentId.(string)),
+			Region:        spotinst.String(resourceData.Get("region").(string))}
+
+	} else if environmentName, ok := resourceData.GetOk("beanstalk_environment_name"); ok {
+		input = &aws.ImportBeanstalkInput{
+			EnvironmentName: spotinst.String(environmentName.(string)),
+			Region:          spotinst.String(resourceData.Get("region").(string))}
+	}
 
 	resp, err := meta.(*Client).elastigroup.CloudProviderAWS().ImportBeanstalkEnv(context.Background(), input)
 
@@ -264,6 +273,7 @@ func resourceSpotinstAWSBeanstalkGroupUpdate(resourceData *schema.ResourceData, 
 func resourceSpotinstAWSBeanstalkGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting group: %s", d.Id())
 	input := &aws.DeleteGroupInput{GroupID: spotinst.String(d.Id())}
+
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
 		return fmt.Errorf("failed to delete group: %s", err)
 	}

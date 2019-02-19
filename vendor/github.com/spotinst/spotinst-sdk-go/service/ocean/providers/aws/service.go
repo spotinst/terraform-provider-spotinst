@@ -23,6 +23,9 @@ type Service interface {
 	ReadLaunchSpec(context.Context, *ReadLaunchSpecInput) (*ReadLaunchSpecOutput, error)
 	UpdateLaunchSpec(context.Context, *UpdateLaunchSpecInput) (*UpdateLaunchSpecOutput, error)
 	DeleteLaunchSpec(context.Context, *DeleteLaunchSpecInput) (*DeleteLaunchSpecOutput, error)
+
+	ListClusterInstances(context.Context, *ListClusterInstancesInput) (*ListClusterInstancesOutput, error)
+	DetachClusterInstances(context.Context, *DetachClusterInstancesInput) (*DetachClusterInstancesOutput, error)
 }
 
 type ServiceOp struct {

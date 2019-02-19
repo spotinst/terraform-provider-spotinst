@@ -75,12 +75,14 @@ type InstanceTypes struct {
 }
 
 type LaunchSpecification struct {
-	SecurityGroupIDs   []string            `json:"securityGroupIds,omitempty"`
-	ImageID            *string             `json:"imageId,omitempty"`
-	KeyPair            *string             `json:"keyPair,omitempty"`
-	UserData           *string             `json:"userData,omitempty"`
-	IAMInstanceProfile *IAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
-	Tags               []*Tag              `json:"tags,omitempty"`
+	AssociatePublicIpAddress *bool               `json:"associatePublicIpAddress,omitempty"`
+	SecurityGroupIDs         []string            `json:"securityGroupIds,omitempty"`
+	ImageID                  *string             `json:"imageId,omitempty"`
+	KeyPair                  *string             `json:"keyPair,omitempty"`
+	UserData                 *string             `json:"userData,omitempty"`
+	IAMInstanceProfile       *IAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
+	Tags                     []*Tag              `json:"tags,omitempty"`
+	LoadBalancers            []*LoadBalancer     `json:"loadBalancers,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -89,6 +91,15 @@ type LaunchSpecification struct {
 type IAMInstanceProfile struct {
 	ARN  *string `json:"arn,omitempty"`
 	Name *string `json:"name,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type LoadBalancer struct {
+	Name *string `json:"name,omitempty"`
+	Arn  *string `json:"arn,omitempty"`
+	Type *string `json:"type,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -320,8 +331,6 @@ func (s *ServiceOp) DeleteCluster(ctx context.Context, input *DeleteClusterInput
 	return &DeleteClusterOutput{}, nil
 }
 
-// endregion
-
 // region Cluster
 
 func (o *Cluster) MarshalJSON() ([]byte, error) {
@@ -513,13 +522,19 @@ func (o *LaunchSpecification) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
+func (o *LaunchSpecification) SetAssociatePublicIpAddress(v *bool) *LaunchSpecification {
+	if o.AssociatePublicIpAddress = v; o.AssociatePublicIpAddress == nil {
+		o.nullFields = append(o.nullFields, "AssociatePublicIpAddress")
+	}
+	return o
+}
+
 func (o *LaunchSpecification) SetSecurityGroupIDs(v []string) *LaunchSpecification {
 	if o.SecurityGroupIDs = v; o.SecurityGroupIDs == nil {
 		o.nullFields = append(o.nullFields, "SecurityGroupIDs")
 	}
 	return o
 }
-
 func (o *LaunchSpecification) SetImageId(v *string) *LaunchSpecification {
 	if o.ImageID = v; o.ImageID == nil {
 		o.nullFields = append(o.nullFields, "ImageID")
@@ -555,6 +570,35 @@ func (o *LaunchSpecification) SetTags(v []*Tag) *LaunchSpecification {
 	return o
 }
 
+func (o *LaunchSpecification) SetLoadBalancers(v []*LoadBalancer) *LaunchSpecification {
+	if o.LoadBalancers = v; o.LoadBalancers == nil {
+		o.nullFields = append(o.nullFields, "LoadBalancers")
+	}
+	return o
+}
+// endregion
+
+// region LoadBalancer
+func (o *LoadBalancer) SetArn(v *string) *LoadBalancer {
+	if o.Arn = v; o.Arn == nil {
+		o.nullFields = append(o.nullFields, "Arn")
+	}
+	return o
+}
+
+func (o *LoadBalancer) SetName(v *string) *LoadBalancer {
+	if o.Name = v; o.Name == nil {
+		o.nullFields = append(o.nullFields, "Name")
+	}
+	return o
+}
+
+func (o *LoadBalancer) SetType(v *string) *LoadBalancer {
+	if o.Type = v; o.Type == nil {
+		o.nullFields = append(o.nullFields, "Type")
+	}
+	return o
+}
 // endregion
 
 // region IAMInstanceProfile

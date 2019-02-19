@@ -20,6 +20,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupMultaiRuntime(fieldsMap)
 	SetupRoute53(fieldsMap)
 	SetupDockerSwarm(fieldsMap)
+	SetupElasticBeanstalk(fieldsMap)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

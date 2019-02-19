@@ -34,6 +34,13 @@ func Provider() terraform.ResourceProvider {
 			string(commons.ElastigroupAWSBeanstalkResourceName): resourceSpotinstElastigroupAWSBeanstalk(),
 			string(commons.OceanAWSResourceName):                resourceSpotinstOceanAWS(),
 			string(commons.ElastigroupAzureResourceName):        resourceSpotinstElastigroupAzure(),
+			string(commons.MRScalerAWSResourceName):             resourceSpotinstMRScalerAWS(),
+			string(commons.MultaiBalancerResourceName):          resourceSpotinstMultaiBalancer(),
+			string(commons.MultaiDeploymentResourceName):        resourceSpotinstMultaiDeployment(),
+			string(commons.MultaiListenerResourceName):          resourceSpotinstMultaiListener(),
+			string(commons.MultaiRoutingRuleResourceName):       resourceSpotinstMultaiRoutingRule(),
+			string(commons.MultaiTargetResourceName):            resourceSpotinstMultaiTarget(),
+			string(commons.MultaiTargetSetResourceName):         resourceSpotinstMultaiTargetSet(),
 		},
 
 		ConfigureFunc: providerConfigure,

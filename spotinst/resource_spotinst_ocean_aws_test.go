@@ -313,12 +313,20 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-042d658b3ee907848"),
+					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.HexStateFunc("echo hello world")),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.key", "fakeKey"),
 					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.value", "fakeValue"),
+
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/8db573b63a46bfb2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
+
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 				),
 			},
 			{
@@ -334,12 +342,20 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-042d658b3ee907848"),
+					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.HexStateFunc("echo hello world updated")),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.key", "fakeKeyUpdated"),
 					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.value", "fakeValueUpdated"),
+
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/1234567890"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
+
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 				),
 			},
 			{
@@ -369,6 +385,17 @@ const testLaunchConfigAWSConfig_Create = `
   //key_name             = "my-key.ssh"
   user_data            = "echo hello world"
   //iam_instance_profile = "iam-profile"
+  associate_public_ip_address = false
+  load_balancers = [
+    {
+      arn = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/8db573b63a46bfb2"
+      type = "TARGET_GROUP"
+    },
+    {
+      name = "AntonK"
+      type = "CLASSIC"
+    }
+  ]
 
   tags = [{
     key   = "fakeKey"
@@ -384,6 +411,17 @@ const testLaunchConfigAWSConfig_Update = `
   //key_name             = "my-key-updated.ssh"
   user_data            = "echo hello world updated"
   //iam_instance_profile = "iam-profile updated"
+  associate_public_ip_address = true
+  load_balancers = [
+    {
+      arn = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/1234567890"
+      type = "TARGET_GROUP"
+    },
+    {
+      name = "AntonK"
+      type = "CLASSIC"
+    }
+  ]
 
   tags = [{
     key   = "fakeKeyUpdated"
@@ -512,6 +550,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.evaluation_periods", "300"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
@@ -537,6 +576,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.evaluation_periods", "600"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.cpu_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "4"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "true"),
@@ -544,6 +584,31 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "30"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "512"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testScalingConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
 				),
 			},
 		},
@@ -559,6 +624,7 @@ const testScalingConfig_Create = `
 
     autoscale_headroom = {
       cpu_per_unit    = 1024
+      gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
@@ -585,6 +651,7 @@ const testScalingConfig_Update = `
 
     autoscale_headroom = {
       cpu_per_unit    = 512
+      gpu_per_unit    = 2
       memory_per_unit = 1024
       num_of_units    = 4
     }

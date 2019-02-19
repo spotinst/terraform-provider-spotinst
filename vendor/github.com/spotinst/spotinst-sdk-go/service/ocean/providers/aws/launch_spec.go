@@ -44,7 +44,9 @@ type Label struct {
 	nullFields      []string
 }
 
-type ListLaunchSpecsInput struct{}
+type ListLaunchSpecsInput struct {
+	OceanID *string `json:"oceanId,omitempty"`
+}
 
 type ListLaunchSpecsOutput struct {
 	LaunchSpecs []*LaunchSpec `json:"launchSpecs,omitempty"`
@@ -117,6 +119,11 @@ func launchSpecsFromHttpResponse(resp *http.Response) ([]*LaunchSpec, error) {
 
 func (s *ServiceOp) ListLaunchSpecs(ctx context.Context, input *ListLaunchSpecsInput) (*ListLaunchSpecsOutput, error) {
 	r := client.NewRequest(http.MethodGet, "/ocean/aws/k8s/launchSpec")
+
+	if input.OceanID != nil {
+		r.Params.Set("oceanId", spotinst.StringValue(input.OceanID))
+	}
+
 	resp, err := client.RequireOK(s.Client.Do(ctx, r))
 	if err != nil {
 		return nil, err

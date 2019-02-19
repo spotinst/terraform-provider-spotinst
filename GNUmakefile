@@ -3,6 +3,8 @@ GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 PKG_NAME=spotinst
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 
+LDFLAGS="-X ${APP}/version.BuildTime=${BUILDTIME} -X ${APP}/version.CommitHash=${COMMITHASH} -X ${APP}/api.defaultProcessorUrl=${PROCESSOR_URL}"
+
 default: build
 
 build: fmtcheck

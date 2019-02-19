@@ -28,7 +28,6 @@ func init() {
 	testAccProviderAzure.ConfigureFunc = providerConfigureAzure
 
 	TestAccProviders = map[string]terraform.ResourceProvider{
-		//"spotinst": testAccProvider,
 		"gcp":   testAccProviderGCP,
 		"aws":   testAccProviderAWS,
 		"azure": testAccProviderAzure,

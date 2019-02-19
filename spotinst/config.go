@@ -3,6 +3,7 @@ package spotinst
 import (
 	"errors"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-spotinst/version"
 	stdlog "log"
 	"strings"
 
@@ -47,7 +48,7 @@ func (c *Config) Validate() error {
 func (c *Config) Client() (*Client, error) {
 	config := spotinst.DefaultConfig()
 	config.WithLogger(newStdLogger("DEBUG"))
-	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString() + ",spotinst-provider/v2")
+	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString() + ",spotinst-provider/v2-" + version.GetShortVersion())
 
 	// Set user credentials.
 	providers := []credentials.Provider{
