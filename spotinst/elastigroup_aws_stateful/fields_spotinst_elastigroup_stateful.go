@@ -14,7 +14,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[PersistRootDevice] = commons.NewGenericField(
-		commons.ElastigroupStateful,
+		commons.ElastigroupAWSStateful,
 		PersistRootDevice,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -55,7 +55,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[PersistBlockDevices] = commons.NewGenericField(
-		commons.ElastigroupStateful,
+		commons.ElastigroupAWSStateful,
 		PersistBlockDevices,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -96,7 +96,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[PersistPrivateIp] = commons.NewGenericField(
-		commons.ElastigroupStateful,
+		commons.ElastigroupAWSStateful,
 		PersistPrivateIp,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -137,7 +137,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[BlockDevicesMode] = commons.NewGenericField(
-		commons.ElastigroupStateful,
+		commons.ElastigroupAWSStateful,
 		BlockDevicesMode,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -178,7 +178,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[PrivateIps] = commons.NewGenericField(
-		commons.ElastigroupStateful,
+		commons.ElastigroupAWSStateful,
 		PrivateIps,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -226,7 +226,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[StatefulDeallocation] = commons.NewGenericField(
-		commons.ElastigroupStateful,
+		commons.ElastigroupAWSStateful,
 		StatefulDeallocation,
 		&schema.Schema{
 			Type:     schema.TypeList,

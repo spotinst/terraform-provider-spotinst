@@ -489,7 +489,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "0"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 				),

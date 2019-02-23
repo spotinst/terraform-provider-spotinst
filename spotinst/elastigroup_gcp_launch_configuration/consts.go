@@ -14,15 +14,19 @@ const (
 )
 
 const (
-	Labels          commons.FieldName = "labels"
-	Metadata        commons.FieldName = "metadata"
-	Tags            commons.FieldName = "tags"
+	Labels   commons.FieldName = "labels"
+	Metadata commons.FieldName = "metadata"
+	Tags     commons.FieldName = "tags"
+
 	BackendServices commons.FieldName = "backend_services"
-	NamedPorts      commons.FieldName = "named_ports"
 	Name            commons.FieldName = "name"
-	Ports           commons.FieldName = "ports"
-	ServiceName     commons.FieldName = "service_name"
-	ServiceAccount  commons.FieldName = "service_account"
-	StartupScript   commons.FieldName = "startup_script"
-	IPForwarding    commons.FieldName = "ip_forwarding"
+	LocationType    commons.FieldName = "location_type"
+	Scheme          commons.FieldName = "scheme"
+	NamedPorts      commons.FieldName = "named_ports"
+
+	Ports          commons.FieldName = "ports"
+	ServiceName    commons.FieldName = "service_name"
+	ServiceAccount commons.FieldName = "service_account"
+	StartupScript  commons.FieldName = "startup_script"
+	IPForwarding   commons.FieldName = "ip_forwarding"
 )

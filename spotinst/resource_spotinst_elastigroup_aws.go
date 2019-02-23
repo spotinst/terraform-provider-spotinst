@@ -332,22 +332,40 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 			if rollConfig, ok := updateGroupSchema[string(elastigroup_aws.RollConfig)]; !ok || rollConfig == nil {
 				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_aws.RollConfig), groupId)
 			} else {
-				if rollGroupInput, err := expandElastigroupRollConfig(rollConfig, groupId); err != nil {
+				if rollGroupInput, err := expandElastigroupRollConfig(rollConfig, spotinst.String(groupId)); err != nil {
 					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for group [%v], error: %v", groupId, err)
 				} else {
 					if json, err := commons.ToJson(rollConfig); err != nil {
 						return err
 					} else {
 						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
-						if rollOut, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput); err != nil {
-							errResult = fmt.Errorf("[ERROR] onRoll() -> Roll group [%v] API call failed, error: %v", groupId, err)
-						} else {
-							err := awaitReadyRoll(groupId, rollConfig, rollOut, meta.(*Client))
+						errResult = resource.Retry(time.Minute*5, func() *resource.RetryError {
+							rollGroupInput.GroupID = spotinst.String(groupId)
+							rollOut, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput)
 							if err != nil {
-								return fmt.Errorf("[ERROR] Timed out when waiting for minimum roll %%: %s", err)
+
+								// checks whether to retry role
+								if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+									for _, err := range errs {
+										if strings.Contains(err.Code, "CANT_ROLL_CAPACITY_BELOW_MINIMUM") {
+											time.Sleep(time.Minute)
+											return resource.RetryableError(err)
+										}
+									}
+								}
+								// Some other error, report it.
+								return resource.NonRetryableError(err)
 							}
-						}
-						log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
+
+							awaitErr := awaitReadyRoll(groupId, rollConfig, rollOut, meta.(*Client))
+							if awaitErr != nil {
+								waitErr := fmt.Errorf("[ERROR] Timed out when waiting for minimum roll %%: %s", err)
+								return resource.NonRetryableError(waitErr)
+							} else {
+								log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
+							}
+							return nil
+						})
 					}
 				}
 			}
@@ -407,7 +425,7 @@ func awaitReadyRoll(groupId string, rollConfig interface{}, rollOut *aws.RollGro
 			deployStatusInput := &aws.DeploymentStatusInput{GroupID: spotinst.String(groupId), RollID: spotinst.String(rollId)}
 			err := resource.Retry(time.Second*time.Duration(pctTimeout), func() *resource.RetryError {
 				if rollStatus, err := client.elastigroup.CloudProviderAWS().DeploymentStatus(context.Background(), deployStatusInput); err != nil {
-					return resource.NonRetryableError(fmt.Errorf("[ERROR] onRoll() -> Roll group status [%v] API call failed, error: %v", groupId, err))
+					return resource.NonRetryableError(fmt.Errorf("[ERROR] awaitReadyRoll() -> Roll group status [%v] API call failed, error: %v", groupId, err))
 				} else {
 					if spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value) < pctComplete {
 						log.Printf("===> waiting for at least %d%% of batches to complete, currently %d%% <===\n", pctComplete, spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value))
@@ -428,8 +446,8 @@ func awaitReadyRoll(groupId string, rollConfig interface{}, rollOut *aws.RollGro
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Fields Expand
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandElastigroupRollConfig(data interface{}, groupID string) (*aws.RollGroupInput, error) {
-	i := &aws.RollGroupInput{GroupID: spotinst.String(groupID)}
+func expandElastigroupRollConfig(data interface{}, groupID *string) (*aws.RollGroupInput, error) {
+	i := &aws.RollGroupInput{GroupID: groupID}
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})

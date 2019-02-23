@@ -84,6 +84,7 @@ const (
 	IntegrationRoute53 commons.FieldName = "integration_route53"
 	Domains            commons.FieldName = "domains"
 	HostedZoneId       commons.FieldName = "hosted_zone_id"
+	SpotinstAcctID     commons.FieldName = "spotinst_acct_id"
 	RecordSets         commons.FieldName = "record_sets"
 	UsePublicIP        commons.FieldName = "use_public_ip"
 	Name               commons.FieldName = "name"

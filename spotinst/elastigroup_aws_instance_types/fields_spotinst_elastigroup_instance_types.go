@@ -16,7 +16,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[OnDemand] = commons.NewGenericField(
-		commons.ElastigroupInstanceType,
+		commons.ElastigroupAWSInstanceType,
 		OnDemand,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -55,7 +55,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Spot] = commons.NewGenericField(
-		commons.ElastigroupInstanceType,
+		commons.ElastigroupAWSInstanceType,
 		Spot,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -108,7 +108,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[PreferredSpot] = commons.NewGenericField(
-		commons.ElastigroupInstanceType,
+		commons.ElastigroupAWSInstanceType,
 		PreferredSpot,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -162,7 +162,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[InstanceTypeWeights] = commons.NewGenericField(
-		commons.ElastigroupInstanceType,
+		commons.ElastigroupAWSInstanceType,
 		InstanceTypeWeights,
 		&schema.Schema{
 			Type:     schema.TypeSet,

@@ -1,6 +1,11 @@
 package elastigroup_aws_integrations
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
+
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -10,10 +15,11 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func SetupDockerSwarm(fieldsMap map[commons.FieldName]*commons.GenericField) {
-	fieldsMap[IntegrationDockerSwarm] = commons.NewGenericField(
-		commons.ElastigroupIntegrations,
-		IntegrationDockerSwarm,
+func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
+
+	fieldsMap[IntegrationNomad] = commons.NewGenericField(
+		commons.ElastigroupAWSIntegrations,
+		IntegrationNomad,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -37,6 +43,11 @@ func SetupDockerSwarm(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 					string(AutoscaleCooldown): {
 						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
+					string(AclToken): {
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
@@ -77,43 +88,58 @@ func SetupDockerSwarm(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+
+					string(AutoscaleConstraints): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Key): {
+									Type:      schema.TypeString,
+									Required:  true,
+									StateFunc: attrStateFunc,
+								},
+
+								string(Value): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+						Set: constraintHashKV,
+					},
 				},
 			},
 		},
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
 		},
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(IntegrationDockerSwarm)); ok {
-				if integration, err := expandAWSGroupDockerSwarmIntegration(v, false); err != nil {
+			if v, ok := resourceData.GetOk(string(IntegrationNomad)); ok {
+				if integration, err := expandAWSGroupNomadIntegration(v, false); err != nil {
 					return err
 				} else {
-					elastigroup.Integration.SetDockerSwarm(integration)
+					elastigroup.Integration.SetNomad(integration)
 				}
 			}
 			return nil
 		},
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value *aws.DockerSwarmIntegration = nil
-
-			if v, ok := resourceData.GetOk(string(IntegrationDockerSwarm)); ok {
-				if integration, err := expandAWSGroupDockerSwarmIntegration(v, true); err != nil {
+			var value *aws.NomadIntegration = nil
+			if v, ok := resourceData.GetOk(string(IntegrationNomad)); ok {
+				if integration, err := expandAWSGroupNomadIntegration(v, true); err != nil {
 					return err
 				} else {
 					value = integration
 				}
 			}
-			elastigroup.Integration.SetDockerSwarm(value)
+			elastigroup.Integration.SetNomad(value)
 			return nil
 		},
-
 		nil,
 	)
 }
@@ -121,8 +147,8 @@ func SetupDockerSwarm(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.DockerSwarmIntegration, error) {
-	integration := &aws.DockerSwarmIntegration{}
+func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadIntegration, error) {
+	integration := &aws.NomadIntegration{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
 		return integration, nil
@@ -137,16 +163,22 @@ func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.
 		integration.SetMasterPort(spotinst.Int(v))
 	}
 
+	if v, ok := m[string(AclToken)].(string); ok && v != "" {
+		integration.SetAclToken(spotinst.String(v))
+	} else if nullify {
+		integration.SetAclToken(nil)
+	}
+
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
 		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
+			integration.SetAutoScale(&aws.AutoScaleNomad{})
 		}
 		integration.AutoScale.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(AutoscaleCooldown)].(int); ok && v > 0 {
 		if integration.AutoScale == nil {
-			integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
+			integration.SetAutoScale(&aws.AutoScaleNomad{})
 		}
 		integration.AutoScale.SetCooldown(spotinst.Int(v))
 	}
@@ -158,11 +190,9 @@ func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.
 		}
 		if headroom != nil {
 			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
+				integration.SetAutoScale(&aws.AutoScaleNomad{})
 			}
 			integration.AutoScale.SetHeadroom(headroom)
-		} else {
-			integration.AutoScale.Headroom = nil
 		}
 	}
 
@@ -173,11 +203,64 @@ func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.
 		}
 		if down != nil {
 			if integration.AutoScale == nil {
-				integration.SetAutoScale(&aws.AutoScaleDockerSwarm{})
+				integration.SetAutoScale(&aws.AutoScaleNomad{})
 			}
 			integration.AutoScale.SetDown(down)
 		}
 	}
 
+	if v, ok := m[string(AutoscaleConstraints)]; ok {
+		consts, err := expandNomadAutoScaleConstraints(v)
+		if err != nil {
+			return nil, err
+		}
+		if consts != nil {
+			if integration.AutoScale == nil {
+				integration.SetAutoScale(&aws.AutoScaleNomad{})
+			}
+			integration.AutoScale.SetConstraints(consts)
+		}
+	}
 	return integration, nil
+}
+
+func expandNomadAutoScaleConstraints(data interface{}) ([]*aws.AutoScaleConstraint, error) {
+	list := data.(*schema.Set).List()
+	out := make([]*aws.AutoScaleConstraint, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(Key)]; !ok {
+			return nil, errors.New("invalid Nomad constraint: key missing")
+		}
+
+		if _, ok := attr[string(Value)]; !ok {
+			return nil, errors.New("invalid Nomad constraint: value missing")
+		}
+		c := &aws.AutoScaleConstraint{
+			Key:   spotinst.String(fmt.Sprintf("${%s}", attr[string(Key)].(string))),
+			Value: spotinst.String(attr[string(Value)].(string)),
+		}
+		out = append(out, c)
+	}
+	return out, nil
+}
+
+func attrStateFunc(v interface{}) string {
+	switch s := v.(type) {
+	case string:
+		return fmt.Sprintf("${%s}", s)
+	default:
+		return ""
+	}
+}
+
+func constraintHashKV(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(fmt.Sprintf("%s-", m[string(Key)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(Value)].(string)))
+	return hashcode.String(buf.String())
 }

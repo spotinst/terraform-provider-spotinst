@@ -15,7 +15,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[ScalingUpPolicy] = commons.NewGenericField(
-		commons.ElastigroupScalingPolicies,
+		commons.ElastigroupAWSScalingPolicies,
 		ScalingUpPolicy,
 		upDownScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -65,7 +65,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[ScalingDownPolicy] = commons.NewGenericField(
-		commons.ElastigroupScalingPolicies,
+		commons.ElastigroupAWSScalingPolicies,
 		ScalingDownPolicy,
 		upDownScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -115,7 +115,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[ScalingTargetPolicy] = commons.NewGenericField(
-		commons.ElastigroupScalingPolicies,
+		commons.ElastigroupAWSScalingPolicies,
 		ScalingTargetPolicy,
 		targetScalingPolicySchema(),
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

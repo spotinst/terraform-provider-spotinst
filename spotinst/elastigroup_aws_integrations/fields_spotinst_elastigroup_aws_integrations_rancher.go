@@ -15,7 +15,7 @@ import (
 func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationRancher] = commons.NewGenericField(
-		commons.ElastigroupIntegrations,
+		commons.ElastigroupAWSIntegrations,
 		IntegrationRancher,
 		&schema.Schema{
 			Type:     schema.TypeList,

@@ -12,7 +12,7 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupElasticBeanstalk(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[IntegrationBeanstalk] = commons.NewGenericField(
-		commons.ElastigroupIntegrations,
+		commons.ElastigroupAWSIntegrations,
 		IntegrationBeanstalk,
 		&schema.Schema{
 			Type:     schema.TypeList,

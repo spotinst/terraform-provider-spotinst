@@ -128,7 +128,6 @@ The following arguments are supported:
 
 * `availability_zones` - (Required) List of availability zones for the group.
 
-
 * `subnets` - (Optional) A list of regions and subnets.
 * `region` - (Required) The region for the group of subnets.
 * `subnet_names` - (Required) The names of the subnets in the region.
@@ -144,25 +143,6 @@ The following arguments are supported:
 * `fallback_to_od` - (Optional) Activate fallback-to-on-demand. When provisioning an instance, if no Preemptible market is available, fallback-to-on-demand will provision an On-Demand instance to maintain the group capacity.
 * `draining_timeout` - (Optional) Time (seconds) the instance is allowed to run after it is detached from the group. This is to allow the instance time to drain all the current TCP connections before terminating it.
 
-* `gpu` - (Optional) Defines the GPU configuration.
-* `type` - (Required) The type of GPU instance. Valid values: `nvidia-tesla-v100`, `nvidia-tesla-p100`, `nvidia-tesla-k80`.
-* `count` - (Required) The number of GPUs. Must be 0, 2, 4, 6, 8.
-
-* `health_check_grace_period` - (optional) Period of time (seconds) to wait for VM to reach healthiness before monitoring for unhealthiness.
-
-* `network_interface` - (Required, minimum 1) Array of objects representing the network configuration for the elastigroup.
-* `network` - (Required) Network resource for this group.
-* `access_configs` - (Optional) Array of configurations.
-* `name` - (Optional) Name of this access configuration.
-* `type` - (Optional) Array of configurations for this interface. Currently, only ONE_TO_ONE_NAT is supported.
-
-* `tags` - (Optional) Tags to mark created instances.
-* `backend_services` - (Optional) Describes the backend service configurations.
-* `service_name` - (Required)
-* `named_port` - (Optional) Describes a named port and a list of ports.
-* `port_name` - (Required) The name of the port.
-* `ports` - (Required) A list of ports.
-
 * `metadata` - (Optional) Array of objects with key-value pairs.
 * `key` - (Optional) Metadata key.
 * `value` - (Optional) Metadata value.
@@ -170,6 +150,63 @@ The following arguments are supported:
 * `labels` - (Optional) Array of objects with key-value pairs.
 * `key` - (Optional) Labels key.
 * `value` - (Optional) Labels value.
+
+* `tags` - (Optional) Tags to mark created instances.
+
+<a id="GPU"></a>
+## GPU
+
+* `gpu` - (Optional) Defines the GPU configuration.
+* `type` - (Required) The type of GPU instance. Valid values: `nvidia-tesla-v100`, `nvidia-tesla-p100`, `nvidia-tesla-k80`.
+* `count` - (Required) The number of GPUs. Must be 0, 2, 4, 6, 8.
+
+Usage:
+
+```hcl
+  gpu = {
+    count = 2
+    type = "nvidia-tesla-p100"
+  }
+```
+
+<a id="health-check"></a>
+## Health Check
+
+* `health_check_grace_period` - (optional) Period of time (seconds) to wait for VM to reach healthiness before monitoring for unhealthiness.
+
+```hcl
+  health_check_grace_period = 100
+```
+
+<a id="backend-services"></a>
+## Backend Services
+
+* `backend_services` - (Optional) Describes the backend service configurations.
+* `service_name` - (Required) The name of the backend service.
+* `location_type` - (Optional) Sets which location the backend services will be active. Valid values: `regional`, `global`.
+* `scheme` - (Optional) Use when `location_type` is "regional". Set the traffic for the backend service to either between the instances in the vpc or to traffic from the internet. Valid values: `INTERNAL`, `EXTERNAL`.
+* `named_port` - (Optional) Describes a named port and a list of ports.
+* `port_name` - (Required) The name of the port.
+* `ports` - (Required) A list of ports.
+
+Usage:
+
+```hcl
+  backend_services_config = {[
+    {
+      service_name = "spotinst-elb-backend-service"
+      locationType = "regional"
+      scheme       = "INTERNAL"
+      ports = {
+        port_name = "port-name"
+        ports = [8000, 6000]
+      }
+    },
+  ]}
+```
+
+<a id="disks"></a>
+## Disks
 
 * `disks` - (Optional) Array of disks associated with this instance. Persistent disks must be created before you can assign them.
 * `auto_delete` - (Optional) Specifies whether the disk will be auto-deleted when the instance is deleted.
@@ -184,8 +221,65 @@ The following arguments are supported:
 * `disk_type` - (Optional, Default" `pd-standard`) Specifies the disk type to use to create the instance. Valid values: pd-ssd, local-ssd.
 * `source_image` - (Optional) A source image used to create the disk. You can provide a private (custom) image, and Compute Engine will use the corresponding image from your project.
 
+Usage:
+
+```hcl
+disks = [
+    {
+      device_nime = "device"
+      mode        = "READ_WRITE"
+      type        = "PERSISTENT"
+      auto_delete = true
+      boot        = true
+      interface   = "SCSI"
+
+      initialize_parms = {
+        disk_size_gb = 10
+        disk_type    = "pd-standard"
+        source_image = ""
+      }
+    }
+  ]
+```
+
+<a id="network-interface"></a>
+## Network Interfaces
+
+Each of the `network_interface` attributes controls a portion of the GCP
+Instance's "Network Interfaces". It's a good idea to familiarize yourself with [GCP's Network
+Interfaces docs](https://cloud.google.com/vpc/docs/multiple-interfaces-concepts)
+to understand the implications of using these attributes.
+
+* `network_interface` - (Required, minimum 1) Array of objects representing the network configuration for the elastigroup.
+* `network` - (Required) Network resource for this group.
+* `access_configs` - (Optional) Array of configurations.
+* `name` - (Optional) Name of this access configuration.
+* `type` - (Optional) Array of configurations for this interface. Currently, only ONE_TO_ONE_NAT is supported.
+
+```hcl
+  network_interface = [{ 
+    network = "default"
+	
+    access_configs = {
+      name = "config1"
+      type = "ONE_TO_ONE_NAT"
+    }
+
+    alias_ip_ranges = {
+     subnetwork_range_name = "range-name-1"
+     ip_cidr_range = "10.128.0.0/20"
+    }
+  }]
+```
+
+<a id="scaling-policy"></a>
+## Scaling Policies
+
 * `scaling_up_policy` - (Optional) Contains scaling policies for scaling the Elastigroup up.
 * `scaling_down_policy` - (Optional) Contains scaling policies for scaling the Elastigroup down.
+
+Each `scaling_*_policy` supports the following:
+
 * `policy_name` - (Optional) Name of scaling policy.
 * `metric_name` - (Optional) Metric to monitor. Valid values: "Percentage CPU", "Network In", "Network Out", "Disk Read Bytes", "Disk Write Bytes", "Disk Write Operations/Sec", "Disk Read Operations/Sec".
 * `statistic` - (Optional) Statistic by which to evaluate the selected metric. Valid values: "AVERAGE", "SAMPLE_COUNT", "SUM", "MINIMUM", "MAXIMUM", "PERCENTILE", "COUNT".
@@ -197,3 +291,53 @@ The following arguments are supported:
 * `action` - (Optional) Scaling action to take when the policy is triggered.
 * `type` - (Optional) Type of scaling action to take when the scaling policy is triggered. Valid values: "adjustment", "setMinTarget", "updateCapacity", "percentageAdjustment"
 * `adjustment` - (Optional) Value to which the action type will be adjusted. Required if using "numeric" or "percentageAdjustment" action types.
+
+Usage:
+
+```hcl
+  scaling = {
+      up = {
+        policy_name = "scale_up_1"
+        source      = "stackdriver"
+        metric_name = "instance/disk/read_ops_count"
+        namespace   = "compute"
+        statistic   = "average"
+        unit        = "percent"
+        threshold   = 10000
+        period      = 300
+        cooldown    = 300
+        operator    = "gte"
+  
+        evaluation_periods = 1
+        
+        action = {
+          type       = "adjustment"
+          adjustment = 1
+        }
+  
+        dimensions = [
+          {
+            name  = "storage_type"
+            value = "pd-ssd"
+          }
+        ]
+      }
+    }
+```
+
+<a id="third-party-integrations"></a>
+## Third-Party Integrations
+
+* `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
+
+    * `master_host` - (Required) IP or FQDN of one of your swarm managers.
+    * `master_port` - (Required) Network port used by your swarm.
+            
+Usage:
+
+```hcl
+integration_docker_swarm = {
+    master_host = "10.10.10.10"
+    master_port = 2376
+}
+```

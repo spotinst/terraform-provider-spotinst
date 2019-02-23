@@ -13,6 +13,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_disk"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_gpu"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_instance_types"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_integrations"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_launch_configuration"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_network_interface"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_scaling_policies"
@@ -46,6 +47,7 @@ func setupElastigroupGCPResource() {
 	elastigroup_gcp_disk.Setup(fieldsMap)
 	elastigroup_gcp_gpu.Setup(fieldsMap)
 	elastigroup_gcp_instance_types.Setup(fieldsMap)
+	elastigroup_gcp_integrations.Setup(fieldsMap)
 	elastigroup_gcp_launch_configuration.Setup(fieldsMap)
 	elastigroup_gcp_network_interface.Setup(fieldsMap)
 	elastigroup_gcp_scaling_policies.Setup(fieldsMap)

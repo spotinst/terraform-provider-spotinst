@@ -121,8 +121,9 @@ func NewElastigroupGCPWrapper() *ElastigroupGCPWrapper {
 				LaunchSpecification: &gcp.LaunchSpecification{},
 				InstanceTypes:       &gcp.InstanceTypes{},
 			},
-			Scaling:  &gcp.Scaling{},
-			Strategy: &gcp.Strategy{},
+			Integration: &gcp.Integration{},
+			Scaling:     &gcp.Scaling{},
+			Strategy:    &gcp.Strategy{},
 		},
 	}
 }

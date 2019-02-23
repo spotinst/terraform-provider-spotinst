@@ -1,4 +1,18 @@
-## 1.7.0 (Unreleased)
+## 1.7.1 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added optional `spotinst_acct_id` to Route53 integration
+* resource/spotinst_elastigroup_azure: added `update_policy` to control blue/green deployment options
+* resource/spotinst_elastigroup_gcp: added DockerSwarm integration. 
+* resource/spotinst_elastigroup_gcp: added `location_type` and `scheme` to `backend_services`
+
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: `should_roll` now retries on `CANT_ROLL_CAPACITY_BELOW_MINIMUM` error
+* resource/spotinst_ocean_aws: `spot_percentage` no longer defaults to `0` when undefined
+* resource/spotinst_ocean_aws: `fallback_to_od` now defaults to `true` when undefined
+
+## 1.7.0 (February 19, 2019)
 
 FEATURES:
 * *New Resource*: `spotinst_mrscaler_aws`

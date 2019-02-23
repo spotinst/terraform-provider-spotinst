@@ -266,4 +266,48 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[UpdatePolicy] = commons.NewGenericField(
+		commons.ElastigroupAzure,
+		UpdatePolicy,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldRoll): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+
+					string(RollConfig): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(BatchSizePercentage): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+
+								string(GracePeriod): {
+									Type:     schema.TypeInt,
+									Optional: true,
+									Default:  -1,
+								},
+
+								string(HealthCheckType): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
+
 }

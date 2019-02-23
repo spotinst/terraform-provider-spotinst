@@ -587,6 +587,7 @@ Usage:
 
     * `domains` - (Required) Collection of one or more domains to register.
         * `hosted_zone_id` - (Required) The id associated with a hosted zone.
+        * `spotinst_acct_id` - (Optional) The Spotinst account ID that is linked to the AWS account that holds the Route 53 hosted Zone ID. The default is the user Spotinst account provided as a URL parameter.
         * `record_sets` - (Required) Collection of records containing authoritative DNS information for the specified domain name.
             * `name` - (Required) The record set name.
             * `use_public_ip` - (Optional, Default: `false`) - Designates if the IP address should be exposed to connections outside the VPC.
@@ -596,7 +597,8 @@ Usage:
 ```hcl
     integration_route53 = {
       domains = {
-        hosted_zone_id = "zone-id"
+        hosted_zone_id   = "zone-id"
+        spotinst_acct_id = "act-123456"
         
         record_sets = {
           name          = "foo.example.com"
