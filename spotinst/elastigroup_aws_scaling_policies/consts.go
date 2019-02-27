@@ -6,6 +6,8 @@ const (
 	Prefix = ""
 )
 
+type DimensionField string
+
 const (
 	ScalingUpPolicy     commons.FieldName = "scaling_up_policy"
 	ScalingDownPolicy   commons.FieldName = "scaling_down_policy"
@@ -32,4 +34,7 @@ const (
 	Target            commons.FieldName = "target"
 	ActionType        commons.FieldName = "action_type"
 	IsEnabled         commons.FieldName = "is_enabled"
+
+	DimensionName  DimensionField = "name"
+	DimensionValue DimensionField = "value"
 )
