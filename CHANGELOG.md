@@ -11,6 +11,7 @@ BUG FIXES:
 * resource/spotinst_elastigroup_aws: `should_roll` now retries on `CANT_ROLL_CAPACITY_BELOW_MINIMUM` error
 * resource/spotinst_ocean_aws: `spot_percentage` no longer defaults to `0` when undefined
 * resource/spotinst_ocean_aws: `fallback_to_od` now defaults to `true` when undefined
+* resource/spotinst_elastigroup_aws: `dimensions` changed to properly set `name` and `value` parameters
 
 ## 1.7.0 (February 19, 2019)
 
