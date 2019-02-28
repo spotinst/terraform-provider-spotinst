@@ -1,4 +1,4 @@
-## 1.7.1 (Unreleased)
+## 1.8.0 (Unreleased)
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added optional `spotinst_acct_id` to Route53 integration
