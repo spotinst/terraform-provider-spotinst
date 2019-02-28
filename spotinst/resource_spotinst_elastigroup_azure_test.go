@@ -861,3 +861,99 @@ const testAzureScheduledTaskGroupConfig_EmptyFields = `
 `
 
 // endregion
+
+// region Elastigroup: Update Policy
+func TestAccSpotinstElastigroupAzure_UpdatePolicy(t *testing.T) {
+	groupName := "eg-azure-update-policy"
+	resourceName := createElastigroupAzureResourceName(groupName)
+
+	var group azure.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureUpdatePolicyGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.grace_period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.health_check_type", "NONE"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureUpdatePolicyGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.grace_period", "600"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.health_check_type", "INSTANCE_STATE"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureUpdatePolicyGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureUpdatePolicyGroupConfig_Create = `
+ // --- UPDATE POLICY ----------------
+  update_policy = {
+    should_roll = false
+    roll_config = {
+      batch_size_percentage = 33
+      grace_period = 300
+      health_check_type = "NONE"
+    }
+  }
+ // ----------------------------------
+`
+
+const testAzureUpdatePolicyGroupConfig_Update = `
+ // --- UPDATE POLICY ----------------
+  update_policy = {
+    should_roll = true
+    roll_config = {
+      batch_size_percentage = 66
+      grace_period = 600
+      health_check_type = "INSTANCE_STATE"
+    }
+  }
+ // ----------------------------------
+`
+
+const testAzureUpdatePolicyGroupConfig_EmptyFields = `
+ // --- UPDATE POLICY ----------------
+ // ----------------------------------
+`
+
+// endregion

@@ -333,6 +333,7 @@ func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".service_name", "terraform-acc-test-backend-service"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".location_type", "global"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".name", "http"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.0", "80"),
@@ -366,13 +367,9 @@ func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.0", "40"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.1", "4040"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".service_name", "terraform-acc-test-backend-service"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports."+NamedPortsHash2_update+".name", "https"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports."+NamedPortsHash2_update+".ports.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports."+NamedPortsHash2_update+".ports.0", "50"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports."+NamedPortsHash2_update+".ports.1", "5050"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".named_ports."+NamedPortsHash2_update+".ports.2", "6060"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".service_name", "terraform-acc-test-backend-service-tcp"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".location_type", "regional"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".scheme", "EXTERNAL"),
 					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "true"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".key", "test_key"),
@@ -415,9 +412,9 @@ const (
 	LabelsHash_update      = "3119730257"
 	MetaHash_create        = "1912256051"
 	MetaHash_update        = "284772212"
-	BackendSvcHash_create  = "2431595559"
-	BackendSvcHash1_update = "2963621724"
-	BackendSvcHash2_update = "1192301944"
+	BackendSvcHash_create  = "1781664423"
+	BackendSvcHash1_update = "659180285"
+	BackendSvcHash2_update = "2663756714"
 	NamedPortsHash_create  = "571950593"
 	NamedPortsHash1_update = "981148154"
 	NamedPortsHash2_update = "1016050568"
@@ -446,6 +443,7 @@ const testLaunchConfigurationGCPGroupConfig_Create = `
 
  backend_services = [{
     service_name = "terraform-acc-test-backend-service"
+    location_type = "global"
     named_ports = {
       name = "http"
       ports = [80, 8080]
@@ -485,18 +483,16 @@ const testLaunchConfigurationGCPGroupConfig_Update = `
 
  backend_services = [
  {
-   service_name = "terraform-acc-test-backend-service"
-   named_ports = {
-     name = "http"
-     ports = [40, 4040]
-   }
+  service_name = "terraform-acc-test-backend-service"
+  named_ports = {
+    name = "http"
+    ports = [40, 4040]
+  }
  },
  {
-   service_name = "terraform-acc-test-backend-service"
-   named_ports = {
-     name = "https"
-     ports = [50, 5050, 6060]
-   }
+   service_name  = "terraform-acc-test-backend-service-tcp"
+   location_type = "regional"
+   scheme        = "EXTERNAL"
  }
  ]
  // ---------------------------------------
@@ -1423,6 +1419,89 @@ subnets = [
 const testSubnetsGCPGroupConfig_EmptyFields = `
 // --- SUBNETS ------------------------------------------
 // ------------------------------------------------------
+`
+
+// endregion
+
+// region Docker Swarm integration
+
+func TestAccSpotinstElastigroupGCP_IntegrationDockerSwarm(t *testing.T) {
+	groupName := "eg-integration-docker-swarm"
+	resourceName := createElastigroupGCPResourceName(groupName)
+
+	var group gcp.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupGCPDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testGCPIntegrationDockerSwarmGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupGCPExists(&group, resourceName),
+					testCheckElastigroupGCPAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_host", "docker-swarm-master-host"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_port", "8000"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testGCPIntegrationDockerSwarmGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupGCPExists(&group, resourceName),
+					testCheckElastigroupGCPAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_host", "docker-swarm-master-host-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.master_port", "9000"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testGCPIntegrationDockerSwarmGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupGCPExists(&group, resourceName),
+					testCheckElastigroupGCPAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testGCPIntegrationDockerSwarmGroupConfig_Create = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ integration_docker_swarm = {
+    master_host = "docker-swarm-master-host"
+    master_port = 8000
+ }
+ // -------------------------------------
+`
+
+const testGCPIntegrationDockerSwarmGroupConfig_Update = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ integration_docker_swarm = {
+	master_host = "docker-swarm-master-host-update"
+    master_port = 9000
+  }
+ // -------------------------------------
+`
+
+const testGCPIntegrationDockerSwarmGroupConfig_EmptyFields = `
+ // --- INTEGRATION: DOCKER SWARM -------
+ // -------------------------------------
 `
 
 // endregion

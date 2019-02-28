@@ -33,6 +33,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Required: true,
 					},
 
+					string(LocationType): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(Scheme): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
 					string(NamedPorts): {
 						Type:     schema.TypeSet,
 						Optional: true,
@@ -76,12 +86,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var result *gcp.BackendServiceConfig = nil
 			if v, ok := resourceData.GetOk(string(BackendServices)); ok {
+				var value []*gcp.BackendService = nil
 				if services, err := expandServices(v); err != nil {
 					return err
 				} else {
 					result = &gcp.BackendServiceConfig{}
-					result.SetBackendServices(services)
+					value = services
 				}
+				result.SetBackendServices(value)
 			}
 			elastigroup.Compute.LaunchSpecification.SetBackendServiceConfig(result)
 			return nil
@@ -156,7 +168,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Metadata] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		Metadata,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -222,7 +234,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Tags] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		Tags,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -275,7 +287,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[StartupScript] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		StartupScript,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -332,7 +344,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[ServiceAccount] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		ServiceAccount,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -373,7 +385,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[IPForwarding] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		IPForwarding,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -554,13 +566,23 @@ func expandServices(data interface{}) ([]*gcp.BackendService, error) {
 			elem.SetBackendServiceName(spotinst.String(v.(string)))
 		}
 
-		if v, ok := attr[string(NamedPorts)]; ok {
-			namedPorts, err := expandNamedPorts(v)
-			if err != nil {
-				return nil, err
-			}
-			if namedPorts != nil {
-				elem.SetNamedPorts(namedPorts)
+		if v, ok := attr[string(Scheme)].(string); ok && v != "" {
+			elem.SetScheme(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(LocationType)].(string); ok && v != "" {
+			elem.SetLocationType(spotinst.String(v))
+
+			if v != "regional" {
+				if v, ok := attr[string(NamedPorts)]; ok {
+					namedPorts, err := expandNamedPorts(v)
+					if err != nil {
+						return nil, err
+					}
+					if namedPorts != nil {
+						elem.SetNamedPorts(namedPorts)
+					}
+				}
 			}
 		}
 		out = append(out, elem)

@@ -12,18 +12,18 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
+func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[IntegrationMesosphere] = commons.NewGenericField(
-		commons.ElastigroupIntegrations,
-		IntegrationMesosphere,
+	fieldsMap[IntegrationMultaiRuntime] = commons.NewGenericField(
+		commons.ElastigroupAWSIntegrations,
+		IntegrationMultaiRuntime,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(ApiServer): {
+					string(DeploymentId): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -34,16 +34,16 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value []interface{} = nil
-			if elastigroup.Integration != nil && elastigroup.Integration.Mesosphere != nil {
-				value = flattenAWSGroupMesosphereIntegration(elastigroup.Integration.Mesosphere)
+			if elastigroup.Integration != nil && elastigroup.Integration.Multai != nil {
+				value = flattenAWSGroupMultaiIntegration(elastigroup.Integration.Multai)
 			}
 			if value != nil {
-				if err := resourceData.Set(string(IntegrationMesosphere), value); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationMesosphere), err)
+				if err := resourceData.Set(string(IntegrationMultaiRuntime), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationMultaiRuntime), err)
 				}
 			} else {
-				if err := resourceData.Set(string(IntegrationMesosphere), []*aws.MesosphereIntegration{}); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationMesosphere), err)
+				if err := resourceData.Set(string(IntegrationMultaiRuntime), []*aws.MultaiIntegration{}); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IntegrationMultaiRuntime), err)
 				}
 			}
 			return nil
@@ -51,11 +51,11 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(IntegrationMesosphere)); ok {
-				if integration, err := expandAWSGroupMesosphereIntegration(v); err != nil {
+			if v, ok := resourceData.GetOk(string(IntegrationMultaiRuntime)); ok {
+				if integration, err := expandAWSGroupMultaiIntegration(v); err != nil {
 					return err
 				} else {
-					elastigroup.Integration.SetMesosphere(integration)
+					elastigroup.Integration.SetMultai(integration)
 				}
 			}
 			return nil
@@ -63,15 +63,15 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value *aws.MesosphereIntegration = nil
-			if v, ok := resourceData.GetOk(string(IntegrationMesosphere)); ok {
-				if integration, err := expandAWSGroupMesosphereIntegration(v); err != nil {
+			var value *aws.MultaiIntegration = nil
+			if v, ok := resourceData.GetOk(string(IntegrationMultaiRuntime)); ok {
+				if integration, err := expandAWSGroupMultaiIntegration(v); err != nil {
 					return err
 				} else {
 					value = integration
 				}
 			}
-			elastigroup.Integration.SetMesosphere(value)
+			elastigroup.Integration.SetMultai(value)
 			return nil
 		},
 		nil,
@@ -81,21 +81,21 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandAWSGroupMesosphereIntegration(data interface{}) (*aws.MesosphereIntegration, error) {
-	integration := &aws.MesosphereIntegration{}
+func expandAWSGroupMultaiIntegration(data interface{}) (*aws.MultaiIntegration, error) {
+	integration := &aws.MultaiIntegration{}
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(ApiServer)].(string); ok && v != "" {
-			integration.SetServer(spotinst.String(v))
+		if v, ok := m[string(DeploymentId)].(string); ok && v != "" {
+			integration.SetDeploymentId(spotinst.String(v))
 		}
 	}
 	return integration, nil
 }
 
-func flattenAWSGroupMesosphereIntegration(integration *aws.MesosphereIntegration) []interface{} {
+func flattenAWSGroupMultaiIntegration(integration *aws.MultaiIntegration) []interface{} {
 	result := make(map[string]interface{})
-	result[string(ApiServer)] = spotinst.StringValue(integration.Server)
+	result[string(DeploymentId)] = spotinst.StringValue(integration.DeploymentID)
 	return []interface{}{result}
 }

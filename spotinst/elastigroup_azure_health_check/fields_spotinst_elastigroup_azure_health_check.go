@@ -21,15 +21,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string((AutoHealing)): {
+					string(AutoHealing): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
-					string((HealthCheckType)): {
+					string(HealthCheckType): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
-					string((GracePeriod)): {
+					string(GracePeriod): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},

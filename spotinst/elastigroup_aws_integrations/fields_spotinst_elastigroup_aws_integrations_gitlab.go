@@ -13,7 +13,7 @@ import (
 func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationGitlab] = commons.NewGenericField(
-		commons.ElastigroupIntegrations,
+		commons.ElastigroupAWSIntegrations,
 		IntegrationGitlab,
 		&schema.Schema{
 			Type:     schema.TypeList,

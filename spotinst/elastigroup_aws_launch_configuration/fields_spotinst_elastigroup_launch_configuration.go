@@ -18,7 +18,7 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[ImageId] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		ImageId,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -57,7 +57,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[IamInstanceProfile] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		IamInstanceProfile,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -116,7 +116,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[KeyName] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		KeyName,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -155,7 +155,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[SecurityGroups] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		SecurityGroups,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -203,7 +203,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[UserData] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		UserData,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -261,7 +261,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[ShutdownScript] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		ShutdownScript,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -319,7 +319,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[EnableMonitoring] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		EnableMonitoring,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -359,7 +359,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[EbsOptimized] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		EbsOptimized,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -399,7 +399,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[PlacementTenancy] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		PlacementTenancy,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -441,7 +441,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[CPUCredits] = commons.NewGenericField(
-		commons.ElastigroupLaunchConfiguration,
+		commons.ElastigroupAWSLaunchConfiguration,
 		CPUCredits,
 		&schema.Schema{
 			Type:     schema.TypeString,

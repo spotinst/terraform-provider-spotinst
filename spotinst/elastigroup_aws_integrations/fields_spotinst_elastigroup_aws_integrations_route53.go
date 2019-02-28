@@ -13,7 +13,7 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupRoute53(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[IntegrationRoute53] = commons.NewGenericField(
-		commons.ElastigroupIntegrations,
+		commons.ElastigroupAWSIntegrations,
 		IntegrationRoute53,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -29,6 +29,11 @@ func SetupRoute53(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(HostedZoneId): {
 									Type:     schema.TypeString,
 									Required: true,
+								},
+
+								string(SpotinstAcctID): {
+									Type:     schema.TypeString,
+									Optional: true,
 								},
 
 								string(RecordSets): {
@@ -119,29 +124,28 @@ func expandAWSGroupRoute53IntegrationDomains(data interface{}) ([]*aws.Domain, e
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
+		domain := &aws.Domain{}
 
 		if !ok {
 			continue
 		}
 
-		if _, ok := attr[string(HostedZoneId)]; !ok {
-			return nil, errors.New("invalid domain attributes: hosted_zone_id missing")
+		if v, ok := attr[string(HostedZoneId)].(string); ok && v != "" {
+			domain.SetHostedZoneID(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(SpotinstAcctID)].(string); ok && v != "" {
+			domain.SetSpotinstAccountID(spotinst.String(v))
 		}
 
 		if r, ok := attr[string(RecordSets)]; ok {
-			recordSets, err := expandAWSGroupRoute53IntegrationDomainsRecordSets(r)
-
-			if err != nil {
+			if recordSets, err := expandAWSGroupRoute53IntegrationDomainsRecordSets(r); err != nil {
 				return nil, err
+			} else {
+				domain.SetRecordSets(recordSets)
 			}
-
-			domain := &aws.Domain{
-				HostedZoneID: spotinst.String(attr[string(HostedZoneId)].(string)),
-			}
-
-			domain.SetRecordSets(recordSets)
-			domains = append(domains, domain)
 		}
+		domains = append(domains, domain)
 	}
 	return domains, nil
 }

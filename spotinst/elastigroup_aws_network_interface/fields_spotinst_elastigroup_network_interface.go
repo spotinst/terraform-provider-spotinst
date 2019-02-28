@@ -17,7 +17,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[NetworkInterface] = commons.NewGenericField(
-		commons.ElastigroupNetworkInterface,
+		commons.ElastigroupAWSNetworkInterface,
 		NetworkInterface,
 		&schema.Schema{
 			Type:     schema.TypeSet,

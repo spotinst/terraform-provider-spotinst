@@ -17,7 +17,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[EbsBlockDevice] = commons.NewGenericField(
-		commons.ElastigroupBlockDevices,
+		commons.ElastigroupAWSBlockDevices,
 		EbsBlockDevice,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -119,7 +119,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[EphemeralBlockDevice] = commons.NewGenericField(
-		commons.ElastigroupBlockDevices,
+		commons.ElastigroupAWSBlockDevices,
 		EphemeralBlockDevice,
 		&schema.Schema{
 			Type:     schema.TypeSet,

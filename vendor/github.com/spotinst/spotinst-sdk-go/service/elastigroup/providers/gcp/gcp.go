@@ -119,7 +119,6 @@ type AliasIPRange struct {
 // BackendServiceConfig constains a list of backend service configurations.
 type BackendServiceConfig struct {
 	BackendServices []*BackendService `json:"backendServices,omitempty"`
-
 	forceSendFields []string
 	nullFields      []string
 }
@@ -127,6 +126,8 @@ type BackendServiceConfig struct {
 // BackendService defines the configuration for a single backend service.
 type BackendService struct {
 	BackendServiceName *string     `json:"backendServiceName,omitempty"`
+	LocationType       *string     `json:"locationType,omitempty"`
+	Scheme             *string     `json:"scheme,omitempty"`
 	NamedPorts         *NamedPorts `json:"namedPorts,omitempty"`
 
 	forceSendFields []string
@@ -372,7 +373,8 @@ type Strategy struct {
 // region Integration structs
 
 type Integration struct {
-	GKE *GKEIntegration `json:"gke,omitempty"`
+	GKE         *GKEIntegration         `json:"gke,omitempty"`
+	DockerSwarm *DockerSwarmIntegration `json:"dockerSwarm,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -392,6 +394,18 @@ type GKEIntegration struct {
 type AutoScaleGKE struct {
 	AutoScale                   // embedding
 	Labels    []*AutoScaleLabel `json:"labels,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+// endregion
+
+// region DockerSwarmIntegration structs
+
+type DockerSwarmIntegration struct {
+	MasterHost *string `json:"masterHost,omitempty"`
+	MasterPort *int    `json:"masterPort,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1243,6 +1257,22 @@ func (o *BackendService) SetBackendServiceName(v *string) *BackendService {
 	return o
 }
 
+// SetLocationType sets the location type
+func (o *BackendService) SetLocationType(v *string) *BackendService {
+	if o.LocationType = v; o.LocationType == nil {
+		o.nullFields = append(o.nullFields, "LocationType")
+	}
+	return o
+}
+
+// SetScheme sets the scheme
+func (o *BackendService) SetScheme(v *string) *BackendService {
+	if o.Scheme = v; o.Scheme == nil {
+		o.nullFields = append(o.nullFields, "Scheme")
+	}
+	return o
+}
+
 // SetNamedPorts sets the named port object
 func (o *BackendService) SetNamedPorts(v *NamedPorts) *BackendService {
 	if o.NamedPorts = v; o.NamedPorts == nil {
@@ -1653,6 +1683,14 @@ func (o *Integration) SetGKE(v *GKEIntegration) *Integration {
 	return o
 }
 
+// SetDockerSwarm sets the DockerSwarm integration
+func (o *Integration) SetDockerSwarm(v *DockerSwarmIntegration) *Integration {
+	if o.DockerSwarm = v; o.DockerSwarm == nil {
+		o.nullFields = append(o.nullFields, "DockerSwarm")
+	}
+	return o
+}
+
 // region GKE integration setters
 
 func (o *GKEIntegration) MarshalJSON() ([]byte, error) {
@@ -1686,6 +1724,32 @@ func (o *AutoScaleGKE) SetLabels(v []*AutoScaleLabel) *AutoScaleGKE {
 }
 
 // endregion
+
+// endregion
+
+// region DockerSwarm integration setters
+
+func (o *DockerSwarmIntegration) MarshalJSON() ([]byte, error) {
+	type noMethod DockerSwarmIntegration
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+// SetMasterPort sets the master port
+func (o *DockerSwarmIntegration) SetMasterPort(v *int) *DockerSwarmIntegration {
+	if o.MasterPort = v; o.MasterPort == nil {
+		o.nullFields = append(o.nullFields, "MasterPort")
+	}
+	return o
+}
+
+// SetMasterHost sets the master host
+func (o *DockerSwarmIntegration) SetMasterHost(v *string) *DockerSwarmIntegration {
+	if o.MasterHost = v; o.MasterHost == nil {
+		o.nullFields = append(o.nullFields, "MasterHost")
+	}
+	return o
+}
 
 // endregion
 

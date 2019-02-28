@@ -186,12 +186,12 @@ whitelist = ["t1.micro", "m1.small"]
 ```
 
 * `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
-* `tag_key` - (Optional) The tag key.
-* `tag_value` - (Optional) The tag value.
+* `key` - (Optional) The tag key.
+* `value` - (Optional) The tag value.
 
 ```hcl
 tags = [{
-  tag_key   = "fakeKey"
-  tag_value = "fakeValue"
+  key   = "fakeKey"
+  value = "fakeValue"
 }]
 ```

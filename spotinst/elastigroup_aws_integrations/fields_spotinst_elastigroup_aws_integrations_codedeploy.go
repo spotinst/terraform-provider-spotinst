@@ -14,7 +14,7 @@ import (
 func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationCodeDeploy] = commons.NewGenericField(
-		commons.ElastigroupIntegrations,
+		commons.ElastigroupAWSIntegrations,
 		IntegrationCodeDeploy,
 		&schema.Schema{
 			Type:     schema.TypeList,

@@ -14,7 +14,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[SpotPercentage] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.ElastigroupAWSStrategy,
 		SpotPercentage,
 		&schema.Schema{
 			Type:          schema.TypeFloat,
@@ -53,7 +53,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[OnDemandCount] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.ElastigroupAWSStrategy,
 		OnDemandCount,
 		&schema.Schema{
 			Type:          schema.TypeInt,
@@ -94,7 +94,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Orientation] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.ElastigroupAWSStrategy,
 		Orientation,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -132,7 +132,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[LifetimePeriod] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.ElastigroupAWSStrategy,
 		LifetimePeriod,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -173,7 +173,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[DrainingTimeout] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.ElastigroupAWSStrategy,
 		DrainingTimeout,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -211,7 +211,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[UtilizeReservedInstances] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.ElastigroupAWSStrategy,
 		UtilizeReservedInstances,
 		&schema.Schema{
 			Type:     schema.TypeBool,
@@ -252,7 +252,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[FallbackToOnDemand] = commons.NewGenericField(
-		commons.ElastigroupStrategy,
+		commons.ElastigroupAWSStrategy,
 		FallbackToOnDemand,
 		&schema.Schema{
 			Type:     schema.TypeBool,

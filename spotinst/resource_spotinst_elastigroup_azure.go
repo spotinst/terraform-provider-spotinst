@@ -20,6 +20,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_strategy"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_vm_sizes"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -177,7 +178,19 @@ func updateAzureGroup(elastigroup *azure.Group, resourceData *schema.ResourceDat
 		Group: elastigroup,
 	}
 
+	var shouldRoll = false
 	groupId := resourceData.Id()
+
+	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if list != nil && len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if roll, ok := m[string(elastigroup_azure.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
+
+		}
+	}
 
 	if json, err := commons.ToJson(elastigroup); err != nil {
 		return err
@@ -187,8 +200,63 @@ func updateAzureGroup(elastigroup *azure.Group, resourceData *schema.ResourceDat
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAzure().Update(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update group [%v]: %v", groupId, err)
+	} else if shouldRoll {
+		if err := rollAzureGroup(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Group [%v] roll failed, error: %v", groupId, err)
+			return err
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping group roll", string(elastigroup_azure.ShouldRoll))
 	}
 	return nil
+}
+
+func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
+	var errResult error = nil
+	groupId := resourceData.Id()
+
+	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if list != nil && len(list) > 0 && list[0] != nil {
+			updateGroupSchema := list[0].(map[string]interface{})
+			if rollConfig, ok := updateGroupSchema[string(elastigroup_azure.RollConfig)]; !ok || rollConfig == nil {
+				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_azure.RollConfig), groupId)
+			} else {
+				if rollGroupInput, err := expandElastigroupAzureRollConfig(rollConfig, spotinst.String(groupId)); err != nil {
+					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for group [%v], error: %v", groupId, err)
+				} else {
+					if json, err := commons.ToJson(rollConfig); err != nil {
+						return err
+					} else {
+						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
+						errResult = resource.Retry(time.Minute*5, func() *resource.RetryError {
+							rollGroupInput.GroupID = spotinst.String(groupId)
+							_, err := meta.(*Client).elastigroup.CloudProviderAzure().Roll(context.Background(), rollGroupInput)
+							if err != nil {
+								// checks whether to retry role
+								if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+									for _, err := range errs {
+										if strings.Contains(err.Code, "CANT_ROLL_CAPACITY_BELOW_MINIMUM") {
+											time.Sleep(time.Minute)
+											return resource.RetryableError(err)
+										}
+									}
+								}
+								// Some other error, report it.
+								return resource.NonRetryableError(err)
+							}
+							log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
+							return nil
+						})
+					}
+				}
+			}
+		}
+	} else {
+		errResult = fmt.Errorf("[ERROR] onRoll() -> Missing update policy for group [%v]", groupId)
+	}
+
+	return errResult
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -222,6 +290,40 @@ func deleteAzureGroup(resourceData *schema.ResourceData, meta interface{}) error
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAzure().Delete(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete group: %s", err)
+	}
+	return nil
+}
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//         Fields Expand
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func expandElastigroupAzureRollConfig(data interface{}, groupID *string) (*azure.RollGroupInput, error) {
+	i := &azure.RollGroupInput{GroupID: groupID}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(elastigroup_azure.BatchSizePercentage)].(int); ok {
+			i.BatchSizePercentage = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(elastigroup_azure.GracePeriod)].(int); ok && v != -1 {
+			i.GracePeriod = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(elastigroup_azure_health_check.HealthCheckType)].(string); ok && v != "" {
+			i.HealthCheckType = spotinst.String(v)
+		}
+	}
+	return i, nil
+}
+
+func getAzureRollStatus(rollOut *azure.RollGroupOutput) *string {
+	for item := range rollOut.Items {
+		rs := strings.ToUpper(spotinst.StringValue(rollOut.Items[item].Status))
+		if rs == "IN_PROGRESS" || rs == "STARTING" {
+			return rollOut.Items[item].RollID
+		}
 	}
 	return nil
 }
