@@ -1,4 +1,4 @@
-## 1.8.0 (Unreleased)
+## 1.8.0 (February 28, 2019)
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added optional `spotinst_acct_id` to Route53 integration
