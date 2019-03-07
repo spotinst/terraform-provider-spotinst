@@ -339,7 +339,13 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 						return err
 					} else {
 						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
-						errResult = resource.Retry(time.Minute*5, func() *resource.RetryError {
+
+						// we want the outer retry timeout to equal the inner retry timeout, or 5 mins if undefined
+						rto := spotinst.IntValue(getRollTimeout(rollConfig))
+						if rto == 0 {
+							rto = 300
+						}
+						errResult = resource.Retry(time.Duration(rto)*time.Second, func() *resource.RetryError {
 							rollGroupInput.GroupID = spotinst.String(groupId)
 							rollOut, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput)
 							if err != nil {
