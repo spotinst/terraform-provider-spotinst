@@ -925,7 +925,7 @@ func TestAccSpotinstElastigroupAWS_HealthChecks(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "health_check_type", "ELB"),
+					//resource.TestCheckResourceAttr(resourceName, "health_check_type", "ELB"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_grace_period", "100"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement", "60"),
 				),
@@ -939,7 +939,7 @@ func TestAccSpotinstElastigroupAWS_HealthChecks(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "health_check_type", "TARGET_GROUP"),
+					//resource.TestCheckResourceAttr(resourceName, "health_check_type", "TARGET_GROUP"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_grace_period", "50"),
 					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement", "120"),
 				),
@@ -964,7 +964,7 @@ func TestAccSpotinstElastigroupAWS_HealthChecks(t *testing.T) {
 
 const testHealthChecksGroupConfig_Create = `
  // --- HEALTH-CHECKS ------------------------------------
- health_check_type = "ELB" 
+ //health_check_type = "ELB" 
  health_check_grace_period = 100
  health_check_unhealthy_duration_before_replacement = 60
  // ------------------------------------------------------
@@ -972,7 +972,7 @@ const testHealthChecksGroupConfig_Create = `
 
 const testHealthChecksGroupConfig_Update = `
  // --- HEALTH-CHECKS ------------------------------------
- health_check_type = "TARGET_GROUP" 
+ //health_check_type = "TARGET_GROUP" 
  health_check_grace_period = 50
  health_check_unhealthy_duration_before_replacement = 120
  // ------------------------------------------------------

@@ -1,4 +1,9 @@
 ## 1.8.1 (Unreleased)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: rolling with `wait_for_roll_percentage` no longer times out after 5 minutes
+* resource/spotinst_elastigroup_aws: removed duplicated `wait_for_roll_percentage` and `wait_for_roll_timeout`
+
 ## 1.8.0 (February 28, 2019)
 
 ENHANCEMENTS:
@@ -8,7 +13,6 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_gcp: added `location_type` and `scheme` to `backend_services`
 
 BUG FIXES:
-
 * resource/spotinst_elastigroup_aws: `should_roll` now retries on `CANT_ROLL_CAPACITY_BELOW_MINIMUM` error
 * resource/spotinst_ocean_aws: `spot_percentage` no longer defaults to `0` when undefined
 * resource/spotinst_ocean_aws: `fallback_to_od` now defaults to `true` when undefined

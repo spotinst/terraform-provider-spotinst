@@ -1037,16 +1037,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Required: true,
 					},
 
-					string(WaitForRollPct): {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-
-					string(WaitForRollTimeout): {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-
 					string(RollConfig): {
 						Type:     schema.TypeList,
 						Optional: true,
