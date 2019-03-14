@@ -227,7 +227,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				elastigroup.Compute.LaunchSpecification.UserData != nil {
 
 				userData := elastigroup.Compute.LaunchSpecification.UserData
-				value = spotinst.StringValue(userData)
+				userDataValue := spotinst.StringValue(userData)
+				if userDataValue != "" {
+					value = userDataValue
+				}
 			}
 			if err := resourceData.Set(string(UserData), HexStateFunc(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserData), err)
