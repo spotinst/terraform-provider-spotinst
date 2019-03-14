@@ -312,8 +312,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				startupScript := elastigroup.Compute.LaunchSpecification.StartupScript
 				startupScriptValue := spotinst.StringValue(startupScript)
 				if startupScriptValue != "" {
-					decodedStartupScript, _ := base64.StdEncoding.DecodeString(startupScriptValue)
-					value = string(decodedStartupScript)
+					if isBase64Encoded(resourceData.Get(string(StartupScript)).(string)) {
+						value = startupScriptValue
+					} else {
+						decodedStartupScript, _ := base64.StdEncoding.DecodeString(startupScriptValue)
+						value = string(decodedStartupScript)
+					}
 				}
 			}
 			if err := resourceData.Set(string(StartupScript), HexStateFunc(value)); err != nil {
