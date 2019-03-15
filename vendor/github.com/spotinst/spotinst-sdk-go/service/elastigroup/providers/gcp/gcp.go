@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -25,6 +26,10 @@ type Group struct {
 	Scaling     *Scaling     `json:"scaling,omitempty"`
 	Strategy    *Strategy    `json:"strategy,omitempty"`
 	Integration *Integration `json:"thirdPartiesIntegration,omitempty"`
+
+	// Read-only fields.
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -119,7 +124,6 @@ type AliasIPRange struct {
 // BackendServiceConfig constains a list of backend service configurations.
 type BackendServiceConfig struct {
 	BackendServices []*BackendService `json:"backendServices,omitempty"`
-
 	forceSendFields []string
 	nullFields      []string
 }
@@ -127,6 +131,8 @@ type BackendServiceConfig struct {
 // BackendService defines the configuration for a single backend service.
 type BackendService struct {
 	BackendServiceName *string     `json:"backendServiceName,omitempty"`
+	LocationType       *string     `json:"locationType,omitempty"`
+	Scheme             *string     `json:"scheme,omitempty"`
 	NamedPorts         *NamedPorts `json:"namedPorts,omitempty"`
 
 	forceSendFields []string
@@ -382,9 +388,11 @@ type Integration struct {
 // region GKEIntegration structs
 
 type GKEIntegration struct {
-	ClusterID       *string       `json:"clusterID,omitempty"`
+	ClusterID       *string       `json:"clusterIdentifier,omitempty"`
 	ClusterZoneName *string       `json:"clusterZoneName,omitempty"`
+	AutoUpdate      *bool         `json:"autoUpdate,omitempty"`
 	AutoScale       *AutoScaleGKE `json:"autoScale,omitempty"`
+	Location        *string       `json:"location,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -438,6 +446,7 @@ type DeleteGroupOutput struct{}
 type ImportGKEClusterInput struct {
 	ClusterID       *string         `json:"clusterID,omitempty"`
 	ClusterZoneName *string         `json:"clusterZoneName,omitempty"`
+	DryRun          *bool           `json:"dryRun,omitempty"`
 	Group           *ImportGKEGroup `json:"group,omitempty"`
 }
 
@@ -563,7 +572,7 @@ func (s *ServiceOp) Update(ctx context.Context, input *UpdateGroupInput) (*Updat
 		return nil, err
 	}
 
-	// We do not need the ID anymore so let's drop it.
+	// We do NOT need the ID anymore, so let's drop it.
 	input.Group.ID = nil
 
 	r := client.NewRequest(http.MethodPut, path)
@@ -631,6 +640,7 @@ func (s *ServiceOp) ImportGKECluster(ctx context.Context, input *ImportGKECluste
 
 	r.Params["clusterId"] = []string{spotinst.StringValue(input.ClusterID)}
 	r.Params["zone"] = []string{spotinst.StringValue(input.ClusterZoneName)}
+	r.Params["dryRun"] = []string{strconv.FormatBool(spotinst.BoolValue(input.DryRun))}
 
 	body := &ImportGKEClusterInput{Group: input.Group}
 	r.Obj = body
@@ -1256,6 +1266,22 @@ func (o *BackendService) SetBackendServiceName(v *string) *BackendService {
 	return o
 }
 
+// SetLocationType sets the location type
+func (o *BackendService) SetLocationType(v *string) *BackendService {
+	if o.LocationType = v; o.LocationType == nil {
+		o.nullFields = append(o.nullFields, "LocationType")
+	}
+	return o
+}
+
+// SetScheme sets the scheme
+func (o *BackendService) SetScheme(v *string) *BackendService {
+	if o.Scheme = v; o.Scheme == nil {
+		o.nullFields = append(o.nullFields, "Scheme")
+	}
+	return o
+}
+
 // SetNamedPorts sets the named port object
 func (o *BackendService) SetNamedPorts(v *NamedPorts) *BackendService {
 	if o.NamedPorts = v; o.NamedPorts == nil {
@@ -1682,10 +1708,34 @@ func (o *GKEIntegration) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
+// SetAutoUpdate sets the autoupdate flag
+func (o *GKEIntegration) SetAutoUpdate(v *bool) *GKEIntegration {
+	if o.AutoUpdate = v; o.AutoUpdate == nil {
+		o.nullFields = append(o.nullFields, "AutoUpdate")
+	}
+	return o
+}
+
 // SetAutoScale sets the AutoScale configuration used with the GKE integration
 func (o *GKEIntegration) SetAutoScale(v *AutoScaleGKE) *GKEIntegration {
 	if o.AutoScale = v; o.AutoScale == nil {
 		o.nullFields = append(o.nullFields, "AutoScale")
+	}
+	return o
+}
+
+// SetLocation sets the location that the cluster is located in
+func (o *GKEIntegration) SetLocation(v *string) *GKEIntegration {
+	if o.Location = v; o.Location == nil {
+		o.nullFields = append(o.nullFields, "Location")
+	}
+	return o
+}
+
+// SetClusterID sets the cluster ID
+func (o *GKEIntegration) SetClusterID(v *string) *GKEIntegration {
+	if o.ClusterID = v; o.ClusterID == nil {
+		o.nullFields = append(o.nullFields, "ClusterID")
 	}
 	return o
 }
