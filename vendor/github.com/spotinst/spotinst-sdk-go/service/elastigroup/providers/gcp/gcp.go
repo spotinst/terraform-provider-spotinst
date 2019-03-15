@@ -119,6 +119,7 @@ type AliasIPRange struct {
 // BackendServiceConfig constains a list of backend service configurations.
 type BackendServiceConfig struct {
 	BackendServices []*BackendService `json:"backendServices,omitempty"`
+
 	forceSendFields []string
 	nullFields      []string
 }
@@ -126,8 +127,6 @@ type BackendServiceConfig struct {
 // BackendService defines the configuration for a single backend service.
 type BackendService struct {
 	BackendServiceName *string     `json:"backendServiceName,omitempty"`
-	LocationType       *string     `json:"locationType,omitempty"`
-	Scheme             *string     `json:"scheme,omitempty"`
 	NamedPorts         *NamedPorts `json:"namedPorts,omitempty"`
 
 	forceSendFields []string
@@ -1253,22 +1252,6 @@ func (o *BackendService) MarshalJSON() ([]byte, error) {
 func (o *BackendService) SetBackendServiceName(v *string) *BackendService {
 	if o.BackendServiceName = v; o.BackendServiceName == nil {
 		o.nullFields = append(o.nullFields, "BackendServiceName")
-	}
-	return o
-}
-
-// SetLocationType sets the location type
-func (o *BackendService) SetLocationType(v *string) *BackendService {
-	if o.LocationType = v; o.LocationType == nil {
-		o.nullFields = append(o.nullFields, "LocationType")
-	}
-	return o
-}
-
-// SetScheme sets the scheme
-func (o *BackendService) SetScheme(v *string) *BackendService {
-	if o.Scheme = v; o.Scheme == nil {
-		o.nullFields = append(o.nullFields, "Scheme")
 	}
 	return o
 }
