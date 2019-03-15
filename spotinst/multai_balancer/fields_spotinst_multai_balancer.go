@@ -137,12 +137,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Idle): &schema.Schema{
+					string(Idle): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
 
-					string(Draining): &schema.Schema{
+					string(Draining): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
@@ -196,12 +196,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(TagKey): &schema.Schema{
+					string(TagKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(TagValue): &schema.Schema{
+					string(TagValue): {
 						Type:     schema.TypeString,
 						Required: true,
 					},

@@ -270,12 +270,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Region): &schema.Schema{
+					string(Region): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(SubnetNames): &schema.Schema{
+					string(SubnetNames): {
 						Type:     schema.TypeList,
 						Required: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
