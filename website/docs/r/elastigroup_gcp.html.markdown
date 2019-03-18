@@ -224,7 +224,7 @@ Usage:
 Usage:
 
 ```hcl
-disks = [
+  disks = [
     {
       device_nime = "device"
       mode        = "READ_WRITE"
@@ -291,7 +291,10 @@ Each `scaling_*_policy` supports the following:
 * `action` - (Optional) Scaling action to take when the policy is triggered.
 * `type` - (Optional) Type of scaling action to take when the scaling policy is triggered. Valid values: "adjustment", "setMinTarget", "updateCapacity", "percentageAdjustment"
 * `adjustment` - (Optional) Value to which the action type will be adjusted. Required if using "numeric" or "percentageAdjustment" action types.
-
+* `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
+    * `name` - (Required) The dimension name.
+    * `value` - (Required) The dimension value.
+    
 Usage:
 
 ```hcl

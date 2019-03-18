@@ -1055,9 +1055,9 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".statistic", "count"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".unit", "seconds"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.0.value", "value-1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".threshold", "10"),
 					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".operator", "gte"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".evaluation_periods", "10"),
@@ -1083,9 +1083,9 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".statistic", "sum"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".unit", "bytes"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".cooldown", "300"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.0.value", "value-1-update"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".threshold", "5"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".operator", "lte"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".evaluation_periods", "20"),
@@ -1111,8 +1111,8 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 }
 
 const (
-	UpHash_create = "3257000837"
-	UpHash_update = "1993509092"
+	UpHash_create = "3191844943"
+	UpHash_update = "16398893"
 )
 
 const testScalingUpPolicyGCPGroupConfig_Create = `
@@ -1207,9 +1207,9 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".statistic", "count"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".unit", "seconds"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.0.value", "value-1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".threshold", "10"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".operator", "gte"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".evaluation_periods", "10"),
@@ -1235,9 +1235,9 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".statistic", "sum"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".unit", "bytes"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".cooldown", "300"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.%", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.0.value", "value-1-update"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".threshold", "5"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".operator", "lte"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".evaluation_periods", "20"),
@@ -1263,8 +1263,8 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 }
 
 const (
-	DownHash_create = "3257000837"
-	DownHash_update = "1993509092"
+	DownHash_create = "3191844943"
+	DownHash_update = "16398893"
 )
 
 const testScalingDownPolicyGCPGroupConfig_Create = `

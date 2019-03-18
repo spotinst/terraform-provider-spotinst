@@ -58,7 +58,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   wait_for_capacity         = 5
   wait_for_capacity_timeout = 300
 
-  scaling_up_policy {
+  scaling_up_policy = {
     policy_name        = "Default Scaling Up Policy"
     metric_name        = "DefaultQueuesDepth"
     statistic          = "average"
@@ -71,7 +71,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     cooldown           = 300
   }
 
-  scaling_down_policy {
+  scaling_down_policy = {
     policy_name        = "Default Scaling Down Policy"
     metric_name        = "DefaultQueuesDepth"
     statistic          = "average"
@@ -224,7 +224,7 @@ Each `scheduled_task` supports the following:
 * `scale_target_capacity` - (Optional) The desired number of instances the group should have.
 * `scale_min_capacity` - (Optional) The minimum number of instances the group should have.
 * `scale_max_capacity` - (Optional) The maximum number of instances the group should have.
-* `is_enabled` - (Optional, Default: `false`) Setting the task to being enabled or disabled. Valid values: true, false.
+* `is_enabled` - (Optional, Default: `true`) Setting the task to being enabled or disabled.
 * `target_capacity` - (Optional; Only valid for statefulUpdateCapacity) The desired number of instances the group should have.
 * `min_capacity` - (Optional; Only valid for statefulUpdateCapacity) The minimum number of instances the group should have.
 * `max_capacity` - (Optional; Only valid for statefulUpdateCapacity) The maximum number of instances the group should have.
@@ -268,7 +268,9 @@ Each `scaling_*_policy` supports the following:
 * `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
 * `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
 * `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
-* `dimensions` - (Optional) A mapping of dimensions describing qualities of the metric.
+* `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
+    * `name` - (Required) The dimension name.
+    * `value` - (Required) The dimension value.
 * `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) The operator to use in order to determine if the scaling policy is applicable. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
 * `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
 
@@ -830,6 +832,10 @@ Usage:
         * `grace_period` - (Optional) Sets the grace period for new instances to become healthy.
         * `wait_for_roll_percentage` - (Optional) For use with `should_roll`. Sets minimum % of roll required to complete before continuing the plan. Required if `wait_for_roll_timeout` is set.
         * `wait_for_roll_timeout` - (Optional) For use with `should_roll`. Sets how long to wait for the deployed % of a roll to exceed `wait_for_roll_percentage` before continuing the plan. Required if `wait_for_roll_percentage` is set.
+        * `strategy` - (Optional) Strategy parameters
+           * `action` - (Required) Action to take. Valid values: `REPLACE_SERVER`, `RESTART_SERVER`.
+           * `should_drain_instances` - (Optional) Specify whether to drain incoming TCP connections before terminating a server.
+           * `batch_min_healthy_percentage` - (Optional, Default `50`) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the deployment will fail. Range `1` - `100`. 
        
 ```hcl
   update_policy = {
@@ -843,6 +849,12 @@ Usage:
       grace_period          = 300
       wait_for_roll_percentage = 10
       wait_for_roll_timeout    = 1500
+      
+      strategy = {
+        action = "REPLACE_SERVER"
+        should_drain_instances = false
+        batch_min_healthy_percentage = 10
+      }
     }
   }
 ```       

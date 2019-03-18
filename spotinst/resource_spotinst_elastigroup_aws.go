@@ -339,7 +339,6 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 						return err
 					} else {
 						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
-
 						// we want the outer retry timeout to equal the inner retry timeout, or 5 mins if undefined
 						rto := spotinst.IntValue(getRollTimeout(rollConfig))
 						if rto == 0 {

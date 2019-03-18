@@ -675,8 +675,9 @@ type Instance struct {
 }
 
 type RollStrategy struct {
-	Action               *string `json:"action,omitempty"`
-	ShouldDrainInstances *bool   `json:"shouldDrainInstances,omitempty"`
+	Action                    *string `json:"action,omitempty"`
+	ShouldDrainInstances      *bool   `json:"shouldDrainInstances,omitempty"`
+	BatchMinHealthyPercentage *int    `json:"batchMinHealthyPercentage,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string

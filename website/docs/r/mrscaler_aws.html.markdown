@@ -36,7 +36,6 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   security_config = "example-config"
   service_role    = "example-role"
   
-  visible_to_all_users  = true
   termination_protected = false
   keep_job_flow_alive   = true
 // -------------------------
@@ -286,7 +285,6 @@ The following arguments are supported:
 * `security_config` - (Optional) The name of the security configuration applied to the cluster.
 * `service_role` - (Optional) The IAM role that will be assumed by the Amazon EMR service to access AWS resources on your behalf.
 * `job_flow_role` - (Optional) The IAM role that was specified when the job flow was launched. The EC2 instances of the job flow assume this role.
-* `visible_to_all_users` - (Optional) Specifies whether the cluster is visible to all IAM users of the AWS account associated with the cluster.
 * `termination_protected` - (Optional) Specifies whether the Amazon EC2 instances in the cluster are protected from termination by API calls, user intervention, or in the event of a job-flow error.
 * `keep_job_flow_alive` - (Optional) Specifies whether the cluster should remain available after completing all steps.
 

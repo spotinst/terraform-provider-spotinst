@@ -10,6 +10,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
 	"testing"
+	"time"
 )
 
 var clusterID *string = nil
@@ -84,6 +85,7 @@ type MRScalerAWSConfigMetaData struct {
 }
 
 func createMRScalerAWSTerraform(mcm *MRScalerAWSConfigMetaData) string {
+	time.Sleep(6 * time.Second)
 	if mcm == nil {
 		return ""
 	}
@@ -145,7 +147,7 @@ func createMRScalerAWSTerraform(mcm *MRScalerAWSConfigMetaData) string {
 
 	if mcm.clonedCluster {
 		mcm.strategy = "clone"
-		mcm.clusterID = "j-40QKT56T5Q6W"
+		mcm.clusterID = "j-TD2G92URMWZX"
 
 		if mcm.updateBaselineFields {
 			format = testMRScalerAWSBaselineCloned_Update
@@ -370,7 +372,6 @@ func TestAccSpotinstMRScalerAWSNewCluster_Cluster(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "job_flow_role", "EMR_EC2_DefaultRole"),
 					//resource.TestCheckResourceAttr(resourceName, "cluster.0.security_config", "test-config-jeffrey"),
 					//resource.TestCheckResourceAttr(resourceName,"cluster.0.service_role",""),
-					resource.TestCheckResourceAttr(resourceName, "visible_to_all_users", "true"),
 					resource.TestCheckResourceAttr(resourceName, "termination_protected", "false"),
 					resource.TestCheckResourceAttr(resourceName, "keep_job_flow_alive", "true"),
 				),
@@ -390,7 +391,6 @@ func TestAccSpotinstMRScalerAWSNewCluster_Cluster(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "job_flow_role", "EMR_EC2_DefaultRole"),
 					//resource.TestCheckResourceAttr(resourceName, "cluster.0.security_config", "test-config-jeffrey"),
 					//resource.TestCheckResourceAttr(resourceName,"cluster.0.service_role",""),
-					resource.TestCheckResourceAttr(resourceName, "visible_to_all_users", "true"),
 					resource.TestCheckResourceAttr(resourceName, "termination_protected", "false"),
 					resource.TestCheckResourceAttr(resourceName, "keep_job_flow_alive", "true"),
 				),
@@ -406,7 +406,6 @@ const testMRScalerAWSCluster_Create = `
     job_flow_role = "EMR_EC2_DefaultRole"
     //security_config = "test-config-jeffrey"
     //service_role = "fake"
-    visible_to_all_users = true
     termination_protected = false
     keep_job_flow_alive = true
  // -------------------------
@@ -419,7 +418,6 @@ const testMRScalerAWSCluster_Update = `
     job_flow_role = "EMR_EC2_DefaultRole"
     //security_config = "test-config-jeffrey"
     //service_role = "fake"
-    visible_to_all_users = true
     termination_protected = false
     keep_job_flow_alive = true
  // -------------------------
@@ -655,9 +653,9 @@ func TestAccSpotinstMRScalerAWSNewCluster_CoreGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckMRScalerAWSExists(&scaler, resourceName),
 					testCheckMRScalerAWSAttributes(&scaler, scalerName),
-					resource.TestCheckResourceAttr(resourceName, "core_min_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_max_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "core_min_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_max_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "1"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.0", "c3.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.1", "c4.xlarge"),
@@ -679,9 +677,9 @@ func TestAccSpotinstMRScalerAWSNewCluster_CoreGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckMRScalerAWSExists(&scaler, resourceName),
 					testCheckMRScalerAWSAttributes(&scaler, scalerName),
-					resource.TestCheckResourceAttr(resourceName, "core_min_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_max_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "core_min_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_max_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "1"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.0", "c3.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.1", "c4.xlarge"),
@@ -712,9 +710,9 @@ const testMRScalerAWSCoreGroup_Create = `
 const testMRScalerAWSCoreGroup_Update = `
 // --- CORE GROUP -------------
   core_instance_types = ["c3.xlarge", "c4.xlarge"]
-  core_min_size         = 2
-  core_max_size         = 2
-  core_desired_capacity = 2
+  core_min_size         = 1
+  core_max_size         = 1
+  core_desired_capacity = 1
   core_lifecycle = "ON_DEMAND"
   core_ebs_optimized = true
   core_ebs_block_device = {
@@ -729,9 +727,9 @@ const testMRScalerAWSCoreGroup_Update = `
 const testMRScalerAWSCoreGroup_EmptyFields = `
 // --- CORE GROUP -------------
   core_instance_types = ["c3.xlarge", "c4.xlarge"]
-  core_min_size         = 2
-  core_max_size         = 2
-  core_desired_capacity = 2
+  core_min_size         = 1
+  core_max_size         = 1
+  core_desired_capacity = 1
   core_lifecycle = "ON_DEMAND"
   core_ebs_block_device = {
     volumes_per_instance = 2
@@ -2036,9 +2034,9 @@ func TestAccSpotinstMRScalerAWSCloned_CoreGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckMRScalerAWSExists(&scaler, resourceName),
 					testCheckMRScalerAWSAttributes(&scaler, scalerName),
-					resource.TestCheckResourceAttr(resourceName, "core_min_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_max_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "core_min_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_max_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "1"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.0", "c3.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.1", "c4.xlarge"),
@@ -2060,9 +2058,9 @@ func TestAccSpotinstMRScalerAWSCloned_CoreGroup(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckMRScalerAWSExists(&scaler, resourceName),
 					testCheckMRScalerAWSAttributes(&scaler, scalerName),
-					resource.TestCheckResourceAttr(resourceName, "core_min_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_max_size", "2"),
-					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "core_min_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_max_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "core_desired_capacity", "1"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.0", "c3.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.1", "c4.xlarge"),

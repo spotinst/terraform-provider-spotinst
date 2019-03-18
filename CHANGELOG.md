@@ -1,8 +1,21 @@
-## 1.8.1 (Unreleased)
+## 1.9.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure: added `additional_ip_configs` to `network`
+* resource/spotinst_elastigroup_azure: added kubernetes and Multai to `integrations`
+* resource/spotinst_elastigroup_azure: added `scaling policies`
 
 BUG FIXES:
+* changed the order that credentials are set. See notes.
+* resource/spotinst_elastigroup_azure: `dimensions` changed to properly set `name` and `value` parameters
+* resource/spotinst_elastigroup_gcp: `dimensions` changed to properly set `name` and `value` parameters
 * resource/spotinst_elastigroup_aws: rolling with `wait_for_roll_percentage` no longer times out after 5 minutes
 * resource/spotinst_elastigroup_aws: removed duplicated `wait_for_roll_percentage` and `wait_for_roll_timeout`
+* resource/spotinst_mrscaler_aws: `visible_to_all_users` changed to deprecated. Values will not be sent in API calls.
+
+NOTES:
+* credentials are now given the following precedence: defined in the template, defined using environment variables, defined in ~/.spotinst/credentials
+* spotinst_mrscaler_aws_test: added a delay due to counter AWS rate limiting
 
 ## 1.8.0 (February 28, 2019)
 

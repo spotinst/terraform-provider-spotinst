@@ -1068,6 +1068,31 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
+
+								string(Strategy): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Action): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+
+											string(ShouldDrainInstances): {
+												Type:     schema.TypeBool,
+												Optional: true,
+											},
+
+											string(BatchMinHealthyPercentage): {
+												Type:     schema.TypeInt,
+												Optional: true,
+												Default:  50,
+											},
+										},
+									},
+								},
 							},
 						},
 					},

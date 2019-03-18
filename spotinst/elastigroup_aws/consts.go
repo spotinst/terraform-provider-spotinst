@@ -65,9 +65,13 @@ const (
 	AutoApplyTags        commons.FieldName = "auto_apply_tags"
 	ShouldRoll           commons.FieldName = "should_roll"
 
-	RollConfig          commons.FieldName = "roll_config"
-	BatchSizePercentage commons.FieldName = "batch_size_percentage"
-	GracePeriod         commons.FieldName = "grace_period"
+	RollConfig                commons.FieldName = "roll_config"
+	BatchSizePercentage       commons.FieldName = "batch_size_percentage"
+	GracePeriod               commons.FieldName = "grace_period"
+	Strategy                  commons.FieldName = "strategy"
+	Action                    commons.FieldName = "action"
+	ShouldDrainInstances      commons.FieldName = "should_drain_instances"
+	BatchMinHealthyPercentage commons.FieldName = "batch_min_healthy_percentage"
 
 	WaitForCapacity        commons.FieldName = "wait_for_capacity"
 	WaitForCapacityTimeout commons.FieldName = "wait_for_capacity_timeout"

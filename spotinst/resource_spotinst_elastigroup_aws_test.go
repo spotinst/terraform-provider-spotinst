@@ -3208,7 +3208,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-6tb5ndrerb"),
+					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-e3sngajkvh"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.automatic_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.batch_size_percentage", "100"),
@@ -3233,7 +3233,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-6tb5ndrerb"),
+					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-e3sngajkvh"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.automatic_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.batch_size_percentage", "10"),
@@ -3266,7 +3266,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 const testIntegrationBeanstalkGroupConfig_Create = `
  // --- INTEGRATION: BEANSTALK  --------------
  integration_beanstalk = {
-  environment_id = "e-6tb5ndrerb"
+  environment_id = "e-e3sngajkvh"
   deployment_preferences = {
     automatic_roll        = true
     batch_size_percentage = 100
@@ -3290,7 +3290,7 @@ const testIntegrationBeanstalkGroupConfig_Create = `
 const testIntegrationBeanstalkGroupConfig_Update = `
  // --- INTEGRATION: BEANSTALK  --------------
  integration_beanstalk = {
-  environment_id = "e-6tb5ndrerb"
+  environment_id = "e-e3sngajkvh"
   deployment_preferences = {
     automatic_roll        = false
     batch_size_percentage = 10
@@ -3844,6 +3844,10 @@ func TestAccSpotinstElastigroupAWS_UpdatePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.grace_period", "300"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.health_check_type", "ELB"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.0.action", "REPLACE_SERVER"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.0.batch_min_healthy_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.0.should_drain_instances", "false"),
 				),
 			},
 			{
@@ -3863,6 +3867,10 @@ func TestAccSpotinstElastigroupAWS_UpdatePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.grace_period", "600"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.health_check_type", "EC2"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.0.action", "RESTART_SERVER"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.0.batch_min_healthy_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.strategy.0.should_drain_instances", "true"),
 				),
 			},
 			{
@@ -3893,6 +3901,11 @@ const testUpdatePolicyGroupConfig_Create = `
       batch_size_percentage = 33
       grace_period = 300
       health_check_type = "ELB"
+      strategy = {
+        action = "REPLACE_SERVER"
+        should_drain_instances = false
+        //batch_min_healthy_percentage = 10
+      }
     }
   }
  // ----------------------------------
@@ -3910,6 +3923,11 @@ const testUpdatePolicyGroupConfig_Update = `
       batch_size_percentage = 66
       grace_period = 600
       health_check_type = "EC2"
+      strategy = {
+        action = "RESTART_SERVER"
+        should_drain_instances = true
+        batch_min_healthy_percentage = 20
+      }
     }
   }
  // ----------------------------------
