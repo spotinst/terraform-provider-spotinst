@@ -117,6 +117,7 @@ func createScaler(scaler *mrscaler.Scaler, spotinstClient *Client) (*string, err
 
 func resourceSpotinstMRScalerAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
+	time.Sleep(10 * time.Second)
 	log.Printf(string(commons.ResourceOnRead),
 		commons.MRScalerAWSResource.GetName(), id)
 

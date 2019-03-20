@@ -6,6 +6,8 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"log"
+	"strings"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -40,6 +42,28 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(AssignPublicIP): {
 						Type:     schema.TypeBool,
 						Optional: true,
+					},
+
+					string(AdditionalIPConfigs): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Name): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(PrivateIPVersion): {
+									Type:     schema.TypeString,
+									Optional: true,
+									StateFunc: func(v interface{}) string {
+										value := v.(string)
+										return strings.ToUpper(value)
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -88,6 +112,22 @@ func flattenAzureGroupNetwork(network *azure.Network) []interface{} {
 	result[string(SubnetName)] = spotinst.StringValue(network.SubnetName)
 	result[string(ResourceGroupName)] = spotinst.StringValue(network.ResourceGroupName)
 	result[string(AssignPublicIP)] = spotinst.BoolValue(network.AssignPublicIP)
+
+	if network.AdditionalIPConfigs != nil && len(network.AdditionalIPConfigs) > 0 {
+		log.Printf("ALEX DEBUG setting cfgs %v\n", len(network.AdditionalIPConfigs))
+		cfgs := make([]interface{}, 0, len(network.AdditionalIPConfigs))
+		for _, cfg := range network.AdditionalIPConfigs {
+			c := make(map[string]interface{})
+			c[string(Name)] = spotinst.StringValue(cfg.Name)
+			c[string(PrivateIPVersion)] = spotinst.StringValue(cfg.PrivateIPAddressVersion)
+
+			if c[string(Name)] != nil {
+				cfgs = append(cfgs, c)
+			}
+		}
+		result[string(AdditionalIPConfigs)] = cfgs
+	}
+
 	return []interface{}{result}
 }
 
@@ -112,6 +152,44 @@ func expandAzureGroupNetwork(data interface{}) (*azure.Network, error) {
 		if v, ok := m[string(AssignPublicIP)].(bool); ok {
 			network.SetAssignPublicIP(spotinst.Bool(v))
 		}
+
+		if v, ok := m[string(AdditionalIPConfigs)]; ok {
+			configs, err := expandAzureGroupAddlConfigs(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if configs != nil {
+				network.SetAdditionalIPConfigs(configs)
+			}
+		} else {
+			network.AdditionalIPConfigs = nil
+		}
 	}
 	return network, nil
+}
+
+func expandAzureGroupAddlConfigs(data interface{}) ([]*azure.AdditionalIPConfigs, error) {
+	list := data.([]interface{})
+	addlConfigs := make([]*azure.AdditionalIPConfigs, 0, len(list))
+
+	for _, item := range list {
+		attr, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		cfg := &azure.AdditionalIPConfigs{}
+
+		if v, ok := attr[string(Name)].(string); ok && v != "" {
+			cfg.SetName(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(PrivateIPVersion)].(string); ok && v != "" {
+			cfg.SetPrivateIPAddressVersion(spotinst.String(v))
+			//cfg.SetPrivateIPAddressVersion(spotinst.String(strings.ToUpper(v)))
+		}
+		addlConfigs = append(addlConfigs, cfg)
+	}
+
+	return addlConfigs, nil
 }

@@ -56,8 +56,10 @@ const (
 	ElastigroupAzureLoadBalancers       ResourceAffinity = "Elastigroup_Azure_Load_Balancers"
 	ElastigroupAzureVMSizes             ResourceAffinity = "Elastigroup_Azure_VM_Sizes"
 	ElastigroupAzureImage               ResourceAffinity = "Elastigroup_Azure_Image"
+	ElastigroupAzureIntegrations        ResourceAffinity = "Elastigroup_Azure_Integrations"
 	ElastigroupAzureLaunchConfiguration ResourceAffinity = "Elastigroup_Azure_Launch_Configuration"
 	ElastigroupAzureHealthCheck         ResourceAffinity = "Elastigroup_Azure_Health_Check"
+	ElastigroupAzureScalingPolicies     ResourceAffinity = "Elastigroup_Azure_Scaling_Policies"
 	ElastigroupAzureScheduledTask       ResourceAffinity = "Elastigroup_Azure_Scheduled_Task"
 
 	MRScalerAWS                    ResourceAffinity = "MRScaler_AWS"

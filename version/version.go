@@ -11,8 +11,8 @@ var (
 	OS           = runtime.GOOS
 	Architecture = runtime.GOARCH
 	Major        = 1
-	Minor        = 8
-	Patch        = 1
+	Minor        = 9
+	Patch        = 0
 )
 
 func GetLongVersion() string {

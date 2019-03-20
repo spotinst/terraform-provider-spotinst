@@ -223,7 +223,7 @@ func baseScalingPolicySchema() *schema.Schema {
 
 							string(DimensionValue): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 						},
 					},
@@ -299,6 +299,7 @@ func upDownScalingPolicySchema() *schema.Schema {
 	s[string(IsEnabled)] = &schema.Schema{
 		Type:     schema.TypeBool,
 		Optional: true,
+		Default:  true,
 	}
 
 	return o

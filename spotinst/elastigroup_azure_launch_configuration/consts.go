@@ -7,5 +7,6 @@ const (
 )
 
 const (
-	UserData commons.FieldName = "user_data"
+	UserData       commons.FieldName = "user_data"
+	ShutdownScript commons.FieldName = "shutdown_script"
 )

@@ -65,6 +65,63 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ShutdownScript] = commons.NewGenericField(
+		commons.ElastigroupAzureLaunchConfiguration,
+		ShutdownScript,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				// check to make sure nil SHA isn't being passed from somewhere upstream
+				if (old == "da39a3ee5e6b4b0d3255bfef95601890afd80709" && new == "") ||
+					(old == "" && new == "da39a3ee5e6b4b0d3255bfef95601890afd80709") {
+					return true
+				}
+				return false
+			},
+			StateFunc: HexStateFunc,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value = ""
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.ShutdownScript != nil {
+
+				s := elastigroup.Compute.LaunchSpecification.ShutdownScript
+				scriptVal := spotinst.StringValue(s)
+				if scriptVal != "" {
+					decodedScript, _ := base64.StdEncoding.DecodeString(scriptVal)
+					value = string(decodedScript)
+				}
+			}
+			if err := resourceData.Set(string(ShutdownScript), HexStateFunc(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShutdownScript), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(ShutdownScript)).(string); ok && v != "" {
+				s := spotinst.String(base64Encode(v))
+				elastigroup.Compute.LaunchSpecification.SetShutdownScript(s)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var shutdownScript *string = nil
+			if v, ok := resourceData.Get(string(ShutdownScript)).(string); ok && v != "" {
+				shutdownScript = spotinst.String(base64Encode(v))
+			}
+			elastigroup.Compute.LaunchSpecification.SetShutdownScript(shutdownScript)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

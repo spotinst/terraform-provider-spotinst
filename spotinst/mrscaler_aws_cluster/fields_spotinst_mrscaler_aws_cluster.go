@@ -207,41 +207,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.MRScalerAWSCluster,
 		VisibleToAllUsers,
 		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:       schema.TypeBool,
+			Optional:   true,
+			Deprecated: "This field has been removed from our API and is no longer functional.",
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
-			scaler := mrsWrapper.GetMRScalerAWS()
-			var value *bool = nil
-			if scaler.Cluster != nil && scaler.Cluster.VisibleToAllUsers != nil {
-				value = scaler.Cluster.VisibleToAllUsers
-			}
-			if err := resourceData.Set(string(VisibleToAllUsers), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VisibleToAllUsers), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
-			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOkExists(string(VisibleToAllUsers)); ok {
-				if scaler.Cluster == nil {
-					scaler.SetCluster(&mrscaler.Cluster{})
-				}
-				scaler.Cluster.SetVisibleToAllUsers(spotinst.Bool(v.(bool)))
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
-			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOkExists(string(VisibleToAllUsers)); ok {
-				if scaler.Cluster == nil {
-					scaler.SetCluster(&mrscaler.Cluster{})
-				}
-				scaler.Cluster.SetVisibleToAllUsers(spotinst.Bool(v.(bool)))
-			}
 			return nil
 		},
 		nil,
@@ -341,7 +317,6 @@ func flattenMRScalerAWSCluster(cluster *mrscaler.Cluster) []interface{} {
 	result[string(JobFlowRole)] = spotinst.StringValue(cluster.JobFlowRole)
 	result[string(SecurityConfig)] = spotinst.StringValue(cluster.SecurityConfiguration)
 	result[string(ServiceRole)] = spotinst.StringValue(cluster.ServiceRole)
-	result[string(VisibleToAllUsers)] = spotinst.BoolValue(cluster.VisibleToAllUsers)
 	result[string(TerminationProtected)] = spotinst.BoolValue(cluster.TerminationProtected)
 	result[string(KeepJobFlowAlive)] = spotinst.BoolValue(cluster.KeepJobFlowAliveWhenNoSteps)
 	return []interface{}{result}
@@ -373,10 +348,6 @@ func expandMRScalerAWSCluster(data interface{}) (*mrscaler.Cluster, error) {
 
 	if v, ok := m[string(ServiceRole)].(string); ok && v != "" {
 		cluster.SetServiceRole(spotinst.String(v))
-	}
-
-	if v, ok := m[string(VisibleToAllUsers)].(bool); ok {
-		cluster.SetVisibleToAllUsers(spotinst.Bool(v))
 	}
 
 	if v, ok := m[string(TerminationProtected)].(bool); ok {

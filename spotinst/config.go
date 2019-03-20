@@ -50,12 +50,6 @@ func (c *Config) Client() (*Client, error) {
 	config.WithLogger(newStdLogger("DEBUG"))
 	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString() + ",spotinst-provider/v2-" + version.GetShortVersion())
 
-	// Set user credentials.
-	providers := []credentials.Provider{
-		new(credentials.EnvProvider),
-		new(credentials.FileProvider),
-	}
-
 	var static *credentials.StaticProvider
 	if c.Token != "" || c.Account != "" {
 		static = &credentials.StaticProvider{
@@ -64,9 +58,16 @@ func (c *Config) Client() (*Client, error) {
 				Account: c.Account,
 			},
 		}
-		// Static provider should be placed between Env and File providers.
-		providers = append(providers[:1], append([]credentials.Provider{static}, providers[1:]...)...)
 	}
+
+	providers := []credentials.Provider{}
+
+	if static != nil {
+		providers = append(providers, static)
+	}
+
+	providers = append(providers, new(credentials.EnvProvider), new(credentials.FileProvider))
+
 	creds := credentials.NewChainCredentials(providers...)
 
 	if _, err := creds.Get(); err != nil {

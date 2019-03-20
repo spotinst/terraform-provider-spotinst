@@ -405,7 +405,9 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureExists(&group, resourceName),
 					testCheckElastigroupAzureAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world"))),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.HexStateFunc("goodbye world")),
+				),
 			},
 			{
 				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
@@ -415,7 +417,20 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureExists(&group, resourceName),
 					testCheckElastigroupAzureAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world"))),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.HexStateFunc("goodbye world updated")),
+				),
+			},
+			{
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:    groupName,
+					launchConfig: testAzureLaunchConfigurationGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world")),
+				),
 			},
 		},
 	})
@@ -423,13 +438,21 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 
 const testAzureLaunchConfigurationGroupConfig_Create = `
 // --- LAUNCH CONFIGURATION --------------------
-user_data = "hello world"
+user_data       = "hello world"
+shutdown_script = "goodbye world"
 // ---------------------------------------------
 `
 
 const testAzureLaunchConfigurationGroupConfig_Update = `
 // --- LAUNCH CONFIGURATION --------------------
-user_data = "hello world"
+user_data       = "hello world"
+shutdown_script = "goodbye world updated"
+// ---------------------------------------------
+`
+
+const testAzureLaunchConfigurationGroupConfig_EmptyFields = `
+// --- LAUNCH CONFIGURATION --------------------
+user_data       = "hello world"
 // ---------------------------------------------
 `
 
@@ -592,12 +615,14 @@ func TestAccSpotinstElastigroupAzure_Network(t *testing.T) {
 
 	var group azure.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureDestroy,
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureDestroy,
+		IDRefreshName: resourceName,
 
 		Steps: []resource.TestStep{
 			{
+				ResourceName: resourceName,
 				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
 					groupName: groupName,
 					network:   testAzureNetworkGroupConfig_Create,
@@ -610,6 +635,9 @@ func TestAccSpotinstElastigroupAzure_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "alex-test"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.subnet_name", "alex-test-subnet"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "alex-test-netwrk"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.additional_ip_configs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.additional_ip_configs.0.name", "test"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.additional_ip_configs.0.private_ip_version", "IPV4"),
 				),
 			},
 		},
@@ -622,7 +650,11 @@ const testAzureNetworkGroupConfig_Create = `
     virtual_network_name = "alex-test-netwrk"
     subnet_name = "alex-test-subnet"                 
     resource_group_name = "alex-test"         
-    assign_public_ip = true                
+    assign_public_ip = true
+    additional_ip_configs = [{
+      name = "test"
+      private_ip_version = "IPv4"
+    }]
   }
 // ---------------------------------------------
 `
@@ -749,6 +781,369 @@ const testAzureVMSizesGroupConfig_Update = `
  od_sizes           = ["basic_a2"]
  low_priority_sizes = ["basic_a2"]
 // ---------------------------------------------
+`
+
+// endregion
+
+//region Azure Elastigroup: Scaling Up Policies
+func TestAccSpotinstElastigroupAzure_ScalingUpPolicies(t *testing.T) {
+	groupName := "eg-azure-scaling-up-policy"
+	resourceName := createElastigroupAzureResourceName(groupName)
+
+	var group azure.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScalingUpPolicyGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.dimensions.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.dimensions.0.name", "resourceName"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.dimensions.0.value", "resource-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.dimensions.1.name", "resourceGroupName"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.dimensions.1.value", "resource-group-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.threshold", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.operator", "gt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.action_type", "setMinTarget"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.1849256711.min_target_capacity", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2419393025.adjustment", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2419393025.max_target_capacity", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2419393025.maximum", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2419393025.minimum", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2419393025.target", ""),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScalingUpPolicyGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.cooldown", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.evaluation_periods", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.period", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.action_type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.2306090151.adjustment", "MAX(5,10)"),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3866228442.min_target_capacity", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3866228442.max_target_capacity", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3866228442.maximum", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3866228442.minimum", ""),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3866228442.target", ""),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScalingUpPolicyGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureScalingUpPolicyGroupConfig_Create = `
+// --- SCALE UP POLICY ------------------
+  scaling_up_policy = [{
+    policy_name = "policy-name"
+    metric_name = "CPUUtilization"
+    namespace = "Microsoft.Compute"
+    statistic = "average"
+    unit = "percent"
+    cooldown = 60
+    dimensions = [
+      {
+        name  = "resourceName"
+        value = "resource-name"
+      },
+      {
+        name  = "resourceGroupName"
+        value = "resource-group-name"
+      },
+    ]
+    threshold = 10
+    
+    operator = "gt"
+    evaluation_periods = "10"
+    period = "60"
+    
+    // === MIN TARGET ===================
+    action_type = "setMinTarget"
+    min_target_capacity = 1
+    // ==================================
+    
+    // === ADJUSTMENT ===================
+    # action_type = "adjustment"
+    # action_type = "percentageAdjustment"
+    # adjustment = "MAX(5,10)"
+    // ==================================
+    
+    // === UPDATE CAPACITY ==============
+    # action_type = "updateCapacity"
+    # minimum = 0
+    # maximum = 10
+    # target = 5
+    // ==================================
+    
+  }]
+// ----------------------------------------
+`
+
+const testAzureScalingUpPolicyGroupConfig_Update = `
+// --- SCALE UP POLICY ------------------
+  scaling_up_policy = [{
+    policy_name = "policy-name-update"
+    metric_name = "CPUUtilization"
+    namespace = "Microsoft.Compute"
+    statistic = "sum"
+    unit = "bytes"
+    cooldown = 120
+    dimensions = {
+      name  = "name-1-update"
+      value = "value-1-update"
+    }
+    threshold = 5
+    
+    operator = "lt"
+    evaluation_periods = 5
+    period = 120
+    
+    //// === MIN TARGET ===================
+    # action_type = "setMinTarget"
+    # min_target_capacity = 1
+    //// ==================================
+    
+    // === ADJUSTMENT ===================
+    # action_type = "percentageAdjustment"
+    action_type = "adjustment"
+    adjustment = "MAX(5,10)"
+    // ==================================
+    
+    // === UPDATE CAPACITY ==============
+    # action_type = "updateCapacity"
+    # minimum = 0
+    # maximum = 10
+    # target = 5
+    // ==================================
+    
+  }]
+// ----------------------------------------
+`
+
+const testAzureScalingUpPolicyGroupConfig_EmptyFields = `
+// --- SCALE UP POLICY ------------------
+// ----------------------------------------
+`
+
+// endregion
+
+//region Azure Elastigroup: Scaling Down Policies
+func TestAccSpotinstElastigroupAzure_ScalingDownPolicies(t *testing.T) {
+	groupName := "eg-azure-scaling-down-policy"
+	resourceName := createElastigroupAzureResourceName(groupName)
+
+	var group azure.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScalingDownPolicyGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.threshold", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.operator", "gt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3631766188.action_type", "adjustment"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScalingDownPolicyGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.cooldown", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.evaluation_periods", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.period", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.action_type", "updateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.maximum", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.minimum", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.3021627480.target", "5"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureScalingDownPolicyGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureScalingDownPolicyGroupConfig_Create = `
+// --- SCALE DOWN POLICY ------------------
+  scaling_down_policy = [{
+    policy_name = "policy-name"
+    metric_name = "CPUUtilization"
+    namespace = "Microsoft.Compute"
+    statistic = "average"
+    unit = "percent"
+    cooldown = 60
+    dimensions = {
+        name = "name-1"
+        value = "value-1"
+    }
+    threshold = 10
+    
+    operator = "gt"
+    evaluation_periods = "10"
+    period = "60"
+    
+    // === MIN TARGET ===================
+    # action_type = "setMinTarget"
+    # min_target_capacity = 1
+    // ==================================
+    
+    // === ADJUSTMENT ===================
+    action_type = "adjustment"
+    # action_type = "percentageAdjustment"
+    adjustment = "MIN(5,10)"
+    // ==================================
+    
+    // === UPDATE CAPACITY ==============
+    # action_type = "updateCapacity"
+    # minimum = 0
+    # maximum = 10
+    # target = 5
+    // ==================================
+    
+  }]
+// ----------------------------------------
+`
+
+const testAzureScalingDownPolicyGroupConfig_Update = `
+// --- SCALE DOWN POLICY ------------------
+  scaling_down_policy = [{
+    policy_name = "policy-name-update"
+    metric_name = "CPUUtilization"
+    namespace = "Microsoft.Compute"
+    statistic = "sum"
+    unit = "bytes"
+    cooldown = 120
+    dimensions = {
+        name = "name-1-update"
+        value = "value-1-update"
+    }
+    threshold = 5
+    
+    operator = "lt"
+    evaluation_periods = 5
+    period = 120
+    
+    //// === MIN TARGET ===================
+    # action_type = "setMinTarget"
+    # min_target_capacity = 1
+    //// ==================================
+    
+    // === ADJUSTMENT ===================
+    # action_type = "percentageAdjustment"
+    # action_type = "adjustment"
+    # adjustment = "MAX(5,10)"
+    // ==================================
+    
+    // === UPDATE CAPACITY ==============
+    action_type = "updateCapacity"
+    minimum = 0
+    maximum = 10
+    target = 5
+    // ==================================
+    
+  }]
+// ----------------------------------------
+`
+
+const testAzureScalingDownPolicyGroupConfig_EmptyFields = `
+// --- SCALE DOWN POLICY ------------------
+// ----------------------------------------
 `
 
 // endregion
@@ -954,6 +1349,162 @@ const testAzureUpdatePolicyGroupConfig_Update = `
 const testAzureUpdatePolicyGroupConfig_EmptyFields = `
  // --- UPDATE POLICY ----------------
  // ----------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Kubernetes Integration
+func TestAccSpotinstElastigroupAzure_IntegrationKubernetes(t *testing.T) {
+	groupName := "eg-integration-kubernetes"
+	resourceName := createElastigroupAzureResourceName(groupName)
+
+	var group azure.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureIntegrationKubernetesGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.cluster_identifier", "k8s-cluster-id"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureIntegrationKubernetesGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.cluster_identifier", "k8s-cluster-id-updated"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureIntegrationKubernetesGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureIntegrationKubernetesGroupConfig_Create = `
+ // --- INTEGRATION: KUBERNETES --------------
+ integration_kubernetes = {
+    cluster_identifier = "k8s-cluster-id"
+  }
+ // ------------------------------------------
+`
+
+const testAzureIntegrationKubernetesGroupConfig_Update = `
+ // --- INTEGRATION: KUBERNETES --------------
+ integration_kubernetes = {
+    cluster_identifier = "k8s-cluster-id-updated"
+  }
+ // ------------------------------------------
+`
+
+const testAzureIntegrationKubernetesGroupConfig_EmptyFields = `
+ // --- INTEGRATION: KUBERNETES --------------
+ // ------------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Multai Runtime Integration
+func TestAccSpotinstElastigroupAzure_IntegrationMultaiRuntime(t *testing.T) {
+	groupName := "eg-integration-multai-runtime"
+	resourceName := createElastigroupAzureResourceName(groupName)
+
+	var group azure.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureIntegrationMultaiRuntimeGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.0.deployment_id", "multai-deployment-id"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureIntegrationMultaiRuntimeGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.0.deployment_id", "multai-deployment-id-update"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureIntegrationMultaiRuntimeGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureExists(&group, resourceName),
+					testCheckElastigroupAzureAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureIntegrationMultaiRuntimeGroupConfig_Create = `
+ // --- INTEGRATION: MULTAI-RUNTIME ------
+ integration_multai_runtime = {
+    deployment_id = "multai-deployment-id"
+  }
+ // --------------------------------------
+`
+
+const testAzureIntegrationMultaiRuntimeGroupConfig_Update = `
+ // --- INTEGRATION: MULTAI-RUNTIME ------
+ integration_multai_runtime = {
+    deployment_id = "multai-deployment-id-update"
+  }
+ // --------------------------------------
+`
+
+const testAzureIntegrationMultaiRuntimeGroupConfig_EmptyFields = `
+ // --- INTEGRATION: MULTAI-RUNTIME ------
+ // --------------------------------------
 `
 
 // endregion
