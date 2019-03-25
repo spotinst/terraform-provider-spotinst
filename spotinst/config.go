@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/hashicorp/terraform/helper/logging"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
@@ -49,6 +50,9 @@ func (c *Config) Client() (*Client, error) {
 	config := spotinst.DefaultConfig()
 	config.WithLogger(newStdLogger("DEBUG"))
 	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString() + ",spotinst-provider/v2-" + version.GetShortVersion())
+	httpClient := spotinst.DefaultHTTPClient()
+	httpClient.Transport = logging.NewTransport("Spotinst", httpClient.Transport)
+	config.WithHTTPClient(httpClient)
 
 	var static *credentials.StaticProvider
 	if c.Token != "" || c.Account != "" {
