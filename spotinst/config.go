@@ -3,8 +3,7 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-spotinst/version"
-	stdlog "log"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform/terraform"
@@ -16,8 +15,9 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
+	sdkLog "github.com/spotinst/spotinst-sdk-go/spotinst/log"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
+	"github.com/terraform-providers/terraform-provider-spotinst/version"
 )
 
 var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
@@ -71,7 +71,7 @@ func (c *Config) Client() (*Client, error) {
 	creds := credentials.NewChainCredentials(providers...)
 
 	if _, err := creds.Get(); err != nil {
-		stdlog.Printf("[ERROR] Failed to instantiate Spotinst client: %v", err)
+		log.Printf("[ERROR] Failed to instantiate Spotinst client: %v", err)
 		return nil, ErrNoValidCredentials
 	}
 	config.WithCredentials(creds)
@@ -88,13 +88,13 @@ func (c *Config) Client() (*Client, error) {
 		mrscaler:     mrscaler.New(sess),
 		ocean:        ocean.New(sess),
 	}
-	stdlog.Println("[INFO] Spotinst client configured")
+	log.Println("[INFO] Spotinst client configured")
 
 	return client, nil
 }
 
-func newStdLogger(level string) log.Logger {
-	return log.LoggerFunc(func(format string, args ...interface{}) {
-		stdlog.Printf(fmt.Sprintf("[%s] %s", strings.ToUpper(level), format), args...)
+func newStdLogger(level string) sdkLog.Logger {
+	return sdkLog.LoggerFunc(func(format string, args ...interface{}) {
+		log.Printf(fmt.Sprintf("[%s] %s", strings.ToUpper(level), format), args...)
 	})
 }
