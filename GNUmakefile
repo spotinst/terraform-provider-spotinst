@@ -7,6 +7,10 @@ LDFLAGS="-X ${APP}/version.BuildTime=${BUILDTIME} -X ${APP}/version.CommitHash=$
 
 default: build
 
+sweep:
+	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
+	TF_ACC=1 go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
+
 build: fmtcheck
 	go install
 

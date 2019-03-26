@@ -23,6 +23,7 @@ type Service interface {
 	Roll(context.Context, *RollGroupInput) (*RollGroupOutput, error)
 	Scale(context.Context, *ScaleGroupInput) (*ScaleGroupOutput, error)
 	GetInstanceHealthiness(context.Context, *GetInstanceHealthinessInput) (*GetInstanceHealthinessOutput, error)
+	GetGroupEvents(context.Context, *GetGroupEventsInput) (*GetGroupEventsOutput, error)
 	ImportBeanstalkEnv(context.Context, *ImportBeanstalkInput) (*ImportBeanstalkOutput, error)
 	StartBeanstalkMaintenance(context.Context, *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error)
 	FinishBeanstalkMaintenance(context.Context, *BeanstalkMaintenanceInput) (*BeanstalkMaintenanceOutput, error)

@@ -46,8 +46,7 @@ const (
 	ElastigroupGCPScalingPolicies     ResourceAffinity = "Elastigroup_GCP_Scaling_Policies"
 	ElastigroupGCPStrategy            ResourceAffinity = "Elastigroup_GCP_Strategy"
 
-	ElastigroupGKE             ResourceAffinity = "Elastigroup_GKE"
-	ElastigroupGKEInstanceType ResourceAffinity = "Elastigroup_GKE_Instance_Type"
+	ElastigroupGKE ResourceAffinity = "Elastigroup_GKE"
 
 	ElastigroupAzure                    ResourceAffinity = "Elastigroup_Azure"
 	ElastigroupAzureStrategy            ResourceAffinity = "Elastigroup_Azure_Strategy"
@@ -82,6 +81,7 @@ const (
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"
+	ResourceFieldOnMerge  LogFormat = "onMerge() -> %s -> %s"
 
 	ResourceOnDelete LogFormat = "onDelete() -> %s -> started for %s..."
 	ResourceOnUpdate LogFormat = "onUpdate() -> %s -> started for %s..."

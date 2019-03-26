@@ -5,6 +5,7 @@ import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/comm
 const (
 	Name      commons.FieldName = "name"
 	NodeImage commons.FieldName = "node_image"
+	Location  commons.FieldName = "location"
 
 	MaxSize               commons.FieldName = "max_size"
 	MinSize               commons.FieldName = "min_size"

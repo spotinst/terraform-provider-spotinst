@@ -10,8 +10,44 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_launch_configuration"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_elastigroup_azure", &resource.Sweeper{
+		Name: "spotinst_elastigroup_azure",
+		F:    testSweepElastigroupAzure,
+	})
+}
+
+func testSweepElastigroupAzure(region string) error {
+	client, err := getProviderClient("azure")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).elastigroup.CloudProviderAzure()
+
+	input := &azure.ListGroupsInput{}
+	if resp, err := conn.List(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of groups to sweep")
+	} else {
+		if len(resp.Groups) == 0 {
+			log.Printf("[INFO] No groups to sweep")
+		}
+		for _, group := range resp.Groups {
+			if strings.Contains(spotinst.StringValue(group.Name), "test-acc-") {
+				if _, err := conn.Delete(context.Background(), &azure.DeleteGroupInput{GroupID: group.ID}); err != nil {
+					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(group.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(group.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createElastigroupAzureResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.ElastigroupAzureResourceName), name)
@@ -162,7 +198,7 @@ func createElastigroupAzureTerraform(gcm *AzureGroupConfigMetadata) string {
 
 // region Elastigroup Azure: Baseline
 func TestAccSpotinstElastigroupAzure_Baseline(t *testing.T) {
-	groupName := "eg-azure-baseline"
+	groupName := "test-acc-eg-azure-baseline"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -256,7 +292,7 @@ resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
 
 // region Azure Elastigroup: Health Checks
 func TestAccSpotinstElastigroupAzure_HealthChecks(t *testing.T) {
-	groupName := "eg-azure-health-checks"
+	groupName := "test-acc-eg-azure-health-checks"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -342,7 +378,7 @@ const testAzureHealthChecksGroupConfig_EmptyFields = `
 
 // region Azure Elastigroup: Image
 func TestAccSpotinstElastigroupAzure_Image(t *testing.T) {
-	groupName := "eg-azure-image"
+	groupName := "test-acc-eg-azure-image"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -387,7 +423,7 @@ const testAzureImageGroupConfig_Create = `
 
 // region Azure Elastigroup: Launch Configuration
 func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
-	groupName := "eg-azure-launch-configuration"
+	groupName := "test-acc-eg-azure-launch-configuration"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -460,7 +496,7 @@ user_data       = "hello world"
 
 // region Azure Elastigroup: Load Balancers
 func TestAccSpotinstElastigroupAzure_LoadBalancers(t *testing.T) {
-	groupName := "eg-azure-load-balancers"
+	groupName := "test-acc-eg-azure-load-balancers"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -550,7 +586,7 @@ const testAzureLoadBalancersGroupConfig_EmptyFields = `
 
 // region Azure Elastigroup: Login
 func TestAccSpotinstElastigroupAzure_Login(t *testing.T) {
-	groupName := "eg-azure-login"
+	groupName := "test-acc-eg-azure-login"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -610,7 +646,7 @@ const testAzureLoginGroupConfig_Update = `
 
 // region Azure Elastigroup: Network
 func TestAccSpotinstElastigroupAzure_Network(t *testing.T) {
-	groupName := "eg-azure-network"
+	groupName := "test-acc-eg-azure-network"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -663,7 +699,7 @@ const testAzureNetworkGroupConfig_Create = `
 
 // region Azure Elastigroup: Strategy
 func TestAccSpotinstElastigroupAzure_Strategy(t *testing.T) {
-	groupName := "eg-azure-strategy"
+	groupName := "test-acc-eg-azure-strategy"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -725,7 +761,7 @@ const testAzureStrategyGroupConfig_Update = `
 
 // region Azure Elastigroup: VM Sizes
 func TestAccSpotinstElastigroupAzure_VMSizes(t *testing.T) {
-	groupName := "eg-azure-vm-sizes"
+	groupName := "test-acc-eg-azure-vm-sizes"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -787,7 +823,7 @@ const testAzureVMSizesGroupConfig_Update = `
 
 //region Azure Elastigroup: Scaling Up Policies
 func TestAccSpotinstElastigroupAzure_ScalingUpPolicies(t *testing.T) {
-	groupName := "eg-azure-scaling-up-policy"
+	groupName := "test-acc-eg-azure-scaling-up-policy"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -977,7 +1013,7 @@ const testAzureScalingUpPolicyGroupConfig_EmptyFields = `
 
 //region Azure Elastigroup: Scaling Down Policies
 func TestAccSpotinstElastigroupAzure_ScalingDownPolicies(t *testing.T) {
-	groupName := "eg-azure-scaling-down-policy"
+	groupName := "test-acc-eg-azure-scaling-down-policy"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -1150,7 +1186,7 @@ const testAzureScalingDownPolicyGroupConfig_EmptyFields = `
 
 // region Azure Elastigroup: Scheduled Task
 func TestAccSpotinstElastigroupAzure_ScheduledTask(t *testing.T) {
-	groupName := "eg-azure-scheduled-task"
+	groupName := "test-acc-eg-azure-scheduled-task"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -1259,7 +1295,7 @@ const testAzureScheduledTaskGroupConfig_EmptyFields = `
 
 // region Elastigroup: Update Policy
 func TestAccSpotinstElastigroupAzure_UpdatePolicy(t *testing.T) {
-	groupName := "eg-azure-update-policy"
+	groupName := "test-acc-eg-azure-update-policy"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -1355,7 +1391,7 @@ const testAzureUpdatePolicyGroupConfig_EmptyFields = `
 
 // region Elastigroup: Kubernetes Integration
 func TestAccSpotinstElastigroupAzure_IntegrationKubernetes(t *testing.T) {
-	groupName := "eg-integration-kubernetes"
+	groupName := "test-acc-eg-integration-kubernetes"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group
@@ -1433,7 +1469,7 @@ const testAzureIntegrationKubernetesGroupConfig_EmptyFields = `
 
 // region Elastigroup: Multai Runtime Integration
 func TestAccSpotinstElastigroupAzure_IntegrationMultaiRuntime(t *testing.T) {
-	groupName := "eg-integration-multai-runtime"
+	groupName := "test-acc-eg-integration-multai-runtime"
 	resourceName := createElastigroupAzureResourceName(groupName)
 
 	var group azure.Group

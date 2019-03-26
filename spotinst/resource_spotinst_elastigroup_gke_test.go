@@ -9,8 +9,44 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_elastigroup_gke", &resource.Sweeper{
+		Name: "spotinst_elastigroup_gke",
+		F:    testSweepElastigroupGKE,
+	})
+}
+
+func testSweepElastigroupGKE(region string) error {
+	client, err := getProviderClient("gcp")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).elastigroup.CloudProviderGCP()
+
+	input := &gcp.ListGroupsInput{}
+	if resp, err := conn.List(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of groups to sweep")
+	} else {
+		if len(resp.Groups) == 0 {
+			log.Printf("[INFO] No groups to sweep")
+		}
+		for _, group := range resp.Groups {
+			if strings.Contains(spotinst.StringValue(group.Name), "test-acc-") {
+				if _, err := conn.Delete(context.Background(), &gcp.DeleteGroupInput{GroupID: group.ID}); err != nil {
+					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(group.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(group.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 // createElastigroupGKEResourceName creates a resource name for the test group
 func createElastigroupGKEResourceName(name string) string {
@@ -139,7 +175,7 @@ func createElastigroupGKETerraform(gcm *GKEGroupConfigMetadata) string {
 
 // region Elastigroup GKE: Baseline
 func TestAccSpotinstElastigroupGKE_Baseline(t *testing.T) {
-	groupName := "eg-gke-baseline"
+	groupName := "test-acc-eg-gke-baseline"
 	resourceName := createElastigroupGKEResourceName(groupName)
 
 	var group gcp.Group
@@ -180,7 +216,7 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  provider = "%v"
 
  name = "%v"
- cluster_id = "terraform-acc-test-cluster"
+ //cluster_id = "terraform-acc-test-cluster"
  cluster_zone_name = "us-central1-a"
  node_image = "COS"
 
@@ -193,6 +229,21 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  %v
  %v
  %v
+
+ integration_gke = {
+  location = "us-central1-a"
+  cluster_id = "terraform-acc-test-cluster"
+  autoscale_is_enabled     = true
+  autoscale_is_auto_config = false
+  autoscale_cooldown       = 300
+  
+  autoscale_headroom = {
+    cpu_per_unit    = 1024
+    memory_per_unit = 512
+    num_of_units    = 2
+  }
+ }
+
 }
 
 `
@@ -202,7 +253,7 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  provider = "%v"
 
  name = "%v"
- cluster_id = "terraform-acc-test-cluster"
+ //cluster_id = "terraform-acc-test-cluster"
  cluster_zone_name = "us-central1-a"
  node_image = "COS"
 
@@ -215,6 +266,21 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  %v
  %v
  %v
+
+ integration_gke = {
+  location = "us-central1-a"
+  cluster_id = "terraform-acc-test-cluster"
+  autoscale_is_enabled     = true
+  autoscale_is_auto_config = false
+  autoscale_cooldown       = 300
+  
+  autoscale_headroom = {
+    cpu_per_unit    = 1024
+    memory_per_unit = 512
+    num_of_units    = 2
+  }
+ }
+
 }
 
 `
@@ -223,7 +289,7 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
 
 // region Elastigroup GKE: Instance Types
 func TestAccSpotinstElastigroupGKE_InstanceTypes(t *testing.T) {
-	groupName := "eg-gke-instance-types"
+	groupName := "test-acc-eg-gke-instance-types"
 	resourceName := createElastigroupGKEResourceName(groupName)
 
 	var group gcp.Group
@@ -284,7 +350,7 @@ const testInstanceTypesGKEGroupConfig_Update = `
 
 // region Elastigroup GKE: Strategy
 func TestAccSpotinstElastigroupGKE_Strategy(t *testing.T) {
-	groupName := "eg-gcp-strategy"
+	groupName := "test-acc-eg-gke-strategy"
 	resourceName := createElastigroupGKEResourceName(groupName)
 
 	var group gcp.Group

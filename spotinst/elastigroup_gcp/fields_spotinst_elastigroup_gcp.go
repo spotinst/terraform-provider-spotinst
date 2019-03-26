@@ -266,19 +266,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGCP,
 		Subnets,
 		&schema.Schema{
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:             schema.TypeSet,
+			Optional:         true,
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Region): &schema.Schema{
-						Type:     schema.TypeString,
-						Required: true,
+						Type:             schema.TypeString,
+						Required:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 
 					string(SubnetNames): &schema.Schema{
-						Type:     schema.TypeList,
-						Required: true,
-						Elem:     &schema.Schema{Type: schema.TypeString},
+						Type:             schema.TypeList,
+						Required:         true,
+						Elem:             &schema.Schema{Type: schema.TypeString},
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 				},
 			},

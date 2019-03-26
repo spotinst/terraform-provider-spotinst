@@ -424,6 +424,12 @@
 			"revisionTime": "2015-06-09T07:04:31Z"
 		},
 		{
+			"checksumSHA1": "GndKRHbHXJwNF3MAnv4La2/ID1I=",
+			"path": "github.com/hashicorp/terraform",
+			"revision": "2a6ad820bb245586b6de58a0674e29b970fa5507",
+			"revisionTime": "2018-11-13T22:39:41Z"
+		},
+		{
 			"checksumSHA1": "S9zz39wHULAnQNVOpM7KNaqQjuc=",
 			"path": "github.com/hashicorp/terraform/config",
 			"revision": "8ba8fc79c106dee098c625f4c40cd53d73660a92",
@@ -660,10 +666,10 @@
 			"revisionTime": "2019-01-02T18:18:36Z"
 		},
 		{
-			"checksumSHA1": "+AKflz5CX9YMji6VcPhavPZ6MrU=",
+			"checksumSHA1": "k6NvSdti9AlkuCRiyFW2BdZ3QqQ=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws",
-			"revision": "0e3fe42bc0c9249b1d350bd95636066719e96c2f",
-			"revisionTime": "2019-02-26T22:33:23Z"
+			"revision": "278edfc6c31bce3f6677a7b66e7ad7d9e5f72c4c",
+			"revisionTime": "2019-03-26T23:13:42Z"
 		},
 		{
 			"checksumSHA1": "u3IpexXg7GYUSQYydkq0qTzC35U=",
@@ -672,10 +678,10 @@
 			"revisionTime": "2019-02-26T22:33:23Z"
 		},
 		{
-			"checksumSHA1": "0i0Fiypb6w4T2F8RJpwG/RVtWVI=",
+			"checksumSHA1": "UAgh8EMCWxACLigikI1NEHG7UGM=",
 			"path": "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp",
-			"revision": "0e3fe42bc0c9249b1d350bd95636066719e96c2f",
-			"revisionTime": "2019-02-26T22:33:23Z"
+			"revision": "4062cd9e717cffb94701f2f6bd952075bf0abfcc",
+			"revisionTime": "2019-03-27T21:40:31Z"
 		},
 		{
 			"checksumSHA1": "KfARJ4Tsb0rNvxRMNgSVBG2yUag=",

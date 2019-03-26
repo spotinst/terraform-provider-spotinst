@@ -59,8 +59,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGCPStrategy,
 		FallbackToOnDemand,
 		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
+			Type:             schema.TypeBool,
+			Optional:         true,
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

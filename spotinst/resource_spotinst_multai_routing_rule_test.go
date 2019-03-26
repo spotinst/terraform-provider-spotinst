@@ -152,7 +152,7 @@ const (
 const testBaselineRoutingRuleConfig_Create = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
-  name = "foo"
+  name = "test-acc-foo"
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -163,7 +163,7 @@ resource "spotinst_multai_target_set" "foo" {
   provider = "aws"
   balancer_id   = "${spotinst_multai_balancer.foo.id}"
   deployment_id = "dp-12345"
-  name          = "bar"
+  name          = "test-acc-bar"
   protocol      = "http"
   port          = 1338
   weight        = 2
@@ -212,7 +212,7 @@ resource "` + string(commons.MultaiRoutingRuleResourceName) + `" "%v" {
 const testBaselineRoutingRuleConfig_Update = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
-  name = "foo"
+  name = "test-acc-foo"
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -227,7 +227,7 @@ resource "spotinst_multai_target_set" "foo" {
   provider = "aws"
   balancer_id   = "${spotinst_multai_balancer.foo.id}"
   deployment_id = "dp-12345"
-  name          = "bar"
+  name          = "test-acc-bar"
   protocol      = "http"
   port          = 1338
   weight        = 2
