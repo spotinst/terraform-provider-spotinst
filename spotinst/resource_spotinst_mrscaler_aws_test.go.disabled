@@ -9,6 +9,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
+	"os"
 	"testing"
 	"time"
 )
@@ -85,7 +86,10 @@ type MRScalerAWSConfigMetaData struct {
 }
 
 func createMRScalerAWSTerraform(mcm *MRScalerAWSConfigMetaData) string {
-	time.Sleep(6 * time.Second)
+	// check if "make testacc' is being ran, and sleep. Causes timeouts when running "make test"
+	if os.Getenv("TF_ACC") == "1" {
+		time.Sleep(30 * time.Second)
+	}
 	if mcm == nil {
 		return ""
 	}
