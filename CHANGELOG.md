@@ -1,4 +1,4 @@
-## 1.9.0 (Unreleased)
+## 1.9.0 (March 27, 2019)
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure: added `additional_ip_configs` to `network`
