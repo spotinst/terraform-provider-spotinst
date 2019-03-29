@@ -9,8 +9,43 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_multai_target", &resource.Sweeper{
+		Name: "spotinst_multai_target",
+		F:    testSweepMultaiTarget,
+	})
+}
+
+func testSweepMultaiTarget(region string) error {
+	client, err := getProviderClient("aws")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).multai
+	input := &multai.ListTargetsInput{}
+	if resp, err := conn.ListTargets(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of targets to sweep")
+	} else {
+		if len(resp.Targets) == 0 {
+			log.Printf("[INFO] No target to sweep")
+		}
+		for _, tgt := range resp.Targets {
+			if strings.Contains(spotinst.StringValue(tgt.Name), "test-acc-") {
+				if _, err := conn.DeleteTarget(context.Background(), &multai.DeleteTargetInput{TargetSetID: tgt.ID}); err != nil {
+					return fmt.Errorf("unable to delete target %v in sweep", spotinst.StringValue(tgt.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(tgt.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createMultaiTargetResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.MultaiTargetResourceName), name)
@@ -111,7 +146,7 @@ func createTargetTerraform(tcm *TargetConfigMetadata) string {
 }
 
 func TestAccSpotinstMultaiTarget_Baseline(t *testing.T) {
-	targetName := "target-baseline"
+	targetName := "test-acc-target-baseline"
 	resourceName := createMultaiTargetResourceName(targetName)
 
 	var target multai.Target
@@ -164,7 +199,7 @@ const (
 const testBaselineTargetConfig_Create = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
-  name = "foo"
+  name = "test-acc-foo"
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -175,7 +210,7 @@ resource "spotinst_multai_target_set" "foo" {
   provider = "aws"
   balancer_id   = "${spotinst_multai_balancer.foo.id}"
   deployment_id = "dp-12345"
-  name          = "bar"
+  name          = "test-acc-bar"
   protocol      = "http"
   port          = 1338
   weight        = 2
@@ -212,7 +247,7 @@ resource "` + string(commons.MultaiTargetResourceName) + `" "%v" {
 const testBaselineTargetConfig_Update = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
-  name = "foo"
+  name = "test-acc-foo"
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -223,7 +258,7 @@ resource "spotinst_multai_target_set" "foo" {
   provider = "aws"
   balancer_id   = "${spotinst_multai_balancer.foo.id}"
   deployment_id = "dp-12345"
-  name          = "bar"
+  name          = "test-acc-bar"
   protocol      = "http"
   port          = 1338
   weight        = 2

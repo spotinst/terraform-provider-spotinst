@@ -16,8 +16,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGKE,
 		ClusterID,
 		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
+			Type:       schema.TypeString,
+			Optional:   true,
+			Deprecated: "Please define cluster_id under integration_gke",
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -60,7 +61,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *string = nil
 			if elastigroup.Name != nil {
@@ -72,14 +73,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ImportGKEWrapper)
-			elastigroup := egWrapper.GetImport()
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			elastigroup.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			elastigroup.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
@@ -98,12 +99,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ImportGKEWrapper)
-			elastigroup := egWrapper.GetImport()
-			if v, ok := resourceData.Get(string(NodeImage)).(string); ok && v != "" {
-				nodeImage := spotinst.String(v)
-				elastigroup.SetNodeImage(nodeImage)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -121,7 +116,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *int = nil
 			if elastigroup.Capacity != nil && elastigroup.Capacity.Minimum != nil {
@@ -133,15 +128,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ImportGKEWrapper)
-			elastigroup := egWrapper.GetImport()
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(MinSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMinimum(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(MinSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMinimum(spotinst.Int(v))
@@ -160,7 +155,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *int = nil
 			if elastigroup.Capacity != nil && elastigroup.Capacity.Maximum != nil {
@@ -172,15 +167,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ImportGKEWrapper)
-			elastigroup := egWrapper.GetImport()
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(MaxSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMaximum(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(MaxSize)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetMaximum(spotinst.Int(v))
@@ -198,7 +193,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *int = nil
 			if elastigroup.Capacity != nil && elastigroup.Capacity.Target != nil {
@@ -210,15 +205,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ImportGKEWrapper)
-			elastigroup := egWrapper.GetImport()
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(TargetCapacity)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetTarget(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(TargetCapacity)).(int); ok && v >= 0 {
 				elastigroup.Capacity.SetTarget(spotinst.Int(v))
@@ -237,7 +232,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *int = nil
 			if elastigroup.Strategy != nil && elastigroup.Strategy.PreemptiblePercentage != nil {
@@ -250,17 +245,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ImportGKEWrapper)
-			elastigroup := egWrapper.GetImport()
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOkExists(string(PreemptiblePercentage)); ok {
 				value := v.(int)
-				elastigroup.SetPreemptiblePercentage(spotinst.Int(value))
+				elastigroup.Strategy.SetPreemptiblePercentage(spotinst.Int(value))
 			}
 			return nil
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGKEWrapper)
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOkExists(string(PreemptiblePercentage)); ok {
 				value := v.(int)

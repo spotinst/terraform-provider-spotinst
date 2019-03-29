@@ -3,7 +3,6 @@ package spotinst
 import (
 	"context"
 	"fmt"
-
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"

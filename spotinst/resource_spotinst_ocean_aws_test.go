@@ -10,8 +10,43 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_ocean_aws", &resource.Sweeper{
+		Name: "spotinst_ocean_aws",
+		F:    testSweepOceanAWS,
+	})
+}
+
+func testSweepOceanAWS(region string) error {
+	client, err := getProviderClient("aws")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).ocean.CloudProviderAWS()
+	input := &aws.ListClustersInput{}
+	if resp, err := conn.ListClusters(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of clusters to sweep")
+	} else {
+		if len(resp.Clusters) == 0 {
+			log.Printf("[INFO] No clusters to sweep")
+		}
+		for _, cluster := range resp.Clusters {
+			if strings.Contains(spotinst.StringValue(cluster.Name), "test-acc-") {
+				if _, err := conn.DeleteCluster(context.Background(), &aws.DeleteClusterInput{ClusterID: cluster.ID}); err != nil {
+					return fmt.Errorf("unable to delete cluster %v in sweep", spotinst.StringValue(cluster.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(cluster.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createOceanAWSResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.OceanAWSResourceName), name)
@@ -133,7 +168,7 @@ func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
 
 // region OceanAWS: Baseline
 func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
-	clusterName := "cluster-baseline"
+	clusterName := "test-acc-cluster-baseline"
 	controllerClusterID := "baseline-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
@@ -220,7 +255,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
 // region OceanAWS: Instance Types Whitelist
 func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
-	clusterName := "cluster-instance-types-whitelist"
+	clusterName := "test-acc-cluster-instance-types-whitelist"
 	controllerClusterID := "whitelist-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
@@ -289,7 +324,7 @@ const testInstanceTypesWhitelistAWSConfig_EmptyFields = `
 
 // region OceanAWS: Launch Configuration
 func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
-	clusterName := "cluster-launch-configuration"
+	clusterName := "test-acc-luster-launch-configuration"
 	controllerClusterID := "launch-config-cluster-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
@@ -441,7 +476,7 @@ const testLaunchConfigAWSConfig_EmptyFields = `
 
 // region OceanAWS: Strategy
 func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
-	clusterName := "cluster-strategy"
+	clusterName := "test-acc-cluster-strategy"
 	controllerClusterID := "strategy-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
@@ -523,7 +558,7 @@ const testStrategyConfig_EmptyFields = `
 
 // region OceanAWS: Autoscaler
 func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
-	clusterName := "cluster-autoscaler"
+	clusterName := "test-acc-cluster-autoscaler"
 	controllerClusterID := "autoscaler-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
 
