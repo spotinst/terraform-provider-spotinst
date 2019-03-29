@@ -9,8 +9,43 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_multai_deployment", &resource.Sweeper{
+		Name: "spotinst_multai_deployment",
+		F:    testSweepMultaiDeployment,
+	})
+}
+
+func testSweepMultaiDeployment(region string) error {
+	client, err := getProviderClient("aws")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).multai
+	input := &multai.ListDeploymentsInput{}
+	if resp, err := conn.ListDeployments(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of deployments to sweep")
+	} else {
+		if len(resp.Deployments) == 0 {
+			log.Printf("[INFO] No deployments to sweep")
+		}
+		for _, depl := range resp.Deployments {
+			if strings.Contains(spotinst.StringValue(depl.Name), "test-acc-") {
+				if _, err := conn.DeleteDeployment(context.Background(), &multai.DeleteDeploymentInput{DeploymentID: depl.ID}); err != nil {
+					return fmt.Errorf("unable to delete deployment %v in sweep", spotinst.StringValue(depl.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(depl.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createMultaiDeploymentResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.MultaiDeploymentResourceName), name)
@@ -112,7 +147,7 @@ func createDeploymentTerraform(bcm *DeploymentConfigMetadata) string {
 }
 
 func TestAccSpotinstMultaiDeployment_Baseline(t *testing.T) {
-	deployName := "mlb-baseline"
+	deployName := "test-acc-mlb-baseline"
 	resourceName := createMultaiDeploymentResourceName(deployName)
 
 	var deployment multai.Deployment
@@ -129,7 +164,7 @@ func TestAccSpotinstMultaiDeployment_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSpotinstMultaiDeploymentExists(&deployment, resourceName),
 					testAccCheckSpotinstMultaiDeploymentAttributes(&deployment, deployName),
-					resource.TestCheckResourceAttr(resourceName, "name", "mlb-baseline"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-mlb-baseline"),
 				),
 			},
 			{
@@ -140,7 +175,7 @@ func TestAccSpotinstMultaiDeployment_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSpotinstMultaiDeploymentExists(&deployment, resourceName),
 					testAccCheckSpotinstMultaiDeploymentAttributes(&deployment, deployName),
-					resource.TestCheckResourceAttr(resourceName, "name", "mlb-baseline"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-mlb-baseline"),
 				),
 			},
 		},

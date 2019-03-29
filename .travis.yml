@@ -18,7 +18,6 @@ install:
 script:
 - make test
 - if [ $TRAVIS_REPO_SLUG != "terraform-providers/terraform-provider-spotinst" ]; then make testacc spotinst; fi
-- make vendor-status
 - make vet
 - make website-test
 

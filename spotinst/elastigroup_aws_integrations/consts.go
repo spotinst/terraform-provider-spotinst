@@ -19,8 +19,9 @@ const (
 	MemoryPerUnit         commons.FieldName = "memory_per_unit"
 	NumOfUnits            commons.FieldName = "num_of_units"
 
-	AutoscaleDown     commons.FieldName = "autoscale_down"
-	EvaluationPeriods commons.FieldName = "evaluation_periods"
+	AutoscaleDown          commons.FieldName = "autoscale_down"
+	EvaluationPeriods      commons.FieldName = "evaluation_periods"
+	MaxScaleDownPercentage commons.FieldName = "max_scale_down_percentage"
 
 	ApiServer commons.FieldName = "api_server"
 

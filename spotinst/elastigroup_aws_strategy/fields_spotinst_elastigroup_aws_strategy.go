@@ -2,8 +2,8 @@ package elastigroup_aws_strategy
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -293,8 +293,99 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ScalingStrategy] = commons.NewGenericField(
+		commons.ElastigroupAWSStrategy,
+		ScalingStrategy,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(TerminateAtEndOfBillingHour): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+
+					string(TerminationPolicy): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []interface{} = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.ScalingStrategy != nil {
+				s := elastigroup.Strategy.ScalingStrategy
+				value = flattenAWSGroupScalingStrategy(s)
+			}
+			if value != nil {
+				if err := resourceData.Set(string(ScalingStrategy), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingStrategy), err)
+				}
+			} else {
+				if err := resourceData.Set(string(ScalingStrategy), []*aws.ScalingStrategy{}); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingStrategy), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(ScalingStrategy)); ok {
+				if s, err := expandAWSGroupScalingStrategy(v); err != nil {
+					return err
+				} else {
+					elastigroup.Strategy.SetScalingStrategy(s)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *aws.ScalingStrategy = nil
+			if v, ok := resourceData.GetOk(string(ScalingStrategy)); ok {
+				if s, err := expandAWSGroupScalingStrategy(v); err != nil {
+					return err
+				} else {
+					value = s
+				}
+			}
+			elastigroup.Strategy.SetScalingStrategy(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func flattenAWSGroupScalingStrategy(strategy *aws.ScalingStrategy) []interface{} {
+	result := make(map[string]interface{})
+	result[string(TerminationPolicy)] = spotinst.StringValue(strategy.TerminationPolicy)
+	result[string(TerminateAtEndOfBillingHour)] = spotinst.BoolValue(strategy.TerminateAtEndOfBillingHour)
+	return []interface{}{result}
+}
+
+func expandAWSGroupScalingStrategy(data interface{}) (*aws.ScalingStrategy, error) {
+	strategy := &aws.ScalingStrategy{}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(TerminateAtEndOfBillingHour)].(bool); ok {
+			strategy.SetTerminateAtEndOfBillingHour(spotinst.Bool(v))
+		}
+
+		if v, ok := m[string(TerminationPolicy)].(string); ok && v != "" {
+			strategy.SetTerminationPolicy(spotinst.String(v))
+		}
+	}
+	return strategy, nil
+}

@@ -9,8 +9,43 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_multai_balancer", &resource.Sweeper{
+		Name: "spotinst_multai_balancer",
+		F:    testSweepMultaiBalancer,
+	})
+}
+
+func testSweepMultaiBalancer(region string) error {
+	client, err := getProviderClient("aws")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).multai
+	input := &multai.ListLoadBalancersInput{}
+	if resp, err := conn.ListLoadBalancers(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of balancers to sweep")
+	} else {
+		if len(resp.Balancers) == 0 {
+			log.Printf("[INFO] No balancers to sweep")
+		}
+		for _, bal := range resp.Balancers {
+			if strings.Contains(spotinst.StringValue(bal.Name), "test-acc-") {
+				if _, err := conn.DeleteLoadBalancer(context.Background(), &multai.DeleteLoadBalancerInput{BalancerID: bal.ID}); err != nil {
+					return fmt.Errorf("unable to delete balancer %v in sweep", spotinst.StringValue(bal.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(bal.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createMultaiBalancerResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.MultaiBalancerResourceName), name)
@@ -112,7 +147,7 @@ func createBalancerTerraform(bcm *BalancerConfigMetadata) string {
 }
 
 func TestAccSpotinstMultaiBalancer_Baseline(t *testing.T) {
-	balName := "mlb-baseline"
+	balName := "test-acc-mlb-baseline"
 	resourceName := createMultaiBalancerResourceName(balName)
 
 	var balancer multai.LoadBalancer
@@ -129,7 +164,7 @@ func TestAccSpotinstMultaiBalancer_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSpotinstMultaiBalancerExists(&balancer, resourceName),
 					testAccCheckSpotinstMultaiBalancerAttributes(&balancer, balName),
-					resource.TestCheckResourceAttr(resourceName, "name", "mlb-baseline"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-mlb-baseline"),
 					resource.TestCheckResourceAttr(resourceName, "scheme", "internal"),
 					resource.TestCheckResourceAttr(resourceName, "connection_timeouts.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "connection_timeouts."+BalancerTimeoutsHash_Create+".idle", "10"),
@@ -147,7 +182,7 @@ func TestAccSpotinstMultaiBalancer_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckSpotinstMultaiBalancerExists(&balancer, resourceName),
 					testAccCheckSpotinstMultaiBalancerAttributes(&balancer, balName),
-					resource.TestCheckResourceAttr(resourceName, "name", "mlb-baseline"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-mlb-baseline"),
 					resource.TestCheckResourceAttr(resourceName, "scheme", "internet-facing"),
 					resource.TestCheckResourceAttr(resourceName, "connection_timeouts."+BalancerTimeoutsHash_Update+".idle", "20"),
 					resource.TestCheckResourceAttr(resourceName, "connection_timeouts."+BalancerTimeoutsHash_Update+".draining", "20"),

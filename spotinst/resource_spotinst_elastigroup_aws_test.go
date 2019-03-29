@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -14,6 +15,40 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration"
 	"regexp"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_elastigroup_aws", &resource.Sweeper{
+		Name: "spotinst_elastigroup_aws",
+		F:    testSweepElastigroupAWS,
+	})
+}
+
+func testSweepElastigroupAWS(region string) error {
+	client, err := getProviderClient("aws")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).elastigroup.CloudProviderAWS()
+	input := &aws.ListGroupsInput{}
+	if resp, err := conn.List(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of groups to sweep")
+	} else {
+		if len(resp.Groups) == 0 {
+			log.Printf("[INFO] No groups to sweep")
+		}
+		for _, group := range resp.Groups {
+			if strings.Contains(spotinst.StringValue(group.Name), "test-acc-") {
+				if _, err := conn.Delete(context.Background(), &aws.DeleteGroupInput{GroupID: group.ID}); err != nil {
+					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(group.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(group.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createElastigroupResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.ElastigroupAwsResourceName), name)
@@ -145,7 +180,7 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 
 // region Elastigroup: Baseline
 func TestAccSpotinstElastigroupAWS_Baseline(t *testing.T) {
-	groupName := "eg-baseline"
+	groupName := "test-acc-eg-baseline"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -296,7 +331,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 
 // region Elastigroup: Instance Types
 func TestAccSpotinstElastigroupAWS_InstanceTypes(t *testing.T) {
-	groupName := "eg-instance-types"
+	groupName := "test-acc-eg-instance-types"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -379,7 +414,7 @@ const testInstanceTypesGroupConfig_Update = `
 
 // region Elastigroup: Launch Configuration
 func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
-	groupName := "eg-launch-configuration"
+	groupName := "test-acc-eg-launch-configuration"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -501,7 +536,7 @@ const testLaunchConfigurationGroupConfig_EmptyFields = `
 
 // region Elastigroup: Preferred Spot
 func TestAccSpotinstElastigroupAWS_PreferredSpot(t *testing.T) {
-	groupName := "eg-preferred-spot"
+	groupName := "test-acc-eg-preferred-spot"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -576,7 +611,7 @@ const testPreferredSpotGroupConfig_EmptyFields = `
 
 // region Elastigroup: Strategy
 func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
-	groupName := "eg-strategy"
+	groupName := "test-acc-eg-strategy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -602,6 +637,9 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "lifetime_period", ""),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "300"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.terminate_at_end_of_billing_hour", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "default"),
 				),
 			},
 			{
@@ -619,6 +657,9 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "lifetime_period", ""),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "600"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.terminate_at_end_of_billing_hour", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "newestInstance"),
 				),
 			},
 			{
@@ -636,6 +677,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "lifetime_period", ""),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "600"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "0"),
 				),
 			},
 		},
@@ -650,6 +692,11 @@ const testStrategyGroupConfig_Create = `
  lifetime_period	 		= ""
  draining_timeout 			= 300
  utilize_reserved_instances = false
+
+ scaling_strategy = {
+   terminate_at_end_of_billing_hour = true
+   termination_policy = "default"
+ }
  // ---------------------------------
 `
 
@@ -661,6 +708,11 @@ const testStrategyGroupConfig_Update = `
  lifetime_period 			= ""
  draining_timeout 			= 600
  utilize_reserved_instances = true
+
+ scaling_strategy = {
+   terminate_at_end_of_billing_hour = false
+   termination_policy = "newestInstance"
+ }
  // ---------------------------------
 `
 
@@ -676,7 +728,7 @@ const testStrategyGroupConfig_EmptyFields = `
 
 // region Elastigroup: Subnet IDs
 func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
-	groupName := "eg-subnet-ids"
+	groupName := "test-acc-eg-subnet-ids"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -725,7 +777,7 @@ func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 
 // region Elastigroup: Preferred Availability Zones
 func TestAccSpotinstElastigroupAWS_PreferredAvailabilityZones(t *testing.T) {
-	groupName := "eg-preferred-availability-zones"
+	groupName := "test-acc-eg-preferred-availability-zones"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -800,7 +852,7 @@ const testPreferredAvailabilityZonesGroupConfig_EmptyFields = `
 
 // region Elastigroup: Load Balancers
 func TestAccSpotinstElastigroupAWS_LoadBalancers(t *testing.T) {
-	groupName := "eg-load-balancers"
+	groupName := "test-acc-eg-load-balancers"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -905,7 +957,7 @@ const testLoadBalancersGroupConfig_EmptyFields = `
 
 // region Elastigroup: Health Checks
 func TestAccSpotinstElastigroupAWS_HealthChecks(t *testing.T) {
-	groupName := "eg-health-checks"
+	groupName := "test-acc-eg-health-checks"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -987,7 +1039,7 @@ const testHealthChecksGroupConfig_EmptyFields = `
 
 // region Elastigroup: Elastic IPs
 func TestAccSpotinstElastigroupAWS_ElasticIPs(t *testing.T) {
-	groupName := "eg-elastic-ips"
+	groupName := "test-acc-eg-elastic-ips"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1062,7 +1114,7 @@ const testElasticIPsGroupConfig_EmptyFields = `
 
 // region Elastigroup: Elastic IPs with Terraform Count Parallelism
 func TestAccSpotinstElastigroupAWS_ElasticIPs_Count_Parallelism(t *testing.T) {
-	groupName := "eg-elastic-ips-tf-count-parallelism"
+	groupName := "test-acc-eg-elastic-ips-tf-count-parallelism"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1173,7 +1225,7 @@ const testElasticIPsGroupConfig_Count_EmptyFields = `
 
 // region Elastigroup: Signals
 func TestAccSpotinstElastigroupAWS_Signals(t *testing.T) {
-	groupName := "eg-signals"
+	groupName := "test-acc-eg-signals"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1261,7 +1313,7 @@ const testSignalsGroupConfig_EmptyFields = `
 
 // region Elastigroup: Revert To Spot (Maintenance Window)
 func TestAccSpotinstElastigroupAWS_RevertToSpot(t *testing.T) {
-	groupName := "eg-revert-to-spot"
+	groupName := "test-acc-eg-revert-to-spot"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1341,7 +1393,7 @@ const testRevertToSpotGroupConfig_EmptyFields = `
 
 // region Elastigroup: Network Interfaces
 func TestAccSpotinstElastigroupAWS_NetworkInterfaces(t *testing.T) {
-	groupName := "eg-network-interfaces"
+	groupName := "test-acc-eg-network-interfaces"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1467,7 +1519,7 @@ const testNetworkInterfacesGroupConfig_EmptyFields = `
 
 // region Elastigroup: Scaling Up Policies
 func TestAccSpotinstElastigroupAWS_ScalingUpPolicies(t *testing.T) {
-	groupName := "eg-scaling-up-policy"
+	groupName := "test-acc-eg-scaling-up-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1657,7 +1709,7 @@ const testScalingUpPolicyGroupConfig_EmptyFields = `
 
 // region Elastigroup: Scaling Down Policies
 func TestAccSpotinstElastigroupAWS_ScalingDownPolicies(t *testing.T) {
-	groupName := "eg-scaling-down-policy"
+	groupName := "test-acc-eg-scaling-down-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1846,7 +1898,7 @@ const testScalingDownPolicyGroupConfig_EmptyFields = `
 
 // region Elastigroup: Scaling Target Policies
 func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
-	groupName := "eg-scaling-target-policy"
+	groupName := "test-acc-eg-scaling-target-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -1966,7 +2018,7 @@ const testScalingTargetPolicyGroupConfig_EmptyFields = `
 
 // region Elastigroup: Scheduled Tasks
 func TestAccSpotinstElastigroupAWS_ScheduledTask(t *testing.T) {
-	groupName := "eg-scheduled-task"
+	groupName := "test-acc-eg-scheduled-task"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2113,7 +2165,7 @@ const testScheduledTaskGroupConfig_EmptyFields = `
 
 // region Elastigroup: Stateful
 func TestAccSpotinstElastigroupAWS_Stateful(t *testing.T) {
-	groupName := "eg-stateful"
+	groupName := "test-acc-eg-stateful"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2205,7 +2257,7 @@ const testStatefulGroupConfig_EmptyFields = `
 `
 
 func TestAccSpotinstElastigroupAWS_DeallocationStateful_DeleteNetworkInterfacesAndSnapshots(t *testing.T) {
-	groupName := "eg-stateful-deallocation-network-interfaces-snapshots"
+	groupName := "test-acc-eg-stateful-deallocation-network-interfaces-snapshots"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2260,7 +2312,7 @@ const testDeallocationStatefulGroupConfig_DeleteNetworkInterfacesAndSnapshots = 
 `
 
 func TestAccSpotinstElastigroupAWS_DeallocationStateful_DeleteVolumesAndImages(t *testing.T) {
-	groupName := "eg-stateful-deallocation-volumes-images"
+	groupName := "test-acc-eg-stateful-deallocation-volumes-images"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2315,7 +2367,7 @@ const testDeallocationStatefulGroupConfig_DeleteVolumesAndImages = `
 `
 
 func TestAccSpotinstElastigroupAWS_DeallocationStateful_DeleteWithoutStatefulResources(t *testing.T) {
-	groupName := "eg-stateful-deallocation-empty"
+	groupName := "test-acc-eg-stateful-deallocation-empty"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2354,7 +2406,7 @@ const testDeallocationStatefulGroupConfig_EmptyFields = `
 
 // region Elastigroup: Block Devices
 func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
-	groupName := "eg-block-devices"
+	groupName := "test-acc-eg-block-devices"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2491,7 +2543,7 @@ const testElastigroupBlockDevices_EmptyFields = `
 
 // region Elastigroup: Tags
 func TestAccSpotinstElastigroupAWS_Tags(t *testing.T) {
-	groupName := "eg-tags"
+	groupName := "test-acc-eg-tags"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2583,7 +2635,7 @@ const testTagsGroupConfig_EmptyFields = `
 
 // region Elastigroup: Rancher Integration
 func TestAccSpotinstElastigroupAWS_IntegrationRancher(t *testing.T) {
-	groupName := "eg-integration-rancher"
+	groupName := "test-acc-eg-integration-rancher"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2677,7 +2729,7 @@ const testIntegrationRancherGroupConfig_EmptyFields = `
 
 // region Elastigroup: Code Deploy Integration
 func TestAccSpotinstElastigroupAWS_IntegrationCodeDeploy(t *testing.T) {
-	groupName := "eg-integration-code-deploy"
+	groupName := "test-acc-eg-integration-code-deploy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2773,7 +2825,7 @@ const testIntegrationCodeDeployGroupConfig_EmptyFields = `
 
 // region Elastigroup: Route53 integration
 func TestAccSpotinstElastigroupAWS_IntegrationRoute53(t *testing.T) {
-	groupName := "eg-integration-route53"
+	groupName := "test-acc-eg-integration-route53"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2906,7 +2958,7 @@ const testIntegrationRoute53GroupConfig_EmptyFields = `
 
 // region Elastigroup: ECS Integration
 func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
-	groupName := "eg-integration-ecs"
+	groupName := "test-acc-eg-integration-ecs"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -2931,12 +2983,12 @@ func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
-					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "70"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.key", "test.key.ecs"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.value", "test.value.ecs"),
@@ -2961,6 +3013,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.key", "test.key.ecs.update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.value", "test.value.ecs.update"),
@@ -2999,6 +3052,7 @@ const testIntegrationECSGroupConfig_Create = `
 
     autoscale_down = {
       evaluation_periods = 300
+      max_scale_down_percentage = 70
     }
 
     autoscale_attributes = [{
@@ -3026,6 +3080,7 @@ const testIntegrationECSGroupConfig_Update = `
 
     autoscale_down = {
       evaluation_periods = 150
+      max_scale_down_percentage = 50
     }
 
     autoscale_attributes = [{
@@ -3045,7 +3100,7 @@ const testIntegrationECSGroupConfig_EmptyFields = `
 
 // region Elastigroup: Kubernetes Integration
 func TestAccSpotinstElastigroupAWS_IntegrationKubernetes(t *testing.T) {
-	groupName := "eg-integration-kubernetes"
+	groupName := "test-acc-eg-integration-kubernetes"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3187,7 +3242,7 @@ const testIntegrationKubernetesGroupConfig_EmptyFields = `
 
 // region Elasitgroup: Beanstalk Integration
 func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
-	groupName := "eg-integration-beanstalk"
+	groupName := "test-acc-eg-integration-beanstalk"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3319,7 +3374,7 @@ const testIntegrationBeanstalkGroupConfig_EmptyFields = `
 
 // region Elastigroup: Nomad Integration
 func TestAccSpotinstElastigroupAWS_IntegrationNomad(t *testing.T) {
-	groupName := "eg-integration-nomad"
+	groupName := "test-acc-eg-integration-nomad"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3456,7 +3511,7 @@ const testIntegrationNomadGroupConfig_EmptyFields = `
 // region Docker Swarm integration
 
 func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
-	groupName := "eg-integration-docker-swarm"
+	groupName := "test-acc-eg-integration-docker-swarm"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3578,7 +3633,7 @@ const testIntegrationDockerSwarmGroupConfig_EmptyFields = `
 
 // region Elastigroup: Gitlab Integration
 func TestAccSpotinstElastigroupAWS_IntegrationGitlab(t *testing.T) {
-	groupName := "eg-integration-gitlab"
+	groupName := "test-acc-eg-integration-gitlab"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3660,7 +3715,7 @@ const testIntegrationGitlabGroupConfig_EmptyFields = `
 
 // region Elastigroup: Mesosphere Integration
 func TestAccSpotinstElastigroupAWS_IntegrationMesosphere(t *testing.T) {
-	groupName := "eg-integration-mesosphere"
+	groupName := "test-acc-eg-integration-mesosphere"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3738,7 +3793,7 @@ const testIntegrationMesosphereGroupConfig_EmptyFields = `
 
 // region Elastigroup: Multai Runtime Integration
 func TestAccSpotinstElastigroupAWS_IntegrationMultaiRuntime(t *testing.T) {
-	groupName := "eg-integration-multai-runtime"
+	groupName := "test-acc-eg-integration-multai-runtime"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3816,7 +3871,7 @@ const testIntegrationMultaiRuntimeGroupConfig_EmptyFields = `
 
 // region Elastigroup: Update Policy
 func TestAccSpotinstElastigroupAWS_UpdatePolicy(t *testing.T) {
-	groupName := "eg-update-policy"
+	groupName := "test-acc-eg-update-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group
@@ -3944,7 +3999,7 @@ const testUpdatePolicyGroupConfig_EmptyFields = `
 // region Wait for Capacity
 
 func TestAccSpotinstElastigroupAWS_WaitForCapacity(t *testing.T) {
-	groupName := "eg-update-policy"
+	groupName := "test-acc-eg-update-policy"
 	resourceName := createElastigroupResourceName(groupName)
 
 	var group aws.Group

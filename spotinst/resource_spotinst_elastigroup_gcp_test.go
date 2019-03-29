@@ -10,8 +10,44 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_launch_configuration"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_elastigroup_gcp", &resource.Sweeper{
+		Name: "spotinst_elastigroup_gcp",
+		F:    testSweepElastigroupGCP,
+	})
+}
+
+func testSweepElastigroupGCP(region string) error {
+	client, err := getProviderClient("gcp")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).elastigroup.CloudProviderGCP()
+
+	input := &gcp.ListGroupsInput{}
+	if resp, err := conn.List(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of groups to sweep")
+	} else {
+		if len(resp.Groups) == 0 {
+			log.Printf("[INFO] No groups to sweep")
+		}
+		for _, group := range resp.Groups {
+			if strings.Contains(spotinst.StringValue(group.Name), "test-acc-") {
+				if _, err := conn.Delete(context.Background(), &gcp.DeleteGroupInput{GroupID: group.ID}); err != nil {
+					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(group.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(group.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 // createElastigroupGCPResourceName creates a resource name for the test group
 func createElastigroupGCPResourceName(name string) string {
@@ -154,7 +190,7 @@ func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
 
 // region Elastigroup GCP: Baseline
 func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
-	groupName := "eg-gcp-baseline"
+	groupName := "test-acc-eg-gcp-baseline"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -247,7 +283,7 @@ resource "` + string(commons.ElastigroupGCPResourceName) + `" "%v" {
 
 // region Elastigroup GCP: Instance Types
 func TestAccSpotinstElastigroupGCP_InstanceTypes(t *testing.T) {
-	groupName := "eg-gcp-instance-types"
+	groupName := "test-acc-eg-gcp-instance-types"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -308,7 +344,7 @@ const testInstanceTypesGCPGroupConfig_Update = `
 
 // region Elastigroup GCP: Launch Configuration
 func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
-	groupName := "eg-gcp-launch-configuration"
+	groupName := "test-acc-eg-gcp-launch-configuration"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -509,7 +545,7 @@ const testLaunchConfigurationGCPGroupConfig_EmptyFields = `
 
 // region Elastigroup GCP: Disk
 func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
-	groupName := "eg-gcp-disk"
+	groupName := "test-acc-eg-gcp-disk"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -647,7 +683,7 @@ const testDiskGCPGroupConfig_EmptyFields = `
 
 // region Elastigroup GCP: Strategy
 func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
-	groupName := "eg-gcp-strategy"
+	groupName := "test-acc-eg-gcp-strategy"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -726,7 +762,7 @@ const testStrategyGCPGroupConfig_EmptyFields = `
 
 // region Elastigroup GCP: GPU
 func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
-	groupName := "eg-gcp-gpu"
+	groupName := "test-acc-eg-gcp-gpu"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -804,7 +840,7 @@ const testGPUGCPGroupConfig_EmptyFields = `
 
 // region Elastigroup GCP: Health Checks
 func TestAccSpotinstElastigroupGCP_HealthChecks(t *testing.T) {
-	groupName := "eg-gcp-health-checks"
+	groupName := "test-acc-eg-gcp-health-checks"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -880,7 +916,7 @@ health_check_grace_period = 0
 
 // region Elastigroup GCP: Network Interfaces
 func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
-	groupName := "eg-network-interfaces"
+	groupName := "test-acc-eg-network-interfaces"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -1027,7 +1063,7 @@ const testNetworkInterfacesGCPGroupConfig_EmptyFields = `
 
 // region Elastigroup GCP: Scaling Up Policies
 func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
-	groupName := "eg-gcp-scaling-up-policy"
+	groupName := "test-acc-eg-gcp-scaling-up-policy"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -1179,7 +1215,7 @@ const testScalingUpPolicyGCPGroupConfig_EmptyFields = `
 
 // region Elastigroup GCP: Scaling Down Policies
 func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
-	groupName := "eg-gcp-scaling-down-policy"
+	groupName := "test-acc-eg-gcp-scaling-down-policy"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -1331,7 +1367,7 @@ const testScalingDownPolicyGCPGroupConfig_EmptyFields = `
 
 // region Elastigroup GCP: Subnets
 func TestAccSpotinstElastigroupGCP_Subnets(t *testing.T) {
-	groupName := "eg-gcp-subnets"
+	groupName := "test-acc-eg-gcp-subnets"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group
@@ -1426,7 +1462,7 @@ const testSubnetsGCPGroupConfig_EmptyFields = `
 // region Docker Swarm integration
 
 func TestAccSpotinstElastigroupGCP_IntegrationDockerSwarm(t *testing.T) {
-	groupName := "eg-integration-docker-swarm"
+	groupName := "test-acc-eg-integration-docker-swarm"
 	resourceName := createElastigroupGCPResourceName(groupName)
 
 	var group gcp.Group

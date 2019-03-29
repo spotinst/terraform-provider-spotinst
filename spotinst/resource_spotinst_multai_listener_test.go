@@ -103,7 +103,7 @@ func createListenerTerraform(lcm *ListenerConfigMetadata) string {
 }
 
 func TestAccSpotinstMultaiListener_Baseline(t *testing.T) {
-	listenerName := "listener-baseline"
+	listenerName := "test-acc-listener-baseline"
 	resourceName := createMultaiListenerResourceName(listenerName)
 
 	var listener multai.Listener

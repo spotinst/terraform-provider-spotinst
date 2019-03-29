@@ -57,6 +57,11 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   wait_for_capacity         = 5
   wait_for_capacity_timeout = 300
+  
+  scaling_strategy = {
+    terminate_at_end_of_billing_hour = true
+    termination_policy = "default"
+  }
 
   scaling_up_policy = {
     policy_name        = "Default Scaling Up Policy"
@@ -159,6 +164,9 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `utilize_reserved_instances` - (Optional) In a case of any available reserved instances, Elastigroup will utilize them first before purchasing Spot instances.
+* `scaling_strategy` - (Optional) Set termination policy.
+    * `terminate_at_end_of_billing_hour` - (Optional) Specify whether to terminate instances at the end of each billing hour.
+    * `termination_policy` - (Optional) - Determines whether to terminate the newest instances when performing a scaling action. Valid values: `"default"`, `"newestInstance"`.
 
 * `health_check_type` - (Optional) The service that will perform health checks for the instance. Valid values: `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health.
@@ -530,12 +538,14 @@ Usage:
     * `autoscale_is_enabled` - (Optional, Default: `false`) Specifies whether the auto scaling feature is enabled.
     * `autoscale_cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes before any further trigger-related scaling activities can start.
     * `autoscale_is_auto_config` - (Optional, Default: `false`) Enabling the automatic auto-scaler functionality. For more information please see: [ECS auto scaler](https://api.spotinst.com/container-management/amazon-ecs/elastigroup-for-ecs-concepts/autoscaling/).
+    * `autoscale_scale_down_non_service_tasks` - (Optional) Determines whether to scale down non-service tasks.
     * `autoscale_headroom` - (Optional) Headroom for the cluster.
         * `cpu_per_unit` - (Optional, Default: `0`) Cpu units for compute.
         * `memory_per_unit` - (Optional, Default: `0`) RAM units for compute.
         * `num_of_units` - (Optional, Default: `0`) Amount of units for compute.
     * `autoscale_down` - (Optional) Enabling scale down.
         * `evaluation_periods` - (Optional, Default: `5`) Amount of cooldown evaluation periods for scale down.
+        * `max_scale_down_percentage` - (Optional) Represents the maximum percent to scale-down. Number between 1-100.
     * `autoscale_attributes` - (Optional) A key/value mapping of tags to assign to the resource.
 
 Usage:
@@ -545,6 +555,7 @@ Usage:
     cluster_name         = "ecs-cluster"
     autoscale_is_enabled = false
     autoscale_cooldown   = 300
+    autoscale_scale_down_non_service_tasks = false
     
     autoscale_headroom = {
       cpu_per_unit    = 1024
@@ -553,7 +564,8 @@ Usage:
     }
     
     autoscale_down = {
-      evaluation_periods = 300
+      evaluation_periods        = 300
+      max_scale_down_percentage = 70
     }
     
     autoscale_attributes = [{

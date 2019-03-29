@@ -122,7 +122,7 @@ func (res *GenericResource) GetName() string {
 }
 
 func ToJson(object interface{}) (string, error) {
-	if bytes, err := json.Marshal(object); err != nil {
+	if bytes, err := json.MarshalIndent(object, "", "  "); err != nil {
 		return "", err
 	} else {
 		return string(bytes), nil

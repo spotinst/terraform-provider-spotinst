@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -12,6 +13,41 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_elastigroup_beanstalk", &resource.Sweeper{
+		Name: "spotinst_elastigroup_beanstalk",
+		F:    testSweepElastigroupBeanstalk,
+	})
+}
+
+func testSweepElastigroupBeanstalk(region string) error {
+	client, err := getProviderClient("aws")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).elastigroup.CloudProviderAWS()
+
+	input := &aws.ListGroupsInput{}
+	if resp, err := conn.List(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of groups to sweep")
+	} else {
+		if len(resp.Groups) == 0 {
+			log.Printf("[INFO] No groups to sweep")
+		}
+		for _, group := range resp.Groups {
+			if strings.Contains(spotinst.StringValue(group.Name), "test-acc-") {
+				if _, err := conn.Delete(context.Background(), &aws.DeleteGroupInput{GroupID: group.ID}); err != nil {
+					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(group.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(group.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createElastigroupAWSBeanstalkResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.ElastigroupAWSBeanstalkResourceName), name)
@@ -109,7 +145,7 @@ func createElastigroupAWSBeanstalkTerraform(gcm *BeanstalkGroupConfigMetadata, u
 
 // region Beanstalk Elastigroup: Baseline
 func TestAccSpotinstElastigroupAWSBeanstalk_Baseline(t *testing.T) {
-	groupName := "beanstalk-baseline"
+	groupName := "test-acc-bs-baseline"
 	resourceName := createElastigroupAWSBeanstalkResourceName(groupName)
 
 	var group aws.Group
@@ -191,7 +227,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
 `
 
 func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
-	groupName := "beanstalk-baseline"
+	groupName := "test-acc-bs-baseline"
 	resourceName := createElastigroupAWSBeanstalkResourceName(groupName)
 
 	var group aws.Group

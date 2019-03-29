@@ -6,7 +6,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
 	"strings"
 )
 
@@ -114,7 +113,6 @@ func flattenAzureGroupNetwork(network *azure.Network) []interface{} {
 	result[string(AssignPublicIP)] = spotinst.BoolValue(network.AssignPublicIP)
 
 	if network.AdditionalIPConfigs != nil && len(network.AdditionalIPConfigs) > 0 {
-		log.Printf("ALEX DEBUG setting cfgs %v\n", len(network.AdditionalIPConfigs))
 		cfgs := make([]interface{}, 0, len(network.AdditionalIPConfigs))
 		for _, cfg := range network.AdditionalIPConfigs {
 			c := make(map[string]interface{})

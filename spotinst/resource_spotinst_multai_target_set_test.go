@@ -9,8 +9,43 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
+	"strings"
 	"testing"
 )
+
+func init() {
+	resource.AddTestSweepers("spotinst_multai_target_set", &resource.Sweeper{
+		Name: "spotinst_multai_target_set",
+		F:    testSweepMultaiTargetSet,
+	})
+}
+
+func testSweepMultaiTargetSet(region string) error {
+	client, err := getProviderClient("aws")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).multai
+	input := &multai.ListTargetSetsInput{}
+	if resp, err := conn.ListTargetSets(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of target sets to sweep")
+	} else {
+		if len(resp.TargetSets) == 0 {
+			log.Printf("[INFO] No target sets to sweep")
+		}
+		for _, set := range resp.TargetSets {
+			if strings.Contains(spotinst.StringValue(set.Name), "test-acc-") {
+				if _, err := conn.DeleteTargetSet(context.Background(), &multai.DeleteTargetSetInput{TargetSetID: set.ID}); err != nil {
+					return fmt.Errorf("unable to delete target set %v in sweep", spotinst.StringValue(set.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(set.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createMultaiTargetSetResourceName(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.MultaiTargetSetResourceName), name)
@@ -112,7 +147,7 @@ func createTargetSetTerraform(tscm *TargetSetConfigMetadata) string {
 }
 
 func TestAccSpotinstMultaiTargetSet_Baseline(t *testing.T) {
-	targetSetName := "target-set-baseline"
+	targetSetName := "test-acc-target-set-baseline"
 	resourceName := createMultaiTargetSetResourceName(targetSetName)
 
 	var targetSet multai.TargetSet
@@ -183,7 +218,7 @@ const (
 const testBaselineTargetSetConfig_Create = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
-  name = "foo"
+  name = "test-acc-foo"
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -217,7 +252,7 @@ resource "spotinst_multai_target_set" "%v" {
 const testBaselineTargetSetConfig_Update = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
-  name = "foo"
+  name = "test-acc-foo"
   connection_timeouts {
     idle     = 10
     draining = 10

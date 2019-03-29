@@ -1,5 +1,6 @@
 package elastigroup_gcp_launch_configuration
 
+import "C"
 import (
 	"bytes"
 	"crypto/sha1"
@@ -24,39 +25,46 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGCPLaunchConfiguration,
 		BackendServices,
 		&schema.Schema{
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:             schema.TypeSet,
+			Optional:         true,
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(ServiceName): {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:             schema.TypeString,
+						Required:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 
 					string(LocationType): {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:             schema.TypeString,
+						Optional:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 
 					string(Scheme): {
-						Type:     schema.TypeString,
-						Optional: true,
+						Type:             schema.TypeString,
+						Optional:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 
 					string(NamedPorts): {
-						Type:     schema.TypeSet,
-						Optional: true,
+						Type:             schema.TypeSet,
+						Optional:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Name): {
-									Type:     schema.TypeString,
-									Required: true,
+									Type:             schema.TypeString,
+									Required:         true,
+									DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 								},
 
 								string(Ports): {
-									Type:     schema.TypeList,
-									Required: true,
-									Elem:     &schema.Schema{Type: schema.TypeString},
+									Type:             schema.TypeList,
+									Required:         true,
+									DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+									Elem:             &schema.Schema{Type: schema.TypeString},
 								},
 							},
 						},
@@ -105,18 +113,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGCPLaunchConfiguration,
 		Labels,
 		&schema.Schema{
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:             schema.TypeSet,
+			Optional:         true,
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(LabelKey): {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:             schema.TypeString,
+						Required:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 
 					string(LabelValue): {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:             schema.TypeString,
+						Required:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 				},
 			},
@@ -171,18 +182,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSLaunchConfiguration,
 		Metadata,
 		&schema.Schema{
-			Type:     schema.TypeSet,
-			Optional: true,
+			Type:             schema.TypeSet,
+			Optional:         true,
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(MetadataKey): {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:             schema.TypeString,
+						Required:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 
 					string(MetadataValue): {
-						Type:     schema.TypeString,
-						Required: true,
+						Type:             schema.TypeString,
+						Required:         true,
+						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 				},
 			},
@@ -237,9 +251,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSLaunchConfiguration,
 		Tags,
 		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     &schema.Schema{Type: schema.TypeString},
+			Type:             schema.TypeList,
+			Optional:         true,
+			Elem:             &schema.Schema{Type: schema.TypeString},
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
@@ -298,7 +313,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					(old == "" && new == "da39a3ee5e6b4b0d3255bfef95601890afd80709") {
 					return true
 				}
-				return false
+				return commons.SuppressIfImportedFromGKE(k, old, new, d)
 			},
 			StateFunc: HexStateFunc,
 		},
@@ -347,8 +362,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSLaunchConfiguration,
 		ServiceAccount,
 		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:             schema.TypeString,
+			Optional:         true,
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
@@ -388,9 +404,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSLaunchConfiguration,
 		IPForwarding,
 		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  false,
+			Type:             schema.TypeBool,
+			Optional:         true,
+			Default:          false,
+			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
