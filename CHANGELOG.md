@@ -6,6 +6,11 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: `autoscale_scale_down_non_service_tasks` `to integration_ecs`
 * resource/spotinst_elastigroup_aws: added `scaling_strategy`
 
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: fixes handling of base64-encoded strings
+* resource/spotinst_elastigroup_azure: fixes handling of base64-encoded strings
+* resource/spotinst_elastigroup_gcp: fixes handling of base64-encoded strings
+
 NOTES:
 * added sweepers for acceptance tests. These can be run using the `-sweep` flag, and will destroy any resource with a name beginning with `test-acc-`
 * resource/spotinst_elastigroup_gke: Many fields have a diff suppress applied due to this resource's nature (most everything is imported). We will probably support importing and managing GKE clusters using Terraform Modules in the future.
