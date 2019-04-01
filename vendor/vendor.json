@@ -424,6 +424,12 @@
 			"revisionTime": "2015-06-09T07:04:31Z"
 		},
 		{
+			"checksumSHA1": "GndKRHbHXJwNF3MAnv4La2/ID1I=",
+			"path": "github.com/hashicorp/terraform",
+			"revision": "2a6ad820bb245586b6de58a0674e29b970fa5507",
+			"revisionTime": "2018-11-13T22:39:41Z"
+		},
+		{
 			"checksumSHA1": "S9zz39wHULAnQNVOpM7KNaqQjuc=",
 			"path": "github.com/hashicorp/terraform/config",
 			"revision": "8ba8fc79c106dee098c625f4c40cd53d73660a92",

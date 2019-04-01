@@ -1,6 +1,5 @@
 package elastigroup_gcp_launch_configuration
 
-import "C"
 import (
 	"bytes"
 	"crypto/sha1"
