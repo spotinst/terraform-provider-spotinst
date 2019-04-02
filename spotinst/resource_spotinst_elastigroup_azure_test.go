@@ -441,8 +441,8 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureExists(&group, resourceName),
 					testCheckElastigroupAzureAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.HexStateFunc("goodbye world")),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.Base64StateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.Base64StateFunc("goodbye world")),
 				),
 			},
 			{
@@ -453,8 +453,8 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureExists(&group, resourceName),
 					testCheckElastigroupAzureAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.HexStateFunc("goodbye world updated")),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.Base64StateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.Base64StateFunc("goodbye world updated")),
 				),
 			},
 			{
@@ -465,7 +465,7 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureExists(&group, resourceName),
 					testCheckElastigroupAzureAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.HexStateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.Base64StateFunc("hello world")),
 				),
 			},
 		},
