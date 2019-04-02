@@ -1,9 +1,7 @@
 package ocean_aws_launch_configuration
 
 import (
-	"crypto/sha1"
 	"encoding/base64"
-	"encoding/hex"
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
@@ -218,7 +216,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 				return false
 			},
-			StateFunc: HexStateFunc,
+			StateFunc: Base64StateFunc,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
@@ -238,7 +236,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 			}
-			if err := resourceData.Set(string(UserData), HexStateFunc(value)); err != nil {
+			if err := resourceData.Set(string(UserData), Base64StateFunc(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserData), err)
 			}
 			return nil
@@ -397,13 +395,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
 
-func HexStateFunc(v interface{}) string {
-	switch s := v.(type) {
-	case string:
-		hash := sha1.Sum([]byte(s))
-		return hex.EncodeToString(hash[:])
-	default:
-		return ""
+func Base64StateFunc(v interface{}) string {
+	if isBase64Encoded(v.(string)) {
+		return v.(string)
+	} else {
+		return base64Encode(v.(string))
 	}
 }
 

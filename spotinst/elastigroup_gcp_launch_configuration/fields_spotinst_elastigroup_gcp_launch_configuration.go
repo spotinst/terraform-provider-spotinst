@@ -2,9 +2,7 @@ package elastigroup_gcp_launch_configuration
 
 import (
 	"bytes"
-	"crypto/sha1"
 	"encoding/base64"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/hashicorp/terraform/helper/hashcode"
@@ -314,7 +312,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 				return commons.SuppressIfImportedFromGKE(k, old, new, d)
 			},
-			StateFunc: HexStateFunc,
+			StateFunc: Base64StateFunc,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
@@ -334,7 +332,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 			}
-			if err := resourceData.Set(string(StartupScript), HexStateFunc(value)); err != nil {
+			if err := resourceData.Set(string(StartupScript), Base64StateFunc(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(StartupScript), err)
 			}
 			return nil
@@ -459,13 +457,11 @@ func hashKV(v interface{}) int {
 	return hashcode.String(buf.String())
 }
 
-func HexStateFunc(v interface{}) string {
-	switch s := v.(type) {
-	case string:
-		hash := sha1.Sum([]byte(s))
-		return hex.EncodeToString(hash[:])
-	default:
-		return ""
+func Base64StateFunc(v interface{}) string {
+	if isBase64Encoded(v.(string)) {
+		return v.(string)
+	} else {
+		return base64Encode(v.(string))
 	}
 }
 
