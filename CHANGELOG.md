@@ -1,4 +1,4 @@
-## 1.10.0 (Unreleased)
+## 1.10.0 (April 03, 2019)
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_gke: Now supports all gcp fields. Added special handling due to parameter import, see notes. 
