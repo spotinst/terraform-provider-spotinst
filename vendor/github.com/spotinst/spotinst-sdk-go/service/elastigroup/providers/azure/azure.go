@@ -52,23 +52,7 @@ type Scheduling struct {
 }
 
 type Integration struct {
-	Rancher    *RancherIntegration    `json:"rancher,omitempty"`
-	Kubernetes *KubernetesIntegration `json:"kubernetes,omitempty"`
-	Multai     *MultaiIntegration     `json:"mlbRuntime,omitempty"`
-
-	forceSendFields []string
-	nullFields      []string
-}
-
-type KubernetesIntegration struct {
-	ClusterIdentifier *string `json:"clusterIdentifier,omitempty"`
-
-	forceSendFields []string
-	nullFields      []string
-}
-
-type MultaiIntegration struct {
-	DeploymentID *string `json:"deploymentId,omitempty"`
+	Rancher *RancherIntegration `json:"rancher,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -268,19 +252,10 @@ type Storage struct {
 }
 
 type Network struct {
-	VirtualNetworkName  *string                `json:"virtualNetworkName,omitempty"`
-	SubnetName          *string                `json:"subnetName,omitempty"`
-	ResourceGroupName   *string                `json:"resourceGroupName,omitempty"`
-	AssignPublicIP      *bool                  `json:"assignPublicIp,omitempty"`
-	AdditionalIPConfigs []*AdditionalIPConfigs `json:"additionalIpConfigurations,omitempty"`
-
-	forceSendFields []string
-	nullFields      []string
-}
-
-type AdditionalIPConfigs struct {
-	Name                    *string `json:"name,omitempty"`
-	PrivateIPAddressVersion *string `json:"privateIpAddressVersion,omitempty"`
+	VirtualNetworkName *string `json:"virtualNetworkName,omitempty"`
+	SubnetName         *string `json:"subnetName,omitempty"`
+	ResourceGroupName  *string `json:"resourceGroupName,omitempty"`
+	AssignPublicIP     *bool   `json:"assignPublicIp,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1296,57 +1271,9 @@ func (o *Integration) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *Integration) SetKubernetes(v *KubernetesIntegration) *Integration {
-	if o.Kubernetes = v; o.Kubernetes == nil {
-		o.nullFields = append(o.nullFields, "Kubernetes")
-	}
-	return o
-}
-
-func (o *Integration) SetMultai(v *MultaiIntegration) *Integration {
-	if o.Multai = v; o.Multai == nil {
-		o.nullFields = append(o.nullFields, "Multai")
-	}
-	return o
-}
-
 func (o *Integration) SetRancher(v *RancherIntegration) *Integration {
 	if o.Rancher = v; o.Rancher == nil {
 		o.nullFields = append(o.nullFields, "Rancher")
-	}
-	return o
-}
-
-// endregion
-
-// region KubernetesIntegration
-
-func (o *KubernetesIntegration) MarshalJSON() ([]byte, error) {
-	type noMethod KubernetesIntegration
-	raw := noMethod(*o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
-func (o *KubernetesIntegration) SetClusterIdentifier(v *string) *KubernetesIntegration {
-	if o.ClusterIdentifier = v; o.ClusterIdentifier == nil {
-		o.nullFields = append(o.nullFields, "ClusterIdentifier")
-	}
-	return o
-}
-
-// endregion
-
-// region MultaiIntegration
-
-func (o *MultaiIntegration) MarshalJSON() ([]byte, error) {
-	type noMethod MultaiIntegration
-	raw := noMethod(*o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
-func (o *MultaiIntegration) SetDeploymentId(v *string) *MultaiIntegration {
-	if o.DeploymentID = v; o.DeploymentID == nil {
-		o.nullFields = append(o.nullFields, "DeploymentID")
 	}
 	return o
 }
@@ -2133,14 +2060,6 @@ func (o *Network) SetAssignPublicIP(v *bool) *Network {
 	return o
 }
 
-// SetAdditionalIPConfigs sets the additional IP configurations
-func (o *Network) SetAdditionalIPConfigs(v []*AdditionalIPConfigs) *Network {
-	if o.AdditionalIPConfigs = v; o.AdditionalIPConfigs == nil {
-		o.nullFields = append(o.nullFields, "AdditionalIPConfigs")
-	}
-	return o
-}
-
 // endregion
 
 // region Login
@@ -2168,32 +2087,6 @@ func (o *Login) SetSSHPublicKey(v *string) *Login {
 func (o *Login) SetPassword(v *string) *Login {
 	if o.Password = v; o.Password == nil {
 		o.nullFields = append(o.nullFields, "Password")
-	}
-	return o
-}
-
-// endregion
-
-// region AdditionalIPConfigs
-
-func (o *AdditionalIPConfigs) MarshalJSON() ([]byte, error) {
-	type noMethod AdditionalIPConfigs
-	raw := noMethod(*o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
-// SetName sets the name
-func (o *AdditionalIPConfigs) SetName(v *string) *AdditionalIPConfigs {
-	if o.Name = v; o.Name == nil {
-		o.nullFields = append(o.nullFields, "Name")
-	}
-	return o
-}
-
-// SetPrivateIPAddressVersion sets the ip address version
-func (o *AdditionalIPConfigs) SetPrivateIPAddressVersion(v *string) *AdditionalIPConfigs {
-	if o.PrivateIPAddressVersion = v; o.PrivateIPAddressVersion == nil {
-		o.nullFields = append(o.nullFields, "PrivateIPAddressVersion")
 	}
 	return o
 }
