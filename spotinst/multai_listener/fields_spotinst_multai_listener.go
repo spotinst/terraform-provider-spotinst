@@ -124,13 +124,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(CertificateIDs): &schema.Schema{
+					string(CertificateIDs): {
 						Type:     schema.TypeList,
 						Required: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 
-					string(MinVersion): &schema.Schema{
+					string(MinVersion): {
 						Type:     schema.TypeString,
 						Required: true,
 						StateFunc: func(v interface{}) string {
@@ -139,7 +139,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(MaxVersion): &schema.Schema{
+					string(MaxVersion): {
 						Type:     schema.TypeString,
 						Required: true,
 						StateFunc: func(v interface{}) string {
@@ -148,17 +148,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(SessionTicketsDisabled): &schema.Schema{
+					string(SessionTicketsDisabled): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
 
-					string(PreferServerCipherSuites): &schema.Schema{
+					string(PreferServerCipherSuites): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
 
-					string(CipherSuites): &schema.Schema{
+					string(CipherSuites): {
 						Type:     schema.TypeList,
 						Required: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
@@ -214,12 +214,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(TagKey): &schema.Schema{
+					string(TagKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(TagValue): &schema.Schema{
+					string(TagValue): {
 						Type:     schema.TypeString,
 						Required: true,
 					},

@@ -271,13 +271,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Region): &schema.Schema{
+					string(Region): {
 						Type:             schema.TypeString,
 						Required:         true,
 						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 					},
 
-					string(SubnetNames): &schema.Schema{
+					string(SubnetNames): {
 						Type:             schema.TypeList,
 						Required:         true,
 						Elem:             &schema.Schema{Type: schema.TypeString},
