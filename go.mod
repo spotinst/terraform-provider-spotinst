@@ -1,44 +1,17 @@
 module github.com/terraform-providers/terraform-provider-spotinst
 
 require (
-	github.com/apparentlymart/go-cidr v0.0.0-20170418151526-7e4b007599d4 // indirect
 	github.com/armon/go-radix v0.0.0-20170727155443-1fca145dffbc // indirect
-	github.com/aws/aws-sdk-go v1.8.34 // indirect
-	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/fsouza/go-dockerclient v0.0.0-20160427172547-1d4f4ae73768
-	github.com/go-ini/ini v1.23.1 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
-	github.com/golang/protobuf v0.0.0-20180616230025-9f81198da99b // indirect
-	github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce // indirect
-	github.com/hashicorp/go-cleanhttp v0.0.0-20170211013415-3573b8b52aa7 // indirect
-	github.com/hashicorp/go-getter v0.0.0-20171007181130-2f449c791e6a // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20171005151751-ca137eb4b438 // indirect
-	github.com/hashicorp/go-multierror v0.0.0-20150916205742-d30f09973e19 // indirect
-	github.com/hashicorp/go-plugin v0.0.0-20170828024549-3e6d191694b5 // indirect
-	github.com/hashicorp/go-uuid v0.0.0-20160120003506-36289988d83c // indirect
-	github.com/hashicorp/go-version v0.0.0-20161031182605-e96d38404026 // indirect
-	github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f // indirect
-	github.com/hashicorp/hil v0.0.0-20170512213305-fac2259da677 // indirect
-	github.com/hashicorp/logutils v0.0.0-20150609070431-0dc08b1671f3 // indirect
-	github.com/hashicorp/terraform v0.10.7
-	github.com/hashicorp/yamux v0.0.0-20160720233140-d1caa6c97c9f // indirect
-	github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7 // indirect
+	github.com/hashicorp/terraform v0.11.14-0.20190329073242-44702fa6c163
 	github.com/mattn/go-isatty v0.0.0-20170925054904-a5cdd64afdee // indirect
-	github.com/mitchellh/cli v0.0.0-20170908181043-65fcae5817c8 // indirect
-	github.com/mitchellh/copystructure v0.0.0-20161013195342-5af94aef99f5 // indirect
-	github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747 // indirect
 	github.com/mitchellh/go-testing-interface v0.0.0-20171004221916-a61a99592b77 // indirect
-	github.com/mitchellh/hashstructure v0.0.0-20160209213820-6b17d669fac5 // indirect
-	github.com/mitchellh/mapstructure v0.0.0-20170307201123-53818660ed49 // indirect
-	github.com/mitchellh/reflectwalk v0.0.0-20161003174516-92573fe8d000 // indirect
-	github.com/posener/complete v0.0.0-20170908125245-88e59760adad // indirect
-	github.com/satori/go.uuid v0.0.0-20160927100844-b061729afc07 // indirect
-	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect
 	github.com/spotinst/spotinst-sdk-go v0.0.0-20190226223323-0e3fe42bc0c9
-	github.com/ulikunitz/xz v0.5.4 // indirect
+	golang.org/x/net v0.0.0-20190311183353-d8887717615a // indirect
 	golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6 // indirect
-	google.golang.org/genproto v0.0.0-20171002232614-f676e0f3ac63 // indirect
 	google.golang.org/grpc v0.0.0-20180620191901-b519e3d28d37 // indirect
 )
