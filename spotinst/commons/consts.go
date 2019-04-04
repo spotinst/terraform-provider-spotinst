@@ -25,6 +25,8 @@ const (
 	OceanAWSStrategy            ResourceAffinity = "Ocean_AWS_Strategy"
 	OceanAWSLaunchConfiguration ResourceAffinity = "Ocean_AWS_Launch_Configuration"
 
+	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
+
 	ElastigroupAWS                    ResourceAffinity = "Elastigroup_AWS"
 	ElastigroupAWSInstanceType        ResourceAffinity = "Elastigroup_AWS_Instance_Type"
 	ElastigroupAWSStrategy            ResourceAffinity = "Elastigroup_AWS_Strategy"

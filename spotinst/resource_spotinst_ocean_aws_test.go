@@ -111,20 +111,19 @@ type ClusterConfigMetadata struct {
 	updateBaselineFields bool
 }
 
-func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
-	if gcm == nil {
+func createOceanAWSTerraform(ccm *ClusterConfigMetadata) string {
+	if ccm == nil {
 		return ""
 	}
 
-	if gcm.provider == "" {
-		gcm.provider = "aws"
+	if ccm.provider == "" {
+		ccm.provider = "aws"
 	}
 
-	if gcm.launchConfig == "" {
-		gcm.launchConfig = testLaunchConfigAWSConfig_Create
+	if ccm.launchConfig == "" {
+		ccm.launchConfig = testLaunchConfigAWSConfig_Create
 	}
 
-	//template := ""
 	template :=
 		`provider "aws" {
 	 token   = "fake"
@@ -132,37 +131,37 @@ func createOceanAWSTerraform(gcm *ClusterConfigMetadata) string {
 	}
 	`
 
-	if gcm.updateBaselineFields {
+	if ccm.updateBaselineFields {
 		format := testBaselineAWSConfig_Update
 		template += fmt.Sprintf(format,
-			gcm.clusterName,
-			gcm.provider,
-			gcm.clusterName,
-			gcm.controllerClusterID,
-			gcm.instanceWhitelist,
-			gcm.launchConfig,
-			gcm.strategy,
-			gcm.fieldsToAppend,
+			ccm.clusterName,
+			ccm.provider,
+			ccm.clusterName,
+			ccm.controllerClusterID,
+			ccm.instanceWhitelist,
+			ccm.launchConfig,
+			ccm.strategy,
+			ccm.fieldsToAppend,
 		)
 	} else {
 		format := testBaselineAWSConfig_Create
 		template += fmt.Sprintf(format,
-			gcm.clusterName,
-			gcm.provider,
-			gcm.clusterName,
-			gcm.controllerClusterID,
-			gcm.instanceWhitelist,
-			gcm.launchConfig,
-			gcm.strategy,
-			gcm.fieldsToAppend,
+			ccm.clusterName,
+			ccm.provider,
+			ccm.clusterName,
+			ccm.controllerClusterID,
+			ccm.instanceWhitelist,
+			ccm.launchConfig,
+			ccm.strategy,
+			ccm.fieldsToAppend,
 		)
 	}
 
-	if gcm.variables != "" {
-		template = gcm.variables + "\n" + template
+	if ccm.variables != "" {
+		template = ccm.variables + "\n" + template
 	}
 
-	log.Printf("Terraform [%v] template:\n%v", gcm.clusterName, template)
+	log.Printf("Terraform [%v] template:\n%v", ccm.clusterName, template)
 	return template
 }
 
@@ -355,13 +354,12 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.key", "fakeKey"),
 					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.value", "fakeValue"),
-
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/8db573b63a46bfb2"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
-
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 				),
 			},
 			{
@@ -384,13 +382,12 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.key", "fakeKeyUpdated"),
 					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.value", "fakeValueUpdated"),
-
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/1234567890"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
-
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "24"),
 				),
 			},
 			{
@@ -421,6 +418,7 @@ const testLaunchConfigAWSConfig_Create = `
   user_data            = "echo hello world"
   //iam_instance_profile = "iam-profile"
   associate_public_ip_address = false
+  root_volume_size = 20
   load_balancers = [
     {
       arn = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/8db573b63a46bfb2"
@@ -447,6 +445,7 @@ const testLaunchConfigAWSConfig_Update = `
   user_data            = "echo hello world updated"
   //iam_instance_profile = "iam-profile updated"
   associate_public_ip_address = true
+  root_volume_size = 24
   load_balancers = [
     {
       arn = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/1234567890"

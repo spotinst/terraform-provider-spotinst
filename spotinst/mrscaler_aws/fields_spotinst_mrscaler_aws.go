@@ -887,6 +887,59 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[InstanceWeights] = commons.NewGenericField(
+		commons.MRScalerAWS,
+		InstanceWeights,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(InstanceType): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(WeightedCapacity): {
+						Type:     schema.TypeInt,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
+			scaler := mrsWrapper.GetMRScalerAWS()
+			if v, ok := resourceData.GetOk(string(InstanceWeights)); ok {
+				if apps, err := expandInstanceWeights(v); err != nil {
+					return err
+				} else {
+					scaler.Compute.SetInstanceWeights(apps)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
+			scaler := mrsWrapper.GetMRScalerAWS()
+			values := []*mrscaler.InstanceWeight{}
+			if v, ok := resourceData.GetOk(string(InstanceWeights)); ok {
+				if weights, err := expandInstanceWeights(v); err != nil {
+					return err
+				} else {
+					values = weights
+				}
+			}
+			scaler.Compute.SetInstanceWeights(values)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -993,6 +1046,27 @@ func expandApplications(data interface{}) ([]*mrscaler.Application, error) {
 	}
 
 	return apps, nil
+}
+
+func expandInstanceWeights(data interface{}) ([]*mrscaler.InstanceWeight, error) {
+	list := data.(*schema.Set).List()
+	weights := make([]*mrscaler.InstanceWeight, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		weight := &mrscaler.InstanceWeight{}
+
+		if v, ok := m[string(InstanceType)].(string); ok && v != "" {
+			weight.SetInstanceType(spotinst.String(v))
+		}
+
+		if v, ok := m[string(WeightedCapacity)].(int); ok {
+			weight.SetWeightedCapacity(spotinst.Int(v))
+		}
+
+		weights = append(weights, weight)
+	}
+
+	return weights, nil
 }
 
 func flattenS3File(file *mrscaler.S3File) []interface{} {

@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -124,6 +125,59 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ManagedServiceIdentities] = commons.NewGenericField(
+		commons.ElastigroupAzureLaunchConfiguration,
+		ManagedServiceIdentities,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ResourceGroupName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(Name): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(ManagedServiceIdentities)); ok {
+				if msi, err := expandAzureGroupManagedServiceIdentities(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetManagedServiceIdentities(msi)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []*azure.ManagedServiceIdentity = nil
+			if v, ok := resourceData.GetOk(string(ManagedServiceIdentities)); ok {
+				if msi, err := expandAzureGroupManagedServiceIdentities(v); err != nil {
+					return err
+				} else {
+					value = msi
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetManagedServiceIdentities(value)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -153,4 +207,25 @@ func base64Encode(data string) string {
 func isBase64Encoded(data string) bool {
 	_, err := base64.StdEncoding.DecodeString(data)
 	return err == nil
+}
+
+func expandAzureGroupManagedServiceIdentities(data interface{}) ([]*azure.ManagedServiceIdentity, error) {
+	list := data.(*schema.Set).List()
+	services := make([]*azure.ManagedServiceIdentity, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		msi := &azure.ManagedServiceIdentity{}
+
+		if v, ok := m[string(ResourceGroupName)].(string); ok {
+			msi.SetResourceGroupName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Name)].(string); ok && v != "" {
+			msi.SetName(spotinst.String(v))
+		}
+
+		services = append(services, msi)
+	}
+
+	return services, nil
 }

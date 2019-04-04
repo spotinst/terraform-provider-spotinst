@@ -13,4 +13,5 @@ const (
 	Arn                      commons.FieldName = "arn"
 	Name                     commons.FieldName = "name"
 	Type                     commons.FieldName = "type"
+	RootVolumeSize           commons.FieldName = "root_volume_size"
 )

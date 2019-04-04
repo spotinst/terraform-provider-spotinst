@@ -1,4 +1,19 @@
 ## 1.11.0 (Unreleased)
+
+ENHANCEMENTS:
+* new resource: ocean_aws_launch_spec
+* resource/spotinst_elastigroup_azure: added `managed_service_identities`
+* resource/elastigroup_gcp: added `shutdown_script`
+* resource/elastigroup_gcp: added healthcheck fields
+* resource/mrscaler: added `instance_weights`
+* resource/ocean_aws: added `root_volume_size` to launch configuration
+
+NOTES: 
+* migrated to go modules
+* added missing docs, example for multai_listener
+* resource/multai_listener: added missing tls_config docs
+* resource/elastigroup_gcp: fixed typos, examples in docs
+
 ## 1.10.0 (April 03, 2019)
 
 ENHANCEMENTS:

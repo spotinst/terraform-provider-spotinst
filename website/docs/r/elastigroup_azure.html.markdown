@@ -21,6 +21,11 @@ resource "elastigroup_azure" "test_azure_group" {
 
   user_data       = ""
   shutdown_script = ""
+  
+  managed_service_identities = {
+    resource_group_name = "spotinst-azure"
+    name = "example-identity"
+  }
 
   // --- CAPACITY ------------------------------------------------------
   min_size         = 0
@@ -169,6 +174,9 @@ The following arguments are supported:
 
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `shutdown_script` - (Optional) Shutdown script for the group. Value should be passed as a string encoded at Base64 only.
+* `managed_service_identity` - (Optional) Add a user-assigned managed identity to the VMs in the cluster.
+    * `resource_group_name` - (Required) The Resource Group that the user-assigned managed identity resides in.
+    * `name` - (Required) The name of the managed identity.
 
 * `strategy` - (Required) Describes the deployment strategy.
 * `low_priority_percentage` - (Optional, Default `100`) Percentage of Low Priority instances to maintain. Required if `od_count` is not specified.
