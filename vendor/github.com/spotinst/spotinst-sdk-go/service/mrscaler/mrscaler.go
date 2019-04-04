@@ -3,13 +3,12 @@ package mrscaler
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
-
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/uritemplates"
+	"io/ioutil"
+	"net/http"
 )
 
 // A InstanceGroupType represents the type of an instance group.

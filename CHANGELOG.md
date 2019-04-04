@@ -1,4 +1,6 @@
 ## 1.11.0 (Unreleased)
+NOTES: migrated to go modules
+
 ## 1.10.0 (April 03, 2019)
 
 ENHANCEMENTS:
