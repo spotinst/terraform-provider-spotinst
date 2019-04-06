@@ -252,7 +252,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Protocol): &schema.Schema{
+					string(Protocol): {
 						Type:     schema.TypeString,
 						Required: true,
 						StateFunc: func(v interface{}) string {
@@ -261,33 +261,33 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(Path): &schema.Schema{
+					string(Path): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(Port): &schema.Schema{
+					string(Port): {
 						Type:     schema.TypeInt,
 						Optional: true,
 						Computed: true,
 					},
 
-					string(Interval): &schema.Schema{
+					string(Interval): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},
 
-					string(Timeout): &schema.Schema{
+					string(Timeout): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},
 
-					string(HealthyThreshold): &schema.Schema{
+					string(HealthyThreshold): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},
 
-					string(UnhealthyThreshold): &schema.Schema{
+					string(UnhealthyThreshold): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},
@@ -342,12 +342,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(TagKey): &schema.Schema{
+					string(TagKey): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(TagValue): &schema.Schema{
+					string(TagValue): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
