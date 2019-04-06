@@ -19,13 +19,17 @@ type Group struct {
 	Name              *string      `json:"name,omitempty"`
 	ResourceGroupName *string      `json:"resourceGroupName,omitempty"`
 	Description       *string      `json:"description,omitempty"`
+	Region            *string      `json:"region,omitempty"`
 	Capacity          *Capacity    `json:"capacity,omitempty"`
 	Compute           *Compute     `json:"compute,omitempty"`
 	Strategy          *Strategy    `json:"strategy,omitempty"`
 	Scaling           *Scaling     `json:"scaling,omitempty"`
 	Scheduling        *Scheduling  `json:"scheduling,omitempty"`
 	Integration       *Integration `json:"thirdPartiesIntegration,omitempty"`
-	Region            *string      `json:"region,omitempty"`
+
+	// Read-only fields.
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -205,6 +209,7 @@ type LaunchSpecification struct {
 	Storage             *Storage             `json:"storage,omitempty"`
 	Network             *Network             `json:"network,omitempty"`
 	Login               *Login               `json:"login,omitempty"`
+	CustomData          *string              `json:"customData,omitempty""`
 
 	forceSendFields []string
 	nullFields      []string
@@ -810,7 +815,7 @@ func (s *ServiceOp) Update(ctx context.Context, input *UpdateGroupInput) (*Updat
 		return nil, err
 	}
 
-	// We do not need the ID anymore so let's drop it.
+	// We do NOT need the ID anymore, so let's drop it.
 	input.Group.ID = nil
 
 	r := client.NewRequest(http.MethodPut, path)
@@ -1891,6 +1896,13 @@ func (o *LaunchSpecification) SetUserData(v *string) *LaunchSpecification {
 	return o
 }
 
+func (o *LaunchSpecification) SetCustomData(v *string) *LaunchSpecification {
+	if o.CustomData = v; o.CustomData == nil {
+		o.nullFields = append(o.nullFields, "CustomData")
+	}
+	return o
+}
+
 // SetShutdownScript sets the shutdown script used when draining instances
 func (o *LaunchSpecification) SetShutdownScript(v *string) *LaunchSpecification {
 	if o.ShutdownScript = v; o.ShutdownScript == nil {
@@ -2287,20 +2299,6 @@ func (o *RollStatus) SetRollID(v *string) *RollStatus {
 func (o *RollStatus) SetStatus(v *string) *RollStatus {
 	if o.Status = v; o.Status == nil {
 		o.nullFields = append(o.nullFields, "Status")
-	}
-	return o
-}
-
-func (o *RollStatus) SetCreatedAt(v *string) *RollStatus {
-	if o.CreatedAt = v; o.CreatedAt == nil {
-		o.nullFields = append(o.nullFields, "CreatedAt")
-	}
-	return o
-}
-
-func (o *RollStatus) SetUpdatedAt(v *string) *RollStatus {
-	if o.UpdatedAt = v; o.UpdatedAt == nil {
-		o.nullFields = append(o.nullFields, "UpdatedAt")
 	}
 	return o
 }
