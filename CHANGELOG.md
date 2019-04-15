@@ -3,7 +3,6 @@
 ENHANCEMENTS:
 * new resource: ocean_aws_launch_spec
 * resource/elastigroup_azure: added `managed_service_identities`
-* resource/elastigroup_azure: added `custom_data`
 * resource/elastigroup_gcp: added `shutdown_script`
 * resource/elastigroup_gcp: added healthcheck fields
 * resource/mrscaler: added `instance_weights`
