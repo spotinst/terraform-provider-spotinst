@@ -24,7 +24,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *string = nil
 			if cluster.Name != nil {
@@ -36,13 +36,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
@@ -58,7 +58,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *string = nil
 			if cluster.ControllerClusterID != nil {
@@ -70,13 +70,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetControllerClusterId(spotinst.String(resourceData.Get(string(ControllerClusterID)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetControllerClusterId(spotinst.String(resourceData.Get(string(ControllerClusterID)).(string)))
 			return nil
@@ -92,7 +92,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *string = nil
 			if cluster.Region != nil {
@@ -104,7 +104,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Region)); ok {
 				cluster.SetRegion(spotinst.String(v.(string)))
@@ -112,7 +112,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Region)); ok {
 				cluster.SetRegion(spotinst.String(v.(string)))
@@ -131,7 +131,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *int = nil
 			if cluster.Capacity != nil && cluster.Capacity.Maximum != nil {
@@ -143,20 +143,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(MaxSize)); ok && v != nil {
-				cluster.Capacity.SetMaximum(spotinst.Int(v.(int)))
+			if v, ok := resourceData.Get(string(MaxSize)).(int); ok && v >= 0 {
+				cluster.Capacity.SetMaximum(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(MaxSize)); ok && v != nil {
-				cluster.Capacity.SetMaximum(spotinst.Int(v.(int)))
+			if v, ok := resourceData.Get(string(MaxSize)).(int); ok && v >= 0 {
+				cluster.Capacity.SetMaximum(spotinst.Int(v))
 			}
-
 			return nil
 		},
 		nil,
@@ -171,7 +170,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *int = nil
 			if cluster.Capacity != nil && cluster.Capacity.Minimum != nil {
@@ -183,18 +182,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(MinSize)); ok && v != nil {
-				cluster.Capacity.SetMinimum(spotinst.Int(v.(int)))
+			if v, ok := resourceData.Get(string(MinSize)).(int); ok && v >= 0 {
+				cluster.Capacity.SetMinimum(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(MinSize)); ok && v != nil {
-				cluster.Capacity.SetMinimum(spotinst.Int(v.(int)))
+			if v, ok := resourceData.Get(string(MinSize)).(int); ok && v >= 0 {
+				cluster.Capacity.SetMinimum(spotinst.Int(v))
 			}
 			return nil
 		},
@@ -210,7 +209,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *int = nil
 			if cluster.Capacity != nil && cluster.Capacity.Target != nil {
@@ -222,18 +221,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(DesiredCapacity)); ok && v != nil {
-				cluster.Capacity.SetTarget(spotinst.Int(v.(int)))
+			if v, ok := resourceData.Get(string(DesiredCapacity)).(int); ok && v >= 0 {
+				cluster.Capacity.SetTarget(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(DesiredCapacity)); ok && v != nil {
-				cluster.Capacity.SetTarget(spotinst.Int(v.(int)))
+			if v, ok := resourceData.Get(string(DesiredCapacity)).(int); ok && v >= 0 {
+				cluster.Capacity.SetTarget(spotinst.Int(v))
 			}
 			return nil
 		},
@@ -249,7 +248,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value []string = nil
 			if cluster.Compute != nil && cluster.Compute.SubnetIDs != nil {
@@ -261,7 +260,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
@@ -273,7 +272,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
@@ -309,7 +308,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var result []interface{} = nil
 			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
@@ -325,7 +324,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if value, ok := resourceData.GetOk(string(Tags)); ok {
 				if tags, err := expandTags(value); err != nil {
@@ -337,7 +336,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var tagsToAdd []*aws.Tag = nil
 			if value, ok := resourceData.GetOk(string(Tags)); ok {

@@ -1,8 +1,8 @@
-package ocean_aws_auto_scaling
+package ocean_gke_auto_scaling
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -12,7 +12,7 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Autoscaler] = commons.NewGenericField(
-		commons.OceanAWSAutoScaling,
+		commons.OceanGKEAutoScaling,
 		Autoscaler,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -105,7 +105,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Autoscaler)); ok {
 				if autoscaler, err := expandAutoscaler(v, false); err != nil {
@@ -118,9 +118,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var value *aws.AutoScaler = nil
+			var value *gcp.AutoScaler = nil
 
 			if v, ok := resourceData.GetOk(string(Autoscaler)); ok {
 				if autoscaler, err := expandAutoscaler(v, true); err != nil {
@@ -140,8 +140,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
-	autoscaler := &aws.AutoScaler{}
+func expandAutoscaler(data interface{}, nullify bool) (*gcp.AutoScaler, error) {
+	autoscaler := &gcp.AutoScaler{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
 		return autoscaler, nil
@@ -153,7 +153,7 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 	}
 
 	if v, ok := m[string(AutoscaleDown)]; ok {
-		down, err := expandOceanAWSAutoScalerDown(v)
+		down, err := expandOceanGKEAutoScalerDown(v)
 		if err != nil {
 			return nil, err
 		}
@@ -163,7 +163,7 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 	}
 
 	if v, ok := m[string(AutoscaleHeadroom)]; ok {
-		headroom, err := expandOceanAWSAutoScalerHeadroom(v)
+		headroom, err := expandOceanGKEAutoScalerHeadroom(v)
 		if err != nil {
 			return nil, err
 		}
@@ -183,7 +183,7 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 	}
 
 	if v, ok := m[string(ResourceLimits)]; ok {
-		resLimits, err := expandOceanAWSAutoScalerResourceLimits(v)
+		resLimits, err := expandOceanGKEAutoScalerResourceLimits(v)
 		if err != nil {
 			return nil, err
 		}
@@ -197,9 +197,9 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 	return autoscaler, nil
 }
 
-func expandOceanAWSAutoScalerHeadroom(data interface{}) (*aws.AutoScalerHeadroom, error) {
+func expandOceanGKEAutoScalerHeadroom(data interface{}) (*gcp.AutoScalerHeadroom, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		headroom := &aws.AutoScalerHeadroom{}
+		headroom := &gcp.AutoScalerHeadroom{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
@@ -225,9 +225,9 @@ func expandOceanAWSAutoScalerHeadroom(data interface{}) (*aws.AutoScalerHeadroom
 	return nil, nil
 }
 
-func expandOceanAWSAutoScalerResourceLimits(data interface{}) (*aws.AutoScalerResourceLimits, error) {
+func expandOceanGKEAutoScalerResourceLimits(data interface{}) (*gcp.AutoScalerResourceLimits, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		resLimits := &aws.AutoScalerResourceLimits{}
+		resLimits := &gcp.AutoScalerResourceLimits{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
@@ -246,9 +246,9 @@ func expandOceanAWSAutoScalerResourceLimits(data interface{}) (*aws.AutoScalerRe
 	return nil, nil
 }
 
-func expandOceanAWSAutoScalerDown(data interface{}) (*aws.AutoScalerDown, error) {
+func expandOceanGKEAutoScalerDown(data interface{}) (*gcp.AutoScalerDown, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		autoScaleDown := &aws.AutoScalerDown{}
+		autoScaleDown := &gcp.AutoScalerDown{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 

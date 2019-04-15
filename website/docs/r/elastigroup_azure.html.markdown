@@ -175,7 +175,6 @@ The following arguments are supported:
 
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `shutdown_script` - (Optional) Shutdown script for the group. Value should be passed as a string encoded at Base64 only.
-* `custom_data` - (Optional) 
 * `managed_service_identity` - (Optional) Add a user-assigned managed identity to the VMs in the cluster.
     * `resource_group_name` - (Required) The Resource Group that the user-assigned managed identity resides in.
     * `name` - (Required) The name of the managed identity.
