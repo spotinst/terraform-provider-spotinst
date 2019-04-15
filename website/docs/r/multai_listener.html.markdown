@@ -20,9 +20,12 @@ resource "multai_listener" "my_listener" {
   port        = 1337
 
   tls_config = {
-    min_version = "1.0"
-    max_version = ""
-
+    certificate_ids             = ["ce-12345"]
+    min_version                 = "TLS10"
+    max_version                 = "TLS12"
+    cipher_suites               = [""]
+    prefer_server_cipher_suites = true
+    session_tickets_disabled    = false
   }
 
   tags = [{
@@ -41,10 +44,13 @@ The following arguments are supported:
 * `port` - (Required) The port on which the load balancer is listening.
 
 * `tls_config` - (Optional) Describes the TLSConfig configuration.
-* `min_version` - (Required) MinVersion contains the minimum SSL/TLS version that is acceptable (1.0 is the minimum)
-* `max_version` - (Required) MaxVersion contains the maximum SSL/TLS version that is acceptable.
-*
+    * `min_version` - (Required) MinVersion contains the minimum SSL/TLS version that is acceptable (1.0 is the minimum).
+    * `max_version` - (Required) MaxVersion contains the maximum SSL/TLS version that is acceptable.
+    * `certificate_ids` - (Optional) Contains one or more certificate chains to present to the other side of the connection.
+    * `cipher_suites` - (Optional) List of supported cipher suites. If cipherSuites is nil, TLS uses a list of suites supported by the implementation.
+    * `prefer_server_cipher_suites` - (Optional) Controls whether the server selects the client’s most preferred ciphersuite, or the server’s most preferred ciphersuite.
+    * `session_tickets_disabled` - (Optional) May be set to true to disable session ticket (resumption) support.
 
 * `tags` - (Optional) A list of key:value paired tags.
-* `key` - (Required) The tag's key.
-* `value` - (Required) The tag's value.
+    * `key` - (Required) The tag's key.
+    * `value` - (Required) The tag's value.

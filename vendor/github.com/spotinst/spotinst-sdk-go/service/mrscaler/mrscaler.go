@@ -128,6 +128,7 @@ type Compute struct {
 	Applications                    []*Application      `json:"applications,omitempty"`
 	BootstrapActions                *BootstrapActions   `json:"bootstrapActions,omitempty"`
 	Steps                           *Steps              `json:"steps,omitempty"`
+	InstanceWeights                 []*InstanceWeight   `json:"instanceWeights,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -167,6 +168,14 @@ type Application struct {
 	Args    []string `json:"args,omitempty"`
 	Name    *string  `json:"name,omitempty"`
 	Version *string  `json:"version,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type InstanceWeight struct {
+	InstanceType     *string `json:"instanceType,omitempty"`
+	WeightedCapacity *int    `json:"weightedCapacity,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -934,6 +943,14 @@ func (o *Compute) SetApplications(v []*Application) *Compute {
 	return o
 }
 
+// SetInstanceWeights sets a list if instance weights by type
+func (o *Compute) SetInstanceWeights(v []*InstanceWeight) *Compute {
+	if o.InstanceWeights = v; o.InstanceWeights == nil {
+		o.nullFields = append(o.nullFields, "InstanceWeights")
+	}
+	return o
+}
+
 //endregion
 
 // region Application
@@ -964,6 +981,30 @@ func (o *Application) SetName(v *string) *Application {
 func (o *Application) SetVersion(v *string) *Application {
 	if o.Version = v; o.Version == nil {
 		o.nullFields = append(o.nullFields, "Version")
+	}
+	return o
+}
+
+// endregion
+
+// region InstanceWeight
+
+func (o *InstanceWeight) MarshalJSON() ([]byte, error) {
+	type noMethod InstanceWeight
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *InstanceWeight) SetInstanceType(v *string) *InstanceWeight {
+	if o.InstanceType = v; o.InstanceType == nil {
+		o.nullFields = append(o.nullFields, "InstanceType")
+	}
+	return o
+}
+
+func (o *InstanceWeight) SetWeightedCapacity(v *int) *InstanceWeight {
+	if o.WeightedCapacity = v; o.WeightedCapacity == nil {
+		o.nullFields = append(o.nullFields, "WeightedCapacity")
 	}
 	return o
 }

@@ -88,6 +88,7 @@ type LaunchSpecification struct {
 	IAMInstanceProfile       *IAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
 	Tags                     []*Tag              `json:"tags,omitempty"`
 	LoadBalancers            []*LoadBalancer     `json:"loadBalancers,omitempty"`
+	RootVolumeSize           *int                `json:"rootVolumeSize,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -579,6 +580,13 @@ func (o *LaunchSpecification) SetTags(v []*Tag) *LaunchSpecification {
 func (o *LaunchSpecification) SetLoadBalancers(v []*LoadBalancer) *LaunchSpecification {
 	if o.LoadBalancers = v; o.LoadBalancers == nil {
 		o.nullFields = append(o.nullFields, "LoadBalancers")
+	}
+	return o
+}
+
+func (o *LaunchSpecification) SetRootVolumeSize(v *int) *LaunchSpecification {
+	if o.RootVolumeSize = v; o.RootVolumeSize == nil {
+		o.nullFields = append(o.nullFields, "RootVolumeSize")
 	}
 	return o
 }

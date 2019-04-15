@@ -202,14 +202,15 @@ type VMSizes struct {
 }
 
 type LaunchSpecification struct {
-	LoadBalancersConfig *LoadBalancersConfig `json:"loadBalancersConfig,omitempty"`
-	Image               *Image               `json:"image,omitempty"`
-	UserData            *string              `json:"userData,omitempty"`
-	ShutdownScript      *string              `json:"shutdownScript,omitempty"`
-	Storage             *Storage             `json:"storage,omitempty"`
-	Network             *Network             `json:"network,omitempty"`
-	Login               *Login               `json:"login,omitempty"`
-	CustomData          *string              `json:"customData,omitempty""`
+	LoadBalancersConfig      *LoadBalancersConfig      `json:"loadBalancersConfig,omitempty"`
+	Image                    *Image                    `json:"image,omitempty"`
+	UserData                 *string                   `json:"userData,omitempty"`
+	ShutdownScript           *string                   `json:"shutdownScript,omitempty"`
+	Storage                  *Storage                  `json:"storage,omitempty"`
+	Network                  *Network                  `json:"network,omitempty"`
+	Login                    *Login                    `json:"login,omitempty"`
+	CustomData               *string                   `json:"customData,omitempty"`
+	ManagedServiceIdentities []*ManagedServiceIdentity `json:"managedServiceIdentities,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -227,6 +228,14 @@ type LoadBalancer struct {
 	BalancerID  *string `json:"balancerId,omitempty"`
 	TargetSetID *string `json:"targetSetId,omitempty"`
 	AutoWeight  *bool   `json:"autoWeight"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type ManagedServiceIdentity struct {
+	ResourceGroupName *string `json:"resourceGroupName,omitempty"`
+	Name              *string `json:"name,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1903,7 +1912,13 @@ func (o *LaunchSpecification) SetCustomData(v *string) *LaunchSpecification {
 	return o
 }
 
-// SetShutdownScript sets the shutdown script used when draining instances
+func (o *LaunchSpecification) SetManagedServiceIdentities(v []*ManagedServiceIdentity) *LaunchSpecification {
+	if o.ManagedServiceIdentities = v; o.ManagedServiceIdentities == nil {
+		o.nullFields = append(o.nullFields, "ManagedServiceIdentities")
+	}
+	return o
+}
+
 func (o *LaunchSpecification) SetShutdownScript(v *string) *LaunchSpecification {
 	if o.ShutdownScript = v; o.ShutdownScript == nil {
 		o.nullFields = append(o.nullFields, "ShutdownScript")
@@ -1983,6 +1998,30 @@ func (o *LoadBalancer) SetTargetSetId(v *string) *LoadBalancer {
 func (o *LoadBalancer) SetAutoWeight(v *bool) *LoadBalancer {
 	if o.AutoWeight = v; o.AutoWeight == nil {
 		o.nullFields = append(o.nullFields, "AutoWeight")
+	}
+	return o
+}
+
+// endregion
+
+// region ManagedServiceIdentity
+
+func (o *ManagedServiceIdentity) MarshalJSON() ([]byte, error) {
+	type noMethod ManagedServiceIdentity
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *ManagedServiceIdentity) SetResourceGroupName(v *string) *ManagedServiceIdentity {
+	if o.ResourceGroupName = v; o.ResourceGroupName == nil {
+		o.nullFields = append(o.nullFields, "ResourceGroupName")
+	}
+	return o
+}
+
+func (o *ManagedServiceIdentity) SetName(v *string) *ManagedServiceIdentity {
+	if o.Name = v; o.Name == nil {
+		o.nullFields = append(o.nullFields, "Name")
 	}
 	return o
 }

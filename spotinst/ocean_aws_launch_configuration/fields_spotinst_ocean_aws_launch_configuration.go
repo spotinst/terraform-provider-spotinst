@@ -54,6 +54,47 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RootVolumeSize] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		RootVolumeSize,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.RootVolumeSize != nil {
+				value = cluster.Compute.LaunchSpecification.RootVolumeSize
+			}
+			if err := resourceData.Set(string(RootVolumeSize), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RootVolumeSize), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.Get(string(RootVolumeSize)).(int); ok && v > 0 {
+				cluster.Compute.LaunchSpecification.SetRootVolumeSize(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+			if v, ok := resourceData.Get(string(RootVolumeSize)).(int); ok && v > 0 {
+				value = spotinst.Int(v)
+			}
+			cluster.Compute.LaunchSpecification.SetRootVolumeSize(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[IAMInstanceProfile] = commons.NewGenericField(
 		commons.OceanAWSLaunchConfiguration,
 		IAMInstanceProfile,

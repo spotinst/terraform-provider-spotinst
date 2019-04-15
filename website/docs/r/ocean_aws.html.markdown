@@ -31,7 +31,10 @@ resource "spotinst_ocean_aws" "example" {
   key_name             = "fake key"
   user_data            = "echo hello world"
   iam_instance_profile = "iam-profile"
+  root_volume_size     = 20
+  
   associate_public_ip_address = true
+  
   load_balancers = [
     {
       arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
@@ -111,7 +114,9 @@ whitelist = ["t1.micro", "m1.small"]
 * `security_groups` - (Required) One or more security group ids.
 * `key_name` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
-* `associate_public_ip_address` - (Optional)
+* `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
+* `root_volume_size` - (Optional) The size (in Gb) to allocate for the root volume. Minimum `20`.
+
 * `load_balancers` - (Optional) - Array of load balancer objects to add to ocean cluster
     * `arn` - (Optional) Required if type is set to TARGET_GROUP
     * `name` - (Optional) Required if type is set to CLASSIC
@@ -123,7 +128,10 @@ whitelist = ["t1.micro", "m1.small"]
   key_name             = "fake key"
   user_data            = "echo hello world"
   iam_instance_profile = "iam-profile"
+  root_volume_size     = 20
+  
   associate_public_ip_address = true
+  
   load_balancers = [
     {
       arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"

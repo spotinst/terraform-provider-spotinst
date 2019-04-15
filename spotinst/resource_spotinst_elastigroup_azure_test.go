@@ -443,7 +443,7 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 					testCheckElastigroupAzureAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.Base64StateFunc("goodbye world")),
-					resource.TestCheckResourceAttr(resourceName, "custom_data", elastigroup_azure_launch_configuration.Base64StateFunc("custom world")),
+					//resource.TestCheckResourceAttr(resourceName, "custom_data", elastigroup_azure_launch_configuration.Base64StateFunc("custom world")),
 				),
 			},
 			{
@@ -456,7 +456,7 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 					testCheckElastigroupAzureAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_azure_launch_configuration.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_azure_launch_configuration.Base64StateFunc("goodbye world updated")),
-					resource.TestCheckResourceAttr(resourceName, "custom_data", elastigroup_azure_launch_configuration.Base64StateFunc("custom world updated")),
+					//resource.TestCheckResourceAttr(resourceName, "custom_data", elastigroup_azure_launch_configuration.Base64StateFunc("custom world updated")),
 				),
 			},
 			{
@@ -476,23 +476,31 @@ func TestAccSpotinstElastigroupAzure_LaunchConfiguration(t *testing.T) {
 
 const testAzureLaunchConfigurationGroupConfig_Create = `
 // --- LAUNCH CONFIGURATION --------------------
-user_data       = "hello world"
-shutdown_script = "goodbye world"
-custom_data     = "custom world"
+ user_data       = "hello world"
+ shutdown_script = "goodbye world"
+ //custom_data     = "custom world"
+ managed_service_identities = {
+   resource_group_name = "alex-test"
+   name = "terraform-test-identity"
+ }
 // ---------------------------------------------
 `
 
 const testAzureLaunchConfigurationGroupConfig_Update = `
 // --- LAUNCH CONFIGURATION --------------------
-user_data       = "hello world"
-shutdown_script = "goodbye world updated"
-custom_data     = "custom world updated"
+ user_data       = "hello world"
+ shutdown_script = "goodbye world updated"
+ //custom_data     = "custom world updated"
+ managed_service_identities = {
+   resource_group_name = "alex-test"
+   name = "terraform-test-identity-updated"
+ }
 // ---------------------------------------------
 `
 
 const testAzureLaunchConfigurationGroupConfig_EmptyFields = `
 // --- LAUNCH CONFIGURATION --------------------
-user_data       = "hello world"
+ user_data       = "hello world"
 // ---------------------------------------------
 `
 

@@ -193,6 +193,16 @@ resource "` + string(commons.MultaiListenerResourceName) + `" "%v" {
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   protocol    = "http"
   port        = 1338
+
+  //tls_config = {
+  //  certificate_ids             = ["ce-b7159e06c63d"]
+  //  min_version                 = "TLS10"
+  //  max_version                 = "TLS12"
+  //  cipher_suites               = [""]
+  //  prefer_server_cipher_suites = true
+  //  session_tickets_disabled    = false
+  //}
+
   tags = [{
    key = "updated"
    value = "updated"

@@ -28,5 +28,6 @@ const (
 	ServiceName    commons.FieldName = "service_name"
 	ServiceAccount commons.FieldName = "service_account"
 	StartupScript  commons.FieldName = "startup_script"
+	ShutdownScript commons.FieldName = "shutdown_script"
 	IPForwarding   commons.FieldName = "ip_forwarding"
 )

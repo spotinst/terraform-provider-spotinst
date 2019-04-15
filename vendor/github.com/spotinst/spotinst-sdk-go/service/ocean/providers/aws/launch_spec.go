@@ -18,6 +18,7 @@ type LaunchSpec struct {
 	ImageID  *string  `json:"imageId,omitempty"`
 	UserData *string  `json:"userData,omitempty"`
 	Labels   []*Label `json:"labels,omitempty"`
+	Taints   []*Taint `json:"taints,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -39,6 +40,15 @@ type LaunchSpec struct {
 type Label struct {
 	Key   *string `json:"key,omitempty"`
 	Value *string `json:"value,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Taint struct {
+	Key    *string `json:"key,omitempty"`
+	Value  *string `json:"value,omitempty"`
+	Effect *string `json:"effect,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -286,6 +296,13 @@ func (o *LaunchSpec) SetLabels(v []*Label) *LaunchSpec {
 	return o
 }
 
+func (o *LaunchSpec) SetTaints(v []*Taint) *LaunchSpec {
+	if o.Taints = v; o.Taints == nil {
+		o.nullFields = append(o.nullFields, "Taints")
+	}
+	return o
+}
+
 // endregion
 
 // region Label
@@ -306,6 +323,37 @@ func (o *Label) SetKey(v *string) *Label {
 func (o *Label) SetValue(v *string) *Label {
 	if o.Value = v; o.Value == nil {
 		o.nullFields = append(o.nullFields, "Value")
+	}
+	return o
+}
+
+// endregion
+
+// region Taints
+
+func (o *Taint) MarshalJSON() ([]byte, error) {
+	type noMethod Taint
+	raw := noMethod(*o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Taint) SetKey(v *string) *Taint {
+	if o.Key = v; o.Key == nil {
+		o.nullFields = append(o.nullFields, "Key")
+	}
+	return o
+}
+
+func (o *Taint) SetValue(v *string) *Taint {
+	if o.Value = v; o.Value == nil {
+		o.nullFields = append(o.nullFields, "Value")
+	}
+	return o
+}
+
+func (o *Taint) SetEffect(v *string) *Taint {
+	if o.Effect = v; o.Effect == nil {
+		o.nullFields = append(o.nullFields, "Effect")
 	}
 	return o
 }

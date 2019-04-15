@@ -366,6 +366,7 @@ func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "265168459660-compute@developer.gserviceaccount.com"),
 					resource.TestCheckResourceAttr(resourceName, "startup_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo goodbye world")),
 					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".service_name", "terraform-acc-test-backend-service"),
@@ -396,6 +397,7 @@ func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"),
 					resource.TestCheckResourceAttr(resourceName, "startup_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo goodbye world updated")),
 					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".service_name", "terraform-acc-test-backend-service"),
 					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports.#", "1"),
@@ -433,6 +435,7 @@ func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "cannot set empty service account"),
 					resource.TestCheckResourceAttr(resourceName, "startup_script", elastigroup_gcp_launch_configuration.Base64StateFunc("cannot set empty startup script")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("cannot set empty shutdown script")),
 					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "false"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "0"),
@@ -460,6 +463,7 @@ const testLaunchConfigurationGCPGroupConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
  service_account = "265168459660-compute@developer.gserviceaccount.com"
  startup_script = "echo hello world"
+ shutdown_script = "echo goodbye world"
  ip_forwarding = false
 
  labels = [
@@ -493,6 +497,7 @@ const testLaunchConfigurationGCPGroupConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
  service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
  startup_script = "echo hello world updated"
+ shutdown_script = "echo goodbye world updated"
  ip_forwarding = true
 
  labels = [
@@ -537,7 +542,8 @@ const testLaunchConfigurationGCPGroupConfig_Update = `
 const testLaunchConfigurationGCPGroupConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
  service_account = "cannot set empty service account"
- startup_script = "cannot set empty startup script"
+ startup_script  = "cannot set empty startup script"
+ shutdown_script = "cannot set empty shutdown script"
  // ---------------------------------------
 `
 
@@ -782,7 +788,9 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					//resource.TestCheckResourceAttr(resourceName, "health_check_grace_period", "100"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.1808591713.count", "2"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.1808591713.type", "nvidia-tesla-p100"),
 				),
 			},
 			{
@@ -794,7 +802,9 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					//resource.TestCheckResourceAttr(resourceName, "health_check_grace_period", "50"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.3512838290.count", "1"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.3512838290.type", "nvidia-tesla-v100"),
 				),
 			},
 			{
@@ -806,7 +816,7 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					//resource.TestCheckResourceAttr(resourceName, "health_check_grace_period", "0"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.#", "0"),
 				),
 			},
 		},
@@ -854,8 +864,7 @@ func TestAccSpotinstElastigroupGCP_HealthChecks(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
-					groupName: groupName,
-					//fieldsToAppend: testHealthChecksGCPGroupConfig_Create,
+					groupName:      groupName,
 					fieldsToAppend: testHealthChecksGCPGroupConfig_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
@@ -867,8 +876,7 @@ func TestAccSpotinstElastigroupGCP_HealthChecks(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
-					groupName: groupName,
-					//fieldsToAppend: testHealthChecksGCPGroupConfig_Update,
+					groupName:      groupName,
 					fieldsToAppend: testHealthChecksGCPGroupConfig_Update,
 				}),
 				Check: resource.ComposeTestCheckFunc(
@@ -880,8 +888,7 @@ func TestAccSpotinstElastigroupGCP_HealthChecks(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
-					groupName: groupName,
-					//fieldsToAppend: testHealthChecksGCPGroupConfig_EmptyFields,
+					groupName:      groupName,
 					fieldsToAppend: testHealthChecksGCPGroupConfig_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
@@ -896,19 +903,27 @@ func TestAccSpotinstElastigroupGCP_HealthChecks(t *testing.T) {
 
 const testHealthChecksGCPGroupConfig_Create = `
 // --- HEALTH-CHECKS ------------------------------------
-health_check_grace_period = 100
+ auto_healing = true
+ health_check_grace_period = 100
+ health_check_type = "K8S_NODE"
+ unhealthy_duration = 120
 // ------------------------------------------------------
 `
 
 const testHealthChecksGCPGroupConfig_Update = `
 // --- HEALTH-CHECKS ------------------------------------
-health_check_grace_period = 50
+ auto_healing = false
+ health_check_grace_period = 50
+ health_check_type = "K8S_NODE"
+ unhealthy_duration = 180 
 // ------------------------------------------------------
 `
 
 const testHealthChecksGCPGroupConfig_EmptyFields = `
 // --- HEALTH-CHECKS ------------------------------------
-health_check_grace_period = 0
+ health_check_grace_period = 0
+ health_check_type = "K8S_NODE"
+ unhealthy_duration = 60 
 // ------------------------------------------------------
 `
 
@@ -963,7 +978,6 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".subnetwork_range_name", "range-name-2"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".ip_cidr_range", "10.128.0.0/20"),
-
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1.network", "new-network"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs."+AccessConfig2_update+".name", "config3"),

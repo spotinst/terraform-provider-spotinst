@@ -1594,6 +1594,17 @@ const testNewClusterOptionalFields_Create = `
   additional_primary_security_groups = ["sg-f2f94288"]
   additional_replica_security_groups = ["sg-8cfb40f6"]
 
+  instance_weights = [
+    {
+      instance_type     = "t2.small"
+      weighted_capacity = 10
+    },
+    {
+      instance_type     = "t2.medium"
+      weighted_capacity = 90
+    }
+  ]
+
   applications = [
     {
       name = "Ganglia"
