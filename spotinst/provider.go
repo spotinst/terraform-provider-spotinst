@@ -32,6 +32,7 @@ func Provider() terraform.ResourceProvider {
 			string(commons.SubscriptionResourceName):            resourceSpotinstSubscription(),
 			string(commons.ElastigroupAWSBeanstalkResourceName): resourceSpotinstElastigroupAWSBeanstalk(),
 			string(commons.OceanAWSResourceName):                resourceSpotinstOceanAWS(),
+			string(commons.OceanAWSLaunchSpecResourceName):      resourceSpotinstOceanAWSLaunchSpec(),
 			string(commons.ElastigroupAzureResourceName):        resourceSpotinstElastigroupAzure(),
 			string(commons.MRScalerAWSResourceName):             resourceSpotinstMRScalerAWS(),
 			string(commons.MultaiBalancerResourceName):          resourceSpotinstMultaiBalancer(),

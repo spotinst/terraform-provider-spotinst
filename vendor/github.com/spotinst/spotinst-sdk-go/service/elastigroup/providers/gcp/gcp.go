@@ -28,8 +28,8 @@ type Group struct {
 	Integration *Integration `json:"thirdPartiesIntegration,omitempty"`
 
 	// Read-only fields.
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -187,7 +187,10 @@ type GPU struct {
 
 // Health defines the healthcheck attributes for the group. Health is an element of Compute.
 type Health struct {
-	GracePeriod *int `json:"gracePeriod,omitempty"`
+	AutoHealing       *bool   `json:"autoHealing,omitempty"`
+	GracePeriod       *int    `json:"gracePeriod,omitempty"`
+	HealthCheckType   *string `json:"healthCheckType,omitempty"`
+	UnhealthyDuration *int    `json:"unhealthyDuration,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -232,6 +235,7 @@ type LaunchSpecification struct {
 	Metadata             []*Metadata           `json:"metadata,omitempty"`
 	ServiceAccount       *string               `json:"serviceAccount,omitempty"`
 	StartupScript        *string               `json:"startupScript,omitempty"`
+	ShutdownScript       *string               `json:"shutdownScript,omitempty"`
 	Tags                 []string              `json:"tags,omitempty"`
 
 	forceSendFields []string
@@ -1102,6 +1106,29 @@ func (o *Health) SetGracePeriod(v *int) *Health {
 	return o
 }
 
+// SetHealthCheckType sets the type of helath check to perform
+func (o *Health) SetHealthCheckType(v *string) *Health {
+	if o.HealthCheckType = v; o.HealthCheckType == nil {
+		o.nullFields = append(o.nullFields, "HealthCheckType")
+	}
+	return o
+}
+
+// SetAutoHealing sets autohealing to true or false
+func (o *Health) SetAutoHealing(v *bool) *Health {
+	if o.AutoHealing = v; o.AutoHealing == nil {
+		o.nullFields = append(o.nullFields, "AutoHealing")
+	}
+	return o
+}
+
+func (o *Health) SetUnhealthyDuration(v *int) *Health {
+	if o.UnhealthyDuration = v; o.UnhealthyDuration == nil {
+		o.nullFields = append(o.nullFields, "UnhealthyDuration")
+	}
+	return o
+}
+
 // endregion
 
 // region InstanceTypes setters
@@ -1222,6 +1249,14 @@ func (o *LaunchSpecification) SetServiceAccount(v *string) *LaunchSpecification 
 func (o *LaunchSpecification) SetStartupScript(v *string) *LaunchSpecification {
 	if o.StartupScript = v; o.StartupScript == nil {
 		o.nullFields = append(o.nullFields, "StartupScript")
+	}
+	return o
+}
+
+// SetShutdownScript sets the script that will run when draining instances before termination
+func (o *LaunchSpecification) SetShutdownScript(v *string) *LaunchSpecification {
+	if o.ShutdownScript = v; o.ShutdownScript == nil {
+		o.nullFields = append(o.nullFields, "ShutdownScript")
 	}
 	return o
 }

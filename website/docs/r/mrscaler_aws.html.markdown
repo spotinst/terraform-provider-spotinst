@@ -65,6 +65,17 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
       args = ["fake", "args"]
     }
   ]
+  
+  instance_weights = [
+    {
+      instance_type     = "t2.small"
+      weighted_capacity = 10
+    },
+    {
+      instance_type     = "t2.medium"
+      weighted_capacity = 90
+    }
+  ]
 
   steps_file = {
     bucket = "example-bucket"
@@ -347,6 +358,9 @@ The following arguments are supported:
     * `args` - (Optional) Arguments for EMR to pass to the application.
     * `name` - (Required) The application name.
     * `version`- (Optional)T he version of the application.
+* `instance_weights` - (Optional) Describes the instance and weights. Check out [Elastigroup Weighted Instances](https://api.spotinst.com/elastigroup-for-aws/concepts/general-concepts/elastigroup-capacity-instances-or-weighted) for more info.
+    * `instance_type` - (Required) The type of the instance.
+    * `weighted_capacity` - (Required) The weight given to the associated instance type. 
 
 <a id="availability-zone"></a>
 ## Availability Zones (Clone, New strategies)

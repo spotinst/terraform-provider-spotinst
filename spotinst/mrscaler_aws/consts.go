@@ -40,4 +40,8 @@ const (
 	Args         commons.FieldName = "args"
 	AppName      commons.FieldName = "name"
 	Version      commons.FieldName = "version"
+
+	InstanceWeights  commons.FieldName = "instance_weights"
+	InstanceType     commons.FieldName = "instance_type"
+	WeightedCapacity commons.FieldName = "weighted_capacity"
 )

@@ -27,12 +27,19 @@ resource "spotinst_elastigroup_gcp" "example" {
 
   preemptible_percentage = 50
   # on_demand_count        = 2
-  fallback_to_od         = true
+  fallback_to_ondemand         = true
   draining_timeout       = 180
   
-  labels           = [key = "env", value = "staging"]
+  labels = [
+    {
+      key = "test_key"
+      value = "test_value"
+    }
+  ]
+  
   tags             = ["http", "https"]
-  backend_services_config = {[
+  
+  backend_services_config = [
     {
       service_name = "spotinst-elb-backend-service"
       ports = {
@@ -40,18 +47,18 @@ resource "spotinst_elastigroup_gcp" "example" {
         ports = [8000, 6000]
       }
     },
-  ]}
+  ]
 
   disks = [
     {
-      device_nime = "device"
+      device_name = "device"
       mode        = "READ_WRITE"
       type        = "PERSISTENT"
       auto_delete = true
       boot        = true
       interface   = "SCSI"
 
-      initialize_parms = {
+      initialize_params = {
         disk_size_gb = 10
         disk_type    = "pd-standard"
         source_image = ""
@@ -59,13 +66,13 @@ resource "spotinst_elastigroup_gcp" "example" {
     }
   ]
 
-  network_interfaces = [
+  network_interface = [
     {
       network = "spot-network"
     }
   ]
 
-  instance_types_on_demand   = ["n1-standard-1"]
+  instance_types_ondemand   = ["n1-standard-1"]
   instance_types_preemptible = ["n1-standard-1", "n1-standard-2"]
 
   instance_types_custom = [
@@ -120,6 +127,7 @@ The following arguments are supported:
 * `name` - (Required) The group name. 
 * `description` - (Optional) The region your GCP group will be created in.
 * `startup_script` - (Optional) Create and run your own startup scripts on your virtual machines to perform automated tasks every time your instance boots up.
+* `shutdown_script` - (Optional) The Base64-encoded shutdown script that executes prior to instance termination, for more information please see: [Shutdown Script](https://api.spotinst.com/integration-docs/elastigroup/concepts/compute-concepts/shutdown-scripts/)
 * `service_account` - (Optional) The email of the service account in which the group instances will be launched.
 
 * `max_size` - (Required) The maximum number of instances the group should have at any time.
@@ -131,16 +139,16 @@ The following arguments are supported:
 * `subnets` - (Optional) A list of regions and subnets.
 * `region` - (Required) The region for the group of subnets.
 * `subnet_names` - (Required) The names of the subnets in the region.
-* `instance_types_preemptible` - (Required) The preemptible VMs instance type. To maximize cost savings and market availability, select as many types as possible. Required if instance_types_on_demand is not set.
-* `instance_types_on_demand` - (Required) The regular VM instance type to use for mixed-type groups and when falling back to on-demand. Required if instance_types_preemptible is not set.
+* `instance_types_preemptible` - (Required) The preemptible VMs instance type. To maximize cost savings and market availability, select as many types as possible. Required if instance_types_ondemand is not set.
+* `instance_types_ondemand` - (Required) The regular VM instance type to use for mixed-type groups and when falling back to on-demand. Required if instance_types_preemptible is not set.
 
-* `instance_types_custom` - (Required) Defines a set of custom instance types. Required if instance_types_preemptible and instance_types_on_demand are not set.
+* `instance_types_custom` - (Required) Defines a set of custom instance types. Required if instance_types_preemptible and instance_types_ondemand are not set.
 * `vCPU` - (Optional) The number of vCPUs in the custom instance type. GCP has a number of limitations on accepted vCPU values. For more information, see the GCP documentation (here.)[https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type#specifications]
 * `memory_gib` - (Optional) The memory (in GiB) in the custom instance types. GCP has a number of limitations on accepted memory values.For more information, see the GCP documentation (here.)[https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type#specifications]
 
 * `preemptible_percentage` - (Optional) Percentage of Preemptible VMs to spin up from the "desired_capacity".
 * `on_demand_count` - (Optional) Number of regular VMs to launch in the group. The rest will be Preemptible VMs. When this parameter is specified, the preemptible_percentage parameter is being ignored.
-* `fallback_to_od` - (Optional) Activate fallback-to-on-demand. When provisioning an instance, if no Preemptible market is available, fallback-to-on-demand will provision an On-Demand instance to maintain the group capacity.
+* `fallback_to_ondemand` - (Optional) Activate fallback-to-on-demand. When provisioning an instance, if no Preemptible market is available, fallback-to-on-demand will provision an On-Demand instance to maintain the group capacity.
 * `draining_timeout` - (Optional) Time (seconds) the instance is allowed to run after it is detached from the group. This is to allow the instance time to drain all the current TCP connections before terminating it.
 
 * `metadata` - (Optional) Array of objects with key-value pairs.
@@ -172,7 +180,10 @@ Usage:
 <a id="health-check"></a>
 ## Health Check
 
-* `health_check_grace_period` - (optional) Period of time (seconds) to wait for VM to reach healthiness before monitoring for unhealthiness.
+* `auto_healing` - (Optional) Enable auto-replacement of unhealthy instances.
+* `health_check_grace_period` - (Optional) Period of time (seconds) to wait for VM to reach healthiness before monitoring for unhealthiness.
+* `health_check_type` - (Optional) The kind of health check to perform when monitoring for unhealthiness.
+* `unhealthy_duration` - (Optional) Period of time (seconds) to remain in an unhealthy status before a replacement is triggered.
 
 ```hcl
   health_check_grace_period = 100
@@ -233,7 +244,7 @@ Usage:
       boot        = true
       interface   = "SCSI"
 
-      initialize_parms = {
+      initialize_params = {
         disk_size_gb = 10
         disk_type    = "pd-standard"
         source_image = ""
