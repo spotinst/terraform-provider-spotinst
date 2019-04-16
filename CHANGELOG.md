@@ -1,4 +1,4 @@
-## 1.11.0 (Unreleased)
+## 1.11.0 (April 16, 2019)
 
 ENHANCEMENTS:
 * new resource: ocean_aws_launch_spec
