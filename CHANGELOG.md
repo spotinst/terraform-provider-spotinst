@@ -1,4 +1,5 @@
-## 1.11.0 (Unreleased)
+## 1.11.1 (Unreleased)
+## 1.11.0 (April 16, 2019)
 
 FEATURES:
 * *New Resource*: `spotinst_ocean_aws_launch_spec`
