@@ -101,46 +101,39 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGCPLaunchConfiguration,
 		BackendServices,
 		&schema.Schema{
-			Type:             schema.TypeSet,
-			Optional:         true,
-			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+			Type:     schema.TypeSet,
+			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(ServiceName): {
-						Type:             schema.TypeString,
-						Required:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeString,
+						Required: true,
 					},
 
 					string(LocationType): {
-						Type:             schema.TypeString,
-						Optional:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeString,
+						Optional: true,
 					},
 
 					string(Scheme): {
-						Type:             schema.TypeString,
-						Optional:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeString,
+						Optional: true,
 					},
 
 					string(NamedPorts): {
-						Type:             schema.TypeSet,
-						Optional:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeSet,
+						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Name): {
-									Type:             schema.TypeString,
-									Required:         true,
-									DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+									Type:     schema.TypeString,
+									Required: true,
 								},
 
 								string(Ports): {
-									Type:             schema.TypeList,
-									Required:         true,
-									DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
-									Elem:             &schema.Schema{Type: schema.TypeString},
+									Type:     schema.TypeList,
+									Required: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
 								},
 							},
 						},
@@ -184,21 +177,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGCPLaunchConfiguration,
 		Labels,
 		&schema.Schema{
-			Type:             schema.TypeSet,
-			Optional:         true,
-			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+			Type:     schema.TypeSet,
+			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(LabelKey): {
-						Type:             schema.TypeString,
-						Required:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeString,
+						Required: true,
 					},
 
 					string(LabelValue): {
-						Type:             schema.TypeString,
-						Required:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeString,
+						Required: true,
 					},
 				},
 			},
@@ -253,21 +243,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchConfiguration,
 		Metadata,
 		&schema.Schema{
-			Type:             schema.TypeSet,
-			Required:         true,
-			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+			Type:     schema.TypeSet,
+			Required: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(MetadataKey): {
-						Type:             schema.TypeString,
-						Required:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeString,
+						Required: true,
 					},
 
 					string(MetadataValue): {
-						Type:             schema.TypeString,
-						Required:         true,
-						DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+						Type:     schema.TypeString,
+						Required: true,
 					},
 				},
 			},
@@ -322,10 +309,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchConfiguration,
 		Tags,
 		&schema.Schema{
-			Type:             schema.TypeList,
-			Required:         true,
-			Elem:             &schema.Schema{Type: schema.TypeString},
-			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+			Type:     schema.TypeList,
+			Required: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
@@ -376,9 +362,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchConfiguration,
 		ServiceAccount,
 		&schema.Schema{
-			Type:             schema.TypeString,
-			Required:         true,
-			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+			Type:     schema.TypeString,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
@@ -418,10 +403,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchConfiguration,
 		IPForwarding,
 		&schema.Schema{
-			Type:             schema.TypeBool,
-			Optional:         true,
-			Default:          false,
-			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)

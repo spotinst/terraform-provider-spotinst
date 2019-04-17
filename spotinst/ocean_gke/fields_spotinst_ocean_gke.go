@@ -309,10 +309,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchConfiguration,
 		AvailabilityZones,
 		&schema.Schema{
-			Type:             schema.TypeList,
-			Required:         true,
-			Elem:             &schema.Schema{Type: schema.TypeString},
-			DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
+			Type:     schema.TypeList,
+			Required: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			//DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)

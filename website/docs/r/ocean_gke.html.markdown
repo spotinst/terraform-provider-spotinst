@@ -106,7 +106,8 @@ Usage:
 
 <a id="launch-configuration"></a>
 ## Launch Configuration
-Note: the label, metadata, and tag keys shown in this example are required. Please modify the values to match your configuration. You may also add additional key/value pairs. 
+Note: label, metadata, and tag keys are required, and depend on your GKE cluster. Please modify the values to match your configuration. You may also add additional key/value pairs. This resource is intended to be
+used as part of a Module.
 
 * `source_image` - (Optional) A source image used to create the disk. You can provide a private (custom) image, and Compute Engine will use the corresponding image from your project.
 * `service_account` - (Optional) The email of the service account in which the group instances will be launched.

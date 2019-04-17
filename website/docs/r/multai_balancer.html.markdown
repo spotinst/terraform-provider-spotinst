@@ -13,7 +13,7 @@ Provides a Spotinst Multai Balancer.
 ## Example Usage
 
 ```hcl
-resource "multai_balancer" "my_balancer" {
+resource "spotinst_multai_balancer" "my_balancer" {
   name   = "foo"
   scheme = "internal"
 
