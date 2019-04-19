@@ -1919,6 +1919,7 @@ func (o *LaunchSpecification) SetManagedServiceIdentities(v []*ManagedServiceIde
 	return o
 }
 
+// SetShutdownScript sets the shutdown script used when draining instances
 func (o *LaunchSpecification) SetShutdownScript(v *string) *LaunchSpecification {
 	if o.ShutdownScript = v; o.ShutdownScript == nil {
 		o.nullFields = append(o.nullFields, "ShutdownScript")
