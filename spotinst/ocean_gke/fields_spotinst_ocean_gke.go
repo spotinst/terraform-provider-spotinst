@@ -1,12 +1,9 @@
-package ocean_aws
+package ocean_gke
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -17,14 +14,14 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
-		commons.OceanAWS,
+		commons.OceanGKE,
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *string = nil
 			if cluster.Name != nil {
@@ -36,13 +33,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			return nil
@@ -50,15 +47,88 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[ControllerClusterID] = commons.NewGenericField(
-		commons.OceanAWS,
-		ControllerClusterID,
+	fieldsMap[MasterLocation] = commons.NewGenericField(
+		commons.OceanGKE,
+		MasterLocation,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(MasterLocation)); ok && v != nil {
+				if cluster.GKE == nil {
+					cluster.SetGKE(&gcp.GKE{})
+				}
+				cluster.GKE.SetMasterLocation(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ClusterName] = commons.NewGenericField(
+		commons.OceanGKE,
+		ClusterName,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *string = nil
+			if cluster.GKE != nil && cluster.GKE.ClusterName != nil {
+				value = cluster.GKE.ClusterName
+			}
+			if err := resourceData.Set(string(ClusterName), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ClusterName), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(ClusterName)); ok && v != nil {
+				if cluster.GKE == nil {
+					cluster.SetGKE(&gcp.GKE{})
+				}
+				cluster.GKE.SetClusterName(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *string = nil
+			if v, ok := resourceData.GetOk(string(ClusterName)); ok && v != nil {
+				if cluster.GKE == nil {
+					cluster.SetGKE(&gcp.GKE{})
+				}
+				value = spotinst.String(v.(string))
+			}
+			cluster.GKE.SetClusterName(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ControllerClusterID] = commons.NewGenericField(
+		commons.OceanGKE,
+		ControllerClusterID,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *string = nil
 			if cluster.ControllerClusterID != nil {
@@ -70,60 +140,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetControllerClusterId(spotinst.String(resourceData.Get(string(ControllerClusterID)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			cluster.SetControllerClusterId(spotinst.String(resourceData.Get(string(ControllerClusterID)).(string)))
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[Region] = commons.NewGenericField(
-		commons.OceanAWS,
-		Region,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			var value *string = nil
-			if cluster.Region != nil {
-				value = cluster.Region
-			}
-			if err := resourceData.Set(string(Region), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Region), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(Region)); ok {
-				cluster.SetRegion(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(Region)); ok {
-				cluster.SetRegion(spotinst.String(v.(string)))
-			}
 			return nil
 		},
 		nil,
 	)
 
 	fieldsMap[MaxSize] = commons.NewGenericField(
-		commons.OceanAWS,
+		commons.OceanGKE,
 		MaxSize,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -131,7 +163,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *int = nil
 			if cluster.Capacity != nil && cluster.Capacity.Maximum != nil {
@@ -143,7 +175,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(MaxSize)); ok {
 				cluster.Capacity.SetMaximum(spotinst.Int(v.(int)))
@@ -151,7 +183,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(MaxSize)); ok {
 				cluster.Capacity.SetMaximum(spotinst.Int(v.(int)))
@@ -162,7 +194,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[MinSize] = commons.NewGenericField(
-		commons.OceanAWS,
+		commons.OceanGKE,
 		MinSize,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -170,7 +202,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *int = nil
 			if cluster.Capacity != nil && cluster.Capacity.Minimum != nil {
@@ -182,7 +214,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(MinSize)); ok {
 				cluster.Capacity.SetMinimum(spotinst.Int(v.(int)))
@@ -190,7 +222,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(MinSize)); ok {
 				cluster.Capacity.SetMinimum(spotinst.Int(v.(int)))
@@ -201,7 +233,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[DesiredCapacity] = commons.NewGenericField(
-		commons.OceanAWS,
+		commons.OceanGKE,
 		DesiredCapacity,
 		&schema.Schema{
 			Type:     schema.TypeInt,
@@ -209,7 +241,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *int = nil
 			if cluster.Capacity != nil && cluster.Capacity.Target != nil {
@@ -221,7 +253,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(DesiredCapacity)); ok {
 				cluster.Capacity.SetTarget(spotinst.Int(v.(int)))
@@ -229,7 +261,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(DesiredCapacity)); ok {
 				cluster.Capacity.SetTarget(spotinst.Int(v.(int)))
@@ -239,175 +271,99 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[SubnetIds] = commons.NewGenericField(
-		commons.OceanAWS,
-		SubnetIds,
+	fieldsMap[SubnetName] = commons.NewGenericField(
+		commons.OceanGKE,
+		SubnetName,
 		&schema.Schema{
-			Type:     schema.TypeList,
-			Elem:     &schema.Schema{Type: schema.TypeString},
+			Type:     schema.TypeString,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var value []string = nil
-			if cluster.Compute != nil && cluster.Compute.SubnetIDs != nil {
-				value = cluster.Compute.SubnetIDs
+			var value *string = nil
+			if cluster.Compute != nil && cluster.Compute.SubnetName != nil {
+				value = cluster.Compute.SubnetName
 			}
-			if err := resourceData.Set(string(SubnetIds), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetIds), err)
+			if err := resourceData.Set(string(SubnetName), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetName), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
-				if subnetIds, err := expandSubnetIDs(value); err != nil {
-					return err
-				} else {
-					cluster.Compute.SetSubnetIDs(subnetIds)
-				}
-			}
+			cluster.Compute.SetSubnetName(spotinst.String(resourceData.Get(string(SubnetName)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
-				if subnetIds, err := expandSubnetIDs(value); err != nil {
-					return err
-				} else {
-					cluster.Compute.SetSubnetIDs(subnetIds)
-				}
-			}
+			cluster.Compute.SetSubnetName(spotinst.String(resourceData.Get(string(SubnetName)).(string)))
 			return nil
 		},
 		nil,
 	)
 
-	fieldsMap[Tags] = commons.NewGenericField(
-		commons.OceanAWS,
-		Tags,
+	fieldsMap[AvailabilityZones] = commons.NewGenericField(
+		commons.OceanGKELaunchConfiguration,
+		AvailabilityZones,
 		&schema.Schema{
-			Type:     schema.TypeSet,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(TagKey): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-
-					string(TagValue): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-				},
-			},
-			Set: hashKV,
+			Type:     schema.TypeList,
+			Required: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			//DiffSuppressFunc: commons.SuppressIfImportedFromGKE,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var result []interface{} = nil
+			var result []string = nil
 			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
-				cluster.Compute.LaunchSpecification.Tags != nil {
-				tags := cluster.Compute.LaunchSpecification.Tags
-				result = flattenTags(tags)
-			}
-			if result != nil {
-				if err := resourceData.Set(string(Tags), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+				cluster.Compute.AvailabilityZones != nil {
+				values := cluster.Compute.AvailabilityZones
+				for _, zones := range values {
+					result = append(result, zones)
 				}
+			}
+			if err := resourceData.Set(string(AvailabilityZones), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AvailabilityZones), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var result []string
+			if v, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
+				azList := v.([]interface{})
+				result = make([]string, len(azList))
+				for i, j := range azList {
+					result[i] = j.(string)
+				}
+				cluster.Compute.SetAvailabilityZones(result)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if value, ok := resourceData.GetOk(string(Tags)); ok {
-				if tags, err := expandTags(value); err != nil {
-					return err
-				} else {
-					cluster.Compute.LaunchSpecification.SetTags(tags)
+			var result []string
+			if v, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
+				azList := v.([]interface{})
+				result = make([]string, len(azList))
+				for i, j := range azList {
+					result[i] = j.(string)
 				}
+				cluster.Compute.SetAvailabilityZones(result)
 			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			var tagsToAdd []*aws.Tag = nil
-			if value, ok := resourceData.GetOk(string(Tags)); ok {
-				if tags, err := expandTags(value); err != nil {
-					return err
-				} else {
-					tagsToAdd = tags
-				}
-			}
-			cluster.Compute.LaunchSpecification.SetTags(tagsToAdd)
 			return nil
 		},
 		nil,
 	)
+
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandSubnetIDs(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if subnetID, ok := v.(string); ok && subnetID != "" {
-			result = append(result, subnetID)
-		}
-	}
-	return result, nil
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
-	return hashcode.String(buf.String())
-}
-
-func flattenTags(tags []*aws.Tag) []interface{} {
-	result := make([]interface{}, 0, len(tags))
-	for _, tag := range tags {
-		m := make(map[string]interface{})
-		m[string(TagKey)] = spotinst.StringValue(tag.Key)
-		m[string(TagValue)] = spotinst.StringValue(tag.Value)
-
-		result = append(result, m)
-	}
-	return result
-}
-
-func expandTags(data interface{}) ([]*aws.Tag, error) {
-	list := data.(*schema.Set).List()
-	tags := make([]*aws.Tag, 0, len(list))
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		if _, ok := attr[string(TagKey)]; !ok {
-			return nil, errors.New("invalid tag attributes: key missing")
-		}
-
-		if _, ok := attr[string(TagValue)]; !ok {
-			return nil, errors.New("invalid tag attributes: value missing")
-		}
-		tag := &aws.Tag{
-			Key:   spotinst.String(attr[string(TagKey)].(string)),
-			Value: spotinst.String(attr[string(TagValue)].(string)),
-		}
-		tags = append(tags, tag)
-	}
-	return tags, nil
-}

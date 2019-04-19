@@ -13,7 +13,7 @@ Provides a Spotinst Multai Target Set.
 ## Example Usage
 
 ```hcl
-resource "multai_target_set" "my_target_set" {
+resource "spotinst_multai_target_set" "my_target_set" {
   balancer_id   = "b-12345"
   deployment_id = "dp-12345"
   name          = "foo"

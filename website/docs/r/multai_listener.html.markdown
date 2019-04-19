@@ -13,7 +13,7 @@ Provides a Spotinst Multai Listener.
 ## Example Usage
 
 ```hcl
-resource "multai_listener" "my_listener" {
+resource "spotinst_multai_listener" "my_listener" {
   name        = "foo"
   balancer_id = "b-12345"
   protocol    = "http"

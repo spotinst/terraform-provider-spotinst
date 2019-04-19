@@ -2,6 +2,7 @@ package ocean
 
 import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
@@ -12,6 +13,7 @@ import (
 // for details on the service.
 type Service interface {
 	CloudProviderAWS() aws.Service
+	CloudProviderGCP() gcp.Service
 }
 
 type ServiceOp struct {
@@ -32,6 +34,12 @@ func New(sess *session.Session, cfgs ...*spotinst.Config) *ServiceOp {
 
 func (s *ServiceOp) CloudProviderAWS() aws.Service {
 	return &aws.ServiceOp{
+		Client: s.Client,
+	}
+}
+
+func (s *ServiceOp) CloudProviderGCP() gcp.Service {
+	return &gcp.ServiceOp{
 		Client: s.Client,
 	}
 }

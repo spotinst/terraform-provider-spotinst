@@ -3,7 +3,7 @@ package commons
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"log"
 )
 
@@ -11,37 +11,37 @@ import (
 //            Variables
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
-	OceanAWSResourceName ResourceName = "spotinst_ocean_aws"
+	OceanGKEResourceName ResourceName = "spotinst_ocean_gke"
 )
 
-var OceanAWSResource *OceanAWSTerraformResource
+var OceanGKEResource *OceanGKETerraformResource
 
-type OceanAWSTerraformResource struct {
+type OceanGKETerraformResource struct {
 	GenericResource // embedding
 }
 
-type AWSClusterWrapper struct {
-	cluster *aws.Cluster
+type GKEClusterWrapper struct {
+	cluster *gcp.Cluster
 }
 
-func NewOceanAWSResource(fieldsMap map[FieldName]*GenericField) *OceanAWSTerraformResource {
-	return &OceanAWSTerraformResource{
+func NewOceanGKEResource(fieldsMap map[FieldName]*GenericField) *OceanGKETerraformResource {
+	return &OceanGKETerraformResource{
 		GenericResource: GenericResource{
-			resourceName: OceanAWSResourceName,
+			resourceName: OceanGKEResourceName,
 			fields:       NewGenericFields(fieldsMap),
 		},
 	}
 }
 
-func (res *OceanAWSTerraformResource) OnCreate(
+func (res *OceanGKETerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*aws.Cluster, error) {
+	meta interface{}) (*gcp.Cluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	clusterWrapper := NewClusterWrapper()
+	clusterWrapper := NewGKEClusterWrapper()
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
@@ -55,8 +55,8 @@ func (res *OceanAWSTerraformResource) OnCreate(
 	return clusterWrapper.GetCluster(), nil
 }
 
-func (res *OceanAWSTerraformResource) OnRead(
-	cluster *aws.Cluster,
+func (res *OceanGKETerraformResource) OnRead(
+	cluster *gcp.Cluster,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -64,7 +64,7 @@ func (res *OceanAWSTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	clusterWrapper := NewClusterWrapper()
+	clusterWrapper := NewGKEClusterWrapper()
 	clusterWrapper.SetCluster(cluster)
 
 	for _, field := range res.fields.fieldsMap {
@@ -80,15 +80,15 @@ func (res *OceanAWSTerraformResource) OnRead(
 	return nil
 }
 
-func (res *OceanAWSTerraformResource) OnUpdate(
+func (res *OceanGKETerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *aws.Cluster, error) {
+	meta interface{}) (bool, *gcp.Cluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	clusterWrapper := NewClusterWrapper()
+	clusterWrapper := NewGKEClusterWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -106,23 +106,22 @@ func (res *OceanAWSTerraformResource) OnUpdate(
 	return hasChanged, clusterWrapper.GetCluster(), nil
 }
 
-func NewClusterWrapper() *AWSClusterWrapper {
-	return &AWSClusterWrapper{
-		cluster: &aws.Cluster{
-			Capacity: &aws.Capacity{},
-			Compute: &aws.Compute{
-				LaunchSpecification: &aws.LaunchSpecification{},
-				InstanceTypes:       &aws.InstanceTypes{},
+func NewGKEClusterWrapper() *GKEClusterWrapper {
+	return &GKEClusterWrapper{
+		cluster: &gcp.Cluster{
+			Capacity: &gcp.Capacity{},
+			Compute: &gcp.Compute{
+				LaunchSpecification: &gcp.LaunchSpecification{},
+				InstanceTypes:       &gcp.InstanceTypes{},
 			},
-			Strategy: &aws.Strategy{},
 		},
 	}
 }
 
-func (clusterWrapper *AWSClusterWrapper) GetCluster() *aws.Cluster {
+func (clusterWrapper *GKEClusterWrapper) GetCluster() *gcp.Cluster {
 	return clusterWrapper.cluster
 }
 
-func (clusterWrapper *AWSClusterWrapper) SetCluster(cluster *aws.Cluster) {
+func (clusterWrapper *GKEClusterWrapper) SetCluster(cluster *gcp.Cluster) {
 	clusterWrapper.cluster = cluster
 }

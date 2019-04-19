@@ -13,7 +13,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_auto_scaling"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_cluster_aws_strategy"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_strategy"
 	"log"
 	"strings"
 	"time"
@@ -31,7 +31,7 @@ func resourceSpotinstOceanAWS() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
-		Schema: commons.OceanResource.GetSchemaMap(),
+		Schema: commons.OceanAWSResource.GetSchemaMap(),
 	}
 }
 
@@ -42,9 +42,9 @@ func setupClusterAWSResource() {
 	ocean_aws_auto_scaling.Setup(fieldsMap)
 	ocean_aws_instance_types.Setup(fieldsMap)
 	ocean_aws_launch_configuration.Setup(fieldsMap)
-	ocean_cluster_aws_strategy.Setup(fieldsMap)
+	ocean_aws_strategy.Setup(fieldsMap)
 
-	commons.OceanResource = commons.NewOceanAWSResource(fieldsMap)
+	commons.OceanAWSResource = commons.NewOceanAWSResource(fieldsMap)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -52,14 +52,14 @@ func setupClusterAWSResource() {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
-		commons.OceanResource.GetName())
+		commons.OceanAWSResource.GetName())
 
-	cluster, err := commons.OceanResource.OnCreate(resourceData, meta)
+	cluster, err := commons.OceanAWSResource.OnCreate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
-	clusterId, err := createCluster(cluster, meta.(*Client))
+	clusterId, err := createAWSCluster(cluster, meta.(*Client))
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func resourceSpotinstClusterAWSCreate(resourceData *schema.ResourceData, meta in
 	return resourceSpotinstClusterAWSRead(resourceData, meta)
 }
 
-func createCluster(cluster *aws.Cluster, spotinstClient *Client) (*string, error) {
+func createAWSCluster(cluster *aws.Cluster, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(cluster); err != nil {
 		return nil, err
 	} else {
@@ -113,7 +113,7 @@ const ErrCodeClusterNotFound = "CLUSTER_DOESNT_EXIST"
 func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
-		commons.OceanResource.GetName(), id)
+		commons.OceanAWSResource.GetName(), id)
 
 	input := &aws.ReadClusterInput{ClusterID: spotinst.String(id)}
 	resp, err := meta.(*Client).ocean.CloudProviderAWS().ReadCluster(context.Background(), input)
@@ -141,7 +141,7 @@ func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta inte
 		return nil
 	}
 
-	if err := commons.OceanResource.OnRead(clusterResponse, resourceData, meta); err != nil {
+	if err := commons.OceanAWSResource.OnRead(clusterResponse, resourceData, meta); err != nil {
 		return err
 	}
 	log.Printf("===> Cluster read successfully: %s <===", id)
@@ -154,16 +154,16 @@ func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta inte
 func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
-		commons.OceanResource.GetName(), id)
+		commons.OceanAWSResource.GetName(), id)
 
-	shouldUpdate, cluster, err := commons.OceanResource.OnUpdate(resourceData, meta)
+	shouldUpdate, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
-		if err := updateCluster(cluster, resourceData, meta); err != nil {
+		if err := updateAWSCluster(cluster, resourceData, meta); err != nil {
 			return err
 		}
 	}
@@ -171,7 +171,7 @@ func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta in
 	return resourceSpotinstClusterAWSRead(resourceData, meta)
 }
 
-func updateCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
+func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
 	var input = &aws.UpdateClusterInput{
 		Cluster: cluster,
 	}
@@ -197,9 +197,9 @@ func updateCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta
 func resourceSpotinstClusterAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
-		commons.OceanResource.GetName(), id)
+		commons.OceanAWSResource.GetName(), id)
 
-	if err := deleteCluster(resourceData, meta); err != nil {
+	if err := deleteAWSCluster(resourceData, meta); err != nil {
 		return err
 	}
 
@@ -208,7 +208,7 @@ func resourceSpotinstClusterAWSDelete(resourceData *schema.ResourceData, meta in
 	return nil
 }
 
-func deleteCluster(resourceData *schema.ResourceData, meta interface{}) error {
+func deleteAWSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 	clusterId := resourceData.Id()
 	input := &aws.DeleteClusterInput{
 		ClusterID: spotinst.String(clusterId),

@@ -1,4 +1,4 @@
-package ocean_cluster_aws_strategy
+package ocean_aws_strategy
 
 import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"

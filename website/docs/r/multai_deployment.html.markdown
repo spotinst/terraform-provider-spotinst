@@ -13,7 +13,7 @@ Provides a Spotinst Multai Deployment.
 ## Example Usage
 
 ```hcl
-resource "multai_deployment" "my_deployment" {
+resource "spotinst_multai_deployment" "my_deployment" {
   name = "foo"
 }
 ```

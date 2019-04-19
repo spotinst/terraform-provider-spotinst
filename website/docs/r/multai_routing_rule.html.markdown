@@ -13,7 +13,7 @@ Provides a Spotinst Multai Routing Rule.
 ## Example Usage
 
 ```hcl
-resource "multai_routing_rule" "my_routing_rule" {
+resource "spotinst_multai_routing_rule" "my_routing_rule" {
   balancer_id = "b-12345"
   listener_id = "l-98765"
   route       = "Path(\x60/bar\x60)"

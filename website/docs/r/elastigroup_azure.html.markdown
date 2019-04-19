@@ -13,7 +13,7 @@ Provides a Spotinst elastigroup Azure resource.
 ## Example Usage
 
 ```hcl
-resource "elastigroup_azure" "test_azure_group" {
+resource "spotinst_elastigroup_azure" "test_azure_group" {
   name                = "example_elastigroup_azure"
   resource_group_name = "spotinst-azure"
   region              = "eastus"

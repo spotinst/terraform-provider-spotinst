@@ -129,44 +129,36 @@ The following arguments are supported:
 * `startup_script` - (Optional) Create and run your own startup scripts on your virtual machines to perform automated tasks every time your instance boots up.
 * `shutdown_script` - (Optional) The Base64-encoded shutdown script that executes prior to instance termination, for more information please see: [Shutdown Script](https://api.spotinst.com/integration-docs/elastigroup/concepts/compute-concepts/shutdown-scripts/)
 * `service_account` - (Optional) The email of the service account in which the group instances will be launched.
-
 * `max_size` - (Required) The maximum number of instances the group should have at any time.
 * `min_size` - (Required) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
-
 * `availability_zones` - (Required) List of availability zones for the group.
-
 * `subnets` - (Optional) A list of regions and subnets.
-* `region` - (Required) The region for the group of subnets.
-* `subnet_names` - (Required) The names of the subnets in the region.
+    * `region` - (Required) The region for the group of subnets.
+    * `subnet_names` - (Required) The names of the subnets in the region.
 * `instance_types_preemptible` - (Required) The preemptible VMs instance type. To maximize cost savings and market availability, select as many types as possible. Required if instance_types_ondemand is not set.
 * `instance_types_ondemand` - (Required) The regular VM instance type to use for mixed-type groups and when falling back to on-demand. Required if instance_types_preemptible is not set.
-
 * `instance_types_custom` - (Required) Defines a set of custom instance types. Required if instance_types_preemptible and instance_types_ondemand are not set.
-* `vCPU` - (Optional) The number of vCPUs in the custom instance type. GCP has a number of limitations on accepted vCPU values. For more information, see the GCP documentation (here.)[https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type#specifications]
-* `memory_gib` - (Optional) The memory (in GiB) in the custom instance types. GCP has a number of limitations on accepted memory values.For more information, see the GCP documentation (here.)[https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type#specifications]
-
+    * `vCPU` - (Optional) The number of vCPUs in the custom instance type. GCP has a number of limitations on accepted vCPU values. For more information, see the GCP documentation (here.)[https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type#specifications]
+    * `memory_gib` - (Optional) The memory (in GiB) in the custom instance types. GCP has a number of limitations on accepted memory values.For more information, see the GCP documentation (here.)[https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type#specifications]
 * `preemptible_percentage` - (Optional) Percentage of Preemptible VMs to spin up from the "desired_capacity".
 * `on_demand_count` - (Optional) Number of regular VMs to launch in the group. The rest will be Preemptible VMs. When this parameter is specified, the preemptible_percentage parameter is being ignored.
 * `fallback_to_ondemand` - (Optional) Activate fallback-to-on-demand. When provisioning an instance, if no Preemptible market is available, fallback-to-on-demand will provision an On-Demand instance to maintain the group capacity.
 * `draining_timeout` - (Optional) Time (seconds) the instance is allowed to run after it is detached from the group. This is to allow the instance time to drain all the current TCP connections before terminating it.
-
 * `metadata` - (Optional) Array of objects with key-value pairs.
-* `key` - (Optional) Metadata key.
-* `value` - (Optional) Metadata value.
-
+    * `key` - (Optional) Metadata key.
+    * `value` - (Optional) Metadata value.
 * `labels` - (Optional) Array of objects with key-value pairs.
-* `key` - (Optional) Labels key.
-* `value` - (Optional) Labels value.
-
+    * `key` - (Optional) Labels key.
+    * `value` - (Optional) Labels value.
 * `tags` - (Optional) Tags to mark created instances.
 
 <a id="GPU"></a>
 ## GPU
 
 * `gpu` - (Optional) Defines the GPU configuration.
-* `type` - (Required) The type of GPU instance. Valid values: `nvidia-tesla-v100`, `nvidia-tesla-p100`, `nvidia-tesla-k80`.
-* `count` - (Required) The number of GPUs. Must be 0, 2, 4, 6, 8.
+    * `type` - (Required) The type of GPU instance. Valid values: `nvidia-tesla-v100`, `nvidia-tesla-p100`, `nvidia-tesla-k80`.
+    * `count` - (Required) The number of GPUs. Must be 0, 2, 4, 6, 8.
 
 Usage:
 
@@ -186,24 +178,27 @@ Usage:
 * `unhealthy_duration` - (Optional) Period of time (seconds) to remain in an unhealthy status before a replacement is triggered.
 
 ```hcl
+  auto_health               = true
   health_check_grace_period = 100
-```
+  health_check_type         = ""
+  unhealthy_duration        = ""
+  ```
 
 <a id="backend-services"></a>
 ## Backend Services
 
 * `backend_services` - (Optional) Describes the backend service configurations.
-* `service_name` - (Required) The name of the backend service.
-* `location_type` - (Optional) Sets which location the backend services will be active. Valid values: `regional`, `global`.
-* `scheme` - (Optional) Use when `location_type` is "regional". Set the traffic for the backend service to either between the instances in the vpc or to traffic from the internet. Valid values: `INTERNAL`, `EXTERNAL`.
-* `named_port` - (Optional) Describes a named port and a list of ports.
-* `port_name` - (Required) The name of the port.
-* `ports` - (Required) A list of ports.
+    * `service_name` - (Required) The name of the backend service.
+    * `location_type` - (Optional) Sets which location the backend services will be active. Valid values: `regional`, `global`.
+    * `scheme` - (Optional) Use when `location_type` is "regional". Set the traffic for the backend service to either between the instances in the vpc or to traffic from the internet. Valid values: `INTERNAL`, `EXTERNAL`.
+    * `named_port` - (Optional) Describes a named port and a list of ports.
+        * `port_name` - (Required) The name of the port.
+        * `ports` - (Required) A list of ports.
 
 Usage:
 
 ```hcl
-  backend_services_config = {[
+  backend_services_config = [
     {
       service_name = "spotinst-elb-backend-service"
       locationType = "regional"
@@ -213,31 +208,31 @@ Usage:
         ports = [8000, 6000]
       }
     },
-  ]}
+  ]
 ```
 
 <a id="disks"></a>
 ## Disks
 
 * `disks` - (Optional) Array of disks associated with this instance. Persistent disks must be created before you can assign them.
-* `auto_delete` - (Optional) Specifies whether the disk will be auto-deleted when the instance is deleted.
-* `boot` - (Optional) Indicates that this is a boot disk. The virtual machine will use the first partition of the disk for its root filesystem.
-* `device_name` - (Optional) Specifies a unique device name of your choice.
-* `interface` - (Optional, Default: `SCSI`) Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. 
-* `mode` - (Optional, Default: `READ_WRITE`) The mode in which to attach this disk, either READ_WRITE or READ_ONLY.
-* `source` - (Optional) Specifies a valid partial or full URL to an existing Persistent Disk resource. This field is only applicable for persistent disks.
-* `type` - (Optional, Default: `PERSISTENT`) Specifies the type of disk, either SCRATCH or PERSISTENT.
-* `initialize_params` - (Optional) Specifies the parameters for a new disk that will be created alongside the new instance. Use initialization parameters to create boot disks or local SSDs attached to the new instance.
-* `disk_size_gb` - (Optional) Specifies disk size in gigabytes. Must be in increments of 2.
-* `disk_type` - (Optional, Default" `pd-standard`) Specifies the disk type to use to create the instance. Valid values: pd-ssd, local-ssd.
-* `source_image` - (Optional) A source image used to create the disk. You can provide a private (custom) image, and Compute Engine will use the corresponding image from your project.
+    * `auto_delete` - (Optional) Specifies whether the disk will be auto-deleted when the instance is deleted.
+    * `boot` - (Optional) Indicates that this is a boot disk. The virtual machine will use the first partition of the disk for its root filesystem.
+    * `device_name` - (Optional) Specifies a unique device name of your choice.
+    * `interface` - (Optional, Default: `SCSI`) Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. 
+    * `mode` - (Optional, Default: `READ_WRITE`) The mode in which to attach this disk, either READ_WRITE or READ_ONLY.
+    * `source` - (Optional) Specifies a valid partial or full URL to an existing Persistent Disk resource. This field is only applicable for persistent disks.
+    * `type` - (Optional, Default: `PERSISTENT`) Specifies the type of disk, either SCRATCH or PERSISTENT.
+    * `initialize_params` - (Optional) Specifies the parameters for a new disk that will be created alongside the new instance. Use initialization parameters to create boot disks or local SSDs attached to the new instance.
+        * `disk_size_gb` - (Optional) Specifies disk size in gigabytes. Must be in increments of 2.
+        * `disk_type` - (Optional, Default" `pd-standard`) Specifies the disk type to use to create the instance. Valid values: pd-ssd, local-ssd.
+        * `source_image` - (Optional) A source image used to create the disk. You can provide a private (custom) image, and Compute Engine will use the corresponding image from your project.
 
 Usage:
 
 ```hcl
   disks = [
     {
-      device_nime = "device"
+      device_name = "device"
       mode        = "READ_WRITE"
       type        = "PERSISTENT"
       auto_delete = true
@@ -262,10 +257,10 @@ Interfaces docs](https://cloud.google.com/vpc/docs/multiple-interfaces-concepts)
 to understand the implications of using these attributes.
 
 * `network_interface` - (Required, minimum 1) Array of objects representing the network configuration for the elastigroup.
-* `network` - (Required) Network resource for this group.
-* `access_configs` - (Optional) Array of configurations.
-* `name` - (Optional) Name of this access configuration.
-* `type` - (Optional) Array of configurations for this interface. Currently, only ONE_TO_ONE_NAT is supported.
+    * `network` - (Required) Network resource for this group.
+    * `access_configs` - (Optional) Array of configurations.
+        * `name` - (Optional) Name of this access configuration.
+        * `type` - (Optional) Array of configurations for this interface. Currently, only ONE_TO_ONE_NAT is supported.
 
 ```hcl
   network_interface = [{ 
@@ -300,8 +295,8 @@ Each `scaling_*_policy` supports the following:
 * `cooldown` - (Optional) Time (seconds) to wait after a scaling action before resuming monitoring.
 * `operator` - (Optional) The operator used to evaluate the threshold against the current metric value. Valid values: "gt" (greater than), "get" (greater-than or equal), "lt" (less than), "lte" (less than or equal).
 * `action` - (Optional) Scaling action to take when the policy is triggered.
-* `type` - (Optional) Type of scaling action to take when the scaling policy is triggered. Valid values: "adjustment", "setMinTarget", "updateCapacity", "percentageAdjustment"
-* `adjustment` - (Optional) Value to which the action type will be adjusted. Required if using "numeric" or "percentageAdjustment" action types.
+    * `type` - (Optional) Type of scaling action to take when the scaling policy is triggered. Valid values: "adjustment", "setMinTarget", "updateCapacity", "percentageAdjustment"
+    * `adjustment` - (Optional) Value to which the action type will be adjusted. Required if using "numeric" or "percentageAdjustment" action types.
 * `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
     * `name` - (Required) The dimension name.
     * `value` - (Required) The dimension value.
@@ -343,7 +338,6 @@ Usage:
 ## Third-Party Integrations
 
 * `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
-
     * `master_host` - (Required) IP or FQDN of one of your swarm managers.
     * `master_port` - (Required) Network port used by your swarm.
             

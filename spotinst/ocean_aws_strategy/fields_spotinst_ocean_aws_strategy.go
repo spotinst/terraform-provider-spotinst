@@ -1,4 +1,4 @@
-package ocean_cluster_aws_strategy
+package ocean_aws_strategy
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *float64 = nil
 			if cluster.Strategy != nil && cluster.Strategy.SpotPercentage != nil {
@@ -32,7 +32,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(SpotPercentage)); ok {
 				spotPct := v.(float64)
@@ -41,7 +41,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var spotPct *float64 = nil
 			if v, ok := resourceData.GetOk(string(SpotPercentage)); ok {
@@ -61,7 +61,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *bool = nil
 			if cluster.Strategy != nil && cluster.Strategy.UtilizeReservedInstances != nil {
@@ -75,7 +75,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 
 			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
@@ -84,7 +84,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var uri *bool = nil
 			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
@@ -105,7 +105,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Default:  true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *bool = nil
 			if cluster.Strategy != nil && cluster.Strategy.FallbackToOnDemand != nil {
@@ -119,7 +119,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
 				ftod := v.(bool)
@@ -129,7 +129,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var fallback *bool = nil
 			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
