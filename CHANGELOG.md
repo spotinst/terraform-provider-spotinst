@@ -1,8 +1,23 @@
-## 1.11.1 (Unreleased)
-## 1.11.0 (April 16, 2019)
+## 1.12.0 (Unreleased)
+
+FEATURES:
+* *New Resource*: `spotinst_ocean_gke`
 
 ENHANCEMENTS:
-* new resource: ocean_aws_launch_spec
+* resource/spotinst_elastigroup_azure: added `custom_data`
+
+NOTES: 
+* documentation: resource names are now accurate
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: 
+
+## 1.11.0 (April 16, 2019)
+
+FEATURES:
+* *New Resource*: `spotinst_ocean_aws_launch_spec`
+
+ENHANCEMENTS:
 * resource/elastigroup_azure: added `managed_service_identities`
 * resource/elastigroup_gcp: added `shutdown_script`
 * resource/elastigroup_gcp: added healthcheck fields

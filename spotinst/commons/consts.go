@@ -27,6 +27,12 @@ const (
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
 
+	OceanGKE                    ResourceAffinity = "Ocean_GKE"
+	OceanGKEInstanceTypes       ResourceAffinity = "Ocean_GKE_Instance_Types"
+	OceanGKEAutoScaling         ResourceAffinity = "Ocean_GKE_Auto_Scaling"
+	OceanGKELaunchConfiguration ResourceAffinity = "Ocean_GKE_Launch_Configuration"
+	OceanGKENetworkInterface    ResourceAffinity = "Ocean_GKE_Network_Interface"
+
 	ElastigroupAWS                    ResourceAffinity = "Elastigroup_AWS"
 	ElastigroupAWSInstanceType        ResourceAffinity = "Elastigroup_AWS_Instance_Type"
 	ElastigroupAWSStrategy            ResourceAffinity = "Elastigroup_AWS_Strategy"

@@ -13,7 +13,7 @@ Provides a Spotinst Multai Target.
 ## Example Usage
 
 ```hcl
-resource "multai_target" "my_target" {
+resource "spotinst_multai_target" "my_target" {
   balancer_id   = "b-12345"
   target_set_id = "l-98765"
 

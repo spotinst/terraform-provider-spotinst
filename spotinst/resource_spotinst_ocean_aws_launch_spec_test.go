@@ -144,7 +144,7 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata) string {
 
 // region OceanAWSLaunchSpec: Baseline
 func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-b23e9516"
+	oceanID := "o-4bc9b7d9"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
