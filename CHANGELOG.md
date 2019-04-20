@@ -10,7 +10,8 @@ NOTES:
 * documentation: resource names are now accurate
 
 BUG FIXES:
-* resource/spotinst_elastigroup_aws: 
+* resource/spotinst_elastigroup_aws: resolved errors with `max_scale_down_pct`
+* resource/spotinst_elastigroup_azure: `custom_data`
 
 ## 1.11.0 (April 16, 2019)
 
