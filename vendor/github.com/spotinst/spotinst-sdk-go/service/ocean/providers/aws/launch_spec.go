@@ -13,12 +13,15 @@ import (
 )
 
 type LaunchSpec struct {
-	ID       *string  `json:"id,omitempty"`
-	OceanID  *string  `json:"oceanId,omitempty"`
-	ImageID  *string  `json:"imageId,omitempty"`
-	UserData *string  `json:"userData,omitempty"`
-	Labels   []*Label `json:"labels,omitempty"`
-	Taints   []*Taint `json:"taints,omitempty"`
+	ID                 *string             `json:"id,omitempty"`
+	Name               *string             `json:"name,omitempty"`
+	OceanID            *string             `json:"oceanId,omitempty"`
+	ImageID            *string             `json:"imageId,omitempty"`
+	UserData           *string             `json:"userData,omitempty"`
+	SecurityGroupIDs   []string            `json:"securityGroupIds,omitempty"`
+	IAMInstanceProfile *IAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
+	Labels             []*Label            `json:"labels,omitempty"`
+	Taints             []*Taint            `json:"taints,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -268,6 +271,13 @@ func (o *LaunchSpec) SetId(v *string) *LaunchSpec {
 	return o
 }
 
+func (o *LaunchSpec) SetName(v *string) *LaunchSpec {
+	if o.Name = v; o.Name == nil {
+		o.nullFields = append(o.nullFields, "Name")
+	}
+	return o
+}
+
 func (o *LaunchSpec) SetOceanId(v *string) *LaunchSpec {
 	if o.OceanID = v; o.OceanID == nil {
 		o.nullFields = append(o.nullFields, "OceanID")
@@ -285,6 +295,20 @@ func (o *LaunchSpec) SetImageId(v *string) *LaunchSpec {
 func (o *LaunchSpec) SetUserData(v *string) *LaunchSpec {
 	if o.UserData = v; o.UserData == nil {
 		o.nullFields = append(o.nullFields, "UserData")
+	}
+	return o
+}
+
+func (o *LaunchSpec) SetSecurityGroupIDs(v []string) *LaunchSpec {
+	if o.SecurityGroupIDs = v; o.SecurityGroupIDs == nil {
+		o.nullFields = append(o.nullFields, "SecurityGroupIDs")
+	}
+	return o
+}
+
+func (o *LaunchSpec) SetIAMInstanceProfile(v *IAMInstanceProfile) *LaunchSpec {
+	if o.IAMInstanceProfile = v; o.IAMInstanceProfile == nil {
+		o.nullFields = append(o.nullFields, "IAMInstanceProfile")
 	}
 	return o
 }
