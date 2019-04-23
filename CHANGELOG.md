@@ -1,4 +1,4 @@
-## 1.12.0 (Unreleased)
+## 1.12.0 (April 23, 2019)
 
 FEATURES:
 * *New Resource*: `spotinst_ocean_gke`
