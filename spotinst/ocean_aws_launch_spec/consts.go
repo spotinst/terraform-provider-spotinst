@@ -4,6 +4,7 @@ import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/comm
 
 type LabelField string
 type TaintField string
+type IAMField string
 
 const (
 	LabelKey   LabelField = "key"
@@ -17,9 +18,15 @@ const (
 )
 
 const (
-	OceanID  commons.FieldName = "ocean_id"
-	ImageID  commons.FieldName = "image_id"
-	UserData commons.FieldName = "user_data"
-	Labels   commons.FieldName = "labels"
-	Taints   commons.FieldName = "taints"
+	ARN  IAMField = "arn"
+	Name IAMField = "name"
+)
+
+const (
+	OceanID            commons.FieldName = "ocean_id"
+	ImageID            commons.FieldName = "image_id"
+	UserData           commons.FieldName = "user_data"
+	IamInstanceProfile commons.FieldName = "iam_instance_profile"
+	Labels             commons.FieldName = "labels"
+	Taints             commons.FieldName = "taints"
 )

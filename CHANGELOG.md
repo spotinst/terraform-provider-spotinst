@@ -1,4 +1,10 @@
-## 1.12.0 (Unreleased)
+## 1.13.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `iam_instance_profile`
+* resource/spotinst_ocean_aws: added `ebs_optimized` and `monitoring`
+
+## 1.12.0 (April 23, 2019)
 
 FEATURES:
 * *New Resource*: `spotinst_ocean_gke`
@@ -10,7 +16,8 @@ NOTES:
 * documentation: resource names are now accurate
 
 BUG FIXES:
-* resource/spotinst_elastigroup_aws: 
+* resource/spotinst_elastigroup_aws: resolved errors with `max_scale_down_pct`
+* resource/spotinst_elastigroup_azure: `custom_data`
 
 ## 1.11.0 (April 16, 2019)
 

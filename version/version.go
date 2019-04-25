@@ -11,7 +11,7 @@ var (
 	OS           = runtime.GOOS
 	Architecture = runtime.GOARCH
 	Major        = 1
-	Minor        = 12
+	Minor        = 13
 	Patch        = 0
 )
 
