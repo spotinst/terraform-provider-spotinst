@@ -8,6 +8,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration"
 	"log"
 	"testing"
 )
@@ -161,6 +162,16 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "test"),
+					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "labels.72815409.key", "label key"),
+					resource.TestCheckResourceAttr(resourceName, "labels.72815409.value", "label value"),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.key", "taint key"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.value", "taint value"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.effect", "NoSchedule"),
 				),
 			},
 			{
@@ -170,6 +181,16 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "labels.3686834679.key", "label key updated"),
+					resource.TestCheckResourceAttr(resourceName, "labels.3686834679.value", "label value updated"),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.key", "taint key updated"),
+					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.value", "taint value updated"),
+					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.effect", "NoExecute"),
 				),
 			},
 		},
@@ -183,7 +204,8 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
   image_id = "ami-79826301"
   user_data = "hello world"
-  
+  iam_instance_profile = "test"
+
   labels = [{
     key = "label key"
     value = "label value"
@@ -194,6 +216,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
     value = "taint value"
     effect = "NoSchedule"
   }]
+
 
  %v
 }
@@ -206,6 +229,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
   image_id = "ami-79826301"
   user_data = "hello world updated"
+  iam_instance_profile = "updated"
   
   labels = {
     key = "label key updated"

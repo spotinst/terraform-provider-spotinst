@@ -1,4 +1,9 @@
 ## 1.13.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `iam_instance_profile`
+* resource/spotinst_ocean_aws: added `ebs_optimized` and `monitoring`
+
 ## 1.12.0 (April 23, 2019)
 
 FEATURES:

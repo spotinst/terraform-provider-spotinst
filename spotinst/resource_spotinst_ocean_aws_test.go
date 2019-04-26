@@ -360,6 +360,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
+					resource.TestCheckResourceAttr(resourceName, "monitoring", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 				),
 			},
 			{
@@ -388,6 +390,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "24"),
+					resource.TestCheckResourceAttr(resourceName, "monitoring", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 				),
 			},
 			{
@@ -412,16 +416,19 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 
 const testLaunchConfigAWSConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id             = "ami-79826301"
-  security_groups      = ["sg-042d658b3ee907848"]
-  //key_name             = "my-key.ssh"
-  user_data            = "echo hello world"
-  //iam_instance_profile = "iam-profile"
+  image_id                    = "ami-79826301"
+  security_groups             = ["sg-042d658b3ee907848"]
+  //key_name                  = "my-key.ssh"
+  user_data                   = "echo hello world"
+  //iam_instance_profile      = "iam-profile"
   associate_public_ip_address = false
-  root_volume_size = 20
+  root_volume_size            = 20
+  monitoring                  = true
+  ebs_optimized               = true
+
   load_balancers = [
     {
-      arn = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/8db573b63a46bfb2"
+      arn  = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/8db573b63a46bfb2"
       type = "TARGET_GROUP"
     },
     {
@@ -439,16 +446,19 @@ const testLaunchConfigAWSConfig_Create = `
 
 const testLaunchConfigAWSConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id             = "ami-79826301"
-  security_groups      = ["sg-042d658b3ee907848"]
-  //key_name             = "my-key-updated.ssh"
-  user_data            = "echo hello world updated"
-  //iam_instance_profile = "iam-profile updated"
+  image_id                    = "ami-79826301"
+  security_groups             = ["sg-042d658b3ee907848"]
+  //key_name                  = "my-key-updated.ssh"
+  user_data                   = "echo hello world updated"
+  //iam_instance_profile      = "iam-profile updated"
   associate_public_ip_address = true
-  root_volume_size = 24
+  root_volume_size            = 24
+  monitoring                  = false
+  ebs_optimized               = false
+
   load_balancers = [
     {
-      arn = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/1234567890"
+      arn  = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/1234567890"
       type = "TARGET_GROUP"
     },
     {
