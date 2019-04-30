@@ -207,3 +207,21 @@ tags = [{
   value = "fakeValue"
 }]
 ```
+
+<a id="update-policy"></a>
+## Update Policy
+
+* `update_policy` - (Optional)
+    * `should_roll` - (Required) Enables the roll.
+    * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
+        * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
+
+```hcl
+  update_policy = {
+    should_roll = false
+    
+    roll_config = {
+      batch_size_percentage = 33
+    }
+  }
+```

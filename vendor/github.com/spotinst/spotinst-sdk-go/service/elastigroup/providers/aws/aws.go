@@ -167,6 +167,7 @@ type AutoScaleDockerSwarm struct {
 
 type AutoScaleHeadroom struct {
 	CPUPerUnit    *int `json:"cpuPerUnit,omitempty"`
+	GPUPerUnit    *int `json:"gpuPerUnit,omitempty"`
 	MemoryPerUnit *int `json:"memoryPerUnit,omitempty"`
 	NumOfUnits    *int `json:"numOfUnits,omitempty"`
 
@@ -2048,6 +2049,13 @@ func (o *AutoScaleHeadroom) MarshalJSON() ([]byte, error) {
 func (o *AutoScaleHeadroom) SetCPUPerUnit(v *int) *AutoScaleHeadroom {
 	if o.CPUPerUnit = v; o.CPUPerUnit == nil {
 		o.nullFields = append(o.nullFields, "CPUPerUnit")
+	}
+	return o
+}
+
+func (o *AutoScaleHeadroom) SetGPUPerUnit(v *int) *AutoScaleHeadroom {
+	if o.GPUPerUnit = v; o.GPUPerUnit == nil {
+		o.nullFields = append(o.nullFields, "GPUPerUnit")
 	}
 	return o
 }

@@ -738,3 +738,99 @@ const testScalingConfig_EmptyFields = `
 `
 
 // endregion
+
+// region OceanAWS: Update Policy
+
+func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
+	clusterName := "test-acc-cluster-update-policy"
+	controllerClusterID := "update-policy-controller-id"
+	resourceName := createOceanAWSResourceName(clusterName)
+
+	var cluster aws.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testUpdatePolicyAWSClusterConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testUpdatePolicyAWSClusterConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testUpdatePolicyAWSClusterConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testUpdatePolicyAWSClusterConfig_Create = `
+ spot_percentage = 100
+
+ // --- UPDATE POLICY ----------------
+  update_policy = {
+    should_roll = false
+    roll_config = {
+      batch_size_percentage = 33
+    }
+  }
+ // ----------------------------------
+`
+
+const testUpdatePolicyAWSClusterConfig_Update = `
+ spot_percentage = 50
+
+ // --- UPDATE POLICY ----------------
+  update_policy = {
+    should_roll = true
+    roll_config = {
+      batch_size_percentage = 66
+    }
+  }
+ // ----------------------------------
+`
+
+const testUpdatePolicyAWSClusterConfig_EmptyFields = `
+ // --- UPDATE POLICY ----------------
+ // ----------------------------------
+`
+
+// endregion

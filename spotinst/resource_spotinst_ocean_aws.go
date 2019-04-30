@@ -66,7 +66,7 @@ func resourceSpotinstClusterAWSCreate(resourceData *schema.ResourceData, meta in
 
 	resourceData.SetId(spotinst.StringValue(clusterId))
 
-	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
+	log.Printf("===> Cluster created successfully: %s <===", resourceData.Id())
 	return resourceSpotinstClusterAWSRead(resourceData, meta)
 }
 
@@ -120,7 +120,7 @@ func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta inte
 
 	if err != nil {
 		// If the cluster was not found, return nil so that we can show
-		// that the group does not exist
+		// that the cluster does not exist
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
 				if err.Code == ErrCodeClusterNotFound {
@@ -176,7 +176,18 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 		Cluster: cluster,
 	}
 
+	var shouldRoll = false
 	clusterId := resourceData.Id()
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if list != nil && len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if roll, ok := m[string(ocean_aws.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
+		}
+	}
 
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
@@ -186,8 +197,54 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterId, err)
+	} else if shouldRoll {
+		if err := rollCluster(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterId, err)
+			return err
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws.ShouldRoll))
 	}
 
+	return nil
+}
+
+func rollCluster(resourceData *schema.ResourceData, meta interface{}) error {
+	var errResult error = nil
+	clusterId := resourceData.Id()
+
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if list != nil && len(list) > 0 && list[0] != nil {
+			updateClusterSchema := list[0].(map[string]interface{})
+			if rollConfig, ok := updateClusterSchema[string(ocean_aws.RollConfig)]; !ok || rollConfig == nil {
+				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_aws.RollConfig), clusterId)
+			} else {
+				if rollClusterInput, err := expandOceanRollConfig(rollConfig, spotinst.String(clusterId)); err != nil {
+					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for cluster [%v], error: %v", clusterId, err)
+				} else {
+					if json, err := commons.ToJson(rollConfig); err != nil {
+						return err
+					} else {
+						log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterId, json)
+						rollClusterInput.Roll.ClusterID = spotinst.String(clusterId)
+						_, err := meta.(*Client).ocean.CloudProviderAWS().Roll(context.Background(), rollClusterInput)
+						if err != nil {
+							return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterId, err)
+						} else {
+							log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterId)
+						}
+					}
+				}
+			}
+		}
+	} else {
+		errResult = fmt.Errorf("[ERROR] onRoll() -> Missing update policy for cluster [%v]", clusterId)
+	}
+
+	if errResult != nil {
+		return errResult
+	}
 	return nil
 }
 
@@ -224,4 +281,22 @@ func deleteAWSCluster(resourceData *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete cluster: %s", err)
 	}
 	return nil
+}
+
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//         Utils
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+func expandOceanRollConfig(data interface{}, clusterId *string) (*aws.RollClusterInput, error) {
+	i := &aws.RollClusterInput{Roll: &aws.Roll{ClusterID: clusterId}}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ocean_aws.BatchSizePercentage)].(int); ok {
+			i.Roll.BatchSizePercentage = spotinst.Int(v)
+		}
+
+	}
+	return i, nil
 }
