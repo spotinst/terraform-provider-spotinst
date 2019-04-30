@@ -1,4 +1,6 @@
-## 1.13.0 (Unreleased)
+## 1.13.1 (Unreleased)
+
+## 1.13.0 (April 26, 2019)
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `iam_instance_profile`
