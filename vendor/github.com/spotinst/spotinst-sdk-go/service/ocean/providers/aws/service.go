@@ -26,6 +26,8 @@ type Service interface {
 
 	ListClusterInstances(context.Context, *ListClusterInstancesInput) (*ListClusterInstancesOutput, error)
 	DetachClusterInstances(context.Context, *DetachClusterInstancesInput) (*DetachClusterInstancesOutput, error)
+
+	Roll(context.Context, *RollClusterInput) (*RollClusterOutput, error)
 }
 
 type ServiceOp struct {

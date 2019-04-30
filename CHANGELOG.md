@@ -1,5 +1,8 @@
 ## 1.13.1 (Unreleased)
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `update_policy` for managing rolling deployments
+
 ## 1.13.0 (April 26, 2019)
 
 ENHANCEMENTS:
