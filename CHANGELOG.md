@@ -1,4 +1,9 @@
 ## 1.13.2 (Unreleased)
+
+NOTES:
+
+Adding the additonal protocol version (5) for Terraform 0.12 to this release.
+
 ## 1.13.1 (May 01, 2019)
 
 ENHANCEMENTS:
