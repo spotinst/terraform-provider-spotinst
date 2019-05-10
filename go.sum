@@ -217,8 +217,8 @@ github.com/smartystreets/assertions v0.0.0-20190116191733-b6c0e53d7304/go.mod h1
 github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c/go.mod h1:XDJAKZRPZ1CvBcN2aX5YOUTYGHki24fSF0Iv48Ibg0s=
 github.com/soheilhy/cmux v0.1.4/go.mod h1:IM3LyeVVIOuxMH7sFAkER9+bJ4dT7Ms6E4xg4kGIyLM=
 github.com/spf13/afero v1.0.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=
-github.com/spotinst/spotinst-sdk-go v0.0.0-20190510192009-ac96b4bb820f h1:s5aJnliNS4Be2E2I54BpSSDD81LdcsHR2nQ8oHQ94Oo=
-github.com/spotinst/spotinst-sdk-go v0.0.0-20190510192009-ac96b4bb820f/go.mod h1:hl5jnGvawJ84YGUk0ogthSWRO886F4f8CoGbHsuwcm4=
+github.com/spotinst/spotinst-sdk-go v0.0.0-20190510223236-6deb754bf781 h1:kiSOyStzpxKLmjh6BlQS71OCXu9kk0yRmd4cpIhgLxc=
+github.com/spotinst/spotinst-sdk-go v0.0.0-20190510223236-6deb754bf781/go.mod h1:hl5jnGvawJ84YGUk0ogthSWRO886F4f8CoGbHsuwcm4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
