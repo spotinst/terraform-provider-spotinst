@@ -123,6 +123,7 @@ func NewElastigroupGCPWrapper() *ElastigroupGCPWrapper {
 			},
 			Integration: &gcp.Integration{},
 			Scaling:     &gcp.Scaling{},
+			Scheduling:  &gcp.Scheduling{},
 			Strategy:    &gcp.Strategy{},
 		},
 	}

@@ -52,6 +52,7 @@ const (
 	ElastigroupGCPLaunchConfiguration ResourceAffinity = "Elastigroup_GCP_Launch_Configuration"
 	ElastigroupGCPNetworkInterface    ResourceAffinity = "Elastigroup_GCP_Network_Interface"
 	ElastigroupGCPScalingPolicies     ResourceAffinity = "Elastigroup_GCP_Scaling_Policies"
+	ElastigroupGCPScheduledTask       ResourceAffinity = "Elastigroup_GCP_Scheduled_Task"
 	ElastigroupGCPStrategy            ResourceAffinity = "Elastigroup_GCP_Strategy"
 
 	ElastigroupGKE ResourceAffinity = "Elastigroup_GKE"

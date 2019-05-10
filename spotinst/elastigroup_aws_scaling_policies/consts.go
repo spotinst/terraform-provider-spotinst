@@ -2,10 +2,6 @@ package elastigroup_aws_scaling_policies
 
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 
-const (
-	Prefix = ""
-)
-
 type DimensionField string
 
 const (
@@ -34,6 +30,7 @@ const (
 	Target            commons.FieldName = "target"
 	ActionType        commons.FieldName = "action_type"
 	IsEnabled         commons.FieldName = "is_enabled"
+	PredictiveMode    commons.FieldName = "predictive_mode"
 
 	DimensionName  DimensionField = "name"
 	DimensionValue DimensionField = "value"

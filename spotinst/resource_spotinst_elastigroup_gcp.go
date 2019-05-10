@@ -17,6 +17,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_launch_configuration"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_network_interface"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_scaling_policies"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_scheduled_task"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_strategy"
 	"log"
 	"time"
@@ -51,6 +52,7 @@ func setupElastigroupGCPResource() {
 	elastigroup_gcp_launch_configuration.Setup(fieldsMap)
 	elastigroup_gcp_network_interface.Setup(fieldsMap)
 	elastigroup_gcp_scaling_policies.Setup(fieldsMap)
+	elastigroup_gcp_scheduled_task.Setup(fieldsMap)
 	elastigroup_gcp_strategy.Setup(fieldsMap)
 
 	commons.ElastigroupGCPResource = commons.NewElastigroupGCPResource(fieldsMap)

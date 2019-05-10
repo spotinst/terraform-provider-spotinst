@@ -121,8 +121,9 @@ The following arguments are supported:
 * `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
 For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
 
-* `availability_zones` - (Optional) List of Strings of availability zones.
-Note: When this parameter is set, `subnet_ids` should be left unused.
+* `availability_zones` - (Optional) List of Strings of availability zones. When this parameter is set, `subnet_ids` should be left unused.
+Note: `availability_zones` naming syntax follows the convention `availability-zone:subnet:placement-group-name`. For example, to set an AZ in `us-east-1` with subnet `subnet-123456` and placement group `ClusterI03`, you would set:
+`availability_zones = ["us-east-1a:subnet-123456:ClusterI03"]`
 
 * `subnet_ids` - (Optional) List of Strings of subnet identifiers.
 Note: When this parameter is set, `availability_zones` should be left unused.
@@ -301,6 +302,10 @@ When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `
 * `maximum` - (Optional; if using `updateCapacity`) The maximal number of instances to have in the group.
 * `target` - (Optional; if using `updateCapacity`) The target number of instances to have in the group.
 
+`scaling_target_policies` support predictive scaling:
+
+* `predictive_mode` - (Optional) Start a metric prediction process to determine the expected target metric value within the next two days. See [Predictive Autoscaling](https://api.spotinst.com/elastigroup-for-aws/concepts/scaling-concepts/predictive-autoscaling/) documentation for more info. Valid values: `FORECAST_AND_SCALE`, `FORECAST_ONLY`.
+
 Usage:
 
 ```hcl
@@ -347,14 +352,15 @@ Usage:
 
 ```hcl
   scaling_target_policy = [{
-      policy_name = ""
-      metric_name = ""
-      namespace   = ""
-      source      = ""
-      statistic   = ""
-      unit        = ""
-      cooldown    = 10
-      target      = 1
+      policy_name     = ""
+      metric_name     = ""
+      namespace       = ""
+      source          = ""
+      statistic       = ""
+      unit            = ""
+      cooldown        = 10
+      target          = 1
+      predictive_mode = ""
       
       dimensions = [{
         name  = ""

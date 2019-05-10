@@ -364,9 +364,9 @@ func (s *ServiceOp) DeleteLoadBalancer(ctx context.Context, input *DeleteLoadBal
 
 // region LoadBalancer
 
-func (o *LoadBalancer) MarshalJSON() ([]byte, error) {
+func (o LoadBalancer) MarshalJSON() ([]byte, error) {
 	type noMethod LoadBalancer
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -628,9 +628,9 @@ func (s *ServiceOp) DeleteListener(ctx context.Context, input *DeleteListenerInp
 
 // region Listener
 
-func (o *Listener) MarshalJSON() ([]byte, error) {
+func (o Listener) MarshalJSON() ([]byte, error) {
 	type noMethod Listener
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -680,9 +680,9 @@ func (o *Listener) SetTags(v []*Tag) *Listener {
 
 // region TLSConfig
 
-func (o *TLSConfig) MarshalJSON() ([]byte, error) {
+func (o TLSConfig) MarshalJSON() ([]byte, error) {
 	type noMethod TLSConfig
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -940,9 +940,9 @@ func (s *ServiceOp) DeleteRoutingRule(ctx context.Context, input *DeleteRoutingR
 
 // region RoutingRule
 
-func (o *RoutingRule) MarshalJSON() ([]byte, error) {
+func (o RoutingRule) MarshalJSON() ([]byte, error) {
 	type noMethod RoutingRule
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -1211,9 +1211,9 @@ func (s *ServiceOp) DeleteMiddleware(ctx context.Context, input *DeleteMiddlewar
 
 // region Middleware
 
-func (o *Middleware) MarshalJSON() ([]byte, error) {
+func (o Middleware) MarshalJSON() ([]byte, error) {
 	type noMethod Middleware
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -1477,9 +1477,9 @@ func (s *ServiceOp) DeleteTargetSet(ctx context.Context, input *DeleteTargetSetI
 
 // region TargetSet
 
-func (o *TargetSet) MarshalJSON() ([]byte, error) {
+func (o TargetSet) MarshalJSON() ([]byte, error) {
 	type noMethod TargetSet
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -1550,9 +1550,9 @@ func (o *TargetSet) SetTags(v []*Tag) *TargetSet {
 
 // region TargetSetHealthCheck
 
-func (o *TargetSetHealthCheck) MarshalJSON() ([]byte, error) {
+func (o TargetSetHealthCheck) MarshalJSON() ([]byte, error) {
 	type noMethod TargetSetHealthCheck
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -1827,9 +1827,9 @@ func (s *ServiceOp) DeleteTarget(ctx context.Context, input *DeleteTargetInput) 
 
 // region Target
 
-func (o *Target) MarshalJSON() ([]byte, error) {
+func (o Target) MarshalJSON() ([]byte, error) {
 	type noMethod Target
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -2016,9 +2016,9 @@ func (s *ServiceOp) ReadRuntime(ctx context.Context, input *ReadRuntimeInput) (*
 
 // region Runtime
 
-func (o *Runtime) MarshalJSON() ([]byte, error) {
+func (o Runtime) MarshalJSON() ([]byte, error) {
 	type noMethod Runtime
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -2242,9 +2242,9 @@ func (s *ServiceOp) DeleteDeployment(ctx context.Context, input *DeleteDeploymen
 
 // region Deployment
 
-func (o *Deployment) MarshalJSON() ([]byte, error) {
+func (o Deployment) MarshalJSON() ([]byte, error) {
 	type noMethod Deployment
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 

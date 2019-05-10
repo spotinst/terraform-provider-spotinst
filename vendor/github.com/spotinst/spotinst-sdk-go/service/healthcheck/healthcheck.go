@@ -241,9 +241,9 @@ func (s *ServiceOp) Delete(ctx context.Context, input *DeleteHealthCheckInput) (
 
 // region HealthCheck
 
-func (o *HealthCheck) MarshalJSON() ([]byte, error) {
+func (o HealthCheck) MarshalJSON() ([]byte, error) {
 	type noMethod HealthCheck
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -293,9 +293,9 @@ func (o *HealthCheck) SetProxyPort(v *int) *HealthCheck {
 
 // region Check
 
-func (o *Check) MarshalJSON() ([]byte, error) {
+func (o Check) MarshalJSON() ([]byte, error) {
 	type noMethod Check
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
