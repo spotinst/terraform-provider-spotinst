@@ -372,9 +372,9 @@ func (s *ServiceOp) DeleteCluster(ctx context.Context, input *DeleteClusterInput
 
 // region Cluster
 
-func (o *Cluster) MarshalJSON() ([]byte, error) {
+func (o Cluster) MarshalJSON() ([]byte, error) {
 	type noMethod Cluster
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -431,9 +431,9 @@ func (o *Cluster) SetGKE(v *GKE) *Cluster {
 
 // region GKE
 
-func (o *GKE) MarshalJSON() ([]byte, error) {
+func (o GKE) MarshalJSON() ([]byte, error) {
 	type noMethod GKE
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -455,9 +455,9 @@ func (o *GKE) SetMasterLocation(v *string) *GKE {
 
 // region Capacity
 
-func (o *Capacity) MarshalJSON() ([]byte, error) {
+func (o Capacity) MarshalJSON() ([]byte, error) {
 	type noMethod Capacity
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -486,9 +486,9 @@ func (o *Capacity) SetTarget(v *int) *Capacity {
 
 // region Compute
 
-func (o *Compute) MarshalJSON() ([]byte, error) {
+func (o Compute) MarshalJSON() ([]byte, error) {
 	type noMethod Compute
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -531,9 +531,9 @@ func (o *Compute) SetSubnetName(v *string) *Compute {
 
 // region InstanceTypes
 
-func (o *InstanceTypes) MarshalJSON() ([]byte, error) {
+func (o InstanceTypes) MarshalJSON() ([]byte, error) {
 	type noMethod InstanceTypes
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -548,9 +548,9 @@ func (o *InstanceTypes) SetWhitelist(v []string) *InstanceTypes {
 
 // region LaunchSpecification
 
-func (o *LaunchSpecification) MarshalJSON() ([]byte, error) {
+func (o LaunchSpecification) MarshalJSON() ([]byte, error) {
 	type noMethod LaunchSpecification
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -614,9 +614,9 @@ func (o *LaunchSpecification) SetTags(v []string) *LaunchSpecification {
 
 // region BackendService
 
-func (o *BackendService) MarshalJSON() ([]byte, error) {
+func (o BackendService) MarshalJSON() ([]byte, error) {
 	type noMethod BackendService
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -652,9 +652,9 @@ func (o *BackendService) SetNamedPorts(v *NamedPorts) *BackendService {
 
 // region NamedPort setters
 
-func (o *NamedPorts) MarshalJSON() ([]byte, error) {
+func (o NamedPorts) MarshalJSON() ([]byte, error) {
 	type noMethod NamedPorts
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -677,9 +677,9 @@ func (o *NamedPorts) SetPorts(v []int) *NamedPorts {
 
 // region Metadata
 
-func (o *Metadata) MarshalJSON() ([]byte, error) {
+func (o Metadata) MarshalJSON() ([]byte, error) {
 	type noMethod Metadata
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -701,9 +701,9 @@ func (o *Metadata) SetValue(v *string) *Metadata {
 
 // region NetworkInterface
 
-func (o *NetworkInterface) MarshalJSON() ([]byte, error) {
+func (o NetworkInterface) MarshalJSON() ([]byte, error) {
 	type noMethod NetworkInterface
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -732,9 +732,9 @@ func (o *NetworkInterface) SetNetwork(v *string) *NetworkInterface {
 
 // region AliasIPRange
 
-func (o *AliasIPRange) MarshalJSON() ([]byte, error) {
+func (o AliasIPRange) MarshalJSON() ([]byte, error) {
 	type noMethod AliasIPRange
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -756,9 +756,9 @@ func (o *AliasIPRange) SetSubnetworkRangeName(v *string) *AliasIPRange {
 
 // region AccessConfig
 
-func (o *AccessConfig) MarshalJSON() ([]byte, error) {
+func (o AccessConfig) MarshalJSON() ([]byte, error) {
 	type noMethod AccessConfig
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -780,9 +780,9 @@ func (o *AccessConfig) SetType(v *string) *AccessConfig {
 
 // region AutoScaler
 
-func (o *AutoScaler) MarshalJSON() ([]byte, error) {
+func (o AutoScaler) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScaler
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -832,9 +832,9 @@ func (o *AutoScaler) SetDown(v *AutoScalerDown) *AutoScaler {
 
 // region AutoScalerHeadroom
 
-func (o *AutoScalerHeadroom) MarshalJSON() ([]byte, error) {
+func (o AutoScalerHeadroom) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScalerHeadroom
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -871,9 +871,9 @@ func (o *AutoScalerHeadroom) SetGPUPerUnit(v *int) *AutoScalerHeadroom {
 
 // region AutoScalerResourceLimits
 
-func (o *AutoScalerResourceLimits) MarshalJSON() ([]byte, error) {
+func (o AutoScalerResourceLimits) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScalerResourceLimits
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -895,9 +895,9 @@ func (o *AutoScalerResourceLimits) SetMaxMemoryGiB(v *int) *AutoScalerResourceLi
 
 // region AutoScalerDown
 
-func (o *AutoScalerDown) MarshalJSON() ([]byte, error) {
+func (o AutoScalerDown) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScalerDown
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 

@@ -1555,3 +1555,101 @@ const testGCPIntegrationDockerSwarmGroupConfig_EmptyFields = `
 `
 
 // endregion
+
+// region Elastigroup: Scheduled Tasks
+func TestAccSpotinstElastigroupGCP_ScheduledTask(t *testing.T) {
+	groupName := "test-acc-eg-gcp-scheduled-task"
+	resourceName := createElastigroupGCPResourceName(groupName)
+
+	var group gcp.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupGCPDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testGCPScheduledTaskGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupGCPExists(&group, resourceName),
+					testCheckElastigroupGCPAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.task_type", "setCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.cron_expression", "* * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.min_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.max_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.target_capacity", "2"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testGCPScheduledTaskGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupGCPExists(&group, resourceName),
+					testCheckElastigroupGCPAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.task_type", "setCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.cron_expression", "* * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.min_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.max_capacity", "4"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.target_capacity", "3"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testGCPScheduledTaskGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupGCPExists(&group, resourceName),
+					testCheckElastigroupGCPAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testGCPScheduledTaskGroupConfig_Create = `
+ // --- SCHEDULED TASK ------------------
+  scheduled_task = [{
+	is_enabled = false
+    task_type = "setCapacity"
+    cron_expression = "* * * * *"
+    target_capacity = 2
+    min_capacity = 1
+    max_capacity = 3
+  }]
+ // -------------------------------------
+`
+
+const testGCPScheduledTaskGroupConfig_Update = `
+ // --- SCHEDULED TASK ------------------
+  scheduled_task = [{
+	is_enabled = true
+    task_type = "setCapacity"
+    cron_expression = "* * * * *"
+    target_capacity = 3
+    min_capacity = 2
+    max_capacity = 4
+  }]
+ // -------------------------------------
+`
+
+const testGCPScheduledTaskGroupConfig_EmptyFields = `
+ // --- SCHEDULED TASK ------------------
+ // -------------------------------------
+`
+
+// endregion

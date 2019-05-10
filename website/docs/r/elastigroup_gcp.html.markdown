@@ -349,3 +349,28 @@ integration_docker_swarm = {
     master_port = 2376
 }
 ```
+
+<a id="scheduled-task"></a>
+## Scheduled Tasks
+
+Each `scheduled_task` supports the following:
+
+* `task_type` - (Required) The task type to run. Valid values: `"setCapacity"`.
+* `cron_expression` - (Optional) A valid cron expression. The cron is running in UTC time zone and is in [Unix cron format](https://en.wikipedia.org/wiki/Cron).
+* `is_enabled` - (Optional, Default: `true`) Setting the task to being enabled or disabled.
+* `target_capacity` - (Optional) The desired number of instances the group should have.
+* `min_capacity` - (Optional) The minimum number of instances the group should have.
+* `max_capacity` - (Optional) The maximum number of instances the group should have.
+
+Usage:
+
+```hcl
+  scheduled_task = [{
+    task_type             = "setCapacity"
+    cron_expression       = ""
+    is_enabled            = false
+    target_capacity       = 5
+    min_capacity          = 0
+    max_capacity          = 10
+  }]
+```

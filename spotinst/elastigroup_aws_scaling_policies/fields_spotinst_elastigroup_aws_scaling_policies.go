@@ -2,7 +2,6 @@ package elastigroup_aws_scaling_policies
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -314,6 +313,11 @@ func targetScalingPolicySchema() *schema.Schema {
 		Required: true,
 	}
 
+	s[string(PredictiveMode)] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	return o
 }
 
@@ -431,6 +435,9 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 				policy.SetTarget(spotinst.Float64(v))
 			}
 
+			if v, ok := m[string(PredictiveMode)].(string); ok && v != "" {
+				policy.SetPredictive(&aws.Predictive{Mode: spotinst.String(v)})
+			}
 		}
 
 		if policy.Namespace != nil {
@@ -510,6 +517,11 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 		// Target scaling policy?
 		if policy.Threshold == nil {
 			m[string(Target)] = spotinst.Float64Value(policy.Target)
+
+			if policy.Predictive != nil && policy.Predictive.Mode != nil {
+				m[string(PredictiveMode)] = spotinst.StringValue(policy.Predictive.Mode)
+			}
+
 		} else {
 			m[string(IsEnabled)] = spotinst.BoolValue(policy.IsEnabled)
 		}

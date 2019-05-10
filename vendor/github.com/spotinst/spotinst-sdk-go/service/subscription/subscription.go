@@ -228,9 +228,9 @@ func (s *ServiceOp) Delete(ctx context.Context, input *DeleteSubscriptionInput) 
 
 // region Subscription
 
-func (o *Subscription) MarshalJSON() ([]byte, error) {
+func (o Subscription) MarshalJSON() ([]byte, error) {
 	type noMethod Subscription
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
