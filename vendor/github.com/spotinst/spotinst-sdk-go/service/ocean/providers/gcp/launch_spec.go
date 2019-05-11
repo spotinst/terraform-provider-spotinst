@@ -255,9 +255,9 @@ func (s *ServiceOp) DeleteLaunchSpec(ctx context.Context, input *DeleteLaunchSpe
 
 // region LaunchSpec
 
-func (o *LaunchSpec) MarshalJSON() ([]byte, error) {
+func (o LaunchSpec) MarshalJSON() ([]byte, error) {
 	type noMethod LaunchSpec
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -307,9 +307,9 @@ func (o *LaunchSpec) SetTaints(v []*Taint) *LaunchSpec {
 
 // region Label
 
-func (o *Label) MarshalJSON() ([]byte, error) {
+func (o Label) MarshalJSON() ([]byte, error) {
 	type noMethod Label
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -331,9 +331,9 @@ func (o *Label) SetValue(v *string) *Label {
 
 // region Taints
 
-func (o *Taint) MarshalJSON() ([]byte, error) {
+func (o Taint) MarshalJSON() ([]byte, error) {
 	type noMethod Taint
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 

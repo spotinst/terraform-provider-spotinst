@@ -1,4 +1,9 @@
 ## 1.13.3 (Unreleased)
+
+ENHANCEMENTS:
+* resource_elastigroup_gcp: added `scheduled_task`
+* resource_elastigroup_aws: added `predictive_mode`
+
 ## 1.13.2 (May 01, 2019)
 
 NOTES:

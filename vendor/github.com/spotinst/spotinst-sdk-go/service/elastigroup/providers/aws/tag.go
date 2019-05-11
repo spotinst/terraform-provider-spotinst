@@ -10,9 +10,9 @@ type Tag struct {
 	nullFields      []string
 }
 
-func (o *Tag) MarshalJSON() ([]byte, error) {
+func (o Tag) MarshalJSON() ([]byte, error) {
 	type noMethod Tag
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 

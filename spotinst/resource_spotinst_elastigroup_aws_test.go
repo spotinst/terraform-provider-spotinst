@@ -1919,17 +1919,18 @@ func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.policy_name", "policy-name"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.source", "cloudWatch"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.statistic", "average"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.unit", "percent"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.dimensions.0.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.dimensions.0.value", "value-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2823833345.target", "1.1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.source", "cloudWatch"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.predictive_mode", "FORECAST_AND_SCALE"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.target", "1.1"),
 				),
 			},
 			{
@@ -1942,17 +1943,18 @@ func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.policy_name", "policy-name-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.source", "spectrum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.unit", "bytes"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.cooldown", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.dimensions.0.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.dimensions.0.value", "value-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1110682238.target", "2.2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.source", "spectrum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.cooldown", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.predictive_mode", "FORECAST_ONLY"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.target", "2.2"),
 				),
 			},
 			{
@@ -1981,6 +1983,7 @@ const testScalingTargetPolicyGroupConfig_Create = `
   statistic = "average"
   unit = "percent"
   cooldown = 60
+  predictive_mode = "FORECAST_AND_SCALE"
   dimensions = {
       name = "name-1"
       value = "value-1"
@@ -2000,6 +2003,7 @@ const testScalingTargetPolicyGroupConfig_Update = `
   statistic = "sum"
   unit = "bytes"
   cooldown = 120
+  predictive_mode = "FORECAST_ONLY"
   dimensions = {
       name = "name-1-update"
       value = "value-1-update"

@@ -416,9 +416,9 @@ func (s *ServiceOp) Roll(ctx context.Context, input *RollClusterInput) (*RollClu
 
 // region Cluster
 
-func (o *Cluster) MarshalJSON() ([]byte, error) {
+func (o Cluster) MarshalJSON() ([]byte, error) {
 	type noMethod Cluster
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -482,9 +482,9 @@ func (o *Cluster) SetAutoScaler(v *AutoScaler) *Cluster {
 
 // region Strategy
 
-func (o *Strategy) MarshalJSON() ([]byte, error) {
+func (o Strategy) MarshalJSON() ([]byte, error) {
 	type noMethod Strategy
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -513,9 +513,9 @@ func (o *Strategy) SetFallbackToOnDemand(v *bool) *Strategy {
 
 // region Capacity
 
-func (o *Capacity) MarshalJSON() ([]byte, error) {
+func (o Capacity) MarshalJSON() ([]byte, error) {
 	type noMethod Capacity
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -544,9 +544,9 @@ func (o *Capacity) SetTarget(v *int) *Capacity {
 
 // region Compute
 
-func (o *Compute) MarshalJSON() ([]byte, error) {
+func (o Compute) MarshalJSON() ([]byte, error) {
 	type noMethod Compute
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -575,9 +575,9 @@ func (o *Compute) SetSubnetIDs(v []string) *Compute {
 
 // region InstanceTypes
 
-func (o *InstanceTypes) MarshalJSON() ([]byte, error) {
+func (o InstanceTypes) MarshalJSON() ([]byte, error) {
 	type noMethod InstanceTypes
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -599,9 +599,9 @@ func (o *InstanceTypes) SetBlacklist(v []string) *InstanceTypes {
 
 // region LaunchSpecification
 
-func (o *LaunchSpecification) MarshalJSON() ([]byte, error) {
+func (o LaunchSpecification) MarshalJSON() ([]byte, error) {
 	type noMethod LaunchSpecification
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -711,9 +711,9 @@ func (o *LoadBalancer) SetType(v *string) *LoadBalancer {
 
 // region IAMInstanceProfile
 
-func (o *IAMInstanceProfile) MarshalJSON() ([]byte, error) {
+func (o IAMInstanceProfile) MarshalJSON() ([]byte, error) {
 	type noMethod IAMInstanceProfile
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -735,9 +735,9 @@ func (o *IAMInstanceProfile) SetName(v *string) *IAMInstanceProfile {
 
 // region AutoScaler
 
-func (o *AutoScaler) MarshalJSON() ([]byte, error) {
+func (o AutoScaler) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScaler
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -787,9 +787,9 @@ func (o *AutoScaler) SetDown(v *AutoScalerDown) *AutoScaler {
 
 // region AutoScalerHeadroom
 
-func (o *AutoScalerHeadroom) MarshalJSON() ([]byte, error) {
+func (o AutoScalerHeadroom) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScalerHeadroom
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -825,9 +825,9 @@ func (o *AutoScalerHeadroom) SetNumOfUnits(v *int) *AutoScalerHeadroom {
 
 // region AutoScalerResourceLimits
 
-func (o *AutoScalerResourceLimits) MarshalJSON() ([]byte, error) {
+func (o AutoScalerResourceLimits) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScalerResourceLimits
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
@@ -849,9 +849,9 @@ func (o *AutoScalerResourceLimits) SetMaxMemoryGiB(v *int) *AutoScalerResourceLi
 
 // region AutoScalerDown
 
-func (o *AutoScalerDown) MarshalJSON() ([]byte, error) {
+func (o AutoScalerDown) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScalerDown
-	raw := noMethod(*o)
+	raw := noMethod(o)
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
