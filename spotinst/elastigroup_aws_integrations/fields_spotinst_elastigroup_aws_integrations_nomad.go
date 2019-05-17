@@ -1,11 +1,9 @@
 package elastigroup_aws_integrations
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -90,14 +88,14 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(AutoscaleConstraints): {
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Key): {
-									Type:      schema.TypeString,
-									Required:  true,
-									StateFunc: attrStateFunc,
+									Type:     schema.TypeString,
+									Required: true,
+									//StateFunc: attrStateFunc,
 								},
 
 								string(Value): {
@@ -106,7 +104,6 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 							},
 						},
-						Set: constraintHashKV,
 					},
 				},
 			},
@@ -225,7 +222,7 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 }
 
 func expandNomadAutoScaleConstraints(data interface{}) ([]*aws.AutoScaleConstraint, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	out := make([]*aws.AutoScaleConstraint, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
@@ -246,21 +243,4 @@ func expandNomadAutoScaleConstraints(data interface{}) ([]*aws.AutoScaleConstrai
 		out = append(out, c)
 	}
 	return out, nil
-}
-
-func attrStateFunc(v interface{}) string {
-	switch s := v.(type) {
-	case string:
-		return fmt.Sprintf("${%s}", s)
-	default:
-		return ""
-	}
-}
-
-func constraintHashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(Key)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(Value)].(string)))
-	return hashcode.String(buf.String())
 }

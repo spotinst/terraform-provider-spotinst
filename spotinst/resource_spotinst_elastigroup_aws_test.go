@@ -354,10 +354,10 @@ func TestAccSpotinstElastigroupAWS_InstanceTypes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "m4.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1650831227.instance_type", "m4.xlarge"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1650831227.weight", "1"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.2214348274.instance_type", "m4.2xlarge"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.2214348274.weight", "2"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.0.instance_type", "m4.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.0.weight", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1.instance_type", "m4.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.1.weight", "2"),
 				),
 			},
 			{
@@ -374,8 +374,8 @@ func TestAccSpotinstElastigroupAWS_InstanceTypes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "c4.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.2", "c4.4xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.3291405167.instance_type", "c4.xlarge"),
-					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.3291405167.weight", "3"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.0.instance_type", "c4.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types_weights.0.weight", "3"),
 				),
 			},
 		},
@@ -386,15 +386,15 @@ const testInstanceTypesGroupConfig_Create = `
  // --- INSTANCE TYPES --------------------------------
  instance_types_ondemand = "m4.2xlarge"
  instance_types_spot 	 = ["m4.xlarge", "m4.2xlarge"]
- instance_types_weights  = [
-  {
+ instance_types_weights {
     instance_type = "m4.xlarge"
     weight        = 1
-  },
-  {
+ }
+
+ instance_types_weights {
     instance_type = "m4.2xlarge"
     weight        = 2
-  }]
+ }
  // ---------------------------------------------------
 `
 
@@ -402,11 +402,10 @@ const testInstanceTypesGroupConfig_Update = `
  // --- INSTANCE TYPES --------------------------------
  instance_types_ondemand = "c4.4xlarge"
  instance_types_spot 	 = ["c4.xlarge", "c4.2xlarge", "c4.4xlarge"]
- instance_types_weights  = [
-  {
+ instance_types_weights {
     instance_type = "c4.xlarge"
     weight        = 3
-  }]
+  }
  // ---------------------------------------------------
 `
 
@@ -693,7 +692,7 @@ const testStrategyGroupConfig_Create = `
  draining_timeout 			= 300
  utilize_reserved_instances = false
 
- scaling_strategy = {
+ scaling_strategy {
    terminate_at_end_of_billing_hour = true
    termination_policy = "default"
  }
@@ -709,7 +708,7 @@ const testStrategyGroupConfig_Update = `
  draining_timeout 			= 600
  utilize_reserved_instances = true
 
- scaling_strategy = {
+ scaling_strategy {
    terminate_at_end_of_billing_hour = false
    termination_policy = "newestInstance"
  }
@@ -877,11 +876,11 @@ func TestAccSpotinstElastigroupAWS_LoadBalancers(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.1", "bal2"),
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.0", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.2753680074.target_set_id", "ts-123"),
 					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.2753680074.balancer_id", "bal-123"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.979814926.target_set_id", "ts-234"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.979814926.balancer_id", "bal-234"),
+					//resource.TestCheckResourceAttr(resourceName, "multai_target_sets.979814926.target_set_id", "ts-234"),
+					//resource.TestCheckResourceAttr(resourceName, "multai_target_sets.979814926.balancer_id", "bal-234"),
 				),
 			},
 			{
@@ -926,14 +925,14 @@ const testLoadBalancersGroupConfig_Create = `
  // --- LOAD BALANCERS --------------------
  elastic_load_balancers = ["bal1", "bal2"]
  target_group_arns = ["arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"]
- multai_target_sets = [{
-    target_set_id = "ts-123",
+ multai_target_sets {
+    target_set_id = "ts-123"
     balancer_id = "bal-123"
-  },
-  {
-    target_set_id = "ts-234",
-    balancer_id = "bal-234"
-  }]
+  }
+  //{
+  //  target_set_id = "ts-234",
+  //  balancer_id = "bal-234"
+  //}]
  // ---------------------------------------
 `
 
@@ -941,10 +940,10 @@ const testLoadBalancersGroupConfig_Update = `
  // --- LOAD BALANCERS --------------------
  elastic_load_balancers = ["bal1", "bal3"]
  target_group_arns = ["arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testNewTargetGroup/1234567890123456"]
- multai_target_sets = [{
-    target_set_id = "ts-123",
+ multai_target_sets {
+    target_set_id = "ts-123"
     balancer_id = "bal-123"
-  }]
+  }
  // ---------------------------------------
 `
 
@@ -1259,11 +1258,11 @@ func TestAccSpotinstElastigroupAWS_Signals(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "signal.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "signal.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.name", "INSTANCE_READY_TO_SHUTDOWN"),
 					resource.TestCheckResourceAttr(resourceName, "signal.1191208186.timeout", "100"),
-					resource.TestCheckResourceAttr(resourceName, "signal.1735739494.name", "INSTANCE_READY"),
-					resource.TestCheckResourceAttr(resourceName, "signal.1735739494.timeout", "200"),
+					//resource.TestCheckResourceAttr(resourceName, "signal.1735739494.name", "INSTANCE_READY"),
+					//resource.TestCheckResourceAttr(resourceName, "signal.1735739494.timeout", "200"),
 				),
 			},
 			{
@@ -1284,7 +1283,7 @@ func TestAccSpotinstElastigroupAWS_Signals(t *testing.T) {
 
 const testSignalsGroupConfig_Create = `
  // --- SIGNAL -----
-  signal = {
+  signal {
     name = "INSTANCE_READY_TO_SHUTDOWN"
     timeout = 100
   }
@@ -1293,14 +1292,14 @@ const testSignalsGroupConfig_Create = `
 
 const testSignalsGroupConfig_Update = `
  // --- SIGNAL -----
-  signal = [{
+  signal {
     name = "INSTANCE_READY_TO_SHUTDOWN"
     timeout = 100
-  },
-  {
-    name = "INSTANCE_READY"
-    timeout = 200
-  }]
+  }
+  //{
+  //  name = "INSTANCE_READY"
+  //  timeout = 200
+  //}]
  // ----------------
 `
 
@@ -1469,7 +1468,7 @@ func TestAccSpotinstElastigroupAWS_NetworkInterfaces(t *testing.T) {
 
 const testNetworkInterfacesGroupConfig_Create = `
  // --- NETWORK INTERFACE ------------------
- network_interface = [{ 
+ network_interface { 
     description = "network interface description"
     device_index = 1
     secondary_private_ip_address_count = 1
@@ -1478,13 +1477,13 @@ const testNetworkInterfacesGroupConfig_Create = `
     delete_on_termination = false
     network_interface_id = "n-123456"
     private_ip_address = "1.1.1.1"
-  }]
+  }
  // ----------------------------------------
 `
 
 const testNetworkInterfacesGroupConfig_Update = `
  // --- NETWORK INTERFACE ------------------
- network_interface = [{ 
+ network_interface { 
     description = "network interface description updated"
     device_index = 2
     secondary_private_ip_address_count = 2
@@ -1492,13 +1491,13 @@ const testNetworkInterfacesGroupConfig_Update = `
     associate_ipv6_address = true
     delete_on_termination = true
     private_ip_address = "2.2.2.2"
-  }]
+  }
  // ----------------------------------------
 `
 
 const testIntegrationNetworkInterfacesGroupConfig_ShouldFail = `
  // --- NETWORK INTERFACE ------------------
- network_interface = [{ 
+ network_interface { 
     description = "network interface description updated"
     device_index = 2
     secondary_private_ip_address_count = 2
@@ -1506,7 +1505,7 @@ const testIntegrationNetworkInterfacesGroupConfig_ShouldFail = `
     network_interface_id = "n-123456"
     delete_on_termination = true
     private_ip_address = "2.2.2.2"
-  }]
+  }
  // ----------------------------------------
 `
 
@@ -1616,7 +1615,7 @@ func TestAccSpotinstElastigroupAWS_ScalingUpPolicies(t *testing.T) {
 
 const testScalingUpPolicyGroupConfig_Create = `
  // --- SCALE UP POLICY ------------------
- scaling_up_policy = [{
+ scaling_up_policy {
   policy_name = "policy-name"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
@@ -1625,7 +1624,7 @@ const testScalingUpPolicyGroupConfig_Create = `
   unit = "percent"
   cooldown = 60
   is_enabled = false
-  dimensions = {
+  dimensions {
       name = "name-1"
       value = "value-1"
   }
@@ -1653,13 +1652,13 @@ const testScalingUpPolicyGroupConfig_Create = `
   # target = 5
   // ==================================
 
-  }]
+  }
  // ----------------------------------------
 `
 
 const testScalingUpPolicyGroupConfig_Update = `
  // --- SCALE UP POLICY ------------------
- scaling_up_policy = [{
+ scaling_up_policy {
   policy_name = "policy-name-update"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
@@ -1668,7 +1667,7 @@ const testScalingUpPolicyGroupConfig_Update = `
   unit = "bytes"
   is_enabled = true
   cooldown = 120
-  dimensions = {
+  dimensions {
       name = "name-1-update"
       value = "value-1-update"
   }
@@ -1696,7 +1695,7 @@ const testScalingUpPolicyGroupConfig_Update = `
   # target = 5
   // ==================================
 
-  }]
+  }
  // ----------------------------------------
 `
 
@@ -1805,7 +1804,7 @@ func TestAccSpotinstElastigroupAWS_ScalingDownPolicies(t *testing.T) {
 
 const testScalingDownPolicyGroupConfig_Create = `
  // --- SCALE DOWN POLICY ------------------
- scaling_down_policy = [{
+ scaling_down_policy {
   policy_name = "policy-name"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
@@ -1814,7 +1813,7 @@ const testScalingDownPolicyGroupConfig_Create = `
   unit = "percent"
   is_enabled = false
   cooldown = 60
-  dimensions = {
+  dimensions {
       name = "name-1"
       value = "value-1"
   }
@@ -1842,13 +1841,13 @@ const testScalingDownPolicyGroupConfig_Create = `
   # target = 5
   // ==================================
 
-  }]
+  }
  // ----------------------------------------
 `
 
 const testScalingDownPolicyGroupConfig_Update = `
  // --- SCALE DOWN POLICY ------------------
- scaling_down_policy = [{
+ scaling_down_policy {
   policy_name = "policy-name-update"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
@@ -1857,7 +1856,7 @@ const testScalingDownPolicyGroupConfig_Update = `
   unit = "bytes"
   is_enabled = true
   cooldown = 120
-  dimensions = {
+  dimensions {
       name = "name-1-update"
       value = "value-1-update"
   }
@@ -1885,7 +1884,7 @@ const testScalingDownPolicyGroupConfig_Update = `
   target = 5
   // ==================================
 
-  }]
+  }
  // ----------------------------------------
 `
 
@@ -1975,7 +1974,7 @@ func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 
 const testScalingTargetPolicyGroupConfig_Create = `
  // --- SCALE TARGET POLICY ----------------
- scaling_target_policy = [{
+ scaling_target_policy {
   policy_name = "policy-name"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
@@ -1984,18 +1983,18 @@ const testScalingTargetPolicyGroupConfig_Create = `
   unit = "percent"
   cooldown = 60
   predictive_mode = "FORECAST_AND_SCALE"
-  dimensions = {
+  dimensions {
       name = "name-1"
       value = "value-1"
   }
   target=1.1
-  }]
+  }
  // ----------------------------------------
 `
 
 const testScalingTargetPolicyGroupConfig_Update = `
  // --- SCALE TARGET POLICY ----------------
- scaling_target_policy = [{
+ scaling_target_policy {
   policy_name = "policy-name-update"
   metric_name = "CPUUtilization"
   namespace = "AWS/EC2"
@@ -2004,12 +2003,12 @@ const testScalingTargetPolicyGroupConfig_Update = `
   unit = "bytes"
   cooldown = 120
   predictive_mode = "FORECAST_ONLY"
-  dimensions = {
+  dimensions {
       name = "name-1-update"
       value = "value-1-update"
   }
   target=2.2
-  }]
+  }
  // ----------------------------------------
 `
 
@@ -2114,7 +2113,7 @@ func TestAccSpotinstElastigroupAWS_ScheduledTask(t *testing.T) {
 
 const testScheduledTaskGroupConfig_Create = `
  // --- SCHEDULED TASK ------------------
-  scheduled_task = [{
+  scheduled_task {
 	is_enabled = false
     task_type = "backup_ami"
     scale_min_capacity = 0
@@ -2124,13 +2123,13 @@ const testScheduledTaskGroupConfig_Create = `
     scale_target_capacity = 5
     batch_size_percentage = 33
     grace_period = 300
-  }]
+  }
  // -------------------------------------
 `
 
 const testScheduledTaskGroupConfig_Update = `
  // --- SCHEDULED TASK ------------------
-  scheduled_task = [{
+  scheduled_task {
 	is_enabled = false
     task_type = "backup_ami"
     scale_min_capacity = 0
@@ -2140,13 +2139,13 @@ const testScheduledTaskGroupConfig_Update = `
     scale_target_capacity = 5
     batch_size_percentage = 33
     grace_period = 300
-  }]
+  }
  // -------------------------------------
 `
 
 const testScheduledTaskGroupConfig_Update2 = `
  // --- SCHEDULED TASK ------------------
-  scheduled_task = [{
+  scheduled_task {
     is_enabled = true
     task_type = "statefulUpdateCapacity"
     target_capacity = 2
@@ -2156,7 +2155,7 @@ const testScheduledTaskGroupConfig_Update2 = `
     cron_expression = "0 0 12 1/1 * ? *"
     batch_size_percentage = 66
     grace_period = 150
-  }]
+  }
  // -------------------------------------
 `
 
@@ -2428,7 +2427,7 @@ func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.delete_on_termination", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.device_name", "/dev/sdb"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.encrypted", "false"),
@@ -2436,13 +2435,13 @@ func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.snapshot_id", ""),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.volume_size", "12"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.volume_type", "gp2"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.delete_on_termination", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.device_name", "/dev/sda"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.encrypted", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.iops", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.snapshot_id", ""),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.volume_size", "8"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.volume_type", "io1"),
+					//resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.delete_on_termination", "false"),
+					//resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.device_name", "/dev/sda"),
+					//resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.encrypted", "false"),
+					//resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.iops", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.snapshot_id", ""),
+					//resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.volume_size", "8"),
+					//resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.volume_type", "io1"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.3796236554.device_name", "/dev/xvdc"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.3796236554.virtual_name", "ephemeral0"),
 				),
@@ -2485,7 +2484,7 @@ func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 
 const testElastigroupBlockDevices_Create = `
  // --- EBS BLOCK DEVICE -----------------
- ebs_block_device = [{
+ ebs_block_device {
    device_name 			    = "/dev/sdb"
    snapshot_id 				= ""
    volume_type 				= "gp2"
@@ -2493,29 +2492,29 @@ const testElastigroupBlockDevices_Create = `
    iops 					= 1
    delete_on_termination 	= true
    encrypted 				= false
- },
- {
-   device_name 			    = "/dev/sda"
-   snapshot_id 				= ""
-   volume_type 				= "io1"
-   volume_size 				= 8
-   iops 					= 1
-   delete_on_termination 	= false
-   encrypted 				= false
- }]
+ }
+ //{
+ //  device_name 			    = "/dev/sda"
+ //  snapshot_id 				= ""
+ //  volume_type 				= "io1"
+ //  volume_size 				= 8
+ //  iops 					= 1
+ //  delete_on_termination 	= false
+ //  encrypted 				= false
+ //}
  // --------------------------------------
 
  // --- EPHEMERAL BLOCK DEVICE ----
- ephemeral_block_device = [{
+ ephemeral_block_device {
   device_name  = "/dev/xvdc"
   virtual_name = "ephemeral0"
- }]
+ }
  // -------------------------------
 `
 
 const testElastigroupBlockDevices_Update = `
  // --- EBS BLOCK DEVICE -----------------
- ebs_block_device = [{
+ ebs_block_device {
    device_name 				= "/dev/sda"
    snapshot_id 				= ""
    volume_type 				= "sc1"
@@ -2524,14 +2523,14 @@ const testElastigroupBlockDevices_Update = `
    delete_on_termination 	= true
    encrypted 				= true
    kms_key_id 				= "acceptance-kms-key"
- }]
+ }
  // --------------------------------------
 
  // --- EPHEMERAL BLOCK DEVICE ----
- ephemeral_block_device = [{
+ ephemeral_block_device {
   device_name  = "/dev/xvdc"
   virtual_name = "ephemeral1"
- }]
+ }
  // -------------------------------
 `
 
@@ -2700,7 +2699,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationRancher(t *testing.T) {
 
 const testIntegrationRancherGroupConfig_Create = `
 // --- INTEGRATION: RANCHER ---
-integration_rancher = {
+integration_rancher {
    master_host = "master-host"
    access_key = "access-key"
    secret_key = "secret-key"
@@ -2711,14 +2710,14 @@ integration_rancher = {
 
 const testIntegrationRancherGroupConfig_Update = `
  // --- INTEGRATION: RANCHER ---
- integration_rancher = {
+ integration_rancher {
     master_host = "master-host-update"
     access_key = "access-key-update"
     secret_key = "secret-key-update"
     version = "2"
  }
 
-integration_kubernetes = {
+integration_kubernetes {
 	autoscale_is_enabled = true
  }
  // ----------------------------
@@ -2796,10 +2795,10 @@ func TestAccSpotinstElastigroupAWS_IntegrationCodeDeploy(t *testing.T) {
 
 const testIntegrationCodeDeployGroupConfig_Create = `
  // --- INTEGRATION: CODE-DEPLOY ----------
- integration_codedeploy = {
+ integration_codedeploy {
     cleanup_on_failure = false
     terminate_instance_on_failure = false
-    deployment_groups = {
+    deployment_groups {
       application_name = "code-deploy-application"
       deployment_group_name = "code-deploy-deployment"
     }
@@ -2809,10 +2808,10 @@ const testIntegrationCodeDeployGroupConfig_Create = `
 
 const testIntegrationCodeDeployGroupConfig_Update = `
  // --- INTEGRATION: CODE-DEPLOY ----------
- integration_codedeploy = {
+ integration_codedeploy {
     cleanup_on_failure = true
     terminate_instance_on_failure = true
-    deployment_groups = {
+    deployment_groups {
       application_name = "code-deploy-application-update"
       deployment_group_name = "code-deploy-deployment-update"
     }
@@ -2902,7 +2901,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationRoute53(t *testing.T) {
 
 const testIntegrationRoute53GroupConfig_Create = `
 // --- INTEGRATION: ROUTE53 ----------
-integration_route53 = {
+integration_route53 {
 	domains = [
 		{
 			hosted_zone_id   = "id_create"
@@ -2918,7 +2917,7 @@ integration_route53 = {
 `
 const testIntegrationRoute53GroupConfig_Update = `
 // --- INTEGRATION: ROUTE53 ----------
-integration_route53 = {
+integration_route53 {
 	domains = [
 		{
 			hosted_zone_id = "id_update"
@@ -3041,56 +3040,56 @@ func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 
 const testIntegrationECSGroupConfig_Create = `
  // --- INTEGRATION: ECS -----------
- integration_ecs = { 
+ integration_ecs { 
     cluster_name = "ecs-cluster-name"
     autoscale_is_enabled = false
 	autoscale_is_auto_config = false
     autoscale_cooldown = 300
     autoscale_scale_down_non_service_tasks = false
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 1024
       memory_per_unit = 512
       num_of_units = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
       max_scale_down_percentage = 70
     }
 
-    autoscale_attributes = [{
+    autoscale_attributes {
       key   = "test.key.ecs"
       value = "test.value.ecs"
-    }]
+    }
   }
  // --------------------------------
 `
 
 const testIntegrationECSGroupConfig_Update = `
  // --- INTEGRATION: ECS -----------
- integration_ecs = { 
+ integration_ecs { 
     cluster_name = "ecs-cluster-name-update"
     autoscale_is_enabled = true
 	autoscale_is_auto_config = true
     autoscale_cooldown = 180
     autoscale_scale_down_non_service_tasks = true
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 2048
       memory_per_unit = 1024
       num_of_units = 1
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 150
       max_scale_down_percentage = 50
     }
 
-    autoscale_attributes = [{
+    autoscale_attributes {
       key   = "test.key.ecs.update"
       value = "test.value.ecs.update"
-    }]
+    }
   }
  // --------------------------------
 `
@@ -3182,7 +3181,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationKubernetes(t *testing.T) {
 
 const testIntegrationKubernetesGroupConfig_Create = `
  // --- INTEGRATION: KUBERNETES --------------
- integration_kubernetes = {
+ integration_kubernetes {
     integration_mode = "pod"
     cluster_identifier = "k8s-cluster-id"
 
@@ -3190,27 +3189,27 @@ const testIntegrationKubernetesGroupConfig_Create = `
     autoscale_is_auto_config = false
     autoscale_cooldown = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 1024
       memory_per_unit = 512
       num_of_units = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    autoscale_labels = [{
+    autoscale_labels {
       key   = "test.key.k8s"
       value = "test.value.k8s"
-    }]
+    }
   }
  // ------------------------------------------
 `
 
 const testIntegrationKubernetesGroupConfig_Update = `
  // --- INTEGRATION: KUBERNETES --------------
- integration_kubernetes = {
+ integration_kubernetes {
 	integration_mode = "saas"
     api_server = "k8s-server"
     token = "k8s-token"
@@ -3219,20 +3218,20 @@ const testIntegrationKubernetesGroupConfig_Update = `
     autoscale_is_auto_config = true
     autoscale_cooldown = 180
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 2048
       memory_per_unit = 1024
       num_of_units = 1
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 150
     }
 
-    autoscale_labels = [{
+    autoscale_labels {
       key   = "test.key.k8s.update"
       value = "test.value.k8s.update"
-    }]
+    }
   }
  // ------------------------------------------
 `
@@ -3324,20 +3323,20 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 
 const testIntegrationBeanstalkGroupConfig_Create = `
  // --- INTEGRATION: BEANSTALK  --------------
- integration_beanstalk = {
+ integration_beanstalk {
   environment_id = "e-e3sngajkvh"
-  deployment_preferences = {
+  deployment_preferences {
     automatic_roll        = true
     batch_size_percentage = 100
     grace_period          = 90
-    strategy             = {
-      action                = "REPLACE_SERVER"
+    strategy {
+      action = "REPLACE_SERVER"
       should_drain_instances = true
     }
   }
-  managed_actions={
-    platform_update = {
-      perform_at    = "timeWindow"
+  managed_actions {
+    platform_update {
+      perform_at = "timeWindow"
       time_window  = "Mon:23:50-Tue:00:20"
       update_level = "minorAndPatch"
     }
@@ -3348,20 +3347,20 @@ const testIntegrationBeanstalkGroupConfig_Create = `
 
 const testIntegrationBeanstalkGroupConfig_Update = `
  // --- INTEGRATION: BEANSTALK  --------------
- integration_beanstalk = {
+ integration_beanstalk {
   environment_id = "e-e3sngajkvh"
-  deployment_preferences = {
-    automatic_roll        = false
+  deployment_preferences {
+    automatic_roll = false
     batch_size_percentage = 10
-    grace_period          = 900
-    strategy             = {
-      action                 = "REPLACE_SERVER"
+    grace_period = 900
+    strategy {
+      action = "REPLACE_SERVER"
       should_drain_instances = false
     }
   }
-  managed_actions={
-    platform_update = {
-      perform_at    = "never"
+  managed_actions {
+    platform_update {
+      perform_at = "never"
       update_level = "minorAndPatch"
     }
   }
@@ -3408,8 +3407,8 @@ func TestAccSpotinstElastigroupAWS_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "300"),
-					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.3420361780.key", "test.key.nomad"),
-					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.3420361780.value", "test.value.nomad"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.key", "test.key.nomad"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.value", "test.value.nomad"),
 				),
 			},
 			{
@@ -3431,8 +3430,8 @@ func TestAccSpotinstElastigroupAWS_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "150"),
-					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.1137182518.key", "test.key.nomad.update"),
-					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.1137182518.value", "test.value.nomad.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.key", "test.key.nomad.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.value", "test.value.nomad.update"),
 				),
 			},
 			{
@@ -3453,54 +3452,55 @@ func TestAccSpotinstElastigroupAWS_IntegrationNomad(t *testing.T) {
 
 const testIntegrationNomadGroupConfig_Create = `
  // --- INTEGRATION: NOMAD --------------
- integration_nomad = {
+ integration_nomad {
     master_host = "nomad-master-host"
     master_port = 8000
 
     autoscale_is_enabled = false
     autoscale_cooldown = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 1024
       memory_per_unit = 512
       num_of_units = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    autoscale_constraints = [{
+    autoscale_constraints {
       key   = "test.key.nomad"
+
       value = "test.value.nomad"
-    }]
+    }
   }
  // --------------------------------------
 `
 
 const testIntegrationNomadGroupConfig_Update = `
  // --- INTEGRATION: NOMAD --------------
- integration_nomad = {
+ integration_nomad {
 	master_host = "nomad-master-host-update"
     master_port = 9000
 
     autoscale_is_enabled = true
     autoscale_cooldown = 180
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 2048
       memory_per_unit = 1024
       num_of_units = 1
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 150
     }
 
-    autoscale_constraints = [{
+    autoscale_constraints {
       key   = "test.key.nomad.update"
       value = "test.value.nomad.update"
-    }]
+    }
   }
  // --------------------------------------
 `
@@ -3586,20 +3586,20 @@ func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
 
 const testIntegrationDockerSwarmGroupConfig_Create = `
  // --- INTEGRATION: DOCKER SWARM -------
- integration_docker_swarm = {
+ integration_docker_swarm {
     master_host = "docker-swarm-master-host"
     master_port = 8000
 
     autoscale_is_enabled = false
     autoscale_cooldown = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 1024
       memory_per_unit = 512
       num_of_units = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
  }
@@ -3608,20 +3608,20 @@ const testIntegrationDockerSwarmGroupConfig_Create = `
 
 const testIntegrationDockerSwarmGroupConfig_Update = `
  // --- INTEGRATION: DOCKER SWARM -------
- integration_docker_swarm = {
+ integration_docker_swarm {
 	master_host = "docker-swarm-master-host-update"
     master_port = 9000
 
     autoscale_is_enabled = true
     autoscale_cooldown = 180
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 2048
       memory_per_unit = 1024
       num_of_units = 1
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 150
     }
   }
@@ -3692,8 +3692,8 @@ func TestAccSpotinstElastigroupAWS_IntegrationGitlab(t *testing.T) {
 
 const testIntegrationGitlabGroupConfig_Create = `
  // --- INTEGRATION: GITLAB ---
- integration_gitlab = {
-	runner = {
+ integration_gitlab {
+	runner {
 		is_enabled = true
 	}
  }
@@ -3702,8 +3702,8 @@ const testIntegrationGitlabGroupConfig_Create = `
 
 const testIntegrationGitlabGroupConfig_Update = `
  // --- INTEGRATION: GITLAB ---
- integration_gitlab = {
-    runner = {
+ integration_gitlab {
+    runner {
 		is_enabled = false
 	}
  }
@@ -3774,7 +3774,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationMesosphere(t *testing.T) {
 
 const testIntegrationMesosphereGroupConfig_Create = `
  // --- INTEGRATION: MESOSPHERE --------------
- integration_mesosphere = {
+ integration_mesosphere {
     api_server = "mesosphere-api-server"
  }
  // ------------------------------------------
@@ -3782,7 +3782,7 @@ const testIntegrationMesosphereGroupConfig_Create = `
 
 const testIntegrationMesosphereGroupConfig_Update = `
  // --- INTEGRATION: MESOSPHERE --------------
- integration_mesosphere = {
+ integration_mesosphere {
 	api_server = "mesosphere-api-server-update"
  }
  // ------------------------------------------
@@ -3852,7 +3852,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationMultaiRuntime(t *testing.T) {
 
 const testIntegrationMultaiRuntimeGroupConfig_Create = `
  // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime = {
+ integration_multai_runtime {
     deployment_id = "multai-deployment-id"
   }
  // --------------------------------------
@@ -3860,7 +3860,7 @@ const testIntegrationMultaiRuntimeGroupConfig_Create = `
 
 const testIntegrationMultaiRuntimeGroupConfig_Update = `
  // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime = {
+ integration_multai_runtime {
     deployment_id = "multai-deployment-id-update"
   }
  // --------------------------------------
@@ -3950,17 +3950,17 @@ func TestAccSpotinstElastigroupAWS_UpdatePolicy(t *testing.T) {
 
 const testUpdatePolicyGroupConfig_Create = `
  // --- UPDATE POLICY ----------------
-  description = "created by Terraform - trigger update policy 1"
+ // description = "created by Terraform - trigger update policy 1"
 
-  update_policy = {
+  update_policy {
     should_resume_stateful = false
     auto_apply_tags = false
     should_roll = false
-    roll_config = {
+    roll_config {
       batch_size_percentage = 33
       grace_period = 300
       health_check_type = "ELB"
-      strategy = {
+      strategy {
         action = "REPLACE_SERVER"
         should_drain_instances = false
         //batch_min_healthy_percentage = 10
@@ -3972,17 +3972,17 @@ const testUpdatePolicyGroupConfig_Create = `
 
 const testUpdatePolicyGroupConfig_Update = `
  // --- UPDATE POLICY ----------------
- description = "created by Terraform - trigger update policy 2"
+ //description = "created by Terraform - trigger update policy 2"
 
-  update_policy = {
+  update_policy {
     should_resume_stateful = true
     auto_apply_tags = true
     should_roll = true
-    roll_config = {
+    roll_config {
       batch_size_percentage = 66
       grace_period = 600
       health_check_type = "EC2"
-      strategy = {
+      strategy {
         action = "RESTART_SERVER"
         should_drain_instances = true
         batch_min_healthy_percentage = 20
@@ -3994,7 +3994,7 @@ const testUpdatePolicyGroupConfig_Update = `
 
 const testUpdatePolicyGroupConfig_EmptyFields = `
  // --- UPDATE POLICY ----------------
- description = "created by Terraform - trigger update policy 3"
+ //description = "created by Terraform - trigger update policy 3"
  // ----------------------------------
 `
 

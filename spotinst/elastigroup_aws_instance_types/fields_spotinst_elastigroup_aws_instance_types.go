@@ -165,7 +165,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSInstanceType,
 		InstanceTypeWeights,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -218,7 +218,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupInstanceTypeWeights(data interface{}) ([]*aws.InstanceTypeWeight, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	weights := make([]*aws.InstanceTypeWeight, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
