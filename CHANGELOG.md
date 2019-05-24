@@ -1,4 +1,5 @@
-## 1.13.3 (Unreleased)
+## 1.13.4 (Unreleased)
+## 1.13.3 (May 13, 2019)
 
 ENHANCEMENTS:
 * resource_elastigroup_gcp: added `scheduled_task`
