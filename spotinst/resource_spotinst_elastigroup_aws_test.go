@@ -3267,7 +3267,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-e3sngajkvh"),
+					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-mzp2rk47dw"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.automatic_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.batch_size_percentage", "100"),
@@ -3292,7 +3292,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-e3sngajkvh"),
+					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-mzp2rk47dw"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.automatic_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.batch_size_percentage", "10"),
@@ -3325,7 +3325,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 const testIntegrationBeanstalkGroupConfig_Create = `
  // --- INTEGRATION: BEANSTALK  --------------
  integration_beanstalk = {
-  environment_id = "e-e3sngajkvh"
+  environment_id = "e-mzp2rk47dw"
   deployment_preferences = {
     automatic_roll        = true
     batch_size_percentage = 100
@@ -3349,7 +3349,7 @@ const testIntegrationBeanstalkGroupConfig_Create = `
 const testIntegrationBeanstalkGroupConfig_Update = `
  // --- INTEGRATION: BEANSTALK  --------------
  integration_beanstalk = {
-  environment_id = "e-e3sngajkvh"
+  environment_id = "e-mzp2rk47dw"
   deployment_preferences = {
     automatic_roll        = false
     batch_size_percentage = 10
