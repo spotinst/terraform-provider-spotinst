@@ -1138,10 +1138,10 @@ func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, er
 			if len(parts) >= 1 && parts[0] != "" {
 				zone.SetName(spotinst.String(parts[0]))
 			}
-			if len(parts) == 2 && parts[1] != "" {
+			if len(parts) >= 2 && parts[1] != "" {
 				zone.SetSubnetId(spotinst.String(parts[1]))
 			}
-			if len(parts) == 3 && parts[2] != "" {
+			if len(parts) >= 3 && parts[2] != "" {
 				zone.SetPlacementGroupName(spotinst.String(parts[2]))
 			}
 			zones = append(zones, zone)
