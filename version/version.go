@@ -12,7 +12,7 @@ var (
 	Architecture = runtime.GOARCH
 	Major        = 1
 	Minor        = 13
-	Patch        = 3
+	Patch        = 4
 )
 
 func GetLongVersion() string {

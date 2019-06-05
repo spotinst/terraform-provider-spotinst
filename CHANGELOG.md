@@ -1,4 +1,8 @@
 ## 1.13.4 (Unreleased)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: expand `availability_zones` fail to set proper arguments
+
 ## 1.13.3 (May 13, 2019)
 
 ENHANCEMENTS:
