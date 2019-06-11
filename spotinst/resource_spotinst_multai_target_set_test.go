@@ -219,6 +219,7 @@ const testBaselineTargetSetConfig_Create = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
   name = "test-acc-foo"
+
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -233,7 +234,8 @@ resource "spotinst_multai_target_set" "%v" {
   protocol      = "http"
   port          = 1337
   weight        = 1
-  health_check = {
+
+  health_check {
     protocol            = "http"
     path                = "/"
     port                = 3000
@@ -243,16 +245,17 @@ resource "spotinst_multai_target_set" "%v" {
     unhealthy_threshold = 2
   }
 
-  tags = [{
+  tags {
    key = "fakeKey"
    value = "fakeVal"
-  }]
+  }
 }`
 
 const testBaselineTargetSetConfig_Update = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
   name = "test-acc-foo"
+
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -267,7 +270,8 @@ resource "spotinst_multai_target_set" "%v" {
   protocol      = "http"
   port          = 1338
   weight        = 2
-  health_check = {
+
+  health_check {
     protocol            = "http"
     path                = "/"
     port                = 3001
@@ -277,8 +281,8 @@ resource "spotinst_multai_target_set" "%v" {
     unhealthy_threshold = 3
   }
 
-  tags = [{
+  tags {
    key = "updated"
    value = "updated"
-  }]
+  }
 }`

@@ -427,23 +427,20 @@ const testLaunchConfigOceanGKE_Create = `
   service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
 
   // required fields
-  labels = [
-   {
-     key = "spotinst-gke-original-node-pool",
+  labels {
+     key = "spotinst-gke-original-node-pool"
      value = "terraform-acc-test-cluster__default-pool" 
    }
-  ]
 
-  metadata = [
-    {
+  metadata {
        key = "metadata_key"
        value = "metadata_value"
-    },
-    {
+    }
+
+	metadata {
       key = "cluster-name"
       value = "terraform-acc-test-cluster"
     }
-  ]
 
   tags = ["gke-test-native-vpc-5cb557f7-node"]
 
@@ -451,15 +448,15 @@ const testLaunchConfigOceanGKE_Create = `
   root_volume_size_in_gb = 100
   ip_forwarding = true
 
-  backend_services = [{
+  backend_services {
     service_name  = "terraform-acc-test-backend-service"
     location_type = "global"
   
-    named_ports = {
+    named_ports {
       name = "http"
       ports = [80, 8080]
     }
-  }]
+  }
 
  // ---------------------------------------
 `
@@ -469,19 +466,15 @@ const testLaunchConfigOceanGKE_Update = `
   source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
   service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
 
-  labels = [
-    {
-      key = "spotinst-gke-original-node-pool",
+  labels {
+      key = "spotinst-gke-original-node-pool"
       value = "terraform-acc-test-cluster__default-pool" 
     }
-  ]
 
-  metadata = [
-	{
+  metadata {
 	   key = "cluster-name"
-       value = "terraform-acc-test-cluster"
+		 value = "terraform-acc-test-cluster"
 	}
-  ]
 
   tags = ["gke-test-native-vpc-5cb557f7-node"]
 
@@ -489,15 +482,15 @@ const testLaunchConfigOceanGKE_Update = `
   root_volume_size_in_gb = 101
   ip_forwarding = false
 
-  backend_services = [{
+  backend_services {
     service_name  = "terraform-acc-test-backend-service"
     location_type = "global"
   
-    named_ports = {
+    named_ports {
       name = "http"
       ports = [80, 8080]
     }
-  }]
+  }
   
  // ---------------------------------------
 `
@@ -507,31 +500,27 @@ const testLaunchConfigOceanGKE_EmptyFields = `
   source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
   service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
 
-  labels = [
-    {
-      key = "spotinst-gke-original-node-pool",
+  labels {
+      key = "spotinst-gke-original-node-pool"
       value = "terraform-acc-test-cluster__default-pool" 
     }
-  ]
 
-  metadata = [
-	{
+  metadata {
 	   key = "cluster-name"
        value = "terraform-acc-test-cluster"
 	}
-  ]
 
   tags = ["gke-test-native-vpc-5cb557f7-node"]
 
-  backend_services = [{
+  backend_services {
     service_name  = "terraform-acc-test-backend-service"
     location_type = "global"
   
-    named_ports = {
+    named_ports  {
       name = "http"
       ports = [80, 8080]
     }
-  }]
+  }
  // ---------------------------------------
 `
 
@@ -633,23 +622,23 @@ func TestAccSpotinstOceanGKE_Autoscaler(t *testing.T) {
 
 const testGKEScalingConfig_Create = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 1024
       max_memory_gib = 20
     }
@@ -660,23 +649,23 @@ const testGKEScalingConfig_Create = `
 
 const testGKEScalingConfig_Update = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled     = true
     autoscale_is_auto_config = true
     autoscale_cooldown       = 600
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 512
       gpu_per_unit    = 2
       memory_per_unit = 1024
       num_of_units    = 4
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 600
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 512
       max_memory_gib = 30
     }
@@ -686,22 +675,22 @@ const testGKEScalingConfig_Update = `
 
 const testGKEScalingConfig_EmptyFields = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled = false
     autoscale_is_auto_config = false
     autoscale_cooldown = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 1024
       memory_per_unit = 512
       num_of_units = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu   = 1024
       max_memory_gib = 20
     }
@@ -794,60 +783,58 @@ func TestAccSpotinstOceanGKE_NetworkInterfaces(t *testing.T) {
 
 const testNetworkInterfacesOceanGKEGroupConfig_Create = `
  // --- NETWORK INTERFACE ------------------
-  network_interface = [{ 
+  network_interface { 
     network = "terraform-acc-test-vpc-network"
 	
-   access_configs = {
+   access_configs {
      name = "config1"
      type = "ONE_TO_ONE_NAT"
    }
   
-   alias_ip_ranges = {
+   alias_ip_ranges {
      subnetwork_range_name = "range-1"
      ip_cidr_range = "10.8.0.0/20"
    }
-  }]
+  }
  // ----------------------------------------
 `
 
 const testNetworkInterfacesOceanGKEGroupConfig_Update = `
  // --- NETWORK INTERFACE ------------------
-  network_interface = [
-    { 
+  	network_interface { 
       network = "terraform-acc-test-vpc-network"
 	
-      access_configs = {
+      access_configs {
         name = "config2"
         type = "ONE_TO_ONE_NAT"
       }
   
-      alias_ip_ranges = {
+      alias_ip_ranges {
         subnetwork_range_name = "range-1"
         ip_cidr_range = "10.8.0.0/20"
       }
-    },
-    { 
+    }
+    network_interface { 
       network = "new-network"
 	
-      access_configs = {
+      access_configs {
         name = "config3"
         type = "ONE_TO_ONE_NAT"
       }
     }
-  ]
  // ----------------------------------------
 `
 
 const testNetworkInterfacesOceanGKEGroupConfig_EmptyFields = `
  // --- NETWORK INTERFACE ------------------
-  network_interface = [{     
+  network_interface {     
     network = "terraform-acc-test-vpc-network"
 
-   access_configs = {
+   access_configs {
      name = "config2"
      type = "ONE_TO_ONE_NAT"
    }
-  }]
+  }
  // ----------------------------------------
 `
 

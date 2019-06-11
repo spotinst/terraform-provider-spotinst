@@ -351,7 +351,7 @@ func TestAccSpotinstElastigroupAzure_HealthChecks(t *testing.T) {
 
 const testAzureHealthChecksGroupConfig_Create = `
  // --- HEALTH-CHECKS ------------------------------------
- health_check = {
+ health_check {
    health_check_type = "INSTANCE_STATE"
    auto_healing      = true
    grace_period      = 180	 
@@ -361,7 +361,7 @@ const testAzureHealthChecksGroupConfig_Create = `
 
 const testAzureHealthChecksGroupConfig_Update = `
  // --- HEALTH-CHECKS ------------------------------------
- health_check = {
+ health_check {
    health_check_type = "INSTANCE_STATE"
    auto_healing      = false
    grace_period      = 240	 
@@ -409,8 +409,8 @@ func TestAccSpotinstElastigroupAzure_Image(t *testing.T) {
 
 const testAzureImageGroupConfig_Create = `
 // --- IMAGES --------------------------------
-  image = {
-    marketplace = {
+  image {
+    marketplace {
       publisher = "Canonical"
       offer = "UbuntuServer"
       sku = "16.04-LTS"
@@ -479,7 +479,8 @@ const testAzureLaunchConfigurationGroupConfig_Create = `
  user_data       = "hello world"
  shutdown_script = "goodbye world"
  custom_data     = "custom world"
- managed_service_identities = {
+
+ managed_service_identities {
    resource_group_name = "alex-test"
    name = "terraform-test-identity"
  }
@@ -491,7 +492,8 @@ const testAzureLaunchConfigurationGroupConfig_Update = `
  user_data       = "hello world"
  shutdown_script = "goodbye world updated"
  custom_data     = "custom world"
- managed_service_identities = {
+
+ managed_service_identities {
    resource_group_name = "alex-test"
    name = "terraform-test-identity-updated"
  }
@@ -566,27 +568,23 @@ func TestAccSpotinstElastigroupAzure_LoadBalancers(t *testing.T) {
 
 const testAzureLoadBalancersGroupConfig_Create = `
 // --- LOAD BALANCERS --------------------------
-  load_balancers = [
-    {
-      type = "MULTAI_TARGET_SET"
-      balancer_id = "lb-0be85d6aa269"
-      target_set_id = "ts-ae9c9603c365"
-      auto_weight = true
-    }
-  ]
+  load_balancers {
+		type = "MULTAI_TARGET_SET"
+		balancer_id = "lb-0be85d6aa269"
+		target_set_id = "ts-ae9c9603c365"
+		auto_weight = true
+	}
 // ---------------------------------------------
 `
 
 const testAzureLoadBalancersGroupConfig_Update = `
 // --- LOAD BALANCERS --------------------------
-  load_balancers = [
-    {
+  load_balancers {
       type = "MULTAI_TARGET_SET"
       balancer_id = "lb-0be85d6aa269"
       target_set_id = "ts-ae9c9603c365"
       auto_weight = false
     }
-  ]
 // ---------------------------------------------
 `
 
@@ -641,7 +639,7 @@ func TestAccSpotinstElastigroupAzure_Login(t *testing.T) {
 
 const testAzureLoginGroupConfig_Create = `
 // --- LOGIN ---------------------------------
-  login = {
+  login {
     user_name = "alex-test"
     ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLn7RIjgivW2nWoh56XV2wpDKjjWFk92UgfTsqL8qYI0lGCJuoGeMlje1VWyAemMGZZsK5et8j3/caZsVd1Hypui3xV+tRAmtnyqVCjDGYsBQIMKoDzLrrZz7/s2WNKbMegOgQ+8YxXLhxuS5YGKhNjvxC2kJCe1HkPAPvx03kzNGmxxv6pt5TaQPXUqVxfWoeoaLRDcL8Ns2kikZC6v2cfY/PcmwoYd7XlVuILLTMNF6ujOUsX9kHt/910dEW66iZpc+PjHnKuAu/5238lssiUZULTHWbjE09MG8kHIiZq9Z9HgmAS++YLUc2G9InBqiLXMbie4S9qMcp+crl1oG/"
   }
@@ -650,7 +648,7 @@ const testAzureLoginGroupConfig_Create = `
 
 const testAzureLoginGroupConfig_Update = `
 // --- LOGIN ---------------------------------
-  login = {
+  login {
     user_name = "alex-test"
     ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLn7RIjgivW2nWoh56XV2wpDKjjWFk92UgfTsqL8qYI0lGCJuoGeMlje1VWyAemMGZZsK5et8j3/caZsVd1Hypui3xV+tRAmtnyqVCjDGYsBQIMKoDzLrrZz7/s2WNKbMegOgQ+8YxXLhxuS5YGKhNjvxC2kJCe1HkPAPvx03kzNGmxxv6pt5TaQPXUqVxfWoeoaLRDcL8Ns2kikZC6v2cfY/PcmwoYd7XlVuILLTMNF6ujOUsX9kHt/910dEW66iZpc+PjHnKuAu/5238lssiUZULTHWbjE09MG8kHIiZq9Z9HgmAS++YLUc2G9InBqiLXMbie4S9qMcp+crl1oG/"
   }
@@ -695,15 +693,16 @@ func TestAccSpotinstElastigroupAzure_Network(t *testing.T) {
 
 const testAzureNetworkGroupConfig_Create = `
 // --- NETWORK ---------------------------------
-  network = {
+  network {
     virtual_network_name = "alex-test-netwrk"
     subnet_name = "alex-test-subnet"                 
     resource_group_name = "alex-test"         
     assign_public_ip = true
-    additional_ip_configs = [{
+
+    additional_ip_configs {
       name = "test"
       private_ip_version = "IPv4"
-    }]
+    }
   }
 // ---------------------------------------------
 `
@@ -754,7 +753,7 @@ func TestAccSpotinstElastigroupAzure_Strategy(t *testing.T) {
 
 const testAzureStrategyGroupConfig_Create = `
 // --- STRATEGY --------------------------------
-  strategy = {
+  strategy {
     low_priority_percentage = 100
     draining_timeout = 180
   }
@@ -763,7 +762,7 @@ const testAzureStrategyGroupConfig_Create = `
 
 const testAzureStrategyGroupConfig_Update = `
 // --- STRATEGY --------------------------------
-  strategy = {
+  strategy {
     od_count = 1
     draining_timeout = 240
   }
@@ -931,24 +930,24 @@ func TestAccSpotinstElastigroupAzure_ScalingUpPolicies(t *testing.T) {
 
 const testAzureScalingUpPolicyGroupConfig_Create = `
 // --- SCALE UP POLICY ------------------
-  scaling_up_policy = [{
+  scaling_up_policy {
     policy_name = "policy-name"
     metric_name = "CPUUtilization"
     namespace = "Microsoft.Compute"
     statistic = "average"
     unit = "percent"
     cooldown = 60
-    dimensions = [
-      {
-        name  = "resourceName"
-        value = "resource-name"
-      },
-      {
-        name  = "resourceGroupName"
-        value = "resource-group-name"
-      },
-    ]
     threshold = 10
+
+		dimensions {
+			name  = "resourceName"
+			value = "resource-name"
+		}
+
+     dimensions {
+			name  = "resourceGroupName"
+			value = "resource-group-name"
+		 }
     
     operator = "gt"
     evaluation_periods = "10"
@@ -971,25 +970,25 @@ const testAzureScalingUpPolicyGroupConfig_Create = `
     # maximum = 10
     # target = 5
     // ==================================
-    
-  }]
+  }
 // ----------------------------------------
 `
 
 const testAzureScalingUpPolicyGroupConfig_Update = `
 // --- SCALE UP POLICY ------------------
-  scaling_up_policy = [{
+  scaling_up_policy {
     policy_name = "policy-name-update"
     metric_name = "CPUUtilization"
     namespace = "Microsoft.Compute"
     statistic = "sum"
     unit = "bytes"
     cooldown = 120
-    dimensions = {
+    threshold = 5
+
+    dimensions {
       name  = "name-1-update"
       value = "value-1-update"
     }
-    threshold = 5
     
     operator = "lt"
     evaluation_periods = 5
@@ -1012,8 +1011,7 @@ const testAzureScalingUpPolicyGroupConfig_Update = `
     # maximum = 10
     # target = 5
     // ==================================
-    
-  }]
+  }
 // ----------------------------------------
 `
 
@@ -1110,18 +1108,19 @@ func TestAccSpotinstElastigroupAzure_ScalingDownPolicies(t *testing.T) {
 
 const testAzureScalingDownPolicyGroupConfig_Create = `
 // --- SCALE DOWN POLICY ------------------
-  scaling_down_policy = [{
+  scaling_down_policy {
     policy_name = "policy-name"
     metric_name = "CPUUtilization"
     namespace = "Microsoft.Compute"
     statistic = "average"
     unit = "percent"
     cooldown = 60
-    dimensions = {
+    threshold = 10
+
+    dimensions {
         name = "name-1"
         value = "value-1"
     }
-    threshold = 10
     
     operator = "gt"
     evaluation_periods = "10"
@@ -1144,25 +1143,25 @@ const testAzureScalingDownPolicyGroupConfig_Create = `
     # maximum = 10
     # target = 5
     // ==================================
-    
-  }]
+  }
 // ----------------------------------------
 `
 
 const testAzureScalingDownPolicyGroupConfig_Update = `
 // --- SCALE DOWN POLICY ------------------
-  scaling_down_policy = [{
+  scaling_down_policy {
     policy_name = "policy-name-update"
     metric_name = "CPUUtilization"
     namespace = "Microsoft.Compute"
     statistic = "sum"
     unit = "bytes"
     cooldown = 120
-    dimensions = {
+    threshold = 5
+
+    dimensions {
         name = "name-1-update"
         value = "value-1-update"
     }
-    threshold = 5
     
     operator = "lt"
     evaluation_periods = 5
@@ -1185,8 +1184,7 @@ const testAzureScalingDownPolicyGroupConfig_Update = `
     maximum = 10
     target = 5
     // ==================================
-    
-  }]
+  }
 // ----------------------------------------
 `
 
@@ -1268,7 +1266,7 @@ func TestAccSpotinstElastigroupAzure_ScheduledTask(t *testing.T) {
 
 const testAzureScheduledTaskGroupConfig_Create = `
  // --- SCHEDULED TASK ------------------
-  scheduled_task = [{
+  scheduled_task {
     is_enabled = true
     cron_expression = "* * * * *"
     task_type = "scale"
@@ -1279,13 +1277,13 @@ const testAzureScheduledTaskGroupConfig_Create = `
     scale_target_capacity = 6
     batch_size_percentage = 33
     grace_period = 300
-  }]
+  }
  // -------------------------------------
 `
 
 const testAzureScheduledTaskGroupConfig_Update = `
  // --- SCHEDULED TASK ------------------
-  scheduled_task = [{
+  scheduled_task {
     is_enabled = false
     cron_expression = "* * * * *"
     task_type = "scale"
@@ -1295,7 +1293,7 @@ const testAzureScheduledTaskGroupConfig_Update = `
     scale_target_capacity = 5
     batch_size_percentage = 50
     grace_period = 360
-  }]
+  }
  // -------------------------------------
 `
 
@@ -1371,9 +1369,10 @@ func TestAccSpotinstElastigroupAzure_UpdatePolicy(t *testing.T) {
 
 const testAzureUpdatePolicyGroupConfig_Create = `
  // --- UPDATE POLICY ----------------
-  update_policy = {
+  update_policy {
     should_roll = false
-    roll_config = {
+
+    roll_config {
       batch_size_percentage = 33
       grace_period = 300
       health_check_type = "NONE"
@@ -1384,9 +1383,10 @@ const testAzureUpdatePolicyGroupConfig_Create = `
 
 const testAzureUpdatePolicyGroupConfig_Update = `
  // --- UPDATE POLICY ----------------
-  update_policy = {
+  update_policy {
     should_roll = true
-    roll_config = {
+
+    roll_config {
       batch_size_percentage = 66
       grace_period = 600
       health_check_type = "INSTANCE_STATE"
@@ -1459,7 +1459,7 @@ func TestAccSpotinstElastigroupAzure_IntegrationKubernetes(t *testing.T) {
 
 const testAzureIntegrationKubernetesGroupConfig_Create = `
  // --- INTEGRATION: KUBERNETES --------------
- integration_kubernetes = {
+ integration_kubernetes {
     cluster_identifier = "k8s-cluster-id"
   }
  // ------------------------------------------
@@ -1467,7 +1467,7 @@ const testAzureIntegrationKubernetesGroupConfig_Create = `
 
 const testAzureIntegrationKubernetesGroupConfig_Update = `
  // --- INTEGRATION: KUBERNETES --------------
- integration_kubernetes = {
+ integration_kubernetes {
     cluster_identifier = "k8s-cluster-id-updated"
   }
  // ------------------------------------------
@@ -1537,7 +1537,7 @@ func TestAccSpotinstElastigroupAzure_IntegrationMultaiRuntime(t *testing.T) {
 
 const testAzureIntegrationMultaiRuntimeGroupConfig_Create = `
  // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime = {
+ integration_multai_runtime {
     deployment_id = "multai-deployment-id"
   }
  // --------------------------------------
@@ -1545,7 +1545,7 @@ const testAzureIntegrationMultaiRuntimeGroupConfig_Create = `
 
 const testAzureIntegrationMultaiRuntimeGroupConfig_Update = `
  // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime = {
+ integration_multai_runtime {
     deployment_id = "multai-deployment-id-update"
   }
  // --------------------------------------
