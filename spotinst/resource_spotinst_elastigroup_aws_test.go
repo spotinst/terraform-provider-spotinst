@@ -3473,10 +3473,10 @@ const testIntegrationNomadGroupConfig_Create = `
       evaluation_periods = 300
     }
 
-    autoscale_constraints [{
+    autoscale_constraints {
       key   = "test.key.nomad"
       value = "test.value.nomad"
-    }]
+    }
   }
  // --------------------------------------
 `

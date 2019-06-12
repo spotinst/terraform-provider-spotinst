@@ -128,7 +128,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_LAUNCH"
 
-  format {
+  format = {
 		customField        = "first"
 		anotherCustomField = "second"
   }
@@ -144,7 +144,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATE"
 
-  format {
+  format = {
 		customField        = "first updated"
 		anotherCustomField = "second updated"
   }
@@ -219,7 +219,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="CANT_SCALE_UP_GROUP_MAX_CAPACITY"
 
-  format {
+  format = {
 		customField        = "first"
 		anotherCustomField = "second"
   }
@@ -235,7 +235,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="GROUP_UPDATED"
 
-  format {
+  format = {
 		customField        = "first updated"
 		anotherCustomField = "second updated"
   }
@@ -310,7 +310,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="GROUP_ROLL_FINISHED"
 
-  format {
+  format = {
 		customField        = "first"
 		anotherCustomField = "second"
   }
@@ -326,7 +326,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="GROUP_ROLL_FAILED"
 
-  format {
+  format = {
 		customField        = "first updated"
 		anotherCustomField = "second updated"
   }
@@ -401,7 +401,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"
 
-  format {
+  format = {
 		customField        = "first"
 		anotherCustomField = "second"
   }
@@ -417,7 +417,7 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATED"
 
-  format {
+  format = {
 		customField        = "first updated"
 		anotherCustomField = "second updated"
   }
