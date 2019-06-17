@@ -358,14 +358,14 @@ func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKEExists(&cluster, resourceName),
 					testCheckOceanGKEAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
+					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/terraform-image-do-not-delete"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size_in_gb", "100"),
 					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "true"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "gke-test-native-vpc-5cb557f7-node"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.key", "spotinst-gke-original-node-pool"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "terraform-acc-test-cluster__default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.key", "cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.value", "terraform-acc-test-cluster"),
@@ -383,14 +383,14 @@ func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKEExists(&cluster, resourceName),
 					testCheckOceanGKEAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
+					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/terraform-image-do-not-delete"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size_in_gb", "101"),
 					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "false"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "gke-test-native-vpc-5cb557f7-node"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.key", "spotinst-gke-original-node-pool"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "terraform-acc-test-cluster__default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.key", "cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.value", "terraform-acc-test-cluster"),
@@ -406,12 +406,12 @@ func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKEExists(&cluster, resourceName),
 					testCheckOceanGKEAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
+					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/terraform-image-do-not-delete"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "gke-test-native-vpc-5cb557f7-node"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.key", "spotinst-gke-original-node-pool"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "terraform-acc-test-cluster__default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.key", "cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.value", "terraform-acc-test-cluster"),
@@ -423,13 +423,13 @@ func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
 
 const testLaunchConfigOceanGKE_Create = `
  // --- LAUNCH CONFIGURATION --------------
-  source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
+  source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/terraform-image-do-not-delete"
   service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
 
   // required fields
   labels {
      key = "spotinst-gke-original-node-pool"
-     value = "terraform-acc-test-cluster__default-pool" 
+     value = "default-pool" 
    }
 
   metadata {
@@ -463,12 +463,12 @@ const testLaunchConfigOceanGKE_Create = `
 
 const testLaunchConfigOceanGKE_Update = `
  // --- LAUNCH CONFIGURATION --------------
-  source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
+  source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/terraform-image-do-not-delete"
   service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
 
   labels {
       key = "spotinst-gke-original-node-pool"
-      value = "terraform-acc-test-cluster__default-pool" 
+      value = "default-pool" 
     }
 
   metadata {
@@ -497,12 +497,12 @@ const testLaunchConfigOceanGKE_Update = `
 
 const testLaunchConfigOceanGKE_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
-  source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
+  source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/terraform-image-do-not-delete"
   service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
 
   labels {
       key = "spotinst-gke-original-node-pool"
-      value = "terraform-acc-test-cluster__default-pool" 
+      value = "default-pool" 
     }
 
   metadata {
