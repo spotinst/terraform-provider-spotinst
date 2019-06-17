@@ -177,7 +177,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupGCPLaunchConfiguration,
 		Labels,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -192,7 +192,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
@@ -454,7 +453,7 @@ func hashKV(v interface{}) int {
 }
 
 func expandLabels(data interface{}) ([]*gcp.Label, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	labels := make([]*gcp.Label, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})

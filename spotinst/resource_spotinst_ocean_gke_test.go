@@ -337,7 +337,7 @@ const testInstanceTypesWhitelistGKEConfig_EmptyFields = `
 
 // region OceanGKE: Launch Configuration
 func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
-	clusterName := "test-acc-luster-launch-configuration"
+	clusterName := "test-acc-cluster-launch-configuration"
 	controllerClusterID := "launch-config-cluster-id"
 	resourceName := createOceanGKEResourceName(clusterName)
 
@@ -364,8 +364,8 @@ func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "gke-test-native-vpc-5cb557f7-node"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.key", "spotinst-gke-original-node-pool"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.key", "spotinst-gke-original-node-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.value", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.key", "cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.value", "terraform-acc-test-cluster"),
@@ -389,8 +389,8 @@ func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "gke-test-native-vpc-5cb557f7-node"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.key", "spotinst-gke-original-node-pool"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.key", "spotinst-gke-original-node-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.value", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.key", "cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.value", "terraform-acc-test-cluster"),
@@ -410,8 +410,8 @@ func TestAccSpotinstOceanGKE_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0", "gke-test-native-vpc-5cb557f7-node"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.key", "spotinst-gke-original-node-pool"),
-					resource.TestCheckResourceAttr(resourceName, "labels.3733835725.value", "default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.key", "spotinst-gke-original-node-pool"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.value", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.key", "cluster-name"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1434173804.value", "terraform-acc-test-cluster"),
@@ -745,7 +745,7 @@ func TestAccSpotinstOceanGKE_NetworkInterfaces(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKEExists(&cluster, resourceName),
 					testCheckOceanGKEAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network", "terraform-acc-test-vpc-network"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.2016707571.name", "config2"),
@@ -753,10 +753,6 @@ func TestAccSpotinstOceanGKE_NetworkInterfaces(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.1202464105.subnetwork_range_name", "range-1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.1202464105.ip_cidr_range", "10.8.0.0/20"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.network", "new-network"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs.1864165171.name", "config3"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs.1864165171.type", "ONE_TO_ONE_NAT"),
 				),
 			},
 			{
@@ -812,14 +808,6 @@ const testNetworkInterfacesOceanGKEGroupConfig_Update = `
       alias_ip_ranges {
         subnetwork_range_name = "range-1"
         ip_cidr_range = "10.8.0.0/20"
-      }
-    }
-    network_interface { 
-      network = "new-network"
-	
-      access_configs {
-        name = "config3"
-        type = "ONE_TO_ONE_NAT"
       }
     }
  // ----------------------------------------
