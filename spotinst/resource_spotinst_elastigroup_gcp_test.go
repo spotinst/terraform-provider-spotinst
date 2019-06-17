@@ -967,7 +967,7 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs."+AccessConfig_update+".name", "config2"),
@@ -975,13 +975,6 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".subnetwork_range_name", "range-name-2"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".ip_cidr_range", "10.128.0.0/20"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.network", "new-network"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs."+AccessConfig2_update+".name", "config3"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs."+AccessConfig2_update+".type", "ONE_TO_ONE_NAT"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.alias_ip_ranges.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.alias_ip_ranges."+AliasIP2_update+".subnetwork_range_name", "range-name-3"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.alias_ip_ranges."+AliasIP2_update+".ip_cidr_range", "10.128.0.0/20"),
 				),
 			},
 			{
@@ -1013,52 +1006,37 @@ const (
 
 const testNetworkInterfacesGCPGroupConfig_Create = `
  // --- NETWORK INTERFACE ------------------
-  network_interface { 
-    network = "default"
+	network_interface { 
+		network = "default"
 	
-    access_configs {
-      name = "config1"
-      type = "ONE_TO_ONE_NAT"
-    }
+		access_configs {
+			name = "config1"
+			type = "ONE_TO_ONE_NAT"
+		}
 
-    alias_ip_ranges {
-     subnetwork_range_name = "range-name-1"
-     ip_cidr_range = "10.128.0.0/20"
-    }
+		alias_ip_ranges {
+		 subnetwork_range_name = "range-name-1"
+		 ip_cidr_range = "10.128.0.0/20"
+		}
   }
  // ----------------------------------------
 `
 
 const testNetworkInterfacesGCPGroupConfig_Update = `
  // --- NETWORK INTERFACE ------------------
-  network_interface { 
-      network = "updated"
+	network_interface {
+		network = "updated"
 	
-      access_configs {
-        name = "config2"
-        type = "ONE_TO_ONE_NAT"
-      }
+		access_configs {
+			name = "config2"
+			type = "ONE_TO_ONE_NAT"
+		}
 
-      alias_ip_ranges {
-       subnetwork_range_name = "range-name-2"
-       ip_cidr_range = "10.128.0.0/20"
-      }
-    }
-
-	network_interface { 
-      network = "new-network"
-	
-      access_configs {
-        name = "config3"
-        type = "ONE_TO_ONE_NAT"
-      }
-
-      alias_ip_ranges {
-       subnetwork_range_name = "range-name-3"
-       ip_cidr_range = "10.128.0.0/20"
-      }
-    }
-  ]
+		alias_ip_ranges {
+		 subnetwork_range_name = "range-name-2"
+		 ip_cidr_range 				 = "10.128.0.0/20"
+		}
+	}
  // ----------------------------------------
 `
 
