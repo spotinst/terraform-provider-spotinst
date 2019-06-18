@@ -218,7 +218,7 @@ resource "spotinst_multai_target_set" "foo" {
 
   health_check {
     protocol            = "http"
-    Path                = "/"
+    path                = "/"
     port                = 3001
     interval            = 20
     timeout             = 5
@@ -268,7 +268,7 @@ resource "spotinst_multai_target_set" "foo" {
 
   health_check {
     protocol            = "http"
-    Path                = "/"
+    path                = "/"
     port                = 3001
     interval            = 20
     timeout             = 5
