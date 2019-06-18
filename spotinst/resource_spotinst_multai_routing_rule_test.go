@@ -147,6 +147,9 @@ func TestAccSpotinstMultaiRoutingRule_Baseline(t *testing.T) {
 const (
 	RoutingRuleTagsHash_Create = "2538041064"
 	RoutingRuleTagsHash_Update = "1968254376"
+
+	Path_Create = "\"Path(\x60/bar\x60)\""
+	Path_Update = "\"Path(\x60/baz\x60)\""
 )
 
 const testBaselineRoutingRuleConfig_Create = `
@@ -201,7 +204,7 @@ resource "` + string(commons.MultaiRoutingRuleResourceName) + `" "%v" {
   provider = "%v"
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   listener_id    = "${spotinst_multai_listener.foo.id}"
-  route          = "Path(\x60/bar\x60)"
+  route          = ` + Path_Create + `
   strategy       = "RANDOM"
   //middleware_ids = ["example"]
   target_set_ids = ["${spotinst_multai_target_set.foo.id}"]
@@ -269,7 +272,7 @@ resource "` + string(commons.MultaiRoutingRuleResourceName) + `" "%v" {
   provider = "%v"
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   listener_id    = "${spotinst_multai_listener.foo.id}"
-  route          = "Path(\x60/baz\x60)"
+  route          = ` + Path_Update + `
   strategy       = "LEASTCONN"
   target_set_ids = ["${spotinst_multai_target_set.foo.id}"]
 
