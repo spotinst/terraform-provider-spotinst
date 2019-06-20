@@ -19,10 +19,10 @@ resource "spotinst_multai_routing_rule" "my_routing_rule" {
   route       = "Path(\x60/bar\x60)"
   strategy    = "LEASTCONN"
 
-  tags = [{
+  tags {
     key   = "env"
     value = "prod"
-  }]
+  }
 }
 ```
 

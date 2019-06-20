@@ -21,7 +21,7 @@ resource "spotinst_subscription" "default-subscription" {
   protocol    = "http"
   endpoint    = "http://endpoint.com"
   
-  format = {
+  format {
     event         = "%event%"
     instance_id   = "%instance-id%"
     resource_id   = "%resource-id%"

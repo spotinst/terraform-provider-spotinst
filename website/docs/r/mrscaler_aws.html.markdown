@@ -24,7 +24,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   
   availability_zones = ["us-west-2a:subnet-123456"]
   
-  provisioning_timeout = {
+  provisioning_timeout {
     timeout        = 15
     timeout_action = "terminate"
   }
@@ -52,42 +52,38 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   additional_primary_security_groups = ["sg-456321"]
   additional_replica_security_groups = ["sg-123654"]
 
-  applications = [
-    {
-      name = "Ganglia"
-      version = "1.0"
-    },
-    {
-      name = "Hadoop"
-    },
-    {
-      name = "Pig"
-      args = ["fake", "args"]
-    }
-  ]
+  applications {
+    name = "Ganglia"
+    version = "1.0"
+  }
+  applications {
+    name = "Hadoop"
+  }
+  applications {
+    name = "Pig"
+    args = ["fake", "args"]
+  }
   
-  instance_weights = [
-    {
-      instance_type     = "t2.small"
-      weighted_capacity = 10
-    },
-    {
-      instance_type     = "t2.medium"
-      weighted_capacity = 90
-    }
-  ]
+  instance_weights {
+    instance_type     = "t2.small"
+    weighted_capacity = 10
+  }
+  instance_weights {
+    instance_type     = "t2.medium"
+    weighted_capacity = 90
+  }
 
-  steps_file = {
+  steps_file {
     bucket = "example-bucket"
     key = "steps.json"
   }
 
-  configurations_file = {
+  configurations_file {
     bucket = "example-bucket"
     key = "configurations.json"
   }
 
-  bootstrap_actions_file = {
+  bootstrap_actions_file {
     bucket = "terraform-emr-test"
     key = "bootstrap-actions.json"
   }
@@ -98,7 +94,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   master_lifecycle      = "SPOT"
   master_ebs_optimized  = true
   
-  master_ebs_block_device = {
+  master_ebs_block_device {
     volumes_per_instance = 1
     volume_type          = "gp2"
     size_in_gb           = 30
@@ -113,7 +109,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   core_lifecycle        = "ON_DEMAND"
   core_ebs_optimized    = false
   
-  core_ebs_block_device = {
+  core_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
     size_in_gb           = 40
@@ -128,7 +124,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   task_lifecycle        = "SPOT"
   task_ebs_optimized    = false
   
-  task_ebs_block_device = {
+  task_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
     size_in_gb           = 40
@@ -136,11 +132,12 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
 // ----------------------------
 
 // --- TAGS -------------------
-  tags = [{
+  tags {
       key   = "Creator"
       value = "Terraform"
-  }]
+  }
 // ----------------------------
+}
 ```
 
 ## Example Usage - Clone Strategy
@@ -172,7 +169,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   master_lifecycle      = "SPOT"
   master_ebs_optimized  = true
   
-  master_ebs_block_device = {
+  master_ebs_block_device {
     volumes_per_instance = 1
     volume_type          = "gp2"
     size_in_gb           = 30
@@ -187,7 +184,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   core_lifecycle        = "ON_DEMAND"
   core_ebs_optimized    = false
   
-  core_ebs_block_device = {
+  core_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
     size_in_gb           = 40
@@ -202,7 +199,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   task_lifecycle        = "SPOT"
   task_ebs_optimized    = false
   
-  task_ebs_block_device = {
+  task_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
     size_in_gb           = 40
@@ -210,14 +207,14 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
 // ----------------------------
 
 // --- TAGS -------------------
-  tags = [{
+  tags {
       key   = "Creator"
       value = "Terraform"
-  }]
+  }
 // ----------------------------
 
 // --- TASK SCALING POLICY ------
-  task_scaling_down_policy = [{
+  task_scaling_down_policy {
     policy_name = "policy-name"
     metric_name = "CPUUtilization"
     namespace   = "AWS/EC2"
@@ -226,7 +223,8 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
     threshold   = 10
     adjustment  = "1"
     cooldown    = 60
-    dimensions = {
+    
+    dimensions {
       name  = "name-1"
       value = "value-1"
     }
@@ -235,13 +233,14 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
     evaluation_periods = 10
     period             = 60
 
-    action_type = ""
-    minimum     = 0
-    maximum     = 10
-    target      = 5
+    action_type         = ""
+    minimum             = 0
+    maximum             = 10
+    target              = 5
     max_target_capacity = 1
-  }]
+  }
 // ----------------------------
+}
 ```
 
 ## Example Usage - Wrap Strategy
@@ -264,7 +263,7 @@ resource "spotinst_mrscaler" "example-scaler-2" {
   task_maximum   = 4
   task_lifecycle = "SPOT"
   
-  task_ebs_block_device = {
+  task_ebs_block_device {
     volumes_per_instance = 1
     volume_type          = "gp2"
     size_in_gb           = 20

@@ -22,7 +22,7 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
   user_data       = ""
   shutdown_script = ""
   
-  managed_service_identities = {
+  managed_service_identities {
     resource_group_name = "spotinst-azure"
     name = "example-identity"
   }
@@ -39,8 +39,8 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
   // -------------------------------------------------------------------
 
   // --- IMAGE ---------------------------------------------------------
-  image = {
-    marketplace = {
+  image {
+    marketplace {
       publisher = "Canonical"
       offer     = "UbuntuServer"
       sku       = "16.04-LTS"
@@ -49,23 +49,23 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
   // -------------------------------------------------------------------
 
   // --- STRATEGY ------------------------------------------------------
-  strategy = {
+  strategy {
     od_count          = 1
     draining_timeout  = 300
   }
   // -------------------------------------------------------------------
 
   // --- LOAD BALANCERS ------------------------------------------------
-  load_balancers = [{
+  load_balancers {
     type          = "MULTAI_TARGET_SET"
     balancer_id   = "lb-1ee2e3q"
     target_set_id = "ts-3eq"
     auto_weight   = true
-  }]
+  }
   // -------------------------------------------------------------------
 
   // --- HEALTH-CHECKS -------------------------------------------------
-  health_check = {
+  health_check {
     health_check_type = "INSTANCE_STATE"
     grace_period      = 120
     auto_healing      = true
@@ -73,7 +73,7 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
   // -------------------------------------------------------------------
 
   // --- NETWORK -------------------------------------------------------
-  network = {
+  network {
     virtual_network_name = "vname"
     subnet_name          = "my-subnet-name"
     resource_group_name  = "subnetResourceGroup"
@@ -82,14 +82,14 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
   // -------------------------------------------------------------------
 
   // --- LOGIN ---------------------------------------------------------
-  login = {
+  login {
     user_name      = "admin"
     ssh_public_key = "33a2s1f3g5a1df5g1ad3f2g1adfg56dfg=="
   }
   // -------------------------------------------------------------------
   
   // --- SCHEDULED TASK ------------------------------------------------
-  scheduled_task = [{
+  scheduled_task {
     is_enabled      = true
     cron_expression = "* * * * *"
     task_type       = "scale"
@@ -102,11 +102,11 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
     scale_target_capacity = 6
     batch_size_percentage = 33
     grace_period          = 300
-  }]
+  }
  // -------------------------------------------------------------------
  
  // --- SCALING POLICIES ----------------------------------------------
-   scaling_up_policy = [{
+   scaling_up_policy {
        policy_name = "policy-name"
        metric_name = "CPUUtilization"
        namespace   = "Microsoft.Compute"
@@ -115,25 +115,23 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
        unit        = "percent"
        cooldown    = 60
        
-       dimensions = [
-         {
-           name  = "resourceName"
-           value = "resource-name"
-         },
-         {
-           name  = "resourceGroupName"
-           value = "resource-group-name"
-         },
-       ]
+       dimensions {
+         name  = "resourceName"
+         value = "resource-name"
+       }
+       dimensions {
+         name  = "resourceGroupName"
+         value = "resource-group-name"
+       }
        
        operator            = "gt"
        evaluation_periods  = "10"
        period              = "60"
        action_type         = "setMinTarget"
        min_target_capacity = 1
-     }]
+     }
  
-     scaling_down_policy = [{
+    scaling_down_policy {
        policy_name = "policy-name"
        metric_name = "CPUUtilization"
        namespace   = "Microsoft.Compute"
@@ -142,7 +140,7 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
        unit        = "percent"
        cooldown    = 60
        
-       dimensions = {
+       dimensions {
            name  = "name-1"
            value = "value-1"
        }
@@ -152,7 +150,7 @@ resource "spotinst_elastigroup_azure" "test_azure_group" {
        period             = "60"
        action_type        = "adjustment"
        adjustment         = "MIN(5,10)"
-     }]
+     }
 }
  // -------------------------------------------------------------------
  
@@ -194,12 +192,12 @@ The following arguments are supported:
 * `auto_weight` - (Optional, Default: `false`)
 
 ```hcl
-  load_balancers = [{
+  load_balancers {
     type          = "MULTAI_TARGET_SET"
     balancer_id   = "lb-1ee2e3q"
     target_set_id = "ts-3eq"
     auto_weight   = true
-  }]
+  }
 ```
 
 <a id="image"></a>
@@ -214,8 +212,8 @@ The following arguments are supported:
 
 ```hcl
   // market image
-  image = {
-    marketplace = {
+  image {
+    marketplace {
       publisher = "Canonical"
       offer     = "UbuntuServer"
       sku       = "16.04-LTS"
@@ -223,8 +221,8 @@ The following arguments are supported:
   }
   
   // custom image
-  image = {
-    custom = {
+  image {
+    custom {
       image_name          = "customImage"
       resource_group_name = "resourceGroup"
     }
@@ -240,7 +238,7 @@ The following arguments are supported:
 * `auto_healing` - (Optional) Enable auto-healing of unhealthy VMs.
 
 ```hcl
-  health_check = {
+  health_check {
     health_check_type = "INSTANCE_STATE"
     grace_period      = 120
     auto_healing      = true
@@ -260,16 +258,16 @@ The following arguments are supported:
 * `private_ip_version` - (Optional) Available from Azure Api-Version 2017-03-30 onwards, it represents whether the specific ipconfiguration is IPv4 or IPv6. Valid values: `IPv4`, `IPv6`.
 
 ```hcl
-  network = {
+  network {
     virtual_network_name = "vname"
     subnet_name          = "my-subnet-name"
     resource_group_name  = "subnetResourceGroup"
     assign_public_ip     = true
     
-    additional_ip_configs = [{
+    additional_ip_configs {
       name = "test"
       private_ip_version = "IPv4"
-    }]
+    }
   }
 ```
 
@@ -277,7 +275,7 @@ The following arguments are supported:
 ## Login
 
 ```hcl
-  network = {
+  network {
     virtual_network_name = "vname"
     subnet_name          = "my-subnet-name"
     resource_group_name  = "subnetResourceGroup"
@@ -294,7 +292,7 @@ The following arguments are supported:
 * `password` - (Optional) Password for admin access to Windows VMs. Required for Windows product types.
 
 ```hcl
-  login = {
+  login {
     user_name      = "admin"
     ssh_public_key = "33a2s1f3g5a1df5g1ad21651sag56dfg=="
   }
@@ -397,16 +395,14 @@ Each `scaling_*_policy` supports the following:
 When `namespace` is defined and is not `"Microsoft.Compute"` the list of dimensions must contain the following:
 
 ```hcl
-  dimensions = [
-    {
+  dimensions {
       name  = "resourceName"
       value = "example-resource-name"
-    },
-    {
+  }
+  dimensions {
       name  = "resourceGroupName"
       value = "example-resource-group-name"
-    },
-  ]
+  }
 ```
 
 * `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
@@ -432,7 +428,7 @@ Usage:
 
 ```hcl
 // --- SCALE DOWN POLICY ------------------
-  scaling_down_policy = [{
+  scaling_down_policy {
     policy_name = "policy-name"
     metric_name = "CPUUtilization"
     namespace   = "Microsoft.Compute"
@@ -441,7 +437,7 @@ Usage:
     unit        = "percent"
     cooldown    = 60
     
-    dimensions = {
+    dimensions {
       name  = "name-1"
       value = "value-1"
     }
@@ -468,11 +464,11 @@ Usage:
     # target      = 5
     // ==================================
     
-  }]
+  }
 // ----------------------------------------
 
 // --- SCALE DOWN POLICY ------------------
-  scaling_down_policy = [{
+  scaling_down_policy {
     policy_name = "policy-name-update"
     metric_name = "CPUUtilization"
     namespace   = "Microsoft.Compute"
@@ -481,7 +477,7 @@ Usage:
     unit        = "bytes"
     cooldown    = 120
     
-    dimensions = {
+    dimensions {
         name  = "name-1-update"
         value = "value-1-update"
     }
@@ -507,8 +503,7 @@ Usage:
     maximum     = 10
     target      = 5
     // ==================================
-    
-  }]
+  }
 // ----------------------------------------
 ```
 
@@ -528,7 +523,7 @@ Usage:
 * `grace_period` - (Optional) The time to allow instances to become healthy.
 
 ```hcl
-  scheduled_task = [{
+  scheduled_task {
     is_enabled      = true
     cron_expression = "* * * * *"
     task_type       = "scale"
@@ -541,7 +536,7 @@ Usage:
     scale_target_capacity = 6
     batch_size_percentage = 33
     grace_period          = 300
-  }]
+  }
 ```
 
 <a id="update-policy"></a>
@@ -556,10 +551,10 @@ Usage:
         * `grace_period` - (Optional) Sets the grace period for new instances to become healthy.
        
 ```hcl
-  update_policy = {
+  update_policy {
     should_roll = false
     
-    roll_config = {
+    roll_config {
       batch_size_percentage = 33
       health_check_type     = "INSTANCE_STATE"
       grace_period          = 300
@@ -576,7 +571,7 @@ Usage:
 Usage:
 
 ```hcl
-  integration_kubernetes = {
+  integration_kubernetes {
     cluster_identifier = "k8s-cluster-id"
   }
 ```
@@ -587,7 +582,7 @@ Usage:
 Usage:
 
 ```hcl
-  integration_multai_runtime = {
+  integration_multai_runtime {
     deployment_id = ""
   }
 ```  

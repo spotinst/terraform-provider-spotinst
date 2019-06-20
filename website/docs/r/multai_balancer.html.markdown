@@ -17,15 +17,15 @@ resource "spotinst_multai_balancer" "my_balancer" {
   name   = "foo"
   scheme = "internal"
 
-  connection_timeouts = {
+  connection_timeouts {
     idle     = 10
     draining = 10
   }
 
-  tags = [{
+  tags {
     key   = "env"
     value = "prod"
-  }]
+  }
 }
 ```
 

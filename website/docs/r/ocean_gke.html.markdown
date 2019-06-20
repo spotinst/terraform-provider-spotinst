@@ -32,43 +32,43 @@ resource "spotinst_ocean_gke" "example" {
   root_volume_size_in_gb = 100
   ip_forwarding          = true
  
-  labels = [{
+  labels {
     key   = "spotinst-gke-original-node-pool",
     value = "example-cluster-name__default-pool"
-  }]
+  }
  
-  metadata = [{
+  metadata {
     key   = "cluster-name"
     value = "example-cluster"
-  }]
+  }
  
   tags = ["gke-example-vpc-1234567-node"]
  
-  backend_services = [{
+  backend_services {
     service_name  = "example-backend-service"
     location_type = "global"
     
-    named_ports = {
+    named_ports {
       name  = "http"
       ports = [80, 8080]
     }
-   }]
+   }
   // ---------------------------------------
  
   // --- NETWORK INTERFACE ------------------
-   network_interface = [{
+   network_interface {
      network = "example-vpc-network"
  
-    access_configs = {
+    access_configs {
       name = "config1"
       type = "ONE_TO_ONE_NAT"
     }
  
-    alias_ip_ranges = {
+    alias_ip_ranges {
       subnetwork_range_name = "range-1"
       ip_cidr_range         = "10.8.0.0/20"
     }
-   }]
+   }
   // ----------------------------------------
 }
 ```
@@ -129,15 +129,15 @@ Usage:
   root_volume_size_in_gb = 100
   ip_forwarding          = true
  
-  labels = [{
+  labels {
     key   = "spotinst-gke-original-node-pool",
     value = "example-cluster-name__default-pool"
-  }]
+  }
  
-  metadata = [{
+  metadata {
     key   = "cluster-name"
     value = "example-cluster"
-  }]
+  }
  
   tags = ["gke-example-vpc-1234567-node"]
 ```
@@ -156,15 +156,16 @@ Usage:
 Usage:
         
 ```hcl
-  backend_services = [{
+  backend_services {
     service_name  = "example-backend-service"
     location_type = "global"
     scheme        = "INTERNAL"
-    named_ports = {
+    
+    named_ports {
       name  = "http"
       ports = [80, 8080]
     }
-   }]
+   }
 ```
 
 <a id="autoscaler"></a>
@@ -188,23 +189,23 @@ Usage:
 Usage:
 
 ```hcl
-  autoscaler = {
+  autoscaler {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 1024
       max_memory_gib = 20
     }

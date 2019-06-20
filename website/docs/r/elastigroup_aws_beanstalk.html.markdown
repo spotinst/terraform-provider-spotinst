@@ -28,18 +28,18 @@ resource "spotinst_elastigroup_aws_beanstalk" "elastigoup-aws=beanstalk" {
  instance_types_spot        = ["t2.micro", "t2.medium", "t2.large"]
 }
 
-deployment_preferences = {
+deployment_preferences {
     automatic_roll        = true
     batch_size_percentage = 100
     grace_period          = 90
-    strategy = {
+    strategy {
         action                 = "REPLACE_SERVER"
         should_drain_instances = true
     }
 }
 
-managed_actions = {
-    platform_update = {
+managed_actions {
+    platform_update {
         perform_at   = "timeWindow"
         time_window  = "Mon:23:50-Tue:00:20"
         update_level = "minorAndPatch"

@@ -22,10 +22,10 @@ resource "spotinst_multai_target" "my_target" {
   host   = "host"
   weight = 1
 
-  tags = [{
+  tags {
     key   = "env"
     value = "prod"
-  }]
+  }
 }
 ```
 
