@@ -207,7 +207,7 @@ github.com/posener/complete/match
 # github.com/spf13/afero v1.2.1
 github.com/spf13/afero
 github.com/spf13/afero/mem
-# github.com/spotinst/spotinst-sdk-go v0.0.0-20190510223236-6deb754bf781
+# github.com/spotinst/spotinst-sdk-go v0.0.0-20190714104821-e713329000a6
 github.com/spotinst/spotinst-sdk-go/service/elastigroup
 github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws
 github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure

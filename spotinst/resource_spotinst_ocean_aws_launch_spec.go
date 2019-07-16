@@ -97,7 +97,7 @@ func createLaunchSpec(launchSpec *aws.LaunchSpec, spotinstClient *Client) (*stri
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Read
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-const ErrCodeLaunchSpecNotFound = "LAUNCH_SPEC_DOESNT_EXIST"
+const ErrCodeLaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
 func resourceSpotinstOceanAWSLaunchSpecRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
