@@ -216,7 +216,7 @@ func expandOceanAWSAutoScalerHeadroom(data interface{}) (*aws.AutoScalerHeadroom
 			}
 
 			if v, ok := m[string(GPUPerUnit)].(int); ok && v >= 0 {
-				headroom.SetNumOfUnits(spotinst.Int(v))
+				headroom.SetGPUPerUnit(spotinst.Int(v))
 			}
 		}
 		return headroom, nil

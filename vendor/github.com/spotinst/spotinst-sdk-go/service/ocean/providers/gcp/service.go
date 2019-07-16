@@ -23,6 +23,9 @@ type Service interface {
 	ReadLaunchSpec(context.Context, *ReadLaunchSpecInput) (*ReadLaunchSpecOutput, error)
 	UpdateLaunchSpec(context.Context, *UpdateLaunchSpecInput) (*UpdateLaunchSpecOutput, error)
 	DeleteLaunchSpec(context.Context, *DeleteLaunchSpecInput) (*DeleteLaunchSpecOutput, error)
+
+	ImportOceanGKECluster(ctx context.Context, input *ImportOceanGKEClusterInput) (*ImportOceanGKEClusterOutput, error)
+	ImportOceanGKELaunchSpec(ctx context.Context, input *ImportOceanGKELaunchSpecInput) (*ImportOceanGKELaunchSpecOutput, error)
 }
 
 type ServiceOp struct {

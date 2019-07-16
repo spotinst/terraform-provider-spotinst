@@ -768,12 +768,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(TagKey): {
 						Type:     schema.TypeString,
-						Required: true,
+						Optional: true,
 					},
 
 					string(TagValue): {
 						Type:     schema.TypeString,
-						Required: true,
+						Optional: true,
 					},
 				},
 			},

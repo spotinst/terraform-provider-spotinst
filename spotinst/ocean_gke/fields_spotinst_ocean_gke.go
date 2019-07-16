@@ -1,11 +1,15 @@
 package ocean_gke
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"strconv"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -306,7 +310,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[AvailabilityZones] = commons.NewGenericField(
-		commons.OceanGKELaunchConfiguration,
+		commons.OceanGKELaunchSpec,
 		AvailabilityZones,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -362,8 +366,395 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[BackendServices] = commons.NewGenericField(
+		commons.ElastigroupGCPLaunchConfiguration,
+		BackendServices,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ServiceName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(LocationType): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(Scheme): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(NamedPorts): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Name): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(Ports): {
+									Type:     schema.TypeList,
+									Required: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(BackendServices)); ok {
+				if services, err := expandServices(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.SetBackendServices(services)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value []*gcp.BackendService = nil
+			if v, ok := resourceData.GetOk(string(BackendServices)); ok {
+				if services, err := expandServices(v); err != nil {
+					return err
+				} else {
+					value = services
+				}
+			}
+			cluster.Compute.SetBackendServices(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[SourceImage] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		SourceImage,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			var value *string = nil
+			if ls != nil && ls.SourceImage != nil {
+				value = ls.SourceImage
+			}
+			if err := resourceData.Set(string(SourceImage), spotinst.StringValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SourceImage), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			if v, ok := resourceData.Get(string(SourceImage)).(string); ok && v != "" {
+				ls.SetSourceImage(spotinst.String(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			if v, ok := resourceData.Get(string(SourceImage)).(string); ok && v != "" {
+				ls.SetSourceImage(spotinst.String(v))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Metadata] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		Metadata,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Required: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(MetadataKey): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(MetadataValue): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+			Set: hashKV,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			var result []interface{} = nil
+			if ls != nil && ls.Metadata != nil {
+				metadata := ls.Metadata
+				result = flattenMetadata(metadata)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Metadata), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Metadata), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			if value, ok := resourceData.GetOk(string(Metadata)); ok {
+				if metadata, err := expandMetadata(value); err != nil {
+					return err
+				} else {
+					ls.SetMetadata(metadata)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			var metadataList []*gcp.Metadata
+			if value, ok := resourceData.GetOk(string(Metadata)); ok {
+				if metadata, err := expandMetadata(value); err != nil {
+					return err
+				} else {
+					metadataList = metadata
+				}
+			}
+			ls.SetMetadata(metadataList)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Labels] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		Labels,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(LabelKey): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(LabelValue): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+			Set: hashKV,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			var result []interface{} = nil
+			if ls != nil && ls.Labels != nil {
+				labels := ls.Labels
+				result = flattenLabels(labels)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Labels), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Labels), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			if value, ok := resourceData.GetOk(string(Labels)); ok {
+				if labels, err := expandLabels(value); err != nil {
+					return err
+				} else {
+					ls.SetLabels(labels)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			ls := lsWrapper.GetCluster().Compute.LaunchSpecification
+			var labelList []*gcp.Label = nil
+			if value, ok := resourceData.GetOk(string(Labels)); ok {
+				if labels, err := expandLabels(value); err != nil {
+					return err
+				} else {
+					labelList = labels
+				}
+			}
+			ls.SetLabels(labelList)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //         Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+func expandServices(data interface{}) ([]*gcp.BackendService, error) {
+	list := data.(*schema.Set).List()
+	out := make([]*gcp.BackendService, 0, len(list))
+
+	for _, v := range list {
+		elem := &gcp.BackendService{}
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		if v, ok := attr[string(ServiceName)]; ok {
+			elem.SetBackendServiceName(spotinst.String(v.(string)))
+		}
+
+		if v, ok := attr[string(Scheme)].(string); ok && v != "" {
+			elem.SetScheme(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(LocationType)].(string); ok && v != "" {
+			elem.SetLocationType(spotinst.String(v))
+
+			if v != "regional" {
+				if v, ok := attr[string(NamedPorts)]; ok {
+					namedPorts, err := expandNamedPorts(v)
+					if err != nil {
+						return nil, err
+					}
+					if namedPorts != nil {
+						elem.SetNamedPorts(namedPorts)
+					}
+				}
+			}
+		}
+		out = append(out, elem)
+	}
+	return out, nil
+}
+
+func expandNamedPorts(data interface{}) (*gcp.NamedPorts, error) {
+	list := data.(*schema.Set).List()
+	namedPorts := &gcp.NamedPorts{}
+
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		if v, ok := m[string(Name)].(string); ok && v != "" {
+			namedPorts.SetName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Ports)]; ok && v != nil {
+			portsList := v.([]interface{})
+			result := make([]int, len(portsList))
+			for i, j := range portsList {
+				if intVal, err := strconv.Atoi(j.(string)); err != nil {
+					return nil, err
+				} else {
+					result[i] = intVal
+				}
+			}
+			namedPorts.SetPorts(result)
+		}
+	}
+	return namedPorts, nil
+}
+
+func hashKV(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelKey)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelValue)].(string)))
+	return hashcode.String(buf.String())
+}
+
+func expandLabels(data interface{}) ([]*gcp.Label, error) {
+	list := data.(*schema.Set).List()
+	labels := make([]*gcp.Label, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(LabelKey)]; !ok {
+			return nil, errors.New("invalid label attributes: key missing")
+		}
+
+		if _, ok := attr[string(LabelValue)]; !ok {
+			return nil, errors.New("invalid label attributes: value missing")
+		}
+		label := &gcp.Label{
+			Key:   spotinst.String(attr[string(LabelKey)].(string)),
+			Value: spotinst.String(attr[string(LabelValue)].(string)),
+		}
+		labels = append(labels, label)
+	}
+	return labels, nil
+}
+
+func expandMetadata(data interface{}) ([]*gcp.Metadata, error) {
+	list := data.(*schema.Set).List()
+	metadata := make([]*gcp.Metadata, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(MetadataKey)]; !ok {
+			return nil, errors.New("invalid metadata attributes: key missing")
+		}
+
+		if _, ok := attr[string(MetadataValue)]; !ok {
+			return nil, errors.New("invalid metadata attributes: value missing")
+		}
+		metaObject := &gcp.Metadata{
+			Key:   spotinst.String(attr[string(MetadataKey)].(string)),
+			Value: spotinst.String(attr[string(MetadataValue)].(string)),
+		}
+		metadata = append(metadata, metaObject)
+	}
+	return metadata, nil
+}
+
+func flattenLabels(labels []*gcp.Label) []interface{} {
+	result := make([]interface{}, 0, len(labels))
+	for _, label := range labels {
+		m := make(map[string]interface{})
+		m[string(LabelKey)] = spotinst.StringValue(label.Key)
+		m[string(LabelValue)] = spotinst.StringValue(label.Value)
+
+		result = append(result, m)
+	}
+	return result
+}
+
+func flattenMetadata(metadata []*gcp.Metadata) []interface{} {
+	result := make([]interface{}, 0, len(metadata))
+	for _, metaObject := range metadata {
+		m := make(map[string]interface{})
+		m[string(MetadataKey)] = spotinst.StringValue(metaObject.Key)
+		m[string(MetadataValue)] = spotinst.StringValue(metaObject.Value)
+
+		result = append(result, m)
+	}
+	return result
+}
