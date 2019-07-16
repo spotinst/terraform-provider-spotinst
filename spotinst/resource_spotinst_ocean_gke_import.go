@@ -54,7 +54,7 @@ func importOceanGKECluster(resourceData *schema.ResourceData, meta interface{}) 
 		// that the group is gone.
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
-				if err.Code == ErrCodeGroupNotFound {
+				if err.Code == ErrCodeClusterNotFound {
 					resourceData.SetId("")
 					return nil, err
 				}
