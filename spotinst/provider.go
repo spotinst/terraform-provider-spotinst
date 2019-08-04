@@ -36,6 +36,8 @@ func Provider() terraform.ResourceProvider {
 			string(commons.OceanGKEImportResourceName):           resourceSpotinstOceanGKEImport(),
 			string(commons.OceanGKELaunchSpecResourceName):       resourceSpotinstOceanGKELaunchSpec(),
 			string(commons.OceanGKELaunchSpecImportResourceName): resourceSpotinstOceanGKELaunchSpecImport(),
+			string(commons.OceanECSResourceName):                 resourceSpotinstOceanECS(),
+			string(commons.OceanECSLaunchSpecResourceName):       resourceSpotinstOceanECSLaunchSpec(),
 			string(commons.ElastigroupAzureResourceName):         resourceSpotinstElastigroupAzure(),
 			string(commons.MRScalerAWSResourceName):              resourceSpotinstMRScalerAWS(),
 			string(commons.MultaiBalancerResourceName):           resourceSpotinstMultaiBalancer(),
