@@ -12,6 +12,55 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
+	fieldsMap[DrainingTimeout] = commons.NewGenericField(
+		commons.OceanAWSStrategy,
+		DrainingTimeout,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+
+			if cluster.Strategy != nil && cluster.Strategy.DrainingTimeout != nil {
+				value = cluster.Strategy.DrainingTimeout
+			}
+			if value != nil {
+				if err := resourceData.Set(string(DrainingTimeout), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DrainingTimeout), err)
+				}
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+				cluster.Strategy.SetDrainingTimeout(spotinst.Int(v.(int)))
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var dt *int = nil
+
+			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+				dt = spotinst.Int(v.(int))
+			}
+
+			cluster.Strategy.SetDrainingTimeout(dt)
+
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[SpotPercentage] = commons.NewGenericField(
 		commons.OceanAWSStrategy,
 		SpotPercentage,

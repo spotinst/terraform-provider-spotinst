@@ -114,6 +114,7 @@ func NewECSClusterWrapper() *ECSClusterWrapper {
 				LaunchSpecification: &aws.ECSLaunchSpecification{},
 				InstanceTypes:       &aws.ECSInstanceTypes{},
 			},
+			Strategy: &aws.ECSStrategy{},
 		},
 	}
 }

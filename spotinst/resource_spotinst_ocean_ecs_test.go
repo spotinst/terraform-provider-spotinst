@@ -614,6 +614,82 @@ autoscaler {
 
 // endregion
 
+// region oceanECS: Strategy
+func TestAccSpotinstoceanECS_Strategy(t *testing.T) {
+	name := "test-acc-cluster-strategy"
+	clusterName := "strategy-cluster-name"
+	resourceName := createOceanECSResourceName(clusterName)
+
+	var cluster aws.ECSCluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testStrategy_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testStrategy_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testStrategy_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testStrategy_Create = `
+// --- STRATEGY -----------------
+	draining_timeout = 120
+// --------------------------------
+`
+
+const testStrategy_Update = `
+// --- AUTOSCALER -----------------
+	draining_timeout = 240
+// --------------------------------
+`
+
+const testStrategy_EmptyFields = `
+// --- STRATEGY -----------------
+
+// --------------------------------
+`
+
+// endregion
+
 // region oceanECS: Update Policy
 func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 	name := "test-acc-cluster-update-policy"

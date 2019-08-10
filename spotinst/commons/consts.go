@@ -31,6 +31,7 @@ const (
 	OceanGKEImport           ResourceAffinity = "Ocean_GKE_Import"
 	OceanGKEInstanceTypes    ResourceAffinity = "Ocean_GKE_Instance_Types"
 	OceanGKEAutoScaling      ResourceAffinity = "Ocean_GKE_Auto_Scaling"
+	OceanGKEStrategy         ResourceAffinity = "Ocean_GKE_Strategy"
 	OceanGKELaunchSpec       ResourceAffinity = "Ocean_GKE_Launch_Spec"
 	OceanGKELaunchSpecImport ResourceAffinity = "Ocean_GKE_Launch_Spec_Import"
 	OceanGKENetworkInterface ResourceAffinity = "Ocean_GKE_Network_Interface"
@@ -40,6 +41,7 @@ const (
 	OceanECSInstanceTypes       ResourceAffinity = "Ocean_ECS_Instance_Types"
 	OceanECSLaunchSpecification ResourceAffinity = "Ocean_ECS_Launch_Specification"
 	OceanECSLaunchSpec          ResourceAffinity = "Ocean_ECS_Launch_Spec"
+	OceanECSStrategy            ResourceAffinity = "Ocean_ECS_Strategy"
 
 	ElastigroupAWS                    ResourceAffinity = "Elastigroup_AWS"
 	ElastigroupAWSInstanceType        ResourceAffinity = "Elastigroup_AWS_Instance_Type"

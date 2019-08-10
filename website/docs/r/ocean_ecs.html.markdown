@@ -98,6 +98,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `key_pair` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
+* `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 
 
 ```hcl
@@ -107,6 +108,7 @@ whitelist = ["t1.micro", "m1.small"]
   user_data                   = "echo hello world"
   iam_instance_profile        = "iam-profile"
   associate_public_ip_address = true
+  draining_timeout            = 120
 ```
 
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.

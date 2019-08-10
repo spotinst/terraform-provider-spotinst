@@ -8,4 +8,5 @@ const (
 	SpotPercentage           commons.FieldName = "spot_percentage"
 	FallbackToOnDemand       commons.FieldName = "fallback_to_ondemand"
 	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
+	DrainingTimeout          commons.FieldName = "draining_timeout"
 )

@@ -114,6 +114,7 @@ func NewGKEClusterWrapper() *GKEClusterWrapper {
 				LaunchSpecification: &gcp.LaunchSpecification{},
 				InstanceTypes:       &gcp.InstanceTypes{},
 			},
+			Strategy: &gcp.Strategy{},
 		},
 	}
 }

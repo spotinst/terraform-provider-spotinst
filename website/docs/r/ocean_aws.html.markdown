@@ -48,6 +48,7 @@ resource "spotinst_ocean_aws" "example" {
   // --- STRATEGY --------------------
   fallback_to_ondemand       = true
   spot_percentage            = 100
+  draining_timeout           = 120
   utilize_reserved_instances = false
   // ---------------------------------
 
@@ -148,11 +149,13 @@ whitelist = ["t1.micro", "m1.small"]
 * `fallback_to_ondemand` - (Optional, Default: `true`) If not Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
 * `spot_percentage` - (Optional, Default: `100`) The percentage of Spot instances the cluster should maintain. Min 0, max 100.
 * `utilize_reserved_instances` - (Optional, Default `false`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
+* `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 
 ```hcl
   fallback_to_ondemand       = true
   spot_percentage            = 100
   utilize_reserved_instances = false
+  draining_timeout           = 120
 ```
 
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.

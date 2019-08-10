@@ -14,6 +14,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_autoscaler"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_launch_specification"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_strategy"
 	"log"
 	"strings"
 	"time"
@@ -40,6 +41,7 @@ func setupClusterECSResource() {
 	ocean_ecs_instance_types.Setup(fieldsMap)
 	ocean_ecs_launch_specification.Setup(fieldsMap)
 	ocean_ecs_autoscaler.Setup(fieldsMap)
+	ocean_ecs_strategy.Setup(fieldsMap)
 
 	commons.OceanECSResource = commons.NewOceanECSResource(fieldsMap)
 }
