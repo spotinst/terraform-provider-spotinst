@@ -60,4 +60,47 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[UtilizeReservedInstances] = commons.NewGenericField(
+		commons.OceanECSStrategy,
+		UtilizeReservedInstances,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var value *bool = nil
+			if cluster.Strategy != nil && cluster.Strategy.UtilizeReservedInstances != nil {
+				value = cluster.Strategy.UtilizeReservedInstances
+			}
+			if value != nil {
+				if err := resourceData.Set(string(UtilizeReservedInstances), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeReservedInstances), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+
+			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
+				cluster.Strategy.SetUtilizeReservedInstances(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var uri *bool = nil
+			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
+				uri = spotinst.Bool(v.(bool))
+			}
+			cluster.Strategy.SetUtilizeReservedInstances(uri)
+			return nil
+		},
+		nil,
+	)
 }
