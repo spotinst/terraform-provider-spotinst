@@ -14,6 +14,7 @@ import (
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
+
 	fieldsMap[ImageID] = commons.NewGenericField(
 		commons.OceanECSLaunchSpecification,
 		ImageID,
@@ -304,6 +305,96 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 			if v, ok := resourceData.GetOkExists(string(AssociatePublicIpAddress)); ok {
 				cluster.Compute.LaunchSpecification.SetAssociatePublicIPAddress(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Monitoring] = commons.NewGenericField(
+		commons.OceanECSLaunchSpecification,
+		Monitoring,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+
+			var value *bool = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.Monitoring != nil {
+
+				value = cluster.Compute.LaunchSpecification.Monitoring
+			}
+
+			if err := resourceData.Set(string(Monitoring), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Monitoring), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+
+			if v, ok := resourceData.GetOkExists(string(Monitoring)); ok {
+				cluster.Compute.LaunchSpecification.SetMonitoring(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+
+			if v, ok := resourceData.GetOkExists(string(Monitoring)); ok {
+				cluster.Compute.LaunchSpecification.SetMonitoring(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[EBSOptimized] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		EBSOptimized,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+
+			var value *bool = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.EBSOptimized != nil {
+
+				value = cluster.Compute.LaunchSpecification.EBSOptimized
+			}
+
+			if err := resourceData.Set(string(EBSOptimized), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EBSOptimized), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+
+			if v, ok := resourceData.GetOkExists(string(EBSOptimized)); ok {
+				cluster.Compute.LaunchSpecification.SetEBSOptimized(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+
+			if v, ok := resourceData.GetOkExists(string(EBSOptimized)); ok {
+				cluster.Compute.LaunchSpecification.SetEBSOptimized(spotinst.Bool(v.(bool)))
 			}
 			return nil
 		},

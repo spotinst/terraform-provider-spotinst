@@ -564,7 +564,7 @@ autoscaler {
    cpu_per_unit = 1024
    memory_per_unit = 512
    num_of_units = 3
- }
+ } 
  down {
    max_scale_down_percentage = 10
    evaluation_periods = 3

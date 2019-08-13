@@ -31,7 +31,6 @@ resource "spotinst_ocean_ecs" "example" {
       }
       down {
         max_scale_down_percentage = 20
-        evaluation_periods = 5
       }
       is_auto_config = false
       is_enabled = false
@@ -84,8 +83,7 @@ The following arguments are supported:
   subnet_ids       = ["subnet-12345"]
 ```
 
-* `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if `blacklist` is configured.
-* `blacklist` - (Optional) Instance types not allowed in the Ocean cluster. Cannot be configured if `whitelist` is configured.
+* `whitelist` - (Optional) Instance types allowed in the Ocean cluster.
 
 ```hcl
 whitelist = ["t1.micro", "m1.small"]
@@ -99,6 +97,8 @@ whitelist = ["t1.micro", "m1.small"]
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
+* `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
+* `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
 
 
 ```hcl
@@ -109,6 +109,8 @@ whitelist = ["t1.micro", "m1.small"]
   iam_instance_profile        = "iam-profile"
   associate_public_ip_address = true
   draining_timeout            = 120
+  monitoring                  = true
+  ebs_optimized               = true
 ```
 
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.
@@ -138,8 +140,8 @@ whitelist = ["t1.micro", "m1.small"]
       num_of_units    = 2
     }
 
-    down {
-      evaluation_periods = 300
+    down = {
+      max_scale_down_percentage = 20
     }
 
     resource_limits {
@@ -147,6 +149,17 @@ whitelist = ["t1.micro", "m1.small"]
       max_memory_gib = 20
     }
   }
+```
+
+* `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
+* `key` - (Optional) The tag key.
+* `value` - (Optional) The tag value.
+
+```hcl
+tags = [{
+  key   = "fakeKey"
+  value = "fakeValue"
+}]
 ```
 
 <a id="update-policy"></a>

@@ -9,4 +9,6 @@ const (
 	UserData                 commons.FieldName = "user_data"
 	AssociatePublicIpAddress commons.FieldName = "associate_public_ip_address"
 	ImageID                  commons.FieldName = "image_id"
+	Monitoring               commons.FieldName = "monitoring"
+	EBSOptimized             commons.FieldName = "ebs_optimized"
 )

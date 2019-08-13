@@ -427,15 +427,3 @@ func flattenAttributes(labels []*aws.ECSAttribute) []interface{} {
 	}
 	return result
 }
-
-func expandSubnetIDs(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if subnetID, ok := v.(string); ok && subnetID != "" {
-			result = append(result, subnetID)
-		}
-	}
-	return result, nil
-}

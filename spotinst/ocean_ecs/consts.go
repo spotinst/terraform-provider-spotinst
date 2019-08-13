@@ -2,6 +2,8 @@ package ocean_ecs
 
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 
+type TagField string
+
 const (
 	Region              commons.FieldName = "region"
 	Name                commons.FieldName = "name"
@@ -14,4 +16,7 @@ const (
 	ShouldRoll          commons.FieldName = "should_roll"
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
+	Tags                commons.FieldName = "tags"
+	TagKey              TagField          = "key"
+	TagValue            TagField          = "value"
 )

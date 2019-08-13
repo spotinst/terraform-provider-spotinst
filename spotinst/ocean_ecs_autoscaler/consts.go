@@ -16,5 +16,4 @@ const (
 	MaxMemoryGib           commons.FieldName = "max_memory_gib"
 	Down                   commons.FieldName = "down"
 	MaxScaleDownPercentage commons.FieldName = "max_scale_down_percentage"
-	EvaluationPeriods      commons.FieldName = "evaluation_periods"
 )

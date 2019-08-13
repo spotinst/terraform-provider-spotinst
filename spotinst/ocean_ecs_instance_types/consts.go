@@ -5,5 +5,4 @@ import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/comm
 const (
 	InstanceTypes commons.FieldName = "instance_types"
 	Whitelist     commons.FieldName = "whitelist"
-	Blacklist     commons.FieldName = "blacklist"
 )

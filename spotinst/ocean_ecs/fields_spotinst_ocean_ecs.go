@@ -1,8 +1,12 @@
 package ocean_ecs
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -310,6 +314,72 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+
+	fieldsMap[Tags] = commons.NewGenericField(
+		commons.OceanECS,
+		Tags,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(TagKey): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(TagValue): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+			Set: hashKV,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var result []interface{} = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.Tags != nil {
+				tags := cluster.Compute.LaunchSpecification.Tags
+				result = flattenTags(tags)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Tags), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			if value, ok := resourceData.GetOk(string(Tags)); ok {
+				if tags, err := expandTags(value); err != nil {
+					return err
+				} else {
+					cluster.Compute.LaunchSpecification.SetTags(tags)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var tagsToAdd []*aws.Tag = nil
+			if value, ok := resourceData.GetOk(string(Tags)); ok {
+				if tags, err := expandTags(value); err != nil {
+					return err
+				} else {
+					tagsToAdd = tags
+				}
+			}
+			cluster.Compute.LaunchSpecification.SetTags(tagsToAdd)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -325,4 +395,48 @@ func expandSubnetIDs(data interface{}) ([]string, error) {
 		}
 	}
 	return result, nil
+}
+
+func hashKV(v interface{}) int {
+	var buf bytes.Buffer
+	m := v.(map[string]interface{})
+	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
+	return hashcode.String(buf.String())
+}
+
+func flattenTags(tags []*aws.Tag) []interface{} {
+	result := make([]interface{}, 0, len(tags))
+	for _, tag := range tags {
+		m := make(map[string]interface{})
+		m[string(TagKey)] = spotinst.StringValue(tag.Key)
+		m[string(TagValue)] = spotinst.StringValue(tag.Value)
+
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandTags(data interface{}) ([]*aws.Tag, error) {
+	list := data.(*schema.Set).List()
+	tags := make([]*aws.Tag, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(TagKey)]; !ok {
+			return nil, errors.New("invalid tag attributes: key missing")
+		}
+
+		if _, ok := attr[string(TagValue)]; !ok {
+			return nil, errors.New("invalid tag attributes: value missing")
+		}
+		tag := &aws.Tag{
+			Key:   spotinst.String(attr[string(TagKey)].(string)),
+			Value: spotinst.String(attr[string(TagValue)].(string)),
+		}
+		tags = append(tags, tag)
+	}
+	return tags, nil
 }
