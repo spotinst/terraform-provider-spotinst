@@ -50,8 +50,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetCluster()
 			var dt *int = nil
 
-			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
-				dt = spotinst.Int(v.(int))
+			if v, ok := resourceData.Get(string(DrainingTimeout)).(int); ok && v > 0 {
+				dt = spotinst.Int(v)
 			}
 
 			cluster.Strategy.SetDrainingTimeout(dt)
