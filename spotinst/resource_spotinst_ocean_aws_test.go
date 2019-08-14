@@ -505,6 +505,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 				),
 			},
 			{
@@ -519,6 +520,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 				),
 			},
 			{
@@ -533,6 +535,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "0"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
 				),
 			},
 		},
@@ -544,6 +547,7 @@ const testStrategyConfig_Create = `
  fallback_to_ondemand       = true
  spot_percentage            = 100
  utilize_reserved_instances = false
+ draining_timeout			= 120
  // ---------------------------------
 `
 
@@ -552,6 +556,7 @@ const testStrategyConfig_Update = `
  fallback_to_ondemand       = false
  spot_percentage            = 50
  utilize_reserved_instances = true
+ draining_timeout			= 240
  // ---------------------------------
 `
 

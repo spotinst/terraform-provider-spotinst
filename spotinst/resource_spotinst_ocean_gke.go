@@ -13,6 +13,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_auto_scaling"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_network_interface"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_strategy"
 	"log"
 	"time"
 )
@@ -40,6 +41,7 @@ func setupClusterGKEResource() {
 	ocean_gke_auto_scaling.Setup(fieldsMap)
 	ocean_gke_instance_types.Setup(fieldsMap)
 	ocean_gke_network_interface.Setup(fieldsMap)
+	ocean_gke_strategy.Setup(fieldsMap)
 
 	commons.OceanGKEResource = commons.NewOceanGKEResource(fieldsMap)
 }
