@@ -28,6 +28,19 @@ type Service interface {
 	DetachClusterInstances(context.Context, *DetachClusterInstancesInput) (*DetachClusterInstancesOutput, error)
 
 	Roll(context.Context, *RollClusterInput) (*RollClusterOutput, error)
+	ListECSClusters(context.Context, *ListECSClustersInput) (*ListECSClustersOutput, error)
+	CreateECSCluster(context.Context, *CreateECSClusterInput) (*CreateECSClusterOutput, error)
+	ReadECSCluster(context.Context, *ReadECSClusterInput) (*ReadECSClusterOutput, error)
+	UpdateECSCluster(context.Context, *UpdateECSClusterInput) (*UpdateECSClusterOutput, error)
+	DeleteECSCluster(context.Context, *DeleteECSClusterInput) (*DeleteECSClusterOutput, error)
+
+	ListECSLaunchSpecs(context.Context, *ListECSLaunchSpecsInput) (*ListECSLaunchSpecsOutput, error)
+	CreateECSLaunchSpec(context.Context, *CreateECSLaunchSpecInput) (*CreateECSLaunchSpecOutput, error)
+	ReadECSLaunchSpec(context.Context, *ReadECSLaunchSpecInput) (*ReadECSLaunchSpecOutput, error)
+	UpdateECSLaunchSpec(context.Context, *UpdateECSLaunchSpecInput) (*UpdateECSLaunchSpecOutput, error)
+	DeleteECSLaunchSpec(context.Context, *DeleteECSLaunchSpecInput) (*DeleteECSLaunchSpecOutput, error)
+
+	RollECS(context.Context, *ECSRollClusterInput) (*ECSRollClusterOutput, error)
 }
 
 type ServiceOp struct {

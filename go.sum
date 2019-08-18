@@ -331,11 +331,17 @@ github.com/spotinst/spotinst-sdk-go v0.0.0-20190510223236-6deb754bf781 h1:kiSOyS
 github.com/spotinst/spotinst-sdk-go v0.0.0-20190510223236-6deb754bf781/go.mod h1:hl5jnGvawJ84YGUk0ogthSWRO886F4f8CoGbHsuwcm4=
 github.com/spotinst/spotinst-sdk-go v0.0.0-20190714104821-e713329000a6 h1:VzF7nllIyjF34qPJkIIxnID4NxKeLVhRycia22GGP6k=
 github.com/spotinst/spotinst-sdk-go v0.0.0-20190714104821-e713329000a6/go.mod h1:hl5jnGvawJ84YGUk0ogthSWRO886F4f8CoGbHsuwcm4=
+github.com/spotinst/spotinst-sdk-go v0.0.0-20190813140819-8d02332743c4 h1:udyASXztCF3EZo4msf1uMh0eEuMF6WDsx+ia3rKb938=
+github.com/spotinst/spotinst-sdk-go v0.0.0-20190813140819-8d02332743c4/go.mod h1:hl5jnGvawJ84YGUk0ogthSWRO886F4f8CoGbHsuwcm4=
+github.com/spotinst/spotinst-sdk-go v0.0.0-20190814081052-16968d6ba49e h1:1FqJD+7i8dMg7B1SWn23Zkut5jzoYd9MxSSXOQkPwK8=
+github.com/spotinst/spotinst-sdk-go v0.0.0-20190814081052-16968d6ba49e/go.mod h1:hl5jnGvawJ84YGUk0ogthSWRO886F4f8CoGbHsuwcm4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/objx v0.2.0/go.mod h1:qt09Ya8vawLte6SNmTgCsAVtYtaKzEcn8ATUoHMkEqE=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
+github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/svanharmelen/jsonapi v0.0.0-20180618144545-0c0828c3f16d h1:Z4EH+5EffvBEhh37F0C0DnpklTMh00JOkjW5zK3ofBI=
 github.com/svanharmelen/jsonapi v0.0.0-20180618144545-0c0828c3f16d/go.mod h1:BSTlc8jOjh0niykqEGVXOLXdi9o0r0kR8tCYiMvjFgw=
 github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07/go.mod h1:kDXzergiv9cbyO7IOYJZWg1U88JhDg3PB6klq9Hg2pA=

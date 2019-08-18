@@ -16,6 +16,7 @@ type Cluster struct {
 	AutoScaler          *AutoScaler `json:"autoScaler,omitempty"`
 	Capacity            *Capacity   `json:"capacity,omitempty"`
 	Compute             *Compute    `json:"compute,omitempty"`
+	Strategy            *Strategy   `json:"strategy,omitempty"`
 	ControllerClusterID *string     `json:"controllerClusterId,omitempty"`
 	GKE                 *GKE        `json:"gke,omitempty"`
 	ID                  *string     `json:"id,omitempty"`
@@ -40,6 +41,13 @@ type Cluster struct {
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
 	nullFields []string
+}
+
+type Strategy struct {
+	DrainingTimeout *int `json:"drainingTimeout,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
 }
 
 type AutoScaler struct {
@@ -470,6 +478,13 @@ func (o *Cluster) SetCapacity(v *Capacity) *Cluster {
 	return o
 }
 
+func (o *Cluster) SetStrategy(v *Strategy) *Cluster {
+	if o.Strategy = v; o.Strategy == nil {
+		o.nullFields = append(o.nullFields, "Strategy")
+	}
+	return o
+}
+
 func (o *Cluster) SetCompute(v *Compute) *Cluster {
 	if o.Compute = v; o.Compute == nil {
 		o.nullFields = append(o.nullFields, "Compute")
@@ -566,6 +581,23 @@ func (o *Capacity) SetMaximum(v *int) *Capacity {
 func (o *Capacity) SetTarget(v *int) *Capacity {
 	if o.Target = v; o.Target == nil {
 		o.nullFields = append(o.nullFields, "Target")
+	}
+	return o
+}
+
+// endregion
+
+// region Strategy
+
+func (o Strategy) MarshalJSON() ([]byte, error) {
+	type noMethod Strategy
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Strategy) SetDrainingTimeout(v *int) *Strategy {
+	if o.DrainingTimeout = v; o.DrainingTimeout == nil {
+		o.nullFields = append(o.nullFields, "DrainingTimeout")
 	}
 	return o
 }
