@@ -185,6 +185,148 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[MaxSize] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		MaxSize,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+			if cluster.Capacity != nil && cluster.Capacity.Maximum != nil {
+				value = cluster.Capacity.Maximum
+			}
+			if err := resourceData.Set(string(MaxSize), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxSize), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(MaxSize)); ok {
+				if cluster.Capacity == nil {
+					cluster.Capacity = &gcp.Capacity{}
+				}
+
+				cluster.Capacity.SetMaximum(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(MaxSize)); ok {
+				cluster.Capacity.SetMaximum(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[MinSize] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		MinSize,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+			if cluster.Capacity != nil && cluster.Capacity.Minimum != nil {
+				value = cluster.Capacity.Minimum
+			}
+			if err := resourceData.Set(string(MinSize), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MinSize), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(MinSize)); ok {
+				if cluster.Capacity == nil {
+					cluster.Capacity = &gcp.Capacity{}
+				}
+
+				cluster.Capacity.SetMinimum(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(MinSize)); ok {
+				cluster.Capacity.SetMinimum(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[DesiredCapacity] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		DesiredCapacity,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+			if cluster.Capacity != nil && cluster.Capacity.Target != nil {
+				value = cluster.Capacity.Target
+			}
+			if err := resourceData.Set(string(DesiredCapacity), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DesiredCapacity), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.Get(string(DesiredCapacity)).(int); ok {
+				if cluster.Capacity == nil {
+					cluster.Capacity = &gcp.Capacity{}
+				}
+
+				cluster.Capacity.SetTarget(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(DesiredCapacity)); ok {
+				cluster.Capacity.SetTarget(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ClusterControllerID] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		ClusterControllerID,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		nil,
+		nil,
+		nil,
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

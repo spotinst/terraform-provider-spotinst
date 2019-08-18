@@ -167,6 +167,9 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.1", "n1-standard-2"),
+					resource.TestCheckResourceAttr(resourceName, "max_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 				),
 			},
 			{
@@ -176,6 +179,9 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
+					resource.TestCheckResourceAttr(resourceName, "max_size", "1"),
+					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 				),
 			},
 		},
@@ -186,6 +192,9 @@ const testBaselineOceanGKEImportConfig_Create = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
+ min_size 			= 0
+ max_size 			= 1
+ desired_capacity 	= 0
  cluster_name = "terraform-acc-tests-do-not-delete"
  location     = "us-central1-a"
 
@@ -198,6 +207,9 @@ const testBaselineOceanGKEImportConfig_Update = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
+ min_size = 0
+ max_size = 1
+ desired_capacity = 0
  cluster_name = "terraform-acc-tests-do-not-delete"
  location     = "us-central1-a"
 
