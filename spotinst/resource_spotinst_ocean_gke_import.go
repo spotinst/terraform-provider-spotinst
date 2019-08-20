@@ -157,6 +157,13 @@ func resourceSpotinstClusterGKEImportRead(resourceData *schema.ResourceData, met
 		return nil
 	}
 
+	// Expose the controller cluster identifier.
+	if clusterResponse.ControllerClusterID != nil {
+		if err := resourceData.Set("cluster_controller_id", *clusterResponse.ControllerClusterID); err != nil {
+			log.Printf("[ERROR] Failed to set cluster_controller_id")
+		}
+	}
+
 	if err := commons.OceanGKEImportResource.OnRead(clusterResponse, resourceData, meta); err != nil {
 		return err
 	}
