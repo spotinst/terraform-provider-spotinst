@@ -186,9 +186,6 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
-					resource.TestCheckResourceAttr(resourceName, "max_size", "1"),
-					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 				),
 			},
 			{
@@ -204,9 +201,6 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0e9d5f93224747f51"),
-					resource.TestCheckResourceAttr(resourceName, "max_size", "1"),
-					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 				),
 			},
 		},
@@ -221,9 +215,9 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   name = "%v"
   region = "us-west-2"
 
-  max_size = 1
-  min_size = 0
-  desired_capacity = 0
+  //max_size = 1
+  //min_size = 0
+  //desired_capacity = 0
 
   subnet_ids         = ["subnet-79da021e"]
   security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
@@ -243,9 +237,9 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   name = "%v"
   region = "us-west-2"
 
-  max_size = 1
-  min_size = 0
-  desired_capacity = 0
+  //max_size = 1
+  //min_size = 0
+  //desired_capacity = 0
 
   subnet_ids         = ["subnet-79da021e","subnet-03b7ed5b"]
   security_group_ids = ["sg-0e9d5f93224747f51"]
@@ -325,74 +319,6 @@ const testInstanceTypesWhitelistECSConfig_Update = `
 
 const testInstanceTypesWhitelistECSConfig_EmptyFields = `
 `
-
-func TestAccSpotinstOceanECS_InstanceTypesBlacklist(t *testing.T) {
-	name := "test-acc-cluster-instance-types-blacklist"
-	clusterName := "blacklist-cluster-name"
-	resourceName := createOceanECSResourceName(clusterName)
-
-	var cluster aws.ECSCluster
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
-					name:              name,
-					clusterName:       clusterName,
-					instanceWhitelist: testInstanceTypesBlacklistECSConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanECSExists(&cluster, resourceName),
-					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.1", "m1.small"),
-				),
-			},
-			{
-				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
-					name:              name,
-					clusterName:       clusterName,
-					instanceWhitelist: testInstanceTypesBlacklistECSConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanECSExists(&cluster, resourceName),
-					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
-				),
-			},
-			{
-				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
-					name:              name,
-					clusterName:       clusterName,
-					instanceWhitelist: testInstanceTypesBlacklistECSConfig_EmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanECSExists(&cluster, resourceName),
-					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "0"),
-				),
-			},
-		},
-	})
-}
-
-const testInstanceTypesBlacklistECSConfig_Create = `
- blacklist = ["t1.micro","m1.small"]
-`
-
-const testInstanceTypesBlacklistECSConfig_Update = `
- blacklist = ["t1.micro"]
-`
-
-const testInstanceTypesBlacklistECSConfig_EmptyFields = `
-`
-
-// endregion
 
 // region OceanECS: Launch Specification
 func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
@@ -497,7 +423,6 @@ func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.cooldown", "180"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.evaluation_periods", "3"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.max_scale_down_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.cpu_per_unit", "1024"),
@@ -523,7 +448,6 @@ func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.cooldown", "240"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.evaluation_periods", "5"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.max_scale_down_percentage", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.cpu_per_unit", "512"),
@@ -567,7 +491,6 @@ autoscaler {
  } 
  down {
    max_scale_down_percentage = 10
-   evaluation_periods = 3
  }
  is_auto_config = true
  is_enabled = true
@@ -590,7 +513,6 @@ autoscaler {
  }
  down {
    max_scale_down_percentage = 20
-   evaluation_periods = 5
  }
  is_auto_config = false
  is_enabled = false
