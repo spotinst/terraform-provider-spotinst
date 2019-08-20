@@ -295,12 +295,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.Get(string(DesiredCapacity)).(int); ok {
+			if v, ok := resourceData.GetOk(string(DesiredCapacity)); ok {
 				if cluster.Capacity == nil {
 					cluster.Capacity = &gcp.Capacity{}
 				}
 
-				cluster.Capacity.SetTarget(spotinst.Int(v))
+				cluster.Capacity.SetTarget(spotinst.Int(v.(int)))
 			}
 			return nil
 		},
