@@ -38,7 +38,6 @@ The following arguments are supported:
 * `image_id`  - (Optional) ID of the image used to launch the instances.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_group_ids` - (Optional) One or more security group ids.
-
 * `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
-    * `key` - (Required) The tag key.
-    * `value` - (Required) The tag value.
+    * `key` - (Required) The label key.
+    * `value` - (Required) The label value.

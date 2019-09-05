@@ -230,7 +230,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world updated"
   iam_instance_profile = "updated"
   
-  labels = {
+  labels {
     key = "label key updated"
     value = "label value updated"
   }
