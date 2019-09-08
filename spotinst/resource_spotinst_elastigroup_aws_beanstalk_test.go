@@ -256,11 +256,6 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.action", "REPLACE_SERVER"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.should_drain_instances", "true"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.perform_at", "timeWindow"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.time_window", "Mon:23:50-Tue:00:20"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.update_level", "minorAndPatch"),
 				),
 			},
 			{
@@ -283,11 +278,6 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.action", "REPLACE_SERVER"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.should_drain_instances", "true"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.perform_at", "timeWindow"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.time_window", "Mon:23:50-Tue:00:20"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.update_level", "minorAndPatch"),
 				),
 			},
 		},
@@ -319,14 +309,6 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
    should_drain_instances = true
   }
  }
-
- managed_actions {
-  platform_update {
-   perform_at   = "timeWindow"
-   time_window  = "Mon:23:50-Tue:00:20"
-   update_level = "minorAndPatch"
-  }
- }
 }
 
 `
@@ -354,14 +336,6 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
   strategy {
    action                 = "REPLACE_SERVER"
    should_drain_instances = true
-  }
- }
-
- managed_actions {
-  platform_update {
-   perform_at   = "timeWindow"
-   time_window  = "Mon:23:50-Tue:00:20"
-   update_level = "minorAndPatch"
   }
  }
 }
