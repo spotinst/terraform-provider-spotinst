@@ -1,5 +1,8 @@
 ## 1.13.5 (Unreleased)
 
+NOTES:
+This release supports Terraform v0.12
+
 FEATURES:
 * *New Resource*: `spotinst_ocean_ecs`
 * *New Resource*: `spotinst_ocean_ecs_launch_spec`
