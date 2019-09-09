@@ -1,3 +1,13 @@
+## 1.13.5 (Unreleased)
+
+FEATURES:
+* *New Resource*: `spotinst_ocean_ecs`
+* *New Resource*: `spotinst_ocean_ecs_launch_spec`
+
+ENHANCEMENTS:
+* spotinst_ocean_gke: added `draining_timeout`
+* spotinst_ocean_aws: added `draining_timeout`
+
 ## 1.13.4 (Unreleased)
 
 FEATURES:
