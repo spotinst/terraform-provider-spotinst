@@ -1,4 +1,4 @@
-## 1.13.5 (Unreleased)
+## 1.13.4 (Unreleased)
 
 NOTES:
 This release supports Terraform v0.12
@@ -10,8 +10,6 @@ FEATURES:
 ENHANCEMENTS:
 * spotinst_ocean_gke: added `draining_timeout`
 * spotinst_ocean_aws: added `draining_timeout`
-
-## 1.13.4 (Unreleased)
 
 FEATURES:
 * *New Resource*: `spotinst_ocean_gke_import`
