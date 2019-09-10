@@ -164,7 +164,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "TerraformAcceptanceTests-env"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "TerraformDoNotDelete-env"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 				),
@@ -178,7 +178,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "3"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "1"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "TerraformAcceptanceTests-env"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "TerraformDoNotDelete-env"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "t2.medium"),
@@ -200,7 +200,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 0
  desired_capacity = 1
 
- beanstalk_environment_name = "TerraformAcceptanceTests-env"
+ beanstalk_environment_name = "TerraformDoNotDelete-env"
  instance_types_spot        = ["t2.small"]
 
 }
@@ -219,7 +219,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 1
  desired_capacity = 2
 
- beanstalk_environment_name = "TerraformAcceptanceTests-env"
+ beanstalk_environment_name = "TerraformDoNotDelete-env"
  instance_types_spot        = ["t2.small", "t2.medium"]
 
 }
@@ -246,7 +246,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-e3sngajkvh"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-h3kze2cv9e"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.#", "1"),
@@ -256,11 +256,6 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.action", "REPLACE_SERVER"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.should_drain_instances", "true"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.perform_at", "timeWindow"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.time_window", "Mon:23:50-Tue:00:20"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.update_level", "minorAndPatch"),
 				),
 			},
 			{
@@ -272,7 +267,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "3"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "1"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-e3sngajkvh"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-h3kze2cv9e"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "t2.medium"),
@@ -283,11 +278,6 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.action", "REPLACE_SERVER"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.0.strategy.0.should_drain_instances", "true"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.perform_at", "timeWindow"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.time_window", "Mon:23:50-Tue:00:20"),
-					resource.TestCheckResourceAttr(resourceName, "managed_actions.0.platform_update.0.update_level", "minorAndPatch"),
 				),
 			},
 		},
@@ -306,24 +296,17 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 0
  desired_capacity = 1
 
- beanstalk_environment_id = "e-e3sngajkvh"
+ beanstalk_environment_id = "e-h3kze2cv9e"
  instance_types_spot        = ["t2.small"]
 
- deployment_preferences = {
+ deployment_preferences {
   automatic_roll        = true
   batch_size_percentage = 100
   grace_period          = 90
-  strategy              = {
+
+  strategy {
    action                 = "REPLACE_SERVER"
    should_drain_instances = true
-  }
- }
-
- managed_actions = {
-  platform_update = {
-   perform_at   = "timeWindow"
-   time_window  = "Mon:23:50-Tue:00:20"
-   update_level = "minorAndPatch"
   }
  }
 }
@@ -342,24 +325,17 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 1
  desired_capacity = 2
 
- beanstalk_environment_id = "e-e3sngajkvh"
+ beanstalk_environment_id = "e-h3kze2cv9e"
  instance_types_spot        = ["t2.small", "t2.medium"]
 
- deployment_preferences = {
+ deployment_preferences {
   automatic_roll        = true
   batch_size_percentage = 100
   grace_period          = 90
-  strategy              = {
+
+  strategy {
    action                 = "REPLACE_SERVER"
    should_drain_instances = true
-  }
- }
-
- managed_actions = {
-  platform_update = {
-   perform_at   = "timeWindow"
-   time_window  = "Mon:23:50-Tue:00:20"
-   update_level = "minorAndPatch"
   }
  }
 }

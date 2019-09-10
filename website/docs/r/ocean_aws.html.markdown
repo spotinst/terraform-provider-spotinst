@@ -35,42 +35,41 @@ resource "spotinst_ocean_aws" "example" {
   
   associate_public_ip_address = true
   
-  load_balancers = [
-    {
-      arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
-      type = "TARGET_GROUP"
-    },
-    {
-      name = "AntonK"
-      type = "CLASSIC"
-    }
-  ]
+  load_balancers {
+    arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
+    type = "TARGET_GROUP"
+  }
+  load_balancers {
+    name = "AntonK"
+    type = "CLASSIC"
+  }
   // ---------------------------------------
 
   // --- STRATEGY --------------------
   fallback_to_ondemand       = true
   spot_percentage            = 100
+  draining_timeout           = 120
   utilize_reserved_instances = false
   // ---------------------------------
 
   // --- AUTOSCALER -----------------
-  autoscaler = {
+  autoscaler {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 1024
       max_memory_gib = 20
     }
@@ -136,26 +135,27 @@ whitelist = ["t1.micro", "m1.small"]
   
   associate_public_ip_address = true
   
-  load_balancers = [
-    {
-      arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
-      type = "TARGET_GROUP"
-    },
-    {
-      name = "AntonK"
-      type = "CLASSIC"
-    }
-  ]
+  load_balancers {
+    arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
+    type = "TARGET_GROUP"
+  }
+  
+  load_balancers {
+    name = "balancer-name"
+    type = "CLASSIC"
+  }
 ```
 
 * `fallback_to_ondemand` - (Optional, Default: `true`) If not Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
 * `spot_percentage` - (Optional, Default: `100`) The percentage of Spot instances the cluster should maintain. Min 0, max 100.
 * `utilize_reserved_instances` - (Optional, Default `false`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
+* `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 
 ```hcl
   fallback_to_ondemand       = true
   spot_percentage            = 100
   utilize_reserved_instances = false
+  draining_timeout           = 120
 ```
 
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.
@@ -174,23 +174,23 @@ whitelist = ["t1.micro", "m1.small"]
 * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
 
 ```hcl
-  autoscaler = {
+  autoscaler {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 1024
       max_memory_gib = 20
     }
@@ -202,10 +202,10 @@ whitelist = ["t1.micro", "m1.small"]
 * `value` - (Optional) The tag value.
 
 ```hcl
-tags = [{
+tags {
   key   = "fakeKey"
   value = "fakeValue"
-}]
+}
 ```
 
 <a id="update-policy"></a>
@@ -217,10 +217,10 @@ tags = [{
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
 
 ```hcl
-  update_policy = {
+  update_policy {
     should_roll = false
     
-    roll_config = {
+    roll_config {
       batch_size_percentage = 33
     }
   }

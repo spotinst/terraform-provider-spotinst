@@ -251,6 +251,34 @@ func (s *ServiceOp) DeleteLaunchSpec(ctx context.Context, input *DeleteLaunchSpe
 	return &DeleteLaunchSpecOutput{}, nil
 }
 
+func (s *ServiceOp) ImportOceanGKELaunchSpec(ctx context.Context, input *ImportOceanGKELaunchSpecInput) (*ImportOceanGKELaunchSpecOutput, error) {
+	r := client.NewRequest(http.MethodPost, "/ocean/gcp/k8s/launchSpec/import")
+
+	r.Params["oceanId"] = []string{spotinst.StringValue(input.OceanId)}
+	r.Params["nodePoolName"] = []string{spotinst.StringValue(input.NodePoolName)}
+
+	body := &ImportOceanGKELaunchSpecInput{}
+	r.Obj = body
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	ls, err := launchSpecsFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ImportOceanGKELaunchSpecOutput)
+	if len(ls) > 0 {
+		output.LaunchSpec = ls[0]
+	}
+
+	return output, nil
+}
+
 // endregion
 
 // region LaunchSpec
@@ -356,6 +384,20 @@ func (o *Taint) SetEffect(v *string) *Taint {
 		o.nullFields = append(o.nullFields, "Effect")
 	}
 	return o
+}
+
+// endregion
+
+// region Import
+
+type ImportOceanGKELaunchSpecInput struct {
+	OceanId      *string `json:"oceanId,omitempty"`
+	NodePoolName *string `json:"nodePoolName,omitempty"`
+}
+
+// TODO: Might use LaunchSpec directly
+type ImportOceanGKELaunchSpecOutput struct {
+	LaunchSpec *LaunchSpec `json:"launchSpec,omitempty"`
 }
 
 // endregion

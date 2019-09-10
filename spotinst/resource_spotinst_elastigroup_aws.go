@@ -346,7 +346,14 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 						}
 						errResult = resource.Retry(time.Duration(rto)*time.Second, func() *resource.RetryError {
 							rollGroupInput.GroupID = spotinst.String(groupId)
-							rollOut, err := meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput)
+							var rollOut *aws.RollGroupOutput = nil
+							if v, ok := resourceData.GetOk(string(elastigroup_aws_integrations.IntegrationEcs)); ok && v != "" {
+								rollECSGroupInput := convertToECSRollInput(rollGroupInput)
+								rollOut, err = meta.(*Client).elastigroup.CloudProviderAWS().RollECS(context.Background(), rollECSGroupInput)
+							} else {
+								rollOut, err = meta.(*Client).elastigroup.CloudProviderAWS().Roll(context.Background(), rollGroupInput)
+							}
+
 							if err != nil {
 
 								// checks whether to retry role
@@ -383,6 +390,14 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		return errResult
 	}
 	return nil
+}
+
+func convertToECSRollInput(rollGroupInput *aws.RollGroupInput) *aws.RollECSGroupInput {
+	r := &aws.RollECSGroupInput{GroupID: rollGroupInput.GroupID}
+	r.Roll = &aws.RollECSWrapper{}
+	r.Roll.BatchSizePercentage = rollGroupInput.BatchSizePercentage
+
+	return r
 }
 
 func awaitReady(groupId *string, timeout int, capacity int, client *Client) error {

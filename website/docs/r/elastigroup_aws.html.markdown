@@ -41,15 +41,15 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   instance_types_spot           = ["m3.xlarge", "m3.2xlarge"]
   instance_types_preferred_spot = ["m3.xlarge"]
 
-  instance_types_weights = [
-  {
+  instance_types_weights {
     instance_type = "c3.large"
     weight        = 10
-  },
-  {
+  }
+  
+  instance_types_weights {
     instance_type = "c4.xlarge"
     weight        = 16
-  }]
+  }
 
   orientation           = "balanced"
   fallback_to_ondemand  = false
@@ -58,12 +58,12 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   wait_for_capacity         = 5
   wait_for_capacity_timeout = 300
   
-  scaling_strategy = {
+  scaling_strategy {
     terminate_at_end_of_billing_hour = true
     termination_policy = "default"
   }
 
-  scaling_up_policy = {
+  scaling_up_policy {
     policy_name        = "Default Scaling Up Policy"
     metric_name        = "DefaultQueuesDepth"
     statistic          = "average"
@@ -76,7 +76,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     cooldown           = 300
   }
 
-  scaling_down_policy = {
+  scaling_down_policy {
     policy_name        = "Default Scaling Down Policy"
     metric_name        = "DefaultQueuesDepth"
     statistic          = "average"
@@ -89,20 +89,20 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     cooldown           = 300
   }
 
-  tags = [
-  {
+  tags {
      key   = "Env"
      value = "production"
-  }, 
-  {
+  } 
+  
+  tags {
      key   = "Name"
      value = "default-production"
-  },
-  {
+  }
+  
+  tags {
      key   = "Project"
      value = "app_v2"
   }
- ]
 
   lifecycle {
     ignore_changes = [
@@ -193,15 +193,17 @@ Usage:
 
 ```hcl
   elastic_load_balancers = ["bal5", "bal2"]
-  target_group_arns = ["tg-arn"]
-  multai_target_sets = [{
+  target_group_arns      = ["tg-arn"]
+  
+  multai_target_sets {
     target_set_id = "ts-123",
     balancer_id   = "bal-123"
-  },
-  {
+  }
+  
+  multai_target_sets {
     target_set_id = "ts-234",
     balancer_id   = "bal-234"
-  }]
+  }
 ```
 
 <a id="signal"></a>
@@ -215,7 +217,7 @@ Each `signal` supports the following:
 Usage:
 
 ```hcl
-  signal = {
+  signal {
     name    = "INSTANCE_READY_TO_SHUTDOWN"
     timeout = 100
   }
@@ -245,7 +247,7 @@ Each `scheduled_task` supports the following:
 Usage:
 
 ```hcl
-  scheduled_task = [{
+  scheduled_task {
     task_type             = "backup_ami"
     cron_expression       = ""
     start_time            = "1970-01-01T01:00:00Z"
@@ -259,7 +261,7 @@ Usage:
     max_capacity          = 10
     batch_size_percentage = 33
     grace_period          = 300
-  }]
+  }
 ```
 
 <a id="scaling-policy"></a>
@@ -309,7 +311,7 @@ When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `
 Usage:
 
 ```hcl
-  scaling_up_policy = [{
+  scaling_up_policy {
     policy_name = "policy-name"
     metric_name = "CPUUtilization"
     namespace   = "AWS/EC2"
@@ -319,7 +321,7 @@ Usage:
     cooldown    = 60
     is_enabled  = false
     
-    dimensions = {
+    dimensions {
         name  = "name-1"
         value = "value-1"
     }
@@ -347,11 +349,11 @@ Usage:
     # target      = 5
     // ==================================
   
-  }]
+  }
 ```
 
 ```hcl
-  scaling_target_policy = [{
+  scaling_target_policy {
       policy_name     = ""
       metric_name     = ""
       namespace       = ""
@@ -362,11 +364,11 @@ Usage:
       target          = 1
       predictive_mode = ""
       
-      dimensions = [{
+      dimensions {
         name  = ""
         value = ""
-      }]
-  }]
+      }
+  }
 ```
 
 <a id="network-interface"></a>
@@ -389,7 +391,7 @@ to understand the implications of using these attributes.
 Usage:
 
 ```hcl
-  network_interface = [{ 
+  network_interface { 
     network_interface_id               = "" 
     device_index                       = 1
     description                        = "nic description in here"
@@ -397,7 +399,7 @@ Usage:
     delete_on_termination              = false
     secondary_private_ip_address_count = 1
     associate_public_ip_address        = true
-  }]
+  }
 ```
 
 <a id="block-devices"></a>
@@ -424,7 +426,7 @@ Modifying any `ebs_block_device` currently requires resource replacement.
 Usage:
 
 ```hcl
-  ebs_block_device = [{
+  ebs_block_device {
      device_name           = "/dev/sdb" 
      snapshot_id           = "" 
      volume_type           = "gp2"  
@@ -433,8 +435,9 @@ Usage:
      delete_on_termination = true
      encrypted             = false
      kms_key_id            = "kms-key-01"
-   },
-   {
+   }
+   
+   ebs_block_device {
      device_name           = "/dev/sdc" 
      snapshot_id           = "" 
      volume_type           = "gp2"  
@@ -443,7 +446,7 @@ Usage:
      delete_on_termination = true
      encrypted             = true
      kms_key_id            = "kms-key-02"
-  }]
+  }
 ```
 
 Each `ephemeral_block_device` supports the following:
@@ -455,10 +458,10 @@ Each `ephemeral_block_device` supports the following:
 Usage:
 
 ```hcl
-  ephemeral_block_device = [{
+  ephemeral_block_device {
     device_name  = "/dev/xvdc"
     virtual_name = "ephemeral0"
-  }]
+  }
 ```
 
 <a id="stateful"></a>
@@ -495,7 +498,7 @@ Usage:
 Usage:
 
 ```hcl
-  stateful_deallocation = {
+  stateful_deallocation {
      should_delete_images              = false
      should_delete_network_interfaces  = false
      should_delete_volumes             = false
@@ -530,7 +533,7 @@ Usage:
 Usage:
 
 ```hcl
-  integration_rancher = {
+  integration_rancher {
     master_host = "master_host"
     access_key  = "access_key"
     secret_key  = "secret_key"
@@ -557,27 +560,27 @@ Usage:
 Usage:
 
 ```hcl
-  integration_ecs = { 
+  integration_ecs { 
     cluster_name         = "ecs-cluster"
     autoscale_is_enabled = false
     autoscale_cooldown   = 300
     autoscale_scale_down_non_service_tasks = false
     
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       memory_per_unit = 512
       num_of_units    = 2
     }
     
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods        = 300
       max_scale_down_percentage = 70
     }
     
-    autoscale_attributes = [{
+    autoscale_attributes {
       key   = "test.ecs.key"
       value = "test.ecs.value"
-    }]
+    }
   }
 ```
 
@@ -592,11 +595,11 @@ Usage:
 Usage:
 
 ```hcl
-  integration_codedeploy = {
+  integration_codedeploy {
     cleanup_on_failure            = false
     terminate_instance_on_failure = false
     
-    deployment_groups = {
+    deployment_groups {
       application_name      = "my-app"
       deployment_group_name = "my-group"
     }
@@ -615,12 +618,12 @@ Usage:
 Usage:
 
 ```hcl
-    integration_route53 = {
-      domains = {
+    integration_route53 {
+      domains {
         hosted_zone_id   = "zone-id"
         spotinst_acct_id = "act-123456"
         
-        record_sets = {
+        record_sets {
           name          = "foo.example.com"
           use_public_ip = true
         }
@@ -644,19 +647,19 @@ Usage:
 Usage:
 
 ```hcl
-integration_docker_swarm = {
+integration_docker_swarm {
     master_host          = "10.10.10.10"
     master_port          = 2376
     autoscale_is_enabled = true
     autoscale_cooldown   = 180
     
-    autoscale_headroom = {
+    autoscale_headroom {
         cpu_per_unit    = 2048
         memory_per_unit = 2048
         num_of_units    = 1
     }
     
-    autoscale_down = {
+    autoscale_down {
         evaluation_periods = 3
     } 
 }
@@ -682,7 +685,7 @@ integration_docker_swarm = {
 Usage:
 
 ```hcl
-  integration_kubernetes = {
+  integration_kubernetes {
     integration_mode   = "pod"
     cluster_identifier = "my-identifier.ek8s.com"
     
@@ -696,20 +699,20 @@ Usage:
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
     
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       memory_per_unit = 512
       num_of_units    = 1
     }
     
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
     
-    autoscale_labels = [{
+    autoscale_labels {
       key   = "test.k8s.key"
       value = "test.k8s.value"
-    }]
+    }
   }
 ```
  
@@ -731,27 +734,27 @@ Usage:
 Usage:
 
 ```hcl
-  integration_nomad = {
+  integration_nomad {
     master_host          = "my-nomad-host"
     master_port          = 9000
     acl_token            = "top-secret"
     autoscale_is_enabled = false
     autoscale_cooldown   = 300
     
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       memory_per_unit = 512
       num_of_units    = 2
     }
     
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
     
-    autoscale_constraints = [{
+    autoscale_constraints {
       key   = "test.nomad.key"
       value = "test.nomad.value"
-    }]
+    }
   }
 ```
          
@@ -762,7 +765,7 @@ Usage:
 Usage:
 
 ```hcl
-  integration_mesosphere = {
+  integration_mesosphere {
     api_server = ""
   }
 ```
@@ -774,7 +777,7 @@ Usage:
 Usage:
 
 ```hcl
-  integration_multai_runtime = {
+  integration_multai_runtime {
     deployment_id = ""
   }
 ```
@@ -787,8 +790,8 @@ Usage:
 Usage:
 
 ```hcl
-  integration_gitlab = {
-    runner = {
+  integration_gitlab {
+    runner {
       is_enabled = true
     }
   }
@@ -813,21 +816,21 @@ Usage:
 Usage:
 
 ```hcl
-  integration_beanstalk = {
+  integration_beanstalk {
     environment_id         = "e-3tkmbj7hzc"
   
-    deployment_preferences = {
+    deployment_preferences {
       automatic_roll        = true
       batch_size_percentage = 100
       grace_period          = 90
-      strategy              = {
+      strategy {
         action                = "REPLACE_SERVER"
         should_drain_instance = true
       }
     }
   
-    managed_actions       = {
-      platform_update = {
+    managed_actions {
+      platform_update {
         perform_at   = "timeWindow"
         field_name   = "Mon:23:50-Tue:00:20"
         update_level = "minorAndPatch"
@@ -856,19 +859,19 @@ Usage:
            * `batch_min_healthy_percentage` - (Optional, Default `50`) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the deployment will fail. Range `1` - `100`. 
        
 ```hcl
-  update_policy = {
+  update_policy {
     should_resume_stateful = false
     should_roll            = false
     auto_apply_tags        = false
 
-    roll_config = {
+    roll_config {
       batch_size_percentage = 33
       health_check_type     = "ELB"
       grace_period          = 300
       wait_for_roll_percentage = 10
       wait_for_roll_timeout    = 1500
       
-      strategy = {
+      strategy {
         action = "REPLACE_SERVER"
         should_drain_instances = false
         batch_min_healthy_percentage = 10

@@ -194,10 +194,11 @@ func expandAWSGroupElasticBeanstalkIntegration(data interface{}, nullify bool) (
 		}
 	}
 
-	if v, ok := m[string(ManagedActions)]; ok {
+	if v, ok := m[string(ManagedActions)]; ok && len(v.([]interface{})) > 0 {
 		integration.SetManagedActions(&aws.BeanstalkManagedActions{})
 
 		list := v.([]interface{})
+
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 

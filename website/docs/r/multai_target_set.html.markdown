@@ -21,7 +21,7 @@ resource "spotinst_multai_target_set" "my_target_set" {
   port          = 1338
   weight        = 2
 
-  health_check = {
+  health_check {
     protocol = "http"
     path     = "/"
     port     = 3001
@@ -32,10 +32,10 @@ resource "spotinst_multai_target_set" "my_target_set" {
     unhealthy_threshold = 3
   }
 
-  tags = [{
+  tags {
    key   = "env"
    value = "prod"
-  }]
+  }
 }
 ```
 

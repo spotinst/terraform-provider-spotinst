@@ -19,7 +19,7 @@ resource "spotinst_multai_listener" "my_listener" {
   protocol    = "http"
   port        = 1337
 
-  tls_config = {
+  tls_config {
     certificate_ids             = ["ce-12345"]
     min_version                 = "TLS10"
     max_version                 = "TLS12"
@@ -28,10 +28,10 @@ resource "spotinst_multai_listener" "my_listener" {
     session_tickets_disabled    = false
   }
 
-  tags = [{
+  tags {
     key   = "env"
     value = "prod"
-  }]
+  }
 }
 ```
 

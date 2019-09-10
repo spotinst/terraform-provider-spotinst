@@ -42,38 +42,38 @@ resource "spotinst_elastigroup_gke" "example-gke-elastigroup" {
  preemptible_percentage = 100
  // ---------------------------------
 
- integration_gke = {
+ integration_gke {
   location                 = "us-central1-a"
   cluster_id               = "example-cluster-id"
   autoscale_is_enabled     = true
   autoscale_is_auto_config = false
   autoscale_cooldown       = 300
   
-  autoscale_headroom = {
+  autoscale_headroom {
     cpu_per_unit    = 1024
     memory_per_unit = 512
     num_of_units    = 2
   }
 
-  autoscale_down = {
+  autoscale_down {
     evaluation_periods = 300
   }
 
-  autoscale_labels = {
+  autoscale_labels {
     key   = "label_key"
     value = "label_value"
   }
  }
 
-  backend_services = [{
+  backend_services {
     service_name  = "backend-service"
     location_type = "global"
-    named_ports = {
+    
+    named_ports {
       name  = "http"
       ports = [80, 8080]
     }
-  }]
-
+  }
 }
 ```
 
@@ -112,24 +112,24 @@ All `spotisnt_elastigroup_gcp` arguments are supported. Please be sure to includ
 Usage:
 
 ```hcl
- integration_gke = {
-  location = "us-central1-a"
-  cluster_id = "terraform-acc-test-cluster"
+ integration_gke {
+  location                 = "us-central1-a"
+  cluster_id               = "terraform-acc-test-cluster"
   autoscale_is_enabled     = true
   autoscale_is_auto_config = false
   autoscale_cooldown       = 300
   
-  autoscale_headroom = {
+  autoscale_headroom {
     cpu_per_unit    = 1024
     memory_per_unit = 512
     num_of_units    = 2
   }
 
-  autoscale_down = {
+  autoscale_down {
     evaluation_periods = 300
   }
 
-  autoscale_labels = {
+  autoscale_labels {
     key  = "label_key"
     value = "label_value"
   }

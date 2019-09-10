@@ -10,8 +10,8 @@ const (
 	FailureFieldCreatePattern = "failed creating field %v - %#v"
 	FailureFieldUpdatePattern = "failed updating field %v - %#v"
 
-	FieldUpdateNotAllowedPattern = "field [%v] is immutable, cannot be changed post group creation"
-	FieldCreateNotAllowedPattern = "field [%v] can only be changed after the group is created"
+	FieldUpdateNotAllowedPattern = "field [%v] is immutable, cannot be changed post creation"
+	FieldCreateNotAllowedPattern = "field [%v] can only be changed post creation"
 
 	ProviderToken   FieldName = "token"
 	ProviderAccount FieldName = "account"
@@ -27,11 +27,22 @@ const (
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
 
-	OceanGKE                    ResourceAffinity = "Ocean_GKE"
-	OceanGKEInstanceTypes       ResourceAffinity = "Ocean_GKE_Instance_Types"
-	OceanGKEAutoScaling         ResourceAffinity = "Ocean_GKE_Auto_Scaling"
-	OceanGKELaunchConfiguration ResourceAffinity = "Ocean_GKE_Launch_Configuration"
-	OceanGKENetworkInterface    ResourceAffinity = "Ocean_GKE_Network_Interface"
+	OceanGKE                 ResourceAffinity = "Ocean_GKE"
+	OceanGKEImport           ResourceAffinity = "Ocean_GKE_Import"
+	OceanGKEInstanceTypes    ResourceAffinity = "Ocean_GKE_Instance_Types"
+	OceanGKEAutoScaling      ResourceAffinity = "Ocean_GKE_Auto_Scaling"
+	OceanGKEStrategy         ResourceAffinity = "Ocean_GKE_Strategy"
+	OceanGKELaunchSpec       ResourceAffinity = "Ocean_GKE_Launch_Spec"
+	OceanGKELaunchSpecImport ResourceAffinity = "Ocean_GKE_Launch_Spec_Import"
+	OceanGKENetworkInterface ResourceAffinity = "Ocean_GKE_Network_Interface"
+
+	OceanECS                    ResourceAffinity = "Ocean_ECS"
+	OceanECSAutoScaler          ResourceAffinity = "Ocean_ECS_Auto_Scaler"
+	OceanECSInstanceTypes       ResourceAffinity = "Ocean_ECS_Instance_Types"
+	OceanECSLaunchSpecification ResourceAffinity = "Ocean_ECS_Launch_Specification"
+	OceanECSStrategy            ResourceAffinity = "Ocean_ECS_Strategy"
+
+	OceanECSLaunchSpec ResourceAffinity = "Ocean_ECS_Launch_Spec"
 
 	ElastigroupAWS                    ResourceAffinity = "Elastigroup_AWS"
 	ElastigroupAWSInstanceType        ResourceAffinity = "Elastigroup_AWS_Instance_Type"

@@ -153,14 +153,16 @@ const testBaselineListenerConfig_Create = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
   name = "foo"
+
   connection_timeouts {
     idle     = 10
     draining = 10
   }
-  tags = [{
+
+  tags {
     key = "prod"
     value = "web"
-  }]
+  }
 }
 
 resource "` + string(commons.MultaiListenerResourceName) + `" "%v" {
@@ -168,24 +170,27 @@ resource "` + string(commons.MultaiListenerResourceName) + `" "%v" {
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   protocol    = "http"
   port        = 1337
-  tags = [{
+
+  tags {
    key = "fakeKey"
    value = "fakeVal"
-  }]
+  }
 }`
 
 const testBaselineListenerConfig_Update = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
   name = "foo"
+
   connection_timeouts {
     idle     = 10
     draining = 10
   }
-  tags = [{
+
+  tags {
    key = "prod"
    value = "web"
-  }]
+  }
 }
 
 resource "` + string(commons.MultaiListenerResourceName) + `" "%v" {
@@ -194,7 +199,7 @@ resource "` + string(commons.MultaiListenerResourceName) + `" "%v" {
   protocol    = "http"
   port        = 1338
 
-  //tls_config = {
+  //tls_config {
   //  certificate_ids             = ["ce-b7159e06c63d"]
   //  min_version                 = "TLS10"
   //  max_version                 = "TLS12"
@@ -203,8 +208,8 @@ resource "` + string(commons.MultaiListenerResourceName) + `" "%v" {
   //  session_tickets_disabled    = false
   //}
 
-  tags = [{
+  tags {
    key = "updated"
    value = "updated"
-  }]
+  }
 }`

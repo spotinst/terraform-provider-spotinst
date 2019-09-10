@@ -19,17 +19,16 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
   
-  labels = [{
+  labels {
     key   = "fakeKey"
     value = "fakeValue"
-  }]
+  }
   
-  taints = [{
+  taints {
     key    = "taint key updated"
     value  = "taint value updated"
     effect = "NoExecute"
-  }]
-
+  }
 }
 ```
 

@@ -26,71 +26,59 @@ resource "spotinst_elastigroup_gcp" "example" {
   availability_zones = ["asia-east1-c", "us-central1-a"]
 
   preemptible_percentage = 50
-  # on_demand_count        = 2
-  fallback_to_ondemand         = true
+  # on_demand_count      = 2
+  fallback_to_ondemand   = true
   draining_timeout       = 180
   
-  labels = [
-    {
-      key = "test_key"
-      value = "test_value"
-    }
-  ]
+  labels {
+    key = "test_key"
+    value = "test_value"
+  }
   
-  tags             = ["http", "https"]
+  tags = ["http", "https"]
   
-  backend_services_config = [
-    {
-      service_name = "spotinst-elb-backend-service"
-      ports = {
-        port_name = "port-name"
-        ports = [8000, 6000]
-      }
-    },
-  ]
-
-  disks = [
-    {
-      device_name = "device"
-      mode        = "READ_WRITE"
-      type        = "PERSISTENT"
-      auto_delete = true
-      boot        = true
-      interface   = "SCSI"
-
-      initialize_params = {
-        disk_size_gb = 10
-        disk_type    = "pd-standard"
-        source_image = ""
-      }
+  backend_services_config {
+    service_name = "spotinst-elb-backend-service"
+    ports {
+      port_name = "port-name"
+      ports = [8000, 6000]
     }
-  ]
+  }
 
-  network_interface = [
-    {
-      network = "spot-network"
+  disks {
+    device_name = "device"
+    mode        = "READ_WRITE"
+    type        = "PERSISTENT"
+    auto_delete = true
+    boot        = true
+    interface   = "SCSI"
+
+    initialize_params {
+      disk_size_gb = 10
+      disk_type    = "pd-standard"
+      source_image = ""
     }
-  ]
+   }
 
-  instance_types_ondemand   = ["n1-standard-1"]
+  network_interface {
+    network = "spot-network"
+  }
+
+  instance_types_ondemand    = ["n1-standard-1"]
   instance_types_preemptible = ["n1-standard-1", "n1-standard-2"]
 
-  instance_types_custom = [
-    {
-      vCPU      = 2
-      memoryGiB = 7.5
-    }
-  ]
+  instance_types_custom {
+    vCPU      = 2
+    memoryGiB = 7.5
+  }
 
-  subnets = [
-    {
-      region       = "asia-east1"
-      subnet_names = ""
-    }
-  ]
+  subnets {
+    region       = "asia-east1"
+    subnet_names = ""
+  }
 
-  scaling = {
-    up = {
+  scaling {
+    up {
       policy_name = "scale_up_1"
       source      = "stackdriver"
       metric_name = "instance/disk/read_ops_count"
@@ -104,17 +92,15 @@ resource "spotinst_elastigroup_gcp" "example" {
 
       evaluation_periods = 1
       
-      action = {
+      action {
         type       = "adjustment"
         adjustment = 1
       }
 
-      dimensions = [
-        {
-          name  = "storage_type"
-          value = "pd-ssd"
-        }
-      ]
+      dimensions {
+        name  = "storage_type"
+        value = "pd-ssd"
+      }
     }
   }
 }

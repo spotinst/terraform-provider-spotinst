@@ -206,17 +206,16 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world"
   iam_instance_profile = "test"
 
-  labels = [{
+  labels {
     key = "label key"
     value = "label value"
-  }]
+  }
 
-  taints = [{
+  taints {
     key = "taint key"
     value = "taint value"
     effect = "NoSchedule"
-  }]
-
+  }
 
  %v
 }
@@ -231,16 +230,16 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world updated"
   iam_instance_profile = "updated"
   
-  labels = {
+  labels {
     key = "label key updated"
     value = "label value updated"
   }
 
-  taints = [{
+  taints {
     key = "taint key updated"
     value = "taint value updated"
     effect = "NoExecute"
-  }]
+  }
 
 %v
 }

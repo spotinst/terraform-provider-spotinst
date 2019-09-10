@@ -466,29 +466,27 @@ const testLaunchConfigurationGCPGroupConfig_Create = `
  shutdown_script = "echo goodbye world"
  ip_forwarding = false
 
- labels = [
-   {
+ labels {
      key = "test_key"
      value = "test_value"
    }
- ]
 
- metadata = [
-   {
+ metadata {
      key = "metadata_key"
      value = "metadata_value"
    }
- ]
+
  tags = ["test_tag"]
 
- backend_services = [{
+ backend_services {
     service_name = "terraform-acc-test-backend-service"
     location_type = "global"
-    named_ports = {
+
+    named_ports {
       name = "http"
       ports = [80, 8080]
     }
-  }]
+  }
 
  // ---------------------------------------
 `
@@ -500,42 +498,41 @@ const testLaunchConfigurationGCPGroupConfig_Update = `
  shutdown_script = "echo goodbye world updated"
  ip_forwarding = true
 
- labels = [
-   {
+ labels {
      key = "test_key"
      value = "test_value"
-   },
-   {
+   }
+ labels {
      key = "test_key2"
      value = "test_value2"
    }
- ]
- metadata = [
-   {
+
+ metadata {
      key = "metadata_key"
      value = "metadata_value"
-   },
-   {
+   }
+
+ metadata {
      key = "metadata_key2"
      value = "metadata_value2"
    }
- ]
+
  tags = ["test_tag", "test_tag2"]
 
- backend_services = [
- {
+ backend_services {
   service_name = "terraform-acc-test-backend-service"
-  named_ports = {
+
+  named_ports {
     name = "http"
     ports = [40, 4040]
   }
- },
- {
+ }
+
+ backend_services {
    service_name  = "terraform-acc-test-backend-service-tcp"
    location_type = "regional"
    scheme        = "EXTERNAL"
  }
- ]
  // ---------------------------------------
 `
 
@@ -637,50 +634,50 @@ const (
 
 const testDiskGCPGroupConfig_Create = `
  // --- DISK ------------------------
-  disk = {
+  disk {
     auto_delete = false
     boot = false
     device_name = "tf-test-device"
     interface = "SCSI"
-	mode = "READ_WRITE"
-	source = "fake-source"
-	type = "PERSISTENT"
+		mode = "READ_WRITE"
+		source = "fake-source"
+		type = "PERSISTENT"
 
-    initialize_params = {
-	  disk_size_gb = 20
-	  disk_type = "pd-standard"
-      source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
-	}
+    initialize_params {
+			disk_size_gb = 20
+			disk_type = "pd-standard"
+			source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
+		}
   }
  // ---------------------------------
 `
 
 const testDiskGCPGroupConfig_Update = `
  // --- DISK ------------------------
-  disk = {
+  disk {
     auto_delete = true
     boot = true
     device_name = "tf-test-device-updated"
     interface = "NVM"
-	mode = "READ_ONLY"
-	source = "fake-source-updated"
-	type = "SCRATCH"
+		mode = "READ_ONLY"
+		source = "fake-source-updated"
+		type = "SCRATCH"
 
-    initialize_params = {
-	  disk_size_gb = 30
-	  disk_type = "local-ssd"
+    initialize_params {
+			disk_size_gb = 30
+			disk_type = "local-ssd"
       source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
-	}
+		}
   }
  // ---------------------------------
 `
 
 const testDiskGCPGroupConfig_EmptyFields = `
  // --- DISK ------------------------
-  disk = {
-    initialize_params = {
-      source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
-	}
+  disk {
+    initialize_params {
+			source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
+		}
   }
  // ---------------------------------
 `
@@ -825,19 +822,19 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 
 const testGPUGCPGroupConfig_Create = `
 // --- GPU ----------------------------------------------
-gpu = {
-  count = 2
-  type = "nvidia-tesla-p100"
-}
+	gpu {
+		count = 2
+		type = "nvidia-tesla-p100"
+	}
 // ------------------------------------------------------
 `
 
 const testGPUGCPGroupConfig_Update = `
 // --- GPU ----------------------------------------------
-gpu = {
-  count = 1
-  type = "nvidia-tesla-v100"
-}
+	gpu {
+		count = 1
+		type = "nvidia-tesla-v100"
+	}
 // ------------------------------------------------------
 `
 
@@ -970,7 +967,7 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs."+AccessConfig_update+".name", "config2"),
@@ -978,13 +975,6 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".subnetwork_range_name", "range-name-2"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".ip_cidr_range", "10.128.0.0/20"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.network", "new-network"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs."+AccessConfig2_update+".name", "config3"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.access_configs."+AccessConfig2_update+".type", "ONE_TO_ONE_NAT"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.alias_ip_ranges.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.alias_ip_ranges."+AliasIP2_update+".subnetwork_range_name", "range-name-3"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.1.alias_ip_ranges."+AliasIP2_update+".ip_cidr_range", "10.128.0.0/20"),
 				),
 			},
 			{
@@ -1016,60 +1006,45 @@ const (
 
 const testNetworkInterfacesGCPGroupConfig_Create = `
  // --- NETWORK INTERFACE ------------------
-  network_interface = [{ 
-    network = "default"
+	network_interface { 
+		network = "default"
 	
-    access_configs = {
-      name = "config1"
-      type = "ONE_TO_ONE_NAT"
-    }
+		access_configs {
+			name = "config1"
+			type = "ONE_TO_ONE_NAT"
+		}
 
-    alias_ip_ranges = {
-     subnetwork_range_name = "range-name-1"
-     ip_cidr_range = "10.128.0.0/20"
-    }
-  }]
+		alias_ip_ranges {
+		 subnetwork_range_name = "range-name-1"
+		 ip_cidr_range = "10.128.0.0/20"
+		}
+  }
  // ----------------------------------------
 `
 
 const testNetworkInterfacesGCPGroupConfig_Update = `
  // --- NETWORK INTERFACE ------------------
-  network_interface = [
-    { 
-      network = "updated"
+	network_interface {
+		network = "updated"
 	
-      access_configs = {
-        name = "config2"
-        type = "ONE_TO_ONE_NAT"
-      }
+		access_configs {
+			name = "config2"
+			type = "ONE_TO_ONE_NAT"
+		}
 
-      alias_ip_ranges = {
-       subnetwork_range_name = "range-name-2"
-       ip_cidr_range = "10.128.0.0/20"
-      }
-    },
-    { 
-      network = "new-network"
-	
-      access_configs = {
-        name = "config3"
-        type = "ONE_TO_ONE_NAT"
-      }
-
-      alias_ip_ranges = {
-       subnetwork_range_name = "range-name-3"
-       ip_cidr_range = "10.128.0.0/20"
-      }
-    },
-  ]
+		alias_ip_ranges {
+		 subnetwork_range_name = "range-name-2"
+		 ip_cidr_range 				 = "10.128.0.0/20"
+		}
+	}
  // ----------------------------------------
 `
 
 const testNetworkInterfacesGCPGroupConfig_EmptyFields = `
  // --- NETWORK INTERFACE ------------------
-  network_interface = [{     
+  network_interface {     
     network = "default"
-  }]
+  }
  // ----------------------------------------
 `
 
@@ -1167,56 +1142,59 @@ const (
 
 const testScalingUpPolicyGCPGroupConfig_Create = `
 // --- SCALE UP POLICY ------------------
-scaling_up_policy = [{
- policy_name = "policy-name"
- metric_name = "CPUUtilization"
- namespace = "test-namespace"
- source = "spectrum"
- statistic = "count"
- unit = "seconds"
- cooldown = 60
- dimensions = {
-     name = "name-1"
-     value = "value-1"
+	scaling_up_policy {
+	 policy_name = "policy-name"
+	 metric_name = "CPUUtilization"
+	 namespace = "test-namespace"
+	 source = "spectrum"
+	 statistic = "count"
+	 unit = "seconds"
+	 cooldown = 60
+	
+	 dimensions {
+			 name = "name-1"
+			 value = "value-1"
+	 }
+	
+	 threshold = 10
+	 operator = "gte"
+	 evaluation_periods = 10
+	 period = 60
+	
+	 // === ADJUSTMENT ===================
+	 action_type = "adjustment"
+	 adjustment = 1
+	 // ==================================
  }
- threshold = 10
- operator = "gte"
- evaluation_periods = 10
- period = 60
-
- // === ADJUSTMENT ===================
- action_type = "adjustment"
- adjustment = 1
- // ==================================
- }]
 // ----------------------------------------
 `
 
 const testScalingUpPolicyGCPGroupConfig_Update = `
 // --- SCALE UP POLICY ------------------
-scaling_up_policy = [{
- policy_name = "policy-name-update"
- metric_name = "CPUUtilization"
- namespace = "updated-namespace"
- source = "stackdriver"
- statistic = "sum"
- unit = "bytes"
- cooldown = 300
- dimensions = {
-     name = "name-1-update"
-     value = "value-1-update"
+	scaling_up_policy {
+	 policy_name = "policy-name-update"
+	 metric_name = "CPUUtilization"
+	 namespace = "updated-namespace"
+	 source = "stackdriver"
+	 statistic = "sum"
+	 unit = "bytes"
+	 cooldown = 300
+	 threshold = 5
+	
+	 dimensions {
+			 name = "name-1-update"
+			 value = "value-1-update"
+	 }
+	
+	 operator = "lte"
+	 evaluation_periods = 20
+	 period = 300
+	
+	 // === ADJUSTMENT ===================
+	 action_type = "adjustment"
+	 adjustment = 2
+	 // ==================================
  }
- threshold = 5
-
- operator = "lte"
- evaluation_periods = 20
- period = 300
-
- // === ADJUSTMENT ===================
- action_type = "adjustment"
- adjustment = 2
- // ==================================
- }]
 // ----------------------------------------
 `
 
@@ -1319,56 +1297,59 @@ const (
 
 const testScalingDownPolicyGCPGroupConfig_Create = `
 // --- SCALE DOWN POLICY ------------------
-scaling_down_policy = [{
- policy_name = "policy-name"
- metric_name = "CPUUtilization"
- namespace = "test-namespace"
- source = "spectrum"
- statistic = "count"
- unit = "seconds"
- cooldown = 60
- dimensions = {
-     name = "name-1"
-     value = "value-1"
+	scaling_down_policy {
+	 policy_name = "policy-name"
+	 metric_name = "CPUUtilization"
+	 namespace = "test-namespace"
+	 source = "spectrum"
+	 statistic = "count"
+	 unit = "seconds"
+	 cooldown = 60
+	
+	 dimensions {
+			 name = "name-1"
+			 value = "value-1"
+	 }
+	
+	 threshold = 10
+	 operator = "gte"
+	 evaluation_periods = 10
+	 period = 60
+	
+	 // === ADJUSTMENT ===================
+	 action_type = "adjustment"
+	 adjustment = 1
+	 // ==================================
  }
- threshold = 10
- operator = "gte"
- evaluation_periods = 10
- period = 60
-
- // === ADJUSTMENT ===================
- action_type = "adjustment"
- adjustment = 1
- // ==================================
- }]
 // ----------------------------------------
 `
 
 const testScalingDownPolicyGCPGroupConfig_Update = `
 // --- SCALE DOWN POLICY ------------------
-scaling_down_policy = [{
- policy_name = "policy-name-update"
- metric_name = "CPUUtilization"
- namespace = "updated-namespace"
- source = "stackdriver"
- statistic = "sum"
- unit = "bytes"
- cooldown = 300
- dimensions = {
-     name = "name-1-update"
-     value = "value-1-update"
+	scaling_down_policy {
+	 policy_name = "policy-name-update"
+	 metric_name = "CPUUtilization"
+	 namespace = "updated-namespace"
+	 source = "stackdriver"
+	 statistic = "sum"
+	 unit = "bytes"
+	 cooldown = 300
+	 threshold = 5
+	
+	 dimensions {
+			 name = "name-1-update"
+			 value = "value-1-update"
+	 }
+	
+	 operator = "lte"
+	 evaluation_periods = 20
+	 period = 300
+	
+	 // === ADJUSTMENT ===================
+	 action_type = "adjustment"
+	 adjustment = 2
+	 // ==================================
  }
- threshold = 5
-
- operator = "lte"
- evaluation_periods = 20
- period = 300
-
- // === ADJUSTMENT ===================
- action_type = "adjustment"
- adjustment = 2
- // ==================================
- }]
 // ----------------------------------------
 `
 
@@ -1446,23 +1427,19 @@ const (
 
 const testSubnetsGCPGroupConfig_Create = `
 // --- SUBNETS ------------------------------------------
-subnets = [
-  {
-    region = "us-central1"
-    subnet_names = ["us-central1-a"]
+	subnets {
+			region = "us-central1"
+			subnet_names = ["us-central1-a"]
   }
-]
 // ------------------------------------------------------
 `
 
 const testSubnetsGCPGroupConfig_Update = `
 // --- SUBNETS ------------------------------------------
-subnets = [
-  {
-    region = "us-central1"
-    subnet_names = ["us-central1-a", "us-central1-b"]
+	subnets {
+			region = "us-central1"
+			subnet_names = ["us-central1-a", "us-central1-b"]
   }
-]
 // ------------------------------------------------------
 `
 
@@ -1533,7 +1510,7 @@ func TestAccSpotinstElastigroupGCP_IntegrationDockerSwarm(t *testing.T) {
 
 const testGCPIntegrationDockerSwarmGroupConfig_Create = `
  // --- INTEGRATION: DOCKER SWARM -------
- integration_docker_swarm = {
+ integration_docker_swarm {
     master_host = "docker-swarm-master-host"
     master_port = 8000
  }
@@ -1542,7 +1519,7 @@ const testGCPIntegrationDockerSwarmGroupConfig_Create = `
 
 const testGCPIntegrationDockerSwarmGroupConfig_Update = `
  // --- INTEGRATION: DOCKER SWARM -------
- integration_docker_swarm = {
+ integration_docker_swarm {
 	master_host = "docker-swarm-master-host-update"
     master_port = 9000
   }
@@ -1623,27 +1600,27 @@ func TestAccSpotinstElastigroupGCP_ScheduledTask(t *testing.T) {
 
 const testGCPScheduledTaskGroupConfig_Create = `
  // --- SCHEDULED TASK ------------------
-  scheduled_task = [{
-	is_enabled = false
+  scheduled_task {
+		is_enabled = false
     task_type = "setCapacity"
     cron_expression = "* * * * *"
     target_capacity = 2
     min_capacity = 1
     max_capacity = 3
-  }]
+  }
  // -------------------------------------
 `
 
 const testGCPScheduledTaskGroupConfig_Update = `
  // --- SCHEDULED TASK ------------------
-  scheduled_task = [{
-	is_enabled = true
+  scheduled_task {
+		is_enabled = true
     task_type = "setCapacity"
     cron_expression = "* * * * *"
     target_capacity = 3
     min_capacity = 2
     max_capacity = 4
-  }]
+  }
  // -------------------------------------
 `
 

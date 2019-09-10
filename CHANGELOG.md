@@ -1,4 +1,28 @@
 ## 1.13.4 (Unreleased)
+
+NOTES:
+This release supports Terraform v0.12
+
+FEATURES:
+* *New Resource*: `spotinst_ocean_ecs`
+* *New Resource*: `spotinst_ocean_ecs_launch_spec`
+
+ENHANCEMENTS:
+* spotinst_ocean_gke: added `draining_timeout`
+* spotinst_ocean_aws: added `draining_timeout`
+
+FEATURES:
+* *New Resource*: `spotinst_ocean_gke_import`
+* *New Resource*: `spotinst_ocean_gke_launch_spec`
+* *New Resource*: `spotinst_ocean_gke_launch_spec_import`
+
+ENHANCEMENTS:
+* spotinst_ocean_gke: moved `backend_services` hierarchy from `launchSpecification` to `compute`
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: expand `availability_zones` fail to set proper arguments
+* resource/spotinst_ocean_aws: fixed wrong headroom GPU per unit and num of units for Ocean AWS AutoScaler
+
 ## 1.13.3 (May 13, 2019)
 
 ENHANCEMENTS:

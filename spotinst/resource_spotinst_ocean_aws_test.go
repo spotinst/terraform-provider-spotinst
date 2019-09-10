@@ -426,21 +426,20 @@ const testLaunchConfigAWSConfig_Create = `
   monitoring                  = true
   ebs_optimized               = true
 
-  load_balancers = [
-    {
+  load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/8db573b63a46bfb2"
       type = "TARGET_GROUP"
-    },
-    {
+    }
+
+	load_balancers {
       name = "AntonK"
       type = "CLASSIC"
     }
-  ]
 
-  tags = [{
+  tags {
     key   = "fakeKey"
     value = "fakeValue"
-  }]
+  }
  // ---------------------------------------
 `
 
@@ -456,21 +455,19 @@ const testLaunchConfigAWSConfig_Update = `
   monitoring                  = false
   ebs_optimized               = false
 
-  load_balancers = [
-    {
+  load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:842422002533:loadbalancer/app/AntonK/1234567890"
       type = "TARGET_GROUP"
-    },
-    {
-      name = "AntonK"
-      type = "CLASSIC"
     }
-  ]
+	load_balancers {
+		name = "AntonK"
+		type = "CLASSIC"
+	}
 
-  tags = [{
+  tags {
     key   = "fakeKeyUpdated"
     value = "fakeValueUpdated"
-  }]
+  }
  // ---------------------------------------
 `
 
@@ -508,6 +505,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 				),
 			},
 			{
@@ -522,6 +520,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 				),
 			},
 			{
@@ -536,6 +535,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "0"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
 				),
 			},
 		},
@@ -547,6 +547,7 @@ const testStrategyConfig_Create = `
  fallback_to_ondemand       = true
  spot_percentage            = 100
  utilize_reserved_instances = false
+ draining_timeout			= 120
  // ---------------------------------
 `
 
@@ -555,6 +556,7 @@ const testStrategyConfig_Update = `
  fallback_to_ondemand       = false
  spot_percentage            = 50
  utilize_reserved_instances = true
+ draining_timeout			= 240
  // ---------------------------------
 `
 
@@ -661,23 +663,23 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 
 const testScalingConfig_Create = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 1024
       max_memory_gib = 20
     }
@@ -688,23 +690,23 @@ const testScalingConfig_Create = `
 
 const testScalingConfig_Update = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled     = true
     autoscale_is_auto_config = true
     autoscale_cooldown       = 600
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 512
       gpu_per_unit    = 2
       memory_per_unit = 1024
       num_of_units    = 4
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 600
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 512
       max_memory_gib = 30
     }
@@ -714,22 +716,22 @@ const testScalingConfig_Update = `
 
 const testScalingConfig_EmptyFields = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled = false
     autoscale_is_auto_config = false
     autoscale_cooldown = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 1024
       memory_per_unit = 512
       num_of_units = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu   = 1024
       max_memory_gib = 20
     }
@@ -806,9 +808,10 @@ const testUpdatePolicyAWSClusterConfig_Create = `
  spot_percentage = 100
 
  // --- UPDATE POLICY ----------------
-  update_policy = {
+  update_policy {
     should_roll = false
-    roll_config = {
+
+    roll_config {
       batch_size_percentage = 33
     }
   }
@@ -819,9 +822,10 @@ const testUpdatePolicyAWSClusterConfig_Update = `
  spot_percentage = 50
 
  // --- UPDATE POLICY ----------------
-  update_policy = {
+  update_policy {
     should_roll = true
-    roll_config = {
+
+    roll_config {
       batch_size_percentage = 66
     }
   }
