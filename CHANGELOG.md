@@ -1,4 +1,4 @@
-## 1.13.4 (Unreleased)
+## 1.13.4 (September 10, 2019)
 
 NOTES:
 This release supports Terraform v0.12
