@@ -145,6 +145,52 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[SecurityGroups] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		SecurityGroups,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Required: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value []string = nil
+			if launchSpec.SecurityGroupIDs != nil {
+				value = launchSpec.SecurityGroupIDs
+			}
+			if err := resourceData.Set(string(SecurityGroups), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SecurityGroups), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
+				ids := make([]string, len(v))
+				for i, j := range v {
+					ids[i] = j.(string)
+				}
+				launchSpec.SetSecurityGroupIDs(ids)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
+				ids := make([]string, len(v))
+				for i, j := range v {
+					ids[i] = j.(string)
+				}
+				launchSpec.SetSecurityGroupIDs(ids)
+			}
+			return nil
+		},
+		nil,
+	)
 	fieldsMap[Labels] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
 		Labels,

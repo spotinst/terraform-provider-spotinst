@@ -23,6 +23,7 @@ const (
 )
 
 const (
+	SecurityGroups     commons.FieldName = "security_groups"
 	OceanID            commons.FieldName = "ocean_id"
 	ImageID            commons.FieldName = "image_id"
 	UserData           commons.FieldName = "user_data"
