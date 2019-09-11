@@ -163,6 +163,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "test"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
@@ -182,6 +184,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-0195f2ac3a6014a15"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world updated")),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
@@ -203,6 +208,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
   ocean_id = "%v"
   image_id = "ami-79826301"
+  security_groups = ["sg-0041bd3fd6aa2ee3c"]
   user_data = "hello world"
   iam_instance_profile = "test"
 
@@ -227,6 +233,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
   ocean_id = "%v"
   image_id = "ami-79826301"
+  security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15"]
   user_data = "hello world updated"
   iam_instance_profile = "updated"
   
