@@ -1,3 +1,8 @@
+## 1.13.6 (unrealaesed)
+
+ENHANCEMENTS:
+* resourceSpotinstOceanAWSLaunchSpec: added `scheduled_task`
+
 ## 1.13.5 (Unreleased)
 
 FEATURES:
