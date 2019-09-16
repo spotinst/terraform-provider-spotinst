@@ -59,7 +59,7 @@ func resourceSpotinstClusterAWSCreate(resourceData *schema.ResourceData, meta in
 		return err
 	}
 
-	clusterId, err := createAWSCluster(cluster, meta.(*Client))
+	clusterId, err := createAWSCluster(resourceData, cluster, meta.(*Client))
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func resourceSpotinstClusterAWSCreate(resourceData *schema.ResourceData, meta in
 	return resourceSpotinstClusterAWSRead(resourceData, meta)
 }
 
-func createAWSCluster(cluster *aws.Cluster, spotinstClient *Client) (*string, error) {
+func createAWSCluster(resourceData *schema.ResourceData, cluster *aws.Cluster, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(cluster); err != nil {
 		return nil, err
 	} else {
@@ -78,7 +78,9 @@ func createAWSCluster(cluster *aws.Cluster, spotinstClient *Client) (*string, er
 	}
 
 	input := &aws.CreateClusterInput{Cluster: cluster}
-
+	if v, ok := resourceData.Get(string(ocean_aws_launch_configuration.IAMInstanceProfile)).(string); ok && v != "" {
+		time.Sleep((5 * time.Second))
+	}
 	var resp *aws.CreateClusterOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateCluster(context.Background(), input)

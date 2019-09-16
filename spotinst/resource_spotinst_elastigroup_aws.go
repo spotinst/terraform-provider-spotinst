@@ -175,7 +175,7 @@ func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, met
 		return err
 	}
 
-	groupId, err := createGroup(elastigroup, meta.(*Client))
+	groupId, err := createGroup(resourceData, elastigroup, meta.(*Client))
 	if err != nil {
 		return err
 	}
@@ -200,7 +200,7 @@ func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, met
 	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
 }
 
-func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
+func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(group); err != nil {
 		return nil, err
 	} else {
@@ -208,7 +208,9 @@ func createGroup(group *aws.Group, spotinstClient *Client) (*string, error) {
 	}
 
 	input := &aws.CreateGroupInput{Group: group}
-
+	if v, ok := resourceData.Get(string(elastigroup_aws_launch_configuration.IamInstanceProfile)).(string); ok && v != "" {
+		time.Sleep((5 * time.Second))
+	}
 	var resp *aws.CreateGroupOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
 		r, err := spotinstClient.elastigroup.CloudProviderAWS().Create(context.Background(), input)

@@ -3,6 +3,9 @@
 ENHANCEMENTS:
 * resourceSpotinstOceanAWSLaunchSpec: added `scheduled_task`
 
+NOTES:
+*A delay was added during group creation when IAM instance profile linked with the group in order to decrease the retry process of the group creating.
+
 ## 1.13.5 (Unreleased)
 
 FEATURES:
