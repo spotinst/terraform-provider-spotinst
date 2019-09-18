@@ -19,7 +19,6 @@ ENHANCEMENTS:
 * spotinst_ocean_gke: added `draining_timeout`
 * spotinst_ocean_aws: added `draining_timeout`
 
-
 FEATURES:
 * *New Resource*: `spotinst_ocean_gke_import`
 * *New Resource*: `spotinst_ocean_gke_launch_spec`
