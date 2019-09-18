@@ -79,7 +79,7 @@ func createAWSCluster(resourceData *schema.ResourceData, cluster *aws.Cluster, s
 
 	input := &aws.CreateClusterInput{Cluster: cluster}
 	if v, ok := resourceData.Get(string(ocean_aws_launch_configuration.IAMInstanceProfile)).(string); ok && v != "" {
-		time.Sleep((5 * time.Second))
+		time.Sleep(5 * time.Second)
 	}
 	var resp *aws.CreateClusterOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
