@@ -146,7 +146,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[SecurityGroups] = commons.NewGenericField(
-		commons.ElastigroupAWS,
+		commons.OceanAWSLaunchSpec,
 		SecurityGroups,
 		&schema.Schema{
 			Type:     schema.TypeList,
