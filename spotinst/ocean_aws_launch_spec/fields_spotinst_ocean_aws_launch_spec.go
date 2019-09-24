@@ -150,43 +150,52 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		SecurityGroups,
 		&schema.Schema{
 			Type:     schema.TypeList,
-			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			var value []string = nil
-			if launchSpec.SecurityGroupIDs != nil {
-				value = launchSpec.SecurityGroupIDs
+			var result []string = nil
+
+			if launchSpec != nil && launchSpec.SecurityGroupIDs != nil {
+				securityGroupIds := launchSpec.SecurityGroupIDs
+
+				for _, securityGroupId := range securityGroupIds {
+					securityGroupIdStr := spotinst.StringValue(securityGroupId)
+					result = append(result, securityGroupIdStr)
+				}
 			}
-			if err := resourceData.Set(string(SecurityGroups), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SecurityGroups), err)
-			}
+			resourceData.Set(string(SecurityGroups), result)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
-				ids := make([]string, len(v))
-				for i, j := range v {
-					ids[i] = j.(string)
+			var result []*string = nil
+
+			if value, ok := resourceData.GetOk(string(SecurityGroups)); ok {
+				if value != nil && len(value.([]interface{})) > 0 {
+					for _, v := range value.([]interface{}) {
+						result = append(result, spotinst.String(v.(string)))
+					}
+					launchSpec.SetSecurityGroupIDs(result)
 				}
-				launchSpec.SetSecurityGroupIDs(ids)
 			}
 			return nil
 		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error { //
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
-				ids := make([]string, len(v))
-				for i, j := range v {
-					ids[i] = j.(string)
+			var securityGroupIds []*string = nil
+
+			if value, ok := resourceData.GetOk(string(SecurityGroups)); ok {
+				for _, v := range value.([]interface{}) {
+					securityGroupIds = append(securityGroupIds, spotinst.String(v.(string)))
 				}
-				launchSpec.SetSecurityGroupIDs(ids)
 			}
+
+			launchSpec.SetSecurityGroupIDs(securityGroupIds)
 			return nil
 		},
 		nil,
