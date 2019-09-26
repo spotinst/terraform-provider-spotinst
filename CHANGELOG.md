@@ -1,3 +1,11 @@
+## 1.13.5 (Unreleased)
+
+ENHANCEMENTS:
+* spotinst_ocean_aws_LaunchSpec: added `security_groups`
+
+NOTES:
+*A delay was added during group creation when IAM instance profile linked with the group in order to decrease the retry process of the group creation.
+
 ## 1.13.4 (Unreleased)
 
 NOTES:
