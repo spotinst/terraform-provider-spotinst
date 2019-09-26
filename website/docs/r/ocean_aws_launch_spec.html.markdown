@@ -18,7 +18,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   image_id  = "ami-123456"
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
-  security_group_ids = ["awseb-12345"]
+  security_groups = ["awseb-12345"]
 
   labels {
     key   = "fakeKey"
