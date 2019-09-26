@@ -77,7 +77,8 @@ func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster
 
 	input := &aws.CreateECSClusterInput{Cluster: cluster}
 	if v, ok := resourceData.Get(string(ocean_ecs_launch_specification.IamInstanceProfile)).(string); ok && v != "" {
-		time.Sleep(5 * time.Second)
+		// Wait for IAM instance profile to be ready.
+		time.Sleep(10 * time.Second)
 	}
 	var resp *aws.CreateECSClusterOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {

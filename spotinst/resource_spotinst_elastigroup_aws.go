@@ -209,7 +209,8 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 
 	input := &aws.CreateGroupInput{Group: group}
 	if v, ok := resourceData.Get(string(elastigroup_aws_launch_configuration.IamInstanceProfile)).(string); ok && v != "" {
-		time.Sleep(5 * time.Second)
+		// Wait for IAM instance profile to be ready.
+		time.Sleep(10 * time.Second)
 	}
 	var resp *aws.CreateGroupOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
