@@ -6,7 +6,7 @@ ENHANCEMENTS:
 NOTES:
 *A delay was added during group creation when IAM instance profile linked with the group in order to decrease the retry process of the group creation.
 
-## 1.13.4 (october 2, 2019)
+## 1.13.4 (september 11, 2019)
 
 NOTES:
 This release supports Terraform v0.12
