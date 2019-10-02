@@ -825,14 +825,14 @@ Usage:
       grace_period          = 90
       strategy {
         action                = "REPLACE_SERVER"
-        should_drain_instance = true
+        should_drain_instances = true
       }
     }
   
     managed_actions {
       platform_update {
         perform_at   = "timeWindow"
-        field_name   = "Mon:23:50-Tue:00:20"
+        time_window   = "Mon:23:50-Tue:00:20"
         update_level = "minorAndPatch"
       }
     }
