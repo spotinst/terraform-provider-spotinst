@@ -1,4 +1,4 @@
-## 1.13.5 (Unreleased)
+## 1.13.5 (october 2, 2019)
 
 ENHANCEMENTS:
 * spotinst_ocean_aws_LaunchSpec: added `security_groups`
@@ -6,7 +6,7 @@ ENHANCEMENTS:
 NOTES:
 *A delay was added during group creation when IAM instance profile linked with the group in order to decrease the retry process of the group creation.
 
-## 1.13.4 (Unreleased)
+## 1.13.4 (october 2, 2019)
 
 NOTES:
 This release supports Terraform v0.12
