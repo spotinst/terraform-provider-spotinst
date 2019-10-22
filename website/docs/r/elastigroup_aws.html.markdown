@@ -825,7 +825,7 @@ Usage:
       grace_period          = 90
       strategy {
         action                = "REPLACE_SERVER"
-        should_drain_instance = true
+        should_drain_instances = true
       }
     }
   
