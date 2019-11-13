@@ -108,7 +108,9 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 
 func NewLaunchSpecGKEWrapper() *LaunchSpecGKEWrapper {
 	return &LaunchSpecGKEWrapper{
-		launchSpec: &gcp.LaunchSpec{},
+		launchSpec: &gcp.LaunchSpec{
+			AutoScale: &gcp.AutoScale{},
+		},
 	}
 }
 

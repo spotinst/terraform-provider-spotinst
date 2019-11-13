@@ -25,6 +25,12 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
     value = "fakeValue"
   }
   
+  autoscale_headrooms {
+    num_of_units = 5
+    cpu_per_unit = 1000
+    gpu_per_unit = 0
+    memory_per_unit = 2048
+  }
 }
 ```
 
@@ -41,3 +47,8 @@ The following arguments are supported:
 * `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.
+   
+* `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
+    * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
+    * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
