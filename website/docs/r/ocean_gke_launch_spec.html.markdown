@@ -53,6 +53,6 @@ The following arguments are supported:
 * `labels` - (Optional) Cluster's labels.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
-    * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
-    * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate the headroom.
-    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
+    * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+    * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
+    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate for each headroom unit.
