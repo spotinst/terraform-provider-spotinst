@@ -105,8 +105,8 @@ type TLSConfig struct {
 	// This should be used only for testing.
 	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty"`
 
-	forceSendFields []string `json:"-"`
-	nullFields      []string `json:"-"`
+	forceSendFields []string
+	nullFields      []string
 }
 
 func ParseTLSCipherSuite(suite string) (uint16, error) {

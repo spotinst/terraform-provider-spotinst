@@ -22,6 +22,7 @@ type ECSLaunchSpec struct {
 	SecurityGroupIDs   []string               `json:"securityGroupIds,omitempty"`
 	IAMInstanceProfile *ECSIAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
 	Attributes         []*ECSAttribute        `json:"attributes,omitempty"`
+	AutoScale          *ECSAutoScale          `json:"autoScale,omitempty"`
 
 	// Read-only fields.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -47,6 +48,22 @@ type ECSLaunchSpec struct {
 type ECSAttribute struct {
 	Key   *string `json:"key,omitempty"`
 	Value *string `json:"value,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type ECSAutoScale struct {
+	Headrooms []*ECSAutoScaleHeadroom `json:"headrooms,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type ECSAutoScaleHeadroom struct {
+	CPUPerUnit    *int `json:"cpuPerUnit,omitempty"`
+	MemoryPerUnit *int `json:"memoryPerUnit,omitempty"`
+	NumOfUnits    *int `json:"numOfUnits,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -315,6 +332,13 @@ func (o *ECSLaunchSpec) SetAttributes(v []*ECSAttribute) *ECSLaunchSpec {
 	return o
 }
 
+func (o *ECSLaunchSpec) SetAutoScale(v *ECSAutoScale) *ECSLaunchSpec {
+	if o.AutoScale = v; o.AutoScale == nil {
+		o.nullFields = append(o.nullFields, "AutoScale")
+	}
+	return o
+}
+
 // endregion
 
 // region Attributes
@@ -335,6 +359,54 @@ func (o *ECSAttribute) SetKey(v *string) *ECSAttribute {
 func (o *ECSAttribute) SetValue(v *string) *ECSAttribute {
 	if o.Value = v; o.Value == nil {
 		o.nullFields = append(o.nullFields, "Value")
+	}
+	return o
+}
+
+// endregion
+
+//region AutoScale
+
+func (o ECSAutoScale) MarshalJSON() ([]byte, error) {
+	type noMethod ECSAutoScale
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *ECSAutoScale) SetHeadrooms(v []*ECSAutoScaleHeadroom) *ECSAutoScale {
+	if o.Headrooms = v; o.Headrooms == nil {
+		o.nullFields = append(o.nullFields, "Headrooms")
+	}
+	return o
+}
+
+//endregion
+
+// region ECSAutoScaleHeadroom
+
+func (o ECSAutoScaleHeadroom) MarshalJSON() ([]byte, error) {
+	type noMethod ECSAutoScaleHeadroom
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *ECSAutoScaleHeadroom) SetCPUPerUnit(v *int) *ECSAutoScaleHeadroom {
+	if o.CPUPerUnit = v; o.CPUPerUnit == nil {
+		o.nullFields = append(o.nullFields, "CPUPerUnit")
+	}
+	return o
+}
+
+func (o *ECSAutoScaleHeadroom) SetMemoryPerUnit(v *int) *ECSAutoScaleHeadroom {
+	if o.MemoryPerUnit = v; o.MemoryPerUnit == nil {
+		o.nullFields = append(o.nullFields, "MemoryPerUnit")
+	}
+	return o
+}
+
+func (o *ECSAutoScaleHeadroom) SetNumOfUnits(v *int) *ECSAutoScaleHeadroom {
+	if o.NumOfUnits = v; o.NumOfUnits == nil {
+		o.nullFields = append(o.nullFields, "NumOfUnits")
 	}
 	return o
 }

@@ -30,6 +30,13 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     value  = "taint value updated"
     effect = "NoExecute"
   }
+  
+  autoscale_headrooms {
+    num_of_units = 5
+    cpu_per_unit = 1000
+    gpu_per_unit = 0
+    memory_per_unit = 2048
+  }
 }
 ```
 
@@ -51,4 +58,10 @@ The following arguments are supported:
     * `key` - (Required) The tag key.
     * `value` - (Required) The tag value.
     * `effect` - (Required) The effect of the taint. Valid values: `"NoSchedule"`, `"PreferNoSchedule"`, `"NoExecute"`.
+    
+* `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
+    * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
+    * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+    * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
+    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 

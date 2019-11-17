@@ -352,6 +352,75 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[AutoscaleHeadrooms] = commons.NewGenericField(
+		commons.OceanECSLaunchSpec,
+		AutoscaleHeadrooms,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(CPUPerUnit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
+					string(MemoryPerUnit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
+					string(NumOfUnits): {
+						Type:     schema.TypeInt,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.AutoScale != nil && launchSpec.AutoScale.Headrooms != nil {
+				headrooms := launchSpec.AutoScale.Headrooms
+				result = flattenHeadrooms(headrooms)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(AutoscaleHeadrooms), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoscaleHeadrooms), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
+				if headrooms, err := expandHeadrooms(value); err != nil {
+					return err
+				} else {
+					launchSpec.AutoScale.SetHeadrooms(headrooms)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var headroomList []*aws.ECSAutoScaleHeadroom = nil
+			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
+				if expandedList, err := expandHeadrooms(value); err != nil {
+					return err
+				} else {
+					headroomList = expandedList
+				}
+			}
+			launchSpec.AutoScale.SetHeadrooms(headroomList)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -425,5 +494,41 @@ func flattenAttributes(labels []*aws.ECSAttribute) []interface{} {
 
 		result = append(result, m)
 	}
+	return result
+}
+
+func expandHeadrooms(data interface{}) ([]*aws.ECSAutoScaleHeadroom, error) {
+	list := data.(*schema.Set).List()
+	headrooms := make([]*aws.ECSAutoScaleHeadroom, 0, len(list))
+
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		headroom := &aws.ECSAutoScaleHeadroom{
+			CPUPerUnit:    spotinst.Int(attr[string(CPUPerUnit)].(int)),
+			NumOfUnits:    spotinst.Int(attr[string(NumOfUnits)].(int)),
+			MemoryPerUnit: spotinst.Int(attr[string(MemoryPerUnit)].(int)),
+		}
+
+		headrooms = append(headrooms, headroom)
+	}
+	return headrooms, nil
+}
+
+func flattenHeadrooms(headrooms []*aws.ECSAutoScaleHeadroom) []interface{} {
+	result := make([]interface{}, 0, len(headrooms))
+
+	for _, headroom := range headrooms {
+		m := make(map[string]interface{})
+		m[string(CPUPerUnit)] = spotinst.IntValue(headroom.CPUPerUnit)
+		m[string(NumOfUnits)] = spotinst.IntValue(headroom.NumOfUnits)
+		m[string(MemoryPerUnit)] = spotinst.IntValue(headroom.MemoryPerUnit)
+
+		result = append(result, m)
+	}
+
 	return result
 }

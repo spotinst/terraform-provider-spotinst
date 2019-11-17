@@ -1,3 +1,9 @@
+## 1.13.6 (Unreleased)
+
+* resource/spotinst_ocean_aws_launch_spec: added `autoscale_headrooms`
+* resource/spotinst_ocean_ecs_launch_spec: added `autoscale_headrooms`
+* resource/spotinst_ocean_gke_launch_spec: added `autoscale_headrooms`
+
 ## 1.13.5 (october 2, 2019)
 
 ENHANCEMENTS:
