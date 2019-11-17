@@ -258,9 +258,9 @@ resource "spotinst_mrscaler" "example-scaler-2" {
 // --- TASK GROUP -------------
   task_instance_types = ["c3.xlarge","c4.xlarge"]
   
-  task_target    = 2
-  task_minimum   = 0
-  task_maximum   = 4
+  task_desired_capacity    = 2
+  task_min_size   = 0
+  task_max_size   = 4
   task_lifecycle = "SPOT"
   
   task_ebs_block_device {
