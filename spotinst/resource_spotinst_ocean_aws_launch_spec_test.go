@@ -105,7 +105,7 @@ type LaunchSpecConfigMetadata struct {
 	updateBaselineFields bool
 }
 
-func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata) string {
+func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata, formatToUse string) string {
 	if lscm == nil {
 		return ""
 	}
@@ -121,8 +121,9 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata) string {
 	}
 	`
 
+	format := formatToUse
+
 	if lscm.updateBaselineFields {
-		format := testBaselineOceanAWSLaunchSpecConfig_Update
 		template += fmt.Sprintf(format,
 			lscm.oceanID,
 			lscm.provider,
@@ -130,7 +131,6 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata) string {
 			lscm.fieldsToAppend,
 		)
 	} else {
-		format := testBaselineOceanAWSLaunchSpecConfig_Create
 		template += fmt.Sprintf(format,
 			lscm.oceanID,
 			lscm.provider,
@@ -158,11 +158,13 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 			{
 				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
 					oceanID: oceanID,
-				}),
+				}, testBaselineOceanAWSLaunchSpecConfig_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "test"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
@@ -177,11 +179,14 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 			{
 				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
 					oceanID:              oceanID,
-					updateBaselineFields: true}),
+					updateBaselineFields: true}, testBaselineOceanAWSLaunchSpecConfig_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-0195f2ac3a6014a15"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world updated")),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
@@ -203,6 +208,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
   ocean_id = "%v"
   image_id = "ami-79826301"
+  security_groups = ["sg-0041bd3fd6aa2ee3c"]
   user_data = "hello world"
   iam_instance_profile = "test"
 
@@ -229,6 +235,8 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-79826301"
   user_data = "hello world updated"
   iam_instance_profile = "updated"
+  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+
   
   labels {
     key = "label key updated"
@@ -246,3 +254,126 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 `
 
 // endregion
+
+// region OceanAWSLaunchSpec: AutoScale
+func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
+	oceanID := "o-4bc9b7d9"
+	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
+
+	var launchSpec aws.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID: oceanID,
+				}, testAutoScaleOceanAWSLaunchSpecConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.gpu_per_unit", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.memory_per_unit", "256"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testAutoScaleOceanAWSLaunchSpecConfig_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.memory_per_unit", "512"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testAutoScaleOceanAWSLaunchSpecConfig_Delete),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAutoScaleOceanAWSLaunchSpecConfig_Create = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+
+ autoscale_headrooms {
+   cpu_per_unit = 1024
+   gpu_per_unit = 1
+   memory_per_unit = 512
+   num_of_units = 1
+ }
+   
+ autoscale_headrooms {
+   cpu_per_unit = 1024
+   gpu_per_unit = 1
+   memory_per_unit = 256
+   num_of_units = 1
+ }
+%v
+}
+
+`
+
+const testAutoScaleOceanAWSLaunchSpecConfig_Update = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+ 
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+
+ autoscale_headrooms {
+   cpu_per_unit = 1024
+   gpu_per_unit = 1
+   memory_per_unit = 512
+   num_of_units = 1
+ }
+%v
+}
+
+`
+
+const testAutoScaleOceanAWSLaunchSpecConfig_Delete = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"
+ ocean_id = "%v"
+ 
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+%v
+}
+
+`
+
+//endregion

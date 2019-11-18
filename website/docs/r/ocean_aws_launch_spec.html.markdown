@@ -18,7 +18,8 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   image_id  = "ami-123456"
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
-  
+  security_groups = ["awseb-12345"]
+
   labels {
     key   = "fakeKey"
     value = "fakeValue"
@@ -28,6 +29,13 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     key    = "taint key updated"
     value  = "taint value updated"
     effect = "NoExecute"
+  }
+  
+  autoscale_headrooms {
+    num_of_units = 5
+    cpu_per_unit = 1000
+    gpu_per_unit = 0
+    memory_per_unit = 2048
   }
 }
 ```
@@ -40,6 +48,7 @@ The following arguments are supported:
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Optional) ID of the image used to launch the instances.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
+* `security_groups` - (Optional) Optionally adds security group IDs.
 
 * `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The tag key.
@@ -49,4 +58,10 @@ The following arguments are supported:
     * `key` - (Required) The tag key.
     * `value` - (Required) The tag value.
     * `effect` - (Required) The effect of the taint. Valid values: `"NoSchedule"`, `"PreferNoSchedule"`, `"NoExecute"`.
+    
+* `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
+    * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
+    * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+    * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
+    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 

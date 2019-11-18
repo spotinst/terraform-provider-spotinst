@@ -6,6 +6,12 @@ type LabelField string
 type IAMField string
 
 const (
+	CPUPerUnit    commons.FieldName = "cpu_per_unit"
+	MemoryPerUnit commons.FieldName = "memory_per_unit"
+	NumOfUnits    commons.FieldName = "num_of_units"
+)
+
+const (
 	OceanID            commons.FieldName = "ocean_id"
 	ImageID            commons.FieldName = "image_id"
 	IamInstanceProfile commons.FieldName = "iam_instance_profile"
@@ -15,4 +21,5 @@ const (
 	Attributes         commons.FieldName = "attributes"
 	AttributeKey       commons.FieldName = "key"
 	AttributeValue     commons.FieldName = "value"
+	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
 )

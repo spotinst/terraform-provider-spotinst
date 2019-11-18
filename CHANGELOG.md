@@ -1,7 +1,22 @@
-## 1.13.5 (Unreleased)
-## 1.13.4 (September 10, 2019)
+## 1.13.6 (Unreleased)
+
+* resource/spotinst_ocean_aws_launch_spec: added `autoscale_headrooms`
+* resource/spotinst_ocean_ecs_launch_spec: added `autoscale_headrooms`
+* resource/spotinst_ocean_gke_launch_spec: added `autoscale_headrooms`
+
+## 1.13.5 (October 2, 2019)
+
+ENHANCEMENTS:
+* spotinst_ocean_aws_launch_spec: added `security_groups`
 
 NOTES:
+
+* A delay was added during group creation when IAM instance profile linked with the group in order to decrease the retry process of the group creation.
+
+## 1.13.4 (September 11, 2019)
+
+NOTES:
+
 This release supports Terraform v0.12
 
 FEATURES:

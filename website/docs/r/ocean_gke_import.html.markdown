@@ -14,7 +14,6 @@ Provides a Spotinst Ocean GKE import resource.
 
 ```hcl
 resource "spotinst_ocean_gke_import" "example" {
-
   cluster_name = "example-cluster-name"
   location     = "us-central1-a"
   
@@ -24,15 +23,16 @@ resource "spotinst_ocean_gke_import" "example" {
   
   whitelist = ["n1-standard-1", "n1-standard-2"]
   
-  backend_services = [{
-      service_name  = "example-backend-service"
-      location_type = "regional"
-      scheme        = "INTERNAL"
-      named_ports = {
-        name  = "http"
-        ports = [80, 8080]
-      }
-  }]
+  backend_services {
+    service_name  = "example-backend-service"
+    location_type = "regional"
+    scheme        = "INTERNAL"
+    
+    named_ports {
+      name  = "http"
+      ports = [80, 8080]
+    }
+  }
 }
 ```
 
