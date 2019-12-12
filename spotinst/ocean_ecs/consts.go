@@ -11,7 +11,7 @@ const (
 	MaxSize             commons.FieldName = "max_size"
 	MinSize             commons.FieldName = "min_size"
 	DesiredCapacity     commons.FieldName = "desired_capacity"
-	SubnetIds           commons.FieldName = "subnet_ids"
+	SubnetIDs           commons.FieldName = "subnet_ids"
 	UpdatePolicy        commons.FieldName = "update_policy"
 	ShouldRoll          commons.FieldName = "should_roll"
 	RollConfig          commons.FieldName = "roll_config"

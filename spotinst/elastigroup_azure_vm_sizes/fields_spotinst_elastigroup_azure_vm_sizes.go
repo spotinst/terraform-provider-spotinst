@@ -2,6 +2,7 @@ package elastigroup_azure_vm_sizes
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )

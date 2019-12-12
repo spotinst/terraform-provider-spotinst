@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"strings"
-	"testing"
 )
 
 func init() {
@@ -230,14 +231,14 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  %v
  %v
 
- integration_gke {
+ integration_gke = {
   location = "us-central1-a"
   cluster_id = "terraform-acc-test-cluster"
   autoscale_is_enabled     = true
   autoscale_is_auto_config = false
   autoscale_cooldown       = 300
   
-  autoscale_headroom {
+  autoscale_headroom = {
     cpu_per_unit    = 1024
     memory_per_unit = 512
     num_of_units    = 2
@@ -267,14 +268,14 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  %v
  %v
 
- integration_gke {
+ integration_gke = {
   location = "us-central1-a"
   cluster_id = "terraform-acc-test-cluster"
   autoscale_is_enabled     = true
   autoscale_is_auto_config = false
   autoscale_cooldown       = 300
   
-  autoscale_headroom {
+  autoscale_headroom = {
     cpu_per_unit    = 1024
     memory_per_unit = 512
     num_of_units    = 2

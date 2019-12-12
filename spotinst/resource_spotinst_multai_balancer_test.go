@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"strings"
-	"testing"
 )
 
 func init() {
@@ -214,11 +215,10 @@ resource "` + string(commons.MultaiBalancerResourceName) + `" "%v" {
     idle     = 10
     draining = 10
   }
-
-  tags {
+  tags = [{
     key   = "prod"
     value = "web"
-  }
+  }]
 }`
 
 const testBaselineBalancerConfig_Update = `
@@ -233,9 +233,8 @@ resource "` + string(commons.MultaiBalancerResourceName) + `" "%v" {
     idle     = 20
     draining = 20
   }
-
-  tags {
+  tags = [{
     key   = "updated"
     value = "updated"
-  }
+  }]
 }`

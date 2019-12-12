@@ -85,6 +85,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(IamInstanceProfile)).(string); ok && v != "" {
 				iamInstanceProf := &aws.IAMInstanceProfile{}
+
 				if InstanceProfileArnRegex.MatchString(v) {
 					iamInstanceProf.SetArn(spotinst.String(v))
 				} else {

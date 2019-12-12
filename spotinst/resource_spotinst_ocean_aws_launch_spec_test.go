@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration"
-	"log"
-	"testing"
 )
 
 //func init() {
@@ -121,9 +122,8 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata, formatToU
 	}
 	`
 
-	format := formatToUse
-
 	if lscm.updateBaselineFields {
+		format := formatToUse
 		template += fmt.Sprintf(format,
 			lscm.oceanID,
 			lscm.provider,
@@ -131,6 +131,7 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata, formatToU
 			lscm.fieldsToAppend,
 		)
 	} else {
+		format := formatToUse
 		template += fmt.Sprintf(format,
 			lscm.oceanID,
 			lscm.provider,
@@ -174,6 +175,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.key", "taint key"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.value", "taint value"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.effect", "NoSchedule"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
 				),
 			},
 			{
@@ -186,8 +189,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
-					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-0195f2ac3a6014a15"),
-					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-0195f2ac3a6014a15"), resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world updated")),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "labels.3686834679.key", "label key updated"),
@@ -196,6 +198,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.key", "taint key updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.value", "taint value updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.effect", "NoExecute"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
 				),
 			},
 		},
@@ -211,17 +216,19 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   security_groups = ["sg-0041bd3fd6aa2ee3c"]
   user_data = "hello world"
   iam_instance_profile = "test"
-
-  labels {
+  subnet_ids = ["subnet-7f3fbf06"]
+  
+  labels = [{
     key = "label key"
     value = "label value"
-  }
+  }]
 
-  taints {
+  taints = [{
     key = "taint key"
     value = "taint value"
     effect = "NoSchedule"
-  }
+  }]
+
 
  %v
 }
@@ -233,21 +240,21 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
   ocean_id = "%v"
   image_id = "ami-79826301"
+  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
   user_data = "hello world updated"
   iam_instance_profile = "updated"
-  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+  subnet_ids = ["subnet-7f3fbf06", "subnet-03b7ed5b"]
 
-  
-  labels {
+  labels = {
     key = "label key updated"
     value = "label value updated"
   }
 
-  taints {
+  taints = [{
     key = "taint key updated"
     value = "taint value updated"
     effect = "NoExecute"
-  }
+  }]
 
 %v
 }
@@ -323,19 +330,20 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  user_data = "hello world updated"
  iam_instance_profile = "updated"
 
- autoscale_headrooms {
-   cpu_per_unit = 1024
-   gpu_per_unit = 1
-   memory_per_unit = 512
-   num_of_units = 1
- }
-   
- autoscale_headrooms {
-   cpu_per_unit = 1024
-   gpu_per_unit = 1
-   memory_per_unit = 256
-   num_of_units = 1
- }
+ autoscale_headrooms = [
+   {
+     cpu_per_unit = 1024
+     gpu_per_unit = 1
+     memory_per_unit = 512
+     num_of_units = 1
+   },
+   {
+     cpu_per_unit = 1024
+     gpu_per_unit = 1
+     memory_per_unit = 256
+     num_of_units = 1
+   }
+  ]
 %v
 }
 
@@ -351,12 +359,14 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  user_data = "hello world updated"
  iam_instance_profile = "updated"
 
- autoscale_headrooms {
-   cpu_per_unit = 1024
-   gpu_per_unit = 1
-   memory_per_unit = 512
-   num_of_units = 1
- }
+ autoscale_headrooms = [
+   {
+     cpu_per_unit = 1024
+     gpu_per_unit = 1
+     memory_per_unit = 512
+     num_of_units = 1
+   }
+  ]
 %v
 }
 

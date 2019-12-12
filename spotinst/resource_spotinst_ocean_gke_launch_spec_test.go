@@ -3,13 +3,14 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"testing"
 )
 
 //func init() {
@@ -108,7 +109,7 @@ type GKELaunchSpecConfigMetadata struct {
 	updateBaselineFields bool
 }
 
-func createOceanGKELaunchSpecTerraform(lscm *GKELaunchSpecConfigMetadata, formatToUse string) string {
+func createOceanGKELaunchSpecTerraform(lscm *GKELaunchSpecConfigMetadata, update string, create string) string {
 	if lscm == nil {
 		return ""
 	}
@@ -124,15 +125,15 @@ func createOceanGKELaunchSpecTerraform(lscm *GKELaunchSpecConfigMetadata, format
 	}
 	`
 
-	format := formatToUse
-
 	if lscm.updateBaselineFields {
+		format := update
 		template += fmt.Sprintf(format,
 			lscm.oceanID,
 			lscm.provider,
 			lscm.oceanID,
 		)
 	} else {
+		format := create
 		template += fmt.Sprintf(format,
 			lscm.oceanID,
 			lscm.provider,
@@ -158,7 +159,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testBaselineOceanGKELaunchSpecConfig_Create),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testBaselineOceanGKELaunchSpecConfig_Create, testBaselineOceanGKELaunchSpecConfig_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -171,7 +172,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testBaselineOceanGKELaunchSpecConfig_Update),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testBaselineOceanGKELaunchSpecConfig_Update, testBaselineOceanGKELaunchSpecConfig_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -192,27 +193,31 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
+ metadata = [
+   {
      key = "gci-update-strategy"
      value = "update_disabled"
-   }
- 
- metadata {
+   },
+   {
      key = "gci-ensure-gke-docker"
      value = "true"
    }
- 
- labels {
+ ]
+
+ labels = [
+   {
      key = "testKey2"
      value = "testVal2"
    }
- 
+ ]
 
- taints {
+ taints = [
+   {
      key = "testTaintKey"
      value = "testTaintVal"
      effect = "NoSchedule"
    }
+ ]
 }
 
 `
@@ -224,22 +229,25 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
+ metadata = [
+   {
      key = "gci-update-strategy"
      value = "update_disabled"
-   }
+   },
+ ]
 
- taints {
+ taints = [
+   {
      key = "testTaintKey"
      value = "testTaintVal"
      effect = "NoSchedule"
-   }
-
- taints {
+   },
+   {
      key = "testTaintKey2"
      value = "testTaintVal2"
      effect = "NoSchedule"
    }
+ ]
 }
 
 `
@@ -259,7 +267,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID}, testLabelsOceanGKELaunchSpecConfig_Create),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID}, testLabelsOceanGKELaunchSpecConfig_Create, testLabelsOceanGKELaunchSpecConfig_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -271,7 +279,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testLabelsOceanGKELaunchSpecConfig_Update),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testLabelsOceanGKELaunchSpecConfig_Update, testLabelsOceanGKELaunchSpecConfig_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -291,20 +299,23 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
+ metadata = [
+   {
      key = "gci-update-strategy"
      value = "update_disabled"
-   }
+   },
+ ]
 
- labels {
+ labels = [
+   {
      key = "testKey"
      value = "testVal"
-   }
-
- labels {
+   },
+   {
      key = "testKey2"
      value = "testVal2"
    }
+ ]
 }
 
 `
@@ -316,20 +327,23 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
+ metadata = [
+   {
      key = "gci-update-strategy"
      value = "update_disabled"
-   }
-
- metadata {
+   },
+   {
      key = "gci-ensure-gke-docker"
      value = "true"
    }
+ ]
 
- labels {
+ labels = [
+   {
      key = "testKey"
      value = "testVal"
    }
+ ]
 }
 
 `
@@ -349,7 +363,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID}, testTaintsOceanGKELaunchSpecConfig_Create),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID}, testTaintsOceanGKELaunchSpecConfig_Create, testTaintsOceanGKELaunchSpecConfig_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -360,7 +374,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testTaintsOceanGKELaunchSpecConfig_Update),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testTaintsOceanGKELaunchSpecConfig_Update, testTaintsOceanGKELaunchSpecConfig_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -384,16 +398,20 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
+ metadata = [
+   {
      key = "gci-update-strategy"
      value = "update_disabled"
-   }
+   },
+ ]
 
- taints {
+ taints = [
+   {
      key = "testTaintKey"
      value = "testTaintVal"
      effect = "NoSchedule"
    }
+ ]
 }
 
 `
@@ -405,27 +423,29 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
+ metadata = [
+   {
      key = "gci-update-strategy"
      value = "update_disabled"
-   }
-
- metadata {
+   },
+   {
      key = "gci-ensure-gke-docker"
      value = "true"
    }
+ ]
 
- taints {
+ taints = [
+   {
      key = "testTaintKey"
      value = "testTaintVal"
      effect = "NoSchedule"
-   }
-
- taints {
+   },
+   {
      key = "testTaintKey2"
      value = "testTaintVal2"
      effect = "NoSchedule"
    }
+ ]
 }
 
 `
@@ -445,7 +465,7 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID}, testAutoScaleOceanGKELaunchSpecConfig_Create),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID}, testAutoScaleOceanGKELaunchSpecConfig_Create, testAutoScaleOceanGKELaunchSpecConfig_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -461,7 +481,7 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testAutoScaleOceanGKELaunchSpecConfig_Update),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testAutoScaleOceanGKELaunchSpecConfig_Update, testAutoScaleOceanGKELaunchSpecConfig_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -473,7 +493,7 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testAutoScaleOceanGKELaunchSpecConfig_Delete),
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testAutoScaleOceanGKELaunchSpecConfig_Delete, testAutoScaleOceanGKELaunchSpecConfig_Delete),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
@@ -491,29 +511,27 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
-   key = "gci-update-strategy"
-   value = "update_disabled"
- }
+ metadata = [
+   {
+     key = "gci-update-strategy"
+     value = "update_disabled"
+   },
+ ]
 
- metadata {
-   key = "gci-ensure-gke-docker"
-   value = "true"
- }
-
- autoscale_headrooms {
-   cpu_per_unit = 1024
-   gpu_per_unit = 1
-   memory_per_unit = 512
-   num_of_units = 1
- }
-   
- autoscale_headrooms {
-   cpu_per_unit = 1024
-   gpu_per_unit = 1
-   memory_per_unit = 256
-   num_of_units = 1
- }
+ autoscale_headrooms = [
+   {
+     cpu_per_unit = 1024
+     gpu_per_unit = 1
+     memory_per_unit = 512
+     num_of_units = 1
+   },
+   {
+     cpu_per_unit = 1024
+     gpu_per_unit = 1
+     memory_per_unit = 256
+     num_of_units = 1
+   }
+  ]
 }
 
 `
@@ -525,22 +543,25 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
-   key = "gci-update-strategy"
-   value = "update_disabled"
- }
+ metadata = [
+   {
+     key = "gci-update-strategy"
+     value = "update_disabled"
+   },
+   {
+     key = "gci-ensure-gke-docker"
+     value = "true"
+   }
+ ]
 
- metadata {
-   key = "gci-ensure-gke-docker"
-   value = "true"
- }
-
- autoscale_headrooms {
-   cpu_per_unit = 1024
-   gpu_per_unit = 1
-   memory_per_unit = 512
-   num_of_units = 1
- }
+ autoscale_headrooms = [
+   {
+     cpu_per_unit = 1024
+     gpu_per_unit = 1
+     memory_per_unit = 512
+     num_of_units = 1
+   }
+  ]
 }
 
 `
@@ -552,15 +573,16 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
- metadata {
-   key = "gci-update-strategy"
-   value = "update_disabled"
- }
-
- metadata {
-   key = "gci-ensure-gke-docker"
-   value = "true"
- }
+ metadata = [
+   {
+     key = "gci-update-strategy"
+     value = "update_disabled"
+   },
+   {
+     key = "gci-ensure-gke-docker"
+     value = "true"
+   }
+ ]
 }
 
 `

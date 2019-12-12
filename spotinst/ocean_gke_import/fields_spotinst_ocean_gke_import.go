@@ -2,11 +2,12 @@ package ocean_gke_import
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"strconv"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -61,7 +62,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Whitelist,
 		&schema.Schema{
 			Type:     schema.TypeList,
-			Required: true,
+			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

@@ -32,6 +32,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
+								string(MaxScaleDownPercentage): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
 								string(EvaluationPeriods): {
 									Type:     schema.TypeInt,
 									Optional: true,
@@ -254,6 +258,12 @@ func expandOceanAWSAutoScalerDown(data interface{}) (*aws.AutoScalerDown, error)
 
 			if v, ok := m[string(EvaluationPeriods)].(int); ok && v > 0 {
 				autoScaleDown.SetEvaluationPeriods(spotinst.Int(v))
+			}
+
+			if v, ok := m[string(MaxScaleDownPercentage)].(int); ok && v > 0 {
+				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Int(v))
+			} else {
+				autoScaleDown.SetMaxScaleDownPercentage(nil)
 			}
 		}
 		return autoScaleDown, nil

@@ -38,4 +38,5 @@ const (
 	Labels             commons.FieldName = "labels"
 	Taints             commons.FieldName = "taints"
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
+	SubnetIDs          commons.FieldName = "subnet_ids"
 )

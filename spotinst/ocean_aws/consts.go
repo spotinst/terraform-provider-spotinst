@@ -18,7 +18,7 @@ const (
 	DesiredCapacity commons.FieldName = "desired_capacity"
 
 	Region    commons.FieldName = "region"
-	SubnetIds commons.FieldName = "subnet_ids"
+	SubnetIDs commons.FieldName = "subnet_ids"
 
 	Tags commons.FieldName = "tags"
 

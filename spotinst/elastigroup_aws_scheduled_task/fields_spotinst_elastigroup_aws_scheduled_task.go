@@ -93,6 +93,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
+
 					string(AdjustmentPercentage): {
 						Type:     schema.TypeString,
 						Optional: true,
