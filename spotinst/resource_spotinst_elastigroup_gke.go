@@ -1,8 +1,8 @@
 package spotinst
 
 import (
+	"context"
 	"fmt"
-	"github.com/fsouza/go-dockerclient/external/golang.org/x/net/context"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"

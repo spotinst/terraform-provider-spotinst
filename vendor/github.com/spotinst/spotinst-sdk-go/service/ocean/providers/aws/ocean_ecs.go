@@ -238,19 +238,37 @@ func ecsClustersFromHttpResponse(resp *http.Response) ([]*ECSCluster, error) {
 
 func ecsRollStatusFromJSON(in []byte) (*ECSRollClusterStatus, error) {
 	b := new(ECSRollClusterStatus)
-
 	if err := json.Unmarshal(in, b); err != nil {
 		return nil, err
 	}
 	return b, nil
 }
 
-func ecsRollStatusFromHttpResponse(resp *http.Response) (*ECSRollClusterStatus, error) {
+func ecsRollStatusesFromJSON(in []byte) ([]*ECSRollClusterStatus, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	out := make([]*ECSRollClusterStatus, len(rw.Response.Items))
+	if len(out) == 0 {
+		return out, nil
+	}
+	for i, rb := range rw.Response.Items {
+		b, err := ecsRollStatusFromJSON(rb)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = b
+	}
+	return out, nil
+}
+
+func ecsRollStatusesFromHttpResponse(resp *http.Response) ([]*ECSRollClusterStatus, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	return ecsRollStatusFromJSON(body)
+	return ecsRollStatusesFromJSON(body)
 }
 
 func (s *ServiceOp) ListECSClusters(ctx context.Context, input *ListECSClustersInput) (*ListECSClustersOutput, error) {
@@ -392,12 +410,17 @@ func (s *ServiceOp) RollECS(ctx context.Context, input *ECSRollClusterInput) (*E
 	}
 	defer resp.Body.Close()
 
-	_, err = ecsRollStatusFromHttpResponse(resp)
+	rs, err := ecsRollStatusesFromHttpResponse(resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ECSRollClusterOutput{}, nil
+	output := new(ECSRollClusterOutput)
+	if len(rs) > 0 {
+		output.RollClusterStatus = rs[0]
+	}
+
+	return output, nil
 }
 
 // region Cluster
