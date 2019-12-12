@@ -1,30 +1,44 @@
 package version
 
 import (
-	"fmt"
-	"runtime"
+	"strings"
+
+	"github.com/hashicorp/go-version"
 )
 
 var (
-	BuildTime    string
-	CommitHash   string
-	OS           = runtime.GOOS
-	Architecture = runtime.GOARCH
-	Major        = 1
-	Minor        = 13
-	Patch        = 4
+	// Version represents the main version number.
+	//
+	// Read-only.
+	Version = "1.14.0"
+
+	// Prerelease represents an optional pre-release label for the version.
+	// If this is "" (empty string) then it means that it is a final release.
+	// Otherwise, this is a pre-release such as "beta", "rc1", etc.
+	//
+	// Read-only.
+	Prerelease = ""
+
+	// SemVer is an instance of SemVer version (https://semver.org/) used to
+	// verify that the full version is a proper semantic version.
+	//
+	// Populated at runtime.
+	// Read-only.
+	SemVer *version.Version
 )
 
-func GetLongVersion() string {
-	vLong := fmt.Sprintf("Version: %d.%d.%d\n", Major, Minor, Patch)
-	vLong = vLong + fmt.Sprintf("Hash: %s\n", CommitHash)
-	vLong = vLong + fmt.Sprintf("OS: %s\n", OS)
-	vLong = vLong + fmt.Sprintf("Arch: %s\n", Architecture)
-	vLong = vLong + fmt.Sprintf("Built: %s", BuildTime)
+func init() {
+	v := Version
 
-	return vLong
+	if Prerelease != "" {
+		v += "-" + strings.TrimPrefix(Prerelease, "-")
+	}
+
+	// Parse and verify the given version.
+	SemVer = version.Must(version.NewSemver(v))
 }
 
-func GetShortVersion() string {
-	return fmt.Sprintf("%d.%d.%d", Major, Minor, Patch)
+// String returns the complete version string, including prerelease and metadata.
+func String() string {
+	return SemVer.String()
 }

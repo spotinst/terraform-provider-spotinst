@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
