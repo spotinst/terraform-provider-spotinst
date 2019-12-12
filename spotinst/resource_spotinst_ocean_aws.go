@@ -3,6 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
@@ -14,9 +18,6 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_strategy"
-	"log"
-	"strings"
-	"time"
 )
 
 func resourceSpotinstOceanAWS() *schema.Resource {

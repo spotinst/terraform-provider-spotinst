@@ -3,14 +3,15 @@ package terraform
 import (
 	"fmt"
 	"log"
+	"sort"
 
-	"github.com/hashicorp/hcl2/hcl"
-	"github.com/hashicorp/terraform/configs/configschema"
-	"github.com/hashicorp/terraform/lang"
-
+	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/terraform/addrs"
-	"github.com/hashicorp/terraform/config"
+	"github.com/hashicorp/terraform/configs"
+	"github.com/hashicorp/terraform/configs/configschema"
 	"github.com/hashicorp/terraform/dag"
+	"github.com/hashicorp/terraform/lang"
+	"github.com/hashicorp/terraform/states"
 )
 
 // GraphNodeReferenceable must be implemented by any node that represents
@@ -37,6 +38,11 @@ type GraphNodeReferencer interface {
 	// include both a referenced address and source location information for
 	// the reference.
 	References() []*addrs.Reference
+}
+
+type GraphNodeAttachDependencies interface {
+	GraphNodeResource
+	AttachDependencies([]addrs.AbsResource)
 }
 
 // GraphNodeReferenceOutside is an interface that can optionally be implemented.
@@ -86,6 +92,79 @@ func (t *ReferenceTransformer) Transform(g *Graph) error {
 		for _, parent := range parents {
 			g.Connect(dag.BasicEdge(v, parent))
 		}
+
+		if len(parents) > 0 {
+			continue
+		}
+	}
+
+	return nil
+}
+
+// AttachDependenciesTransformer records all resource dependencies for each
+// instance, and attaches the addresses to the node itself. Managed resource
+// will record these in the state for proper ordering of destroy operations.
+type AttachDependenciesTransformer struct {
+	Config  *configs.Config
+	State   *states.State
+	Schemas *Schemas
+}
+
+func (t AttachDependenciesTransformer) Transform(g *Graph) error {
+	for _, v := range g.Vertices() {
+		attacher, ok := v.(GraphNodeAttachDependencies)
+		if !ok {
+			continue
+		}
+		selfAddr := attacher.ResourceAddr()
+
+		// Data sources don't need to track destroy dependencies
+		if selfAddr.Resource.Mode == addrs.DataResourceMode {
+			continue
+		}
+
+		ans, err := g.Ancestors(v)
+		if err != nil {
+			return err
+		}
+
+		// dedupe addrs when there's multiple instances involved, or
+		// multiple paths in the un-reduced graph
+		depMap := map[string]addrs.AbsResource{}
+		for _, d := range ans.List() {
+			var addr addrs.AbsResource
+
+			switch d := d.(type) {
+			case GraphNodeResourceInstance:
+				instAddr := d.ResourceInstanceAddr()
+				addr = instAddr.Resource.Resource.Absolute(instAddr.Module)
+			case GraphNodeResource:
+				addr = d.ResourceAddr()
+			default:
+				continue
+			}
+
+			// Data sources don't need to track destroy dependencies
+			if addr.Resource.Mode == addrs.DataResourceMode {
+				continue
+			}
+
+			if addr.Equal(selfAddr) {
+				continue
+			}
+			depMap[addr.String()] = addr
+		}
+
+		deps := make([]addrs.AbsResource, 0, len(depMap))
+		for _, d := range depMap {
+			deps = append(deps, d)
+		}
+		sort.Slice(deps, func(i, j int) bool {
+			return deps[i].String() < deps[j].String()
+		})
+
+		log.Printf("[TRACE] AttachDependenciesTransformer: %s depends on %s", attacher.ResourceAddr(), deps)
+		attacher.AttachDependencies(deps)
 	}
 
 	return nil
@@ -422,39 +501,6 @@ func ReferencesFromConfig(body hcl.Body, schema *configschema.Block) []*addrs.Re
 	}
 	refs, _ := lang.ReferencesInBlock(body, schema)
 	return refs
-}
-
-// ReferenceFromInterpolatedVar returns the reference from this variable,
-// or an empty string if there is no reference.
-func ReferenceFromInterpolatedVar(v config.InterpolatedVariable) []string {
-	switch v := v.(type) {
-	case *config.ModuleVariable:
-		return []string{fmt.Sprintf("module.%s.output.%s", v.Name, v.Field)}
-	case *config.ResourceVariable:
-		id := v.ResourceId()
-
-		// If we have a multi-reference (splat), then we depend on ALL
-		// resources with this type/name.
-		if v.Multi && v.Index == -1 {
-			return []string{fmt.Sprintf("%s.*", id)}
-		}
-
-		// Otherwise, we depend on a specific index.
-		idx := v.Index
-		if !v.Multi || v.Index == -1 {
-			idx = 0
-		}
-
-		// Depend on the index, as well as "N" which represents the
-		// un-expanded set of resources.
-		return []string{fmt.Sprintf("%s.%d/%s.N", id, idx, id)}
-	case *config.UserVariable:
-		return []string{fmt.Sprintf("var.%s", v.Name)}
-	case *config.LocalVariable:
-		return []string{fmt.Sprintf("local.%s", v.Name)}
-	default:
-		return nil
-	}
 }
 
 // appendResourceDestroyReferences identifies resource and resource instance

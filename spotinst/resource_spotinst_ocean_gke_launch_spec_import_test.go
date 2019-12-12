@@ -3,14 +3,16 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"testing"
+
+	"log"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
 )
 
 //func init() {

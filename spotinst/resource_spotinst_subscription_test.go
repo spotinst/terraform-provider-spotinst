@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"testing"
 )
 
 func createSubscriptionResourceName(name string) string {
@@ -127,10 +128,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_LAUNCH"
-
-  format = {
-		customField        = "first"
-		anotherCustomField = "second"
+  format={
+	customField        = "first"
+	anotherCustomField = "second"
   }
 
   protocol="http"
@@ -143,10 +143,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATE"
-
-  format = {
-		customField        = "first updated"
-		anotherCustomField = "second updated"
+  format={
+	customField        = "first updated"
+	anotherCustomField = "second updated"
   }
 
   protocol="http"
@@ -218,10 +217,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="CANT_SCALE_UP_GROUP_MAX_CAPACITY"
-
-  format = {
-		customField        = "first"
-		anotherCustomField = "second"
+  format={
+	customField        = "first"
+	anotherCustomField = "second"
   }
 
   protocol="https"
@@ -234,10 +232,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="GROUP_UPDATED"
-
-  format = {
-		customField        = "first updated"
-		anotherCustomField = "second updated"
+  format={
+	customField        = "first updated"
+	anotherCustomField = "second updated"
   }
 
   protocol="https"
@@ -309,10 +306,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="GROUP_ROLL_FINISHED"
-
-  format = {
-		customField        = "first"
-		anotherCustomField = "second"
+  format={
+	customField        = "first"
+	anotherCustomField = "second"
   }
 
   protocol="email"
@@ -325,10 +321,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="GROUP_ROLL_FAILED"
-
-  format = {
-		customField        = "first updated"
-		anotherCustomField = "second updated"
+  format={
+	customField        = "first updated"
+	anotherCustomField = "second updated"
   }
 
   protocol="email"
@@ -400,10 +395,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"
-
-  format = {
-		customField        = "first"
-		anotherCustomField = "second"
+  format={
+	customField        = "first"
+	anotherCustomField = "second"
   }
 
   protocol="email-json"
@@ -416,10 +410,9 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATED"
-
-  format = {
-		customField        = "first updated"
-		anotherCustomField = "second updated"
+  format={
+	customField        = "first updated"
+	anotherCustomField = "second updated"
   }
 
   protocol="email-json"

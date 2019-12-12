@@ -2,6 +2,7 @@ package elastigroup_azure_scaling_policies
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"

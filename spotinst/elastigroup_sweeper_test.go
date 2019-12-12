@@ -2,10 +2,11 @@ package spotinst
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
 )
 
 func TestMain(m *testing.M) {

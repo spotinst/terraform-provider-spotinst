@@ -3,6 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
@@ -15,9 +19,6 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_launch_specification"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_strategy"
-	"log"
-	"strings"
-	"time"
 )
 
 func resourceSpotinstOceanECS() *schema.Resource {
@@ -68,6 +69,7 @@ func resourceSpotinstClusterECSCreate(resourceData *schema.ResourceData, meta in
 	log.Printf("===> Cluster created successfully: %s <===", resourceData.Id())
 	return resourceSpotinstClusterECSRead(resourceData, meta)
 }
+
 func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(cluster); err != nil {
 		return nil, err

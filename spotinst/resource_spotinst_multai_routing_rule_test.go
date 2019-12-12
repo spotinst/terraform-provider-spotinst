@@ -3,13 +3,14 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"testing"
 )
 
 func createMultaiRoutingRuleResourceName(name string) string {
@@ -147,16 +148,12 @@ func TestAccSpotinstMultaiRoutingRule_Baseline(t *testing.T) {
 const (
 	RoutingRuleTagsHash_Create = "2538041064"
 	RoutingRuleTagsHash_Update = "1968254376"
-
-	Path_Create = "\"Path(\x60/bar\x60)\""
-	Path_Update = "\"Path(\x60/baz\x60)\""
 )
 
 const testBaselineRoutingRuleConfig_Create = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
   name = "test-acc-foo"
-
   connection_timeouts {
     idle     = 10
     draining = 10
@@ -171,8 +168,7 @@ resource "spotinst_multai_target_set" "foo" {
   protocol      = "http"
   port          = 1338
   weight        = 2
-
-  health_check {
+  health_check = {
     protocol            = "http"
     path                = "/"
     port                = 3001
@@ -182,10 +178,10 @@ resource "spotinst_multai_target_set" "foo" {
     unhealthy_threshold = 3
   }
 
-  tags {
+  tags = [{
    key = "updated"
    value = "updated"
-  }
+  }]
 }
 
 resource "spotinst_multai_listener" "foo" {
@@ -193,42 +189,39 @@ resource "spotinst_multai_listener" "foo" {
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   protocol    = "http"
   port        = 1338
-
-  tags {
+  tags = [{
     key = "prod"
     value = "web"
-  }
+  }]
 }
 
 resource "` + string(commons.MultaiRoutingRuleResourceName) + `" "%v" {
   provider = "%v"
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   listener_id    = "${spotinst_multai_listener.foo.id}"
-  route          = ` + Path_Create + `
+  route          = "Path(\x60/bar\x60)"
   strategy       = "RANDOM"
   //middleware_ids = ["example"]
   target_set_ids = ["${spotinst_multai_target_set.foo.id}"]
 
-  tags {
+  tags = [{
    key = "fakeKey"
    value = "fakeVal"
-  }
+  }]
 }`
 
 const testBaselineRoutingRuleConfig_Update = `
 resource "spotinst_multai_balancer" "foo" {
   provider = "aws"
   name = "test-acc-foo"
-
   connection_timeouts {
     idle     = 10
     draining = 10
   }
-
-  tags {
+  tags = [{
    key = "prod"
    value = "web"
-  }
+  }]
 }
 
 resource "spotinst_multai_target_set" "foo" {
@@ -239,8 +232,7 @@ resource "spotinst_multai_target_set" "foo" {
   protocol      = "http"
   port          = 1338
   weight        = 2
-
-  health_check {
+  health_check = {
     protocol            = "http"
     path                = "/"
     port                = 3001
@@ -250,10 +242,10 @@ resource "spotinst_multai_target_set" "foo" {
     unhealthy_threshold = 3
   }
 
-  tags {
+  tags = [{
    key = "updated"
    value = "updated"
-  }
+  }]
 }
 
 resource "spotinst_multai_listener" "foo" {
@@ -261,23 +253,22 @@ resource "spotinst_multai_listener" "foo" {
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   protocol    = "http"
   port        = 1338
-
-  tags {
+  tags = [{
     key = "prod"
     value = "web"
-  }
+  }]
 }
 
 resource "` + string(commons.MultaiRoutingRuleResourceName) + `" "%v" {
   provider = "%v"
   balancer_id = "${spotinst_multai_balancer.foo.id}"
   listener_id    = "${spotinst_multai_listener.foo.id}"
-  route          = ` + Path_Update + `
+  route          = "Path(\x60/baz\x60)"
   strategy       = "LEASTCONN"
   target_set_ids = ["${spotinst_multai_target_set.foo.id}"]
 
-  tags {
+  tags = [{
    key = "updated"
    value = "updated"
-  }
+  }]
 }`

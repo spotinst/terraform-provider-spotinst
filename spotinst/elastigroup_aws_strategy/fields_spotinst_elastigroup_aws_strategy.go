@@ -2,6 +2,7 @@ package elastigroup_aws_strategy
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -67,8 +68,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if elastigroup.Strategy != nil && elastigroup.Strategy.OnDemandCount != nil {
 				value = elastigroup.Strategy.OnDemandCount
 			}
-			if err := resourceData.Set(string(OnDemandCount), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OnDemandCount), err)
+			if value != nil {
+				if err := resourceData.Set(string(OnDemandCount), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OnDemandCount), err)
+				}
 			}
 			return nil
 		},
@@ -84,10 +87,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var count *int
 			if v, ok := resourceData.GetOkExists(string(OnDemandCount)); ok && v != nil {
-				value := v.(int)
-				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(value))
+				if value, ok := v.(int); ok && value > 0 {
+					count = spotinst.Int(value)
+				}
 			}
+			elastigroup.Strategy.SetOnDemandCount(count)
 			return nil
 		},
 		nil,

@@ -3,6 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
@@ -21,9 +25,6 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_scheduled_task"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_strategy"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_vm_sizes"
-	"log"
-	"strings"
-	"time"
 )
 
 func resourceSpotinstElastigroupAzure() *schema.Resource {

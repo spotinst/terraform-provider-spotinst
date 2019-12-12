@@ -12,7 +12,7 @@ import (
 //            Variables
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
-	ElastigroupAwsResourceName ResourceName = "spotinst_elastigroup_aws"
+	ElastigroupAWSResourceName ResourceName = "spotinst_elastigroup_aws"
 )
 
 var ElastigroupResource *ElastigroupTerraformResource
@@ -37,7 +37,7 @@ type ElastigroupWrapper struct {
 func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupTerraformResource {
 	return &ElastigroupTerraformResource{
 		GenericResource: GenericResource{
-			resourceName: ElastigroupAwsResourceName,
+			resourceName: ElastigroupAWSResourceName,
 			fields:       NewGenericFields(fieldsMap),
 		},
 	}

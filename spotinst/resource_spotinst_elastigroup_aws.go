@@ -25,14 +25,14 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_strategy"
 )
 
-func resourceSpotinstElastigroupAws() *schema.Resource {
+func resourceSpotinstElastigroupAWS() *schema.Resource {
 	setupElastigroupResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstElastigroupAwsCreate,
-		Read:   resourceSpotinstElastigroupAwsRead,
-		Update: resourceSpotinstElastigroupAwsUpdate,
-		Delete: resourceSpotinstElastigroupAwsDelete,
+		Create: resourceSpotinstElastigroupAWSCreate,
+		Read:   resourceSpotinstElastigroupAWSRead,
+		Update: resourceSpotinstElastigroupAWSUpdate,
+		Delete: resourceSpotinstElastigroupAWSDelete,
 
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -62,7 +62,7 @@ func setupElastigroupResource() {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Delete
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func resourceSpotinstElastigroupAwsDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.ElastigroupResource.GetName(), id)
@@ -126,7 +126,7 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 // ErrCodeGroupNotFound for service response error code "GROUP_DOESNT_EXIST".
 const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
 
-func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.ElastigroupResource.GetName(), id)
@@ -166,7 +166,7 @@ func resourceSpotinstElastigroupAwsRead(resourceData *schema.ResourceData, meta 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Create
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupResource.GetName())
 
@@ -197,7 +197,7 @@ func resourceSpotinstElastigroupAwsCreate(resourceData *schema.ResourceData, met
 
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
+	return resourceSpotinstElastigroupAWSRead(resourceData, meta)
 }
 
 func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstClient *Client) (*string, error) {
@@ -207,11 +207,12 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 		log.Printf("===> Group create configuration: %s", json)
 	}
 
-	input := &aws.CreateGroupInput{Group: group}
 	if v, ok := resourceData.Get(string(elastigroup_aws_launch_configuration.IamInstanceProfile)).(string); ok && v != "" {
 		// Wait for IAM instance profile to be ready.
 		time.Sleep(10 * time.Second)
 	}
+	input := &aws.CreateGroupInput{Group: group}
+
 	var resp *aws.CreateGroupOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
 		r, err := spotinstClient.elastigroup.CloudProviderAWS().Create(context.Background(), input)
@@ -242,7 +243,7 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Update
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func resourceSpotinstElastigroupAwsUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.ElastigroupResource.GetName(), id)
@@ -260,7 +261,7 @@ func resourceSpotinstElastigroupAwsUpdate(resourceData *schema.ResourceData, met
 	}
 
 	log.Printf("===> Elastigroup updated successfully: %s <===", id)
-	return resourceSpotinstElastigroupAwsRead(resourceData, meta)
+	return resourceSpotinstElastigroupAWSRead(resourceData, meta)
 }
 
 func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {

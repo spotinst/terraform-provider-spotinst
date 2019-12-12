@@ -26,11 +26,16 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			string(commons.ElastigroupAwsResourceName):           resourceSpotinstElastigroupAws(),
-			string(commons.ElastigroupGCPResourceName):           resourceSpotinstElastigroupGCP(),
-			string(commons.ElastigroupGKEResourceName):           resourceSpotinstElastigroupGKE(),
-			string(commons.SubscriptionResourceName):             resourceSpotinstSubscription(),
-			string(commons.ElastigroupAWSBeanstalkResourceName):  resourceSpotinstElastigroupAWSBeanstalk(),
+			// Elastigroup.
+			string(commons.ElastigroupAWSResourceName):          resourceSpotinstElastigroupAWS(),
+			string(commons.ElastigroupGCPResourceName):          resourceSpotinstElastigroupGCP(),
+			string(commons.ElastigroupGKEResourceName):          resourceSpotinstElastigroupGKE(),
+			string(commons.ElastigroupAWSBeanstalkResourceName): resourceSpotinstElastigroupAWSBeanstalk(),
+			string(commons.ElastigroupAzureResourceName):        resourceSpotinstElastigroupAzure(),
+			string(commons.SubscriptionResourceName):            resourceSpotinstSubscription(),
+			string(commons.MRScalerAWSResourceName):             resourceSpotinstMRScalerAWS(),
+
+			// Ocean.
 			string(commons.OceanAWSResourceName):                 resourceSpotinstOceanAWS(),
 			string(commons.OceanAWSLaunchSpecResourceName):       resourceSpotinstOceanAWSLaunchSpec(),
 			string(commons.OceanGKEImportResourceName):           resourceSpotinstOceanGKEImport(),
@@ -38,14 +43,17 @@ func Provider() terraform.ResourceProvider {
 			string(commons.OceanGKELaunchSpecImportResourceName): resourceSpotinstOceanGKELaunchSpecImport(),
 			string(commons.OceanECSResourceName):                 resourceSpotinstOceanECS(),
 			string(commons.OceanECSLaunchSpecResourceName):       resourceSpotinstOceanECSLaunchSpec(),
-			string(commons.ElastigroupAzureResourceName):         resourceSpotinstElastigroupAzure(),
-			string(commons.MRScalerAWSResourceName):              resourceSpotinstMRScalerAWS(),
-			string(commons.MultaiBalancerResourceName):           resourceSpotinstMultaiBalancer(),
-			string(commons.MultaiDeploymentResourceName):         resourceSpotinstMultaiDeployment(),
-			string(commons.MultaiListenerResourceName):           resourceSpotinstMultaiListener(),
-			string(commons.MultaiRoutingRuleResourceName):        resourceSpotinstMultaiRoutingRule(),
-			string(commons.MultaiTargetResourceName):             resourceSpotinstMultaiTarget(),
-			string(commons.MultaiTargetSetResourceName):          resourceSpotinstMultaiTargetSet(),
+
+			// Multai.
+			string(commons.MultaiBalancerResourceName):    resourceSpotinstMultaiBalancer(),
+			string(commons.MultaiDeploymentResourceName):  resourceSpotinstMultaiDeployment(),
+			string(commons.MultaiListenerResourceName):    resourceSpotinstMultaiListener(),
+			string(commons.MultaiRoutingRuleResourceName): resourceSpotinstMultaiRoutingRule(),
+			string(commons.MultaiTargetResourceName):      resourceSpotinstMultaiTarget(),
+			string(commons.MultaiTargetSetResourceName):   resourceSpotinstMultaiTargetSet(),
+
+			// Managed Instance.
+			string(commons.ManagedInstanceAWSResourceName): resourceSpotinstMangedInstanceAWS(),
 		},
 
 		ConfigureFunc: providerConfigure,

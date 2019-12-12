@@ -2,9 +2,10 @@ package commons
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
-	"log"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -50,6 +51,7 @@ func (res *ElastigroupAWSBeanstalkTerraformResource) OnCreate(
 
 	buildEmptyElastigroupCapacity(importedGroup)
 	buildEmptyElastigroupInstanceTypes(importedGroup)
+	buildEmptyElastigroupScheduling(importedGroup)
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -168,6 +170,12 @@ func (egWrapper *ElastigroupAWSBeanstalkWrapper) SetElastigroupAWSBeanstalk(elas
 func buildEmptyElastigroupCompute(group *aws.Group) {
 	if group != nil && group.Compute == nil {
 		group.SetCompute(&aws.Compute{})
+	}
+}
+
+func buildEmptyElastigroupScheduling(group *aws.Group) {
+	if group != nil && group.Scheduling == nil {
+		group.SetScheduling(&aws.Scheduling{})
 	}
 }
 

@@ -2,11 +2,12 @@ package elastigroup_gcp_scheduled_task
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"strconv"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

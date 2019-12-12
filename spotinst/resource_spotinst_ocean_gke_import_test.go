@@ -3,15 +3,17 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"strings"
 	"testing"
+
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+
+	"log"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
 )
 
 var GcpClusterName = "terraform-acc-tests-do-not-delete"
@@ -201,9 +203,9 @@ const testBaselineOceanGKEImportConfig_Update = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
- //min_size = 0
- //max_size = 1
- //desired_capacity = 0
+ //min_size 			= 0
+ //max_size 			= 1
+ //desired_capacity 	= 0
  cluster_name = "terraform-acc-tests-do-not-delete"
  location     = "us-central1-a"
 
@@ -274,17 +276,18 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
 
  whitelist = ["n1-standard-1", "n1-standard-2"]
 
-  backend_services {
+  backend_services = [
+    {
       service_name = "terraform-acc-test-backend-service"
       location_type = "global"
 
-      named_ports {
+      named_ports = {
         name = "http"
         ports = [
           80,
           8080]
       }
-    }
+    }]
 }
 
 `
@@ -298,15 +301,16 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
 
  whitelist = ["n1-standard-1", "n1-standard-2"]
 
-  backend_services {
+  backend_services = [
+    {
       service_name = "terraform-acc-test-backend-service"
       location_type = "global"
 
-      named_ports {
+      named_ports = {
         name = "https"
         ports = [443]
       }
-    }
+    }]
 }
 
 `

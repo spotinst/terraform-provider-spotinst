@@ -3,6 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
@@ -15,9 +19,6 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_scaling_policies"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_scheduled_task"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
-	"log"
-	"strings"
-	"time"
 )
 
 func resourceSpotinstMRScalerAWS() *schema.Resource {

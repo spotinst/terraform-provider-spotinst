@@ -20,6 +20,7 @@ type LaunchSpec struct {
 	ImageID            *string             `json:"imageId,omitempty"`
 	UserData           *string             `json:"userData,omitempty"`
 	SecurityGroupIDs   []string            `json:"securityGroupIds,omitempty"`
+	SubnetIDs          []string            `json:"subnetIds,omitempty"`
 	IAMInstanceProfile *IAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
 	Labels             []*Label            `json:"labels,omitempty"`
 	Taints             []*Taint            `json:"taints,omitempty"`
@@ -325,6 +326,13 @@ func (o *LaunchSpec) SetUserData(v *string) *LaunchSpec {
 func (o *LaunchSpec) SetSecurityGroupIDs(v []string) *LaunchSpec {
 	if o.SecurityGroupIDs = v; o.SecurityGroupIDs == nil {
 		o.nullFields = append(o.nullFields, "SecurityGroupIDs")
+	}
+	return o
+}
+
+func (o *LaunchSpec) SetSubnetIDs(v []string) *LaunchSpec {
+	if o.SubnetIDs = v; o.SubnetIDs == nil {
+		o.nullFields = append(o.nullFields, "SubnetIDs")
 	}
 	return o
 }

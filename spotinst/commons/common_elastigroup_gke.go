@@ -2,9 +2,10 @@ package commons
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
-	"log"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

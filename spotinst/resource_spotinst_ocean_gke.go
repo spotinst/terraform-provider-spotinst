@@ -3,6 +3,9 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
@@ -14,8 +17,6 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_network_interface"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_strategy"
-	"log"
-	"time"
 )
 
 func resourceSpotinstOceanGKE() *schema.Resource {
