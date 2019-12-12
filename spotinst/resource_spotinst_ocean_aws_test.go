@@ -105,7 +105,6 @@ type ClusterConfigMetadata struct {
 	clusterName          string
 	controllerClusterID  string
 	instanceWhitelist    string
-	instanceBlacklist    string
 	launchConfig         string
 	strategy             string
 	variables            string
@@ -255,7 +254,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 // endregion
 
 // region OceanAWS: Instance Types Whitelist
-func TestAccSpotinstOceanAWS_InstanceTypesLists(t *testing.T) {
+func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
 	clusterName := "test-acc-cluster-instance-types-whitelist"
 	controllerClusterID := "whitelist-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
@@ -304,36 +303,6 @@ func TestAccSpotinstOceanAWS_InstanceTypesLists(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.1", "m1.small"),
-				),
-			},
-			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:         clusterName,
-					controllerClusterID: controllerClusterID,
-					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanAWSExists(&cluster, resourceName),
-					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
-				),
-			},
-			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:         clusterName,
-					controllerClusterID: controllerClusterID,
-					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_EmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanAWSExists(&cluster, resourceName),
-					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "0"),
 				),
 			},
 		},
@@ -349,15 +318,6 @@ const testInstanceTypesWhitelistAWSConfig_Update = `
 `
 
 const testInstanceTypesWhitelistAWSConfig_EmptyFields = `
-blacklist = ["t1.micro", "m1.small"] 
-`
-
-const testInstanceTypesBlacklistAWSConfig_Update = `
-blacklist = ["t1.micro"] 
-`
-
-const testInstanceTypesBlacklistAWSConfig_EmptyFields = `
-
 `
 
 // endregion
@@ -467,21 +427,20 @@ const testLaunchConfigAWSConfig_Create = `
   monitoring                  = true
   ebs_optimized               = true
 
-  load_balancers = [
-    {
-	  arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
+  load_balancers {
+     arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
       type = "TARGET_GROUP"
-    },
-    {
+    }
+
+	load_balancers {
       name = "AntonK"
       type = "CLASSIC"
     }
-  ]
 
-  tags = [{
+  tags {
     key   = "fakeKey"
     value = "fakeValue"
-  }]
+  }
  // ---------------------------------------
 `
 
@@ -497,21 +456,19 @@ const testLaunchConfigAWSConfig_Update = `
   monitoring                  = false
   ebs_optimized               = false
 
-  load_balancers = [
-    {
-	  arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
+  load_balancers {
+      arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
       type = "TARGET_GROUP"
-    },
-    {
-      name = "AntonK"
-      type = "CLASSIC"
     }
-  ]
+	load_balancers {
+		name = "AntonK"
+		type = "CLASSIC"
+	}
 
-  tags = [{
+  tags {
     key   = "fakeKeyUpdated"
     value = "fakeValueUpdated"
-  }]
+  }
  // ---------------------------------------
 `
 
@@ -638,7 +595,6 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_cooldown", "300"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.evaluation_periods", "300"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.max_scale_down_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "1"),
@@ -665,7 +621,6 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_cooldown", "600"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.evaluation_periods", "600"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.max_scale_down_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.cpu_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "2"),
@@ -709,25 +664,23 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 
 const testScalingConfig_Create = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 1024
       gpu_per_unit    = 1
       memory_per_unit = 512
       num_of_units    = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
-      max_scale_down_percentage = 50  
-
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 1024
       max_memory_gib = 20
     }
@@ -738,25 +691,23 @@ const testScalingConfig_Create = `
 
 const testScalingConfig_Update = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled     = true
     autoscale_is_auto_config = true
     autoscale_cooldown       = 600
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit    = 512
       gpu_per_unit    = 2
       memory_per_unit = 1024
       num_of_units    = 4
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 600
-      max_scale_down_percentage = 10
-
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu       = 512
       max_memory_gib = 30
     }
@@ -766,22 +717,22 @@ const testScalingConfig_Update = `
 
 const testScalingConfig_EmptyFields = `
  // --- AUTOSCALER -----------------
- autoscaler = {
+ autoscaler {
     autoscale_is_enabled = false
     autoscale_is_auto_config = false
     autoscale_cooldown = 300
 
-    autoscale_headroom = {
+    autoscale_headroom {
       cpu_per_unit = 1024
       memory_per_unit = 512
       num_of_units = 2
     }
 
-    autoscale_down = {
+    autoscale_down {
       evaluation_periods = 300
     }
 
-    resource_limits = {
+    resource_limits {
       max_vcpu   = 1024
       max_memory_gib = 20
     }
@@ -858,9 +809,10 @@ const testUpdatePolicyAWSClusterConfig_Create = `
  spot_percentage = 100
 
  // --- UPDATE POLICY ----------------
-  update_policy = {
+  update_policy {
     should_roll = false
-    roll_config = {
+
+    roll_config {
       batch_size_percentage = 33
     }
   }
@@ -871,9 +823,10 @@ const testUpdatePolicyAWSClusterConfig_Update = `
  spot_percentage = 50
 
  // --- UPDATE POLICY ----------------
-  update_policy = {
+  update_policy {
     should_roll = true
-    roll_config = {
+
+    roll_config {
       batch_size_percentage = 66
     }
   }

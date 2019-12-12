@@ -123,7 +123,6 @@ func createOceanECSLaunchSpecTerraform(lscm *ECSLaunchSpecConfigMetadata, format
 	 account = "fake"
 	}
 	`
-
 	format := formatToUse
 
 	if lscm.updateBaselineFields {
@@ -215,10 +214,10 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
   iam_instance_profile = "ecsInstanceRole"
 
-  attributes = [{
+  attributes {
     key = "key"
     value = "value"
-  }]
+  }
  %v
 }
 `
@@ -233,14 +232,15 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-082b5a644766e0e6f"
   iam_instance_profile = "ecsInstanceRole"
 
-  attributes = [{
+  attributes {
     key = "key"
     value = "value"
-  },
-  {
-	key = "key2"
-	value = "value2"
-  }]
+  }
+  
+  attributes {
+  	key = "key2"
+  	value = "value2"
+  }
 
 %v
 }
@@ -262,13 +262,13 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{oceanID: oceanID,
-					name: launchSpecName,
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID: oceanID,
+					name:    launchSpecName,
 				}, testAutoScaleOceanECSLaunchSpecConfig_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
@@ -279,13 +279,13 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{oceanID: oceanID,
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID:              oceanID,
 					name:                 launchSpecName,
 					updateBaselineFields: true}, testAutoScaleOceanECSLaunchSpecConfig_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
@@ -293,13 +293,13 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{oceanID: oceanID,
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID:              oceanID,
 					name:                 launchSpecName,
 					updateBaselineFields: true}, testAutoScaleOceanECSLaunchSpecConfig_Delete),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
 				),
 			},
@@ -309,27 +309,26 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 
 const testAutoScaleOceanECSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
- provider = "%v"  
- name = "%v"
- ocean_id = "%v"  
+  provider = "%v"  
+  name = "%v"
+  ocean_id = "%v"
 
- user_data = "hello world"
- image_id = "ami-082b5a644766e0e6f"
- security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
- iam_instance_profile = "ecsInstanceRole"
+  user_data = "hello world"
+  image_id = "ami-082b5a644766e0e6f"
+  security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
+  iam_instance_profile = "ecsInstanceRole"
 
- autoscale_headrooms = [
-   {
-     cpu_per_unit = 1024
-     memory_per_unit = 512
-     num_of_units = 1
-   },
-   {
-     cpu_per_unit = 1024
-     memory_per_unit = 256
-     num_of_units = 1
-   }
-  ]
+  autoscale_headrooms {
+    cpu_per_unit = 1024
+    memory_per_unit = 512
+    num_of_units = 1
+  }
+    
+  autoscale_headrooms {
+    cpu_per_unit = 1024
+    memory_per_unit = 256
+    num_of_units = 1
+  }
 %v
 }
 
@@ -337,38 +336,38 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
 
 const testAutoScaleOceanECSLaunchSpecConfig_Update = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
- provider = "%v"  
- name = "%v"
- ocean_id = "%v"
-
- user_data = "hello world"
- image_id = "ami-082b5a644766e0e6f"
- security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
- iam_instance_profile = "ecsInstanceRole"
-
- autoscale_headrooms = [
-   {
-     cpu_per_unit = 1024
-     memory_per_unit = 512
-     num_of_units = 1
-   }
-  ]
+  provider = "%v"  
+  name = "%v"
+  ocean_id = "%v"
+  
+  user_data = "hello world"
+  image_id = "ami-082b5a644766e0e6f"
+  security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
+  iam_instance_profile = "ecsInstanceRole"
+  
+  autoscale_headrooms {
+    cpu_per_unit = 1024
+    memory_per_unit = 512
+    num_of_units = 1
+  }
 %v
+
 }
 
 `
 
 const testAutoScaleOceanECSLaunchSpecConfig_Delete = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
- provider = "%v"  
- name = "%v"
- ocean_id = "%v"  
-
- user_data = "hello world"
- image_id = "ami-082b5a644766e0e6f"
- security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
- iam_instance_profile = "ecsInstanceRole"
+  provider = "%v"  
+  name = "%v"
+  ocean_id = "%v"  
+  
+  user_data = "hello world"
+  image_id = "ami-082b5a644766e0e6f"
+  security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
+  iam_instance_profile = "ecsInstanceRole"
 %v
+
 }
 
 `

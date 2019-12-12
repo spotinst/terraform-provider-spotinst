@@ -321,8 +321,6 @@ const testInstanceTypesWhitelistECSConfig_Update = `
 const testInstanceTypesWhitelistECSConfig_EmptyFields = `
 `
 
-// endregion
-
 // region OceanECS: Launch Specification
 func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 	name := "test-acc-cluster-launch-spec"
@@ -485,19 +483,19 @@ func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
 
 const testScalerConfig_Create = `
 // --- AUTOSCALER -----------------
-autoscaler = {
+autoscaler {
  cooldown = 180
- headroom = {
+ headroom {
    cpu_per_unit = 1024
    memory_per_unit = 512
    num_of_units = 3
- }
- down = {
+ } 
+ down {
    max_scale_down_percentage = 10
  }
  is_auto_config = true
  is_enabled = true
- resource_limits = {
+ resource_limits {
    max_vcpu = 2
    max_memory_gib = 1
  }
@@ -507,19 +505,19 @@ autoscaler = {
 
 const testScalerConfig_Update = `
 // --- AUTOSCALER -----------------
-autoscaler = {
+autoscaler {
  cooldown = 240
- headroom = {
+ headroom {
    cpu_per_unit = 512
    memory_per_unit = 1024
    num_of_units = 1
  }
- down = {
+ down {
    max_scale_down_percentage = 20
  }
  is_auto_config = false
  is_enabled = false
- resource_limits = {
+ resource_limits {
    max_vcpu = 1
    max_memory_gib = 2
  }
@@ -529,7 +527,7 @@ autoscaler = {
 
 const testScalerConfig_EmptyFields = `
 // --- AUTOSCALER -----------------
-autoscaler = {
+autoscaler {
  is_enabled = false
  is_auto_config = false
  cooldown = 300
@@ -679,9 +677,9 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 
 const testUpdatePolicyECSClusterConfig_Create = `
 // --- UPDATE POLICY ----------------
-update_policy = {
+update_policy {
  should_roll = false
- roll_config = {
+ roll_config {
    batch_size_percentage = 33
  }
 }
@@ -690,9 +688,9 @@ update_policy = {
 
 const testUpdatePolicyECSClusterConfig_Update = `
 // --- UPDATE POLICY ----------------
-update_policy = {
+update_policy {
  should_roll = true
- roll_config = {
+ roll_config {
    batch_size_percentage = 66
  }
 }

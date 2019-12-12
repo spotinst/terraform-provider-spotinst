@@ -325,7 +325,7 @@ const managedInstanceStrategy_Create = `
  fall_back_to_od = "false"
  utilize_reserved_instances = "false"
  optimization_windows = ["Mon:03:00-Wed:02:20"]
- revert_to_spot = {   
+ revert_to_spot {   
   perform_at = "never"
  }
 `
@@ -337,69 +337,9 @@ const managedInstanceStrategy_Update = `
  fall_back_to_od = "true"
  utilize_reserved_instances = "true"
  optimization_windows = ["Mon:03:30-Wed:02:30", "Mon:00:30-Wed:01:30"]
- revert_to_spot = { 
+ revert_to_spot { 
  perform_at = "always"
 }
-`
-
-// endregion
-// region managedInstance: persistence
-func TestAccSpotinstManagedInstancePersistence(t *testing.T) {
-	name := "test-acc-cluster-managed-instance-persistence"
-	resourceName := createManagedInstanceAWSResourceName(name)
-
-	var cluster aws.ManagedInstance
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testManagedInstanceAWSDestroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createManagedInstanceTerraform(&ManagedInstanceConfigMetadata{
-					name:           name,
-					fieldsToAppend: managedInstancePersistence_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckManagedInstanceAWSExists(&cluster, resourceName),
-					testCheckManagedInstanceAWSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "persist_private_ip", "true"),
-					resource.TestCheckResourceAttr(resourceName, "persist_block_devices", "true"),
-					resource.TestCheckResourceAttr(resourceName, "persist_root_device", "false"),
-					resource.TestCheckResourceAttr(resourceName, "block_devices_mode", "reattach"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createManagedInstanceTerraform(&ManagedInstanceConfigMetadata{
-					name:           name,
-					fieldsToAppend: managedInstancePersistence_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckManagedInstanceAWSExists(&cluster, resourceName),
-					testCheckManagedInstanceAWSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "persist_private_ip", "false"),
-					resource.TestCheckResourceAttr(resourceName, "persist_block_devices", "true"),
-					resource.TestCheckResourceAttr(resourceName, "persist_root_device", "true"),
-					resource.TestCheckResourceAttr(resourceName, "block_devices_mode", "onLaunch"),
-				),
-			},
-		},
-	})
-}
-
-const managedInstancePersistence_Create = `
-  persist_private_ip = "true"
-  persist_block_devices = "true"
-  persist_root_device = "false"
-  block_devices_mode = "reattach"
-`
-
-const managedInstancePersistence_Update = `
-  persist_private_ip = "false"
-  persist_block_devices = "true"
-  persist_root_device = "true"
-  block_devices_mode = "onLaunch"
 `
 
 // endregion
@@ -552,26 +492,26 @@ placement_tenancy = "default"
 iam_instance_profile = "ecsInstanceRole"
 security_group_ids = ["sg-1a29b065","sg-5750fb2f"]
 key_pair = "TamirKeyPair"
- tags = [
-   {
-     key = "explicit1"
-     value = "value1"
-   },
-   {
-     key = "explicit2"
-     value = "value2"
-   }
- ]
+
+  tags {
+    key = "explicit1"
+    value = "value1"
+  }
+
+  tags {
+    key = "explicit2"
+    value = "value2"
+  }
+ 
  user_data = "echo hello world"
  shutdown_script      = "echo goodbye world"
  cpu_credits          = "standard"
 
-network_interface = [{
+network_interface {
    device_index = 0
    associate_public_ip_address = "false"
    associate_ipv6_address = "false"
    }
- ]
 
 `
 
@@ -585,22 +525,22 @@ placement_tenancy = "dedicated"
 iam_instance_profile = "ecsInstanceRole"
 security_group_ids = ["sg-1a29b065"]
 key_pair = "my-key.ssh" 
-  tags = [
-   {
+
+  tags {
      key = "explicit1-update"
      value = "value1-update"
    }
- ]
+ 
  user_data = "echo hello world updated"
  shutdown_script      = "echo goodbye world updated"
  cpu_credits          = "unlimited"
 
-network_interface = [{
+network_interface {
    device_index = 1
    associate_public_ip_address = "true"
    associate_ipv6_address = "true"
    }
- ]
+ 
 
 `
 
@@ -681,30 +621,30 @@ func TestAccSpotinstManagedInstanceScheduling(t *testing.T) {
 }
 
 const managedInstanceScheduling_Create = `
-  scheduled_task = [{
+  scheduled_task {
     task_type             = "pause"
     frequency             = "hourly"
     is_enabled            = "true"
-  }]
+  }
 `
 
 const managedInstanceScheduling_Update = `
 
-  scheduled_task = [{
+  scheduled_task {
     task_type             = "pause"
     cron_expression       = "cron"
     is_enabled            = "true"
-  }]
+  }
 `
 
 const managedInstanceScheduling_Update2 = `
 
-    scheduled_task = [{
+  scheduled_task {
       task_type             = "resume"
       start_time = "2019-11-20T23:59:59Z"
        frequency             = "hourly"
       is_enabled            = "true"
-    }]
+    }
 `
 const managedInstanceScheduling_EmptyFields = `
  // --- SCHEDULED TASK ------------------
@@ -787,55 +727,49 @@ func TestAccSpotinstManagedInstanceIntegrationsRoute53(t *testing.T) {
 
 const managedInstanceIntegrations_route53_Create = `
 // --- INTEGRATION: ROUTE53 ----------
-integration_route53 = {
-	domains = [
-		{
+integration_route53 {
+	domains {
 			hosted_zone_id   = "id_create"
             spotinst_acct_id = "act-123456"
-			record_sets = {
+			record_sets  {
 				name = "test_create"
 				use_public_ip = false
 			}
 		}
-	]
+	
 }
 // ------------------------------------
 `
 
 const managedInstanceIntegrations_route53_Update = `
 // --- INTEGRATION: ROUTE53 ----------
-integration_route53 = {
-	domains = [
-		{
-			hosted_zone_id = "id_update"
-			record_sets = [
-				{
-					name = "test_update"
-					use_public_ip = true
-				},
-				{
-					name = "test_update_two"
-					use_public_ip = false
-				},
-				{
-					name = "test_update_three"
-					use_public_ip = false
-				},
-			]
-		},
-		{
-			hosted_zone_id = "new_domain_on_update"
-			record_sets = [
-				{
-					name = "new_set"
-					use_public_ip = true
-				},
-				{
-					name = "test_update_default_ip"
-				},
-			]
-		},
-	]
+integration_route53 {
+	domains {
+		hosted_zone_id = "id_update"
+		record_sets {
+			name = "test_update"
+			use_public_ip = true
+		}
+		record_sets {
+			name = "test_update_two"
+			use_public_ip = false
+		}
+		record_sets {
+			name = "test_update_three"
+			use_public_ip = false
+		}
+	}
+
+	domains {
+		hosted_zone_id = "new_domain_on_update"
+		record_sets {
+			name = "new_set"
+			use_public_ip = true
+		}
+		record_sets {
+			name = "test_update_default_ip"
+		}
+	}
 }
 // ------------------------------------
 `
@@ -925,37 +859,34 @@ func TestAccSpotinstManagedInstanceIntegrationsLoadBalancers(t *testing.T) {
 
 const managedInstanceIntegrations_Load_Balancers_Create = `
 // --- INTEGRATION: Load_Balancers ----------
-  load_balancers = [
-    {
+  load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
       name = "test_name"
       type = "TARGET_GROUP"
-	}]
+	}
 // ------------------------------------
 `
 
 const managedInstanceIntegrations_Load_Balancers_Update = `
 // --- INTEGRATION: load_balancers ----------
-  load_balancers = [
-    {
+  load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
       type = "MULTAI_TARGET_SET"
       balancer_id   = "lb-1ee2e3q"
       target_set_id = "ts-3eq"
-    }]
+    }
 // ------------------------------------
 `
 const managedInstanceIntegrations_Load_Balancers_Update2 = `
 // --- INTEGRATION: load_balancers ----------
-  load_balancers = [
-    {
+  load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
       type = "MULTAI_TARGET_SET"
       balancer_id   = "lb-1ee2e3q"
       target_set_id = "ts-3eq"
       auto_weight   = "true"
       az_awareness = "true"
-    }]
+    }
 // ------------------------------------
 `
 
