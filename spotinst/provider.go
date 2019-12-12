@@ -1,14 +1,14 @@
 package spotinst
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
-	return &schema.Provider{
+	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			string(commons.ProviderToken): {
 				Type:     schema.TypeString,
@@ -55,18 +55,27 @@ func Provider() terraform.ResourceProvider {
 			// Managed Instance.
 			string(commons.ManagedInstanceAWSResourceName): resourceSpotinstMangedInstanceAWS(),
 		},
-
-		ConfigureFunc: providerConfigure,
 	}
+
+	p.ConfigureFunc = func(d *schema.ResourceData) (interface{}, error) {
+		terraformVersion := p.TerraformVersion
+		if terraformVersion == "" {
+			// Terraform 0.12 introduced this field to the protocol
+			// We can therefore assume that if it's missing it's 0.10 or 0.11
+			terraformVersion = "0.11+compatible"
+		}
+		return providerConfigure(d, terraformVersion)
+	}
+
+	return p
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, error) {
 	config := Config{
-		Token:   d.Get(string(commons.ProviderToken)).(string),
-		Account: d.Get(string(commons.ProviderAccount)).(string),
+		Token:            d.Get(string(commons.ProviderToken)).(string),
+		Account:          d.Get(string(commons.ProviderAccount)).(string),
+		terraformVersion: terraformVersion,
 	}
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
+
 	return config.Client()
 }

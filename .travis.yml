@@ -1,31 +1,33 @@
-dist: trusty
+dist: xenial
 sudo: required
 services:
-- docker
+  - docker
 language: go
-go_import_path: github.com/terraform-providers/terraform-provider-spotinst
-go:
-  - "1.11.x"
 
-install:
-# This script is used by the Travis build to install a cookie for
-# go.googlesource.com so rate limits are higher when using `go get` to fetch
-# packages that live there.
-# See: https://github.com/golang/go/issues/12933
-- bash scripts/gogetcookie.sh
+env:
+  global: GOFLAGS=-mod=vendor
 
-script:
-- make test
-- if [ $TRAVIS_REPO_SLUG != "terraform-providers/terraform-provider-spotinst" ]; then make testacc spotinst; fi
-- make vet
-- make website-test
-
-branches:
-  only:
-  - master
 matrix:
   fast_finish: true
   allow_failures:
-  - go: tip
-env:
-  - GOFLAGS=-mod=vendor GO111MODULE=on
+    - go: tip
+  include:
+    - go: "1.13.x"
+      name: "Code Lint"
+      script: make lint
+    - go: "1.13.x"
+      name: "Code UnitTest"
+      script: make test
+    - go: "1.13.x"
+      name: "Website"
+      script:
+        - make docscheck
+        - make website-test
+        - make website-lint
+
+install:
+  - make tools
+
+branches:
+  only:
+    - master
