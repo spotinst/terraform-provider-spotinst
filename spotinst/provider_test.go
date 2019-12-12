@@ -62,9 +62,6 @@ func providerConfigureGCP(d *schema.ResourceData) (interface{}, error) {
 		Account: string(os.Getenv("SPOTINST_ACCOUNT_GCP")),
 	}
 
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
 	return config.Client()
 }
 
@@ -74,9 +71,6 @@ func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
 		Account: string(os.Getenv("SPOTINST_ACCOUNT_AWS")),
 	}
 
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
 	return config.Client()
 }
 
@@ -86,8 +80,5 @@ func providerConfigureAzure(d *schema.ResourceData) (interface{}, error) {
 		Account: string(os.Getenv("SPOTINST_ACCOUNT_AZURE")),
 	}
 
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
 	return config.Client()
 }
