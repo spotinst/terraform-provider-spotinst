@@ -128,9 +128,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_LAUNCH"
-  format={
-	customField        = "first"
-	anotherCustomField = "second"
+
+  format = {
+		customField        = "first"
+		anotherCustomField = "second"
   }
 
   protocol="http"
@@ -143,9 +144,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATE"
-  format={
-	customField        = "first updated"
-	anotherCustomField = "second updated"
+
+  format = {
+		customField        = "first updated"
+		anotherCustomField = "second updated"
   }
 
   protocol="http"
@@ -217,9 +219,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="CANT_SCALE_UP_GROUP_MAX_CAPACITY"
-  format={
-	customField        = "first"
-	anotherCustomField = "second"
+
+  format = {
+		customField        = "first"
+		anotherCustomField = "second"
   }
 
   protocol="https"
@@ -232,9 +235,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="GROUP_UPDATED"
-  format={
-	customField        = "first updated"
-	anotherCustomField = "second updated"
+
+  format = {
+		customField        = "first updated"
+		anotherCustomField = "second updated"
   }
 
   protocol="https"
@@ -306,9 +310,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="GROUP_ROLL_FINISHED"
-  format={
-	customField        = "first"
-	anotherCustomField = "second"
+
+  format = {
+		customField        = "first"
+		anotherCustomField = "second"
   }
 
   protocol="email"
@@ -321,9 +326,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="GROUP_ROLL_FAILED"
-  format={
-	customField        = "first updated"
-	anotherCustomField = "second updated"
+
+  format = {
+		customField        = "first updated"
+		anotherCustomField = "second updated"
   }
 
   protocol="email"
@@ -395,9 +401,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"
-  format={
-	customField        = "first"
-	anotherCustomField = "second"
+
+  format = {
+		customField        = "first"
+		anotherCustomField = "second"
   }
 
   protocol="email-json"
@@ -410,9 +417,10 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
   provider = "aws"
   resource_id="%v"
   event_type="AWS_EC2_INSTANCE_TERMINATED"
-  format={
-	customField        = "first updated"
-	anotherCustomField = "second updated"
+
+  format = {
+		customField        = "first updated"
+		anotherCustomField = "second updated"
   }
 
   protocol="email-json"
