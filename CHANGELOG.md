@@ -12,7 +12,6 @@ FEATURES:
 * resource/spotinst_ocean_gke_launch_spec: added `autoscale_headrooms`
 * resource/spotinst_ocean_aws_launch_spec: added `subnet_ids`
 * resource/spotinst_ocean_aws: added `max_scale_down_percentage`
-* resource/spotinst_elastigroup_aws_beanstalk: added `scheduled_task`
 
 BUG FIXES:
 * resource/spotinst_ocean_aws: resolved errors with `blacklist`.
