@@ -168,6 +168,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
 * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
 * `autoscale_down` - (Optional) Auto Scaling scale down operations.
+* `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
 * `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
 * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
 * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
@@ -188,6 +189,7 @@ whitelist = ["t1.micro", "m1.small"]
 
     autoscale_down {
       evaluation_periods = 300
+      max_scale_down_percentage = 10
     }
 
     resource_limits {
