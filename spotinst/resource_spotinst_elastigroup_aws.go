@@ -359,7 +359,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 
 							if err != nil {
 
-								// checks whether to retry role
+								// checks whether to retry roll
 								if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 									for _, err := range errs {
 										if strings.Contains(err.Code, "CANT_ROLL_CAPACITY_BELOW_MINIMUM") {
@@ -374,7 +374,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 
 							awaitErr := awaitReadyRoll(groupId, rollConfig, rollOut, meta.(*Client))
 							if awaitErr != nil {
-								waitErr := fmt.Errorf("[ERROR] Timed out when waiting for minimum roll %%: %s", err)
+								waitErr := fmt.Errorf("[ERROR] Timed out when waiting for minimum roll %%: %s", awaitErr)
 								return resource.NonRetryableError(waitErr)
 							} else {
 								log.Printf("onRoll() -> Successfully rolled group [%v]", groupId)
