@@ -1252,6 +1252,31 @@ func (s *ServiceOp) DeploymentStatus(ctx context.Context, input *DeploymentStatu
 	return &RollGroupOutput{deployments}, nil
 }
 
+func (s *ServiceOp) DeploymentStatusECS(ctx context.Context, input *DeploymentStatusInput) (*RollGroupOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/clusterRoll/{rollId}", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+		"rollId":  spotinst.StringValue(input.RollID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	deployments, err := deploymentStatusFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &RollGroupOutput{deployments}, nil
+}
+
 func (s *ServiceOp) StopDeployment(ctx context.Context, input *StopDeploymentInput) (*StopDeploymentOutput, error) {
 	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/roll/{rollId}", uritemplates.Values{
 		"groupId": spotinst.StringValue(input.GroupID),
