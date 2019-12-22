@@ -389,7 +389,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		// Wait for the roll completion.
 		err = awaitReadyRoll(ctx, groupID, rollConfig, rollOut, meta.(*Client))
 		if err != nil {
-			err = fmt.Errorf("[ERROR] Timed out when waiting for minimum roll percentage: %v", err) //todo sali change the log
+			err = fmt.Errorf("[ERROR] Timed out when waiting for minimum roll percentage: %v", err)
 			return resource.NonRetryableError(err)
 		}
 
