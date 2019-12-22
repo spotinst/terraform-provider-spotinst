@@ -1,3 +1,8 @@
+## 1.14.1 (Unreleased)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `IntegrationEcs - roll_config`.
+
 ## 1.14.0 (Unreleased)
 
 NOTES:
