@@ -177,6 +177,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.effect", "NoSchedule"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 				),
 			},
 			{
@@ -202,6 +203,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 				),
 			},
 		},
@@ -218,6 +220,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world"
   iam_instance_profile = "test"
   subnet_ids = ["subnet-7f3fbf06"]
+  root_volume_size = 20
   
   labels {
     key = "label key"
@@ -244,6 +247,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   iam_instance_profile = "updated"
   subnet_ids = ["subnet-7f3fbf06", "subnet-03b7ed5b"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
+  root_volume_size = 30
 
   
   labels {
