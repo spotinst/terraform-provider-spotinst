@@ -506,6 +506,46 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RootVolumeSize] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		RootVolumeSize,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value *int = nil
+			if launchSpec.RootVolumeSize != nil {
+				value = launchSpec.RootVolumeSize
+			}
+			if err := resourceData.Set(string(RootVolumeSize), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RootVolumeSize), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.Get(string(RootVolumeSize)).(int); ok && v > 0 {
+				launchSpec.SetRootVolumeSize(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value *int = nil
+			if v, ok := resourceData.Get(string(RootVolumeSize)).(int); ok && v > 0 {
+				value = spotinst.Int(v)
+			}
+			launchSpec.SetRootVolumeSize(value)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

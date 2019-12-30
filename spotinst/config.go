@@ -111,13 +111,14 @@ func (c *Config) getUserAgent() string {
 
 	var ua string
 	for _, agent := range agents {
-		v := fmt.Sprintf("%s/%s", agent.Product, agent.Version)
+		pv := fmt.Sprintf("%s/%s", agent.Product, agent.Version)
 		if len(agent.Comment) > 0 {
-			v += fmt.Sprintf(" (%s)", strings.Join(agent.Comment, "; "))
+			pv += fmt.Sprintf(" (%s)", strings.Join(agent.Comment, "; "))
 		}
 		if len(ua) > 0 {
-			ua += " " + v
+			ua += " "
 		}
+		ua += pv
 	}
 
 	return ua

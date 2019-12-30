@@ -1,7 +1,12 @@
+## 1.14.2 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `root_volume_size`
+
 ## 1.14.1 (Unreleased)
 
 BUG FIXES:
-* resource/spotinst_elastigroup_aws: resolved errors with `IntegrationEcs - roll_config`.
+* resource/spotinst_elastigroup_aws: resolved errors with `IntegrationEcs - roll_config`
 
 ## 1.14.0 (Unreleased)
 
@@ -19,10 +24,10 @@ FEATURES:
 * resource/spotinst_ocean_aws: added `max_scale_down_percentage`
 
 BUG FIXES:
-* resource/spotinst_ocean_aws: resolved errors with `blacklist`.
-* resource/spotinst_ocean_gke_import: resolved errors with `whitelist`.
-* resource/spotinst_elastigroup_aws: resolved errors with `ondemand_count`.
-* resource/spotinst_elastigroup_gcp: resolved errors with `startup_script`. 
+* resource/spotinst_ocean_aws: resolved errors with `blacklist`
+* resource/spotinst_ocean_gke_import: resolved errors with `whitelist`
+* resource/spotinst_elastigroup_aws: resolved errors with `ondemand_count`
+* resource/spotinst_elastigroup_gcp: resolved errors with `startup_script` 
 
 
 ## 1.13.5 (October 2, 2019)
