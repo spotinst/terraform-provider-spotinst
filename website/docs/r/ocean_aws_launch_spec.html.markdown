@@ -20,6 +20,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   iam_instance_profile = "iam-profile"
   security_groups = ["sg-987654321"]
   subnet_ids = ["subnet-1234"]
+  root_volume_size = 30
 
   labels {
     key   = "fakeKey"
@@ -51,6 +52,7 @@ The following arguments are supported:
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_groups` - (Optional) Optionally adds security group IDs.
 * `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in array should be subnet ID.
+* `root_volume_size` - (Optional) Set root volume size (in GB).
 
 * `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The tag key.
