@@ -16,6 +16,7 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `max_scale_down_percentage`
 
 BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs` 
 * resource/spotinst_ocean_aws: resolved errors with `blacklist`
 * resource/spotinst_ocean_gke_import: resolved errors with `whitelist`
 * resource/spotinst_elastigroup_aws: resolved errors with `ondemand_count`
