@@ -106,7 +106,6 @@ func testAccCheckSpotinstMultaiDeploymentExists(deployment *multai.Deployment, r
 type DeploymentConfigMetadata struct {
 	provider             string
 	name                 string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

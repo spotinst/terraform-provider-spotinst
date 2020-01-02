@@ -68,10 +68,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
 				elastigroup.Compute.InstanceTypes.Spot != nil {
-				spotInstances := elastigroup.Compute.InstanceTypes.Spot
-				for _, spotInstance := range spotInstances {
-					result = append(result, spotInstance)
-				}
+				result = append(result, elastigroup.Compute.InstanceTypes.Spot...)
 			}
 			if err := resourceData.Set(string(Spot), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Spot), err)
@@ -121,10 +118,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
 				elastigroup.Compute.InstanceTypes.PreferredSpot != nil {
-				prefSpots := elastigroup.Compute.InstanceTypes.PreferredSpot
-				for _, prefSpot := range prefSpots {
-					result = append(result, prefSpot)
-				}
+				result = append(result, elastigroup.Compute.InstanceTypes.PreferredSpot...)
 			}
 			if err := resourceData.Set(string(PreferredSpot), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredSpot), err)

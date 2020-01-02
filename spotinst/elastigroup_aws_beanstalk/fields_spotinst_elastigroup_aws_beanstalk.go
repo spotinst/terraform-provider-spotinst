@@ -342,7 +342,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			if v, ok := resourceData.GetOk(string(Maintenance)); ok && v != nil {
 				if v != "START" && v != "END" && v != "STATUS" {
-					return fmt.Errorf("Error: Maintenace mode must be START, END, or STATUS")
+					return fmt.Errorf("error: maintenance mode must be START, END, or STATUS")
 				}
 			}
 			return nil
@@ -350,7 +350,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			if v, ok := resourceData.GetOk(string(Maintenance)); ok && v != nil {
 				if v != "START" && v != "END" && v != "STATUS" {
-					return fmt.Errorf("Error: Maintenace mode must be START or END, or STATUS")
+					return fmt.Errorf("error: maintenance mode must be START or END, or STATUS")
 				}
 			}
 			return nil

@@ -92,7 +92,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var result *gcp.BackendServiceConfig = nil
 			if v, ok := resourceData.GetOk(string(BackendServices)); ok {
-				var value []*gcp.BackendService = nil
+				var value []*gcp.BackendService
 				if services, err := expandServices(v); err != nil {
 					return err
 				} else {

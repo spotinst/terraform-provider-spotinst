@@ -184,7 +184,7 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	clusterId := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
 			if roll, ok := m[string(ocean_aws.ShouldRoll)].(bool); ok && roll {
@@ -219,7 +219,7 @@ func rollCluster(resourceData *schema.ResourceData, meta interface{}) error {
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			updateClusterSchema := list[0].(map[string]interface{})
 			if rollConfig, ok := updateClusterSchema[string(ocean_aws.RollConfig)]; !ok || rollConfig == nil {
 				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_aws.RollConfig), clusterId)

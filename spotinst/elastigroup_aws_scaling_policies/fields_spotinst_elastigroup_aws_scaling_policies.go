@@ -54,11 +54,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = policies
 				}
 			}
-			if value != nil && len(value) > 0 {
-				elastigroup.Scaling.SetUp(value)
-			} else {
-				elastigroup.Scaling.SetUp(nil)
-			}
+			elastigroup.Scaling.SetUp(value)
 			return nil
 		},
 		nil,
@@ -104,11 +100,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = policies
 				}
 			}
-			if value != nil && len(value) > 0 {
-				elastigroup.Scaling.SetDown(value)
-			} else {
-				elastigroup.Scaling.SetDown(nil)
-			}
+			elastigroup.Scaling.SetDown(value)
 			return nil
 		},
 		nil,
@@ -154,11 +146,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = policies
 				}
 			}
-			if value != nil && len(value) > 0 {
-				elastigroup.Scaling.SetTarget(value)
-			} else {
-				elastigroup.Scaling.SetTarget(nil)
-			}
+			elastigroup.Scaling.SetTarget(value)
 			return nil
 		},
 		nil,

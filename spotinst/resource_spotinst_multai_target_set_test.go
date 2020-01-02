@@ -106,7 +106,6 @@ func testAccCheckSpotinstMultaiTargetSetExists(targetSet *multai.TargetSet, reso
 type TargetSetConfigMetadata struct {
 	provider             string
 	name                 string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

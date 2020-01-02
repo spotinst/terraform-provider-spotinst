@@ -105,7 +105,6 @@ func testCheckElastigroupAWSBeanstalkExists(group *aws.Group, resourceName strin
 type BeanstalkGroupConfigMetadata struct {
 	groupName            string
 	provider             string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

@@ -96,7 +96,7 @@ func expandAWSGroupGitlabIntegration(data interface{}) (*aws.GitlabIntegration, 
 }
 
 func expandAWSGroupGitlabRunner(data interface{}) (*aws.GitlabRunner, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
 		runner := &aws.GitlabRunner{}
 		m := list[0].(map[string]interface{})
 

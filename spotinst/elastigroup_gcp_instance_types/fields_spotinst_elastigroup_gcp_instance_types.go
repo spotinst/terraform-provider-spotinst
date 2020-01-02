@@ -67,10 +67,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
 				elastigroup.Compute.InstanceTypes.Preemptible != nil {
-				values := elastigroup.Compute.InstanceTypes.Preemptible
-				for _, preemptible := range values {
-					result = append(result, preemptible)
-				}
+				result = append(result, elastigroup.Compute.InstanceTypes.Preemptible...)
 			}
 			if err := resourceData.Set(string(Preemptible), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Preemptible), err)

@@ -157,8 +157,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if balancer.Timeouts != nil {
 				value = flattenBalancerTimeouts(balancer.Timeouts)
 			}
-			resourceData.Set(string(ConnectionTimeouts), value)
-			return nil
+			return resourceData.Set(string(ConnectionTimeouts), value)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mlbWrapper := resourceObject.(*commons.MultaiBalancerWrapper)

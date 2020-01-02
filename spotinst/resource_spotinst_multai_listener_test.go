@@ -62,7 +62,6 @@ func testAccCheckSpotinstMultaiListenerExists(listener *multai.Listener, resourc
 type ListenerConfigMetadata struct {
 	provider             string
 	name                 string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

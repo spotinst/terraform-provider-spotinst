@@ -106,7 +106,6 @@ func testAccCheckSpotinstMultaiBalancerExists(balancer *multai.LoadBalancer, res
 type BalancerConfigMetadata struct {
 	provider             string
 	name                 string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

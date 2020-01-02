@@ -105,7 +105,6 @@ type ClusterConfigMetadata struct {
 	clusterName          string
 	controllerClusterID  string
 	instanceWhitelist    string
-	instanceBlacklist    string
 	launchConfig         string
 	strategy             string
 	variables            string

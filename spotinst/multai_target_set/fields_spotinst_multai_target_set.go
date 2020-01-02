@@ -303,8 +303,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if targetSet.HealthCheck != nil {
 				value = flattenTargetSetHealthCheck(targetSet.HealthCheck)
 			}
-			resourceData.Set(string(HealthCheck), value)
-			return nil
+			return resourceData.Set(string(HealthCheck), value)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			targetSetWrapper := resourceObject.(*commons.MultaiTargetSetWrapper)

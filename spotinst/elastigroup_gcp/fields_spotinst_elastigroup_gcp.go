@@ -76,10 +76,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var result []string
 			if elastigroup.Compute != nil && elastigroup.Compute.AvailabilityZones != nil {
-				values := elastigroup.Compute.AvailabilityZones
-				for _, zones := range values {
-					result = append(result, zones)
-				}
+				result = append(result, elastigroup.Compute.AvailabilityZones...)
 			}
 			if err := resourceData.Set(string(AvailabilityZones), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AvailabilityZones), err)

@@ -62,7 +62,6 @@ func testAccCheckSpotinstMultaiRoutingRuleExists(routingRule *multai.RoutingRule
 type RoutingRuleConfigMetadata struct {
 	provider             string
 	name                 string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

@@ -10,15 +10,11 @@ import (
 
 var TestAccProviders map[string]terraform.ResourceProvider
 
-var testAccProvider *schema.Provider
 var testAccProviderGCP *schema.Provider
 var testAccProviderAWS *schema.Provider
 var testAccProviderAzure *schema.Provider
 
-var testProviders map[string]terraform.ResourceProvider
-
 func init() {
-	testAccProvider = Provider().(*schema.Provider)
 	testAccProviderGCP = Provider().(*schema.Provider)
 	testAccProviderAWS = Provider().(*schema.Provider)
 	testAccProviderAzure = Provider().(*schema.Provider)
@@ -41,14 +37,14 @@ func TestProvider(t *testing.T) {
 }
 
 func TestProvider_impl(t *testing.T) {
-	var _ terraform.ResourceProvider = Provider()
+	_ = Provider()
 }
 
 func testAccPreCheck(t *testing.T, provider string) {
 	tokens := map[string]string{
-		string("gcp"):   os.Getenv("SPOTINST_TOKEN_GCP"),
-		string("aws"):   os.Getenv("SPOTINST_TOKEN_AWS"),
-		string("azure"): os.Getenv("SPOTINST_TOKEN_AZURE"),
+		"gcp":   os.Getenv("SPOTINST_TOKEN_GCP"),
+		"aws":   os.Getenv("SPOTINST_TOKEN_AWS"),
+		"azure": os.Getenv("SPOTINST_TOKEN_AZURE"),
 	}
 
 	if tokens[provider] == "" {
@@ -58,8 +54,8 @@ func testAccPreCheck(t *testing.T, provider string) {
 
 func providerConfigureGCP(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Token:   string(os.Getenv("SPOTINST_TOKEN_GCP")),
-		Account: string(os.Getenv("SPOTINST_ACCOUNT_GCP")),
+		Token:   os.Getenv("SPOTINST_TOKEN_GCP"),
+		Account: os.Getenv("SPOTINST_ACCOUNT_GCP"),
 	}
 
 	return config.Client()
@@ -67,8 +63,8 @@ func providerConfigureGCP(d *schema.ResourceData) (interface{}, error) {
 
 func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Token:   string(os.Getenv("SPOTINST_TOKEN_AWS")),
-		Account: string(os.Getenv("SPOTINST_ACCOUNT_AWS")),
+		Token:   os.Getenv("SPOTINST_TOKEN_AWS"),
+		Account: os.Getenv("SPOTINST_ACCOUNT_AWS"),
 	}
 
 	return config.Client()
@@ -76,8 +72,8 @@ func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
 
 func providerConfigureAzure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Token:   string(os.Getenv("SPOTINST_TOKEN_AZURE")),
-		Account: string(os.Getenv("SPOTINST_ACCOUNT_AZURE")),
+		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
+		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),
 	}
 
 	return config.Client()

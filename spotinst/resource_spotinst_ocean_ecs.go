@@ -184,7 +184,7 @@ func updateECSCluster(cluster *aws.ECSCluster, resourceData *schema.ResourceData
 	clusterId := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_ecs.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
 			if roll, ok := m[string(ocean_ecs.ShouldRoll)].(bool); ok && roll {
@@ -219,7 +219,7 @@ func rollECSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_ecs.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			updateClusterSchema := list[0].(map[string]interface{})
 			if rollConfig, ok := updateClusterSchema[string(ocean_ecs.RollConfig)]; !ok || rollConfig == nil {
 				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_ecs.RollConfig), clusterId)

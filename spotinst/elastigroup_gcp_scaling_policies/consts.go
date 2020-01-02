@@ -2,8 +2,6 @@ package elastigroup_gcp_scaling_policies
 
 import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 
-type DimensionField = string
-
 const (
 	ScalingDownPolicy commons.FieldName = "scaling_down_policy"
 	ScalingUpPolicy   commons.FieldName = "scaling_up_policy"
@@ -24,6 +22,6 @@ const (
 	Period            commons.FieldName = "period"
 	Threshold         commons.FieldName = "threshold"
 
-	DimensionName  DimensionField = "name"
-	DimensionValue DimensionField = "value"
+	DimensionName  commons.FieldName = "name"
+	DimensionValue commons.FieldName = "value"
 )

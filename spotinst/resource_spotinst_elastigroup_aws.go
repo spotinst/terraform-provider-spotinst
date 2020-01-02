@@ -84,7 +84,7 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 
 	if statefulDeallocation, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulDeallocation)); exists {
 		list := statefulDeallocation.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
 			var result = &aws.StatefulDeallocation{}
@@ -273,7 +273,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 	groupId := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 			if resumeStateful, ok := m[string(elastigroup_aws.ShouldResumeStateful)].(bool); ok && resumeStateful {
 				log.Printf("Resuming paused stateful instances on group [%v]...", groupId)

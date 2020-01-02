@@ -58,11 +58,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if managedInstance.Compute != nil && managedInstance.Compute.LaunchSpecification != nil &&
 				managedInstance.Compute.LaunchSpecification.InstanceTypes.Types != nil {
-				listInstances := managedInstance.Compute.LaunchSpecification.InstanceTypes.Types
-
-				for _, listInstance := range listInstances {
-					result = append(result, listInstance)
-				}
+				result = append(result, managedInstance.Compute.LaunchSpecification.InstanceTypes.Types...)
 			}
 			if err := resourceData.Set(string(Types), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Types), err)

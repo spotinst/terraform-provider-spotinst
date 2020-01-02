@@ -188,12 +188,11 @@ func updateAzureGroup(elastigroup *azure.Group, resourceData *schema.ResourceDat
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 			if roll, ok := m[string(elastigroup_azure.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
 			}
-
 		}
 	}
 
@@ -222,7 +221,7 @@ func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			updateGroupSchema := list[0].(map[string]interface{})
 			if rollConfig, ok := updateGroupSchema[string(elastigroup_azure.RollConfig)]; !ok || rollConfig == nil {
 				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_azure.RollConfig), groupId)
