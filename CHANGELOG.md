@@ -1,3 +1,8 @@
+## 1.14.3 (Unreleased)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs` 
+
 ## 1.14.2 (Unreleased)
 
 ENHANCEMENTS:
@@ -30,7 +35,7 @@ BUG FIXES:
 * resource/spotinst_elastigroup_gcp: resolved errors with `startup_script` 
 
 
-## 1.13.5 (October 2, 2019)
+## 1.13.5 (October 2, 2019) (Unreleased)
 
 ENHANCEMENTS:
 * spotinst_ocean_aws_launch_spec: added `security_groups`
