@@ -1,26 +1,13 @@
-## 1.14.3 (Unreleased)
-
-BUG FIXES:
-* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs` 
-
-## 1.14.2 (Unreleased)
-
-ENHANCEMENTS:
-* resource/spotinst_ocean_aws_launch_spec: added `root_volume_size`
-
-## 1.14.1 (Unreleased)
-
-BUG FIXES:
-* resource/spotinst_elastigroup_aws: resolved errors with `IntegrationEcs - roll_config`
-
-## 1.14.0 (Unreleased)
+## 1.14.0 (January 2, 2020)
 
 NOTES:
-This release imports the standalone SDK [hashicorp/terraform-plugin-sdk](https://github.com/hashicorp/terraform-plugin-sdk) v1.4.0.
+* This release imports the standalone SDK [hashicorp/terraform-plugin-sdk](https://github.com/hashicorp/terraform-plugin-sdk) v1.4.0.
 
 FEATURES:
 * *New Resource*: `spotinst_managed_instance_aws`
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `root_volume_size`
 * resource/spotinst_elastigroup_aws_beanstalk: added `scheduled_task`
 * resource/spotinst_ocean_aws_launch_spec: added `autoscale_headrooms`
 * resource/spotinst_ocean_ecs_launch_spec: added `autoscale_headrooms`
@@ -32,10 +19,10 @@ BUG FIXES:
 * resource/spotinst_ocean_aws: resolved errors with `blacklist`
 * resource/spotinst_ocean_gke_import: resolved errors with `whitelist`
 * resource/spotinst_elastigroup_aws: resolved errors with `ondemand_count`
-* resource/spotinst_elastigroup_gcp: resolved errors with `startup_script` 
+* resource/spotinst_elastigroup_gcp: resolved errors with `startup_script`
+* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs.roll_config`
 
-
-## 1.13.5 (October 2, 2019) (Unreleased)
+## 1.13.5 (October 2, 2019)
 
 ENHANCEMENTS:
 * spotinst_ocean_aws_launch_spec: added `security_groups`

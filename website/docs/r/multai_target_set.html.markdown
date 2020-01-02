@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: multai target set"
-sidebar_current: "docs-do-resource-multai_target_set"
+page_title: "Spotinst: multai_target_set"
+subcategory: "Multai"
 description: |-
  Provides a Spotinst Multai Target Set.
 ---

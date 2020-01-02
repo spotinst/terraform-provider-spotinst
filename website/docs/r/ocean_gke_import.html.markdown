@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: ocean_gke_import"
-sidebar_current: "docs-do-resource-ocean_gke_import"
+subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean resource using gke.
 ---

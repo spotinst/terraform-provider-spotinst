@@ -1,103 +1,111 @@
 <% wrap_layout :inner do %>
-  <% content_for :sidebar do %>
-    <div class="docs-sidebar hidden-print affix-top" role="complementary">
-      <ul class="nav docs-sidenav">
-        <li<%= sidebar_current("docs-home") %>>
-            <a href="/docs/providers/index.html">All Providers</a>
-        </li>
-
-        <li<%= sidebar_current("docs-spotinst-index") %>>
-            <a href="/docs/providers/spotinst/index.html">Spotinst Provider</a>
-        </li>
-
-        <li<%= sidebar_current("docs-spotinst-resource") %>>
-        <a href="#">Spotinst Resources</a>
-            <ul class="nav nav-visible">
-                <li<%= sidebar_current("docs-spotinst-resource-elastigroup_aws") %>>
-                    <a href="/docs/providers/spotinst/r/elastigroup_aws.html">elastigroup_aws</a>
+    <% content_for :sidebar do %>
+        <div class="docs-sidebar hidden-print affix-top" role="complementary">
+            <a href="#" class="subnav-toggle">(Expand/collapse all)</a>
+            <ul class="nav docs-sidenav">
+                <li>
+                    <a href="/docs/providers/index.html">All Providers</a>
                 </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-elastigroup_aws_beanstalk") %>>
-                  <a href="/docs/providers/spotinst/r/elastigroup_aws_beanstalk.html">elastigroup_aws_beanstalk</a>
+                <li>
+                    <a href="/docs/providers/spotinst/index.html">Spotinst Provider</a>
                 </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-elastigroup_azure") %>>
-                    <a href="/docs/providers/spotinst/r/elastigroup_azure.html">elastigroup_azure</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-elastigroup_gcp") %>>
-                    <a href="/docs/providers/spotinst/r/elastigroup_gcp.html">elastigroup_gcp</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-elastigroup_gke") %>>
-                    <a href="/docs/providers/spotinst/r/elastigroup_gke.html">elastigroup_gke</a>
-
-                <li<%= sidebar_current("docs-spotinst-resource-mrscaler_aws") %>>
-                  <a href="/docs/providers/spotinst/r/mrscaler_aws.html">mrscaler_aws</a>
-
-                <li<%= sidebar_current("docs-spotinst-resource-multai_balancer") %>>
-                  <a href="/docs/providers/spotinst/r/multai_balancer.html">multai_balancer</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-multai_deployment") %>>
-                  <a href="/docs/providers/spotinst/r/multai_deployment.html">multai_deployment</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-multai_listener") %>>
-                  <a href="/docs/providers/spotinst/r/multai_listener.html">multai_listener</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-multai_routing_rule") %>>
-                  <a href="/docs/providers/spotinst/r/multai_routing_rule.html">multai_routing_rule</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-multai_target") %>>
-                  <a href="/docs/providers/spotinst/r/multai_target.html">multai_target</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-multai_target_set") %>>
-                  <a href="/docs/providers/spotinst/r/multai_target_set.html">multai_target_set</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-ocean_aws") %>>
-                  <a href="/docs/providers/spotinst/r/ocean_aws.html">ocean_aws</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-ocean_aws_launch_spec") %>>
-                  <a href="/docs/providers/spotinst/r/ocean_aws_launch_spec.html">ocean_aws_launch_spec</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-ocean_gke_import") %>>
-                  <a href="/docs/providers/spotinst/r/ocean_gke_import.html">ocean_gke_import</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-ocean_gke_launch_spec") %>>
-                  <a href="/docs/providers/spotinst/r/ocean_gke_launch_spec.html">ocean_gke_launch_spec</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-ocean_gke_launch_spec_import") %>>
-                  <a href="/docs/providers/spotinst/r/ocean_gke_launch_spec_import.html">ocean_gke_launch_spec_import</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-ocean_ecs") %>>
-                  <a href="/docs/providers/spotinst/r/ocean_ecs.html">ocean_ecs</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-ocean_ecs_launch_spec") %>>
-                  <a href="/docs/providers/spotinst/r/ocean_ecs_launch_spec.html">ocean_ecs_launch_spec</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-subscription") %>>
-                  <a href="/docs/providers/spotinst/r/subscription.html">subscription</a>
-                </li>
-
-                <li<%= sidebar_current("docs-spotinst-resource-managed_instance_aws") %>>
-                  <a href="/docs/providers/spotinst/r/managed_instance_aws.html">managed_instance</a>
-                </li>
-
+                <li>
+                    <a href="#">Elastigroup</a>
+                    <ul class="nav">
+                      <li>
+                        <a href="#">Resources</a>
+                        <ul class="nav nav-auto-expand">
+                          <li>
+                            <a href="/docs/providers/spotinst/r/elastigroup_aws.html">elastigroup_aws</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/elastigroup_aws_beanstalk.html">elastigroup_aws_beanstalk</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/elastigroup_azure.html">elastigroup_azure</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/elastigroup_gcp.html">elastigroup_gcp</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/elastigroup_gke.html">elastigroup_gke</a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Ocean</a>
+                    <ul class="nav">
+                      <li>
+                        <a href="#">Resources</a>
+                        <ul class="nav nav-auto-expand">
+                          <li>
+                            <a href="/docs/providers/spotinst/r/ocean_aws.html">ocean_aws</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/ocean_aws_launch_spec.html">ocean_aws_launch_spec</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/ocean_gke_import.html">ocean_gke_import</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/ocean_gke_launch_spec.html">ocean_gke_launch_spec</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/ocean_gke_launch_spec_import.html">ocean_gke_launch_spec_import</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/ocean_ecs.html">ocean_ecs</a>
+                          </li>
+                          <li>
+                            <a href="/docs/providers/spotinst/r/ocean_ecs_launch_spec.html">ocean_ecs_launch_spec</a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Managed Instance</a>
+                    <ul class="nav">
+                      <li>
+                        <a href="#">Resources</a>
+                        <ul class="nav nav-auto-expand">
+                          <li>
+                            <a href="/docs/providers/spotinst/r/managed_instance_aws.html">managed_instance</a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Mr Scaler</a>
+                    <ul class="nav">
+                      <li>
+                        <a href="#">Resources</a>
+                        <ul class="nav nav-auto-expand">
+                          <li>
+                            <a href="/docs/providers/spotinst/r/mrscaler_aws.html">mrscaler_aws</a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#">Subscription</a>
+                    <ul class="nav">
+                      <li>
+                        <a href="#">Resources</a>
+                        <ul class="nav nav-auto-expand">
+                          <li>
+                            <a href="/docs/providers/spotinst/r/subscription.html">subscription</a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
             </ul>
-    </div>
-  <% end %>
-
-  <%= yield %>
-  <% end %>
+        </div>
+    <% end %>
+    <%= yield %>
+<% end %>

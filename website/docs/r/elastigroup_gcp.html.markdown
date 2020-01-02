@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: elastigroup_gcp"
-sidebar_current: "docs-do-resource-elastigroup_gcp"
+subcategory: "Elastigroup"
 description: |-
    Provides a Spotinst elastigroup resource for Google Cloud.
 ---

@@ -1,7 +1,6 @@
 ---
 layout: "spotinst"
 page_title: "Provider: Spotinst"
-sidebar_current: "docs-spotinst-index"
 description: |-
   The Spotinst provider is used to interact with the resources supported by Spotinst. The provider needs to be configured with the proper credentials before it can be used.
 ---

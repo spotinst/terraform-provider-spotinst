@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: ocean_gke_launch_spec"
-sidebar_current: "docs-do-resource-ocean_gke_launch_spec"
+subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean Launch Spec resource using GKE.
 ---

@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: ocean_ecs_launch_spec"
-sidebar_current: "docs-do-resource-ocean_ecs_launch_spec"
+subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean ECS Launch Spec resource using AWS.
 ---
