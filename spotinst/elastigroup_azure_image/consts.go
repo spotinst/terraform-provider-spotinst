@@ -8,7 +8,7 @@ const (
 
 const (
 	Image commons.FieldName = "image"
-	w
+
 	// marketplace image
 	Marketplace commons.FieldName = "marketplace"
 	Publisher   commons.FieldName = "publisher"

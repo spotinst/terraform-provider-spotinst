@@ -175,8 +175,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if listener.TLSConfig != nil {
 				value = flattenListenerTLSConfig(listener.TLSConfig)
 			}
-			resourceData.Set(string(TLSConfig), value)
-			return nil
+			return resourceData.Set(string(TLSConfig), value)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			listenerWrapper := resourceObject.(*commons.MultaiListenerWrapper)

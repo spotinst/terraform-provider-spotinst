@@ -111,7 +111,6 @@ func testCheckOceanGKEImportExists(cluster *gcp.Cluster, resourceName string) re
 type OceanGKEImportMetadata struct {
 	clusterName          string
 	provider             string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

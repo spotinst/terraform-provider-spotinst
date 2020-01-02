@@ -325,10 +325,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string = nil
 			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
 				cluster.Compute.AvailabilityZones != nil {
-				values := cluster.Compute.AvailabilityZones
-				for _, zones := range values {
-					result = append(result, zones)
-				}
+				result = append(result, cluster.Compute.AvailabilityZones...)
 			}
 			if err := resourceData.Set(string(AvailabilityZones), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AvailabilityZones), err)

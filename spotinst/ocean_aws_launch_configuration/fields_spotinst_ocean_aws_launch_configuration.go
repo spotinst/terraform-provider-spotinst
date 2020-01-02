@@ -409,12 +409,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetCluster()
 
 			var result []*aws.LoadBalancer = nil
-			existingBalancers := cluster.Compute.LaunchSpecification.LoadBalancers
-
-			if existingBalancers != nil && len(existingBalancers) > 0 {
-				for _, balancer := range existingBalancers {
-					result = append(result, balancer)
-				}
+			if lbs := cluster.Compute.LaunchSpecification.LoadBalancers; len(lbs) > 0 {
+				result = append(result, lbs...)
 			}
 			if value, ok := resourceData.GetOk(string(LoadBalancers)); ok {
 				if lb, err := expandLb(value); err != nil {
@@ -425,7 +421,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 
 			cluster.Compute.LaunchSpecification.SetLoadBalancers(result)
-
 			return nil
 		},
 		nil,

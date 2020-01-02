@@ -100,7 +100,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					if existingEphemeralDevices, err := extractBlockDevices(EphemeralBlockDevice, elastigroup, resourceData); err != nil {
 						return err
-					} else if existingEphemeralDevices != nil && len(existingEphemeralDevices) > 0 {
+					} else if len(existingEphemeralDevices) > 0 {
 						ebsDevices = append(existingEphemeralDevices, ebsDevices...)
 					}
 					elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(ebsDevices)
@@ -168,7 +168,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					if existingEBSDevices, err := extractBlockDevices(EbsBlockDevice, elastigroup, resourceData); err == nil {
 						return err
-					} else if existingEBSDevices != nil && len(existingEBSDevices) > 0 {
+					} else if len(existingEBSDevices) > 0 {
 						ephemeralDevices = append(existingEBSDevices, ephemeralDevices...)
 					}
 					elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(ephemeralDevices)
@@ -249,7 +249,7 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 			device.EBS.SetDeleteOnTermination(spotinst.Bool(v))
 		}
 
-		if v, ok := m[string(Encrypted)].(bool); ok && v != false {
+		if v, ok := m[string(Encrypted)].(bool); ok && v {
 			device.EBS.SetEncrypted(spotinst.Bool(v))
 		}
 
@@ -308,7 +308,7 @@ func extractBlockDevices(
 	var ebsDevices []*aws.BlockDeviceMapping = nil
 	var ephemeralDevices []*aws.BlockDeviceMapping = nil
 
-	if result != nil && len(result) > 0 {
+	if len(result) > 0 {
 		for _, device := range result {
 			if device.EBS != nil {
 				ebsDevices = append(ebsDevices, device)
@@ -350,10 +350,10 @@ func onUpdateBlockDevice(egWrapper *commons.ElastigroupWrapper, resourceData *sc
 	if !egWrapper.StatusEbsBlockDeviceUpdated {
 		if tfEBSDevices, err := extractBlockDevices(EbsBlockDevice, elastigroup, resourceData); err != nil {
 			return err
-		} else if tfEBSDevices != nil && len(tfEBSDevices) > 0 {
+		} else if len(tfEBSDevices) > 0 {
 			existingMappings := elastigroup.Compute.LaunchSpecification.BlockDeviceMappings
-			if existingMappings != nil && len(existingMappings) > 0 {
-				tfEBSDevices = append(existingMappings, tfEBSDevices...)
+			if len(existingMappings) > 0 {
+				tfEBSDevices = append(tfEBSDevices, existingMappings...)
 			}
 			elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(tfEBSDevices)
 		} else {
@@ -364,10 +364,10 @@ func onUpdateBlockDevice(egWrapper *commons.ElastigroupWrapper, resourceData *sc
 	if !egWrapper.StatusEphemeralBlockDeviceUpdated {
 		if tfEphemeralDevices, err := extractBlockDevices(EphemeralBlockDevice, elastigroup, resourceData); err != nil {
 			return err
-		} else if tfEphemeralDevices != nil && len(tfEphemeralDevices) > 0 {
+		} else if len(tfEphemeralDevices) > 0 {
 			existingMappings := elastigroup.Compute.LaunchSpecification.BlockDeviceMappings
-			if existingMappings != nil && len(existingMappings) > 0 {
-				tfEphemeralDevices = append(existingMappings, tfEphemeralDevices...)
+			if len(existingMappings) > 0 {
+				tfEphemeralDevices = append(tfEphemeralDevices, existingMappings...)
 			}
 			elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(tfEphemeralDevices)
 		} else {

@@ -105,7 +105,6 @@ func testCheckOceanGKELaunchSpecImportExists(launchSpec *gcp.LaunchSpec, resourc
 type OceanGKELaunchSpecImportMetadata struct {
 	provider             string
 	oceanID              string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

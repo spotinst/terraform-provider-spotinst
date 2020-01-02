@@ -102,10 +102,8 @@ func testCheckManagedInstanceAWSExists(managedInstance *aws.ManagedInstance, res
 }
 
 type ManagedInstanceConfigMetadata struct {
-	provider string
-	name     string
-	region   string
-
+	provider             string
+	name                 string
 	variables            string
 	fieldsToAppend       string
 	updateBaselineFields bool

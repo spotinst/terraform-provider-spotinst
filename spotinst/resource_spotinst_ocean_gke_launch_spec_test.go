@@ -105,7 +105,6 @@ func testCheckOceanGKELaunchSpecExists(launchSpec *gcp.LaunchSpec, resourceName 
 type GKELaunchSpecConfigMetadata struct {
 	provider             string
 	oceanID              string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

@@ -242,7 +242,10 @@ func exposeMrScalerClusterId(resourceData *schema.ResourceData, meta interface{}
 	}
 
 	if resp.ScalerClusterId != nil {
-		resourceData.Set(string(mrscaler_aws.OutputClusterID), resp.ScalerClusterId)
+		if err = resourceData.Set(string(mrscaler_aws.OutputClusterID), resp.ScalerClusterId); err != nil {
+			return err
+		}
 	}
+
 	return nil
 }

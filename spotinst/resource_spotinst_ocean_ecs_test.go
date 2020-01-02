@@ -102,7 +102,6 @@ func testCheckOceanECSExists(cluster *aws.ECSCluster, resourceName string) resou
 type ECSClusterConfigMetadata struct {
 	provider             string
 	name                 string
-	region               string
 	clusterName          string
 	instanceWhitelist    string
 	instanceBlacklist    string
