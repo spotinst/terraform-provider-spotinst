@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: ocean_ecs"
-sidebar_current: "docs-do-resource-ocean_ecs"
+subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean ECS resource using AWS.
 ---

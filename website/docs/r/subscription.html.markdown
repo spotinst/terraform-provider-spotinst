@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: subscription"
-sidebar_current: "docs-do-resource-subscription"
+subcategory: "Subscription"
 description: |-
   Provides a Spotinst subscription resource.
 ---

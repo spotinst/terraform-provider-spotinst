@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: multai balancer"
-sidebar_current: "docs-do-resource-multai_balancer"
+subcategory: "Multai"
 description: |-
  Provides a Spotinst Multai Balancer.
 ---

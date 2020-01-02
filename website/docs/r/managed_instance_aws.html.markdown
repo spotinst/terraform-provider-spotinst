@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: managed_instance_aws"
-sidebar_current: "docs-do-resource-managed_instance_aws"
+subcategory: "Managed Instance"
 description: |-
   Provides a Spotinst AWS managed instance resource.
 ---

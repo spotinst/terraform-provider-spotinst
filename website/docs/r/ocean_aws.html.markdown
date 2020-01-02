@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: ocean_aws"
-sidebar_current: "docs-do-resource-ocean_aws"
+subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean resource using AWS.
 ---

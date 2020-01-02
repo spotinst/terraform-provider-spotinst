@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: Mr Scaler"
-sidebar_current: "docs-do-resource-mr_scaler"
+page_title: "Spotinst: mrscaler_aws"
+subcategory: "Mr Scaler"
 description: |-
   Provides a Spotinst MrScaler resource.
 ---
