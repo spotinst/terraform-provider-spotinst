@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: ocean_aws_launch_spec"
-sidebar_current: "docs-do-resource-ocean_aws_launch_spec"
+subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean Launch Spec resource using AWS.
 ---
@@ -68,4 +68,3 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
-

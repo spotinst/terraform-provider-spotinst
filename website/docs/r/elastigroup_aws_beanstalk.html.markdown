@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: elastigroup_aws_beanstalk"
-sidebar_current: "docs-do-resource-elastigroup_aws_beanstalk"
+subcategory: "Elastigroup"
 description: |-
  Provides a Spotinst AWS group resource using Elastic Beanstalk.
 ---

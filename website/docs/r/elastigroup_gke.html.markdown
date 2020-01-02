@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: elastigroup_gke"
-sidebar_current: "docs-do-resource-elastigroup_gke"
+subcategory: "Elastigroup"
 description: |-
    Provides a Spotinst elastigroup resource for Google Cloud using the Google Kubernetes Engine.
 ---

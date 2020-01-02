@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: multai listener"
-sidebar_current: "docs-do-resource-multai_listener"
+page_title: "Spotinst: multai_listener"
+subcategory: "Multai"
 description: |-
  Provides a Spotinst Multai Listener.
 ---
