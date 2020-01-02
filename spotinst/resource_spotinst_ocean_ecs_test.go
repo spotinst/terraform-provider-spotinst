@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 func init() {
@@ -101,7 +102,6 @@ func testCheckOceanECSExists(cluster *aws.ECSCluster, resourceName string) resou
 type ECSClusterConfigMetadata struct {
 	provider             string
 	name                 string
-	region               string
 	clusterName          string
 	instanceWhitelist    string
 	instanceBlacklist    string

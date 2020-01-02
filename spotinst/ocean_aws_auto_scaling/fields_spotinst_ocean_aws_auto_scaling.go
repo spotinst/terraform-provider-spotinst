@@ -1,7 +1,7 @@
 package ocean_aws_auto_scaling
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -32,6 +32,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
+								string(MaxScaleDownPercentage): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
 								string(EvaluationPeriods): {
 									Type:     schema.TypeInt,
 									Optional: true,
@@ -254,6 +258,12 @@ func expandOceanAWSAutoScalerDown(data interface{}) (*aws.AutoScalerDown, error)
 
 			if v, ok := m[string(EvaluationPeriods)].(int); ok && v > 0 {
 				autoScaleDown.SetEvaluationPeriods(spotinst.Int(v))
+			}
+
+			if v, ok := m[string(MaxScaleDownPercentage)].(int); ok && v > 0 {
+				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Int(v))
+			} else {
+				autoScaleDown.SetMaxScaleDownPercentage(nil)
 			}
 		}
 		return autoScaleDown, nil

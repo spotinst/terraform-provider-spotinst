@@ -3,15 +3,16 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"log"
+	"strings"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
-	"log"
-	"strings"
-	"testing"
 )
 
 func init() {
@@ -253,7 +254,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 // endregion
 
 // region OceanAWS: Instance Types Whitelist
-func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
+func TestAccSpotinstOceanAWS_InstanceTypesLists(t *testing.T) {
 	clusterName := "test-acc-cluster-instance-types-whitelist"
 	controllerClusterID := "whitelist-controller-id"
 	resourceName := createOceanAWSResourceName(clusterName)
@@ -302,6 +303,36 @@ func TestAccSpotinstOceanAWS_InstanceTypesWhitelist(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.1", "m1.small"),
+				),
+			},
+			{
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
+				),
+			},
+			{
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "0"),
 				),
 			},
 		},
@@ -317,6 +348,15 @@ const testInstanceTypesWhitelistAWSConfig_Update = `
 `
 
 const testInstanceTypesWhitelistAWSConfig_EmptyFields = `
+blacklist = ["t1.micro", "m1.small"] 
+`
+
+const testInstanceTypesBlacklistAWSConfig_Update = `
+blacklist = ["t1.micro"] 
+`
+
+const testInstanceTypesBlacklistAWSConfig_EmptyFields = `
+
 `
 
 // endregion
@@ -594,6 +634,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_cooldown", "300"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.max_scale_down_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "1"),
@@ -620,6 +661,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_cooldown", "600"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.evaluation_periods", "600"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_down.0.max_scale_down_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.cpu_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "2"),
@@ -677,6 +719,8 @@ const testScalingConfig_Create = `
 
     autoscale_down {
       evaluation_periods = 300
+      max_scale_down_percentage = 50  
+
     }
 
     resource_limits {
@@ -704,6 +748,8 @@ const testScalingConfig_Update = `
 
     autoscale_down {
       evaluation_periods = 600
+      max_scale_down_percentage = 10
+
     }
 
     resource_limits {

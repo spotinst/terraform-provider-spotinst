@@ -16,8 +16,9 @@ const (
 	ProviderToken   FieldName = "token"
 	ProviderAccount FieldName = "account"
 
-	Subscription            ResourceAffinity = "Subscription"
-	ElastigroupAWSBeanstalk ResourceAffinity = "ElastigroupAWSBeanstalk"
+	Subscription                         ResourceAffinity = "Subscription"
+	ElastigroupAWSBeanstalk              ResourceAffinity = "ElastigroupAWSBeanstalk"
+	ElastigroupAWSBeanstalkScheduledTask ResourceAffinity = "ElastigroupAWSBeanstalk_Scheduled_Task"
 
 	OceanAWS                    ResourceAffinity = "Ocean_AWS"
 	OceanAWSInstanceTypes       ResourceAffinity = "Ocean_AWS_Instance_Types"
@@ -54,6 +55,17 @@ const (
 	ElastigroupAWSBlockDevices        ResourceAffinity = "Elastigroup_AWS_Block_Device"
 	ElastigroupAWSScalingPolicies     ResourceAffinity = "Elastigroup_AWS_Scaling_Policies"
 	ElastigroupAWSIntegrations        ResourceAffinity = "Elastigroup_AWS_Integrations"
+
+	ManagedInstanceAWS                    ResourceAffinity = "Managed_Instance_AWS"
+	ManagedInstanceAWSStrategy            ResourceAffinity = "Managed_Instance_AWS_Strategy"
+	ManagedInstanceAWSPersistence         ResourceAffinity = "Managed_Instance_AWS_Persistence"
+	ManagedInstanceAWSHealthCheck         ResourceAffinity = "Managed_Instance_AWS_HealthCheck"
+	ManagedInstanceAWSIntegrations        ResourceAffinity = "Managed_Instance_AWS_Integrations"
+	ManagedInstanceAWSCompute             ResourceAffinity = "Managed_Instance_AWS_Compute"
+	ManagedInstanceAWSLaunchSpecification ResourceAffinity = "Managed_Instance_AWS_Launch_Specification"
+	ManagedInstanceAWSNetworkInterfaces   ResourceAffinity = "Managed_Instance_AWS_Network_Interfaces"
+	ManagedInstanceAWSScheduling          ResourceAffinity = "Managed_Instance_AWS_Scheduling"
+	ManagedInstanceAWSComputeInstanceType ResourceAffinity = "Managed_Instance_AWS_Compute_Instance_Type"
 
 	ElastigroupGCP                    ResourceAffinity = "Elastigroup_GCP"
 	ElastigroupGCPDisk                ResourceAffinity = "Elastigroup_GCP_Disk"

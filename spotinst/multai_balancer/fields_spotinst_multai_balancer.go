@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
+	"log"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -156,8 +157,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if balancer.Timeouts != nil {
 				value = flattenBalancerTimeouts(balancer.Timeouts)
 			}
-			resourceData.Set(string(ConnectionTimeouts), value)
-			return nil
+			return resourceData.Set(string(ConnectionTimeouts), value)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mlbWrapper := resourceObject.(*commons.MultaiBalancerWrapper)

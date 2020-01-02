@@ -1,14 +1,14 @@
 package spotinst
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
-	return &schema.Provider{
+	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			string(commons.ProviderToken): {
 				Type:     schema.TypeString,
@@ -26,11 +26,16 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			string(commons.ElastigroupAwsResourceName):           resourceSpotinstElastigroupAws(),
-			string(commons.ElastigroupGCPResourceName):           resourceSpotinstElastigroupGCP(),
-			string(commons.ElastigroupGKEResourceName):           resourceSpotinstElastigroupGKE(),
-			string(commons.SubscriptionResourceName):             resourceSpotinstSubscription(),
-			string(commons.ElastigroupAWSBeanstalkResourceName):  resourceSpotinstElastigroupAWSBeanstalk(),
+			// Elastigroup.
+			string(commons.ElastigroupAWSResourceName):          resourceSpotinstElastigroupAWS(),
+			string(commons.ElastigroupGCPResourceName):          resourceSpotinstElastigroupGCP(),
+			string(commons.ElastigroupGKEResourceName):          resourceSpotinstElastigroupGKE(),
+			string(commons.ElastigroupAWSBeanstalkResourceName): resourceSpotinstElastigroupAWSBeanstalk(),
+			string(commons.ElastigroupAzureResourceName):        resourceSpotinstElastigroupAzure(),
+			string(commons.SubscriptionResourceName):            resourceSpotinstSubscription(),
+			string(commons.MRScalerAWSResourceName):             resourceSpotinstMRScalerAWS(),
+
+			// Ocean.
 			string(commons.OceanAWSResourceName):                 resourceSpotinstOceanAWS(),
 			string(commons.OceanAWSLaunchSpecResourceName):       resourceSpotinstOceanAWSLaunchSpec(),
 			string(commons.OceanGKEImportResourceName):           resourceSpotinstOceanGKEImport(),
@@ -38,27 +43,39 @@ func Provider() terraform.ResourceProvider {
 			string(commons.OceanGKELaunchSpecImportResourceName): resourceSpotinstOceanGKELaunchSpecImport(),
 			string(commons.OceanECSResourceName):                 resourceSpotinstOceanECS(),
 			string(commons.OceanECSLaunchSpecResourceName):       resourceSpotinstOceanECSLaunchSpec(),
-			string(commons.ElastigroupAzureResourceName):         resourceSpotinstElastigroupAzure(),
-			string(commons.MRScalerAWSResourceName):              resourceSpotinstMRScalerAWS(),
-			string(commons.MultaiBalancerResourceName):           resourceSpotinstMultaiBalancer(),
-			string(commons.MultaiDeploymentResourceName):         resourceSpotinstMultaiDeployment(),
-			string(commons.MultaiListenerResourceName):           resourceSpotinstMultaiListener(),
-			string(commons.MultaiRoutingRuleResourceName):        resourceSpotinstMultaiRoutingRule(),
-			string(commons.MultaiTargetResourceName):             resourceSpotinstMultaiTarget(),
-			string(commons.MultaiTargetSetResourceName):          resourceSpotinstMultaiTargetSet(),
-		},
 
-		ConfigureFunc: providerConfigure,
+			// Multai.
+			string(commons.MultaiBalancerResourceName):    resourceSpotinstMultaiBalancer(),
+			string(commons.MultaiDeploymentResourceName):  resourceSpotinstMultaiDeployment(),
+			string(commons.MultaiListenerResourceName):    resourceSpotinstMultaiListener(),
+			string(commons.MultaiRoutingRuleResourceName): resourceSpotinstMultaiRoutingRule(),
+			string(commons.MultaiTargetResourceName):      resourceSpotinstMultaiTarget(),
+			string(commons.MultaiTargetSetResourceName):   resourceSpotinstMultaiTargetSet(),
+
+			// Managed Instance.
+			string(commons.ManagedInstanceAWSResourceName): resourceSpotinstMangedInstanceAWS(),
+		},
 	}
+
+	p.ConfigureFunc = func(d *schema.ResourceData) (interface{}, error) {
+		terraformVersion := p.TerraformVersion
+		if terraformVersion == "" {
+			// Terraform 0.12 introduced this field to the protocol
+			// We can therefore assume that if it's missing it's 0.10 or 0.11
+			terraformVersion = "0.11+compatible"
+		}
+		return providerConfigure(d, terraformVersion)
+	}
+
+	return p
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, error) {
 	config := Config{
-		Token:   d.Get(string(commons.ProviderToken)).(string),
-		Account: d.Get(string(commons.ProviderAccount)).(string),
+		Token:            d.Get(string(commons.ProviderToken)).(string),
+		Account:          d.Get(string(commons.ProviderAccount)).(string),
+		terraformVersion: terraformVersion,
 	}
-	if err := config.Validate(); err != nil {
-		return nil, err
-	}
+
 	return config.Client()
 }

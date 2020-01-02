@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -239,9 +240,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[SubnetIds] = commons.NewGenericField(
+	fieldsMap[SubnetIDs] = commons.NewGenericField(
 		commons.OceanAWS,
-		SubnetIds,
+		SubnetIDs,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Elem:     &schema.Schema{Type: schema.TypeString},
@@ -254,15 +255,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if cluster.Compute != nil && cluster.Compute.SubnetIDs != nil {
 				value = cluster.Compute.SubnetIDs
 			}
-			if err := resourceData.Set(string(SubnetIds), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetIds), err)
+			if err := resourceData.Set(string(SubnetIDs), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetIDs), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(SubnetIDs)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
 				} else {
@@ -274,7 +275,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(SubnetIDs)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
 				} else {

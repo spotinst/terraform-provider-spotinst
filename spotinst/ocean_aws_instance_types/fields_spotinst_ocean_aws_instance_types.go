@@ -2,7 +2,8 @@ package ocean_aws_instance_types
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
@@ -22,13 +23,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var result []string
+			var result []string = nil
 			if cluster.Compute != nil && cluster.Compute.InstanceTypes != nil &&
 				cluster.Compute.InstanceTypes.Whitelist != nil {
-				WhitelistInstances := cluster.Compute.InstanceTypes.Whitelist
-				for _, WhitelistInstance := range WhitelistInstances {
-					result = append(result, WhitelistInstance)
-				}
+				result = cluster.Compute.InstanceTypes.Whitelist
 			}
 			if err := resourceData.Set(string(Whitelist), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Whitelist), err)
@@ -39,27 +37,27 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Whitelist)); ok {
-				instances := v.([]interface{})
-				instanceTypes := make([]string, len(instances))
-				for i, j := range instances {
-					instanceTypes[i] = j.(string)
+				if whitelist, err := expandInstanceTypeList(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.InstanceTypes.SetWhitelist(whitelist)
 				}
-				cluster.Compute.InstanceTypes.SetWhitelist(instanceTypes)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var instanceTypes []string = nil
 			if v, ok := resourceData.GetOk(string(Whitelist)); ok {
-				instances := v.([]interface{})
-				instanceTypes = make([]string, len(instances))
-				for i, v := range instances {
-					instanceTypes[i] = v.(string)
+				if whitelist, err := expandInstanceTypeList(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.InstanceTypes.SetWhitelist(whitelist)
 				}
+			} else {
+				cluster.Compute.InstanceTypes.SetWhitelist(nil)
 			}
-			cluster.Compute.InstanceTypes.SetWhitelist(instanceTypes)
+
 			return nil
 		},
 		nil,
@@ -76,13 +74,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var result []string
+			var result []string = nil
 			if cluster.Compute != nil && cluster.Compute.InstanceTypes != nil &&
-				cluster.Compute.InstanceTypes.Whitelist != nil {
-				BlacklistInstances := cluster.Compute.InstanceTypes.Blacklist
-				for _, BlacklistInstance := range BlacklistInstances {
-					result = append(result, BlacklistInstance)
-				}
+				cluster.Compute.InstanceTypes.Blacklist != nil {
+				result = cluster.Compute.InstanceTypes.Blacklist
 			}
 			if err := resourceData.Set(string(Blacklist), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Blacklist), err)
@@ -93,30 +88,41 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				instances := v.([]interface{})
-				instanceTypes := make([]string, len(instances))
-				for i, j := range instances {
-					instanceTypes[i] = j.(string)
+				if whitelist, err := expandInstanceTypeList(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.InstanceTypes.SetBlacklist(whitelist)
 				}
-				cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var instanceTypes []string = nil
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				instances := v.([]interface{})
-				instanceTypes = make([]string, len(instances))
-				for i, v := range instances {
-					instanceTypes[i] = v.(string)
+				if whitelist, err := expandInstanceTypeList(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.InstanceTypes.SetBlacklist(whitelist)
 				}
+			} else {
+				cluster.Compute.InstanceTypes.SetBlacklist(nil)
 			}
-			cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
+
 			return nil
 		},
 		nil,
 	)
+}
 
+func expandInstanceTypeList(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if instanceTypeList, ok := v.(string); ok && instanceTypeList != "" {
+			result = append(result, instanceTypeList)
+		}
+	}
+	return result, nil
 }

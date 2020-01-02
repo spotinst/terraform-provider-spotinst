@@ -1,8 +1,27 @@
-## 1.13.6 (Unreleased)
+## 1.14.0 (January 2, 2020)
 
+NOTES:
+* This release imports the standalone SDK [hashicorp/terraform-plugin-sdk](https://github.com/hashicorp/terraform-plugin-sdk) v1.4.0.
+
+FEATURES:
+* *New Resource*: `spotinst_managed_instance_aws`
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `root_volume_size`
+* resource/spotinst_elastigroup_aws_beanstalk: added `scheduled_task`
 * resource/spotinst_ocean_aws_launch_spec: added `autoscale_headrooms`
 * resource/spotinst_ocean_ecs_launch_spec: added `autoscale_headrooms`
 * resource/spotinst_ocean_gke_launch_spec: added `autoscale_headrooms`
+* resource/spotinst_ocean_aws_launch_spec: added `subnet_ids`
+* resource/spotinst_ocean_aws: added `max_scale_down_percentage`
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs` 
+* resource/spotinst_ocean_aws: resolved errors with `blacklist`
+* resource/spotinst_ocean_gke_import: resolved errors with `whitelist`
+* resource/spotinst_elastigroup_aws: resolved errors with `ondemand_count`
+* resource/spotinst_elastigroup_gcp: resolved errors with `startup_script`
+* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs.roll_config`
 
 ## 1.13.5 (October 2, 2019)
 
@@ -10,14 +29,12 @@ ENHANCEMENTS:
 * spotinst_ocean_aws_launch_spec: added `security_groups`
 
 NOTES:
-
 * A delay was added during group creation when IAM instance profile linked with the group in order to decrease the retry process of the group creation.
 
 ## 1.13.4 (September 11, 2019)
 
 NOTES:
-
-This release supports Terraform v0.12
+* This release supports Terraform v0.12
 
 FEATURES:
 * *New Resource*: `spotinst_ocean_ecs`
@@ -48,8 +65,7 @@ ENHANCEMENTS:
 ## 1.13.2 (May 01, 2019)
 
 NOTES:
-
-Adding the additonal protocol version (5) for Terraform 0.12 to this release.
+* Adding the additonal protocol version (5) for Terraform 0.12 to this release.
 
 ## 1.13.1 (May 01, 2019)
 
@@ -186,7 +202,6 @@ NOTES:
 * resource/spotinst_ocean_aws: Added a new spotinst_ocean_aws resource for creating Spotinst Ocean clusters on AWS
 
 FEATURES:
-
 * *New Resource*: `spotinst_elastigroup_azure`
 * *New Resource*: `spotinst_elastigroup_gcp`
 * *New Resource*: `spotinst_elastigroup_gke`
@@ -196,16 +211,13 @@ FEATURES:
 ## 1.5.0 (December 28, 2018)
 
 NOTES:
-
 * resource/spotinst_elastigroup_aws_beanstalk: Added a new `elastigroup_aws_beanstalk` resource for creating Spotinst elastigroups that are managed by an existing AWS Elastic Beanstalk
 
 FEATURES:
-
 * *New Resource*: `spotinst_elastigroup_aws_beanstalk`
 * *New Feature*: spotinst provider version added to the User-Agent header
 
 ENHANCEMENTS:
-
 * resource/spotinst_elastigroup_aws_beanstalk: Added a the ability to transition in and out of maintenance modes by setting `maintenance` mode to `START` or `END`
 * resource/spotinst_elastigroup_aws: Added the ability to wait for a minimum number of healthy instances for a certain period of time
 * resource/spotinst_elastigroup_aws: Added ability to maintain scaling policy configuration when disabled
@@ -217,7 +229,6 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: Use new `adjustment` field in `scheduled_tasks` to indicate the number of instances to add or remove when scaling
 
 BUG FIXES:
-
 * resource/spotinst_elastigroup_aws: `user_data` and `shutdown_script` no longer updates to empty string SHA
 * resource/spotinst_elastigroup_aws: Fixed an issue of `tags`, `instance_types_spot` and `instance_types_preferred_spot` not being imported properly 
 * resource/spotinst_elastigroup_aws: Fixed an issue where `associate_public_ip` incorrectly defaulting to `false` when undefined
@@ -225,7 +236,6 @@ BUG FIXES:
 ## 1.4.0 (September 13, 2018)
 
 ENHANCEMENTS:
-
 * resource/spotinst_elastigroup_aws: Shutdown script is now supported under `shutdown_script`
 * resource/spotinst_elastigroup_aws: ECS integration support for `autoscale_is_autoconfig`
 * resource/spotinst_elastigroup_aws: Docker Swarm integration as `integration_docker_swarm`
@@ -233,14 +243,12 @@ ENHANCEMENTS:
 ## 1.3.0 (August 13, 2018)
 
 ENHANCEMENTS:
-
 * resource/spotinst_elastigroup_aws: Added a new Route53 integration as `integration_route53`
 * resource/spotinst_elastigroup_aws: Added support for preferred spot instances as `instance_types_preferred_spot`
 
 ## 1.2.0 (July 26, 2018)
 
 ENHANCEMENTS:
-
 * resource/spotinst_elastigroup_aws: Added `kms_key_id` support for `ebs_block_device`
 * resource/spotinst_elastigroup_aws: Added `autoscale_attributes` support for `integration_ecs`
 * resource/spotinst_elastigroup_aws: Added `autoscale_labels` support for `integration_kubernetes`
@@ -249,7 +257,6 @@ ENHANCEMENTS:
 ## 1.1.1 (July 09, 2018)
 
 BUG FIXES:
-
 * resource/spotinst_elastigroup_aws: `scheduled_task` & `network_interface` now properly address fields not specified on TF file as nil instead of their default values
 
 ## 1.1.0 (July 02, 2018)

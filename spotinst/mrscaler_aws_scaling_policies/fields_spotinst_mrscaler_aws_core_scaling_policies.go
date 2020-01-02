@@ -2,7 +2,8 @@ package mrscaler_aws_scaling_policies
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -52,11 +53,7 @@ func SetupCoreScalingPolicies(fieldsMap map[commons.FieldName]*commons.GenericFi
 					value = policies
 				}
 			}
-			if value != nil && len(value) > 0 {
-				scaler.CoreScaling.SetUp(value)
-			} else {
-				scaler.CoreScaling.SetUp(nil)
-			}
+			scaler.CoreScaling.SetUp(value)
 			return nil
 		},
 		nil,
@@ -103,11 +100,7 @@ func SetupCoreScalingPolicies(fieldsMap map[commons.FieldName]*commons.GenericFi
 					value = policies
 				}
 			}
-			if value != nil && len(value) > 0 {
-				scaler.CoreScaling.SetDown(value)
-			} else {
-				scaler.CoreScaling.SetDown(nil)
-			}
+			scaler.CoreScaling.SetDown(value)
 			return nil
 		},
 		nil,

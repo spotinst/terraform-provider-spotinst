@@ -2,7 +2,8 @@ package elastigroup_azure_vm_sizes
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
@@ -26,10 +27,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes != nil &&
 				elastigroup.Compute.VMSizes.OnDemand != nil {
-				onDemandSizes := elastigroup.Compute.VMSizes.OnDemand
-				for _, onDemandSize := range onDemandSizes {
-					result = append(result, onDemandSize)
-				}
+				result = append(result, elastigroup.Compute.VMSizes.OnDemand...)
 				if err := resourceData.Set(string(OnDemand), result); err != nil {
 					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OnDemand), err)
 				}
@@ -79,10 +77,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes != nil &&
 				elastigroup.Compute.VMSizes.LowPriority != nil {
-				lowPrioritySizes := elastigroup.Compute.VMSizes.LowPriority
-				for _, lowPrioritySize := range lowPrioritySizes {
-					result = append(result, lowPrioritySize)
-				}
+				result = append(result, elastigroup.Compute.VMSizes.LowPriority...)
 				if err := resourceData.Set(string(LowPriority), result); err != nil {
 					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LowPriority), err)
 				}

@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"log"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration"
-	"log"
-	"testing"
 )
 
 //func init() {
@@ -174,6 +175,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.key", "taint key"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.value", "taint value"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.effect", "NoSchedule"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 				),
 			},
 			{
@@ -196,6 +200,10 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.key", "taint key updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.value", "taint value updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.effect", "NoExecute"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 				),
 			},
 		},
@@ -211,7 +219,9 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   security_groups = ["sg-0041bd3fd6aa2ee3c"]
   user_data = "hello world"
   iam_instance_profile = "test"
-
+  subnet_ids = ["subnet-7f3fbf06"]
+  root_volume_size = 20
+  
   labels {
     key = "label key"
     value = "label value"
@@ -235,7 +245,9 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-79826301"
   user_data = "hello world updated"
   iam_instance_profile = "updated"
-  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+  subnet_ids = ["subnet-7f3fbf06", "subnet-03b7ed5b"]
+  security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
+  root_volume_size = 30
 
   
   labels {

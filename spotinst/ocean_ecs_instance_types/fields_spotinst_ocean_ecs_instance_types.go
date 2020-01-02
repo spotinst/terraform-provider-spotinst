@@ -2,7 +2,8 @@ package ocean_ecs_instance_types
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
@@ -25,10 +26,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if cluster.Compute != nil && cluster.Compute.InstanceTypes != nil &&
 				cluster.Compute.InstanceTypes.Whitelist != nil {
-				WhitelistInstances := cluster.Compute.InstanceTypes.Whitelist
-				for _, WhitelistInstance := range WhitelistInstances {
-					result = append(result, WhitelistInstance)
-				}
+				result = append(result, cluster.Compute.InstanceTypes.Whitelist...)
 			}
 			if err := resourceData.Set(string(Whitelist), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Whitelist), err)

@@ -36,14 +36,14 @@ const (
 	HealthCheckUnhealthyDurationBeforeReplacement commons.FieldName = "health_check_unhealthy_duration_before_replacement"
 
 	Region                     commons.FieldName = "region"
-	SubnetIds                  commons.FieldName = "subnet_ids"
+	SubnetIDs                  commons.FieldName = "subnet_ids"
 	AvailabilityZones          commons.FieldName = "availability_zones"
 	PreferredAvailabilityZones commons.FieldName = "preferred_availability_zones"
 	ElasticLoadBalancers       commons.FieldName = "elastic_load_balancers"
 	TargetGroupArns            commons.FieldName = "target_group_arns"
 	MultaiTargetSets           commons.FieldName = "multai_target_sets"
-	MultaiTargetSetId          commons.FieldName = "target_set_id"
-	MultaiBalancerId           commons.FieldName = "balancer_id"
+	MultaiTargetSetID          commons.FieldName = "target_set_id"
+	MultaiBalancerID           commons.FieldName = "balancer_id"
 	Tags                       commons.FieldName = "tags"
 
 	RevertToSpot commons.FieldName = "revert_to_spot"

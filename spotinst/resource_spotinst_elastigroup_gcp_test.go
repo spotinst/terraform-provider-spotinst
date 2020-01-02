@@ -3,15 +3,16 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"log"
+	"strings"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_launch_configuration"
-	"log"
-	"strings"
-	"testing"
 )
 
 func init() {

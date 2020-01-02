@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/spotinst/spotinst-sdk-go/service/multai"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 func init() {
@@ -105,7 +106,6 @@ func testAccCheckSpotinstMultaiTargetSetExists(targetSet *multai.TargetSet, reso
 type TargetSetConfigMetadata struct {
 	provider             string
 	name                 string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

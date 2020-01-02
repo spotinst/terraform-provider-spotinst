@@ -3,13 +3,14 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-spotinst/version"
 	stdlog "log"
 	"strings"
 
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/terraform-plugin-sdk/meta"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
+	"github.com/spotinst/spotinst-sdk-go/service/managedinstance"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean"
@@ -18,6 +19,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
+	"github.com/terraform-providers/terraform-provider-spotinst/version"
 )
 
 var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
@@ -28,29 +30,104 @@ var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
 type Config struct {
 	Token   string
 	Account string
+
+	terraformVersion string
 }
 
 type Client struct {
-	elastigroup  elastigroup.Service
-	healthCheck  healthcheck.Service
-	subscription subscription.Service
-	multai       multai.Service
-	mrscaler     mrscaler.Service
-	ocean        ocean.Service
+	elastigroup     elastigroup.Service
+	healthCheck     healthcheck.Service
+	subscription    subscription.Service
+	multai          multai.Service
+	mrscaler        mrscaler.Service
+	ocean           ocean.Service
+	managedInstance managedinstance.Service
 }
 
-// Validate returns an error in case of invalid configuration.
-func (c *Config) Validate() error {
-	return nil
-}
-
-// Client returns a new client for accessing Spotinst.
+// Client configures and returns a fully initialized Spotinst client.
 func (c *Config) Client() (*Client, error) {
-	config := spotinst.DefaultConfig()
-	config.WithLogger(newStdLogger("DEBUG"))
-	config.WithUserAgent("HashiCorp-Terraform/" + terraform.VersionString() + ",spotinst-provider/v2-" + version.GetShortVersion())
+	stdlog.Println("[INFO] Configuring a new Spotinst client")
 
+	// Create a new session.
+	sess, err := c.getSession()
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a new client.
+	client := &Client{
+		elastigroup:     elastigroup.New(sess),
+		healthCheck:     healthcheck.New(sess),
+		subscription:    subscription.New(sess),
+		multai:          multai.New(sess),
+		mrscaler:        mrscaler.New(sess),
+		ocean:           ocean.New(sess),
+		managedInstance: managedinstance.New(sess),
+	}
+
+	stdlog.Println("[INFO] Spotinst client configured")
+	return client, nil
+}
+
+func (c *Config) getSession() (*session.Session, error) {
+	config := spotinst.DefaultConfig()
+
+	// HTTP options.
+	{
+		config.WithHTTPClient(cleanhttp.DefaultPooledClient())
+		config.WithUserAgent(c.getUserAgent())
+	}
+
+	// Credentials.
+	{
+		v, err := c.getCredentials()
+		if err != nil {
+			return nil, err
+		}
+		config.WithCredentials(v)
+	}
+
+	// Logging.
+	{
+		config.WithLogger(log.LoggerFunc(func(format string, args ...interface{}) {
+			stdlog.Printf(fmt.Sprintf("[DEBUG] [spotinst-sdk-go] %s", format), args...)
+		}))
+	}
+
+	return session.New(config), nil
+}
+
+func (c *Config) getUserAgent() string {
+	agents := []struct {
+		Product string
+		Version string
+		Comment []string
+	}{
+		{Product: "HashiCorp", Version: "1.0"},
+		{Product: "Terraform", Version: c.terraformVersion, Comment: []string{"+https://www.terraform.io"}},
+		{Product: "Terraform Plugin SDK", Version: meta.SDKVersionString()},
+		{Product: "Terraform Provider Spotinst", Version: "v2-" + version.String()},
+	}
+
+	var ua string
+	for _, agent := range agents {
+		pv := fmt.Sprintf("%s/%s", agent.Product, agent.Version)
+		if len(agent.Comment) > 0 {
+			pv += fmt.Sprintf(" (%s)", strings.Join(agent.Comment, "; "))
+		}
+		if len(ua) > 0 {
+			ua += " "
+		}
+		ua += pv
+	}
+
+	return ua
+}
+
+func (c *Config) getCredentials() (*credentials.Credentials, error) {
+	var providers []credentials.Provider
 	var static *credentials.StaticProvider
+
 	if c.Token != "" || c.Account != "" {
 		static = &credentials.StaticProvider{
 			Value: credentials.Value{
@@ -59,14 +136,13 @@ func (c *Config) Client() (*Client, error) {
 			},
 		}
 	}
-
-	providers := []credentials.Provider{}
-
 	if static != nil {
 		providers = append(providers, static)
 	}
 
-	providers = append(providers, new(credentials.EnvProvider), new(credentials.FileProvider))
+	providers = append(providers,
+		new(credentials.EnvProvider),
+		new(credentials.FileProvider))
 
 	creds := credentials.NewChainCredentials(providers...)
 
@@ -74,27 +150,6 @@ func (c *Config) Client() (*Client, error) {
 		stdlog.Printf("[ERROR] Failed to instantiate Spotinst client: %v", err)
 		return nil, ErrNoValidCredentials
 	}
-	config.WithCredentials(creds)
 
-	// Create a new session.
-	sess := session.New(config)
-
-	// Create a new client.
-	client := &Client{
-		elastigroup:  elastigroup.New(sess),
-		healthCheck:  healthcheck.New(sess),
-		subscription: subscription.New(sess),
-		multai:       multai.New(sess),
-		mrscaler:     mrscaler.New(sess),
-		ocean:        ocean.New(sess),
-	}
-	stdlog.Println("[INFO] Spotinst client configured")
-
-	return client, nil
-}
-
-func newStdLogger(level string) log.Logger {
-	return log.LoggerFunc(func(format string, args ...interface{}) {
-		stdlog.Printf(fmt.Sprintf("[%s] %s", strings.ToUpper(level), format), args...)
-	})
+	return creds, nil
 }

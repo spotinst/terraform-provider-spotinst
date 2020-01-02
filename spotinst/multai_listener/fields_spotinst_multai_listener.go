@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
+	"log"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"strings"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -174,8 +175,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if listener.TLSConfig != nil {
 				value = flattenListenerTLSConfig(listener.TLSConfig)
 			}
-			resourceData.Set(string(TLSConfig), value)
-			return nil
+			return resourceData.Set(string(TLSConfig), value)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			listenerWrapper := resourceObject.(*commons.MultaiListenerWrapper)

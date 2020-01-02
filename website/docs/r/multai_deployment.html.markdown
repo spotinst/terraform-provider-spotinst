@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: multai deployment"
-sidebar_current: "docs-do-resource-multai_deployment"
+subcategory: "Multai"
 description: |-
  Provides a Spotinst Multai Deployment.
 ---

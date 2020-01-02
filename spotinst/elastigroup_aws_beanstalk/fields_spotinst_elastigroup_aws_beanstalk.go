@@ -2,7 +2,8 @@ package elastigroup_aws_beanstalk
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -341,7 +342,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			if v, ok := resourceData.GetOk(string(Maintenance)); ok && v != nil {
 				if v != "START" && v != "END" && v != "STATUS" {
-					return fmt.Errorf("Error: Maintenace mode must be START, END, or STATUS")
+					return fmt.Errorf("error: maintenance mode must be START, END, or STATUS")
 				}
 			}
 			return nil
@@ -349,7 +350,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			if v, ok := resourceData.GetOk(string(Maintenance)); ok && v != nil {
 				if v != "START" && v != "END" && v != "STATUS" {
-					return fmt.Errorf("Error: Maintenace mode must be START or END, or STATUS")
+					return fmt.Errorf("error: maintenance mode must be START or END, or STATUS")
 				}
 			}
 			return nil

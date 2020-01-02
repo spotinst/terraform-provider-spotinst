@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
+	"log"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"strings"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -302,8 +303,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if targetSet.HealthCheck != nil {
 				value = flattenTargetSetHealthCheck(targetSet.HealthCheck)
 			}
-			resourceData.Set(string(HealthCheck), value)
-			return nil
+			return resourceData.Set(string(HealthCheck), value)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			targetSetWrapper := resourceObject.(*commons.MultaiTargetSetWrapper)

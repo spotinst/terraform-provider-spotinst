@@ -1,11 +1,12 @@
 package elastigroup_azure_scheduled_task
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"strconv"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

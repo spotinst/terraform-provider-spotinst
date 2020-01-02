@@ -3,15 +3,17 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+
 	"log"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 func init() {
@@ -103,7 +105,6 @@ func testCheckElastigroupAWSBeanstalkExists(group *aws.Group, resourceName strin
 type BeanstalkGroupConfigMetadata struct {
 	groupName            string
 	provider             string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 
@@ -341,5 +342,195 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
 }
 
 `
+
+// region Beanstalk Elastigroup: Scheduled Tasks
+func TestAccSpotinstElastigroupAWSBeanstalk_ScheduledTask(t *testing.T) {
+	groupName := "test-acc-bs-scheduled-task"
+	resourceName := createElastigroupAWSBeanstalkResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupAWSBeanstalkDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupAWSBeanstalkTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName}, testScheduledTaskBeanstalkGroupConfig_Update, testScheduledTaskBeanstalkGroupConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAWSBeanstalkExists(&group, resourceName),
+					testCheckElastigroupAWSBeanstalkAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.task_type", "backup_ami"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.scale_min_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.scale_max_capacity", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.adjustment", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.frequency", "hourly"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.scale_target_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3981839301.grace_period", "300"),
+				),
+			},
+			{
+				Config: createElastigroupAWSBeanstalkTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName, updateBaselineFields: true}, testScheduledTaskBeanstalkGroupConfig_Update, testScheduledTaskBeanstalkGroupConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAWSBeanstalkExists(&group, resourceName),
+					testCheckElastigroupAWSBeanstalkAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.task_type", "backup_ami"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.scale_min_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.scale_max_capacity", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.adjustment_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.frequency", "hourly"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.scale_target_capacity", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2572384164.grace_period", "300"),
+				),
+			},
+			{
+				Config: createElastigroupAWSBeanstalkTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName, updateBaselineFields: true}, testScheduledTaskBeanstalkGroupConfig_Update2, testScheduledTaskBeanstalkGroupConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAWSBeanstalkExists(&group, resourceName),
+					testCheckElastigroupAWSBeanstalkAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.task_type", "statefulUpdateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.target_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.min_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.max_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.start_time", "2100-01-01T00:00:00Z"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.cron_expression", "0 0 12 1/1 * ? *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.batch_size_percentage", "66"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.1172895501.grace_period", "150"),
+				),
+			},
+			{
+				Config: createElastigroupAWSBeanstalkTerraform(&BeanstalkGroupConfigMetadata{groupName: groupName, updateBaselineFields: true}, testScheduledTaskBeanstalkGroupConfig_EmptyFields, testScheduledTaskBeanstalkGroupConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAWSBeanstalkExists(&group, resourceName),
+					testCheckElastigroupAWSBeanstalkAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testScheduledTaskBeanstalkGroupConfig_Create = `
+ // --- SCHEDULED TASK ------------------
+resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
+ provider = "%v"
+
+ name 	 = "%v"
+ product = "Linux/UNIX"
+ region  = "us-west-2"
+
+ max_size 		  = 2
+ min_size 		  = 0
+ desired_capacity = 1
+
+ beanstalk_environment_id = "e-mzp2rk47dw"
+ instance_types_spot        = ["t2.small"]
+
+  scheduled_task {
+	is_enabled = false
+    task_type = "backup_ami"
+    scale_min_capacity = 0
+    scale_max_capacity = 10
+    adjustment = 1
+    frequency = "hourly"
+    scale_target_capacity = 5
+    batch_size_percentage = 33
+    grace_period = 300
+  }
+}
+ // -------------------------------------
+
+`
+
+const testScheduledTaskBeanstalkGroupConfig_Update = `
+ // --- SCHEDULED TASK ------------------
+resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
+ provider = "%v"
+
+ name 	 = "%v"
+ product = "Linux/UNIX"
+ region  = "us-west-2"
+
+ max_size 		  = 3
+ min_size 		  = 1
+ desired_capacity = 2
+
+ beanstalk_environment_id = "e-mzp2rk47dw"
+ instance_types_spot        = ["t2.small", "t2.medium"]
+
+  scheduled_task {
+	is_enabled = false
+    task_type = "backup_ami"
+    scale_min_capacity = 0
+    scale_max_capacity = 10
+    adjustment_percentage = 50
+    frequency = "hourly"
+    scale_target_capacity = 5
+    batch_size_percentage = 33
+    grace_period = 300
+  }
+}
+ // -------------------------------------
+`
+
+const testScheduledTaskBeanstalkGroupConfig_Update2 = `
+ // --- SCHEDULED TASK ------------------
+resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
+ provider = "%v"
+
+ name 	 = "%v"
+ product = "Linux/UNIX"
+ region  = "us-west-2"
+
+ max_size 		  = 3
+ min_size 		  = 1
+ desired_capacity = 2
+
+ beanstalk_environment_id = "e-mzp2rk47dw"
+ instance_types_spot        = ["t2.small", "t2.medium"]
+
+  scheduled_task {
+    is_enabled = true
+    task_type = "statefulUpdateCapacity"
+    target_capacity = 2
+    min_capacity = 1
+    max_capacity = 3
+    start_time = "2100-01-01T00:00:00Z"
+    cron_expression = "0 0 12 1/1 * ? *"
+    batch_size_percentage = 66
+    grace_period = 150
+  }
+}
+ // -------------------------------------
+`
+
+const testScheduledTaskBeanstalkGroupConfig_EmptyFields = `
+ // --- SCHEDULED TASK ------------------
+resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
+ provider = "%v"
+
+ name 	 = "%v"
+ product = "Linux/UNIX"
+ region  = "us-west-2"
+
+ max_size 		  = 3
+ min_size 		  = 1
+ desired_capacity = 2
+
+ beanstalk_environment_id = "e-mzp2rk47dw"
+ instance_types_spot        = ["t2.small", "t2.medium"]
+}
+ // -------------------------------------
+`
+
+//// endregion
 
 // endregion

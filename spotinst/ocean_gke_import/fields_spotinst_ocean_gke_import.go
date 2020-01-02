@@ -2,11 +2,12 @@ package ocean_gke_import
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"strconv"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -61,7 +62,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Whitelist,
 		&schema.Schema{
 			Type:     schema.TypeList,
-			Required: true,
+			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -70,10 +71,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if cluster.Compute != nil && cluster.Compute.InstanceTypes != nil &&
 				cluster.Compute.InstanceTypes.Whitelist != nil {
-				WhitelistInstances := cluster.Compute.InstanceTypes.Whitelist
-				for _, WhitelistInstance := range WhitelistInstances {
-					result = append(result, WhitelistInstance)
-				}
+				result = append(result, cluster.Compute.InstanceTypes.Whitelist...)
 			}
 			if err := resourceData.Set(string(Whitelist), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Whitelist), err)

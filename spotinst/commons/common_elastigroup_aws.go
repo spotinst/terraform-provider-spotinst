@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 )
 
@@ -12,7 +12,7 @@ import (
 //            Variables
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
-	ElastigroupAwsResourceName ResourceName = "spotinst_elastigroup_aws"
+	ElastigroupAWSResourceName ResourceName = "spotinst_elastigroup_aws"
 )
 
 var ElastigroupResource *ElastigroupTerraformResource
@@ -37,7 +37,7 @@ type ElastigroupWrapper struct {
 func NewElastigroupResource(fieldsMap map[FieldName]*GenericField) *ElastigroupTerraformResource {
 	return &ElastigroupTerraformResource{
 		GenericResource: GenericResource{
-			resourceName: ElastigroupAwsResourceName,
+			resourceName: ElastigroupAWSResourceName,
 			fields:       NewGenericFields(fieldsMap),
 		},
 	}

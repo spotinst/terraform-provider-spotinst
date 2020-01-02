@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -437,9 +437,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[SubnetIds] = commons.NewGenericField(
+	fieldsMap[SubnetIDs] = commons.NewGenericField(
 		commons.ElastigroupAWS,
-		SubnetIds,
+		SubnetIDs,
 		&schema.Schema{
 			Type:          schema.TypeList,
 			Elem:          &schema.Schema{Type: schema.TypeString},
@@ -453,15 +453,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if elastigroup.Compute != nil && elastigroup.Compute.SubnetIDs != nil {
 				value = elastigroup.Compute.SubnetIDs
 			}
-			if err := resourceData.Set(string(SubnetIds), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetIds), err)
+			if err := resourceData.Set(string(SubnetIDs), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SubnetIDs), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(SubnetIDs)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
 				} else {
@@ -473,7 +473,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if value, ok := resourceData.GetOk(string(SubnetIds)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(SubnetIDs)); ok && value != nil {
 				if subnetIds, err := expandSubnetIDs(value); err != nil {
 					return err
 				} else {
@@ -541,7 +541,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if _, exists := resourceData.GetOk(string(SubnetIds)); !exists {
+			if _, exists := resourceData.GetOk(string(SubnetIDs)); !exists {
 				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 						return err
@@ -555,7 +555,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if _, exists := resourceData.GetOk(string(SubnetIds)); !exists {
+			if _, exists := resourceData.GetOk(string(SubnetIDs)); !exists {
 				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
 						return err
@@ -594,8 +594,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 			}
-			resourceData.Set(string(ElasticLoadBalancers), balNames)
-			return nil
+			return resourceData.Set(string(ElasticLoadBalancers), balNames)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
@@ -609,10 +608,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 				if elbBalancers, err := expandBalancersContent(balNames, fn); err != nil {
 					return err
-				} else if elbBalancers != nil && len(elbBalancers) > 0 {
+				} else if len(elbBalancers) > 0 {
 					existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-					if existingBalancers != nil && len(existingBalancers) > 0 {
-						elbBalancers = append(existingBalancers, elbBalancers...)
+					if len(existingBalancers) > 0 {
+						elbBalancers = append(elbBalancers, existingBalancers...)
 					}
 					elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(elbBalancers)
 				}
@@ -620,11 +619,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
-			if err := onBalancersUpdate(egWrapper, resourceData); err != nil {
-				return err
-			}
-			return nil
+			return onBalancersUpdate(resourceObject.(*commons.ElastigroupWrapper), resourceData)
 		},
 		nil,
 	)
@@ -654,8 +649,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					}
 				}
 			}
-			resourceData.Set(string(TargetGroupArns), tgArns)
-			return nil
+			return resourceData.Set(string(TargetGroupArns), tgArns)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
@@ -677,10 +671,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if tgBalancers, err := expandBalancersContent(tgArns, fn); err != nil {
 					return err
 				} else {
-					if tgBalancers != nil && len(tgBalancers) > 0 {
+					if len(tgBalancers) > 0 {
 						existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-						if existingBalancers != nil && len(existingBalancers) > 0 {
-							tgBalancers = append(existingBalancers, tgBalancers...)
+						if len(existingBalancers) > 0 {
+							tgBalancers = append(tgBalancers, existingBalancers...)
 						}
 						elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(tgBalancers)
 					}
@@ -706,12 +700,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(MultaiTargetSetId): {
+					string(MultaiTargetSetID): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(MultaiBalancerId): {
+					string(MultaiBalancerID): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -729,8 +723,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				balancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
 				targetSets = flattenAWSGroupMultaiTargetSets(balancers)
 			}
-			resourceData.Set(string(MultaiTargetSets), targetSets)
-			return nil
+			return resourceData.Set(string(MultaiTargetSets), targetSets)
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
@@ -740,8 +733,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					return err
 				} else {
 					existing := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-					if existing != nil && len(existing) > 0 {
-						multaiBals = append(existing, multaiBals...)
+					if len(existing) > 0 {
+						multaiBals = append(multaiBals, existing...)
 					}
 					elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(multaiBals)
 				}
@@ -837,10 +830,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var result []string
 			if elastigroup.Compute != nil && elastigroup.Compute.ElasticIPs != nil {
-				elasticIps := elastigroup.Compute.ElasticIPs
-				for _, elasticIp := range elasticIps {
-					result = append(result, elasticIp)
-				}
+				result = append(result, elastigroup.Compute.ElasticIPs...)
 			}
 			if err := resourceData.Set(string(ElasticIps), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ElasticIps), err)
@@ -1241,7 +1231,7 @@ func extractBalancers(
 	var tgBalancers []*aws.LoadBalancer = nil
 	var mlbBalancers []*aws.LoadBalancer = nil
 
-	if existingBalancers != nil && len(existingBalancers) > 0 {
+	if len(existingBalancers) > 0 {
 		for _, balancer := range existingBalancers {
 			balTypeStr := spotinst.StringValue(balancer.Type)
 
@@ -1328,10 +1318,10 @@ func onBalancersUpdate(egWrapper *commons.ElastigroupWrapper, resourceData *sche
 	if !egWrapper.StatusElbUpdated {
 		if elbBalancers, err := extractBalancers(BalancerTypeClassic, elastigroup, resourceData); err != nil {
 			return err
-		} else if elbBalancers != nil && len(elbBalancers) > 0 {
+		} else if len(elbBalancers) > 0 {
 			existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-			if existingBalancers != nil && len(existingBalancers) > 0 {
-				elbBalancers = append(existingBalancers, elbBalancers...)
+			if len(existingBalancers) > 0 {
+				elbBalancers = append(elbBalancers, existingBalancers...)
 			}
 			elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(elbBalancers)
 		} else {
@@ -1342,10 +1332,10 @@ func onBalancersUpdate(egWrapper *commons.ElastigroupWrapper, resourceData *sche
 	if !egWrapper.StatusTgUpdated {
 		if tgBalancers, err := extractBalancers(BalancerTypeTargetGroup, elastigroup, resourceData); err != nil {
 			return err
-		} else if tgBalancers != nil && len(tgBalancers) > 0 {
+		} else if len(tgBalancers) > 0 {
 			existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-			if existingBalancers != nil && len(existingBalancers) > 0 {
-				tgBalancers = append(existingBalancers, tgBalancers...)
+			if len(existingBalancers) > 0 {
+				tgBalancers = append(tgBalancers, existingBalancers...)
 			}
 			elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(tgBalancers)
 		} else {
@@ -1356,10 +1346,10 @@ func onBalancersUpdate(egWrapper *commons.ElastigroupWrapper, resourceData *sche
 	if !egWrapper.StatusMlbUpdated {
 		if mlbBalancers, err := extractBalancers(BalancerTypeMultaiTargetSet, elastigroup, resourceData); err != nil {
 			return err
-		} else if mlbBalancers != nil && len(mlbBalancers) > 0 {
+		} else if len(mlbBalancers) > 0 {
 			existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-			if existingBalancers != nil && len(existingBalancers) > 0 {
-				mlbBalancers = append(existingBalancers, mlbBalancers...)
+			if len(existingBalancers) > 0 {
+				mlbBalancers = append(mlbBalancers, existingBalancers...)
 			}
 			elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(mlbBalancers)
 		} else {
@@ -1416,10 +1406,10 @@ func expandAWSGroupMultaiTargetSets(data interface{}) ([]*aws.LoadBalancer, erro
 		multaiBalancer := &aws.LoadBalancer{
 			Type: spotinst.String(strings.ToUpper(string(BalancerTypeMultaiTargetSet))),
 		}
-		if v, ok := m[string(MultaiTargetSetId)].(string); ok && v != "" {
+		if v, ok := m[string(MultaiTargetSetID)].(string); ok && v != "" {
 			multaiBalancer.SetTargetSetId(spotinst.String(v))
 		}
-		if v, ok := m[string(MultaiBalancerId)].(string); ok && v != "" {
+		if v, ok := m[string(MultaiBalancerID)].(string); ok && v != "" {
 			multaiBalancer.SetBalancerId(spotinst.String(v))
 		}
 		balancers = append(balancers, multaiBalancer)
@@ -1461,8 +1451,8 @@ func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{
 		balType := spotinst.StringValue(balancer.Type)
 		if balType == string(BalancerTypeMultaiTargetSet) {
 			m := make(map[string]interface{})
-			m[string(MultaiTargetSetId)] = spotinst.StringValue(balancer.TargetSetID)
-			m[string(MultaiBalancerId)] = spotinst.StringValue(balancer.BalancerID)
+			m[string(MultaiTargetSetID)] = spotinst.StringValue(balancer.TargetSetID)
+			m[string(MultaiBalancerID)] = spotinst.StringValue(balancer.BalancerID)
 			result = append(result, m)
 		}
 	}
@@ -1484,7 +1474,7 @@ func extractTargetGroupFromArn(arn string) (string, error) {
 	name := ""
 	success := false
 	var match = TargetGroupArnRegex.FindStringSubmatch(arn)
-	if match != nil && len(match) == 2 {
+	if len(match) == 2 {
 		name = match[1]
 		success = name != ""
 	}

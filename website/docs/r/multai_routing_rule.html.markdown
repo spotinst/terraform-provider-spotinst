@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: multai routing_rule"
-sidebar_current: "docs-do-resource-multai_routing_rule"
+subcategory: "Multai"
 description: |-
  Provides a Spotinst Multai Balancer.
 ---

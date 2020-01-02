@@ -54,6 +54,16 @@ func (k *Key) addShadow(val string) error {
 		return errors.New("cannot add shadow to auto-increment or boolean key")
 	}
 
+	// Deduplicate shadows based on their values.
+	if k.value == val {
+		return nil
+	}
+	for i := range k.shadows {
+		if k.shadows[i].value == val {
+			return nil
+		}
+	}
+
 	shadow := newKey(k.s, k.name, val)
 	shadow.isShadow = true
 	k.shadows = append(k.shadows, shadow)
@@ -137,10 +147,15 @@ func (k *Key) transformValue(val string) string {
 		noption := vr[2 : len(vr)-2]
 
 		// Search in the same section.
+		// If not found or found the key itself, then search again in default section.
 		nk, err := k.s.GetKey(noption)
 		if err != nil || k == nk {
-			// Search again in default section.
 			nk, _ = k.s.f.Section("").GetKey(noption)
+			if nk == nil {
+				// Stop when no results found in the default section,
+				// and returns the value as-is.
+				break
+			}
 		}
 
 		// Substitute by new value and take off leading '%(' and trailing ')s'.

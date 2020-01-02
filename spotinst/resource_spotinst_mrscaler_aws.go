@@ -3,8 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/helper/schema"
+	"log"
+	"strings"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -15,9 +19,6 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_scaling_policies"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_scheduled_task"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
-	"log"
-	"strings"
-	"time"
 )
 
 func resourceSpotinstMRScalerAWS() *schema.Resource {
@@ -241,7 +242,10 @@ func exposeMrScalerClusterId(resourceData *schema.ResourceData, meta interface{}
 	}
 
 	if resp.ScalerClusterId != nil {
-		resourceData.Set(string(mrscaler_aws.OutputClusterID), resp.ScalerClusterId)
+		if err = resourceData.Set(string(mrscaler_aws.OutputClusterID), resp.ScalerClusterId); err != nil {
+			return err
+		}
 	}
+
 	return nil
 }

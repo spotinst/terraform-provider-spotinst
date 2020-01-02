@@ -3,8 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/helper/schema"
+	"log"
+	"strings"
+	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -21,9 +25,6 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_scheduled_task"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_strategy"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_azure_vm_sizes"
-	"log"
-	"strings"
-	"time"
 )
 
 func resourceSpotinstElastigroupAzure() *schema.Resource {
@@ -187,12 +188,11 @@ func updateAzureGroup(elastigroup *azure.Group, resourceData *schema.ResourceDat
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 			if roll, ok := m[string(elastigroup_azure.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
 			}
-
 		}
 	}
 
@@ -221,7 +221,7 @@ func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
-		if list != nil && len(list) > 0 && list[0] != nil {
+		if len(list) > 0 && list[0] != nil {
 			updateGroupSchema := list[0].(map[string]interface{})
 			if rollConfig, ok := updateGroupSchema[string(elastigroup_azure.RollConfig)]; !ok || rollConfig == nil {
 				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for group [%v]", string(elastigroup_azure.RollConfig), groupId)

@@ -2,9 +2,10 @@ package commons
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"log"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/multai"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

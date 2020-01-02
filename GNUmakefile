@@ -3,41 +3,74 @@ GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 PKG_NAME=spotinst
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 
-LDFLAGS="-X ${APP}/version.BuildTime=${BUILDTIME} -X ${APP}/version.CommitHash=${COMMITHASH} -X ${APP}/api.defaultProcessorUrl=${PROCESSOR_URL}"
-
 default: build
-
-sweep:
-	@echo "WARNING: This will destroy infrastructure. Use only in development accounts."
-	TF_ACC=1 go test $(TEST) -v -sweep=$(SWEEP) $(SWEEPARGS)
 
 build: fmtcheck
 	go install
+
+gen:
+	go generate ./...
 
 test: fmtcheck
 	go test $(TEST) -timeout=30s -parallel=4
 
 testacc: fmtcheck
-	TF_ACC=1 go test $(TEST) -v $(TESTARGS) -timeout 120m
-
-vet:
-	@echo "go vet ."
-	@go vet $$(go list ./... | grep -v vendor/) ; if [ $$? -eq 1 ]; then \
-		echo ""; \
-		echo "Vet found suspicious constructs. Please check the reported constructs"; \
-		echo "and fix them if necessary before submitting the code for review."; \
-		exit 1; \
-	fi
+	TF_ACC=1 go test $(TEST) -v -count 1 -parallel 20 $(TESTARGS) -timeout 120m
 
 fmt:
-	gofmt -w $(GOFMT_FILES)
+	@gofmt -s -w ./$(PKG_NAME)
 
 fmtcheck:
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
 
-errcheck:
-	@sh -c "'$(CURDIR)/scripts/errcheck.sh'"
+websitefmtcheck:
+	@sh -c "'$(CURDIR)/scripts/websitefmtcheck.sh'"
 
+depscheck:
+	@echo "==> Checking source code with go mod tidy..."
+	@go mod tidy
+	@git diff --exit-code -- go.mod go.sum || \
+		(echo; echo "Unexpected difference in go.mod/go.sum files. Run 'go mod tidy' command or revert any go.mod/go.sum changes and commit."; exit 1)
+	@echo "==> Checking source code with go mod vendor..."
+	@go mod vendor
+	@git diff --compact-summary --exit-code -- vendor || \
+		(echo; echo "Unexpected difference in vendor/ directory. Run 'go mod vendor' command or revert any go.mod/go.sum/vendor changes and commit."; exit 1)
+
+docscheck:
+	@tfproviderdocs check \
+		-require-resource-subcategory
+
+lint:
+	@echo "==> Checking source code against linters..."
+	@golangci-lint run ./$(PKG_NAME)/...
+	@tfproviderlint \
+		-c 1 \
+		-AT001 \
+		-AT002 \
+		-S001 \
+		-S002 \
+		-S003 \
+		-S004 \
+		-S005 \
+		-S007 \
+		-S008 \
+		-S009 \
+		-S010 \
+		-S011 \
+		-S012 \
+		-S013 \
+		-S014 \
+		-S015 \
+		-S016 \
+		-S017 \
+		-S019 \
+		./$(PKG_NAME)
+
+tools:
+	GO111MODULE=on go install github.com/bflad/tfproviderdocs
+	GO111MODULE=on go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
+	GO111MODULE=on go install github.com/client9/misspell/cmd/misspell
+	GO111MODULE=on go install github.com/golangci/golangci-lint/cmd/golangci-lint
 
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
@@ -54,6 +87,10 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
+website-lint:
+	@echo "==> Checking website against linters..."
+	@misspell -error -source=text website/
+
 website-test:
 ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 	echo "$(WEBSITE_REPO) not found in your GOPATH (necessary for layouts and assets), get-ting..."
@@ -61,6 +98,4 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build test testacc vet fmt fmtcheck errcheck test-compile website website-test
-
-
+.PHONY: build gen sweep test testacc fmt fmtcheck lint tools test-compile website website-lint website-test depscheck docscheck

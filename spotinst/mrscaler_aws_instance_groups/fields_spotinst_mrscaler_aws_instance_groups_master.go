@@ -2,7 +2,8 @@ package mrscaler_aws_instance_groups
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -67,10 +68,7 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if scaler.Compute.InstanceGroups != nil && scaler.Compute.InstanceGroups.MasterGroup != nil &&
 				scaler.Compute.InstanceGroups.MasterGroup.InstanceTypes != nil {
-				values := scaler.Compute.InstanceGroups.MasterGroup.InstanceTypes
-				for _, instances := range values {
-					result = append(result, instances)
-				}
+				result = append(result, scaler.Compute.InstanceGroups.MasterGroup.InstanceTypes...)
 			}
 			if err := resourceData.Set(string(MasterInstanceTypes), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MasterInstanceTypes), err)
@@ -124,18 +122,18 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			value := false
+			optimized := false
 			if v, ok := resourceData.GetOkExists(string(MasterEBSOptimized)); ok {
 				if scaler.Compute.InstanceGroups.MasterGroup == nil {
 					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
 				}
-				value = v.(bool)
+				optimized = v.(bool)
 			}
-			if value == true {
+			if optimized {
 				if scaler.Compute.InstanceGroups.MasterGroup.EBSConfiguration == nil {
 					scaler.Compute.InstanceGroups.MasterGroup.SetEBSConfiguration(&mrscaler.EBSConfiguration{})
 				}
-				scaler.Compute.InstanceGroups.MasterGroup.EBSConfiguration.SetOptimized(spotinst.Bool(value))
+				scaler.Compute.InstanceGroups.MasterGroup.EBSConfiguration.SetOptimized(spotinst.Bool(optimized))
 			}
 			return nil
 		},

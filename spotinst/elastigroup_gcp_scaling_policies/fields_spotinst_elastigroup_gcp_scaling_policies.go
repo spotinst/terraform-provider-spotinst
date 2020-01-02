@@ -2,7 +2,8 @@ package elastigroup_gcp_scaling_policies
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -53,11 +54,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = policies
 				}
 			}
-			if value != nil && len(value) > 0 {
-				elastigroup.Scaling.SetUp(value)
-			} else {
-				elastigroup.Scaling.SetUp(nil)
-			}
+			elastigroup.Scaling.SetUp(value)
 			return nil
 		},
 		nil,
@@ -103,11 +100,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = policies
 				}
 			}
-			if value != nil && len(value) > 0 {
-				elastigroup.Scaling.SetDown(value)
-			} else {
-				elastigroup.Scaling.SetDown(nil)
-			}
+			elastigroup.Scaling.SetDown(value)
 			return nil
 		},
 		nil,

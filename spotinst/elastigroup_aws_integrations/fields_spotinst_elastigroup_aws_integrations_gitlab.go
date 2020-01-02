@@ -1,7 +1,7 @@
 package elastigroup_aws_integrations
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -96,7 +96,7 @@ func expandAWSGroupGitlabIntegration(data interface{}) (*aws.GitlabIntegration, 
 }
 
 func expandAWSGroupGitlabRunner(data interface{}) (*aws.GitlabRunner, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
 		runner := &aws.GitlabRunner{}
 		m := list[0].(map[string]interface{})
 

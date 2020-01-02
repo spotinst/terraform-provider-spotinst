@@ -2,7 +2,8 @@ package mrscaler_aws_instance_groups
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -199,18 +200,18 @@ func SetupTaskGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			value := false
+			optimized := false
 			if v, ok := resourceData.GetOkExists(string(TaskEBSOptimized)); ok {
 				if scaler.Compute.InstanceGroups.TaskGroup == nil {
 					scaler.Compute.InstanceGroups.SetTaskGroup(&mrscaler.InstanceGroup{})
 				}
-				value = v.(bool)
+				optimized = v.(bool)
 			}
-			if value == true {
+			if optimized {
 				if scaler.Compute.InstanceGroups.TaskGroup.EBSConfiguration == nil {
 					scaler.Compute.InstanceGroups.TaskGroup.SetEBSConfiguration(&mrscaler.EBSConfiguration{})
 				}
-				scaler.Compute.InstanceGroups.TaskGroup.EBSConfiguration.SetOptimized(spotinst.Bool(value))
+				scaler.Compute.InstanceGroups.TaskGroup.EBSConfiguration.SetOptimized(spotinst.Bool(optimized))
 			}
 			return nil
 		},

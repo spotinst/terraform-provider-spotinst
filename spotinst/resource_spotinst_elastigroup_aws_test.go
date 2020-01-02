@@ -7,13 +7,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"regexp"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_launch_configuration"
-	"regexp"
 )
 
 func init() {
@@ -51,13 +52,13 @@ func testSweepElastigroupAWS(region string) error {
 }
 
 func createElastigroupResourceName(name string) string {
-	return fmt.Sprintf("%v.%v", string(commons.ElastigroupAwsResourceName), name)
+	return fmt.Sprintf("%v.%v", string(commons.ElastigroupAWSResourceName), name)
 }
 
 func testElastigroupDestroy(s *terraform.State) error {
 	client := testAccProviderAWS.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != string(commons.ElastigroupAwsResourceName) {
+		if rs.Type != string(commons.ElastigroupAWSResourceName) {
 			continue
 		}
 		input := &aws.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
@@ -224,7 +225,7 @@ func TestAccSpotinstElastigroupAWS_Baseline(t *testing.T) {
 }
 
 const testBaselineGroupConfig_Create = `
-resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	provider = "%v"
 	
 	name 				= "%v"
@@ -248,7 +249,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 `
 
 const testBaselineGroupConfig_Update = `
-resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	provider = "%v"
 	
 	name 							= "%v"
@@ -272,7 +273,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 `
 
 const testBaselineSubnetIdsGroupConfig_Create = `
-resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	provider = "%v"
 	
 	name 		   = "%v"
@@ -300,7 +301,7 @@ resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
 `
 
 const testBaselineSubnetIdsGroupConfig_Update = `
-resource "` + string(commons.ElastigroupAwsResourceName) + `" "%v" {
+resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	provider = "%v"
 	
 	name 			 = "%v"

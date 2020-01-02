@@ -3,15 +3,17 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
+
 	"log"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
 var GcpClusterName = "terraform-acc-tests-do-not-delete"
@@ -109,7 +111,6 @@ func testCheckOceanGKEImportExists(cluster *gcp.Cluster, resourceName string) re
 type OceanGKEImportMetadata struct {
 	clusterName          string
 	provider             string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

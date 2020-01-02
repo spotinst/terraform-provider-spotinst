@@ -5,12 +5,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/hashcode"
-	"github.com/hashicorp/terraform/helper/schema"
+	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"strconv"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -91,7 +92,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var result *gcp.BackendServiceConfig = nil
 			if v, ok := resourceData.GetOk(string(BackendServices)); ok {
-				var value []*gcp.BackendService = nil
+				var value []*gcp.BackendService
 				if services, err := expandServices(v); err != nil {
 					return err
 				} else {
@@ -304,35 +305,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
-			// occasionally startup_script will be set to the hash value of a null string
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				if (old == "da39a3ee5e6b4b0d3255bfef95601890afd80709" && new == "") ||
-					(old == "" && new == "da39a3ee5e6b4b0d3255bfef95601890afd80709") {
-					return true
-				}
-				return commons.SuppressIfImportedFromGKE(k, old, new, d)
-			},
-			StateFunc: Base64StateFunc,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value = ""
+			var value *string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.StartupScript != nil {
-
-				startupScript := elastigroup.Compute.LaunchSpecification.StartupScript
-				startupScriptValue := spotinst.StringValue(startupScript)
-				if startupScriptValue != "" {
-					if isBase64Encoded(resourceData.Get(string(StartupScript)).(string)) {
-						value = startupScriptValue
-					} else {
-						decodedStartupScript, _ := base64.StdEncoding.DecodeString(startupScriptValue)
-						value = string(decodedStartupScript)
-					}
-				}
+				value = elastigroup.Compute.LaunchSpecification.StartupScript
 			}
-			if err := resourceData.Set(string(StartupScript), Base64StateFunc(value)); err != nil {
+			if err := resourceData.Set(string(StartupScript), value); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(StartupScript), err)
 			}
 			return nil
@@ -340,20 +322,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.Get(string(StartupScript)).(string); ok && v != "" {
-				startupScript := spotinst.String(base64Encode(v))
-				elastigroup.Compute.LaunchSpecification.SetStartupScript(startupScript)
+			if v, ok := resourceData.GetOk(string(StartupScript)); ok && v != nil {
+				elastigroup.Compute.LaunchSpecification.SetStartupScript(spotinst.String(resourceData.Get(string(StartupScript)).(string)))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var startupScript *string = nil
-			if v, ok := resourceData.Get(string(StartupScript)).(string); ok && v != "" {
-				startupScript = spotinst.String(base64Encode(v))
+			if v, ok := resourceData.GetOk(string(StartupScript)); ok && v != nil {
+				elastigroup.Compute.LaunchSpecification.SetStartupScript(spotinst.String(resourceData.Get(string(StartupScript)).(string)))
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetStartupScript(nil)
 			}
-			elastigroup.Compute.LaunchSpecification.SetStartupScript(startupScript)
 			return nil
 		},
 		nil,

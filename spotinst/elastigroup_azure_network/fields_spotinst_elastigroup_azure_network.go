@@ -2,11 +2,12 @@ package elastigroup_azure_network
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"strings"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

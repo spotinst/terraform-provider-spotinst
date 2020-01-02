@@ -3,13 +3,14 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"log"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"testing"
 )
 
 func createMultaiListenerResourceName(name string) string {
@@ -61,7 +62,6 @@ func testAccCheckSpotinstMultaiListenerExists(listener *multai.Listener, resourc
 type ListenerConfigMetadata struct {
 	provider             string
 	name                 string
-	fieldsToAppend       string
 	updateBaselineFields bool
 }
 

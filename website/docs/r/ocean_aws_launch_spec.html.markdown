@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: ocean_aws_launch_spec"
-sidebar_current: "docs-do-resource-ocean_aws_launch_spec"
+subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean Launch Spec resource using AWS.
 ---
@@ -18,7 +18,9 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   image_id  = "ami-123456"
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
-  security_groups = ["awseb-12345"]
+  security_groups = ["sg-987654321"]
+  subnet_ids = ["subnet-1234"]
+  root_volume_size = 30
 
   labels {
     key   = "fakeKey"
@@ -49,6 +51,8 @@ The following arguments are supported:
 * `image_id` - (Optional) ID of the image used to launch the instances.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_groups` - (Optional) Optionally adds security group IDs.
+* `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in array should be subnet ID.
+* `root_volume_size` - (Optional) Set root volume size (in GB).
 
 * `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The tag key.
@@ -64,4 +68,3 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
-

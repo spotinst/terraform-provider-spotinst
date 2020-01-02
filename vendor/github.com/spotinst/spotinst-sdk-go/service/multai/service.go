@@ -8,9 +8,9 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
 )
 
-// Service provides the API operation methods for making requests to
-// endpoints of the Spotinst API. See this package's package overview docs
-// for details on the service.
+// Service provides the API operation methods for making requests to endpoints
+// of the Spotinst API. See this package's package overview docs for details on
+// the service.
 type Service interface {
 	ListLoadBalancers(context.Context, *ListLoadBalancersInput) (*ListLoadBalancersOutput, error)
 	CreateLoadBalancer(context.Context, *CreateLoadBalancerInput) (*CreateLoadBalancerOutput, error)

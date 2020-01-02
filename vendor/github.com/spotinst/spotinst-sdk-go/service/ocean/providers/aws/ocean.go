@@ -145,7 +145,8 @@ type AutoScalerResourceLimits struct {
 }
 
 type AutoScalerDown struct {
-	EvaluationPeriods *int `json:"evaluationPeriods,omitempty"`
+	EvaluationPeriods      *int `json:"evaluationPeriods,omitempty"`
+	MaxScaleDownPercentage *int `json:"maxScaleDownPercentage,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -253,19 +254,37 @@ func clustersFromHttpResponse(resp *http.Response) ([]*Cluster, error) {
 
 func rollStatusFromJSON(in []byte) (*RollClusterStatus, error) {
 	b := new(RollClusterStatus)
-
 	if err := json.Unmarshal(in, b); err != nil {
 		return nil, err
 	}
 	return b, nil
 }
 
-func rollStatusFromHttpResponse(resp *http.Response) (*RollClusterStatus, error) {
+func rollStatusesFromJSON(in []byte) ([]*RollClusterStatus, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	out := make([]*RollClusterStatus, len(rw.Response.Items))
+	if len(out) == 0 {
+		return out, nil
+	}
+	for i, rb := range rw.Response.Items {
+		b, err := rollStatusFromJSON(rb)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = b
+	}
+	return out, nil
+}
+
+func rollStatusesFromHttpResponse(resp *http.Response) ([]*RollClusterStatus, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	return rollStatusFromJSON(body)
+	return rollStatusesFromJSON(body)
 }
 
 func (s *ServiceOp) ListClusters(ctx context.Context, input *ListClustersInput) (*ListClustersOutput, error) {
@@ -407,12 +426,17 @@ func (s *ServiceOp) Roll(ctx context.Context, input *RollClusterInput) (*RollClu
 	}
 	defer resp.Body.Close()
 
-	_, err = rollStatusFromHttpResponse(resp)
+	rs, err := rollStatusesFromHttpResponse(resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return &RollClusterOutput{}, nil
+	output := new(RollClusterOutput)
+	if len(rs) > 0 {
+		output.RollClusterStatus = rs[0]
+	}
+
+	return output, nil
 }
 
 // region Cluster
@@ -866,6 +890,13 @@ func (o AutoScalerDown) MarshalJSON() ([]byte, error) {
 func (o *AutoScalerDown) SetEvaluationPeriods(v *int) *AutoScalerDown {
 	if o.EvaluationPeriods = v; o.EvaluationPeriods == nil {
 		o.nullFields = append(o.nullFields, "EvaluationPeriods")
+	}
+	return o
+}
+
+func (o *AutoScalerDown) SetMaxScaleDownPercentage(v *int) *AutoScalerDown {
+	if o.MaxScaleDownPercentage = v; o.MaxScaleDownPercentage == nil {
+		o.nullFields = append(o.nullFields, "MaxScaleDownPercentage")
 	}
 	return o
 }
