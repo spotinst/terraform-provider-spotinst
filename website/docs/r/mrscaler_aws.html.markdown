@@ -248,7 +248,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
 ```hcl
 # Create a Mr Scaler with Wrap strategy
 
-resource "spotinst_mrscaler" "example-scaler-2" {
+resource "spotinst_mrscaler_aws" "example-scaler-2" {
   name        = "spotinst-mr-scaler-2"
   description = "created by Terraform"
   region      = "us-west-2"
