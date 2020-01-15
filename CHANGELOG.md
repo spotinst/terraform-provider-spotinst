@@ -1,3 +1,8 @@
+## 1.14.1 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_mrscaler_aws: added `ClusterID` support recreate
+
 ## 1.14.0 (January 2, 2020)
 
 NOTES:
@@ -7,7 +12,6 @@ FEATURES:
 * *New Resource*: `spotinst_managed_instance_aws`
 
 ENHANCEMENTS:
-* resource/spotinst_mrscaler_aws: added `ClusterID` support recreate
 * resource/spotinst_ocean_aws_launch_spec: added `root_volume_size`
 * resource/spotinst_elastigroup_aws_beanstalk: added `scheduled_task`
 * resource/spotinst_ocean_aws_launch_spec: added `autoscale_headrooms`
