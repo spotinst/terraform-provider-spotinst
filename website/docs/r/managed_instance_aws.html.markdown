@@ -55,13 +55,8 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
   iam_instance_profile  = "iam-profile"
   key_name              = "my-key.ssh"
   security_groups       = ["sg-123456"]
-  user_data             = "echo hello world"
-  enable_monitoring     = false
-  ebs_optimized         = false
-  placement_tenancy     = "default"
   iam_instance_profile = "managedInstanceRole"
   security_group_ids = ["sg-234"]
-  image_id = "ami-1234"
   key_pair = "labs-oregon"
   tags {
       key = "explicit1"
