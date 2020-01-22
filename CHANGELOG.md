@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 * resource/spotinst_mrscaler_aws: added `ClusterID` support recreate
+* resource/spotinst_managed_instance_aws: update the doc
 
 ## 1.14.0 (January 2, 2020)
 

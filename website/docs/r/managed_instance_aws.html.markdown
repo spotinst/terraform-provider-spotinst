@@ -53,9 +53,6 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
   product     = "Linux/UNIX"
   image_id              = "ami-1234"
   iam_instance_profile  = "iam-profile"
-  key_name              = "my-key.ssh"
-  security_groups       = ["sg-123456"]
-  iam_instance_profile = "managedInstanceRole"
   security_group_ids = ["sg-234"]
   key_pair = "labs-oregon"
   tags {
@@ -160,11 +157,12 @@ Usage:
 
 ```hcl
     scheduled_task {
-      task_type         = "pause"
-      cron_expression   = "* * * * *"
-      start_time        = "2019-11-20T23:59:59Z"
-      frequency         = "hourly"
       is_enabled        = "true"
+      frequency         = "hourly"
+      start_time        = "2019-11-20T23:59:59Z"
+      cron_expression   = "* * * * *"
+      task_type         = "pause"
+
     }
 ```
 
