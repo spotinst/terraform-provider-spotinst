@@ -167,7 +167,7 @@ Usage:
     }
 ```
 
-<a id="Load-Balancers"></a>
+<a id="load-balancers"></a>
 ## Load Balancers
    * `loadBalancersConfig` - (Optional) LB integration object.
        * `load_balancers` - (Optional) List of load balancers configs.
