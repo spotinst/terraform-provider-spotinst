@@ -60,13 +60,14 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
       value = "value1"
     }
   
-    tags {
+  tags {
       key = "explicit2"
       value = "value2"
     }
   user_data  = "managed instance hello world"
   shutdown_script = "managed instance bye world"
   cpu_credits = "standard"
+}
 ```
 
 ## Argument Reference
@@ -166,7 +167,7 @@ Usage:
     }
 ```
 
-<a id="integrations"></a>
+<a id="load-balancers"></a>
 ## Load Balancers
    * `loadBalancersConfig` - (Optional) LB integration object.
        * `load_balancers` - (Optional) List of load balancers configs.
@@ -193,7 +194,9 @@ Usage:
      }
    ```
 
-   ## route53
+<a id="route53"></a>
+## route53
+ 
    * `integration_route53` - (Optional) Describes the [Route53](https://aws.amazon.com/documentation/route53/?id=docs_gateway) integration.
 
        * `domains` - (Required) Route 53 Domain configurations.
