@@ -128,6 +128,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
+			ForceNew: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)

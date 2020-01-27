@@ -1,3 +1,14 @@
+## 1.14.1 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_mrscaler_aws: added `cluster_id` support recreate
+* resource/spotinst_managed_instance_aws: update the doc
+
+BUG FIXES:
+* resource/spotinst_ocean_aws: resolved errors with `desired_capacity`
+* resource/spotinst_ocean_aws: resolved errors with `min_size`
+* resource/spotinst_ocean_aws: resolved errors with `max_size`
+
 ## 1.14.0 (January 2, 2020)
 
 NOTES:

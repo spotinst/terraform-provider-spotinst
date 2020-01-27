@@ -53,28 +53,21 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
   product     = "Linux/UNIX"
   image_id              = "ami-1234"
   iam_instance_profile  = "iam-profile"
-  key_name              = "my-key.ssh"
-  security_groups       = ["sg-123456"]
-  user_data             = "echo hello world"
-  enable_monitoring     = false
-  ebs_optimized         = false
-  placement_tenancy     = "default"
-  iam_instance_profile = "managedInstanceRole"
   security_group_ids = ["sg-234"]
-  image_id = "ami-1234"
   key_pair = "labs-oregon"
   tags {
       key = "explicit1"
       value = "value1"
     }
   
-    tags {
+  tags {
       key = "explicit2"
       value = "value2"
     }
   user_data  = "managed instance hello world"
   shutdown_script = "managed instance bye world"
   cpu_credits = "standard"
+}
 ```
 
 ## Argument Reference
@@ -165,15 +158,16 @@ Usage:
 
 ```hcl
     scheduled_task {
-      task_type         = "pause"
-      cron_expression   = "* * * * *"
-      start_time        = "2019-11-20T23:59:59Z"
-      frequency         = "hourly"
       is_enabled        = "true"
+      frequency         = "hourly"
+      start_time        = "2019-11-20T23:59:59Z"
+      cron_expression   = "* * * * *"
+      task_type         = "pause"
+
     }
 ```
 
-<a id="integrations"></a>
+<a id="load-balancers"></a>
 ## Load Balancers
    * `loadBalancersConfig` - (Optional) LB integration object.
        * `load_balancers` - (Optional) List of load balancers configs.
@@ -200,7 +194,9 @@ Usage:
      }
    ```
 
-   ## route53
+<a id="route53"></a>
+## route53
+ 
    * `integration_route53` - (Optional) Describes the [Route53](https://aws.amazon.com/documentation/route53/?id=docs_gateway) integration.
 
        * `domains` - (Required) Route 53 Domain configurations.
