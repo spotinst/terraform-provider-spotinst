@@ -1,4 +1,4 @@
-## 1.14.1 (Unreleased)
+## 1.14.1 (January 27, 2020)
 
 ENHANCEMENTS:
 * resource/spotinst_mrscaler_aws: added `cluster_id` support recreate
