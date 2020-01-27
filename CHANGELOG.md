@@ -1,7 +1,7 @@
 ## 1.14.1 (Unreleased)
 
 ENHANCEMENTS:
-* resource/spotinst_mrscaler_aws: added `ClusterID` support recreate
+* resource/spotinst_mrscaler_aws: added `cluster_id` support recreate
 * resource/spotinst_managed_instance_aws: update the doc
 
 BUG FIXES:
