@@ -1,4 +1,4 @@
-## 1.14.2 (Unreleased)
+## 1.14.2 (January 29, 2020)
 ​
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: resolved errors with roll_config
