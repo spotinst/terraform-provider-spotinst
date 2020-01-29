@@ -361,15 +361,22 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		retryTimeout = 300
 	}
 
+	var rollECS bool
+	if v, ok := resourceData.GetOk(string(elastigroup_aws_integrations.IntegrationEcs)); ok && v != "" {
+		rollECS = true
+	}
+
+	svc := meta.(*Client).elastigroup.CloudProviderAWS()
+
 	retryFn := func() *resource.RetryError {
 		var rollOut *aws.RollGroupOutput
 		var err error
 
 		// Start the roll.
-		if v, ok := resourceData.GetOk(string(elastigroup_aws_integrations.IntegrationEcs)); ok && v != "" {
-			rollOut, err = meta.(*Client).elastigroup.CloudProviderAWS().RollECS(ctx, convertToECSRollInput(rollGroupInput))
+		if rollECS {
+			rollOut, err = svc.RollECS(ctx, convertToECSRollInput(rollGroupInput))
 		} else {
-			rollOut, err = meta.(*Client).elastigroup.CloudProviderAWS().Roll(ctx, rollGroupInput)
+			rollOut, err = svc.Roll(ctx, rollGroupInput)
 		}
 		if err != nil {
 			// Check whether to retry.
@@ -387,7 +394,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		}
 
 		// Wait for the roll completion.
-		err = awaitReadyRoll(ctx, groupID, rollConfig, rollOut, meta.(*Client))
+		err = awaitReadyRoll(ctx, groupID, rollConfig, rollECS, rollOut, meta.(*Client))
 		if err != nil {
 			err = fmt.Errorf("[ERROR] Timed out when waiting for minimum roll percentage: %v", err)
 			return resource.NonRetryableError(err)
@@ -443,7 +450,7 @@ func awaitReady(groupId *string, timeout int, capacity int, client *Client) erro
 	return nil
 }
 
-func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{}, rollOut *aws.RollGroupOutput, client *Client) error {
+func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{}, rollECS bool, rollOut *aws.RollGroupOutput, client *Client) error {
 	log.Printf("awaitReadyRoll() Waiting for deployment of group: %s", groupID)
 
 	pctTimeout := spotinst.IntValue(getRollTimeout(rollConfig))
@@ -462,18 +469,27 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 		RollID:  spotinst.String(rollID),
 	}
 
+	svc := client.elastigroup.CloudProviderAWS()
 	err := resource.Retry(time.Second*time.Duration(pctTimeout), func() *resource.RetryError {
-		status, err := client.elastigroup.CloudProviderAWS().DeploymentStatusECS(ctx, deployStatusInput)
-		if err != nil {
-			return resource.NonRetryableError(fmt.Errorf("call to roll status of group %q failed: %v", groupID, err))
+		var rollStatus *aws.RollGroupOutput
+		var rollErr error
+
+		if rollECS {
+			rollStatus, rollErr = svc.DeploymentStatusECS(ctx, deployStatusInput)
+		} else {
+			rollStatus, rollErr = svc.DeploymentStatus(ctx, deployStatusInput)
 		}
 
-		if spotinst.IntValue(status.RollGroupStatus[0].Progress.Value) < pctComplete {
+		if rollErr != nil {
+			return resource.NonRetryableError(fmt.Errorf("call to roll status of group %q failed: %v", groupID, rollErr))
+		}
+
+		if spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value) < pctComplete {
 			log.Printf("awaitReadyRoll() Waiting for at least %d%% of batches to complete, current status: %d%%",
-				pctComplete, spotinst.IntValue(status.RollGroupStatus[0].Progress.Value))
+				pctComplete, spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value))
 
 			return resource.RetryableError(fmt.Errorf("roll at %v%% complete",
-				spotinst.IntValue(status.RollGroupStatus[0].Progress.Value)))
+				spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value)))
 		}
 
 		return nil
