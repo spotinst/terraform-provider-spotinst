@@ -1,7 +1,7 @@
-## 1.14.2 (Unreleased)
+## 1.14.3 (Unreleased)
 ​
 ENHANCEMENTS:
-* resource/spotinst_ocean_aws_launch_spec: added `launch_spec_name`
+* resource/spotinst_ocean_aws_launch_spec: added `name`
 
 ## 1.14.2 (January 29, 2020)
 ​

@@ -18,11 +18,6 @@ const (
 )
 
 const (
-	ARN  IAMField = "arn"
-	Name IAMField = "name"
-)
-
-const (
 	CPUPerUnit    commons.FieldName = "cpu_per_unit"
 	GPUPerUnit    commons.FieldName = "gpu_per_unit"
 	MemoryPerUnit commons.FieldName = "memory_per_unit"
@@ -31,7 +26,7 @@ const (
 
 const (
 	SecurityGroups     commons.FieldName = "security_groups"
-	launchSpecName     commons.FieldName = "launch_spec_name"
+	Name               commons.FieldName = "name"
 	OceanID            commons.FieldName = "ocean_id"
 	ImageID            commons.FieldName = "image_id"
 	UserData           commons.FieldName = "user_data"
