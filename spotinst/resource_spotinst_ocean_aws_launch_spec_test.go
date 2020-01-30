@@ -164,6 +164,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "name", "launch spec name test"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world")),
@@ -188,6 +189,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "name", "launch spec name test update"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-0195f2ac3a6014a15"),
@@ -221,6 +223,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   iam_instance_profile = "test"
   subnet_ids = ["subnet-7f3fbf06"]
   root_volume_size = 20
+  name = "launch spec name test"
   
   labels {
     key = "label key"
@@ -248,7 +251,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   subnet_ids = ["subnet-7f3fbf06", "subnet-03b7ed5b"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
   root_volume_size = 30
-
+  name = "launch spec name test update"
   
   labels {
     key = "label key updated"

@@ -87,6 +87,40 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Name] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		Name,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value *string = nil
+			if launchSpec.Name != nil {
+				value = launchSpec.Name
+			}
+			if err := resourceData.Set(string(Name), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Name), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[UserData] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
 		UserData,
