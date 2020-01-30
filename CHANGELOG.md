@@ -3,7 +3,6 @@
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `launch_spec_name`
 
-
 ## 1.14.2 (January 29, 2020)
 ​
 BUG FIXES:

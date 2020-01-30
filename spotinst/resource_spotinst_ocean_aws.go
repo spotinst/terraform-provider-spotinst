@@ -3,7 +3,6 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_scheduling"
 	"log"
 	"strings"
 	"time"
@@ -45,7 +44,6 @@ func setupClusterAWSResource() {
 	ocean_aws_instance_types.Setup(fieldsMap)
 	ocean_aws_launch_configuration.Setup(fieldsMap)
 	ocean_aws_strategy.Setup(fieldsMap)
-	ocean_aws_scheduling.Setup(fieldsMap)
 
 	commons.OceanAWSResource = commons.NewOceanAWSResource(fieldsMap)
 }

@@ -12,5 +12,3 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk v1.4.0
 	github.com/spotinst/spotinst-sdk-go v1.38.2
 )
-
-replace github.com/spotinst/spotinst-sdk-go v1.38.2 => /Users/sali.haguli/.go/src/github.com/spotinst/spotinst-sdk-go
