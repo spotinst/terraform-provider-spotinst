@@ -24,6 +24,7 @@ const (
 	OceanAWSInstanceTypes       ResourceAffinity = "Ocean_AWS_Instance_Types"
 	OceanAWSAutoScaling         ResourceAffinity = "Ocean_AWS_Auto_Scaling"
 	OceanAWSStrategy            ResourceAffinity = "Ocean_AWS_Strategy"
+	OceanAWSScheduling          ResourceAffinity = "Ocean_AWS_Scheduling"
 	OceanAWSLaunchConfiguration ResourceAffinity = "Ocean_AWS_Launch_Configuration"
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"

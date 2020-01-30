@@ -31,6 +31,7 @@ const (
 
 const (
 	SecurityGroups     commons.FieldName = "security_groups"
+	launchSpecName     commons.FieldName = "launch_spec_name"
 	OceanID            commons.FieldName = "ocean_id"
 	ImageID            commons.FieldName = "image_id"
 	UserData           commons.FieldName = "user_data"

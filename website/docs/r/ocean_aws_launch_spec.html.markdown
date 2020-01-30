@@ -15,6 +15,7 @@ Provides a custom Spotinst Ocean AWS Launch Spec resource.
 ```hcl
 resource "spotinst_ocean_aws_launch_spec" "example" {
   ocean_id  = "o-123456"
+  launch_spec_name = "launch spec name test"
   image_id  = "ami-123456"
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
@@ -47,6 +48,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
 The following arguments are supported:
 
 * `ocean_id` - (Required) The ocean cluster you wish to 
+* `launch_spec_name` - (Optional) Set Launch Specification name 
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Optional) ID of the image used to launch the instances.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
