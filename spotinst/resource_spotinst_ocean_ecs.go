@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_scheduling"
 	"log"
 	"strings"
 	"time"
@@ -43,6 +44,7 @@ func setupClusterECSResource() {
 	ocean_ecs_launch_specification.Setup(fieldsMap)
 	ocean_ecs_autoscaler.Setup(fieldsMap)
 	ocean_ecs_strategy.Setup(fieldsMap)
+	ocean_ecs_scheduling.Setup(fieldsMap)
 
 	commons.OceanECSResource = commons.NewOceanECSResource(fieldsMap)
 }
