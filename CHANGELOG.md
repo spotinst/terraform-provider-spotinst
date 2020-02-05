@@ -2,6 +2,8 @@
 ​
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `name`
+* resource/spotinst_ocean_aws: added `scheduled_task`
+* resource/spotinst_ocean_ecs: added `scheduled_task`
 
 ## 1.14.2 (January 29, 2020)
 ​
