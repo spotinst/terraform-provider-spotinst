@@ -17,6 +17,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_auto_scaling"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_scheduling"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_strategy"
 )
 
@@ -44,6 +45,7 @@ func setupClusterAWSResource() {
 	ocean_aws_instance_types.Setup(fieldsMap)
 	ocean_aws_launch_configuration.Setup(fieldsMap)
 	ocean_aws_strategy.Setup(fieldsMap)
+	ocean_aws_scheduling.Setup(fieldsMap)
 
 	commons.OceanAWSResource = commons.NewOceanAWSResource(fieldsMap)
 }
