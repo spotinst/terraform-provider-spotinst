@@ -3,10 +3,11 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_scheduling"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_scheduling"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
