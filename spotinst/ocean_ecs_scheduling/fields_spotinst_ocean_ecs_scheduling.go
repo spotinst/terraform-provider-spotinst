@@ -2,7 +2,6 @@ package ocean_ecs_scheduling
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
