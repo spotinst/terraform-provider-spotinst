@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_scheduling"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
@@ -19,6 +17,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_auto_scaling"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_instance_types"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_scheduling"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_strategy"
 )
 
