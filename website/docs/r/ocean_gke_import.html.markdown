@@ -58,3 +58,36 @@ The following arguments are supported:
     * `named_port` - (Optional) Describes a named port and a list of ports.
         * `port_name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
+
+
+<a id="scheduled-task"></a>
+## scheduled task
+* `scheduled_task` - (Optional) Set scheduling object.
+    * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
+        * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.
+                                     Example: True
+        * `time_windows` - (Required) Set time windows for shutdown hours. specify a list of 'timeWindows' with at least one time window Each string is in the format of - ddd:hh:mm-ddd:hh:mm ddd = day of week = Sun | Mon | Tue | Wed | Thu | Fri | Sat hh = hour 24 = 0 -23 mm = minute = 0 - 59. Time windows should not overlap. required on cluster.scheduling.isEnabled = True. API Times are in UTC
+                                      Example: Fri:15:30-Wed:14:30
+    * `tasks` - (Optional) The scheduling tasks for the cluster.
+        * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for cluster.scheduling.tasks object.
+        * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ".The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of ‘frequency’ or ‘cronExpression’ should be used at a time. Required for cluster.scheduling.tasks object
+                                         Example: 0 1 * * *
+        * `task_type` - (Required) Valid values: "clusterRoll". Required for cluster.scheduling.tasks object.
+        * `batch_size_percentage` - (Optional)  Value in % to set size of batch in roll. Valid values are 0-100
+                                                Example: 20.
+                          
+             
+```hcl
+  scheduled_task  {
+    shutdown_hours  {
+      is_enabled = false
+      time_windows = ["Fri:15:30-Sat:18:30"]
+    }
+    tasks {
+      is_enabled = false
+      cron_expression = "0 1 * * *"
+      task_type = "clusterRoll"
+      batch_size_percentage = 20
+    }
+  }
+```

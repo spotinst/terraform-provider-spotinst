@@ -31,6 +31,7 @@ const (
 
 	OceanGKE                 ResourceAffinity = "Ocean_GKE"
 	OceanGKEImport           ResourceAffinity = "Ocean_GKE_Import"
+	OceanGKEImportScheduling ResourceAffinity = "Ocean_GKE_Import_Scheduling"
 	OceanGKEInstanceTypes    ResourceAffinity = "Ocean_GKE_Instance_Types"
 	OceanGKEAutoScaling      ResourceAffinity = "Ocean_GKE_Auto_Scaling"
 	OceanGKEStrategy         ResourceAffinity = "Ocean_GKE_Strategy"

@@ -1,10 +1,10 @@
-package ocean_ecs_scheduling
+package ocean_gke_import_scheduling
 
 import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -12,7 +12,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[ScheduledTask] = commons.NewGenericField(
-		commons.OceanECSScheduling,
+		commons.OceanGKEImportScheduling,
 		ScheduledTask,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -37,6 +37,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(CronExpression): {
 									Type:     schema.TypeString,
 									Required: true,
+								},
+
+								string(BatchSizePercentage): {
+									Type:     schema.TypeInt,
+									Optional: true,
 								},
 							},
 						},
@@ -64,8 +69,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
 			var result []interface{} = nil
 			if cluster != nil && cluster.Scheduling != nil {
 				scheduling := cluster.Scheduling
@@ -80,8 +85,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(ScheduledTask)); ok {
 				if scheduling, err := expandScheduledTasks(v); err != nil {
 					return err
@@ -92,9 +97,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			var scheduling *aws.ECSScheduling = nil
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var scheduling *gcp.Scheduling = nil
 			if v, ok := resourceData.GetOk(string(ScheduledTask)); ok {
 				if interfaces, err := expandScheduledTasks(v); err != nil {
 					return err
@@ -114,9 +119,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandShutdownHours(data interface{}) (*aws.ECSShutdownHours, error) {
+func expandShutdownHours(data interface{}) (*gcp.ShutdownHours, error) {
 	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		runner := &aws.ECSShutdownHours{}
+		runner := &gcp.ShutdownHours{}
 		m := list[0].(map[string]interface{})
 
 		var isEnabled = spotinst.Bool(false)
@@ -143,7 +148,7 @@ func expandShutdownHours(data interface{}) (*aws.ECSShutdownHours, error) {
 	return nil, nil
 }
 
-func flattenScheduledTasks(scheduling *aws.ECSScheduling) []interface{} {
+func flattenScheduledTasks(scheduling *gcp.Scheduling) []interface{} {
 	result := make(map[string]interface{})
 
 	if scheduling != nil {
@@ -157,7 +162,7 @@ func flattenScheduledTasks(scheduling *aws.ECSScheduling) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenShutdownHours(shutdownHours *aws.ECSShutdownHours) []interface{} {
+func flattenShutdownHours(shutdownHours *gcp.ShutdownHours) []interface{} {
 	result := make(map[string]interface{})
 	result[string(ShutdownHoursIsEnabled)] = spotinst.BoolValue(shutdownHours.IsEnabled)
 
@@ -171,20 +176,21 @@ func flattenShutdownHours(shutdownHours *aws.ECSShutdownHours) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenTasks(tasks []*aws.ECSTask) []interface{} {
+func flattenTasks(tasks []*gcp.Task) []interface{} {
 	result := make([]interface{}, 0, len(tasks))
 	for _, task := range tasks {
 		m := make(map[string]interface{})
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
 		m[string(TaskType)] = spotinst.StringValue(task.Type)
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
+		m[string(BatchSizePercentage)] = spotinst.IntValue(task.BatchSizePercentage)
 		result = append(result, m)
 	}
 	return result
 }
 
-func expandScheduledTasks(data interface{}) (*aws.ECSScheduling, error) {
-	scheduling := &aws.ECSScheduling{}
+func expandScheduledTasks(data interface{}) (*gcp.Scheduling, error) {
+	scheduling := &gcp.Scheduling{}
 	list := data.(*schema.Set).List()
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
@@ -205,7 +211,7 @@ func expandScheduledTasks(data interface{}) (*aws.ECSScheduling, error) {
 			}
 			if shutdownHours != nil {
 				if scheduling.ShutdownHours == nil {
-					scheduling.SetShutdownHours(&aws.ECSShutdownHours{})
+					scheduling.SetShutdownHours(&gcp.ShutdownHours{})
 				}
 				scheduling.SetShutdownHours(shutdownHours)
 			}
@@ -215,12 +221,12 @@ func expandScheduledTasks(data interface{}) (*aws.ECSScheduling, error) {
 	return scheduling, nil
 }
 
-func expandtasks(data interface{}) ([]*aws.ECSTask, error) {
+func expandtasks(data interface{}) ([]*gcp.Task, error) {
 	list := data.([]interface{})
-	tasks := make([]*aws.ECSTask, 0, len(list))
+	tasks := make([]*gcp.Task, 0, len(list))
 	for _, item := range list {
 		m := item.(map[string]interface{})
-		task := &aws.ECSTask{}
+		task := &gcp.Task{}
 
 		if v, ok := m[string(TasksIsEnabled)].(bool); ok {
 			task.SetIsEnabled(spotinst.Bool(v))
@@ -232,6 +238,10 @@ func expandtasks(data interface{}) ([]*aws.ECSTask, error) {
 
 		if v, ok := m[string(CronExpression)].(string); ok && v != "" {
 			task.SetCronExpression(spotinst.String(v))
+		}
+
+		if v, ok := m[string(BatchSizePercentage)].(int); ok {
+			task.SetBatchSizePercentage(spotinst.Int(v))
 		}
 
 		tasks = append(tasks, task)
