@@ -612,6 +612,116 @@ const testStrategy_EmptyFields = `
 
 // endregion
 
+// region OceanECS: Scheduling
+func TestAccSpotinstoceanECS_Scheduling(t *testing.T) {
+	name := "test-acc-cluster-scheduling"
+	clusterName := "scheduling-cluster-name"
+	resourceName := createOceanECSResourceName(clusterName)
+
+	var cluster aws.ECSCluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testScheduling_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.time_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:15:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.cron_expression", "testcron2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.task_type", "clusterRoll"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testScheduling_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.cron_expression", "testcron"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.task_type", "clusterRoll"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testScheduling_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testScheduling_Create = `
+ // --- Scheduling --------------------
+ scheduled_task {
+    shutdown_hours {
+      is_enabled = false
+      time_windows = ["Fri:15:30-Sat:15:30"]
+    }
+    tasks {
+      is_enabled = false
+      cron_expression = "testcron2"
+      task_type = "clusterRoll"
+    }
+  }
+ // ---------------------------------
+`
+
+const testScheduling_Update = `
+ // --- Scheduling --------------------
+  scheduled_task   {
+    shutdown_hours  {
+      is_enabled = true
+      time_windows = ["Fri:15:30-Sat:13:30","Sun:15:30-Mon:13:30"]
+    }
+    tasks  {
+      is_enabled = true
+      cron_expression = "testcron"
+      task_type = "clusterRoll"
+    }
+  }
+ // ---------------------------------
+`
+
+const testScheduling_EmptyFields = `
+ // --- Scheduling --------------------
+ // ---------------------------------
+`
+
+// endregion
+
 // region oceanECS: Update Policy
 func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 	name := "test-acc-cluster-update-policy"

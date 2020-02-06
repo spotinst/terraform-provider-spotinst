@@ -24,6 +24,7 @@ const (
 	OceanAWSInstanceTypes       ResourceAffinity = "Ocean_AWS_Instance_Types"
 	OceanAWSAutoScaling         ResourceAffinity = "Ocean_AWS_Auto_Scaling"
 	OceanAWSStrategy            ResourceAffinity = "Ocean_AWS_Strategy"
+	OceanAWSScheduling          ResourceAffinity = "Ocean_AWS_Scheduling"
 	OceanAWSLaunchConfiguration ResourceAffinity = "Ocean_AWS_Launch_Configuration"
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
@@ -42,6 +43,7 @@ const (
 	OceanECSInstanceTypes       ResourceAffinity = "Ocean_ECS_Instance_Types"
 	OceanECSLaunchSpecification ResourceAffinity = "Ocean_ECS_Launch_Specification"
 	OceanECSStrategy            ResourceAffinity = "Ocean_ECS_Strategy"
+	OceanECSScheduling          ResourceAffinity = "Ocean_ECS_Scheduling"
 
 	OceanECSLaunchSpec ResourceAffinity = "Ocean_ECS_Launch_Spec"
 
