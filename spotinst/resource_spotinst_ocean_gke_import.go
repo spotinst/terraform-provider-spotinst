@@ -13,6 +13,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_import"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_import_scheduling"
 )
 
 func resourceSpotinstOceanGKEImport() *schema.Resource {
@@ -35,6 +36,7 @@ func setupClusterGKEImportResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	ocean_gke_import.Setup(fieldsMap)
+	ocean_gke_import_scheduling.Setup(fieldsMap)
 
 	commons.OceanGKEImportResource = commons.NewOceanGKEImportResource(fieldsMap)
 }
