@@ -12,7 +12,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_gcp_launch_configuration"
 )
 
 func init() {
@@ -135,9 +134,9 @@ func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
 		gcm.instanceTypes = testInstanceTypesGCPGroupConfig_Create
 	}
 
-	if gcm.launchConfig == "" {
-		gcm.launchConfig = testLaunchConfigurationGCPGroupConfig_Create
-	}
+	//if gcm.launchConfig == "" {
+	//	gcm.launchConfig = testLaunchConfigurationGCPGroupConfig_Create
+	//}
 
 	if gcm.disk == "" {
 		gcm.disk = testDiskGCPGroupConfig_Create
@@ -344,208 +343,208 @@ const testInstanceTypesGCPGroupConfig_Update = `
 // endregion
 
 // region Elastigroup GCP: Launch Configuration
-func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
-	groupName := "test-acc-eg-gcp-launch-configuration"
-	resourceName := createElastigroupGCPResourceName(groupName)
-
-	var group gcp.Group
-	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t, "gcp") },
-		Providers:     TestAccProviders,
-		CheckDestroy:  testElastigroupGCPDestroy,
-		IDRefreshName: resourceName,
-
-		Steps: []resource.TestStep{
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
-					groupName:    groupName,
-					launchConfig: testLaunchConfigurationGCPGroupConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupGCPExists(&group, resourceName),
-					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "service_account", "265168459660-compute@developer.gserviceaccount.com"),
-					resource.TestCheckResourceAttr(resourceName, "startup_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo hello world")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo goodbye world")),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".service_name", "terraform-acc-test-backend-service"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".location_type", "global"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".name", "http"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.0", "80"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.1", "8080"),
-					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "false"),
-					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".key", "test_key"),
-					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".value", "test_value"),
-					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".key", "metadata_key"),
-					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".value", "metadata_value"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.0", "test_tag"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
-					groupName:    groupName,
-					launchConfig: testLaunchConfigurationGCPGroupConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupGCPExists(&group, resourceName),
-					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "service_account", "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"),
-					resource.TestCheckResourceAttr(resourceName, "startup_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo hello world updated")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo goodbye world updated")),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".service_name", "terraform-acc-test-backend-service"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".name", "http"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.0", "40"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.1", "4040"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".service_name", "terraform-acc-test-backend-service-tcp"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".location_type", "regional"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".scheme", "EXTERNAL"),
-					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "labels.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".key", "test_key"),
-					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".value", "test_value"),
-					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_update+".key", "test_key2"),
-					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_update+".value", "test_value2"),
-					resource.TestCheckResourceAttr(resourceName, "metadata.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".key", "metadata_key"),
-					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".value", "metadata_value"),
-					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_update+".key", "metadata_key2"),
-					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_update+".value", "metadata_value2"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "tags.0", "test_tag"),
-					resource.TestCheckResourceAttr(resourceName, "tags.1", "test_tag2"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
-					groupName:    groupName,
-					launchConfig: testLaunchConfigurationGCPGroupConfig_EmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupGCPExists(&group, resourceName),
-					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "service_account", "cannot set empty service account"),
-					resource.TestCheckResourceAttr(resourceName, "startup_script", elastigroup_gcp_launch_configuration.Base64StateFunc("cannot set empty startup script")),
-					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("cannot set empty shutdown script")),
-					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "false"),
-					resource.TestCheckResourceAttr(resourceName, "labels.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "metadata.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
-				),
-			},
-		},
-	})
-}
-
-const (
-	LabelsHash_create      = "3430685526"
-	LabelsHash_update      = "3119730257"
-	MetaHash_create        = "1912256051"
-	MetaHash_update        = "284772212"
-	BackendSvcHash_create  = "1781664423"
-	BackendSvcHash1_update = "659180285"
-	BackendSvcHash2_update = "2663756714"
-	NamedPortsHash_create  = "571950593"
-	NamedPortsHash1_update = "981148154"
-	NamedPortsHash2_update = "1016050568"
-)
-
-const testLaunchConfigurationGCPGroupConfig_Create = `
- // --- LAUNCH CONFIGURATION --------------
- service_account = "265168459660-compute@developer.gserviceaccount.com"
- startup_script = "echo hello world"
- shutdown_script = "echo goodbye world"
- ip_forwarding = false
-
- labels {
-     key = "test_key"
-     value = "test_value"
-   }
-
- metadata {
-     key = "metadata_key"
-     value = "metadata_value"
-   }
-
- tags = ["test_tag"]
-
- backend_services {
-    service_name = "terraform-acc-test-backend-service"
-    location_type = "global"
-
-    named_ports {
-      name = "http"
-      ports = [80, 8080]
-    }
-  }
-
- // ---------------------------------------
-`
-
-const testLaunchConfigurationGCPGroupConfig_Update = `
- // --- LAUNCH CONFIGURATION --------------
- service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
- startup_script = "echo hello world updated"
- shutdown_script = "echo goodbye world updated"
- ip_forwarding = true
-
- labels {
-     key = "test_key"
-     value = "test_value"
-   }
- labels {
-     key = "test_key2"
-     value = "test_value2"
-   }
-
- metadata {
-     key = "metadata_key"
-     value = "metadata_value"
-   }
-
- metadata {
-     key = "metadata_key2"
-     value = "metadata_value2"
-   }
-
- tags = ["test_tag", "test_tag2"]
-
- backend_services {
-  service_name = "terraform-acc-test-backend-service"
-
-  named_ports {
-    name = "http"
-    ports = [40, 4040]
-  }
- }
-
- backend_services {
-   service_name  = "terraform-acc-test-backend-service-tcp"
-   location_type = "regional"
-   scheme        = "EXTERNAL"
- }
- // ---------------------------------------
-`
-
-const testLaunchConfigurationGCPGroupConfig_EmptyFields = `
- // --- LAUNCH CONFIGURATION --------------
- service_account = "cannot set empty service account"
- startup_script  = "cannot set empty startup script"
- shutdown_script = "cannot set empty shutdown script"
- // ---------------------------------------
-`
-
-// endregion
+//func TestAccSpotinstElastigroupGCP_LaunchConfiguration(t *testing.T) {
+//	groupName := "test-acc-eg-gcp-launch-configuration"
+//	resourceName := createElastigroupGCPResourceName(groupName)
+//
+//	var group gcp.Group
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:      func() { testAccPreCheck(t, "gcp") },
+//		Providers:     TestAccProviders,
+//		CheckDestroy:  testElastigroupGCPDestroy,
+//		IDRefreshName: resourceName,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				ResourceName: resourceName,
+//				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+//					groupName:    groupName,
+//					launchConfig: testLaunchConfigurationGCPGroupConfig_Create,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckElastigroupGCPExists(&group, resourceName),
+//					testCheckElastigroupGCPAttributes(&group, groupName),
+//					resource.TestCheckResourceAttr(resourceName, "service_account", "265168459660-compute@developer.gserviceaccount.com"),
+//					resource.TestCheckResourceAttr(resourceName, "startup_script", "echo hello world"),
+//					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo goodbye world")),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".service_name", "terraform-acc-test-backend-service"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".location_type", "global"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".name", "http"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.0", "80"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash_create+".named_ports."+NamedPortsHash_create+".ports.1", "8080"),
+//					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "false"),
+//					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".key", "test_key"),
+//					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".value", "test_value"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".key", "metadata_key"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".value", "metadata_value"),
+//					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "tags.0", "test_tag"),
+//				),
+//			},
+//			{
+//				ResourceName: resourceName,
+//				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+//					groupName:    groupName,
+//					launchConfig: testLaunchConfigurationGCPGroupConfig_Update,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckElastigroupGCPExists(&group, resourceName),
+//					testCheckElastigroupGCPAttributes(&group, groupName),
+//					resource.TestCheckResourceAttr(resourceName, "service_account", "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"),
+//					resource.TestCheckResourceAttr(resourceName, "startup_script", "echo hello world updated"),
+//					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo goodbye world updated")),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".service_name", "terraform-acc-test-backend-service"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".name", "http"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.0", "40"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash1_update+".named_ports."+NamedPortsHash1_update+".ports.1", "4040"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".service_name", "terraform-acc-test-backend-service-tcp"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".location_type", "regional"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services."+BackendSvcHash2_update+".scheme", "EXTERNAL"),
+//					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "true"),
+//					resource.TestCheckResourceAttr(resourceName, "labels.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".key", "test_key"),
+//					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_create+".value", "test_value"),
+//					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_update+".key", "test_key2"),
+//					resource.TestCheckResourceAttr(resourceName, "labels."+LabelsHash_update+".value", "test_value2"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".key", "metadata_key"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_create+".value", "metadata_value"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_update+".key", "metadata_key2"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata."+MetaHash_update+".value", "metadata_value2"),
+//					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "tags.0", "test_tag"),
+//					resource.TestCheckResourceAttr(resourceName, "tags.1", "test_tag2"),
+//				),
+//			},
+//			{
+//				ResourceName: resourceName,
+//				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
+//					groupName:    groupName,
+//					launchConfig: testLaunchConfigurationGCPGroupConfig_EmptyFields,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckElastigroupGCPExists(&group, resourceName),
+//					testCheckElastigroupGCPAttributes(&group, groupName),
+//					resource.TestCheckResourceAttr(resourceName, "service_account", "cannot set empty service account"),
+//					resource.TestCheckResourceAttr(resourceName, "startup_script", "cannot set empty startup script"),
+//					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("cannot set empty shutdown script")),
+//					resource.TestCheckResourceAttr(resourceName, "ip_forwarding", "false"),
+//					resource.TestCheckResourceAttr(resourceName, "labels.#", "0"),
+//					resource.TestCheckResourceAttr(resourceName, "metadata.#", "0"),
+//					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
+//				),
+//			},
+//		},
+//	})
+//}
+//
+//const (
+//	LabelsHash_create      = "3430685526"
+//	LabelsHash_update      = "3119730257"
+//	MetaHash_create        = "1912256051"
+//	MetaHash_update        = "284772212"
+//	BackendSvcHash_create  = "1781664423"
+//	BackendSvcHash1_update = "659180285"
+//	BackendSvcHash2_update = "2663756714"
+//	NamedPortsHash_create  = "571950593"
+//	NamedPortsHash1_update = "981148154"
+//	NamedPortsHash2_update = "1016050568"
+//)
+//
+//const testLaunchConfigurationGCPGroupConfig_Create = `
+// // --- LAUNCH CONFIGURATION --------------
+// service_account = "265168459660-compute@developer.gserviceaccount.com"
+// startup_script = "echo hello world"
+// shutdown_script = "echo goodbye world"
+// ip_forwarding = false
+//
+// labels {
+//     key = "test_key"
+//     value = "test_value"
+//   }
+//
+// metadata {
+//     key = "metadata_key"
+//     value = "metadata_value"
+//   }
+//
+// tags = ["test_tag"]
+//
+// backend_services {
+//    service_name = "terraform-acc-test-backend-service"
+//    location_type = "global"
+//
+//    named_ports {
+//      name = "http"
+//      ports = [80, 8080]
+//    }
+//  }
+//
+// // ---------------------------------------
+//`
+//
+//const testLaunchConfigurationGCPGroupConfig_Update = `
+// // --- LAUNCH CONFIGURATION --------------
+// service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
+// startup_script = "echo hello world updated"
+// shutdown_script = "echo goodbye world updated"
+// ip_forwarding = true
+//
+// labels {
+//     key = "test_key"
+//     value = "test_value"
+//   }
+// labels {
+//     key = "test_key2"
+//     value = "test_value2"
+//   }
+//
+// metadata {
+//     key = "metadata_key"
+//     value = "metadata_value"
+//   }
+//
+// metadata {
+//     key = "metadata_key2"
+//     value = "metadata_value2"
+//   }
+//
+// tags = ["test_tag", "test_tag2"]
+//
+// backend_services {
+//  service_name = "terraform-acc-test-backend-service"
+//
+//  named_ports {
+//    name = "http"
+//    ports = [40, 4040]
+//  }
+// }
+//
+// backend_services {
+//   service_name  = "terraform-acc-test-backend-service-tcp"
+//   location_type = "regional"
+//   scheme        = "EXTERNAL"
+// }
+// // ---------------------------------------
+//`
+//
+//const testLaunchConfigurationGCPGroupConfig_EmptyFields = `
+// // --- LAUNCH CONFIGURATION --------------
+// service_account = "cannot set empty service account"
+// startup_script  = "cannot set empty startup script"
+// shutdown_script = "cannot set empty shutdown script"
+// // ---------------------------------------
+//`
+//
+//// endregion
 
 // region Elastigroup GCP: Disk
 func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {

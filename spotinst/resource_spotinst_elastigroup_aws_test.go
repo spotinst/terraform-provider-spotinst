@@ -3016,7 +3016,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "50"),
-					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.key", "test.key.ecs.update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.value", "test.value.ecs.update"),
 				),
