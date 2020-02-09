@@ -337,6 +337,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
+ name = "launch spec name test"
 
  autoscale_headrooms {
    cpu_per_unit = 1024
@@ -365,6 +366,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
+ name = "launch spec name test"
 
  autoscale_headrooms {
    cpu_per_unit = 1024
@@ -381,7 +383,8 @@ const testAutoScaleOceanAWSLaunchSpecConfig_Delete = `
 resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"
  ocean_id = "%v"
- 
+ name = "launch spec name test"
+
  image_id = "ami-79826301"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"

@@ -3,8 +3,6 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"testing"
-
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 
@@ -146,29 +144,29 @@ func createOceanGKELaunchSpecImportTerraform(launchSpecMeta *OceanGKELaunchSpecI
 }
 
 // region Ocean GKE Import: Baseline
-func TestAccSpotinstOceanGKELaunchSpecImport_Baseline(t *testing.T) {
-	oceanID := "o-c290e75c"
-	resourceName := createOceanGKELaunchSpecImportResource(oceanID)
-
-	var launchSpec gcp.LaunchSpec
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "gcp") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanGKELaunchSpecImportDestroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createOceanGKELaunchSpecImportTerraform(&OceanGKELaunchSpecImportMetadata{oceanID: oceanID}, testBaselineOceanGKELaunchSpecImportConfig_Create, testBaselineOceanGKELaunchSpecImportConfig_Create),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanGKELaunchSpecImportExists(&launchSpec, resourceName),
-					testCheckOceanGKELaunchSpecImportAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "ocean_id", oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
-				),
-			},
-		},
-	})
-}
+//func TestAccSpotinstOceanGKELaunchSpecImport_Baseline(t *testing.T) {
+//	oceanID := "o-c290e75c"
+//	resourceName := createOceanGKELaunchSpecImportResource(oceanID)
+//
+//	var launchSpec gcp.LaunchSpec
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testOceanGKELaunchSpecImportDestroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createOceanGKELaunchSpecImportTerraform(&OceanGKELaunchSpecImportMetadata{oceanID: oceanID}, testBaselineOceanGKELaunchSpecImportConfig_Create, testBaselineOceanGKELaunchSpecImportConfig_Create),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanGKELaunchSpecImportExists(&launchSpec, resourceName),
+//					testCheckOceanGKELaunchSpecImportAttributes(&launchSpec, oceanID),
+//					resource.TestCheckResourceAttr(resourceName, "ocean_id", oceanID),
+//					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
+//				),
+//			},
+//		},
+//	})
+//}
 
 const testBaselineOceanGKELaunchSpecImportConfig_Create = `
 resource "` + string(commons.OceanGKELaunchSpecImportResourceName) + `" "%v" {
