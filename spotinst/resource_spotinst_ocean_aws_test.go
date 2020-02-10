@@ -250,90 +250,90 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 // endregion
 
 // region OceanAWS: Instance Types Whitelist
-func TestAccSpotinstOceanAWS_InstanceTypesLists(t *testing.T) {
-	clusterName := "test-acc-cluster-instance-types-whitelist"
-	controllerClusterID := "whitelist-controller-id"
-	resourceName := createOceanAWSResourceName(clusterName)
-
-	var cluster aws.Cluster
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanAWSDestroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:         clusterName,
-					controllerClusterID: controllerClusterID,
-					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanAWSExists(&cluster, resourceName),
-					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "t1.micro"),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.1", "m1.small"),
-				),
-			},
-			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:         clusterName,
-					controllerClusterID: controllerClusterID,
-					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanAWSExists(&cluster, resourceName),
-					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "t1.micro"),
-				),
-			},
-			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:         clusterName,
-					controllerClusterID: controllerClusterID,
-					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_EmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanAWSExists(&cluster, resourceName),
-					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.1", "m1.small"),
-				),
-			},
-			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:         clusterName,
-					controllerClusterID: controllerClusterID,
-					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanAWSExists(&cluster, resourceName),
-					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
-				),
-			},
-			{
-				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
-					clusterName:         clusterName,
-					controllerClusterID: controllerClusterID,
-					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_EmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanAWSExists(&cluster, resourceName),
-					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "0"),
-				),
-			},
-		},
-	})
-}
+//func TestAccSpotinstOceanAWS_InstanceTypesLists(t *testing.T) {
+//	clusterName := "test-acc-cluster-instance-types-whitelist"
+//	controllerClusterID := "whitelist-controller-id"
+//	resourceName := createOceanAWSResourceName(clusterName)
+//
+//	var cluster aws.Cluster
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "aws") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testOceanAWSDestroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+//					clusterName:         clusterName,
+//					controllerClusterID: controllerClusterID,
+//					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_Create,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanAWSExists(&cluster, resourceName),
+//					testCheckOceanAWSAttributes(&cluster, clusterName),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "t1.micro"),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.1", "m1.small"),
+//				),
+//			},
+//			{
+//				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+//					clusterName:         clusterName,
+//					controllerClusterID: controllerClusterID,
+//					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_Update,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanAWSExists(&cluster, resourceName),
+//					testCheckOceanAWSAttributes(&cluster, clusterName),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "t1.micro"),
+//				),
+//			},
+//			{
+//				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+//					clusterName:         clusterName,
+//					controllerClusterID: controllerClusterID,
+//					instanceWhitelist:   testInstanceTypesWhitelistAWSConfig_EmptyFields,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanAWSExists(&cluster, resourceName),
+//					testCheckOceanAWSAttributes(&cluster, clusterName),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
+//					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
+//					resource.TestCheckResourceAttr(resourceName, "blacklist.1", "m1.small"),
+//				),
+//			},
+//			{
+//				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+//					clusterName:         clusterName,
+//					controllerClusterID: controllerClusterID,
+//					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_Update,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanAWSExists(&cluster, resourceName),
+//					testCheckOceanAWSAttributes(&cluster, clusterName),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
+//					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "t1.micro"),
+//				),
+//			},
+//			{
+//				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+//					clusterName:         clusterName,
+//					controllerClusterID: controllerClusterID,
+//					instanceWhitelist:   testInstanceTypesBlacklistAWSConfig_EmptyFields,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanAWSExists(&cluster, resourceName),
+//					testCheckOceanAWSAttributes(&cluster, clusterName),
+//					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
+//					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "0"),
+//				),
+//			},
+//		},
+//	})
+//}
 
 const testInstanceTypesWhitelistAWSConfig_Create = `
   whitelist = ["t1.micro", "m1.small"]
