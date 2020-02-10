@@ -321,55 +321,55 @@ const testInstanceTypesWhitelistECSConfig_EmptyFields = `
 `
 
 // region OceanECS: Launch Specification
-func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
-	name := "test-acc-cluster-launch-spec"
-	clusterName := "launch-spec-cluster-name"
-	resourceName := createOceanECSResourceName(clusterName)
-
-	var cluster aws.ECSCluster
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
-
-		Steps: []resource.TestStep{
-			{
-				ResourceName: resourceName,
-				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
-					name:        name,
-					clusterName: clusterName,
-					launchSpec:  testLaunchSpecECSConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanECSExists(&cluster, resourceName),
-					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
-					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"),
-					resource.TestCheckResourceAttr(resourceName, "key_pair", "spotinst-labs-oregon"),
-					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
-					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
-					name:        name,
-					clusterName: clusterName,
-					launchSpec:  testLaunchSpecECSConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanECSExists(&cluster, resourceName),
-					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0f2176987ee50226e"),
-					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"),
-					resource.TestCheckResourceAttr(resourceName, "key_pair", ""),
-					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
-					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
-				),
-			},
-		},
-	})
-}
+//func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
+//	name := "test-acc-cluster-launch-spec"
+//	clusterName := "launch-spec-cluster-name"
+//	resourceName := createOceanECSResourceName(clusterName)
+//
+//	var cluster aws.ECSCluster
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "aws") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testOceanECSDestroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				ResourceName: resourceName,
+//				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+//					name:        name,
+//					clusterName: clusterName,
+//					launchSpec:  testLaunchSpecECSConfig_Create,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanECSExists(&cluster, resourceName),
+//					testCheckOceanECSAttributes(&cluster, name),
+//					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
+//					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"),
+//					resource.TestCheckResourceAttr(resourceName, "key_pair", "spotinst-labs-oregon"),
+//					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
+//					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
+//				),
+//			},
+//			{
+//				ResourceName: resourceName,
+//				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+//					name:        name,
+//					clusterName: clusterName,
+//					launchSpec:  testLaunchSpecECSConfig_Update,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanECSExists(&cluster, resourceName),
+//					testCheckOceanECSAttributes(&cluster, name),
+//					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0f2176987ee50226e"),
+//					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"),
+//					resource.TestCheckResourceAttr(resourceName, "key_pair", ""),
+//					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
+//					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
+//				),
+//			},
+//		},
+//	})
+//}
 
 const testLaunchSpecECSConfig_Create = `
 // --- LAUNCH SPECIFICATION --------------
