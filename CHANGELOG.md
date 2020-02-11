@@ -6,6 +6,9 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added `scheduled_task`
 * resource/spotinst_ocean_gke_import: added `scheduled_task`
 
+BUG FIXES:
+* resource/mrscaler: resolved errors with retries
+
 ## 1.14.2 (January 29, 2020)
 ​
 BUG FIXES:

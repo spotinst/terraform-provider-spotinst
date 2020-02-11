@@ -21,6 +21,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   region      = "us-west-2"
   strategy    = "new"
   release_label = "emr-5.17.0"
+  retries = 2
   
   availability_zones = ["us-west-2a:subnet-123456"]
   
@@ -297,6 +298,7 @@ The following arguments are supported:
 * `job_flow_role` - (Optional) The IAM role that was specified when the job flow was launched. The EC2 instances of the job flow assume this role.
 * `termination_protected` - (Optional) Specifies whether the Amazon EC2 instances in the cluster are protected from termination by API calls, user intervention, or in the event of a job-flow error.
 * `keep_job_flow_alive` - (Optional) Specifies whether the cluster should remain available after completing all steps.
+* `retries` - (Optional) the amount of times to retry provisioning capacity if provisioning timeout is exceeded Example: 1-5.
 
 <a id="task-group"></a>
 ## Task Group (Wrap, Clone, and New strategies)
