@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
 	"log"
 	"strings"
 	"testing"
