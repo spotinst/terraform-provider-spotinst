@@ -149,17 +149,25 @@ func expandShutdownHours(data interface{}) (*gcp.ShutdownHours, error) {
 }
 
 func flattenScheduledTasks(scheduling *gcp.Scheduling) []interface{} {
-	result := make(map[string]interface{})
+	var out []interface{}
 
 	if scheduling != nil {
+		result := make(map[string]interface{})
+
 		if scheduling.ShutdownHours != nil {
 			result[string(ShutdownHours)] = flattenShutdownHours(scheduling.ShutdownHours)
 		}
-		if scheduling.Tasks != nil {
+
+		if len(scheduling.Tasks) > 0 {
 			result[string(Tasks)] = flattenTasks(scheduling.Tasks)
 		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
 	}
-	return []interface{}{result}
+
+	return out
 }
 
 func flattenShutdownHours(shutdownHours *gcp.ShutdownHours) []interface{} {

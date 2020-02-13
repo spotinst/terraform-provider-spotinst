@@ -144,17 +144,25 @@ func expandShutdownHours(data interface{}) (*aws.ECSShutdownHours, error) {
 }
 
 func flattenScheduledTasks(scheduling *aws.ECSScheduling) []interface{} {
-	result := make(map[string]interface{})
+	var out []interface{}
 
 	if scheduling != nil {
+		result := make(map[string]interface{})
+
 		if scheduling.ShutdownHours != nil {
 			result[string(ShutdownHours)] = flattenShutdownHours(scheduling.ShutdownHours)
 		}
-		if scheduling.Tasks != nil {
+
+		if len(scheduling.Tasks) > 0 {
 			result[string(Tasks)] = flattenTasks(scheduling.Tasks)
 		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
 	}
-	return []interface{}{result}
+
+	return out
 }
 
 func flattenShutdownHours(shutdownHours *aws.ECSShutdownHours) []interface{} {
@@ -173,6 +181,7 @@ func flattenShutdownHours(shutdownHours *aws.ECSShutdownHours) []interface{} {
 
 func flattenTasks(tasks []*aws.ECSTask) []interface{} {
 	result := make([]interface{}, 0, len(tasks))
+
 	for _, task := range tasks {
 		m := make(map[string]interface{})
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
@@ -180,6 +189,7 @@ func flattenTasks(tasks []*aws.ECSTask) []interface{} {
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
 		result = append(result, m)
 	}
+
 	return result
 }
 
