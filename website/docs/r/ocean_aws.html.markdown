@@ -56,6 +56,7 @@ resource "spotinst_ocean_aws" "example" {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
+    auto_headroom_percentage = 50
 
     autoscale_headroom {
       cpu_per_unit    = 1024
@@ -159,6 +160,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes autoscaler.
 * `autoscale_is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
 * `autoscale_cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
+* `auto_headroom_percentage` - (Optional) Set the auto headroom percentage, set a number between 0-200 to control the headroom % from the cluster. Relevant when isAutoConfig=true.
 * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
 * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
 * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate the headroom.
