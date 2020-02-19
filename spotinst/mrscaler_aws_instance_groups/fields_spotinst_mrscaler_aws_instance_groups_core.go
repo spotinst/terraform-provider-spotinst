@@ -2,7 +2,6 @@ package mrscaler_aws_instance_groups
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -30,7 +29,7 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				scaler.Compute.InstanceGroups.CoreGroup.Capacity.Minimum != nil {
 				value = scaler.Compute.InstanceGroups.CoreGroup.Capacity.Minimum
 			}
-			if err := resourceData.Set(string(CoreMin), value); err != nil {
+			if err := resourceData.Set(string(CoreMin), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CoreMin), err)
 			}
 			return nil
@@ -38,28 +37,28 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOk(string(CoreMin)); ok {
+			if v, ok := resourceData.Get(string(CoreMin)).(int); ok && v >= 0 {
 				if scaler.Compute.InstanceGroups.CoreGroup == nil {
 					scaler.Compute.InstanceGroups.SetCoreGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.CoreGroup.Capacity == nil {
 					scaler.Compute.InstanceGroups.CoreGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
 				}
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMinimum(spotinst.Int(v.(int)))
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMinimum(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOk(string(CoreMin)); ok {
+			if v, ok := resourceData.Get(string(CoreMin)).(int); ok && v >= 0 {
 				if scaler.Compute.InstanceGroups.CoreGroup == nil {
 					scaler.Compute.InstanceGroups.SetCoreGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.CoreGroup.Capacity == nil {
 					scaler.Compute.InstanceGroups.CoreGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
 				}
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMinimum(spotinst.Int(v.(int)))
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMinimum(spotinst.Int(v))
 			}
 			return nil
 		},
@@ -80,10 +79,10 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if scaler.Compute != nil && scaler.Compute.InstanceGroups != nil &&
 				scaler.Compute.InstanceGroups.CoreGroup != nil &&
 				scaler.Compute.InstanceGroups.CoreGroup.Capacity != nil &&
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.Minimum != nil {
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.Maximum != nil {
 				value = scaler.Compute.InstanceGroups.CoreGroup.Capacity.Maximum
 			}
-			if err := resourceData.Set(string(CoreMax), value); err != nil {
+			if err := resourceData.Set(string(CoreMax), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CoreMax), err)
 			}
 			return nil
@@ -91,28 +90,28 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOk(string(CoreMax)); ok {
+			if v, ok := resourceData.Get(string(CoreMax)).(int); ok && v >= 0 {
 				if scaler.Compute.InstanceGroups.CoreGroup == nil {
 					scaler.Compute.InstanceGroups.SetCoreGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.CoreGroup.Capacity == nil {
 					scaler.Compute.InstanceGroups.CoreGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
 				}
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMaximum(spotinst.Int(v.(int)))
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMaximum(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOk(string(CoreMax)); ok {
+			if v, ok := resourceData.Get(string(CoreMax)).(int); ok && v >= 0 {
 				if scaler.Compute.InstanceGroups.CoreGroup == nil {
 					scaler.Compute.InstanceGroups.SetCoreGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.CoreGroup.Capacity == nil {
 					scaler.Compute.InstanceGroups.CoreGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
 				}
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMaximum(spotinst.Int(v.(int)))
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetMaximum(spotinst.Int(v))
 			}
 			return nil
 		},
@@ -133,10 +132,10 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if scaler.Compute != nil && scaler.Compute.InstanceGroups != nil &&
 				scaler.Compute.InstanceGroups.CoreGroup != nil &&
 				scaler.Compute.InstanceGroups.CoreGroup.Capacity != nil &&
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.Minimum != nil {
-				value = scaler.Compute.InstanceGroups.CoreGroup.Capacity.Minimum
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.Target != nil {
+				value = scaler.Compute.InstanceGroups.CoreGroup.Capacity.Target
 			}
-			if err := resourceData.Set(string(CoreTarget), value); err != nil {
+			if err := resourceData.Set(string(CoreTarget), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CoreTarget), err)
 			}
 			return nil
@@ -144,28 +143,28 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOk(string(CoreTarget)); ok {
+			if v, ok := resourceData.Get(string(CoreTarget)).(int); ok && v >= 0 {
 				if scaler.Compute.InstanceGroups.CoreGroup == nil {
 					scaler.Compute.InstanceGroups.SetCoreGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.CoreGroup.Capacity == nil {
 					scaler.Compute.InstanceGroups.CoreGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
 				}
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetTarget(spotinst.Int(v.(int)))
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetTarget(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOk(string(CoreTarget)); ok {
+			if v, ok := resourceData.Get(string(CoreTarget)).(int); ok && v >= 0 {
 				if scaler.Compute.InstanceGroups.CoreGroup == nil {
 					scaler.Compute.InstanceGroups.SetCoreGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.CoreGroup.Capacity == nil {
 					scaler.Compute.InstanceGroups.CoreGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
 				}
-				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetTarget(spotinst.Int(v.(int)))
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetTarget(spotinst.Int(v))
 			}
 			return nil
 		},
