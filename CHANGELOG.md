@@ -8,7 +8,10 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `auto_headroom_percentage`
 
 NOTES: 
-* documentation: resource/mrscaler: retries are now accurate
+* documentation: resource/spotinst_mrscaler_aws: retries are now accurate
+
+BUG FIXES:
+* resource/spotinst_mrscaler_aws: resolved errors with `core_min_size`, `core_max_size` , `core_desired_capacity`
 
 ## 1.14.2 (January 29, 2020)
 ​
