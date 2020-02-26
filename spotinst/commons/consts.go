@@ -113,6 +113,8 @@ const (
 	MultaiTarget      ResourceAffinity = "Multai_Target"
 	MultaiTargetSet   ResourceAffinity = "Multai_Target_Set"
 
+	HealthCheck ResourceAffinity = "Health_Check"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

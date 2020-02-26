@@ -183,7 +183,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-f6758eab"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
 				),
@@ -197,8 +197,8 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-f6758eab"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0e9d5f93224747f51"),
 				),
@@ -219,7 +219,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-79da021e"]
+  subnet_ids         = ["subnet-f6758eab"]
   security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
 
  %v
@@ -241,7 +241,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-79da021e","subnet-03b7ed5b"]
+  subnet_ids         = ["subnet-f6758eab","subnet-d47f6a9f"]
   security_group_ids = ["sg-0e9d5f93224747f51"]
 
  %v
