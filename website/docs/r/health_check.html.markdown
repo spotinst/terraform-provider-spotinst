@@ -58,7 +58,7 @@ The following arguments are supported:
 
 * `proxy` - (Required)
 
-  * `addr` - (Required) The public hostname / IP where you installed the the Spotinst HCS
+  * `addr` - (Required) The public hostname / IP where you installed the Spotinst HCS.
   * `port` - (Required) The port of the HCS. default is 80
 
 ## Attributes Reference
