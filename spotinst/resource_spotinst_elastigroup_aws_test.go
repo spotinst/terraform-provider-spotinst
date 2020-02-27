@@ -729,7 +729,7 @@ const testStrategyGroupConfig_EmptyFields = `
 // endregion
 
 // region Elastigroup: Subnet IDs
-func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) { //todo sali
+func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 	groupName := "test-acc-eg-subnet-ids"
 	resourceName := createElastigroupResourceName(groupName)
 
