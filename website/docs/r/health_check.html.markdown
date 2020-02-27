@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_healthcheck
 
-Provides a Spotinst healthcheck resource.
+Provides a Spotinst Health Check resource.
 
 ## Example Usage
 
