@@ -54,7 +54,7 @@ The following arguments are supported:
 * `threshold` - (Required)
 
   * `healthy` - (Required) The number of consecutive successful health checks that must occur before declaring an instance healthy
-  * `unhealthy` - (Required) The number of consecutive failed health checks that must occur before declaring an instance unhealthy
+  * `unhealthy` - (Required) The number of consecutive failed health checks that must occur before declaring an instance unhealthy.
 
 * `proxy` - (Required)
 
