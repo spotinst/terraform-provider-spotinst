@@ -41,7 +41,7 @@ resource "spotinst_health_check" "http_check" {
 
 The following arguments are supported:
 
-* `name` - (Optional) the name of the healthcheck
+* `name` - (Optional) The name of the health check.
 * `resource_id` - (Required) The resource to health check
 * `check` - (Required) Describes the check to execute.
 
