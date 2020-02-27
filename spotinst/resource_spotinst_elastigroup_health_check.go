@@ -174,7 +174,7 @@ func updateHealthCheck(healthCheck *healthcheck.HealthCheck, resourceData *schem
 		log.Printf("===> HealthCheck update configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).healthCheck.Update(context.Background(), input); err != nil { //todo sali look into it
+	if _, err := meta.(*Client).healthCheck.Update(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update HealthCheck [%v]: %v", healthCheckId, err)
 	}
 	return nil
