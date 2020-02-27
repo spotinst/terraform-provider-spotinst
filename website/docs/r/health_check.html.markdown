@@ -65,4 +65,4 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-* `id` - The healthcheck ID.
+* `id` - The Health Check ID.
