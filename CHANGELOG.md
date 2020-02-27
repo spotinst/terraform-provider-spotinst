@@ -13,6 +13,9 @@ NOTES:
 BUG FIXES:
 * resource/spotinst_mrscaler_aws: resolved errors with `core_min_size`, `core_max_size` , `core_desired_capacity`
 
+FEATURES:
+* *New Resource*: `spotinst_health_check`
+
 ## 1.14.2 (January 29, 2020)
 ​
 BUG FIXES:

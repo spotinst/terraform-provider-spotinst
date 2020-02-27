@@ -183,8 +183,8 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-79da021e"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-f6758eab"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-9dee6bfa"),
 				),
 			},
@@ -208,9 +208,9 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-7f3fbf06"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-79da021e"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-f6758eab"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-0821b8599e5ea9d3c"),
 				),
 			},
@@ -229,7 +229,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "true"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-7f3fbf06", "subnet-79da021e", "subnet-03b7ed5b"]
+  subnet_ids = ["subnet-7f3fbf06", "subnet-f6758eab", "subnet-d47f6a9f"]
   instance_types = ["t3.xlarge"]
   preferred_type = "t3.xlarge"
   image_id = "ami-082b5a644766e0e6f"
@@ -249,7 +249,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "false"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-03b7ed5b","subnet-7f3fbf06", "subnet-79da021e"]  
+  subnet_ids = ["subnet-d47f6a9f","subnet-7f3fbf06", "subnet-f6758eab"]  
   instance_types = [
     "t3.xlarge",
     "t3.medium",]

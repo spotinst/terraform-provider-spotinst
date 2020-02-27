@@ -204,7 +204,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.effect", "NoExecute"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 				),
 			},
@@ -248,7 +248,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-79826301"
   user_data = "hello world updated"
   iam_instance_profile = "updated"
-  subnet_ids = ["subnet-7f3fbf06", "subnet-03b7ed5b"]
+  subnet_ids = ["subnet-7f3fbf06", "subnet-d47f6a9f"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
   root_volume_size = 30
   name = "launch spec name test update"

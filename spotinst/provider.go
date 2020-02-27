@@ -54,6 +54,9 @@ func Provider() terraform.ResourceProvider {
 
 			// Managed Instance.
 			string(commons.ManagedInstanceAWSResourceName): resourceSpotinstMangedInstanceAWS(),
+
+			// HealthCheck
+			string(commons.HealthCheckResourceName): resourceSpotinstHealthCheck(),
 		},
 	}
 
