@@ -3,7 +3,7 @@ layout: "spotinst"
 page_title: "Spotinst: health_check"
 sidebar_current: "docs-do-resource-healthcheck"
 description: |-
-  Provides a Spotinst healthcheck resource.
+  Provides a Spotinst Health Check resource.
 ---
 
 # spotinst\_healthcheck
