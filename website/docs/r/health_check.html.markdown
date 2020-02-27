@@ -48,7 +48,7 @@ The following arguments are supported:
     * `protocol` - (Required) The protocol to use to connect with the instance. Valid values: http, https
     * `endpoint` - (Required) The destination for the request
     * `port` - (Required) The port to use to connect with the instance
-    * `interval` - (Required) The amount of time (in seconds) between each health check. Minimum value is 10
+    * `interval` - (Required) The amount of time (in seconds) between each health check (minimum: 10).
     * `timeout` - (Required) the amount of time (in seconds) to wait when receiving a response from the health check.
 
 * `threshold` - (Required)
