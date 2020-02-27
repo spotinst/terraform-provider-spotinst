@@ -115,7 +115,7 @@ func createHealthCheck(resourceData *schema.ResourceData, healthCheck *healthche
 
 	var resp *healthcheck.CreateHealthCheckOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
-		r, err := spotinstClient.healthCheck.Create(context.Background(), input) //todo sali look into it
+		r, err := spotinstClient.healthCheck.Create(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry the HealthCheck creation.
 			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
