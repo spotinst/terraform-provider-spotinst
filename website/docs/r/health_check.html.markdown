@@ -49,7 +49,7 @@ The following arguments are supported:
     * `endpoint` - (Required) The destination for the request
     * `port` - (Required) The port to use to connect with the instance
     * `interval` - (Required) The amount of time (in seconds) between each health check. Minimum value is 10
-    * `timeout` - (Required) the amount of time (in seconds) to wait when receiving a response from the health check
+    * `timeout` - (Required) the amount of time (in seconds) to wait when receiving a response from the health check.
 
 * `threshold` - (Required)
 
