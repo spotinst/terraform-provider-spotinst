@@ -145,7 +145,7 @@ func TestAccSpotinstHealthCheckBaseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckHealthCheckExists(&healthCheck, resourceName),
 					testCheckHealthCheckAttributes(&healthCheck, name),
-					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-health_check_terraform_test_update"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-health_check_terraform_test"),
 					resource.TestCheckResourceAttr(resourceName, "proxy_address", "http://proxy.com"),
 				),
 			},
@@ -177,7 +177,7 @@ const testBaselineHealthCheckConfig_Update = `
 resource "` + string(commons.HealthCheckResourceName) + `" "%v" {
   provider = "%v"
   resource_id = "sig-05d0a009"
-  name = "test-acc-health_check_terraform_test_update"
+  name = "test-acc-health_check_terraform_test"
   proxy_address = "http://proxy.com"
   proxy_port = "6"
   check {
