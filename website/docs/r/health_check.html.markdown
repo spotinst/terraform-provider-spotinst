@@ -42,7 +42,7 @@ resource "spotinst_health_check" "http_check" {
 The following arguments are supported:
 
 * `name` - (Optional) The name of the health check.
-* `resource_id` - (Required) The resource to health check
+* `resource_id` - (Required) The ID of the resource to check.
 * `check` - (Required) Describes the check to execute.
 
     * `protocol` - (Required) The protocol to use to connect with the instance. Valid values: http, https
