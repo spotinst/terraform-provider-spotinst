@@ -13,7 +13,7 @@ Provides a Spotinst Health Check resource.
 ## Example Usage
 
 ```hcl 
-resource "spotinst_health_check" "spotinst_health_check" {
+resource "spotinst_health_check" "http_check" {
   name        = "terraform_healt_cheack"
   resource_id = "sig-123"
 
