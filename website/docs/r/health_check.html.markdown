@@ -45,7 +45,7 @@ The following arguments are supported:
 * `resource_id` - (Required) The ID of the resource to check.
 * `check` - (Required) Describes the check to execute.
 
-    * `protocol` - (Required) The protocol to use to connect with the instance. Valid values: http, https
+    * `protocol` - (Required) The protocol to use to connect with the instance. Valid values: http, https.
     * `endpoint` - (Required) The destination for the request
     * `port` - (Required) The port to use to connect with the instance
     * `interval` - (Required) The amount of time (in seconds) between each health check (minimum: 10).
