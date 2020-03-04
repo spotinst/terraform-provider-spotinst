@@ -7,14 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/health_check"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/health_check"
 )
 
 func resourceSpotinstHealthCheck() *schema.Resource {

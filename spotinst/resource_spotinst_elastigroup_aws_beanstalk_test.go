@@ -247,7 +247,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-h3kze2cv9e"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-g74pi5mwuy"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 					resource.TestCheckResourceAttr(resourceName, "deployment_preferences.#", "1"),
@@ -268,7 +268,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "3"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "1"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-h3kze2cv9e"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_id", "e-g74pi5mwuy"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "t2.medium"),
@@ -297,7 +297,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 0
  desired_capacity = 1
 
- beanstalk_environment_id = "e-h3kze2cv9e"
+ beanstalk_environment_id = "e-g74pi5mwuy"
  instance_types_spot        = ["t2.small"]
 
  deployment_preferences {
@@ -326,7 +326,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 1
  desired_capacity = 2
 
- beanstalk_environment_id = "e-h3kze2cv9e"
+ beanstalk_environment_id = "e-g74pi5mwuy"
  instance_types_spot        = ["t2.small", "t2.medium"]
 
  deployment_preferences {
@@ -431,7 +431,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 0
  desired_capacity = 1
 
- beanstalk_environment_id = "e-mzp2rk47dw"
+ beanstalk_environment_id = "e-g74pi5mwuy"
  instance_types_spot        = ["t2.small"]
 
   scheduled_task {
@@ -463,7 +463,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 1
  desired_capacity = 2
 
- beanstalk_environment_id = "e-mzp2rk47dw"
+ beanstalk_environment_id = "e-g74pi5mwuy"
  instance_types_spot        = ["t2.small", "t2.medium"]
 
   scheduled_task {
@@ -494,7 +494,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 1
  desired_capacity = 2
 
- beanstalk_environment_id = "e-mzp2rk47dw"
+ beanstalk_environment_id = "e-g74pi5mwuy"
  instance_types_spot        = ["t2.small", "t2.medium"]
 
   scheduled_task {
@@ -525,7 +525,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 1
  desired_capacity = 2
 
- beanstalk_environment_id = "e-mzp2rk47dw"
+ beanstalk_environment_id = "e-g74pi5mwuy"
  instance_types_spot        = ["t2.small", "t2.medium"]
 }
  // -------------------------------------

@@ -146,7 +146,7 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata, formatToU
 
 // region OceanAWSLaunchSpec: Baseline
 func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-4bc9b7d9"
+	oceanID := "o-2069e2d7"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -177,7 +177,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.value", "taint value"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.effect", "NoSchedule"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 				),
 			},
@@ -203,7 +203,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.value", "taint value updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.4133802144.effect", "NoExecute"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-f6758eab"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 				),
@@ -221,7 +221,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   security_groups = ["sg-0041bd3fd6aa2ee3c"]
   user_data = "hello world"
   iam_instance_profile = "test"
-  subnet_ids = ["subnet-7f3fbf06"]
+  subnet_ids = ["subnet-bce60ec4"]
   root_volume_size = 20
   name = "launch spec name test"
   
@@ -248,7 +248,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-79826301"
   user_data = "hello world updated"
   iam_instance_profile = "updated"
-  subnet_ids = ["subnet-7f3fbf06", "subnet-d47f6a9f"]
+  subnet_ids = ["subnet-f6758eab", "subnet-d47f6a9f"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
   root_volume_size = 30
   name = "launch spec name test update"
@@ -272,7 +272,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: AutoScale
 func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-4bc9b7d9"
+	oceanID := "o-2069e2d7"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -298,6 +298,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Create+".key", "fakeKey"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Create+".value", "fakeVal"),
 				),
 			},
 			{
@@ -312,6 +315,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".key", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".value", "updated"),
 				),
 			},
 			{
@@ -322,11 +328,17 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
 				),
 			},
 		},
 	})
 }
+
+const (
+	OceanAWSLaunchSpecTagsHash_Create = "2538041064"
+	OceanAWSLaunchSpecTagsHash_Update = "1968254376"
+)
 
 const testAutoScaleOceanAWSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
@@ -352,6 +364,11 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
    memory_per_unit = 256
    num_of_units = 1
  }
+
+ tags {
+     key   = "fakeKey"
+     value = "fakeVal"
+  } 
 %v
 }
 
@@ -374,6 +391,11 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
    memory_per_unit = 512
    num_of_units = 1
  }
+
+ tags {
+     key   = "updated"
+     value = "updated"
+  } 
 %v
 }
 
