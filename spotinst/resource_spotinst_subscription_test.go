@@ -340,92 +340,92 @@ resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
 // endregion
 
 // region Subscription: Email Json
-//func TestAccSpotinstSubscription_EmailJson(t *testing.T) {
-//	subscriptionName := "subscription-email-json"
-//	subResourceName := createSubscriptionResourceName(subscriptionName)
-//
-//	groupName := "eg-baseline"
-//	groupResourceName := createElastigroupResourceName(groupName)
-//	groupResourceId := "${" + groupResourceName + ".id}"
-//	groupTerraform := createElastigroupTerraform(&GroupConfigMetadata{groupName: groupName})
-//
-//	var group aws.Group
-//	var sub subscription.Subscription
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:     func() { testAccPreCheck(t, "aws") },
-//		Providers:    TestAccProviders,
-//		CheckDestroy: testSubscriptionDestroy,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				Config: createSubscriptionTerraform(testSubscription_EmailJson_Create, subscriptionName, groupResourceId, groupTerraform),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupExists(&group, groupResourceName),
-//					testCheckElastigroupAttributes(&group, groupName),
-//					resource.TestCheckResourceAttr(groupResourceName, "availability_zones.#", "2"),
-//					resource.TestCheckResourceAttr(groupResourceName, "max_size", "0"),
-//					resource.TestCheckResourceAttr(groupResourceName, "min_size", "0"),
-//					resource.TestCheckResourceAttr(groupResourceName, "desired_capacity", "0"),
-//					resource.TestCheckResourceAttr(groupResourceName, "capacity_unit", "weight"),
-//
-//					testCheckSubscriptionExists(&sub, subResourceName),
-//					resource.TestCheckResourceAttr(subResourceName, "event_type", "AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"),
-//					resource.TestCheckResourceAttr(subResourceName, "format.%", "2"),
-//					resource.TestCheckResourceAttr(subResourceName, "format.customField", "first"),
-//					resource.TestCheckResourceAttr(subResourceName, "format.anotherCustomField", "second"),
-//					resource.TestCheckResourceAttr(subResourceName, "protocol", "email-json"),
-//					resource.TestCheckResourceAttr(subResourceName, "endpoint", "test@me.com"),
-//				),
-//			},
-//			{
-//				Config: createSubscriptionTerraform(testSubscription_EmailJson_Update, subscriptionName, groupResourceId, groupTerraform),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupExists(&group, groupResourceName),
-//					testCheckElastigroupAttributes(&group, groupName),
-//
-//					testCheckSubscriptionExists(&sub, subResourceName),
-//					resource.TestCheckResourceAttr(subResourceName, "event_type", "AWS_EC2_INSTANCE_TERMINATED"),
-//					resource.TestCheckResourceAttr(subResourceName, "format.%", "2"),
-//					resource.TestCheckResourceAttr(subResourceName, "format.customField", "first updated"),
-//					resource.TestCheckResourceAttr(subResourceName, "format.anotherCustomField", "second updated"),
-//					resource.TestCheckResourceAttr(subResourceName, "protocol", "email-json"),
-//					resource.TestCheckResourceAttr(subResourceName, "endpoint", "test.update@me.com"),
-//				),
-//			},
-//		},
-//	})
-//}
-//
-//const testSubscription_EmailJson_Create = `
-//resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
-//  provider = "aws"
-//  resource_id="%v"
-//  event_type="AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"
-//
-//  format = {
-//		customField        = "first"
-//		anotherCustomField = "second"
-//  }
-//
-//  protocol="email-json"
-//  endpoint="test@me.com"
-//}
-//`
-//
-//const testSubscription_EmailJson_Update = `
-//resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
-//  provider = "aws"
-//  resource_id="%v"
-//  event_type="AWS_EC2_INSTANCE_TERMINATED"
-//
-//  format = {
-//		customField        = "first updated"
-//		anotherCustomField = "second updated"
-//  }
-//
-//  protocol="email-json"
-//  endpoint="test.update@me.com"
-//}
-//`
+func TestAccSpotinstSubscription_EmailJson(t *testing.T) {
+	subscriptionName := "subscription-email-json"
+	subResourceName := createSubscriptionResourceName(subscriptionName)
+
+	groupName := "eg-baseline"
+	groupResourceName := createElastigroupResourceName(groupName)
+	groupResourceId := "${" + groupResourceName + ".id}"
+	groupTerraform := createElastigroupTerraform(&GroupConfigMetadata{groupName: groupName})
+
+	var group aws.Group
+	var sub subscription.Subscription
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testSubscriptionDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createSubscriptionTerraform(testSubscription_EmailJson_Create, subscriptionName, groupResourceId, groupTerraform),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, groupResourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(groupResourceName, "availability_zones.#", "2"),
+					resource.TestCheckResourceAttr(groupResourceName, "max_size", "0"),
+					resource.TestCheckResourceAttr(groupResourceName, "min_size", "0"),
+					resource.TestCheckResourceAttr(groupResourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(groupResourceName, "capacity_unit", "weight"),
+
+					testCheckSubscriptionExists(&sub, subResourceName),
+					resource.TestCheckResourceAttr(subResourceName, "event_type", "AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"),
+					resource.TestCheckResourceAttr(subResourceName, "format.%", "2"),
+					resource.TestCheckResourceAttr(subResourceName, "format.customField", "first"),
+					resource.TestCheckResourceAttr(subResourceName, "format.anotherCustomField", "second"),
+					resource.TestCheckResourceAttr(subResourceName, "protocol", "email-json"),
+					resource.TestCheckResourceAttr(subResourceName, "endpoint", "test@me.com"),
+				),
+			},
+			{
+				Config: createSubscriptionTerraform(testSubscription_EmailJson_Update, subscriptionName, groupResourceId, groupTerraform),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, groupResourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+
+					testCheckSubscriptionExists(&sub, subResourceName),
+					resource.TestCheckResourceAttr(subResourceName, "event_type", "AWS_EC2_INSTANCE_TERMINATED"),
+					resource.TestCheckResourceAttr(subResourceName, "format.%", "2"),
+					resource.TestCheckResourceAttr(subResourceName, "format.customField", "first updated"),
+					resource.TestCheckResourceAttr(subResourceName, "format.anotherCustomField", "second updated"),
+					resource.TestCheckResourceAttr(subResourceName, "protocol", "email-json"),
+					resource.TestCheckResourceAttr(subResourceName, "endpoint", "test.update@me.com"),
+				),
+			},
+		},
+	})
+}
+
+const testSubscription_EmailJson_Create = `
+resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
+  resource_id="%v"
+  event_type="AWS_EC2_INSTANCE_UNHEALTHY_IN_ELB"
+
+  format = {
+		customField        = "first"
+		anotherCustomField = "second"
+  }
+
+  protocol="email-json"
+  endpoint="test@me.com"
+}
+`
+
+const testSubscription_EmailJson_Update = `
+resource "` + string(commons.SubscriptionResourceName) + `" "%v" {
+  provider = "aws"
+  resource_id="%v"
+  event_type="AWS_EC2_INSTANCE_TERMINATED"
+
+  format = {
+		customField        = "first updated"
+		anotherCustomField = "second updated"
+  }
+
+  protocol="email-json"
+  endpoint="test.update@me.com"
+}
+`
 
 // endregion

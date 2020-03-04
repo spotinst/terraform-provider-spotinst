@@ -315,7 +315,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.memory_per_unit", "512"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".key", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".value", "updated"),
 				),
@@ -366,8 +366,8 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  }
 
  tags {
-     key   = "Env"
-     value = "production"
+     key   = "fakeKey"
+     value = "fakeVal"
   } 
 %v
 }
@@ -393,13 +393,8 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  }
 
  tags {
-     key   = "Env"
-     value = "dev"
-  } 
-
- tags {
-     key   = "fakeKey"
-     value = "fakeVal"
+     key   = "updated"
+     value = "updated"
   } 
 %v
 }
