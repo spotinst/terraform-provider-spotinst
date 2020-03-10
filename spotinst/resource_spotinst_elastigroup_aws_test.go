@@ -2958,84 +2958,84 @@ const testIntegrationRoute53GroupConfig_EmptyFields = `
 
 // endregion
 
-// region Elastigroup: ECS Integration
-//func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
-//	groupName := "test-acc-eg-integration-ecs"
-//	resourceName := createElastigroupResourceName(groupName)
-//
-//	var group aws.Group
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:      func() { testAccPreCheck(t, "aws") },
-//		Providers:     TestAccProviders,
-//		CheckDestroy:  testElastigroupDestroy,
-//		IDRefreshName: resourceName,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				ResourceName: resourceName,
-//				Config: createElastigroupTerraform(&GroupConfigMetadata{
-//					groupName:      groupName,
-//					fieldsToAppend: testIntegrationECSGroupConfig_Create,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupExists(&group, resourceName),
-//					testCheckElastigroupAttributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "1024"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "2"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "300"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "70"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "false"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.key", "test.key.ecs"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.value", "test.value.ecs"),
-//				),
-//			},
-//			{
-//				ResourceName: resourceName,
-//				Config: createElastigroupTerraform(&GroupConfigMetadata{
-//					groupName:      groupName,
-//					fieldsToAppend: testIntegrationECSGroupConfig_Update,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupExists(&group, resourceName),
-//					testCheckElastigroupAttributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name-update"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "true"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "true"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "180"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "2048"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "1024"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "50"),
-//					//resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.key", "test.key.ecs.update"),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.value", "test.value.ecs.update"),
-//				),
-//			},
-//			{
-//				ResourceName: resourceName,
-//				Config: createElastigroupTerraform(&GroupConfigMetadata{
-//					groupName:      groupName,
-//					fieldsToAppend: testIntegrationECSGroupConfig_EmptyFields,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupExists(&group, resourceName),
-//					testCheckElastigroupAttributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "0"),
-//				),
-//			},
-//		},
-//	})
-//}
+//region Elastigroup: ECS Integration
+func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
+	groupName := "test-acc-eg-integration-ecs"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationECSGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "70"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.key", "test.key.ecs"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.value", "test.value.ecs"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationECSGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.cluster_name", "ecs-cluster-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_is_auto_config", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_cooldown", "180"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.cpu_per_unit", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.memory_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "50"),
+					//resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.key", "test.key.ecs.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.value", "test.value.ecs.update"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationECSGroupConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.#", "0"),
+				),
+			},
+		},
+	})
+}
 
 const testIntegrationECSGroupConfig_Create = `
  // --- INTEGRATION: ECS -----------
