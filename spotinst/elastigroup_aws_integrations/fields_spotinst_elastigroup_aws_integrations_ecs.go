@@ -261,7 +261,6 @@ func flattenAutoScaleDown(autoScaleDown *aws.AutoScaleDown) []interface{} {
 func flattenAutoScale(autoScale *aws.AutoScale) []interface{} {
 	result := make(map[string]interface{})
 	result[string(AutoscaleIsEnabled)] = spotinst.BoolValue(autoScale.IsEnabled)
-	result[string(AutoscaleIsEnabled)] = spotinst.BoolValue(autoScale.IsEnabled)
 	result[string(AutoscaleIsAutoConfig)] = spotinst.BoolValue(autoScale.IsAutoConfig)
 	result[string(AutoscaleCooldown)] = spotinst.IntValue(autoScale.Cooldown)
 	if autoScale.Headroom != nil {
@@ -287,6 +286,7 @@ func flattenECSIntegrationAutoScaleAttributes(attrs []*aws.AutoScaleAttributes) 
 func flattenECSIntegration(ecs *aws.EC2ContainerServiceIntegration) []interface{} {
 	result := make(map[string]interface{})
 	result[string(ClusterName)] = spotinst.StringValue(ecs.ClusterName)
+	result[string(ShouldScaleDownNonServiceTasks)] = spotinst.BoolValue(ecs.AutoScale.ShouldScaleDownNonServiceTasks)
 
 	if ecs.AutoScale != nil {
 		if autoScale := flattenAutoScale(&ecs.AutoScale.AutoScale); len(autoScale) > 0 {
