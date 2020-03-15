@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"testing"
+
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_launch_specification"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
@@ -146,60 +149,60 @@ func createOceanECSLaunchSpecTerraform(lscm *ECSLaunchSpecConfigMetadata, format
 }
 
 // region OceanECSLaunchSpec: Baseline
-//func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
-//	oceanID := "o-921d89f8"
-//	launchSpecName := "test-acc-ocean-ecs-launch-spec"
-//	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
-//
-//	var launchSpec aws.ECSLaunchSpec
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:     func() { testAccPreCheck(t, "aws") },
-//		Providers:    TestAccProviders,
-//		CheckDestroy: testOceanECSLaunchSpecDestroy,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
-//					oceanID: oceanID,
-//					name:    launchSpecName,
-//				}, testBaselineOceanECSLaunchSpecConfig_Create),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
-//					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-//					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
-//					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
-//					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
-//					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
-//					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
-//				),
-//			},
-//			{
-//				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
-//					oceanID:              oceanID,
-//					name:                 launchSpecName,
-//					updateBaselineFields: true}, testBaselineOceanECSLaunchSpecConfig_Update),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
-//					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-//					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
-//					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world updated")),
-//					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
-//					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
-//					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "0"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.#", "2"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.key", "key2"),
-//					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.value", "value2"),
-//				),
-//			},
-//		},
-//	})
-//}
+func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
+	oceanID := "o-d190d627"
+	launchSpecName := "test-acc-ocean-ecs-launch-spec"
+	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
+
+	var launchSpec aws.ECSLaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID: oceanID,
+					name:    launchSpecName,
+				}, testBaselineOceanECSLaunchSpecConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
+					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
+				),
+			},
+			{
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					name:                 launchSpecName,
+					updateBaselineFields: true}, testBaselineOceanECSLaunchSpecConfig_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
+					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.key", "key2"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.value", "value2"),
+				),
+			},
+		},
+	})
+}
 
 const testBaselineOceanECSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
@@ -247,63 +250,63 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
 // endregion
 
 // region OceanECSLaunchSpec: AutoScale
-//func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
-//	oceanID := "o-921d89f8"
-//	launchSpecName := "test-acc-ocean-ecs-launch-spec"
-//	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
-//
-//	var launchSpec aws.ECSLaunchSpec
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:     func() { testAccPreCheck(t, "aws") },
-//		Providers:    TestAccProviders,
-//		CheckDestroy: testOceanECSLaunchSpecDestroy,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
-//					oceanID: oceanID,
-//					name:    launchSpecName,
-//				}, testAutoScaleOceanECSLaunchSpecConfig_Create),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
-//					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.memory_per_unit", "512"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.cpu_per_unit", "1024"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.num_of_units", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.memory_per_unit", "256"),
-//				),
-//			},
-//			{
-//				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
-//					oceanID:              oceanID,
-//					name:                 launchSpecName,
-//					updateBaselineFields: true}, testAutoScaleOceanECSLaunchSpecConfig_Update),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
-//					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.memory_per_unit", "512"),
-//				),
-//			},
-//			{
-//				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
-//					oceanID:              oceanID,
-//					name:                 launchSpecName,
-//					updateBaselineFields: true}, testAutoScaleOceanECSLaunchSpecConfig_Delete),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
-//					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-//					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
-//				),
-//			},
-//		},
-//	})
-//}
+func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
+	oceanID := "o-d190d627"
+	launchSpecName := "test-acc-ocean-ecs-launch-spec"
+	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
+
+	var launchSpec aws.ECSLaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID: oceanID,
+					name:    launchSpecName,
+				}, testAutoScaleOceanECSLaunchSpecConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.memory_per_unit", "256"),
+				),
+			},
+			{
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					name:                 launchSpecName,
+					updateBaselineFields: true}, testAutoScaleOceanECSLaunchSpecConfig_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.memory_per_unit", "512"),
+				),
+			},
+			{
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					name:                 launchSpecName,
+					updateBaselineFields: true}, testAutoScaleOceanECSLaunchSpecConfig_Delete),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
+				),
+			},
+		},
+	})
+}
 
 const testAutoScaleOceanECSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
