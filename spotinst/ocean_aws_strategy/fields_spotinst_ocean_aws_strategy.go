@@ -158,6 +158,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
+			Default:  true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
@@ -166,17 +167,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if cluster.Strategy != nil && cluster.Strategy.UtilizeReservedInstances != nil {
 				value = cluster.Strategy.UtilizeReservedInstances
 			}
-			if value != nil {
-				if err := resourceData.Set(string(UtilizeReservedInstances), spotinst.BoolValue(value)); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeReservedInstances), err)
-				}
+			if err := resourceData.Set(string(UtilizeReservedInstances), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeReservedInstances), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-
 			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
 				cluster.Strategy.SetUtilizeReservedInstances(spotinst.Bool(v.(bool)))
 			}
@@ -185,11 +183,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var uri *bool = nil
 			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
-				uri = spotinst.Bool(v.(bool))
+				cluster.Strategy.SetUtilizeReservedInstances(spotinst.Bool(v.(bool)))
 			}
-			cluster.Strategy.SetUtilizeReservedInstances(uri)
 			return nil
 		},
 		nil,
