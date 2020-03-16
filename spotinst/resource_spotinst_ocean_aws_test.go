@@ -576,7 +576,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "0"),
-					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
 				),
 			},

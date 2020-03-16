@@ -50,7 +50,8 @@ resource "spotinst_ocean_ecs" "example" {
     key_pair = "KeyPair"
     user_data = "IyEvYmluL2Jhc2gKZWNobyB0ZXJyYWZvcm0tZWNzLWNsdXN0ZXIgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
     associate_public_ip_address = false
-  
+    utilize_reserved_instances = false
+
     update_policy {
       should_roll = true
       roll_config {
@@ -96,6 +97,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `key_pair` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
+* `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
