@@ -186,6 +186,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
+					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 				),
 			},
 			{
@@ -201,6 +202,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-987654"),
+					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 				),
 			},
 		},
@@ -221,6 +223,8 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
 
   subnet_ids         = ["subnet-bce60ec4"]
   security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
+  utilize_reserved_instances = false
+
 
  %v
  %v
@@ -243,6 +247,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
 
   subnet_ids = ["subnet-f6758eab", "subnet-d47f6a9f"]
   security_group_ids = ["sg-987654"]
+  utilize_reserved_instances = true
 
  %v
  %v

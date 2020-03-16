@@ -16,6 +16,7 @@ BUG FIXES:
 * resource/spotinst_mrscaler_aws: resolved errors with `core_min_size`, `core_max_size` , `core_desired_capacity`
 * resource/spotinst_elastigroup_aws: resolved errors with `autoscale_scale_down_non_service_tasks`
 * resource/spotinst_ocean_aws: resolved errors with `utilize_reserved_instances`
+* resource/spotinst_ocean_ecs: resolved errors with `utilize_reserved_instances`
 
 FEATURES:
 * *New Resource*: `spotinst_health_check`
