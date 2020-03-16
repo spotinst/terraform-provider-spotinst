@@ -165,7 +165,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "TerraformDoNotDelete-env"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "Saliterraformtest-env"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 				),
@@ -179,7 +179,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "3"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "1"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "TerraformDoNotDelete-env"),
+					resource.TestCheckResourceAttr(resourceName, "beanstalk_environment_name", "Saliterraformtest-env"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.0", "t2.small"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types_spot.1", "t2.medium"),
@@ -201,7 +201,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 0
  desired_capacity = 1
 
- beanstalk_environment_name = "TerraformDoNotDelete-env"
+ beanstalk_environment_name = "Saliterraformtest-env"
  instance_types_spot        = ["t2.small"]
 
 }
@@ -220,7 +220,7 @@ resource "` + string(commons.ElastigroupAWSBeanstalkResourceName) + `" "%v" {
  min_size 		  = 1
  desired_capacity = 2
 
- beanstalk_environment_name = "TerraformDoNotDelete-env"
+ beanstalk_environment_name = "Saliterraformtest-env"
  instance_types_spot        = ["t2.small", "t2.medium"]
 
 }
