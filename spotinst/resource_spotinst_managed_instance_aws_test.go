@@ -182,9 +182,9 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-7f3fbf06"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-79da021e"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-f6758eab"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-9dee6bfa"),
 				),
 			},
@@ -207,10 +207,9 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_type", "t3.medium"),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-03b7ed5b"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-7f3fbf06"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-79da021e"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-d47f6a9f"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-bce60ec4"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-0821b8599e5ea9d3c"),
 				),
 			},
@@ -229,7 +228,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "true"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-7f3fbf06", "subnet-79da021e", "subnet-03b7ed5b"]
+  subnet_ids = ["subnet-bce60ec4", "subnet-f6758eab", "subnet-d47f6a9f"]
   instance_types = ["t3.xlarge"]
   preferred_type = "t3.xlarge"
   image_id = "ami-082b5a644766e0e6f"
@@ -249,7 +248,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "false"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-03b7ed5b","subnet-7f3fbf06", "subnet-79da021e"]  
+  subnet_ids = ["subnet-d47f6a9f","subnet-bce60ec4"]  
   instance_types = [
     "t3.xlarge",
     "t3.medium",]
@@ -428,13 +427,13 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "placement_tenancy", "default"),
-					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
+					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "EC2Access"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-1a29b065"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.1", "sg-5750fb2f"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a2bce9fa"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.1", "sg-0d641dcbed883357e"),
 					resource.TestCheckResourceAttr(resourceName, "elastic_ip", "eipalloc-987654"),
 					//resource.TestCheckResourceAttr(resourceName, "private_ip", "172.31.100.159"),
-					resource.TestCheckResourceAttr(resourceName, "key_pair", "TamirKeyPair"),
+					resource.TestCheckResourceAttr(resourceName, "key_pair", "core-services-keypair"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.2594194374.key", "explicit1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.2594194374.value", "value1"),
@@ -460,12 +459,12 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "placement_tenancy", "dedicated"),
-					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
+					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "BaseIAMRole"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-1a29b065"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a2bce9fa"),
 					resource.TestCheckResourceAttr(resourceName, "elastic_ip", "eipalloc-123456"),
 					//resource.TestCheckResourceAttr(resourceName, "private_ip", "2.2.2.2"),
-					resource.TestCheckResourceAttr(resourceName, "key_pair", "my-key.ssh"),
+					resource.TestCheckResourceAttr(resourceName, "key_pair", "core-services-keypair"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.2916442246.key", "explicit1-update"),
 					resource.TestCheckResourceAttr(resourceName, "tags.2916442246.value", "value1-update"),
@@ -487,9 +486,9 @@ elastic_ip = "eipalloc-987654"
 ebs_optimized = "false"
 enable_monitoring = "false"
 placement_tenancy = "default"
-iam_instance_profile = "ecsInstanceRole"
-security_group_ids = ["sg-1a29b065","sg-5750fb2f"]
-key_pair = "TamirKeyPair"
+iam_instance_profile = "EC2Access"
+security_group_ids = ["sg-a2bce9fa","sg-0d641dcbed883357e"]
+key_pair = "core-services-keypair"
 
   tags {
     key = "explicit1"
@@ -520,9 +519,9 @@ elastic_ip = "eipalloc-123456"
 ebs_optimized = "true"
 enable_monitoring = "true"
 placement_tenancy = "dedicated"
-iam_instance_profile = "ecsInstanceRole"
-security_group_ids = ["sg-1a29b065"]
-key_pair = "my-key.ssh" 
+iam_instance_profile = "BaseIAMRole"
+security_group_ids = ["sg-a2bce9fa"]
+key_pair = "core-services-keypair" 
 
   tags {
      key = "explicit1-update"

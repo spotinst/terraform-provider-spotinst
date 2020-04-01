@@ -7,12 +7,13 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_launch_specification"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_launch_specification"
 )
 
 func init() {
@@ -149,7 +150,7 @@ func createOceanECSLaunchSpecTerraform(lscm *ECSLaunchSpecConfigMetadata, format
 
 // region OceanECSLaunchSpec: Baseline
 func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-921d89f8"
+	oceanID := "o-d190d627"
 	launchSpecName := "test-acc-ocean-ecs-launch-spec"
 	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
 
@@ -250,7 +251,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanECSLaunchSpec: AutoScale
 func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-921d89f8"
+	oceanID := "o-d190d627"
 	launchSpecName := "test-acc-ocean-ecs-launch-spec"
 	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
 

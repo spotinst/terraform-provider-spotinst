@@ -217,7 +217,7 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  provider = "%v"
 
  name = "%v"
- //cluster_id = "terraform-acc-test-cluster"
+ cluster_id = "terraform-tests-do-not-delete"
  cluster_zone_name = "us-central1-a"
  node_image = "COS"
 
@@ -233,7 +233,7 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
 
  integration_gke {
   location = "us-central1-a"
-  cluster_id = "terraform-acc-test-cluster"
+  cluster_id = "terraform-tests-do-not-delete"
   autoscale_is_enabled     = true
   autoscale_is_auto_config = false
   autoscale_cooldown       = 300
@@ -254,7 +254,7 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
  provider = "%v"
 
  name = "%v"
- //cluster_id = "terraform-acc-test-cluster"
+ cluster_id = "terraform-tests-do-not-delete"
  cluster_zone_name = "us-central1-a"
  node_image = "COS"
 

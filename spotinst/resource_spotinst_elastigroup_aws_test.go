@@ -282,7 +282,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	
 	// --- SUBNET IDS -------------------
 	region      = "us-west-2"
-	subnet_ids  = ["subnet-79da021e", "subnet-03b7ed5b"]
+	subnet_ids  = ["subnet-0d67e8b90c74986c8", "subnet-d47f6a9f"]
 	// ----------------------------------
 	
 	// --- CAPACITY ------------
@@ -310,7 +310,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	
 	// --- SUBNET IDS -------------------
 	region      = "us-west-2"
-	subnet_ids  = ["subnet-79da021e"]
+	subnet_ids  = ["subnet-f6758eab"]
 	// ----------------------------------
 	
 	// --- CAPACITY ------------
@@ -752,8 +752,8 @@ func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0d67e8b90c74986c8"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
 				),
 			},
 			{
@@ -768,7 +768,7 @@ func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-f6758eab"),
 				),
 			},
 		},
@@ -2958,7 +2958,7 @@ const testIntegrationRoute53GroupConfig_EmptyFields = `
 
 // endregion
 
-// region Elastigroup: ECS Integration
+//region Elastigroup: ECS Integration
 func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 	groupName := "test-acc-eg-integration-ecs"
 	resourceName := createElastigroupResourceName(groupName)
@@ -3016,7 +3016,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.evaluation_periods", "150"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_down.0.max_scale_down_percentage", "50"),
-					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.key", "test.key.ecs.update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.value", "test.value.ecs.update"),
 				),
@@ -3265,7 +3265,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-h3kze2cv9e"),
+					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-g74pi5mwuy"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.automatic_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.batch_size_percentage", "100"),
@@ -3285,7 +3285,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-h3kze2cv9e"),
+					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.environment_id", "e-g74pi5mwuy"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.automatic_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_beanstalk.0.deployment_preferences.0.batch_size_percentage", "10"),
@@ -3314,7 +3314,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationBeanstalk(t *testing.T) {
 const testIntegrationBeanstalkGroupConfig_Create = `
  // --- INTEGRATION: BEANSTALK  --------------
  integration_beanstalk {
-  environment_id = "e-h3kze2cv9e"
+  environment_id = "e-g74pi5mwuy"
 
   deployment_preferences {
     automatic_roll        = true
@@ -3333,7 +3333,7 @@ const testIntegrationBeanstalkGroupConfig_Create = `
 const testIntegrationBeanstalkGroupConfig_Update = `
  // --- INTEGRATION: BEANSTALK  --------------
  integration_beanstalk {
-  environment_id = "e-h3kze2cv9e"
+  environment_id = "e-g74pi5mwuy"
 
   deployment_preferences {
     automatic_roll        = false

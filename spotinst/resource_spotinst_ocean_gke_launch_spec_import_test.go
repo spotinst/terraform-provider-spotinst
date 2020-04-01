@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
@@ -15,41 +16,41 @@ import (
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
 
-//func init() {
-//	resource.AddTestSweepers("resource_spotinst_ocean_gke_launch_spec_import", &resource.Sweeper{
-//		Name: "resource_spotinst_ocean_gke_import",
-//		F:    testSweepOceanGKELaunchSpecImport,
-//	})
-//}
-//
-//func testSweepOceanGKELaunchSpecImport(region string) error {
-//	client, err := getProviderClient("gcp")
-//	if err != nil {
-//		return fmt.Errorf("error getting client: %v", err)
-//	}
-//
-//	conn := client.(*Client).ocean.CloudProviderGCP()
-//
-//	input := &gcp.ListLaunchSpecsInput{}
-//	if resp, err := conn.ListLaunchSpecs(context.Background(), input); err != nil {
-//		return fmt.Errorf("error getting list of clusters to sweep")
-//	} else {
-//		if len(resp.LaunchSpecs) == 0 {
-//			log.Printf("[INFO] No clusters to sweep")
-//		}
-//
-//		for _, launchSpec := range resp.LaunchSpecs {
-//			if strings.Contains(spotinst.StringValue(launchSpec.ID), "terraform-acc-tests-") {
-//				if _, err := conn.DeleteLaunchSpec(context.Background(), &gcp.DeleteLaunchSpecInput{LaunchSpecID: launchSpec.ID}); err != nil {
-//					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(launchSpec.ID))
-//				} else {
-//					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(launchSpec.ID))
-//				}
-//			}
-//		}
-//	}
-//	return nil
-//}
+func init() {
+	resource.AddTestSweepers("resource_spotinst_ocean_gke_launch_spec_import", &resource.Sweeper{
+		Name: "resource_spotinst_ocean_gke_import",
+		F:    testSweepOceanGKELaunchSpecImport,
+	})
+}
+
+func testSweepOceanGKELaunchSpecImport(region string) error {
+	client, err := getProviderClient("gcp")
+	if err != nil {
+		return fmt.Errorf("error getting client: %v", err)
+	}
+
+	conn := client.(*Client).ocean.CloudProviderGCP()
+
+	input := &gcp.ListLaunchSpecsInput{}
+	if resp, err := conn.ListLaunchSpecs(context.Background(), input); err != nil {
+		return fmt.Errorf("error getting list of clusters to sweep")
+	} else {
+		if len(resp.LaunchSpecs) == 0 {
+			log.Printf("[INFO] No clusters to sweep")
+		}
+
+		for _, launchSpec := range resp.LaunchSpecs {
+			if strings.Contains(spotinst.StringValue(launchSpec.ID), "terraform-acc-tests-") {
+				if _, err := conn.DeleteLaunchSpec(context.Background(), &gcp.DeleteLaunchSpecInput{LaunchSpecID: launchSpec.ID}); err != nil {
+					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(launchSpec.ID))
+				} else {
+					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(launchSpec.ID))
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func createOceanGKELaunchSpecImportResource(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.OceanGKELaunchSpecImportResourceName), name)
@@ -147,7 +148,7 @@ func createOceanGKELaunchSpecImportTerraform(launchSpecMeta *OceanGKELaunchSpecI
 
 // region Ocean GKE Import: Baseline
 func TestAccSpotinstOceanGKELaunchSpecImport_Baseline(t *testing.T) {
-	oceanID := "o-c290e75c"
+	oceanID := "o-0507758c"
 	resourceName := createOceanGKELaunchSpecImportResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec

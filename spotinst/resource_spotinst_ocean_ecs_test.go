@@ -183,9 +183,10 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
+					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 				),
 			},
 			{
@@ -197,10 +198,11 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-79da021e"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-03b7ed5b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-f6758eab"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0e9d5f93224747f51"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-987654"),
+					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 				),
 			},
 		},
@@ -219,8 +221,10 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-79da021e"]
+  subnet_ids         = ["subnet-bce60ec4"]
   security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
+  utilize_reserved_instances = false
+
 
  %v
  %v
@@ -241,8 +245,9 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-79da021e","subnet-03b7ed5b"]
-  security_group_ids = ["sg-0e9d5f93224747f51"]
+  subnet_ids = ["subnet-f6758eab", "subnet-d47f6a9f"]
+  security_group_ids = ["sg-987654"]
+  utilize_reserved_instances = true
 
  %v
  %v
@@ -319,6 +324,8 @@ const testInstanceTypesWhitelistECSConfig_Update = `
 
 const testInstanceTypesWhitelistECSConfig_EmptyFields = `
 `
+
+// endregion
 
 // region OceanECS: Launch Specification
 func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
@@ -608,6 +615,116 @@ const testStrategy_EmptyFields = `
 // --- STRATEGY -----------------
 
 // --------------------------------
+`
+
+// endregion
+
+// region OceanECS: Scheduling
+func TestAccSpotinstoceanECS_Scheduling(t *testing.T) {
+	name := "test-acc-cluster-scheduling"
+	clusterName := "scheduling-cluster-name"
+	resourceName := createOceanECSResourceName(clusterName)
+
+	var cluster aws.ECSCluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testScheduling_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.time_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:15:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.cron_expression", "testcron2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.task_type", "clusterRoll"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testScheduling_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.cron_expression", "testcron"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.task_type", "clusterRoll"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					clusterName:    clusterName,
+					name:           name,
+					fieldsToAppend: testScheduling_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testScheduling_Create = `
+ // --- Scheduling --------------------
+ scheduled_task {
+    shutdown_hours {
+      is_enabled = false
+      time_windows = ["Fri:15:30-Sat:15:30"]
+    }
+    tasks {
+      is_enabled = false
+      cron_expression = "testcron2"
+      task_type = "clusterRoll"
+    }
+  }
+ // ---------------------------------
+`
+
+const testScheduling_Update = `
+ // --- Scheduling --------------------
+  scheduled_task   {
+    shutdown_hours  {
+      is_enabled = true
+      time_windows = ["Fri:15:30-Sat:13:30","Sun:15:30-Mon:13:30"]
+    }
+    tasks  {
+      is_enabled = true
+      cron_expression = "testcron"
+      task_type = "clusterRoll"
+    }
+  }
+ // ---------------------------------
+`
+
+const testScheduling_EmptyFields = `
+ // --- Scheduling --------------------
+ // ---------------------------------
 `
 
 // endregion

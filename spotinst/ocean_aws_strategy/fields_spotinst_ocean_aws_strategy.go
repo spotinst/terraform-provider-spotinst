@@ -13,6 +13,55 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
+	fieldsMap[GracePeriod] = commons.NewGenericField(
+		commons.OceanAWSStrategy,
+		GracePeriod,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+
+			if cluster.Strategy != nil && cluster.Strategy.DrainingTimeout != nil {
+				value = cluster.Strategy.GracePeriod
+			}
+			if value != nil {
+				if err := resourceData.Set(string(GracePeriod), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(GracePeriod), err)
+				}
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(GracePeriod)); ok {
+				cluster.Strategy.SetGracePeriod(spotinst.Int(v.(int)))
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var dt *int = nil
+
+			if v, ok := resourceData.Get(string(GracePeriod)).(int); ok && v > 0 {
+				dt = spotinst.Int(v)
+			}
+
+			cluster.Strategy.SetGracePeriod(dt)
+
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[DrainingTimeout] = commons.NewGenericField(
 		commons.OceanAWSStrategy,
 		DrainingTimeout,
@@ -109,6 +158,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
+			Default:  true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
@@ -117,17 +167,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if cluster.Strategy != nil && cluster.Strategy.UtilizeReservedInstances != nil {
 				value = cluster.Strategy.UtilizeReservedInstances
 			}
-			if value != nil {
-				if err := resourceData.Set(string(UtilizeReservedInstances), spotinst.BoolValue(value)); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeReservedInstances), err)
-				}
+			if err := resourceData.Set(string(UtilizeReservedInstances), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeReservedInstances), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-
 			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
 				cluster.Strategy.SetUtilizeReservedInstances(spotinst.Bool(v.(bool)))
 			}
@@ -136,11 +183,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var uri *bool = nil
 			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
-				uri = spotinst.Bool(v.(bool))
+				cluster.Strategy.SetUtilizeReservedInstances(spotinst.Bool(v.(bool)))
 			}
-			cluster.Strategy.SetUtilizeReservedInstances(uri)
 			return nil
 		},
 		nil,

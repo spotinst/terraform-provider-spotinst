@@ -24,12 +24,14 @@ const (
 	OceanAWSInstanceTypes       ResourceAffinity = "Ocean_AWS_Instance_Types"
 	OceanAWSAutoScaling         ResourceAffinity = "Ocean_AWS_Auto_Scaling"
 	OceanAWSStrategy            ResourceAffinity = "Ocean_AWS_Strategy"
+	OceanAWSScheduling          ResourceAffinity = "Ocean_AWS_Scheduling"
 	OceanAWSLaunchConfiguration ResourceAffinity = "Ocean_AWS_Launch_Configuration"
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
 
 	OceanGKE                 ResourceAffinity = "Ocean_GKE"
 	OceanGKEImport           ResourceAffinity = "Ocean_GKE_Import"
+	OceanGKEImportScheduling ResourceAffinity = "Ocean_GKE_Import_Scheduling"
 	OceanGKEInstanceTypes    ResourceAffinity = "Ocean_GKE_Instance_Types"
 	OceanGKEAutoScaling      ResourceAffinity = "Ocean_GKE_Auto_Scaling"
 	OceanGKEStrategy         ResourceAffinity = "Ocean_GKE_Strategy"
@@ -42,6 +44,7 @@ const (
 	OceanECSInstanceTypes       ResourceAffinity = "Ocean_ECS_Instance_Types"
 	OceanECSLaunchSpecification ResourceAffinity = "Ocean_ECS_Launch_Specification"
 	OceanECSStrategy            ResourceAffinity = "Ocean_ECS_Strategy"
+	OceanECSScheduling          ResourceAffinity = "Ocean_ECS_Scheduling"
 
 	OceanECSLaunchSpec ResourceAffinity = "Ocean_ECS_Launch_Spec"
 
@@ -109,6 +112,8 @@ const (
 	MultaiRoutingRule ResourceAffinity = "Multai_Routing_Rule"
 	MultaiTarget      ResourceAffinity = "Multai_Target"
 	MultaiTargetSet   ResourceAffinity = "Multai_Target_Set"
+
+	HealthCheck ResourceAffinity = "Health_Check"
 
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"

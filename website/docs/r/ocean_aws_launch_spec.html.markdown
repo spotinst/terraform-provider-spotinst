@@ -15,6 +15,7 @@ Provides a custom Spotinst Ocean AWS Launch Spec resource.
 ```hcl
 resource "spotinst_ocean_aws_launch_spec" "example" {
   ocean_id  = "o-123456"
+  name = "launch spec name test"
   image_id  = "ami-123456"
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
@@ -39,6 +40,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     gpu_per_unit = 0
     memory_per_unit = 2048
   }
+
+ tags {
+     key   = "Env"
+     value = "production"
+  } 
 }
 ```
 
@@ -47,12 +53,14 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
 The following arguments are supported:
 
 * `ocean_id` - (Required) The ocean cluster you wish to 
+* `name` - (Optional) Set Launch Specification name 
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Optional) ID of the image used to launch the instances.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_groups` - (Optional) Optionally adds security group IDs.
 * `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in array should be subnet ID.
 * `root_volume_size` - (Optional) Set root volume size (in GB).
+* `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 
 * `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The tag key.
@@ -68,3 +76,4 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+

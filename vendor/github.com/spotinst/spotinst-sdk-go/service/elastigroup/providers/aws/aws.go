@@ -696,9 +696,21 @@ type Instance struct {
 }
 
 type RollStrategy struct {
-	Action                    *string `json:"action,omitempty"`
-	ShouldDrainInstances      *bool   `json:"shouldDrainInstances,omitempty"`
-	BatchMinHealthyPercentage *int    `json:"batchMinHealthyPercentage,omitempty"`
+	Action                    *string    `json:"action,omitempty"`
+	ShouldDrainInstances      *bool      `json:"shouldDrainInstances,omitempty"`
+	BatchMinHealthyPercentage *int       `json:"batchMinHealthyPercentage,omitempty"`
+	OnFailure                 *OnFailure `json:"onFailure,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type OnFailure struct {
+	ActionType                    *string `json:"actionType,omitempty"`
+	ShouldHandleAllBatches        *bool   `json:"shouldHandleAllBatches,omitempty"`
+	BatchNum                      *int    `json:"batchNum,omitempty"`
+	DrainingTimeout               *int    `json:"drainingTimeout,omitempty"`
+	ShouldDecrementTargetCapacity *bool   `json:"shouldDecrementTargetCapacity,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -3757,6 +3769,58 @@ func (o *RollStrategy) SetAction(v *string) *RollStrategy {
 func (o *RollStrategy) SetShouldDrainInstances(v *bool) *RollStrategy {
 	if o.ShouldDrainInstances = v; o.ShouldDrainInstances == nil {
 		o.nullFields = append(o.nullFields, "ShouldDrainInstances")
+	}
+	return o
+}
+
+func (o *RollStrategy) SetOnFailure(v *OnFailure) *RollStrategy {
+	if o.OnFailure = v; o.OnFailure == nil {
+		o.nullFields = append(o.nullFields, "OnFailure")
+	}
+	return o
+}
+
+// endregion
+
+// region RollStrategy
+
+func (o OnFailure) MarshalJSON() ([]byte, error) {
+	type noMethod OnFailure
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *OnFailure) SetActionType(v *string) *OnFailure {
+	if o.ActionType = v; o.ActionType == nil {
+		o.nullFields = append(o.nullFields, "ActionType")
+	}
+	return o
+}
+
+func (o *OnFailure) SetShouldHandleAllBatches(v *bool) *OnFailure {
+	if o.ShouldHandleAllBatches = v; o.ShouldHandleAllBatches == nil {
+		o.nullFields = append(o.nullFields, "ShouldHandleAllBatches")
+	}
+	return o
+}
+
+func (o *OnFailure) SetBatchNum(v *int) *OnFailure {
+	if o.BatchNum = v; o.BatchNum == nil {
+		o.nullFields = append(o.nullFields, "BatchNum")
+	}
+	return o
+}
+
+func (o *OnFailure) SetDrainingTimeout(v *int) *OnFailure {
+	if o.DrainingTimeout = v; o.DrainingTimeout == nil {
+		o.nullFields = append(o.nullFields, "DrainingTimeout")
+	}
+	return o
+}
+
+func (o *OnFailure) SetShouldDecrementTargetCapacity(v *bool) *OnFailure {
+	if o.ShouldDecrementTargetCapacity = v; o.ShouldDecrementTargetCapacity == nil {
+		o.nullFields = append(o.nullFields, "ShouldDecrementTargetCapacity")
 	}
 	return o
 }

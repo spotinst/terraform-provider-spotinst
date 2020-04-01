@@ -5,6 +5,7 @@ import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/comm
 type LabelField string
 type TaintField string
 type IAMField string
+type TagField string
 
 const (
 	LabelKey   LabelField = "key"
@@ -18,11 +19,6 @@ const (
 )
 
 const (
-	ARN  IAMField = "arn"
-	Name IAMField = "name"
-)
-
-const (
 	CPUPerUnit    commons.FieldName = "cpu_per_unit"
 	GPUPerUnit    commons.FieldName = "gpu_per_unit"
 	MemoryPerUnit commons.FieldName = "memory_per_unit"
@@ -30,7 +26,13 @@ const (
 )
 
 const (
+	TagKey   TagField = "key"
+	TagValue TagField = "value"
+)
+
+const (
 	SecurityGroups     commons.FieldName = "security_groups"
+	Name               commons.FieldName = "name"
 	OceanID            commons.FieldName = "ocean_id"
 	ImageID            commons.FieldName = "image_id"
 	UserData           commons.FieldName = "user_data"
@@ -40,4 +42,5 @@ const (
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
 	SubnetIDs          commons.FieldName = "subnet_ids"
 	RootVolumeSize     commons.FieldName = "root_volume_size"
+	Tags               commons.FieldName = "tags"
 )

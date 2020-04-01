@@ -47,9 +47,9 @@ resource "spotinst_ocean_aws" "example" {
 
   // --- STRATEGY --------------------
   fallback_to_ondemand       = true
-  spot_percentage            = 100
   draining_timeout           = 120
   utilize_reserved_instances = false
+  grace_period = 600
   // ---------------------------------
 
   // --- AUTOSCALER -----------------
@@ -57,6 +57,7 @@ resource "spotinst_ocean_aws" "example" {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
+    auto_headroom_percentage = 50
 
     autoscale_headroom {
       cpu_per_unit    = 1024
@@ -147,13 +148,12 @@ whitelist = ["t1.micro", "m1.small"]
 ```
 
 * `fallback_to_ondemand` - (Optional, Default: `true`) If not Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
-* `spot_percentage` - (Optional, Default: `100`) The percentage of Spot instances the cluster should maintain. Min 0, max 100.
-* `utilize_reserved_instances` - (Optional, Default `false`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
+* `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
+* `grace_period` - (Optional, Default: 600) The amount of time, in seconds, after the instance has launched to start checking its health.
 
 ```hcl
   fallback_to_ondemand       = true
-  spot_percentage            = 100
   utilize_reserved_instances = false
   draining_timeout           = 120
 ```
@@ -162,6 +162,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes autoscaler.
 * `autoscale_is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
 * `autoscale_cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
+* `auto_headroom_percentage` - (Optional) Set the auto headroom percentage (a number in the range [0, 200]) which controls the percentage of headroom from the cluster. Relevant only when `isAutoConfig` toggled on.
 * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
 * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
 * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate the headroom.
@@ -224,6 +225,35 @@ tags {
     
     roll_config {
       batch_size_percentage = 33
+    }
+  }
+```
+
+<a id="scheduled-task"></a>
+## scheduled task
+* `scheduled_task` - (Optional) Set scheduling object.
+    * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
+        * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.
+                                     Example: True
+        * `time_windows` - (Required) Set time windows for shutdown hours. specify a list of 'timeWindows' with at least one time window Each string is in the format of - ddd:hh:mm-ddd:hh:mm ddd = day of week = Sun | Mon | Tue | Wed | Thu | Fri | Sat hh = hour 24 = 0 -23 mm = minute = 0 - 59. Time windows should not overlap. required on cluster.scheduling.isEnabled = True. API Times are in UTC
+                                      Example: Fri:15:30-Wed:14:30
+    * `tasks` - (Optional) The scheduling tasks for the cluster.
+        * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for cluster.scheduling.tasks object.
+        * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ".The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of ‘frequency’ or ‘cronExpression’ should be used at a time. Required for cluster.scheduling.tasks object
+                                         Example: 0 1 * * *
+        * `task_type` - (Required) Valid values: "clusterRoll". Required for cluster.scheduling.tasks object
+                                   Example: clusterRoll
+             
+```hcl
+  scheduled_task  {
+    shutdown_hours  {
+      is_enabled = true
+      time_windows = ["Fri:15:30-Sat:13:30","Sun:15:30-Mon:13:30"]
+    }
+    tasks  {
+      is_enabled = false
+      cron_expression = "salitestcron3"
+      task_type = "clusterRoll"
     }
   }
 ```

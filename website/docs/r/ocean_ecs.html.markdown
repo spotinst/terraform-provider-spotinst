@@ -50,7 +50,8 @@ resource "spotinst_ocean_ecs" "example" {
     key_pair = "KeyPair"
     user_data = "IyEvYmluL2Jhc2gKZWNobyB0ZXJyYWZvcm0tZWNzLWNsdXN0ZXIgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
     associate_public_ip_address = false
-  
+    utilize_reserved_instances = false
+
     update_policy {
       should_roll = true
       roll_config {
@@ -96,6 +97,7 @@ whitelist = ["t1.micro", "m1.small"]
 * `key_pair` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
+* `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
@@ -175,6 +177,36 @@ tags {
     
     roll_config {
       batch_size_percentage = 33
+    }
+  }
+```
+
+
+<a id="scheduled-task"></a>
+## scheduled task
+* `scheduled_task` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
+    * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
+        * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.
+                                     Example: True
+        * `time_windows` - (Required) Set time windows for shutdown hours. specify a list of 'timeWindows' with at least one time window Each string is in the format of - ddd:hh:mm-ddd:hh:mm ddd = day of week = Sun | Mon | Tue | Wed | Thu | Fri | Sat hh = hour 24 = 0 -23 mm = minute = 0 - 59. Time windows should not overlap. required on cluster.scheduling.isEnabled = True. API Times are in UTC
+                                      Example: Fri:15:30-Wed:14:30
+    * `tasks` - (Optional) The scheduling tasks for the cluster.
+        * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for cluster.scheduling.tasks object.
+        * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ".The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of ‘frequency’ or ‘cronExpression’ should be used at a time. Required for cluster.scheduling.tasks object
+                                         Example: 0 1 * * *.
+        * `task_type` - (Required) Valid values: "clusterRoll". Required for cluster.scheduling.tasks object
+                                   Example: clusterRoll.
+             
+```hcl
+  scheduled_task  {
+    shutdown_hours  {
+      is_enabled = false
+      time_windows = ["Fri:15:30-Wed:13:30"]
+    }
+    tasks {
+      is_enabled = false
+      cron_expression = "salitestcron3"
+      task_type = "clusterRoll"
     }
   }
 ```

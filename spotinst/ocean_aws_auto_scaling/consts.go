@@ -5,6 +5,7 @@ import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/comm
 const (
 	Autoscaler             commons.FieldName = "autoscaler"
 	AutoscaleCooldown      commons.FieldName = "autoscale_cooldown"
+	AutoHeadroomPercentage commons.FieldName = "auto_headroom_percentage"
 	AutoscaleDown          commons.FieldName = "autoscale_down"
 	AutoscaleHeadroom      commons.FieldName = "autoscale_headroom"
 	AutoscaleIsAutoConfig  commons.FieldName = "autoscale_is_auto_config"
