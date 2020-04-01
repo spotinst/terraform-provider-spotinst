@@ -1,5 +1,5 @@
 ## 1.14.3 (Unreleased)
-​
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `name`
 * resource/spotinst_ocean_aws: added `scheduled_task`
@@ -8,9 +8,6 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `auto_headroom_percentage`
 * resource/spotinst_ocean_aws_launch_spec: added `tags`
 * resource/spotinst_ocean_aws: added `grace_period`
-
-NOTES: 
-* documentation: resource/spotinst_mrscaler_aws: retries are now accurate
 
 BUG FIXES:
 * resource/spotinst_mrscaler_aws: resolved errors with `core_min_size`, `core_max_size` , `core_desired_capacity`
@@ -21,11 +18,14 @@ BUG FIXES:
 FEATURES:
 * *New Resource*: `spotinst_health_check`
 
+NOTES: 
+* documentation: resource/spotinst_mrscaler_aws: retries are now accurate
+
 ## 1.14.2 (January 29, 2020)
-​
+
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: resolved errors with roll_config
-​
+
 ## 1.14.1 (January 27, 2020)
 
 ENHANCEMENTS:
