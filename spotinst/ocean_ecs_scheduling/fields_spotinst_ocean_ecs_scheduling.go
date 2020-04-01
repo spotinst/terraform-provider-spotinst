@@ -115,7 +115,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandShutdownHours(data interface{}) (*aws.ECSShutdownHours, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
 		runner := &aws.ECSShutdownHours{}
 		m := list[0].(map[string]interface{})
 
@@ -170,12 +170,9 @@ func flattenShutdownHours(shutdownHours *aws.ECSShutdownHours) []interface{} {
 	result[string(ShutdownHoursIsEnabled)] = spotinst.BoolValue(shutdownHours.IsEnabled)
 
 	if shutdownHours.TimeWindows != nil {
-		var timeWindowList []string = nil
-		for _, timeWindow := range shutdownHours.TimeWindows {
-			timeWindowList = append(timeWindowList, timeWindow)
-		}
-		result[string(TimeWindows)] = timeWindowList
+		result[string(TimeWindows)] = shutdownHours.TimeWindows
 	}
+
 	return []interface{}{result}
 }
 

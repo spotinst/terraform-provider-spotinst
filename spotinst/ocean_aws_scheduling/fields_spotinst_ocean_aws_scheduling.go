@@ -138,12 +138,8 @@ func flattenShutdownHours(shutdownHours *aws.ShutdownHours) []interface{} {
 	result := make(map[string]interface{})
 	result[string(ShutdownHoursIsEnabled)] = spotinst.BoolValue(shutdownHours.IsEnabled)
 
-	if shutdownHours.TimeWindows != nil {
-		var timeWindowList []string = nil
-		for _, timeWindow := range shutdownHours.TimeWindows {
-			timeWindowList = append(timeWindowList, timeWindow)
-		}
-		result[string(TimeWindows)] = timeWindowList
+	if len(shutdownHours.TimeWindows) > 0 {
+		result[string(TimeWindows)] = shutdownHours.TimeWindows
 	}
 
 	return []interface{}{result}
@@ -197,7 +193,7 @@ func expandScheduledTasks(data interface{}) (*aws.Scheduling, error) {
 }
 
 func expandShutdownHours(data interface{}) (*aws.ShutdownHours, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
 		runner := &aws.ShutdownHours{}
 		m := list[0].(map[string]interface{})
 

@@ -1,12 +1,12 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: health_check"
-sidebar_current: "docs-do-resource-healthcheck"
+subcategory: "Elastigroup"
 description: |-
   Provides a Spotinst Health Check resource.
 ---
 
-# spotinst\_healthcheck
+# spotinst\_health\_check
 
 Provides a Spotinst Health Check resource.
 
