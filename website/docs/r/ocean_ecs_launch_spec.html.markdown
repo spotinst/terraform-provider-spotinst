@@ -30,6 +30,11 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
     cpu_per_unit = 1000
     memory_per_unit = 2048
   }
+
+  tags {
+     key   = "Env"
+     value = "production"
+  } 
 }
 ```
 
@@ -43,6 +48,8 @@ The following arguments are supported:
 * `image_id`  - (Optional) ID of the image used to launch the instances.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_group_ids` - (Optional) One or more security group ids.
+* `tags` - (Optional) A key/value mapping of tags to assign to the resource.
+
 * `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.

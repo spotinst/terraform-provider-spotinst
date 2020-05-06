@@ -277,6 +277,9 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Create+".key", "fakeKey"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Create+".value", "fakeVal"),
 				),
 			},
 			{
@@ -291,6 +294,9 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Update+".key", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Update+".value", "updated"),
 				),
 			},
 			{
@@ -302,11 +308,17 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
 				),
 			},
 		},
 	})
 }
+
+const (
+	OceanECSLaunchSpecTagsHash_Create = "2538041064"
+	OceanECSLaunchSpecTagsHash_Update = "1968254376"
+)
 
 const testAutoScaleOceanECSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
@@ -318,6 +330,11 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-082b5a644766e0e6f"
   security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
   iam_instance_profile = "ecsInstanceRole"
+
+  tags {
+    key   = "fakeKey"
+    value = "fakeVal"
+  } 
 
   autoscale_headrooms {
     cpu_per_unit = 1024
@@ -345,7 +362,12 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-082b5a644766e0e6f"
   security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
   iam_instance_profile = "ecsInstanceRole"
-  
+ 
+  tags {
+    key   = "updated"
+    value = "updated"
+  } 
+
   autoscale_headrooms {
     cpu_per_unit = 1024
     memory_per_unit = 512

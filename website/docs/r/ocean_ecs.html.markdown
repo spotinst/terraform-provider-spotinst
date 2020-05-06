@@ -20,43 +20,27 @@ resource "spotinst_ocean_ecs" "example" {
   
     min_size         = "0"
     max_size         = "1"
-    desired_capacity = "0"
-  
-    autoscaler {
-      cooldown = 240
-      headroom {
-        cpu_per_unit = 512
-        memory_per_unit = 1024
-        num_of_units = 1
-      }
-      down {
-        max_scale_down_percentage = 20
-      }
-      is_auto_config = false
-      is_enabled = false
-      resource_limits {
-        max_vcpu = 1
-        max_memory_gib = 2
-      }
-    }
-  
+    desired_capacity = "0" 
+
     subnet_ids = ["subnet-12345"]
     whitelist = ["t3.medium"]
-  
+  // blacklist = ["t1.micro", "m1.small"]
+
     security_group_ids = ["sg-12345"]
     image_id = "ami-12345"
-    iam_instance_profile = "arn:aws:iam::12345:instance-profile/ecsInstanceProfile"
+    iam_instance_profile = "iam-profile"
   
     key_pair = "KeyPair"
-    user_data = "IyEvYmluL2Jhc2gKZWNobyB0ZXJyYWZvcm0tZWNzLWNsdXN0ZXIgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
+    user_data = "echo hello world"
     associate_public_ip_address = false
     utilize_reserved_instances = false
+    draining_timeout            = 120
+    monitoring                  = true
+    ebs_optimized               = true
 
-    update_policy {
-      should_roll = true
-      roll_config {
-        batch_size_percentage = 100
-      }
+    tags {
+      key   = "fakeKey"
+      value = "fakeValue"
     }
 }
 ```
@@ -72,25 +56,11 @@ The following arguments are supported:
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster.
 * `subnet_ids` - (Required) A comma-separated list of subnet identifiers for the Ocean cluster. Subnet IDs should be configured with auto assign public ip.
-
-```hcl
-  region = "us-west-2"
-  name = "terraform-ecs-cluster"
-  cluster_name = "terraform-ecs-cluster"
-
-  max_size         = 2
-  min_size         = 1
-  desired_capacity = 2
-  subnet_ids       = ["subnet-12345"]
-```
-
-* `whitelist` - (Optional) Instance types allowed in the Ocean cluster.
-
-```hcl
-whitelist = ["t1.micro", "m1.small"]
-// blacklist = ["t1.micro", "m1.small"]
-```
-
+* `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
+    * `key` - (Optional) The tag key.
+    * `value` - (Optional) The tag value.
+* `whitelist` - (Optional) Instance types allowed in the Ocean cluster, Cannot be configured if blacklist is configured.
+* `blacklist` - (Optional) Instance types to avoid launching in the Ocean cluster. Cannot be configured if whitelist is configured.
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Required) ID of the image used to launch the instances.
 * `security_group_ids` - (Required) One or more security group ids.
@@ -102,33 +72,21 @@ whitelist = ["t1.micro", "m1.small"]
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
 
-
-```hcl
-  image_id                    = "ami-79826301"
-  security_group_ids          = ["sg-042d658b3ee907848"]
-  key_name                    = "fake key"
-  user_data                   = "echo hello world"
-  iam_instance_profile        = "iam-profile"
-  associate_public_ip_address = true
-  draining_timeout            = 120
-  monitoring                  = true
-  ebs_optimized               = true
-```
-
+<a id="auto-scaler"></a>
+## Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean ECS autoscaler.
-* `is_enabled` - (Optional, Default: `true`) Enable the Ocean ECS autoscaler.
-* `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
-* `cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
-* `headroom` - (Optional) Spare resource capacity management enabling fast assignment of tasks without waiting for new resources to launch.
-* `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
-* `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
-* `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
-* `down` - (Optional) Auto Scaling scale down operations.
-* `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
-* `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100
-* `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
-* `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
-* `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
+    * `is_enabled` - (Optional, Default: `true`) Enable the Ocean ECS autoscaler.
+    * `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
+    * `cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
+    * `headroom` - (Optional) Spare resource capacity management enabling fast assignment of tasks without waiting for new resources to launch.
+        * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+        * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
+        * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
+    * `down` - (Optional) Auto Scaling scale down operations.
+        * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100
+    * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
+        * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
+        * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
 
 ```hcl
   autoscaler {
@@ -153,16 +111,6 @@ whitelist = ["t1.micro", "m1.small"]
   }
 ```
 
-* `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
-* `key` - (Optional) The tag key.
-* `value` - (Optional) The tag value.
-
-```hcl
-tags {
-  key   = "fakeKey"
-  value = "fakeValue"
-}
-```
 
 <a id="update-policy"></a>
 ## Update Policy
@@ -205,7 +153,7 @@ tags {
     }
     tasks {
       is_enabled = false
-      cron_expression = "salitestcron3"
+      cron_expression = "* * * * *"
       task_type = "clusterRoll"
     }
   }

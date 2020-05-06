@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_import_autoscaler"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
@@ -37,6 +39,7 @@ func setupClusterGKEImportResource() {
 
 	ocean_gke_import.Setup(fieldsMap)
 	ocean_gke_import_scheduling.Setup(fieldsMap)
+	ocean_gke_import_autoscaler.Setup(fieldsMap)
 
 	commons.OceanGKEImportResource = commons.NewOceanGKEImportResource(fieldsMap)
 }

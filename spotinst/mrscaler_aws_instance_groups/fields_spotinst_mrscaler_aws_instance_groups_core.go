@@ -213,6 +213,41 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[CoreUnit] = commons.NewGenericField(
+		commons.MRScalerAWSCoreGroup,
+		CoreUnit,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "instance",
+			ForceNew: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
+			scaler := mrsWrapper.GetMRScalerAWS()
+
+			if v, ok := resourceData.Get(string(CoreUnit)).(string); ok && v != "" {
+				if scaler.Compute.InstanceGroups.CoreGroup == nil {
+					scaler.Compute.InstanceGroups.SetCoreGroup(&mrscaler.InstanceGroup{})
+				}
+				if scaler.Compute.InstanceGroups.CoreGroup.Capacity == nil {
+					scaler.Compute.InstanceGroups.CoreGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
+				}
+				scaler.Compute.InstanceGroups.CoreGroup.Capacity.SetUnit(spotinst.String(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(CoreUnit))
+			return err
+		},
+		nil,
+	)
+
 	fieldsMap[CoreInstanceTypes] = commons.NewGenericField(
 		commons.MRScalerAWSCoreGroup,
 		CoreInstanceTypes,

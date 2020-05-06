@@ -267,14 +267,15 @@ Usage:
 <a id="scaling-policy"></a>
 ## Scaling Policies
 
-Each `scaling_*_policy` supports the following:
+`scaling_up_policy` supports the following:
 
-* `namespace` - (Required) The namespace for the alarm's associated metric.
-* `metric_name` - (Required) The name of the metric, with or without spaces.
-* `threshold` - (Required) The value against which the specified statistic is compared.
 * `policy_name` - (Required) The name of the policy.
+* `metric_name` - (Required) The name of the metric, with or without spaces.
 * `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
 * `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
+* `threshold` - (Required) The value against which the specified statistic is compared.
+* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
+* `namespace` - (Required) The namespace for the alarm's associated metric.
 * `is_enabled` - (Optional, Default: `true`) Specifies whether the scaling policy described in this block is enabled.
 * `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
 * `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
@@ -285,23 +286,67 @@ Each `scaling_*_policy` supports the following:
 * `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) The operator to use in order to determine if the scaling policy is applicable. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
 * `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
 
-* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
 
 If you do not specify an action type, you can only use – `adjustment`, `minTargetCapacity`, `maxTargetCapacity`.
 While using action_type, please also set the following:
 
 When using `adjustment`           – set the field `adjustment`
-When using `percentageAdjustment` - set the field `adjustment`
-When using `setMaxTarget`         – set the field `max_target_capacity`
 When using `setMinTarget`         – set the field `min_target_capacity`
 When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `target`
 
 * `adjustment` - (Optional; if not using `min_target_capacity` or `max_target_capacity`;) The number of instances to add/remove to/from the target capacity when scale is needed. Can be used as advanced expression for scaling of instances to add/remove to/from the target capacity when scale is needed. You can see more information here: Advanced expression. Example value: `"MAX(currCapacity / 5, value * 10)"`
 * `min_target_capacity` - (Optional; if not using `adjustment`; available only for scale up). The number of the desired target (and minimum) capacity
-* `max_target_capacity` - (Optional; if not using `adjustment`; available only for scale down). The number of the desired target (and maximum) capacity
-
 * `minimum` - (Optional; if using `updateCapacity`) The minimal number of instances to have in the group.
 * `maximum` - (Optional; if using `updateCapacity`) The maximal number of instances to have in the group.
+* `target` - (Optional; if using `updateCapacity`) The target number of instances to have in the group.
+
+
+
+`scaling_down_policy` supports the following:
+
+* `policy_name` - (Required) The name of the policy.
+* `metric_name` - (Required) The name of the metric, with or without spaces.
+* `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
+* `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
+* `threshold` - (Required) The value against which the specified statistic is compared.
+* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
+* `namespace` - (Required) The namespace for the alarm's associated metric.
+* `is_enabled` - (Optional, Default: `true`) Specifies whether the scaling policy described in this block is enabled.
+* `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
+* `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
+* `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
+* `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
+    * `name` - (Required) The dimension name.
+    * `value` - (Required) The dimension value.
+* `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) The operator to use in order to determine if the scaling policy is applicable. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
+* `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
+
+
+If you do not specify an action type, you can only use – `adjustment`, `minTargetCapacity`, `maxTargetCapacity`.
+While using action_type, please also set the following:
+
+When using `adjustment`           – set the field `adjustment`
+When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `target`
+
+* `adjustment` - (Optional; if not using `min_target_capacity` or `max_target_capacity`;) The number of instances to add/remove to/from the target capacity when scale is needed. Can be used as advanced expression for scaling of instances to add/remove to/from the target capacity when scale is needed. You can see more information here: Advanced expression. Example value: `"MAX(currCapacity / 5, value * 10)"`
+* `max_target_capacity` - (Optional; if not using `adjustment`; available only for scale down). The number of the desired target (and maximum) capacity
+* `minimum` - (Optional; if using `updateCapacity`) The minimal number of instances to have in the group.
+* `maximum` - (Optional; if using `updateCapacity`) The maximal number of instances to have in the group.
+* `target` - (Optional; if using `updateCapacity`) The target number of instances to have in the group.
+
+
+`scaling_target_policy` supports the following:
+
+* `policy_name` - (Required) The name of the policy.
+* `metric_name` - (Required) The name of the metric, with or without spaces.
+* `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
+* `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
+* `namespace` - (Required) The namespace for the alarm's associated metric.
+* `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
+* `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
+* `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
+    * `name` - (Required) The dimension name.
+    * `value` - (Required) The dimension value.
 * `target` - (Optional; if using `updateCapacity`) The target number of instances to have in the group.
 
 `scaling_target_policies` support predictive scaling:
@@ -319,7 +364,6 @@ Usage:
     statistic   = "average"
     unit        = ""
     cooldown    = 60
-    is_enabled  = false
     
     dimensions {
         name  = "name-1"
@@ -857,7 +901,12 @@ Usage:
            * `action` - (Required) Action to take. Valid values: `REPLACE_SERVER`, `RESTART_SERVER`.
            * `should_drain_instances` - (Optional) Specify whether to drain incoming TCP connections before terminating a server.
            * `batch_min_healthy_percentage` - (Optional, Default `50`) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the deployment will fail. Range `1` - `100`. 
-       
+           * `on_failure` - (Optional) Set detach options to the deployment.
+               * `action_type` - (Required) Sets the action that will take place, Accepted values are: `DETACH_OLD`, `DETACH_NEW`.
+               * `should_handle_all_batches` - (Optional, Default: `false`) Indicator if the action should apply to all batches of the deployment or only the latest batch.
+               * `draining_timeout` - (Optional, Default: The Elastigroups draining time out) Indicates (in seconds) the timeout to wait until instance are detached.
+               * `action_type` - (Optional, Default: `true`) Decrementing the group target capacity after detaching the instances.
+
 ```hcl
   update_policy {
     should_resume_stateful = false
@@ -875,6 +924,13 @@ Usage:
         action = "REPLACE_SERVER"
         should_drain_instances = false
         batch_min_healthy_percentage = 10
+          on_failure {
+                  action_type = "DETACH_NEW"
+                  should_handle_all_batches = true
+                  batch_num = 2
+                  draining_timeout = 600
+                  should_decrement_target_capacity = true
+         }
       }
     }
   }

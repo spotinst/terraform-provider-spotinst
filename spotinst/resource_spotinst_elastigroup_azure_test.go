@@ -348,30 +348,30 @@ resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
 //	})
 //}
 
-const testAzureHealthChecksGroupConfig_Create = `
- // --- HEALTH-CHECKS ------------------------------------
- health_check {
-   health_check_type = "INSTANCE_STATE"
-   auto_healing      = true
-   grace_period      = 180	 
- }
- // ------------------------------------------------------
-`
+//const testAzureHealthChecksGroupConfig_Create = `
+// // --- HEALTH-CHECKS ------------------------------------
+// health_check {
+//   health_check_type = "INSTANCE_STATE"
+//   auto_healing      = true
+//   grace_period      = 180
+// }
+// // ------------------------------------------------------
+//`
 
-const testAzureHealthChecksGroupConfig_Update = `
- // --- HEALTH-CHECKS ------------------------------------
- health_check {
-   health_check_type = "INSTANCE_STATE"
-   auto_healing      = false
-   grace_period      = 240	 
- }
- // ------------------------------------------------------
-`
+//const testAzureHealthChecksGroupConfig_Update = `
+// // --- HEALTH-CHECKS ------------------------------------
+// health_check {
+//   health_check_type = "INSTANCE_STATE"
+//   auto_healing      = false
+//   grace_period      = 240
+// }
+// // ------------------------------------------------------
+//`
 
-const testAzureHealthChecksGroupConfig_EmptyFields = `
- // --- HEALTH-CHECKS ------------------------------------
- // ------------------------------------------------------
-`
+//const testAzureHealthChecksGroupConfig_EmptyFields = `
+// // --- HEALTH-CHECKS ------------------------------------
+// // ------------------------------------------------------
+//`
 
 // endregion
 
@@ -486,25 +486,25 @@ const testAzureLaunchConfigurationGroupConfig_Create = `
 // ---------------------------------------------
 `
 
-const testAzureLaunchConfigurationGroupConfig_Update = `
-// --- LAUNCH CONFIGURATION --------------------
- user_data       = "hello world"
- shutdown_script = "goodbye world updated"
- custom_data     = "custom world"
+//const testAzureLaunchConfigurationGroupConfig_Update = `
+//// --- LAUNCH CONFIGURATION --------------------
+// user_data       = "hello world"
+// shutdown_script = "goodbye world updated"
+// custom_data     = "custom world"
+//
+// managed_service_identities {
+//   resource_group_name = "alex-test"
+//   name = "terraform-test-identity-updated"
+// }
+//// ---------------------------------------------
+//`
 
- managed_service_identities {
-   resource_group_name = "alex-test"
-   name = "terraform-test-identity-updated"
- }
-// ---------------------------------------------
-`
-
-const testAzureLaunchConfigurationGroupConfig_EmptyFields = `
-// --- LAUNCH CONFIGURATION --------------------
- user_data   = "hello world"
- custom_data = "custom world"
-// ---------------------------------------------
-`
+//const testAzureLaunchConfigurationGroupConfig_EmptyFields = `
+//// --- LAUNCH CONFIGURATION --------------------
+// user_data   = "hello world"
+// custom_data = "custom world"
+//// ---------------------------------------------
+//`
 
 // endregion
 
@@ -576,21 +576,21 @@ const testAzureLoadBalancersGroupConfig_Create = `
 // ---------------------------------------------
 `
 
-const testAzureLoadBalancersGroupConfig_Update = `
-// --- LOAD BALANCERS --------------------------
-  load_balancers {
-      type = "MULTAI_TARGET_SET"
-      balancer_id = "lb-0be85d6aa269"
-      target_set_id = "ts-ae9c9603c365"
-      auto_weight = false
-    }
-// ---------------------------------------------
-`
+//const testAzureLoadBalancersGroupConfig_Update = `
+//// --- LOAD BALANCERS --------------------------
+//  load_balancers {
+//      type = "MULTAI_TARGET_SET"
+//      balancer_id = "lb-0be85d6aa269"
+//      target_set_id = "ts-ae9c9603c365"
+//      auto_weight = false
+//    }
+//// ---------------------------------------------
+//`
 
-const testAzureLoadBalancersGroupConfig_EmptyFields = `
-// --- LOAD BALANCERS --------------------------
-// ---------------------------------------------
-`
+//const testAzureLoadBalancersGroupConfig_EmptyFields = `
+//// --- LOAD BALANCERS --------------------------
+//// ---------------------------------------------
+//`
 
 // endregion
 
@@ -645,14 +645,14 @@ const testAzureLoginGroupConfig_Create = `
 // -------------------------------------------
 `
 
-const testAzureLoginGroupConfig_Update = `
-// --- LOGIN ---------------------------------
-  login {
-    user_name = "alex-test"
-    ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLn7RIjgivW2nWoh56XV2wpDKjjWFk92UgfTsqL8qYI0lGCJuoGeMlje1VWyAemMGZZsK5et8j3/caZsVd1Hypui3xV+tRAmtnyqVCjDGYsBQIMKoDzLrrZz7/s2WNKbMegOgQ+8YxXLhxuS5YGKhNjvxC2kJCe1HkPAPvx03kzNGmxxv6pt5TaQPXUqVxfWoeoaLRDcL8Ns2kikZC6v2cfY/PcmwoYd7XlVuILLTMNF6ujOUsX9kHt/910dEW66iZpc+PjHnKuAu/5238lssiUZULTHWbjE09MG8kHIiZq9Z9HgmAS++YLUc2G9InBqiLXMbie4S9qMcp+crl1oG/"
-  }
-// -------------------------------------------
-`
+//const testAzureLoginGroupConfig_Update = `
+//// --- LOGIN ---------------------------------
+//  login {
+//    user_name = "alex-test"
+//    ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLn7RIjgivW2nWoh56XV2wpDKjjWFk92UgfTsqL8qYI0lGCJuoGeMlje1VWyAemMGZZsK5et8j3/caZsVd1Hypui3xV+tRAmtnyqVCjDGYsBQIMKoDzLrrZz7/s2WNKbMegOgQ+8YxXLhxuS5YGKhNjvxC2kJCe1HkPAPvx03kzNGmxxv6pt5TaQPXUqVxfWoeoaLRDcL8Ns2kikZC6v2cfY/PcmwoYd7XlVuILLTMNF6ujOUsX9kHt/910dEW66iZpc+PjHnKuAu/5238lssiUZULTHWbjE09MG8kHIiZq9Z9HgmAS++YLUc2G9InBqiLXMbie4S9qMcp+crl1oG/"
+//  }
+//// -------------------------------------------
+//`
 
 // region Azure Elastigroup: Network
 //func TestAccSpotinstElastigroupAzure_Network(t *testing.T) {
@@ -759,14 +759,14 @@ const testAzureStrategyGroupConfig_Create = `
 // ---------------------------------------------
 `
 
-const testAzureStrategyGroupConfig_Update = `
-// --- STRATEGY --------------------------------
-  strategy {
-    od_count = 1
-    draining_timeout = 240
-  }
-// ---------------------------------------------
-`
+//const testAzureStrategyGroupConfig_Update = `
+//// --- STRATEGY --------------------------------
+//  strategy {
+//    od_count = 1
+//    draining_timeout = 240
+//  }
+//// ---------------------------------------------
+//`
 
 // endregion
 
@@ -823,12 +823,12 @@ const testAzureVMSizesGroupConfig_Create = `
 // ---------------------------------------------------------
 `
 
-const testAzureVMSizesGroupConfig_Update = `
-// --- VM SIZES --------------------------------
- od_sizes           = ["basic_a2"]
- low_priority_sizes = ["basic_a2"]
-// ---------------------------------------------
-`
+//const testAzureVMSizesGroupConfig_Update = `
+//// --- VM SIZES --------------------------------
+// od_sizes           = ["basic_a2"]
+// low_priority_sizes = ["basic_a2"]
+//// ---------------------------------------------
+//`
 
 // endregion
 
@@ -927,97 +927,97 @@ const testAzureVMSizesGroupConfig_Update = `
 //	})
 //}
 
-const testAzureScalingUpPolicyGroupConfig_Create = `
-// --- SCALE UP POLICY ------------------
-  scaling_up_policy {
-    policy_name = "policy-name"
-    metric_name = "CPUUtilization"
-    namespace = "Microsoft.Compute"
-    statistic = "average"
-    unit = "percent"
-    cooldown = 60
-    threshold = 10
+//const testAzureScalingUpPolicyGroupConfig_Create = `
+//// --- SCALE UP POLICY ------------------
+//  scaling_up_policy {
+//    policy_name = "policy-name"
+//    metric_name = "CPUUtilization"
+//    namespace = "Microsoft.Compute"
+//    statistic = "average"
+//    unit = "percent"
+//    cooldown = 60
+//    threshold = 10
+//
+//		dimensions {
+//			name  = "resourceName"
+//			value = "resource-name"
+//		}
+//
+//     dimensions {
+//			name  = "resourceGroupName"
+//			value = "resource-group-name"
+//		 }
+//
+//    operator = "gt"
+//    evaluation_periods = "10"
+//    period = "60"
+//
+//    // === MIN TARGET ===================
+//    action_type = "setMinTarget"
+//    min_target_capacity = 1
+//    // ==================================
+//
+//    // === ADJUSTMENT ===================
+//    # action_type = "adjustment"
+//    # action_type = "percentageAdjustment"
+//    # adjustment = "MAX(5,10)"
+//    // ==================================
+//
+//    // === UPDATE CAPACITY ==============
+//    # action_type = "updateCapacity"
+//    # minimum = 0
+//    # maximum = 10
+//    # target = 5
+//    // ==================================
+//  }
+//// ----------------------------------------
+//`
 
-		dimensions {
-			name  = "resourceName"
-			value = "resource-name"
-		}
+//const testAzureScalingUpPolicyGroupConfig_Update = `
+//// --- SCALE UP POLICY ------------------
+//  scaling_up_policy {
+//    policy_name = "policy-name-update"
+//    metric_name = "CPUUtilization"
+//    namespace = "Microsoft.Compute"
+//    statistic = "sum"
+//    unit = "bytes"
+//    cooldown = 120
+//    threshold = 5
+//
+//    dimensions {
+//      name  = "name-1-update"
+//      value = "value-1-update"
+//    }
+//
+//    operator = "lt"
+//    evaluation_periods = 5
+//    period = 120
+//
+//    //// === MIN TARGET ===================
+//    # action_type = "setMinTarget"
+//    # min_target_capacity = 1
+//    //// ==================================
+//
+//    // === ADJUSTMENT ===================
+//    # action_type = "percentageAdjustment"
+//    action_type = "adjustment"
+//    adjustment = "MAX(5,10)"
+//    // ==================================
+//
+//    // === UPDATE CAPACITY ==============
+//    # action_type = "updateCapacity"
+//    # minimum = 0
+//    # maximum = 10
+//    # target = 5
+//    // ==================================
+//  }
+//// ----------------------------------------
+//`
 
-     dimensions {
-			name  = "resourceGroupName"
-			value = "resource-group-name"
-		 }
-    
-    operator = "gt"
-    evaluation_periods = "10"
-    period = "60"
-    
-    // === MIN TARGET ===================
-    action_type = "setMinTarget"
-    min_target_capacity = 1
-    // ==================================
-    
-    // === ADJUSTMENT ===================
-    # action_type = "adjustment"
-    # action_type = "percentageAdjustment"
-    # adjustment = "MAX(5,10)"
-    // ==================================
-    
-    // === UPDATE CAPACITY ==============
-    # action_type = "updateCapacity"
-    # minimum = 0
-    # maximum = 10
-    # target = 5
-    // ==================================
-  }
-// ----------------------------------------
-`
-
-const testAzureScalingUpPolicyGroupConfig_Update = `
-// --- SCALE UP POLICY ------------------
-  scaling_up_policy {
-    policy_name = "policy-name-update"
-    metric_name = "CPUUtilization"
-    namespace = "Microsoft.Compute"
-    statistic = "sum"
-    unit = "bytes"
-    cooldown = 120
-    threshold = 5
-
-    dimensions {
-      name  = "name-1-update"
-      value = "value-1-update"
-    }
-    
-    operator = "lt"
-    evaluation_periods = 5
-    period = 120
-    
-    //// === MIN TARGET ===================
-    # action_type = "setMinTarget"
-    # min_target_capacity = 1
-    //// ==================================
-    
-    // === ADJUSTMENT ===================
-    # action_type = "percentageAdjustment"
-    action_type = "adjustment"
-    adjustment = "MAX(5,10)"
-    // ==================================
-    
-    // === UPDATE CAPACITY ==============
-    # action_type = "updateCapacity"
-    # minimum = 0
-    # maximum = 10
-    # target = 5
-    // ==================================
-  }
-// ----------------------------------------
-`
-
-const testAzureScalingUpPolicyGroupConfig_EmptyFields = `
-// --- SCALE UP POLICY ------------------
-// ----------------------------------------
-`
+//const testAzureScalingUpPolicyGroupConfig_EmptyFields = `
+//// --- SCALE UP POLICY ------------------
+//// ----------------------------------------
+//`
 
 // endregion
 
@@ -1105,92 +1105,92 @@ const testAzureScalingUpPolicyGroupConfig_EmptyFields = `
 //	})
 //}
 
-const testAzureScalingDownPolicyGroupConfig_Create = `
-// --- SCALE DOWN POLICY ------------------
-  scaling_down_policy {
-    policy_name = "policy-name"
-    metric_name = "CPUUtilization"
-    namespace = "Microsoft.Compute"
-    statistic = "average"
-    unit = "percent"
-    cooldown = 60
-    threshold = 10
+//const testAzureScalingDownPolicyGroupConfig_Create = `
+//// --- SCALE DOWN POLICY ------------------
+//  scaling_down_policy {
+//    policy_name = "policy-name"
+//    metric_name = "CPUUtilization"
+//    namespace = "Microsoft.Compute"
+//    statistic = "average"
+//    unit = "percent"
+//    cooldown = 60
+//    threshold = 10
+//
+//    dimensions {
+//        name = "name-1"
+//        value = "value-1"
+//    }
+//
+//    operator = "gt"
+//    evaluation_periods = "10"
+//    period = "60"
+//
+//    // === MIN TARGET ===================
+//    # action_type = "setMinTarget"
+//    # min_target_capacity = 1
+//    // ==================================
+//
+//    // === ADJUSTMENT ===================
+//    action_type = "adjustment"
+//    # action_type = "percentageAdjustment"
+//    adjustment = "MIN(5,10)"
+//    // ==================================
+//
+//    // === UPDATE CAPACITY ==============
+//    # action_type = "updateCapacity"
+//    # minimum = 0
+//    # maximum = 10
+//    # target = 5
+//    // ==================================
+//  }
+//// ----------------------------------------
+//`
+//
+//const testAzureScalingDownPolicyGroupConfig_Update = `
+//// --- SCALE DOWN POLICY ------------------
+//  scaling_down_policy {
+//    policy_name = "policy-name-update"
+//    metric_name = "CPUUtilization"
+//    namespace = "Microsoft.Compute"
+//    statistic = "sum"
+//    unit = "bytes"
+//    cooldown = 120
+//    threshold = 5
+//
+//    dimensions {
+//        name = "name-1-update"
+//        value = "value-1-update"
+//    }
+//
+//    operator = "lt"
+//    evaluation_periods = 5
+//    period = 120
+//
+//    //// === MIN TARGET ===================
+//    # action_type = "setMinTarget"
+//    # min_target_capacity = 1
+//    //// ==================================
+//
+//    // === ADJUSTMENT ===================
+//    # action_type = "percentageAdjustment"
+//    # action_type = "adjustment"
+//    # adjustment = "MAX(5,10)"
+//    // ==================================
+//
+//    // === UPDATE CAPACITY ==============
+//    action_type = "updateCapacity"
+//    minimum = 0
+//    maximum = 10
+//    target = 5
+//    // ==================================
+//  }
+//// ----------------------------------------
+//`
 
-    dimensions {
-        name = "name-1"
-        value = "value-1"
-    }
-    
-    operator = "gt"
-    evaluation_periods = "10"
-    period = "60"
-    
-    // === MIN TARGET ===================
-    # action_type = "setMinTarget"
-    # min_target_capacity = 1
-    // ==================================
-    
-    // === ADJUSTMENT ===================
-    action_type = "adjustment"
-    # action_type = "percentageAdjustment"
-    adjustment = "MIN(5,10)"
-    // ==================================
-    
-    // === UPDATE CAPACITY ==============
-    # action_type = "updateCapacity"
-    # minimum = 0
-    # maximum = 10
-    # target = 5
-    // ==================================
-  }
-// ----------------------------------------
-`
-
-const testAzureScalingDownPolicyGroupConfig_Update = `
-// --- SCALE DOWN POLICY ------------------
-  scaling_down_policy {
-    policy_name = "policy-name-update"
-    metric_name = "CPUUtilization"
-    namespace = "Microsoft.Compute"
-    statistic = "sum"
-    unit = "bytes"
-    cooldown = 120
-    threshold = 5
-
-    dimensions {
-        name = "name-1-update"
-        value = "value-1-update"
-    }
-    
-    operator = "lt"
-    evaluation_periods = 5
-    period = 120
-    
-    //// === MIN TARGET ===================
-    # action_type = "setMinTarget"
-    # min_target_capacity = 1
-    //// ==================================
-    
-    // === ADJUSTMENT ===================
-    # action_type = "percentageAdjustment"
-    # action_type = "adjustment"
-    # adjustment = "MAX(5,10)"
-    // ==================================
-    
-    // === UPDATE CAPACITY ==============
-    action_type = "updateCapacity"
-    minimum = 0
-    maximum = 10
-    target = 5
-    // ==================================
-  }
-// ----------------------------------------
-`
-
-const testAzureScalingDownPolicyGroupConfig_EmptyFields = `
-// --- SCALE DOWN POLICY ------------------
-// ----------------------------------------
-`
+//const testAzureScalingDownPolicyGroupConfig_EmptyFields = `
+//// --- SCALE DOWN POLICY ------------------
+//// ----------------------------------------
+//`
 
 // endregion
 
@@ -1262,44 +1262,44 @@ const testAzureScalingDownPolicyGroupConfig_EmptyFields = `
 //		},
 //	})
 //}
-
-const testAzureScheduledTaskGroupConfig_Create = `
- // --- SCHEDULED TASK ------------------
-  scheduled_task {
-    is_enabled = true
-    cron_expression = "* * * * *"
-    task_type = "scale"
-    scale_min_capacity = 5
-    scale_max_capacity = 8
-    adjustment = 2
-    adjustment_percentage = 50
-    scale_target_capacity = 6
-    batch_size_percentage = 33
-    grace_period = 300
-  }
- // -------------------------------------
-`
-
-const testAzureScheduledTaskGroupConfig_Update = `
- // --- SCHEDULED TASK ------------------
-  scheduled_task {
-    is_enabled = false
-    cron_expression = "* * * * *"
-    task_type = "scale"
-    scale_min_capacity = 0
-    scale_max_capacity = 10
-    adjustment_percentage = 50
-    scale_target_capacity = 5
-    batch_size_percentage = 50
-    grace_period = 360
-  }
- // -------------------------------------
-`
-
-const testAzureScheduledTaskGroupConfig_EmptyFields = `
- // --- SCHEDULED TASK ------------------
- // -------------------------------------
-`
+//
+//const testAzureScheduledTaskGroupConfig_Create = `
+// // --- SCHEDULED TASK ------------------
+//  scheduled_task {
+//    is_enabled = true
+//    cron_expression = "* * * * *"
+//    task_type = "scale"
+//    scale_min_capacity = 5
+//    scale_max_capacity = 8
+//    adjustment = 2
+//    adjustment_percentage = 50
+//    scale_target_capacity = 6
+//    batch_size_percentage = 33
+//    grace_period = 300
+//  }
+// // -------------------------------------
+//`
+//
+//const testAzureScheduledTaskGroupConfig_Update = `
+// // --- SCHEDULED TASK ------------------
+//  scheduled_task {
+//    is_enabled = false
+//    cron_expression = "* * * * *"
+//    task_type = "scale"
+//    scale_min_capacity = 0
+//    scale_max_capacity = 10
+//    adjustment_percentage = 50
+//    scale_target_capacity = 5
+//    batch_size_percentage = 50
+//    grace_period = 360
+//  }
+// // -------------------------------------
+//`
+//
+//const testAzureScheduledTaskGroupConfig_EmptyFields = `
+// // --- SCHEDULED TASK ------------------
+// // -------------------------------------
+//`
 
 // endregion
 
@@ -1366,38 +1366,38 @@ const testAzureScheduledTaskGroupConfig_EmptyFields = `
 //	})
 //}
 
-const testAzureUpdatePolicyGroupConfig_Create = `
- // --- UPDATE POLICY ----------------
-  update_policy {
-    should_roll = false
+//const testAzureUpdatePolicyGroupConfig_Create = `
+// // --- UPDATE POLICY ----------------
+//  update_policy {
+//    should_roll = false
+//
+//    roll_config {
+//      batch_size_percentage = 33
+//      grace_period = 300
+//      health_check_type = "NONE"
+//    }
+//  }
+// // ----------------------------------
+//`
 
-    roll_config {
-      batch_size_percentage = 33
-      grace_period = 300
-      health_check_type = "NONE"
-    }
-  }
- // ----------------------------------
-`
+//const testAzureUpdatePolicyGroupConfig_Update = `
+// // --- UPDATE POLICY ----------------
+//  update_policy {
+//    should_roll = true
+//
+//    roll_config {
+//      batch_size_percentage = 66
+//      grace_period = 600
+//      health_check_type = "INSTANCE_STATE"
+//    }
+//  }
+// // ----------------------------------
+//`
 
-const testAzureUpdatePolicyGroupConfig_Update = `
- // --- UPDATE POLICY ----------------
-  update_policy {
-    should_roll = true
-
-    roll_config {
-      batch_size_percentage = 66
-      grace_period = 600
-      health_check_type = "INSTANCE_STATE"
-    }
-  }
- // ----------------------------------
-`
-
-const testAzureUpdatePolicyGroupConfig_EmptyFields = `
- // --- UPDATE POLICY ----------------
- // ----------------------------------
-`
+//const testAzureUpdatePolicyGroupConfig_EmptyFields = `
+// // --- UPDATE POLICY ----------------
+// // ----------------------------------
+//`
 
 // endregion
 
@@ -1456,26 +1456,26 @@ const testAzureUpdatePolicyGroupConfig_EmptyFields = `
 //	})
 //}
 
-const testAzureIntegrationKubernetesGroupConfig_Create = `
- // --- INTEGRATION: KUBERNETES --------------
- integration_kubernetes {
-    cluster_identifier = "k8s-cluster-id"
-  }
- // ------------------------------------------
-`
+//const testAzureIntegrationKubernetesGroupConfig_Create = `
+// // --- INTEGRATION: KUBERNETES --------------
+// integration_kubernetes {
+//    cluster_identifier = "k8s-cluster-id"
+//  }
+// // ------------------------------------------
+//`
 
-const testAzureIntegrationKubernetesGroupConfig_Update = `
- // --- INTEGRATION: KUBERNETES --------------
- integration_kubernetes {
-    cluster_identifier = "k8s-cluster-id-updated"
-  }
- // ------------------------------------------
-`
+//const testAzureIntegrationKubernetesGroupConfig_Update = `
+// // --- INTEGRATION: KUBERNETES --------------
+// integration_kubernetes {
+//    cluster_identifier = "k8s-cluster-id-updated"
+//  }
+// // ------------------------------------------
+//`
 
-const testAzureIntegrationKubernetesGroupConfig_EmptyFields = `
- // --- INTEGRATION: KUBERNETES --------------
- // ------------------------------------------
-`
+//const testAzureIntegrationKubernetesGroupConfig_EmptyFields = `
+// // --- INTEGRATION: KUBERNETES --------------
+// // ------------------------------------------
+//`
 
 // endregion
 
@@ -1534,25 +1534,25 @@ const testAzureIntegrationKubernetesGroupConfig_EmptyFields = `
 //	})
 //}
 
-const testAzureIntegrationMultaiRuntimeGroupConfig_Create = `
- // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime {
-    deployment_id = "multai-deployment-id"
-  }
- // --------------------------------------
-`
+//const testAzureIntegrationMultaiRuntimeGroupConfig_Create = `
+// // --- INTEGRATION: MULTAI-RUNTIME ------
+// integration_multai_runtime {
+//    deployment_id = "multai-deployment-id"
+//  }
+// // --------------------------------------
+//`
 
-const testAzureIntegrationMultaiRuntimeGroupConfig_Update = `
- // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime {
-    deployment_id = "multai-deployment-id-update"
-  }
- // --------------------------------------
-`
+//const testAzureIntegrationMultaiRuntimeGroupConfig_Update = `
+// // --- INTEGRATION: MULTAI-RUNTIME ------
+// integration_multai_runtime {
+//    deployment_id = "multai-deployment-id-update"
+//  }
+// // --------------------------------------
+//`
 
-const testAzureIntegrationMultaiRuntimeGroupConfig_EmptyFields = `
- // --- INTEGRATION: MULTAI-RUNTIME ------
- // --------------------------------------
-`
+//const testAzureIntegrationMultaiRuntimeGroupConfig_EmptyFields = `
+// // --- INTEGRATION: MULTAI-RUNTIME ------
+// // --------------------------------------
+//`
 
 // endregion

@@ -7,6 +7,7 @@ const (
 	TaskMin            commons.FieldName = "task_min_size"
 	TaskMax            commons.FieldName = "task_max_size"
 	TaskTarget         commons.FieldName = "task_desired_capacity"
+	TaskUnit           commons.FieldName = "task_unit"
 	TaskLifecycle      commons.FieldName = "task_lifecycle"
 	TaskEBSBlockDevice commons.FieldName = "task_ebs_block_device"
 	TaskEBSOptimized   commons.FieldName = "task_ebs_optimized"
@@ -21,6 +22,7 @@ const (
 	CoreMax            commons.FieldName = "core_max_size"
 	CoreTarget         commons.FieldName = "core_desired_capacity"
 	CoreLifecycle      commons.FieldName = "core_lifecycle"
+	CoreUnit           commons.FieldName = "core_unit"
 	CoreEBSBlockDevice commons.FieldName = "core_ebs_block_device"
 	CoreEBSOptimized   commons.FieldName = "core_ebs_optimized"
 

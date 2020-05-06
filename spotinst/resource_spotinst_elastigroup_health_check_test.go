@@ -136,12 +136,12 @@ func TestAccSpotinstHealthCheckBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-health_check_terraform_test"),
 					resource.TestCheckResourceAttr(resourceName, "proxy_address", "http://proxy.com"),
 					resource.TestCheckResourceAttr(resourceName, "proxy_port", "6"),
-					resource.TestCheckResourceAttr(resourceName, "check.0.end_point", "http://endpoint.com"),
+					resource.TestCheckResourceAttr(resourceName, "check.0.endpoint", "http://endpoint.com"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.healthy", "2"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.interval", "11"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.port", "1336"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.protocol", "http"),
-					resource.TestCheckResourceAttr(resourceName, "check.0.time_out", "12"),
+					resource.TestCheckResourceAttr(resourceName, "check.0.timeout", "12"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.unhealthy", "3"),
 				),
 			},
@@ -156,12 +156,12 @@ func TestAccSpotinstHealthCheckBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "test-acc-health_check_terraform_test"),
 					resource.TestCheckResourceAttr(resourceName, "proxy_address", "http://proxy.com"),
 					resource.TestCheckResourceAttr(resourceName, "proxy_port", "7"),
-					resource.TestCheckResourceAttr(resourceName, "check.0.end_point", "http://endpoint.com"),
+					resource.TestCheckResourceAttr(resourceName, "check.0.endpoint", "http://endpoint.com"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.healthy", "3"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.interval", "15"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.port", "1335"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.protocol", "http"),
-					resource.TestCheckResourceAttr(resourceName, "check.0.time_out", "13"),
+					resource.TestCheckResourceAttr(resourceName, "check.0.timeout", "13"),
 					resource.TestCheckResourceAttr(resourceName, "check.0.unhealthy", "2"),
 				),
 			},
@@ -179,9 +179,9 @@ resource "` + string(commons.HealthCheckResourceName) + `" "%v" {
   check {
     protocol = "http"
     port = "1336"
-    end_point = "http://endpoint.com"
+    endpoint = "http://endpoint.com"
     interval = "11"
-    time_out = "12"
+    timeout = "12"
     unhealthy  = "3"
     healthy = "2"
   }
@@ -199,9 +199,9 @@ resource "` + string(commons.HealthCheckResourceName) + `" "%v" {
   check {
    protocol = "http"
    port = "1335"
-   end_point = "http://endpoint.com"
+   endpoint = "http://endpoint.com"
    interval = "15"
-   time_out = "13"
+   timeout = "13"
    unhealthy  = "2"
    healthy = "3"
   }

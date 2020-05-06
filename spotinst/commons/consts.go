@@ -32,6 +32,7 @@ const (
 	OceanGKE                 ResourceAffinity = "Ocean_GKE"
 	OceanGKEImport           ResourceAffinity = "Ocean_GKE_Import"
 	OceanGKEImportScheduling ResourceAffinity = "Ocean_GKE_Import_Scheduling"
+	OceanGKEImportAutoScaler ResourceAffinity = "Ocean_GKE_Import_Auto_Scaler"
 	OceanGKEInstanceTypes    ResourceAffinity = "Ocean_GKE_Instance_Types"
 	OceanGKEAutoScaling      ResourceAffinity = "Ocean_GKE_Auto_Scaling"
 	OceanGKEStrategy         ResourceAffinity = "Ocean_GKE_Strategy"
@@ -105,6 +106,7 @@ const (
 	MRScalerAWSStrategy            ResourceAffinity = "MRScaler_AWS_Strategy"
 	MRScalerAWSCluster             ResourceAffinity = "MRScaler_AWS_Cluster"
 	MRScalerAWSScheduledTask       ResourceAffinity = "MRScaler_AWS_Scheduled_Task"
+	MRScalerAWSTerminationPolicies ResourceAffinity = "MRScaler_AWS_Termination_Policies"
 
 	MultaiBalancer    ResourceAffinity = "Multai_Balancer"
 	MultaiDeployment  ResourceAffinity = "Multai_Deployment"

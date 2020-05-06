@@ -118,7 +118,8 @@ func (res *OceanGKEImportTerraformResource) OnUpdate(
 func NewGKEImportClusterWrapper() *GKEImportClusterWrapper {
 	return &GKEImportClusterWrapper{
 		cluster: &gcp.Cluster{
-			Capacity: &gcp.Capacity{},
+			Capacity:   &gcp.Capacity{},
+			AutoScaler: &gcp.AutoScaler{},
 			Compute: &gcp.Compute{
 				LaunchSpecification: &gcp.LaunchSpecification{},
 				InstanceTypes:       &gcp.InstanceTypes{},
