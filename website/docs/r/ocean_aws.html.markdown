@@ -24,6 +24,7 @@ resource "spotinst_ocean_aws" "example" {
 
   subnet_ids = ["subnet-123456789"]
   whitelist  = ["t1.micro", "m1.small"]
+// blacklist = ["t1.micro", "m1.small"]
 
   // --- LAUNCH CONFIGURATION --------------
   image_id             = "ami-123456"
@@ -32,7 +33,8 @@ resource "spotinst_ocean_aws" "example" {
   user_data            = "echo hello world"
   iam_instance_profile = "iam-profile"
   root_volume_size     = 20
-  
+  monitoring           = true
+  ebs_optimized        = true
   associate_public_ip_address = true
   
   load_balancers {
@@ -52,30 +54,10 @@ resource "spotinst_ocean_aws" "example" {
   grace_period = 600
   // ---------------------------------
 
-  // --- AUTOSCALER -----------------
-  autoscaler {
-    autoscale_is_enabled     = false
-    autoscale_is_auto_config = false
-    autoscale_cooldown       = 300
-    auto_headroom_percentage = 50
-
-    autoscale_headroom {
-      cpu_per_unit    = 1024
-      gpu_per_unit    = 1
-      memory_per_unit = 512
-      num_of_units    = 2
-    }
-
-    autoscale_down {
-      evaluation_periods = 300
-    }
-
-    resource_limits {
-      max_vcpu       = 1024
-      max_memory_gib = 20
-    }
+  tags {
+    key   = "fakeKey"
+    value = "fakeValue"
   }
-  // --------------------------------
 }
 ```
 
@@ -90,25 +72,8 @@ The following arguments are supported:
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster.
 * `subnet_ids` - (Required) A comma-separated list of subnet identifiers for the Ocean cluster. Subnet IDs should be configured with auto assign public ip.
-
-```hcl
-  name = "demo"
-  controller_id = "fakeClusterId"
-  region = "us-west-2"
-
-  max_size         = 2
-  min_size         = 1
-  desired_capacity = 2
-```
-
 * `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if `blacklist` is configured.
 * `blacklist` - (Optional) Instance types not allowed in the Ocean cluster. Cannot be configured if `whitelist` is configured.
-
-```hcl
-whitelist = ["t1.micro", "m1.small"]
-// blacklist = ["t1.micro", "m1.small"]
-```
-
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Required) ID of the image used to launch the instances.
 * `security_groups` - (Required) One or more security group ids.
@@ -118,46 +83,20 @@ whitelist = ["t1.micro", "m1.small"]
 * `root_volume_size` - (Optional) The size (in Gb) to allocate for the root volume. Minimum `20`.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
-
 * `load_balancers` - (Optional) - Array of load balancer objects to add to ocean cluster
     * `arn` - (Optional) Required if type is set to TARGET_GROUP
     * `name` - (Optional) Required if type is set to CLASSIC
     * `type` - (Required) Can be set to CLASSIC or TARGET_GROUP
-
-```hcl
-  image_id             = "ami-79826301"
-  security_groups      = ["sg-042d658b3ee907848"]
-  key_name             = "fake key"
-  user_data            = "echo hello world"
-  iam_instance_profile = "iam-profile"
-  root_volume_size     = 20
-  monitoring           = true
-  ebs_optimized        = true
-  
-  associate_public_ip_address = true
-  
-  load_balancers {
-    arn = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
-    type = "TARGET_GROUP"
-  }
-  
-  load_balancers {
-    name = "balancer-name"
-    type = "CLASSIC"
-  }
-```
-
+* `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
+* `key` - (Optional) The tag key.
+* `value` - (Optional) The tag value.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If not Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
-* `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
+* `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, Ocean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `grace_period` - (Optional, Default: 600) The amount of time, in seconds, after the instance has launched to start checking its health.
 
-```hcl
-  fallback_to_ondemand       = true
-  utilize_reserved_instances = false
-  draining_timeout           = 120
-```
-
+<a id="auto-scaler"></a>
+## Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.
 * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes autoscaler.
 * `autoscale_is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
@@ -170,45 +109,32 @@ whitelist = ["t1.micro", "m1.small"]
 * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
 * `autoscale_down` - (Optional) Auto Scaling scale down operations.
 * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
-* `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
 * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
 * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
 * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
 
 ```hcl
   autoscaler {
-    autoscale_is_enabled     = false
+    autoscale_is_enabled     = true
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
 
     autoscale_headroom {
       cpu_per_unit    = 1024
-      gpu_per_unit    = 1
+      gpu_per_unit    = 0
       memory_per_unit = 512
       num_of_units    = 2
     }
 
     autoscale_down {
-      evaluation_periods = 300
-      max_scale_down_percentage = 10
+      max_scale_down_percentage = 60
     }
 
     resource_limits {
       max_vcpu       = 1024
-      max_memory_gib = 20
+      max_memory_gib = 1500
     }
   }
-```
-
-* `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
-* `key` - (Optional) The tag key.
-* `value` - (Optional) The tag value.
-
-```hcl
-tags {
-  key   = "fakeKey"
-  value = "fakeValue"
-}
 ```
 
 <a id="update-policy"></a>
@@ -252,7 +178,7 @@ tags {
     }
     tasks  {
       is_enabled = false
-      cron_expression = "salitestcron3"
+      cron_expression = "* * * * *"
       task_type = "clusterRoll"
     }
   }

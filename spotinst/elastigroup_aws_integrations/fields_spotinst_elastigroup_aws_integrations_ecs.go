@@ -43,6 +43,7 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(AutoscaleCooldown): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  300,
 					},
 
 					string(AutoscaleIsAutoConfig): {

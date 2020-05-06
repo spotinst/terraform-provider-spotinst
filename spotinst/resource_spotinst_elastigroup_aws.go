@@ -522,8 +522,88 @@ func expandElastigroupRollConfig(data interface{}, groupID *string) (*aws.RollGr
 		if v, ok := m[string(elastigroup_aws.HealthCheckType)].(string); ok && v != "" { // Default value ""
 			i.HealthCheckType = spotinst.String(v)
 		}
+
+		if v, ok := m[string(elastigroup_aws.Strategy)]; ok {
+			strategy, err := expandStrategy(v)
+			if err != nil {
+				return nil, err
+			}
+			if strategy != nil {
+				i.Strategy = strategy
+			}
+		}
+
 	}
 	return i, nil
+}
+
+func expandStrategy(data interface{}) (*aws.RollStrategy, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		strategy := &aws.RollStrategy{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(elastigroup_aws.Action)].(string); ok && v != "" { // Default value ""
+				strategy.Action = spotinst.String(v)
+			}
+
+			if v, ok := m[string(elastigroup_aws.ShouldDrainInstances)].(bool); ok {
+				strategy.ShouldDrainInstances = spotinst.Bool(v)
+			}
+
+			if v, ok := m[string(elastigroup_aws.BatchMinHealthyPercentage)].(int); ok && v >= 0 {
+				strategy.BatchMinHealthyPercentage = spotinst.Int(v)
+			}
+
+			if v, ok := m[string(elastigroup_aws.OnFailure)]; ok {
+				onFailure, err := expandOnFailure(v)
+				if err != nil {
+					return nil, err
+				}
+				if onFailure != nil {
+					strategy.OnFailure = onFailure
+				}
+			}
+
+		}
+
+		return strategy, nil
+	}
+
+	return nil, nil
+}
+
+func expandOnFailure(data interface{}) (*aws.OnFailure, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		onFailure := &aws.OnFailure{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(elastigroup_aws.ActionType)].(string); ok && v != "" { // Default value ""
+				onFailure.ActionType = spotinst.String(v)
+			}
+
+			if v, ok := m[string(elastigroup_aws.ShouldHandleAllBatches)].(bool); ok {
+				onFailure.ShouldHandleAllBatches = spotinst.Bool(v)
+			}
+
+			if v, ok := m[string(elastigroup_aws.BatchNum)].(int); ok && v >= 0 {
+				onFailure.BatchNum = spotinst.Int(v)
+			}
+
+			if v, ok := m[string(elastigroup_aws.DrainingTimeout)].(int); ok && v >= 0 {
+				onFailure.DrainingTimeout = spotinst.Int(v)
+			}
+
+			if v, ok := m[string(elastigroup_aws.ShouldDecrementTargetCapacity)].(bool); ok {
+				onFailure.ShouldDecrementTargetCapacity = spotinst.Bool(v)
+			}
+		}
+
+		return onFailure, nil
+	}
+
+	return nil, nil
 }
 
 func getRollTimeout(data interface{}) *int {

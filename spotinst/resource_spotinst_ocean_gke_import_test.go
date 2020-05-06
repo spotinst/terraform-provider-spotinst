@@ -387,3 +387,130 @@ const testOceanGKEScheduling_Update = `
 `
 
 // endregion
+
+// region Ocean GKE Import: autoscaler
+func TestAccSpotinstOceanGKEImport_Autoscaler(t *testing.T) {
+	spotClusterName := "terraform-tests-do-not-delete"
+	resourceName := createOceanGKEImportResourceName(spotClusterName)
+
+	var cluster gcp.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKEImportDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName:    spotClusterName,
+					fieldsToAppend: testOceanGKEAutoscaler_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "15"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.cooldown", "360"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.evaluation_periods", "340"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.max_scale_down_percentage", "12"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.cpu_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.gpu_per_unit", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_auto_config", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "10"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "512"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName:    spotClusterName,
+					fieldsToAppend: testOceanGKEAutoscaler_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.evaluation_periods", "200"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.0.max_scale_down_percentage", "6"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.cpu_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.gpu_per_unit", "3"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_auto_config", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "5"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "256"),
+				),
+			},
+		},
+	})
+}
+
+const testOceanGKEAutoscaler_Create = `
+
+    autoscaler {
+    is_enabled     = true
+    is_auto_config = true
+    cooldown       = 360
+    auto_headroom_percentage = 15
+
+    headroom {
+      cpu_per_unit    = 512
+      gpu_per_unit    = 2
+      memory_per_unit = 256
+      num_of_units    = 1
+    }
+
+    down {
+      evaluation_periods = 340
+      max_scale_down_percentage = 12
+    }
+
+    resource_limits {
+      max_vcpu       = 512
+      max_memory_gib = 10
+    }
+  }
+
+`
+
+const testOceanGKEAutoscaler_Update = `
+
+    autoscaler {
+    is_enabled     = false
+    is_auto_config = false
+    cooldown       = 300
+    auto_headroom_percentage = 20
+
+    headroom {
+      cpu_per_unit    = 256
+      gpu_per_unit    = 3
+      memory_per_unit = 512
+      num_of_units    = 2
+    }
+
+    down {
+      evaluation_periods = 200
+      max_scale_down_percentage = 6
+    }
+
+    resource_limits {
+      max_vcpu       = 256
+      max_memory_gib = 5
+    }
+  }
+`
+
+// endregion

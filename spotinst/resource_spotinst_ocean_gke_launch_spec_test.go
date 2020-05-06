@@ -147,7 +147,7 @@ func createOceanGKELaunchSpecTerraform(lscm *GKELaunchSpecConfigMetadata, format
 
 // region OceanGKELaunchSpec: Baseline
 func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-0507758c"
+	oceanID := "o-a424eae0"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -248,7 +248,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Labels
 func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
-	oceanID := "o-0507758c"
+	oceanID := "o-a424eae0"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -338,7 +338,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Taints
 func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
-	oceanID := "o-0507758c"
+	oceanID := "o-a424eae0"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -434,7 +434,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: AutoScale
 func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-0507758c"
+	oceanID := "o-a424eae0"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec

@@ -144,6 +144,41 @@ func SetupTaskGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[TaskUnit] = commons.NewGenericField(
+		commons.MRScalerAWSTaskGroup,
+		TaskUnit,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  "instance",
+			ForceNew: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
+			scaler := mrsWrapper.GetMRScalerAWS()
+
+			if v, ok := resourceData.Get(string(TaskUnit)).(string); ok && v != "" {
+				if scaler.Compute.InstanceGroups.TaskGroup == nil {
+					scaler.Compute.InstanceGroups.SetTaskGroup(&mrscaler.InstanceGroup{})
+				}
+				if scaler.Compute.InstanceGroups.TaskGroup.Capacity == nil {
+					scaler.Compute.InstanceGroups.TaskGroup.SetCapacity(&mrscaler.InstanceGroupCapacity{})
+				}
+				scaler.Compute.InstanceGroups.TaskGroup.Capacity.SetUnit(spotinst.String(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(TaskUnit))
+			return err
+		},
+		nil,
+	)
+
 	fieldsMap[TaskInstanceTypes] = commons.NewGenericField(
 		commons.MRScalerAWSTaskGroup,
 		TaskInstanceTypes,

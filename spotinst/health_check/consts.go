@@ -10,9 +10,9 @@ const (
 	Check      commons.FieldName = "check"
 	Protocol   commons.FieldName = "protocol"
 	Port       commons.FieldName = "port"
-	Endpoint   commons.FieldName = "end_point"
+	Endpoint   commons.FieldName = "endpoint"
 	Interval   commons.FieldName = "interval"
-	Timeout    commons.FieldName = "time_out"
+	Timeout    commons.FieldName = "timeout"
 	Unhealthy  commons.FieldName = "unhealthy"
 	Healthy    commons.FieldName = "healthy"
 )

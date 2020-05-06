@@ -42,16 +42,17 @@ func (p InstanceGroupType) String() string {
 }
 
 type Scaler struct {
-	ID          *string     `json:"id,omitempty"`
-	Name        *string     `json:"name,omitempty"`
-	Description *string     `json:"description,omitempty"`
-	Region      *string     `json:"region,omitempty"`
-	Strategy    *Strategy   `json:"strategy,omitempty"`
-	Compute     *Compute    `json:"compute,omitempty"`
-	Cluster     *Cluster    `json:"cluster,omitempty"`
-	Scaling     *Scaling    `json:"scaling,omitempty"`
-	CoreScaling *Scaling    `json:"coreScaling,omitempty"`
-	Scheduling  *Scheduling `json:"scheduling,omitempty"`
+	ID                  *string              `json:"id,omitempty"`
+	Name                *string              `json:"name,omitempty"`
+	Description         *string              `json:"description,omitempty"`
+	Region              *string              `json:"region,omitempty"`
+	Strategy            *Strategy            `json:"strategy,omitempty"`
+	Compute             *Compute             `json:"compute,omitempty"`
+	Cluster             *Cluster             `json:"cluster,omitempty"`
+	Scaling             *Scaling             `json:"scaling,omitempty"`
+	CoreScaling         *Scaling             `json:"coreScaling,omitempty"`
+	Scheduling          *Scheduling          `json:"scheduling,omitempty"`
+	TerminationPolicies []*TerminationPolicy `json:"terminationPolicies,omitempty"`
 
 	// forceSendFields is a list of field names (e.g. "Keys") to
 	// unconditionally include in API requests. By default, fields with
@@ -68,6 +69,26 @@ type Scaler struct {
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
 	nullFields []string
+}
+type TerminationPolicy struct {
+	Statements []*Statement `json:"statements,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Statement struct {
+	Namespace         *string  `json:"namespace,omitempty"`
+	MetricName        *string  `json:"metricName,omitempty"`
+	Statistic         *string  `json:"statistic,omitempty"`
+	Unit              *string  `json:"unit,omitempty"`
+	Threshold         *float64 `json:"threshold,omitempty"`
+	Period            *int     `json:"period,omitempty"`
+	EvaluationPeriods *int     `json:"evaluationPeriods,omitempty"`
+	Operator          *string  `json:"operator,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Strategy struct {
@@ -202,9 +223,10 @@ type InstanceGroup struct {
 }
 
 type InstanceGroupCapacity struct {
-	Target  *int `json:"target,omitempty"`
-	Minimum *int `json:"minimum,omitempty"`
-	Maximum *int `json:"maximum,omitempty"`
+	Target  *int    `json:"target,omitempty"`
+	Minimum *int    `json:"minimum,omitempty"`
+	Maximum *int    `json:"maximum,omitempty"`
+	Unit    *string `json:"unit,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -517,6 +539,96 @@ func (o *Scaler) SetScaling(v *Scaling) *Scaler {
 func (o *Scaler) SetCoreScaling(v *Scaling) *Scaler {
 	if o.CoreScaling = v; v == nil {
 		o.nullFields = append(o.nullFields, "CoreScaling")
+	}
+	return o
+}
+
+func (o *Scaler) SetTerminationPolicies(v []*TerminationPolicy) *Scaler {
+	if o.TerminationPolicies = v; v == nil {
+		o.nullFields = append(o.nullFields, "TerminationPolicies")
+	}
+	return o
+}
+
+//endregion
+
+// region TerminationPolicy
+
+func (o TerminationPolicy) MarshalJSON() ([]byte, error) {
+	type noMethod TerminationPolicy
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *TerminationPolicy) SetStatements(v []*Statement) *TerminationPolicy {
+	if o.Statements = v; v == nil {
+		o.nullFields = append(o.nullFields, "Statements")
+	}
+	return o
+}
+
+//endregion
+
+// region Statement
+
+func (o Statement) MarshalJSON() ([]byte, error) {
+	type noMethod Statement
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Statement) SetNamespace(v *string) *Statement {
+	if o.Namespace = v; o.Namespace == nil {
+		o.nullFields = append(o.nullFields, "Namespace")
+	}
+	return o
+}
+
+func (o *Statement) SetMetricName(v *string) *Statement {
+	if o.MetricName = v; o.MetricName == nil {
+		o.nullFields = append(o.nullFields, "MetricName")
+	}
+	return o
+}
+
+func (o *Statement) SetStatistic(v *string) *Statement {
+	if o.Statistic = v; o.Statistic == nil {
+		o.nullFields = append(o.nullFields, "Statistic")
+	}
+	return o
+}
+
+func (o *Statement) SetUnit(v *string) *Statement {
+	if o.Unit = v; o.Unit == nil {
+		o.nullFields = append(o.nullFields, "Unit")
+	}
+	return o
+}
+
+func (o *Statement) SetThreshold(v *float64) *Statement {
+	if o.Threshold = v; o.Threshold == nil {
+		o.nullFields = append(o.nullFields, "Threshold")
+	}
+	return o
+}
+
+func (o *Statement) SetPeriod(v *int) *Statement {
+	if o.Period = v; o.Period == nil {
+		o.nullFields = append(o.nullFields, "Period")
+	}
+	return o
+}
+
+func (o *Statement) SetEvaluationPeriods(v *int) *Statement {
+	if o.EvaluationPeriods = v; o.EvaluationPeriods == nil {
+		o.nullFields = append(o.nullFields, "EvaluationPeriods")
+	}
+	return o
+}
+
+func (o *Statement) SetOperator(v *string) *Statement {
+	if o.Operator = v; o.Operator == nil {
+		o.nullFields = append(o.nullFields, "Operator")
 	}
 	return o
 }
@@ -1159,6 +1271,13 @@ func (o *InstanceGroupCapacity) SetMinimum(v *int) *InstanceGroupCapacity {
 func (o *InstanceGroupCapacity) SetMaximum(v *int) *InstanceGroupCapacity {
 	if o.Maximum = v; v == nil {
 		o.nullFields = append(o.nullFields, "Maximum")
+	}
+	return o
+}
+
+func (o *InstanceGroupCapacity) SetUnit(v *string) *InstanceGroupCapacity {
+	if o.Unit = v; o.Unit == nil {
+		o.nullFields = append(o.nullFields, "Unit")
 	}
 	return o
 }

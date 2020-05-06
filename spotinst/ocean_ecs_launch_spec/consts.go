@@ -4,6 +4,7 @@ import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/comm
 
 type LabelField string
 type IAMField string
+type TagField string
 
 const (
 	CPUPerUnit    commons.FieldName = "cpu_per_unit"
@@ -22,4 +23,15 @@ const (
 	AttributeKey       commons.FieldName = "key"
 	AttributeValue     commons.FieldName = "value"
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
+	Tags               commons.FieldName = "tags"
+)
+
+const (
+	TagKey   TagField = "key"
+	TagValue TagField = "value"
+)
+
+const (
+	LabelKey   LabelField = "key"
+	LabelValue LabelField = "value"
 )

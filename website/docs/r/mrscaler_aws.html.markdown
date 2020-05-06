@@ -109,7 +109,8 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   core_desired_capacity = 1
   core_lifecycle        = "ON_DEMAND"
   core_ebs_optimized    = false
-  
+  core_unit = "instance"
+
   core_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
@@ -124,7 +125,8 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   task_desired_capacity = 1
   task_lifecycle        = "SPOT"
   task_ebs_optimized    = false
-  
+  task_unit = "instance"
+
   task_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
@@ -184,7 +186,8 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   core_desired_capacity = 1
   core_lifecycle        = "ON_DEMAND"
   core_ebs_optimized    = false
-  
+  core_unit = "instance"
+
   core_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
@@ -199,7 +202,8 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   task_desired_capacity = 1
   task_lifecycle        = "SPOT"
   task_ebs_optimized    = false
-  
+  task_unit = "instance"
+
   task_ebs_block_device {
     volumes_per_instance = 2
     volume_type          = "gp2"
@@ -263,7 +267,8 @@ resource "spotinst_mrscaler_aws" "example-scaler-2" {
   task_min_size   = 0
   task_max_size   = 4
   task_lifecycle = "SPOT"
-  
+  task_unit = "instance"
+
   task_ebs_block_device {
     volumes_per_instance = 1
     volume_type          = "gp2"
@@ -306,6 +311,7 @@ The following arguments are supported:
 * `task_target` - (Required) amount of instances in task group.
 * `task_maximum` - (Optional) maximal amount of instances in task group.
 * `task_minimum` - (Optional) The minimal amount of instances in task group.
+* `task_unit` - (Optional, Default: `instance`) Unit of task group for target, min and max. The unit could be `instance` or `weight`. instance - amount of instances. weight - amount of vCPU.
 * `task_lifecycle` - (Required) The MrScaler lifecycle for instances in task group. Allowed values are 'SPOT' and 'ON_DEMAND'.
 * `task_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
 * `task_ebs_block_device` - (Required) This determines the ebs configuration for your task group instances. Only a single block is allowed.
@@ -320,6 +326,7 @@ The following arguments are supported:
 * `core_target` - (Required) amount of instances in core group.
 * `core_maximum` - (Optional) maximal amount of instances in core group.
 * `core_minimum` - (Optional) The minimal amount of instances in core group.
+* `core_unit` - (Optional, Default: `instance`) Unit of task group for target, min and max. The unit could be `instance` or `weight`. instance - amount of instances. weight - amount of vCPU.
 * `core_lifecycle` - (Required) The MrScaler lifecycle for instances in core group. Allowed values are 'SPOT' and 'ON_DEMAND'.
 * `core_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
 * `core_ebs_block_device` - (Required) This determines the ebs configuration for your core group instances. Only a single block is allowed.
@@ -431,6 +438,62 @@ Each `*_scaling_*_policy` supports the following:
 * `min_capacity` - (Optional) New min capacity for the elastigroup.
 * `max_capacity` - (Optional) New max capacity for the elastigroup.
 
+<a id="termination-policies"></a>
+## termination policies
+
+## Example Usage
+
+```hcl
+  termination_policies {
+    statements {
+      namespace = "AWS/ElasticMapReduce"
+      metric_name = "AppsRunning"
+      statistic = "average"
+      unit = "count"
+      threshold = 1
+      period = 360
+      evaluation_periods = 4
+      operator = "lte"
+    }
+    statements {
+      namespace = "AWS/ElasticMapReduce"
+      metric_name = "AppsPending"
+      statistic = "average"
+      unit = "count"
+      threshold = 0
+      period = 300
+      evaluation_periods = 3
+      operator = "lte"
+    }
+  }
+
+  termination_policies {
+    statements {
+      namespace = "AWS/ElasticMapReduce"
+      metric_name = "AppsRunning"
+      statistic = "average"
+      unit = "count"
+      threshold = 0
+      period = 300
+      evaluation_periods = 3
+      operator = "lte"
+    }
+  }
+```
+
+## Argument Reference
+
+* `termination_policies` - (Optional) Allows defining termination policies for EMR clusters based on CloudWatch Metrics.
+* `statements` - (Required) 
+* `namespace` - (Required) Must contain the value: `AWS/ElasticMapReduce`.
+* `metric_name` - (Required) The name of the metric in CloudWatch which the statement will be based on.
+* `statistic` - (Optional, Default: `sum`) The aggregation method of the given metric. Valid Values: `average` | `sum` | `sampleCount` | `maximum` | `minimum`                 
+* `unit` - (Optional, Default: `count`) The unit for a given metric. Valid Values: `seconds` | `microseconds` | `milliseconds` | `bytes` | `kilobytes` | `megabytes` | `gigabytes` | `terabytes` | `bits` | `kilobits` | `megabits` | `gigabits` | `terabits` | `percent` | `count` | `bytes/second` | `kilobytes/second` | `megabytes/second` | `gigabytes/second` | `terabytes/second` | `bits/second` | `kilobits/second` | `megabits/second` | `gigabits/second` | `terabits/second` | `count/second` | `none`                     
+* `threshold` - (Required) The value that the specified statistic is compared to.
+* `period` - (Optional, Default: `300`) The time window in seconds over which the statistic is applied.
+* `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
+* `operator` - (Optional, Default: `gte`) The operator to use in order to determine if the policy is applicable. Valid values: `gt` | `gte` | `lt` | `lte`
+                          
 ## Attributes Reference
 
 The following attributes are exported:
