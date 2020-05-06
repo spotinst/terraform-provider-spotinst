@@ -1,4 +1,4 @@
-## 1.15.0 (Unreleased)
+## 1.15.0 (May 06, 2020)
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added `OnFailure` under `roll_config`
