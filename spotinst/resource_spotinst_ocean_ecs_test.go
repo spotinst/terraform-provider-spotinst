@@ -467,22 +467,6 @@ func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1"),
 				),
 			},
-			//{
-			//	ResourceName: resourceName,
-			//	Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
-			//		clusterName:    clusterName,
-			//		name:           name,
-			//		fieldsToAppend: testScalerConfig_EmptyFields,
-			//	}),
-			//	Check: resource.ComposeTestCheckFunc(
-			//		testCheckOceanECSExists(&cluster, resourceName),
-			//		testCheckOceanECSAttributes(&cluster, name),
-			//		resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
-			//		resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "0"),
-			//		resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.#", "0"),
-			//		resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "0"),
-			//	),
-			//},
 		},
 	})
 }
@@ -530,16 +514,6 @@ autoscaler {
 }
 // --------------------------------
 `
-
-//const testScalerConfig_EmptyFields = `
-//// --- AUTOSCALER -----------------
-//autoscaler {
-// is_enabled = false
-// is_auto_config = false
-// cooldown = 300
-//}
-//// --------------------------------
-//`
 
 // endregion
 

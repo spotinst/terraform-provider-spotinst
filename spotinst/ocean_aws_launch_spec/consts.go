@@ -43,4 +43,8 @@ const (
 	SubnetIDs          commons.FieldName = "subnet_ids"
 	RootVolumeSize     commons.FieldName = "root_volume_size"
 	Tags               commons.FieldName = "tags"
+	ElasticIpPool      commons.FieldName = "elastic_ip_pool"
+	TagSelector        commons.FieldName = "tag_selector"
+	TagSelectorKey     commons.FieldName = "tag_key"
+	TagSelectorValue   commons.FieldName = "tag_value"
 )

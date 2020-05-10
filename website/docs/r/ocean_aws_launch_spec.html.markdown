@@ -41,6 +41,13 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     memory_per_unit = 2048
   }
 
+  elastic_ip_pool  {
+    tag_selector  {
+      tag_key = "key"
+      tag_value = "value"
+    }
+  }
+
  tags {
      key   = "Env"
      value = "production"

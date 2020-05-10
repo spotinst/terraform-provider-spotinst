@@ -1,4 +1,8 @@
 ## 1.16.0 (Unreleased)
+
+ENHANCEMENTS: 
+* resource/spotinst_ocean_aws_launch_spec: added `elastic_ip_pool`
+
 ## 1.15.0 (May 06, 2020)
 
 ENHANCEMENTS:
@@ -12,7 +16,7 @@ ENHANCEMENTS:
 BUG FIXES:
 * resource/spotinst_ocean_aws: resolved errors with `max_size`
 * resource/spotinst_ocean_aws: resolved errors with `autoscale_is_enabled`
-* resource/spotinst_elastigroup_aws: resolved `autoscale_cooldown` under `integration_ecs`
+* resource/spotinst_elastigroup_aws: resolved `autoscale_cooldown` under `integration_ecs` 
 
 ## 1.14.3 (April 01, 2020)
 
@@ -34,7 +38,7 @@ BUG FIXES:
 FEATURES:
 * *New Resource*: `spotinst_health_check`
 
-NOTES:
+NOTES: 
 * documentation: resource/spotinst_mrscaler_aws: retries are now accurate
 
 ## 1.14.2 (January 29, 2020)
@@ -71,7 +75,7 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `max_scale_down_percentage`
 
 BUG FIXES:
-* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs`
+* resource/spotinst_elastigroup_aws: resolved errors with `integration_ecs` 
 * resource/spotinst_ocean_aws: resolved errors with `blacklist`
 * resource/spotinst_ocean_gke_import: resolved errors with `whitelist`
 * resource/spotinst_elastigroup_aws: resolved errors with `ondemand_count`
@@ -141,7 +145,7 @@ FEATURES:
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure: added `custom_data`
 
-NOTES:
+NOTES: 
 * documentation: resource names are now accurate
 
 BUG FIXES:
@@ -160,7 +164,7 @@ ENHANCEMENTS:
 * resource/mrscaler: added `instance_weights`
 * resource/ocean_aws: added `root_volume_size` to launch configuration
 
-NOTES:
+NOTES: 
 * migrated to go modules
 * added missing docs, example for multai_listener
 * resource/multai_listener: added missing tls_config docs
@@ -169,7 +173,7 @@ NOTES:
 ## 1.10.0 (April 03, 2019)
 
 ENHANCEMENTS:
-* resource/spotinst_elastigroup_gke: Now supports all gcp fields. Added special handling due to parameter import, see notes.
+* resource/spotinst_elastigroup_gke: Now supports all gcp fields. Added special handling due to parameter import, see notes. 
 * resource/spotinst_elastigroup_aws: added `max_scale_down_percentage` to `integration_ecs`
 * resource/spotinst_elastigroup_aws: `autoscale_scale_down_non_service_tasks` `to integration_ecs`
 * resource/spotinst_elastigroup_aws: added `scaling_strategy`
@@ -207,7 +211,7 @@ NOTES:
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added optional `spotinst_acct_id` to Route53 integration
 * resource/spotinst_elastigroup_azure: added `update_policy` to control blue/green deployment options
-* resource/spotinst_elastigroup_gcp: added DockerSwarm integration.
+* resource/spotinst_elastigroup_gcp: added DockerSwarm integration. 
 * resource/spotinst_elastigroup_gcp: added `location_type` and `scheme` to `backend_services`
 
 BUG FIXES:
@@ -235,7 +239,7 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added `associate_public_ip_address` to ocean parameters
 * resource/spotinst_elastigroup_aws: Added `deployment_preferences` and `managed_actions` to beanstalk integration
 * resource/spotinst_elastigroup_aws_beanstalk: Added `deployment_preferences` and `managed_actions` parameters
-* added version to user-agent header.
+* added version to user-agent header. 
 
 ## 1.6.1 (January 31, 2019)
 
@@ -285,7 +289,7 @@ ENHANCEMENTS:
 
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: `user_data` and `shutdown_script` no longer updates to empty string SHA
-* resource/spotinst_elastigroup_aws: Fixed an issue of `tags`, `instance_types_spot` and `instance_types_preferred_spot` not being imported properly
+* resource/spotinst_elastigroup_aws: Fixed an issue of `tags`, `instance_types_spot` and `instance_types_preferred_spot` not being imported properly 
 * resource/spotinst_elastigroup_aws: Fixed an issue where `associate_public_ip` incorrectly defaulting to `false` when undefined
 
 ## 1.4.0 (September 13, 2018)
@@ -344,7 +348,7 @@ Introduced a new API schema to support the latest Spotinst API additions while u
 * resource/spotinst_elastigroup_aws: Removed `launch_specification` and flattened its fields on the resource
 * resource/spotinst_elastigroup_aws: Removed `persistence` and flattened its fields on the resource
 * resource/spotinst_elastigroup_aws: Removed `strategy` and flattened its fields on the resource
-* resource/spotinst_elastigroup_aws: Removed `availability_zone` and currently only `availability_zones` field is supported
+* resource/spotinst_elastigroup_aws: Removed `availability_zone` and currently only `availability_zones` field is supported 
 * resource/spotinst_elastigroup_aws: Removed `load_balancers` and broke it down to the following fields: `elastic_load_balancers`, `target_group_arns`, `multai_target_sets`
 * resource/spotinst_elastigroup_aws: Dropped previous `tags` field and changed `tags_kv` name to `tags` which accepts only key/value objects
 * resource/spotinst_elastigroup_aws: Introduced a new object `update_policy` for group roll configuration
@@ -370,7 +374,7 @@ ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: All singleton objects e.g. integrations now support proper logs formatting on any change
 * resource/spotinst_elastigroup_aws: Added support for vpc zone identifier under field name `subnet_ids` as a list of subnet identifiers Strings and `region` field that represent the AWS region your group will be created in
 * resource/spotinst_elastigroup_aws: Added support for `autoscale_is_auto_config` under `integration_kubernetes`
-* resource/spotinst_elastigroup_aws: Added support for maintenance window under field name `revert_to_spot`
+* resource/spotinst_elastigroup_aws: Added support for maintenance window under field name `revert_to_spot` 
 * resource/spotinst_elastigroup_aws: Kubernetes integration now contain cluster controller support under `integration_mode` and `cluster_identifier`
 * resource/spotinst_elastigroup_aws: Flattened previous objects `capacity`, `launch_specification`, `persistence`, `strategy`
 

@@ -386,8 +386,8 @@ github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An
 github.com/spf13/viper v1.3.2/go.mod h1:ZiWeW+zYFKm7srdB9IoDzzZXaJaI5eL9QjNiN/DMA2s=
 github.com/spf13/viper v1.4.0 h1:yXHLWeravcrgGyFSyCgdYpXQ9dR9c/WED3pg1RhxqEU=
 github.com/spf13/viper v1.4.0/go.mod h1:PTJ7Z/lr49W6bUbkmS1V3by4uWynFiR9p7+dSq/yZzE=
-github.com/spotinst/spotinst-sdk-go v1.49.0 h1:JmsLlsgd/cCKpcn04HrParo5r34owDzIC12IW1SpSEs=
-github.com/spotinst/spotinst-sdk-go v1.49.0/go.mod h1:nWi2DyjUi1WUZclpsqZFXvImsU0T39ppqqHwC4/T5mw=
+github.com/spotinst/spotinst-sdk-go v1.50.0 h1:Tj9gbGt5An2+rmkIEYycd48HWHyWDvfSlSzyr2gogZU=
+github.com/spotinst/spotinst-sdk-go v1.50.0/go.mod h1:nWi2DyjUi1WUZclpsqZFXvImsU0T39ppqqHwC4/T5mw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.2.0 h1:Hbg2NidpLE8veEBkEZTL3CvlkUIVzuU9jDplZO54c48=
