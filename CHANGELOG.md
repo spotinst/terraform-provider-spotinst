@@ -1,4 +1,4 @@
-## 1.16.0 (Unreleased)
+## 1.16.0 (May 12, 2020)
 
 ENHANCEMENTS: 
 * resource/spotinst_ocean_aws_launch_spec: added `elastic_ip_pool`
