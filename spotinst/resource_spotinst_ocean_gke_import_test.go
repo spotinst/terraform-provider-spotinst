@@ -454,6 +454,21 @@ func TestAccSpotinstOceanGKEImport_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "256"),
 				),
 			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName:    spotClusterName,
+					fieldsToAppend: testScalerGKEConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -511,6 +526,12 @@ const testOceanGKEAutoscaler_Update = `
       max_memory_gib = 5
     }
   }
+`
+
+const testScalerGKEConfig_EmptyFields = `
+// --- AUTOSCALER -----------------
+autoscaler {}
+// --------------------------------
 `
 
 // endregion

@@ -23,9 +23,10 @@ type LaunchSpec struct {
 	SecurityGroupIDs   []string            `json:"securityGroupIds,omitempty"`
 	SubnetIDs          []string            `json:"subnetIds,omitempty"`
 	IAMInstanceProfile *IAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
+	AutoScale          *AutoScale          `json:"autoScale,omitempty"`
+	ElasticIPPool      *ElasticIPPool      `json:"elasticIpPool,omitempty"`
 	Labels             []*Label            `json:"labels,omitempty"`
 	Taints             []*Taint            `json:"taints,omitempty"`
-	AutoScale          *AutoScale          `json:"autoScale,omitempty"`
 	Tags               []*Tag              `json:"tags,omitempty"`
 
 	// Read-only fields.
@@ -78,6 +79,21 @@ type AutoScaleHeadroom struct {
 	GPUPerUnit    *int `json:"gpuPerUnit,omitempty"`
 	MemoryPerUnit *int `json:"memoryPerUnit,omitempty"`
 	NumOfUnits    *int `json:"numOfUnits,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type ElasticIPPool struct {
+	TagSelector *TagSelector `json:"tagSelector,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type TagSelector struct {
+	Key   *string `json:"tagKey,omitempty"`
+	Value *string `json:"tagValue,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -374,6 +390,20 @@ func (o *LaunchSpec) SetAutoScale(v *AutoScale) *LaunchSpec {
 	return o
 }
 
+func (o *LaunchSpec) SetElasticIPPool(v *ElasticIPPool) *LaunchSpec {
+	if o.ElasticIPPool = v; o.ElasticIPPool == nil {
+		o.nullFields = append(o.nullFields, "ElasticIPPool")
+	}
+	return o
+}
+
+func (o *LaunchSpec) SetTags(v []*Tag) *LaunchSpec {
+	if o.Tags = v; o.Tags == nil {
+		o.nullFields = append(o.nullFields, "Tags")
+	}
+	return o
+}
+
 // endregion
 
 // region Label
@@ -484,9 +514,43 @@ func (o *AutoScaleHeadroom) SetNumOfUnits(v *int) *AutoScaleHeadroom {
 	return o
 }
 
-func (o *LaunchSpec) SetTags(v []*Tag) *LaunchSpec {
-	if o.Tags = v; o.Tags == nil {
-		o.nullFields = append(o.nullFields, "Tags")
+// endregion
+
+// region ElasticIPPool
+
+func (o ElasticIPPool) MarshalJSON() ([]byte, error) {
+	type noMethod ElasticIPPool
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *ElasticIPPool) SetTagSelector(v *TagSelector) *ElasticIPPool {
+	if o.TagSelector = v; o.TagSelector == nil {
+		o.nullFields = append(o.nullFields, "TagSelector")
+	}
+	return o
+}
+
+// endregion
+
+// region TagSelector
+
+func (o TagSelector) MarshalJSON() ([]byte, error) {
+	type noMethod TagSelector
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *TagSelector) SetTagKey(v *string) *TagSelector {
+	if o.Key = v; o.Key == nil {
+		o.nullFields = append(o.nullFields, "Key")
+	}
+	return o
+}
+
+func (o *TagSelector) SetTagValue(v *string) *TagSelector {
+	if o.Value = v; o.Value == nil {
+		o.nullFields = append(o.nullFields, "Value")
 	}
 	return o
 }

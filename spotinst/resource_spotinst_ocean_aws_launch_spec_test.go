@@ -417,3 +417,112 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 `
 
 //endregion
+
+// region OceanAWSLaunchSpec: ElasticIpPool
+func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
+	oceanID := "o-2069e2d7"
+	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
+
+	var launchSpec aws.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID: oceanID,
+				}, testAutoScaleOceanAWSElasticIpPool_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ip_pool.#", "1"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testAutoScaleOceanAWSElasticIpPool_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ip_pool.#", "1"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testAutoScaleOceanAWSElasticIpPool_Delete),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "elastic_ip_pool.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAutoScaleOceanAWSElasticIpPool_Create = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+ elastic_ip_pool {
+   tag_selector {
+     tag_key = "create key "
+     tag_value = "create value"
+   }
+ }
+
+%v
+}
+
+`
+
+const testAutoScaleOceanAWSElasticIpPool_Update = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+ 
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+ elastic_ip_pool {
+   tag_selector {
+     tag_key = "update key "
+     tag_value = "update value"
+   }
+ }
+
+%v
+}
+
+`
+
+const testAutoScaleOceanAWSElasticIpPool_Delete = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"
+ ocean_id = "%v"
+ name = "launch spec name test"
+
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+%v
+}
+
+`
+
+//endregion

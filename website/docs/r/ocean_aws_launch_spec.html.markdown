@@ -41,6 +41,13 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     memory_per_unit = 2048
   }
 
+  elastic_ip_pool  {
+    tag_selector  {
+      tag_key = "key"
+      tag_value = "value"
+    }
+  }
+
  tags {
      key   = "Env"
      value = "production"
@@ -70,7 +77,12 @@ The following arguments are supported:
     * `key` - (Required) The tag key.
     * `value` - (Required) The tag value.
     * `effect` - (Required) The effect of the taint. Valid values: `"NoSchedule"`, `"PreferNoSchedule"`, `"NoExecute"`.
-    
+
+* `elastic_ip_pool` - (Optional) Assign an Elastic IP to the instances spun by the launch spec. Can be null.
+    * `tag_selector` - (Optional) Key-value object, which defines an Elastic IP from the customer pool. Can be null.
+        * `tag_key` - (Required) Elastic IP tag key. The launch spec will consider all elastic IPs tagged with this tag as a part of the elastic IP pool to use.
+        * `tag_value` - (Optional) Elastic IP tag value. Can be null.
+        
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.

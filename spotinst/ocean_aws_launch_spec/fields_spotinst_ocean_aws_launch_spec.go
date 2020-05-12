@@ -309,6 +309,83 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ElasticIpPool] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		ElasticIpPool,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(TagSelector): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+
+								string(TagSelectorKey): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(TagSelectorValue): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.ElasticIPPool != nil {
+				elasticIpPool := launchSpec.ElasticIPPool
+				result = flattenElasticIpPool(elasticIpPool)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(ElasticIpPool), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ElasticIpPool), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(ElasticIpPool)); ok {
+				if elasticIpPool, err := expandElasticIpPool(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetElasticIPPool(elasticIpPool)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value *aws.ElasticIPPool = nil
+
+			if v, ok := resourceData.GetOk(string(ElasticIpPool)); ok {
+				if elasticIpPool, err := expandElasticIpPool(v); err != nil {
+					return err
+				} else {
+					value = elasticIpPool
+				}
+			}
+			launchSpec.SetElasticIPPool(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[SecurityGroups] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
 		SecurityGroups,
@@ -849,4 +926,73 @@ func expandTags(data interface{}) ([]*aws.Tag, error) {
 		tags = append(tags, tag)
 	}
 	return tags, nil
+}
+
+func expandElasticIpPool(data interface{}) (*aws.ElasticIPPool, error) {
+	elasticIpPool := &aws.ElasticIPPool{}
+	list := data.(*schema.Set).List()
+
+	if list == nil || list[0] == nil {
+		return elasticIpPool, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(TagSelector)]; ok {
+		tagSelector, err := expandTagSelector(v)
+		if err != nil {
+			return nil, err
+		}
+		if tagSelector != nil {
+			elasticIpPool.SetTagSelector(tagSelector)
+		} else {
+			elasticIpPool.SetTagSelector(nil)
+		}
+	}
+	return elasticIpPool, nil
+
+}
+
+func expandTagSelector(data interface{}) (*aws.TagSelector, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		tagSelector := &aws.TagSelector{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(TagSelectorKey)].(string); ok && v != "" {
+				tagSelector.SetTagKey(spotinst.String(v))
+			}
+
+			if v, ok := m[string(TagSelectorValue)].(string); ok && v != "" {
+				tagSelector.SetTagValue(spotinst.String(v))
+			}
+		}
+		return tagSelector, nil
+	}
+
+	return nil, nil
+}
+
+func flattenElasticIpPool(elasticIpPool *aws.ElasticIPPool) []interface{} {
+	var out []interface{}
+
+	if elasticIpPool != nil {
+		result := make(map[string]interface{})
+
+		if elasticIpPool.TagSelector != nil {
+			result[string(TagSelector)] = flattenTagSelector(elasticIpPool.TagSelector)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
+}
+
+func flattenTagSelector(tagSelector *aws.TagSelector) []interface{} {
+	m := make(map[string]interface{})
+	m[string(TagSelectorKey)] = spotinst.StringValue(tagSelector.Key)
+	m[string(TagSelectorValue)] = spotinst.StringValue(tagSelector.Value)
+
+	return []interface{}{m}
 }
