@@ -47,4 +47,6 @@ const (
 	TagSelector        commons.FieldName = "tag_selector"
 	TagSelectorKey     commons.FieldName = "tag_key"
 	TagSelectorValue   commons.FieldName = "tag_value"
+	ResourceLimits     commons.FieldName = "resource_limits"
+	MaxInstanceCount   commons.FieldName = "max_instance_count"
 )

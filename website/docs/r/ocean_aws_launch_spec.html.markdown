@@ -48,6 +48,10 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     }
   }
 
+  resource_limits {
+    max_instance_count = 4
+  }
+
  tags {
      key   = "Env"
      value = "production"
@@ -88,4 +92,8 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+
+* `resource_limits` - (Optional) 
+    * `max_instance_count` - (Optional) set a maximum number of instances per launch specification. Can be null. If set, value must be greater than or equal to 0.
+    
 
