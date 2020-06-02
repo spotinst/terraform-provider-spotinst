@@ -109,13 +109,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			if value, ok := resourceData.GetOk(string(Name)); ok && value != nil {
+				launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			if value, ok := resourceData.GetOk(string(Name)); ok && value != nil {
+				launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			}
 			return nil
 		},
 		nil,
