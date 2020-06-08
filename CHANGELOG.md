@@ -1,4 +1,13 @@
 ## 1.17.0 (Unreleased)
+
+ENHANCEMENTS: 
+* resource/spotinst_ocean_aws_launch_spec: added `resource_limits`
+
+BUG FIXES:
+* resource/spotinst_ocean_aws: resolved errors with `max_scale_down_percentage` 
+* resource/spotinst_elastigroup_aws: resolved errors with `integration_route53`
+* resource/ocean_aws_launch_spec: resolved errors with `name`
+
 ## 1.16.0 (May 12, 2020)
 
 ENHANCEMENTS: 

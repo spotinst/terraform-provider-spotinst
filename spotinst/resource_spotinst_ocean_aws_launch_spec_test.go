@@ -164,7 +164,6 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
-					resource.TestCheckResourceAttr(resourceName, "name", "launch spec name test"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world")),
@@ -222,9 +221,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world"
   iam_instance_profile = "test"
   subnet_ids = ["subnet-bce60ec4"]
-  root_volume_size = 20
-  name = "launch spec name test"
-  
+  root_volume_size = 20 
   labels {
     key = "label key"
     value = "label value"
@@ -433,7 +430,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
 			{
 				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
 					oceanID: oceanID,
-				}, testAutoScaleOceanAWSElasticIpPool_Create),
+				}, testLaunchSpecOceanAWSElasticIpPool_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
@@ -443,7 +440,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
 			{
 				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
 					oceanID:              oceanID,
-					updateBaselineFields: true}, testAutoScaleOceanAWSElasticIpPool_Update),
+					updateBaselineFields: true}, testLaunchSpecOceanAWSElasticIpPool_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
@@ -453,7 +450,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
 			{
 				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
 					oceanID:              oceanID,
-					updateBaselineFields: true}, testAutoScaleOceanAWSElasticIpPool_Delete),
+					updateBaselineFields: true}, testLaunchSpecOceanAWSElasticIpPool_Delete),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
@@ -464,7 +461,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
 	})
 }
 
-const testAutoScaleOceanAWSElasticIpPool_Create = `
+const testLaunchSpecOceanAWSElasticIpPool_Create = `
 resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
@@ -487,7 +484,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 `
 
-const testAutoScaleOceanAWSElasticIpPool_Update = `
+const testLaunchSpecOceanAWSElasticIpPool_Update = `
 resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
@@ -510,7 +507,112 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 `
 
-const testAutoScaleOceanAWSElasticIpPool_Delete = `
+const testLaunchSpecOceanAWSElasticIpPool_Delete = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"
+ ocean_id = "%v"
+ name = "launch spec name test"
+
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+%v
+}
+
+`
+
+//endregion
+
+// region OceanAWSLaunchSpec: ResourceLimits
+func TestAccSpotinstOceanAWSLaunchSpec_ResourceLimits(t *testing.T) {
+	oceanID := "o-2069e2d7"
+	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
+
+	var launchSpec aws.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID: oceanID,
+				}, testLaunchSpecOceanAWSResourceLimits_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.4247406351.max_instance_count", "5"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testLaunchSpecOceanAWSResourceLimits_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.3828446798.max_instance_count", "4"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testLaunchSpecOceanAWSResourceLimits_Delete),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testLaunchSpecOceanAWSResourceLimits_Create = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+  resource_limits {
+    max_instance_count = 5
+  }
+
+%v
+}
+
+`
+
+const testLaunchSpecOceanAWSResourceLimits_Update = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+ 
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+  resource_limits {
+    max_instance_count = 4
+  }
+
+%v
+}
+
+`
+
+const testLaunchSpecOceanAWSResourceLimits_Delete = `
 resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"
  ocean_id = "%v"

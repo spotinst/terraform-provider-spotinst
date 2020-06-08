@@ -22,6 +22,7 @@ type LaunchSpec struct {
 	RootVolumeSize     *int                `json:"rootVolumeSize,omitempty"`
 	SecurityGroupIDs   []string            `json:"securityGroupIds,omitempty"`
 	SubnetIDs          []string            `json:"subnetIds,omitempty"`
+	ResourceLimits     *ResourceLimits     `json:"resourceLimits,omitempty"`
 	IAMInstanceProfile *IAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
 	AutoScale          *AutoScale          `json:"autoScale,omitempty"`
 	ElasticIPPool      *ElasticIPPool      `json:"elasticIpPool,omitempty"`
@@ -48,6 +49,13 @@ type LaunchSpec struct {
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
 	nullFields []string
+}
+
+type ResourceLimits struct {
+	MaxInstanceCount *int `json:"maxInstanceCount,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
 }
 
 type Label struct {
@@ -400,6 +408,30 @@ func (o *LaunchSpec) SetElasticIPPool(v *ElasticIPPool) *LaunchSpec {
 func (o *LaunchSpec) SetTags(v []*Tag) *LaunchSpec {
 	if o.Tags = v; o.Tags == nil {
 		o.nullFields = append(o.nullFields, "Tags")
+	}
+	return o
+}
+
+func (o *LaunchSpec) SetResourceLimits(v *ResourceLimits) *LaunchSpec {
+	if o.ResourceLimits = v; o.ResourceLimits == nil {
+		o.nullFields = append(o.nullFields, "ResourceLimits")
+	}
+	return o
+}
+
+// endregion
+
+// region ResourceLimits
+
+func (o ResourceLimits) MarshalJSON() ([]byte, error) {
+	type noMethod ResourceLimits
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *ResourceLimits) SetMaxInstanceCount(v *int) *ResourceLimits {
+	if o.MaxInstanceCount = v; o.MaxInstanceCount == nil {
+		o.nullFields = append(o.nullFields, "MaxInstanceCount")
 	}
 	return o
 }

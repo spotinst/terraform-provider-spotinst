@@ -109,13 +109,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			if value, ok := resourceData.GetOk(string(Name)); ok && value != nil {
+				launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			if value, ok := resourceData.GetOk(string(Name)); ok && value != nil {
+				launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			}
 			return nil
 		},
 		nil,
@@ -381,6 +385,68 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 			}
 			launchSpec.SetElasticIPPool(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ResourceLimits] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		ResourceLimits,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(MaxInstanceCount): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.ResourceLimits != nil {
+				resourceLimits := launchSpec.ResourceLimits
+				result = flattenResourceLimits(resourceLimits)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(ResourceLimits), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ResourceLimits), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(ResourceLimits)); ok {
+				if resourceLimits, err := expandResourceLimits(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetResourceLimits(resourceLimits)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value *aws.ResourceLimits = nil
+
+			if v, ok := resourceData.GetOk(string(ResourceLimits)); ok {
+				if resourceLimits, err := expandResourceLimits(v); err != nil {
+					return err
+				} else {
+					value = resourceLimits
+				}
+			}
+			launchSpec.SetResourceLimits(value)
 			return nil
 		},
 		nil,
@@ -989,10 +1055,45 @@ func flattenElasticIpPool(elasticIpPool *aws.ElasticIPPool) []interface{} {
 	return out
 }
 
+func flattenResourceLimits(resourceLimits *aws.ResourceLimits) []interface{} {
+	var out []interface{}
+
+	if resourceLimits != nil {
+		result := make(map[string]interface{})
+
+		if resourceLimits.MaxInstanceCount != nil {
+			result[string(MaxInstanceCount)] = spotinst.IntValue(resourceLimits.MaxInstanceCount)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
+}
+
 func flattenTagSelector(tagSelector *aws.TagSelector) []interface{} {
 	m := make(map[string]interface{})
 	m[string(TagSelectorKey)] = spotinst.StringValue(tagSelector.Key)
 	m[string(TagSelectorValue)] = spotinst.StringValue(tagSelector.Value)
 
 	return []interface{}{m}
+}
+
+func expandResourceLimits(data interface{}) (*aws.ResourceLimits, error) {
+	if list := data.(*schema.Set).List(); len(list) > 0 {
+		resLimits := &aws.ResourceLimits{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(MaxInstanceCount)].(int); ok && v > 0 {
+				resLimits.SetMaxInstanceCount(spotinst.Int(v))
+			} else {
+				resLimits.SetMaxInstanceCount(nil)
+			}
+		}
+		return resLimits, nil
+	}
+
+	return nil, nil
 }

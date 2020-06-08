@@ -42,7 +42,7 @@ docscheck:
 
 lint:
 	@echo "==> Checking source code against linters..."
-	@golangci-lint run ./$(PKG_NAME)/...
+	@golint ./$(PKG_NAME)/...
 	@tfproviderlint \
 		-c 1 \
 		-AT001 \
@@ -70,7 +70,7 @@ tools:
 	GO111MODULE=on go install github.com/bflad/tfproviderdocs
 	GO111MODULE=on go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
 	GO111MODULE=on go install github.com/client9/misspell/cmd/misspell
-	GO111MODULE=on go install github.com/golangci/golangci-lint/cmd/golangci-lint
+	GO111MODULE=on go install golang.org/x/lint/golint
 
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
