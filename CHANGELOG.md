@@ -1,4 +1,4 @@
-## 1.17.0 (Unreleased)
+## 1.17.0 (June 08, 2020)
 
 ENHANCEMENTS: 
 * resource/spotinst_ocean_aws_launch_spec: added `resource_limits`
