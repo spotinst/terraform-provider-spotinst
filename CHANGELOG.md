@@ -1,4 +1,11 @@
 ## 1.18.0 (Unreleased)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `autoscale_constraints` under `integration_nomad`
+
+NOTES: 
+* documentation: resource/spotinst_elastigroup_aws: added time standard clarification to `start_time` under `scheduled_task`
+
 ## 1.17.0 (June 08, 2020)
 
 ENHANCEMENTS: 
