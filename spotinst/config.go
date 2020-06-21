@@ -17,6 +17,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/featureflag"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
 	"github.com/terraform-providers/terraform-provider-spotinst/version"
@@ -28,8 +29,9 @@ var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
 	"credentials for Spotinst Provider.")
 
 type Config struct {
-	Token   string
-	Account string
+	Token        string
+	Account      string
+	FeatureFlags string
 
 	terraformVersion string
 }
@@ -127,6 +129,8 @@ func (c *Config) getUserAgent() string {
 func (c *Config) getCredentials() (*credentials.Credentials, error) {
 	var providers []credentials.Provider
 	var static *credentials.StaticProvider
+
+	featureflag.Set(c.FeatureFlags)
 
 	if c.Token != "" || c.Account != "" {
 		static = &credentials.StaticProvider{
