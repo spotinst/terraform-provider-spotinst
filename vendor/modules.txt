@@ -338,7 +338,7 @@ github.com/posener/complete/match
 # github.com/spf13/afero v1.2.2
 github.com/spf13/afero
 github.com/spf13/afero/mem
-# github.com/spotinst/spotinst-sdk-go v1.51.1
+# github.com/spotinst/spotinst-sdk-go v1.52.0
 ## explicit
 github.com/spotinst/spotinst-sdk-go/service/elastigroup
 github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws
@@ -356,6 +356,7 @@ github.com/spotinst/spotinst-sdk-go/service/subscription
 github.com/spotinst/spotinst-sdk-go/spotinst
 github.com/spotinst/spotinst-sdk-go/spotinst/client
 github.com/spotinst/spotinst-sdk-go/spotinst/credentials
+github.com/spotinst/spotinst-sdk-go/spotinst/featureflag
 github.com/spotinst/spotinst-sdk-go/spotinst/log
 github.com/spotinst/spotinst-sdk-go/spotinst/session
 github.com/spotinst/spotinst-sdk-go/spotinst/util/jsonutil

@@ -34,6 +34,7 @@ The following arguments are supported:
 
 * `token` - (Required) A Personal API Access Token issued by Spotinst. It can be sourced from the `SPOTINST_TOKEN` environment variable.
 * `account` - (Optional) A valid Spotinst account ID. It can be sourced from the `SPOTINST_ACCOUNT` environment variable.
+* `feature_flags` - (Optional) Spotinst SDK feature flags. They can be sourced from the `SPOTINST_FEATURE_FLAGS` environment variable.
 
 ## Credential Precedence
 
@@ -41,5 +42,14 @@ Credentials will be set given the following precedence:
 1. credentials defined in the provider block of the template
 2. credentials defined as environment variables
 3. credentials defined in ~/.spotinst/credentials
+
+The credentials can be merge in the chain by enabling the `MergeCredentialsChain` feature flag.
+
+```hcl
+provider "spotinst" {
+   account       = "${var.spotinst_account}"
+   feature_flags = "MergeCredentialsChain=true"
+}
+```
 
 Please note that if you omit the Spotinst account, resources will be created using the default account for your organization.
