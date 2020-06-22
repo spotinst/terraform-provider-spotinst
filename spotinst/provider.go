@@ -23,6 +23,13 @@ func Provider() terraform.ResourceProvider {
 				//DefaultFunc: schema.EnvDefaultFunc(credentials.EnvCredentialsVarAccount, ""),
 				Description: "Spotinst Account ID",
 			},
+
+			string(commons.ProviderFeatureFlags): {
+				Type:     schema.TypeString,
+				Optional: true,
+				//DefaultFunc: schema.EnvDefaultFunc(featureflag.EnvVar, ""),
+				Description: "Spotinst SDK Feature Flags",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -77,6 +84,7 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	config := Config{
 		Token:            d.Get(string(commons.ProviderToken)).(string),
 		Account:          d.Get(string(commons.ProviderAccount)).(string),
+		FeatureFlags:     d.Get(string(commons.ProviderFeatureFlags)).(string),
 		terraformVersion: terraformVersion,
 	}
 
