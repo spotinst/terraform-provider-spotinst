@@ -1933,6 +1933,7 @@ func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.unit", "percent"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.cooldown", "60"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.predictive_mode", "FORECAST_AND_SCALE"),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.max_capacity_per_scale", "10"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.0.name", "name-1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.0.value", "value-1"),
@@ -1957,6 +1958,7 @@ func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.unit", "bytes"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.cooldown", "120"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.predictive_mode", "FORECAST_ONLY"),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.max_capacity_per_scale", "7"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.0.name", "name-1-update"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.0.value", "value-1-update"),
@@ -1990,6 +1992,7 @@ const testScalingTargetPolicyGroupConfig_Create = `
   unit = "percent"
   cooldown = 60
   predictive_mode = "FORECAST_AND_SCALE"
+  //max_capacity_per_scale = "10"
   dimensions {
       name = "name-1"
       value = "value-1"
@@ -2010,6 +2013,7 @@ const testScalingTargetPolicyGroupConfig_Update = `
   unit = "bytes"
   cooldown = 120
   predictive_mode = "FORECAST_ONLY"
+  //max_capacity_per_scale = "7"
   dimensions {
       name = "name-1-update"
       value = "value-1-update"
