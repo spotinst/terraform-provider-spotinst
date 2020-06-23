@@ -12,5 +12,3 @@ require (
 	github.com/spotinst/spotinst-sdk-go v1.52.1
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 )
-
-//replace github.com/spotinst/spotinst-sdk-go v1.52.1 => /Users/omer.maria/.go/src/github.com/spotinst-sdk-go
