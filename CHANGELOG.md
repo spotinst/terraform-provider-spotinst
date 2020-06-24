@@ -3,7 +3,7 @@
 ENHANCEMENTS: 
 * resource/spotinst_elastigroup_aws: added support for `max_capacity_per_scale` under `scaling_target_policy`
 
-## 1.18.0 (Unreleased)
+## 1.18.0 (June 24, 2020)
 
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: resolved errors with `autoscale_constraints` under `integration_nomad`
