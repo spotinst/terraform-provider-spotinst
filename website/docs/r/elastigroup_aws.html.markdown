@@ -337,17 +337,18 @@ When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `
 
 `scaling_target_policy` supports the following:
 
-* `policy_name` - (Required) The name of the policy.
-* `metric_name` - (Required) The name of the metric, with or without spaces.
-* `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
-* `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
-* `namespace` - (Required) The namespace for the alarm's associated metric.
-* `cooldown` - (Optional, Default: `300`) The amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
-* `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
+* `policy_name` - (Required) String, the name of the policy.
+* `metric_name` - (Required) String, the name of the metric, with or without spaces.
+* `statistic` - (Optional, Default: `"average"`) String, the metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
+* `unit` - (Required) String, tThe unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
+* `namespace` - (Required) String, the namespace for the alarm's associated metric.
+* `cooldown` - (Optional, Default: `300`) Integer the amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
+* `source` - (Optional) String, the source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
 * `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
-    * `name` - (Required) The dimension name.
-    * `value` - (Required) The dimension value.
+    * `name` - (Required) String, the dimension name.
+    * `value` - (Required) String, the dimension value.
 * `target` - (Optional; if using `updateCapacity`) The target number of instances to have in the group.
+* `max_capacity_per_scale` - (Optional) String, restrict the maximal number of instances which can be added in each scale-up action.
 
 `scaling_target_policies` support predictive scaling:
 
