@@ -3388,9 +3388,9 @@ func TestAccSpotinstElastigroupAWS_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "300"),
-					//resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.#", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.key", "test.key.nomad"),
-					//resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.value", "test.value.nomad"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.3420361780.key", "test.key.nomad"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.3420361780.value", "test.value.nomad"),
 				),
 			},
 			{
@@ -3412,9 +3412,9 @@ func TestAccSpotinstElastigroupAWS_IntegrationNomad(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_down.0.evaluation_periods", "150"),
-					//resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.#", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.key", "test.key.nomad.update"),
-					//resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.0.value", "test.value.nomad.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.1137182518.key", "test.key.nomad.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_nomad.0.autoscale_constraints.1137182518.value", "test.value.nomad.update"),
 				),
 			},
 			{
@@ -3452,10 +3452,10 @@ const testIntegrationNomadGroupConfig_Create = `
       evaluation_periods = 300
     }
 
-    //autoscale_constraints {
-    //  key   = "test.key.nomad"
-    //  value = "test.value.nomad"
-    //}
+    autoscale_constraints {
+     key   = "test.key.nomad"
+     value = "test.value.nomad"
+    }
   }
  // --------------------------------------
 `
@@ -3479,10 +3479,10 @@ const testIntegrationNomadGroupConfig_Update = `
       evaluation_periods = 150
     }
 
-    //autoscale_constraints {
-    //  key   = "test.key.nomad.update"
-    //  value = "test.value.nomad.update"
-    //}
+    autoscale_constraints {
+     key   = "test.key.nomad.update"
+     value = "test.value.nomad.update"
+    }
   }
  // --------------------------------------
 `

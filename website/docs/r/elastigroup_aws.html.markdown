@@ -230,7 +230,7 @@ Each `scheduled_task` supports the following:
 
 * `task_type` - (Required) The task type to run. Supported task types are: `"scale"`, `"backup_ami"`, `"roll"`, `"scaleUp"`, `"percentageScaleUp"`, `"scaleDown"`, `"percentageScaleDown"`, `"statefulUpdateCapacity"`.
 * `cron_expression` - (Optional; Required if not using `frequency`) A valid cron expression. The cron is running in UTC time zone and is in [Unix cron format](https://en.wikipedia.org/wiki/Cron).
-* `start_time` - (Optional; Format: ISO 8601) Set a start time for one time tasks.
+* `start_time` - (Optional; Format: ISO 8601; Time Standard: UTC time) Set a start time for one time tasks.
 * `frequency` - (Optional; Required if not using `cron_expression`) The recurrence frequency to run this task. Supported values are `"hourly"`, `"daily"`, `"weekly"` and `"continuous"`.
 * `scale_target_capacity` - (Optional) The desired number of instances the group should have.
 * `scale_min_capacity` - (Optional) The minimum number of instances the group should have.
