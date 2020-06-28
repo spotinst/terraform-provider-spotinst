@@ -307,6 +307,11 @@ func targetScalingPolicySchema() *schema.Schema {
 		Optional: true,
 	}
 
+	s[string(MaxCapacityPerScale)] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	return o
 }
 
@@ -427,6 +432,10 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			if v, ok := m[string(PredictiveMode)].(string); ok && v != "" {
 				policy.SetPredictive(&aws.Predictive{Mode: spotinst.String(v)})
 			}
+
+			if v, ok := m[string(MaxCapacityPerScale)].(string); ok && v != "" {
+				policy.SetMaxCapacityPerScale(spotinst.String(v))
+			}
 		}
 
 		if policy.Namespace != nil {
@@ -511,6 +520,9 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 				m[string(PredictiveMode)] = spotinst.StringValue(policy.Predictive.Mode)
 			}
 
+			if policy.MaxCapacityPerScale != nil {
+				m[string(MaxCapacityPerScale)] = spotinst.StringValue(policy.MaxCapacityPerScale)
+			}
 		} else {
 			m[string(IsEnabled)] = spotinst.BoolValue(policy.IsEnabled)
 		}

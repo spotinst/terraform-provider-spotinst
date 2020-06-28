@@ -1925,18 +1925,19 @@ func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.policy_name", "policy-name"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.source", "cloudWatch"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.statistic", "average"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.unit", "percent"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.predictive_mode", "FORECAST_AND_SCALE"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.0.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.dimensions.0.value", "value-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2949818563.target", "1.1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.source", "cloudWatch"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.predictive_mode", "FORECAST_AND_SCALE"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.max_capacity_per_scale", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.1484112172.target", "1.1"),
 				),
 			},
 			{
@@ -1949,18 +1950,19 @@ func TestAccSpotinstElastigroupAWS_ScalingTargetPolicies(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.policy_name", "policy-name-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.source", "spectrum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.unit", "bytes"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.cooldown", "120"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.predictive_mode", "FORECAST_ONLY"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.0.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.dimensions.0.value", "value-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.948979961.target", "2.2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.source", "spectrum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.cooldown", "120"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.predictive_mode", "FORECAST_ONLY"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.max_capacity_per_scale", "7"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_target_policy.2724860809.target", "2.2"),
 				),
 			},
 			{
@@ -1990,6 +1992,7 @@ const testScalingTargetPolicyGroupConfig_Create = `
   unit = "percent"
   cooldown = 60
   predictive_mode = "FORECAST_AND_SCALE"
+  max_capacity_per_scale = "10"
   dimensions {
       name = "name-1"
       value = "value-1"
@@ -2010,6 +2013,7 @@ const testScalingTargetPolicyGroupConfig_Update = `
   unit = "bytes"
   cooldown = 120
   predictive_mode = "FORECAST_ONLY"
+  max_capacity_per_scale = "7"
   dimensions {
       name = "name-1-update"
       value = "value-1-update"
