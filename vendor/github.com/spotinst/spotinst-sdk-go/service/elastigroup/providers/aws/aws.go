@@ -422,25 +422,26 @@ type Scaling struct {
 }
 
 type ScalingPolicy struct {
-	PolicyName        *string      `json:"policyName,omitempty"`
-	MetricName        *string      `json:"metricName,omitempty"`
-	Namespace         *string      `json:"namespace,omitempty"`
-	Source            *string      `json:"source,omitempty"`
-	Statistic         *string      `json:"statistic,omitempty"`
-	Unit              *string      `json:"unit,omitempty"`
-	Threshold         *float64     `json:"threshold,omitempty"`
-	Adjustment        *int         `json:"adjustment,omitempty"`
-	MinTargetCapacity *int         `json:"minTargetCapacity,omitempty"`
-	MaxTargetCapacity *int         `json:"maxTargetCapacity,omitempty"`
-	EvaluationPeriods *int         `json:"evaluationPeriods,omitempty"`
-	Period            *int         `json:"period,omitempty"`
-	Cooldown          *int         `json:"cooldown,omitempty"`
-	Operator          *string      `json:"operator,omitempty"`
-	Dimensions        []*Dimension `json:"dimensions,omitempty"`
-	Action            *Action      `json:"action,omitempty"`
-	Target            *float64     `json:"target,omitempty"`
-	IsEnabled         *bool        `json:"isEnabled,omitempty"`
-	Predictive        *Predictive  `json:"predictive,omitempty"`
+	PolicyName          *string      `json:"policyName,omitempty"`
+	MetricName          *string      `json:"metricName,omitempty"`
+	Namespace           *string      `json:"namespace,omitempty"`
+	Source              *string      `json:"source,omitempty"`
+	Statistic           *string      `json:"statistic,omitempty"`
+	Unit                *string      `json:"unit,omitempty"`
+	Threshold           *float64     `json:"threshold,omitempty"`
+	Adjustment          *int         `json:"adjustment,omitempty"`
+	MinTargetCapacity   *int         `json:"minTargetCapacity,omitempty"`
+	MaxTargetCapacity   *int         `json:"maxTargetCapacity,omitempty"`
+	EvaluationPeriods   *int         `json:"evaluationPeriods,omitempty"`
+	Period              *int         `json:"period,omitempty"`
+	Cooldown            *int         `json:"cooldown,omitempty"`
+	Operator            *string      `json:"operator,omitempty"`
+	Dimensions          []*Dimension `json:"dimensions,omitempty"`
+	Action              *Action      `json:"action,omitempty"`
+	Target              *float64     `json:"target,omitempty"`
+	IsEnabled           *bool        `json:"isEnabled,omitempty"`
+	MaxCapacityPerScale *string      `json:"maxCapacityPerScale,omitempty"`
+	Predictive          *Predictive  `json:"predictive,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -2788,6 +2789,13 @@ func (o *ScalingPolicy) SetTarget(v *float64) *ScalingPolicy {
 func (o *ScalingPolicy) SetIsEnabled(v *bool) *ScalingPolicy {
 	if o.IsEnabled = v; o.IsEnabled == nil {
 		o.nullFields = append(o.nullFields, "IsEnabled")
+	}
+	return o
+}
+
+func (o *ScalingPolicy) SetMaxCapacityPerScale(v *string) *ScalingPolicy {
+	if o.MaxCapacityPerScale = v; o.MaxCapacityPerScale == nil {
+		o.nullFields = append(o.nullFields, "MaxCapacityPerScale")
 	}
 	return o
 }
