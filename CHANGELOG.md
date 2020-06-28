@@ -1,4 +1,4 @@
-## 1.19.0 (Unreleased)
+## 1.19.0 (June 28, 2020)
 
 ENHANCEMENTS: 
 * resource/spotinst_elastigroup_aws: added support for `max_capacity_per_scale` under `scaling_target_policy`
