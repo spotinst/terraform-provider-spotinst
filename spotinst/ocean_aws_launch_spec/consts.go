@@ -50,3 +50,22 @@ const (
 	ResourceLimits     commons.FieldName = "resource_limits"
 	MaxInstanceCount   commons.FieldName = "max_instance_count"
 )
+
+const (
+	BlockDeviceMappings commons.FieldName = "block_device_mappings"
+	DeviceName          commons.FieldName = "device_name"
+	Ebs                 commons.FieldName = "ebs"
+	DeleteOnTermination commons.FieldName = "delete_on_termination"
+	Encrypted           commons.FieldName = "encrypted"
+	Iops                commons.FieldName = "iops"
+	KmsKeyId            commons.FieldName = "kms_key_id"
+	SnapshotId          commons.FieldName = "snapshot_id"
+	VolumeSize          commons.FieldName = "volume_size"
+	DynamicVolumeSize   commons.FieldName = "dynamic_volume_size"
+	BaseSize            commons.FieldName = "base_size"
+	Resource            commons.FieldName = "resource"
+	SizePerResourceUnit commons.FieldName = "size_per_resource_unit"
+	VolumeType          commons.FieldName = "volume_type"
+	NoDevice            commons.FieldName = "no_device"
+	VirtualName         commons.FieldName = "virtual_name"
+)

@@ -394,6 +394,155 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[BlockDeviceMappings] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		BlockDeviceMappings,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(DeviceName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(Ebs): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+
+							Schema: map[string]*schema.Schema{
+
+								string(DeleteOnTermination): {
+									Type:     schema.TypeBool,
+									Optional: true,
+									Computed: true,
+								},
+
+								string(Encrypted): {
+									Type:     schema.TypeBool,
+									Optional: true,
+									Computed: true,
+								},
+
+								string(Iops): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(KmsKeyId): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(SnapshotId): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(VolumeSize): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(VolumeType): {
+									Type:     schema.TypeString,
+									Optional: true,
+									Computed: true,
+								},
+
+								string(DynamicVolumeSize): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+
+											string(BaseSize): {
+												Type:     schema.TypeInt,
+												Required: true,
+											},
+
+											string(Resource): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+
+											string(SizePerResourceUnit): {
+												Type:     schema.TypeInt,
+												Required: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+
+					string(NoDevice): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(VirtualName): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+
+			if launchSpec != nil && launchSpec.BlockDeviceMappings != nil {
+				result = flattenBlockDeviceMappings(launchSpec.BlockDeviceMappings)
+			}
+
+			if len(result) > 0 {
+				if err := resourceData.Set(string(BlockDeviceMappings), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(BlockDeviceMappings), err)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
+				if v, err := expandBlockDeviceMappings(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetBlockDeviceMappings(v)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value []*aws.BlockDeviceMapping = nil
+
+			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
+				if blockdevicemappings, err := expandBlockDeviceMappings(v); err != nil {
+					return err
+				} else {
+					value = blockdevicemappings
+				}
+			}
+			launchSpec.SetBlockDeviceMappings(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[ResourceLimits] = commons.NewGenericField(
 		commons.OceanAWSLaunchConfiguration,
 		ResourceLimits,
@@ -1057,6 +1206,160 @@ func flattenElasticIpPool(elasticIpPool *aws.ElasticIPPool) []interface{} {
 	}
 
 	return out
+}
+
+func expandBlockDeviceMappings(data interface{}) ([]*aws.BlockDeviceMapping, error) {
+
+	list := data.([]interface{})
+	bdms := make([]*aws.BlockDeviceMapping, 0, len(list))
+
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		bdm := &aws.BlockDeviceMapping{}
+
+		if !ok {
+			continue
+		}
+
+		if v, ok := attr[string(DeviceName)].(string); ok && v != "" {
+			bdm.SetDeviceName(spotinst.String(v))
+		}
+
+		if r, ok := attr[string(Ebs)]; ok {
+			if ebs, err := expandEbs(r); err != nil {
+				return nil, err
+			} else {
+				bdm.SetEBS(ebs)
+			}
+		}
+
+		if v, ok := attr[string(NoDevice)].(string); ok && v != "" {
+			bdm.SetNoDevice(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(VirtualName)].(string); ok && v != "" {
+			bdm.SetVirtualName(spotinst.String(v))
+		}
+		bdms = append(bdms, bdm)
+	}
+	return bdms, nil
+}
+
+func expandEbs(data interface{}) (*aws.EBS, error) {
+
+	ebs := &aws.EBS{}
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return ebs, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(DeleteOnTermination)].(bool); ok {
+		ebs.SetDeleteOnTermination(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(Encrypted)].(bool); ok {
+		ebs.SetEncrypted(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(Iops)].(int); ok && v > 0 {
+		ebs.SetIops(spotinst.Int(v))
+	}
+
+	if v, ok := m[string(KmsKeyId)].(string); ok && v != "" {
+		ebs.SetKmsKeyId(spotinst.String(v))
+	}
+
+	if v, ok := m[string(SnapshotId)].(string); ok && v != "" {
+		ebs.SetSnapshotId(spotinst.String(v))
+	}
+
+	if v, ok := m[string(VolumeSize)].(int); ok && v > 0 {
+		ebs.SetVolumeSize(spotinst.Int(v))
+	}
+
+	if v, ok := m[string(VolumeType)].(string); ok && v != "" {
+		ebs.SetVolumeType(spotinst.String(v))
+	}
+
+	if v, ok := m[string(DynamicVolumeSize)]; ok && v != nil {
+		if dynamicVolumeSize, err := expandDynamicVolumeSize(v); err != nil {
+			return nil, err
+		} else {
+			if dynamicVolumeSize != nil {
+				ebs.SetDynamicVolumeSize(dynamicVolumeSize)
+			}
+		}
+	}
+	return ebs, nil
+}
+
+func expandDynamicVolumeSize(data interface{}) (*aws.DynamicVolumeSize, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		dvs := &aws.DynamicVolumeSize{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(BaseSize)].(int); ok && v >= 0 {
+				dvs.SetBaseSize(spotinst.Int(v))
+			}
+
+			if v, ok := m[string(Resource)].(string); ok && v != "" {
+				dvs.SetResource(spotinst.String(v))
+			}
+
+			if v, ok := m[string(SizePerResourceUnit)].(int); ok && v >= 0 {
+				dvs.SetSizePerResourceUnit(spotinst.Int(v))
+			}
+		}
+		return dvs, nil
+	}
+	return nil, nil
+}
+
+func flattenBlockDeviceMappings(bdms []*aws.BlockDeviceMapping) []interface{} {
+	result := make([]interface{}, 0, len(bdms))
+
+	for _, bdm := range bdms {
+		m := make(map[string]interface{})
+		m[string(DeviceName)] = spotinst.StringValue(bdm.DeviceName)
+		if bdm.EBS != nil {
+			m[string(Ebs)] = flattenEbs(bdm.EBS)
+		}
+		m[string(NoDevice)] = spotinst.StringValue(bdm.NoDevice)
+		m[string(VirtualName)] = spotinst.StringValue(bdm.VirtualName)
+		result = append(result, m)
+	}
+	return result
+
+}
+
+func flattenEbs(ebs *aws.EBS) []interface{} {
+
+	elasticBS := make(map[string]interface{})
+	elasticBS[string(DeleteOnTermination)] = spotinst.BoolValue(ebs.DeleteOnTermination)
+	elasticBS[string(Encrypted)] = spotinst.BoolValue(ebs.Encrypted)
+	elasticBS[string(Iops)] = spotinst.IntValue(ebs.Iops)
+	elasticBS[string(KmsKeyId)] = spotinst.StringValue(ebs.KmsKeyId)
+	elasticBS[string(SnapshotId)] = spotinst.StringValue(ebs.SnapshotId)
+	elasticBS[string(VolumeType)] = spotinst.StringValue(ebs.VolumeType)
+	elasticBS[string(VolumeSize)] = spotinst.IntValue(ebs.VolumeSize)
+	if ebs.DynamicVolumeSize != nil {
+		elasticBS[string(DynamicVolumeSize)] = flattenDynamicVolumeSize(ebs.DynamicVolumeSize)
+	}
+
+	return []interface{}{elasticBS}
+}
+
+func flattenDynamicVolumeSize(dvs *aws.DynamicVolumeSize) interface{} {
+
+	DynamicVS := make(map[string]interface{})
+	DynamicVS[string(BaseSize)] = spotinst.IntValue(dvs.BaseSize)
+	DynamicVS[string(Resource)] = spotinst.StringValue(dvs.Resource)
+	DynamicVS[string(SizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
+
+	return []interface{}{DynamicVS}
 }
 
 func flattenResourceLimits(resourceLimits *aws.ResourceLimits) []interface{} {

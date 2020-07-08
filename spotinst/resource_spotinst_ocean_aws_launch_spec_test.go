@@ -524,6 +524,148 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 //endregion
 
+// region OceanAWSLaunchSpec: Block Devices
+func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
+	oceanID := "o-2069e2d7"
+	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
+
+	var launchSpec aws.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID: oceanID,
+				}, testLaunchSpecOceanBlockDeviceMappings_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
+					//resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.base_size", "50"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.size_per_resource_unit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testLaunchSpecOceanBlockDeviceMappings_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
+					//resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.base_size", "50"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.size_per_resource_unit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testLaunchSpecOceanBlockDeviceMappings_EmptyFields),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "0"),
+					//resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+				),
+			},
+		},
+	})
+}
+
+const testLaunchSpecOceanBlockDeviceMappings_Create = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+
+image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+	block_device_mappings {
+        device_name = "/dev/xvda1"
+        ebs {
+          delete_on_termination = "true"
+          kms_key_id = "kms-key"
+          encrypted = "false"
+          volume_type = "gp2"
+		  dynamic_volume_size {
+            base_size = 50
+            resource = "CPU"
+            size_per_resource_unit = 20
+          }
+        }
+}
+%v
+      }
+
+`
+
+const testLaunchSpecOceanBlockDeviceMappings_Update = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+
+image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+	block_device_mappings {
+        device_name = "/dev/xvda1"
+        ebs {
+          delete_on_termination = "true"
+          kms_key_id = "kms-key"
+          encrypted = "false"
+          volume_type = "gp2"
+		  dynamic_volume_size {
+            base_size = 50
+            resource = "CPU"
+            size_per_resource_unit = 20
+          }
+        }
+}
+%v
+      }
+`
+
+const testLaunchSpecOceanBlockDeviceMappings_EmptyFields = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+provider = "%v"
+ocean_id = "%v"
+name = "launch spec name test"
+
+image_id = "ami-79826301"
+security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+user_data = "hello world updated"
+iam_instance_profile = "updated"
+%v
+}
+`
+
+// endregion
+
 // region OceanAWSLaunchSpec: ResourceLimits
 func TestAccSpotinstOceanAWSLaunchSpec_ResourceLimits(t *testing.T) {
 	oceanID := "o-2069e2d7"
