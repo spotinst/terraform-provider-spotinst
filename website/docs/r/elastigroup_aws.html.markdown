@@ -399,19 +399,19 @@ Usage:
 
 ```hcl
   scaling_target_policy {
-      policy_name     = ""
-      metric_name     = ""
-      namespace       = ""
-      source          = ""
-      statistic       = ""
-      unit            = ""
-      cooldown        = 10
-      target          = 1
-      predictive_mode = ""
-      
+      policy_name     = "policy-name"
+      metric_name     = "CPUUtilization"
+      namespace       = "AWS/EC2"
+      source          = "spectrum"
+      statistic       = "average"
+      unit            = "bytes"
+      cooldown        = 120
+      target          = 2
+      predictive_mode = "FORCAST_AND_SCALE"
+      max_capacity_per_scale = "10"
       dimensions {
-        name  = ""
-        value = ""
+        name  = "name-1"
+        value = "value-1"
       }
   }
 ```
@@ -928,7 +928,6 @@ Usage:
           on_failure {
                   action_type = "DETACH_NEW"
                   should_handle_all_batches = true
-                  batch_num = 2
                   draining_timeout = 600
                   should_decrement_target_capacity = true
          }
