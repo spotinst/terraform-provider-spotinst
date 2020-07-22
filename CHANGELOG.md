@@ -2,6 +2,7 @@
 
 BUG FIXES:
 * resource/ocean_aws_launch_spec: resolved errors with `image_id`
+* resource/ocean_aws: resolved error with `	auto_headroom_percentage` field under `autoscaler` 
 
 NOTES: 
 * documentation: resource/spotinst_elastigroup_aws: fixed usage example for `scaling_target_policy`
