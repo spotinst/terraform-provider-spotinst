@@ -751,8 +751,9 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "2"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
@@ -778,8 +779,9 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.gpu_per_unit", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "4"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "true"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "150"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "30"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "512"),
@@ -805,6 +807,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
@@ -817,8 +820,9 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 const testScalingConfig_Create = `
  // --- AUTOSCALER -----------------
  autoscaler {
-    autoscale_is_enabled     = false
-    autoscale_is_auto_config = false
+    autoscale_is_enabled     = true
+    autoscale_is_auto_config = true
+	auto_headroom_percentage = 100
     autoscale_cooldown       = 300
 
     autoscale_headroom {
@@ -845,8 +849,9 @@ const testScalingConfig_Create = `
 const testScalingConfig_Update = `
  // --- AUTOSCALER -----------------
  autoscaler {
-    autoscale_is_enabled     = true
-    autoscale_is_auto_config = true
+    autoscale_is_enabled     = false
+    autoscale_is_auto_config = false
+	auto_headroom_percentage = 150
     autoscale_cooldown       = 600
 
     autoscale_headroom {
@@ -875,6 +880,7 @@ const testScalingConfig_EmptyFields = `
  autoscaler {
     autoscale_is_enabled = false
     autoscale_is_auto_config = false
+	auto_headroom_percentage = 100
     autoscale_cooldown = 300
 
     autoscale_headroom {
