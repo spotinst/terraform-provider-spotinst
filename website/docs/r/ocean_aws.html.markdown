@@ -116,7 +116,8 @@ The following arguments are supported:
 ```hcl
   autoscaler {
     autoscale_is_enabled     = true
-    autoscale_is_auto_config = false
+    autoscale_is_auto_config = true
+    auto_headroom_percentage = 100
     autoscale_cooldown       = 300
 
     autoscale_headroom {
