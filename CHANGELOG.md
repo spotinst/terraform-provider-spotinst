@@ -1,4 +1,4 @@
-## 1.20.0 (Unreleased)
+## 1.20.0 (July 23, 2020)
 
 BUG FIXES:
 * resource/ocean_aws_launch_spec: resolved errors with `image_id`
