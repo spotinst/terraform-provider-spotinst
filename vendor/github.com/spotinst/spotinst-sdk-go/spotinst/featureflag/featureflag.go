@@ -17,6 +17,9 @@ var (
 type FeatureFlag interface {
 	fmt.Stringer
 
+	// Name returns the name of the feature flag.
+	Name() string
+
 	// Enabled returns true if the feature is enabled.
 	Enabled() bool
 }
@@ -42,15 +45,14 @@ func New(name string, enabled bool) FeatureFlag {
 	return ff
 }
 
+// Name returns the name of the feature flag.
+func (f *featureFlag) Name() string { return f.name }
+
 // Enabled returns true if the feature is enabled.
-func (f *featureFlag) Enabled() bool {
-	return f.enabled
-}
+func (f *featureFlag) Enabled() bool { return f.enabled }
 
 // String returns the string representation of the feature flag.
-func (f *featureFlag) String() string {
-	return fmt.Sprintf("%s=%t", f.name, f.enabled)
-}
+func (f *featureFlag) String() string { return fmt.Sprintf("%s=%t", f.name, f.enabled) }
 
 // Set parses and stores features from a string like "feature1=true,feature2=false".
 func Set(features string) {
@@ -88,9 +90,6 @@ func Get(name string) FeatureFlag {
 	}
 }
 
-// FeatureFlags defines a list of feature flags.
-type FeatureFlags []FeatureFlag
-
 // All returns a list of all known feature flags.
 func All() FeatureFlags {
 	flagsMutex.Lock()
@@ -106,6 +105,9 @@ func All() FeatureFlags {
 
 	return features
 }
+
+// FeatureFlags defines a list of feature flags.
+type FeatureFlags []FeatureFlag
 
 // String returns the string representation of a list of feature flags.
 func (f FeatureFlags) String() string {

@@ -16,7 +16,9 @@ var (
 // The value should be a comma-separated list of K=V flags, while V is optional.
 const EnvVar = "SPOTINST_FEATURE_FLAGS"
 
+// setFromEnv reads an environment variable and sets features from its value.
+func setFromEnv() { Set(os.Getenv(EnvVar)) }
+
 func init() {
-	// Set features from the environment and ignore any errors.
-	Set(os.Getenv(EnvVar))
+	setFromEnv()
 }

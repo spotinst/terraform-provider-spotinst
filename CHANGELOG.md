@@ -1,4 +1,12 @@
 ## 1.20.0 (Unreleased)
+
+BUG FIXES:
+* resource/ocean_aws_launch_spec: resolved errors with `image_id`
+* resource/ocean_aws: resolved error with `	auto_headroom_percentage` field under `autoscaler` 
+
+NOTES: 
+* documentation: resource/spotinst_elastigroup_aws: fixed usage example for `scaling_target_policy`
+
 ## 1.19.0 (June 28, 2020)
 
 ENHANCEMENTS: 
