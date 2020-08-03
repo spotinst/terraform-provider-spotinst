@@ -61,9 +61,9 @@ type ResourceLimits struct {
 
 type BlockDeviceMapping struct {
 	DeviceName  *string `json:"deviceName,omitempty"`
-	EBS         *EBS    `json:"ebs,omitempty"`
 	NoDevice    *string `json:"noDevice,omitempty"`
 	VirtualName *string `json:"virtualName,omitempty"`
+	EBS         *EBS    `json:"ebs,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -72,10 +72,10 @@ type BlockDeviceMapping struct {
 type EBS struct {
 	DeleteOnTermination *bool              `json:"deleteOnTermination,omitempty"`
 	Encrypted           *bool              `json:"encrypted,omitempty"`
-	Iops                *int               `json:"iops,omitempty"`
-	KmsKeyId            *string            `json:"kmsKeyId,omitempty"`
-	SnapshotId          *string            `json:"snapshotId,omitempty"`
+	KMSKeyID            *string            `json:"kmsKeyId,omitempty"`
+	SnapshotID          *string            `json:"snapshotId,omitempty"`
 	VolumeType          *string            `json:"volumeType,omitempty"`
+	IOPS                *int               `json:"iops,omitempty"`
 	VolumeSize          *int               `json:"volumeSize,omitempty"`
 	DynamicVolumeSize   *DynamicVolumeSize `json:"dynamicVolumeSize,omitempty"`
 
@@ -85,8 +85,8 @@ type EBS struct {
 
 type DynamicVolumeSize struct {
 	BaseSize            *int    `json:"baseSize,omitempty"`
-	Resource            *string `json:"resource,omitempty"`
 	SizePerResourceUnit *int    `json:"sizePerResourceUnit,omitempty"`
+	Resource            *string `json:"resource,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -477,13 +477,6 @@ func (o *BlockDeviceMapping) SetDeviceName(v *string) *BlockDeviceMapping {
 	return o
 }
 
-func (o *BlockDeviceMapping) SetEBS(v *EBS) *BlockDeviceMapping {
-	if o.EBS = v; o.EBS == nil {
-		o.nullFields = append(o.nullFields, "EBS")
-	}
-	return o
-}
-
 func (o *BlockDeviceMapping) SetNoDevice(v *string) *BlockDeviceMapping {
 	if o.NoDevice = v; o.NoDevice == nil {
 		o.nullFields = append(o.nullFields, "NoDevice")
@@ -494,6 +487,13 @@ func (o *BlockDeviceMapping) SetNoDevice(v *string) *BlockDeviceMapping {
 func (o *BlockDeviceMapping) SetVirtualName(v *string) *BlockDeviceMapping {
 	if o.VirtualName = v; o.VirtualName == nil {
 		o.nullFields = append(o.nullFields, "VirtualName")
+	}
+	return o
+}
+
+func (o *BlockDeviceMapping) SetEBS(v *EBS) *BlockDeviceMapping {
+	if o.EBS = v; o.EBS == nil {
+		o.nullFields = append(o.nullFields, "EBS")
 	}
 	return o
 }
@@ -510,28 +510,28 @@ func (o EBS) MarshalJSON() ([]byte, error) {
 
 func (o *EBS) SetEncrypted(v *bool) *EBS {
 	if o.Encrypted = v; o.Encrypted == nil {
-		o.nullFields = append(o.nullFields, "EBS")
+		o.nullFields = append(o.nullFields, "Encrypted")
 	}
 	return o
 }
 
-func (o *EBS) SetIops(v *int) *EBS {
-	if o.Iops = v; o.Iops == nil {
-		o.nullFields = append(o.nullFields, "Iops")
+func (o *EBS) SetIOPS(v *int) *EBS {
+	if o.IOPS = v; o.IOPS == nil {
+		o.nullFields = append(o.nullFields, "IOPS")
 	}
 	return o
 }
 
-func (o *EBS) SetKmsKeyId(v *string) *EBS {
-	if o.KmsKeyId = v; o.KmsKeyId == nil {
-		o.nullFields = append(o.nullFields, "KmsKeyId")
+func (o *EBS) SetKMSKeyId(v *string) *EBS {
+	if o.KMSKeyID = v; o.KMSKeyID == nil {
+		o.nullFields = append(o.nullFields, "KMSKeyID")
 	}
 	return o
 }
 
 func (o *EBS) SetSnapshotId(v *string) *EBS {
-	if o.SnapshotId = v; o.SnapshotId == nil {
-		o.nullFields = append(o.nullFields, "SnapshotId")
+	if o.SnapshotID = v; o.SnapshotID == nil {
+		o.nullFields = append(o.nullFields, "SnapshotID")
 	}
 	return o
 }
@@ -567,6 +567,7 @@ func (o *EBS) SetDynamicVolumeSize(v *DynamicVolumeSize) *EBS {
 // end region
 
 // region Dynamic Volume Size
+
 func (o DynamicVolumeSize) MarshalJSON() ([]byte, error) {
 	type noMethod DynamicVolumeSize
 	raw := noMethod(o)
@@ -575,7 +576,7 @@ func (o DynamicVolumeSize) MarshalJSON() ([]byte, error) {
 
 func (o *DynamicVolumeSize) SetBaseSize(v *int) *DynamicVolumeSize {
 	if o.BaseSize = v; o.BaseSize == nil {
-		o.nullFields = append(o.nullFields, "SetBaseSize")
+		o.nullFields = append(o.nullFields, "BaseSize")
 	}
 	return o
 }
