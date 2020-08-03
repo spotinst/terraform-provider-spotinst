@@ -428,17 +428,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Computed: true,
 								},
 
-								string(Iops): {
+								string(IOPS): {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
 
-								string(KmsKeyId): {
+								string(KMSKeyID): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
 
-								string(SnapshotId): {
+								string(SnapshotID): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
@@ -1263,15 +1263,15 @@ func expandEbs(data interface{}) (*aws.EBS, error) {
 		ebs.SetEncrypted(spotinst.Bool(v))
 	}
 
-	if v, ok := m[string(Iops)].(int); ok && v > 0 {
-		ebs.SetIops(spotinst.Int(v))
+	if v, ok := m[string(IOPS)].(int); ok && v > 0 {
+		ebs.SetIOPS(spotinst.Int(v))
 	}
 
-	if v, ok := m[string(KmsKeyId)].(string); ok && v != "" {
-		ebs.SetKmsKeyId(spotinst.String(v))
+	if v, ok := m[string(KMSKeyID)].(string); ok && v != "" {
+		ebs.SetKMSKeyId(spotinst.String(v))
 	}
 
-	if v, ok := m[string(SnapshotId)].(string); ok && v != "" {
+	if v, ok := m[string(SnapshotID)].(string); ok && v != "" {
 		ebs.SetSnapshotId(spotinst.String(v))
 	}
 
@@ -1340,9 +1340,9 @@ func flattenEbs(ebs *aws.EBS) []interface{} {
 	elasticBS := make(map[string]interface{})
 	elasticBS[string(DeleteOnTermination)] = spotinst.BoolValue(ebs.DeleteOnTermination)
 	elasticBS[string(Encrypted)] = spotinst.BoolValue(ebs.Encrypted)
-	elasticBS[string(Iops)] = spotinst.IntValue(ebs.Iops)
-	elasticBS[string(KmsKeyId)] = spotinst.StringValue(ebs.KmsKeyId)
-	elasticBS[string(SnapshotId)] = spotinst.StringValue(ebs.SnapshotId)
+	elasticBS[string(IOPS)] = spotinst.IntValue(ebs.IOPS)
+	elasticBS[string(KMSKeyID)] = spotinst.StringValue(ebs.KMSKeyID)
+	elasticBS[string(SnapshotID)] = spotinst.StringValue(ebs.SnapshotID)
 	elasticBS[string(VolumeType)] = spotinst.StringValue(ebs.VolumeType)
 	elasticBS[string(VolumeSize)] = spotinst.IntValue(ebs.VolumeSize)
 	if ebs.DynamicVolumeSize != nil {
