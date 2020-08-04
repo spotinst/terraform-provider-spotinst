@@ -198,6 +198,8 @@ github.com/spf13/pflag v1.0.2/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnIn
 github.com/spf13/pflag v1.0.3/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
 github.com/spotinst/spotinst-sdk-go v1.56.0 h1:w7OnAWXWPxvOvqjYv4i0kN70KWGTNcyoNB72suIA30g=
 github.com/spotinst/spotinst-sdk-go v1.56.0/go.mod h1:nWi2DyjUi1WUZclpsqZFXvImsU0T39ppqqHwC4/T5mw=
+github.com/spotinst/spotinst-sdk-go v1.57.0 h1:1Qqhuo/Ci8OvytjE89ANyfmB6nJ8+H4BQEiMkZlVx8k=
+github.com/spotinst/spotinst-sdk-go v1.57.0/go.mod h1:nWi2DyjUi1WUZclpsqZFXvImsU0T39ppqqHwC4/T5mw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=

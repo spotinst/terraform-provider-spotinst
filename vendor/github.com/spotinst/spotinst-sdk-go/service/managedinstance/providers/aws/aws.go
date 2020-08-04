@@ -232,6 +232,7 @@ type Route53Integration struct {
 type Domain struct {
 	HostedZoneID      *string      `json:"hostedZoneId,omitempty"`
 	SpotinstAccountID *string      `json:"spotinstAccountId,omitempty"`
+	RecordSetType     *string      `json:"recordSetType,omitempty"`
 	RecordSets        []*RecordSet `json:"recordSets,omitempty"`
 
 	forceSendFields []string
@@ -239,8 +240,9 @@ type Domain struct {
 }
 
 type RecordSet struct {
-	Name        *string `json:"name,omitempty"`
-	UsePublicIP *bool   `json:"usePublicIp,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	UsePublicIP  *bool   `json:"usePublicIp,omitempty"`
+	UsePublicDNS *bool   `json:"usePublicDns,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -605,6 +607,13 @@ func (o *Domain) SetSpotinstAccountId(v *string) *Domain {
 	return o
 }
 
+func (o *Domain) SetRecordSetType(v *string) *Domain {
+	if o.RecordSetType = v; o.RecordSetType == nil {
+		o.nullFields = append(o.nullFields, "RecordSetType")
+	}
+	return o
+}
+
 func (o *Domain) SetRecordSets(v []*RecordSet) *Domain {
 	if o.RecordSets = v; o.RecordSets == nil {
 		o.nullFields = append(o.nullFields, "RecordSets")
@@ -632,6 +641,13 @@ func (o *RecordSet) SetName(v *string) *RecordSet {
 func (o *RecordSet) SetUsePublicIP(v *bool) *RecordSet {
 	if o.UsePublicIP = v; o.UsePublicIP == nil {
 		o.nullFields = append(o.nullFields, "UsePublicIP")
+	}
+	return o
+}
+
+func (o *RecordSet) SetUsePublicDNS(v *bool) *RecordSet {
+	if o.UsePublicDNS = v; o.UsePublicDNS == nil {
+		o.nullFields = append(o.nullFields, "UsePublicDNS")
 	}
 	return o
 }

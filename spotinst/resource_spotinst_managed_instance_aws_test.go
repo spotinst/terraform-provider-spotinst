@@ -151,7 +151,7 @@ func createManagedInstanceTerraform(ccm *ManagedInstanceConfigMetadata) string {
 	return template
 }
 
-// region managedInstance: Baseline
+// region ManagedInstance: Baseline
 func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 	name := "test-acc-cluster-managed-instance"
 	resourceName := createManagedInstanceAWSResourceName(name)
@@ -261,7 +261,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
 
 // endregion
 
-// region managedInstance: Strategy
+// region ManagedInstance: Strategy
 func TestAccSpotinstManagedInstanceStrategy(t *testing.T) {
 	name := "test-acc-cluster-managed-instance-strategy"
 	resourceName := createManagedInstanceAWSResourceName(name)
@@ -341,7 +341,7 @@ const managedInstanceStrategy_Update = `
 
 // endregion
 
-// region managedInstance: HealthCheck
+// region ManagedInstance: HealthCheck
 func TestAccSpotinstManagedInstanceHealthCheck(t *testing.T) {
 	name := "test-acc-cluster-managed-instance-healthCheck"
 	resourceName := createManagedInstanceAWSResourceName(name)
@@ -403,7 +403,7 @@ unhealthy_duration = "120"
 
 // endregion
 
-// region managedInstance: compute
+// region ManagedInstance: Compute
 func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 	name := "test-acc-cluster-managed-instance-compute"
 	resourceName := createManagedInstanceAWSResourceName(name)
@@ -543,7 +543,7 @@ network_interface {
 
 // endregion
 
-// region managedInstance: scheduling
+// region ManagedInstance: Scheduling
 func TestAccSpotinstManagedInstanceScheduling(t *testing.T) {
 	name := "test-acc-cluster-managed-instance-scheduling"
 	resourceName := createManagedInstanceAWSResourceName(name)
@@ -561,7 +561,6 @@ func TestAccSpotinstManagedInstanceScheduling(t *testing.T) {
 					fieldsToAppend: managedInstanceScheduling_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
-
 					testCheckManagedInstanceAWSExists(&cluster, resourceName),
 					testCheckManagedInstanceAWSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
@@ -643,6 +642,7 @@ const managedInstanceScheduling_Update2 = `
       is_enabled            = "true"
     }
 `
+
 const managedInstanceScheduling_EmptyFields = `
  // --- SCHEDULED TASK ------------------
  // -------------------------------------
@@ -650,7 +650,7 @@ const managedInstanceScheduling_EmptyFields = `
 
 // endregion
 
-// region managedInstance: integrations_route53
+// region ManagedInstance: Route53 Integration
 func TestAccSpotinstManagedInstanceIntegrationsRoute53(t *testing.T) {
 	name := "test-acc-cluster-managed-instance-integrations_route53"
 	resourceName := createManagedInstanceAWSResourceName(name)
@@ -668,7 +668,6 @@ func TestAccSpotinstManagedInstanceIntegrationsRoute53(t *testing.T) {
 					fieldsToAppend: managedInstanceIntegrations_route53_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
-
 					testCheckManagedInstanceAWSExists(&cluster, resourceName),
 					testCheckManagedInstanceAWSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "1"),
@@ -770,6 +769,7 @@ integration_route53 {
 }
 // ------------------------------------
 `
+
 const managedInstanceIntegrations_route53_EmptyFields = `
 // --- INTEGRATION: ROUTE53 ----------
 // ------------------------------------
@@ -777,7 +777,7 @@ const managedInstanceIntegrations_route53_EmptyFields = `
 
 // endregion
 
-// region managedInstance: integrations_route53
+// region ManagedInstance: LoadBalancers Integration
 func TestAccSpotinstManagedInstanceIntegrationsLoadBalancers(t *testing.T) {
 	name := "test-acc-cluster-managed-instance-integrations-load-balancers"
 	resourceName := createManagedInstanceAWSResourceName(name)
@@ -874,6 +874,7 @@ const managedInstanceIntegrations_Load_Balancers_Update = `
     }
 // ------------------------------------
 `
+
 const managedInstanceIntegrations_Load_Balancers_Update2 = `
 // --- INTEGRATION: load_balancers ----------
   load_balancers {

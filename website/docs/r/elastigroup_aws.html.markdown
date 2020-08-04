@@ -655,25 +655,43 @@ Usage:
 
     * `domains` - (Required) Collection of one or more domains to register.
         * `hosted_zone_id` - (Required) The id associated with a hosted zone.
-        * `spotinst_acct_id` - (Optional) The Spotinst account ID that is linked to the AWS account that holds the Route 53 hosted Zone ID. The default is the user Spotinst account provided as a URL parameter.
+        * `spotinst_acct_id` - (Optional) The Spotinst account ID that is linked to the AWS account that holds the Route 53 Hosted Zone ID. The default is the user Spotinst account provided as a URL parameter.
+        * `record_set_type` - (Optional, Default: `a`) The type of the record set. Valid values: `"a"`, `"cname"`.
         * `record_sets` - (Required) Collection of records containing authoritative DNS information for the specified domain name.
             * `name` - (Required) The record set name.
-            * `use_public_ip` - (Optional, Default: `false`) - Designates if the IP address should be exposed to connections outside the VPC.
+            * `use_public_ip` - (Optional, Default: `false`) - Designates whether the IP address should be exposed to connections outside the VPC.
+            * `use_public_dns` - (Optional, Default: `false`) - Designates whether the DNS address should be exposed to connections outside the VPC.
 
 Usage:
 
 ```hcl
-    integration_route53 {
-      domains {
-        hosted_zone_id   = "zone-id"
-        spotinst_acct_id = "act-123456"
-        
-        record_sets {
-          name          = "foo.example.com"
-          use_public_ip = true
-        }
+  integration_route53 {
+
+    # Option 1: Use A records.
+    domains { 
+      hosted_zone_id   = "zone-id"
+      spotinst_acct_id = "act-123456"
+      record_set_type  = "a"
+
+      record_sets {
+        name          = "foo.example.com"
+        use_public_ip = true
       }
     }
+
+    # Option 2: Use CNAME records.
+    domains { 
+      hosted_zone_id   = "zone-id"
+      spotinst_acct_id = "act-123456"
+      record_set_type  = "cname"
+
+      record_sets {
+        name           = "foo.example.com"
+        use_public_dns = true
+      }
+    }
+
+  }
 ```
 
 * `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
@@ -862,26 +880,26 @@ Usage:
 
 ```hcl
   integration_beanstalk {
-    environment_id         = "e-3tkmbj7hzc"
-  
+    environment_id = "e-3tkmbj7hzc"
+
     deployment_preferences {
       automatic_roll        = true
       batch_size_percentage = 100
       grace_period          = 90
       strategy {
-        action                = "REPLACE_SERVER"
+        action                 = "REPLACE_SERVER"
         should_drain_instances = true
       }
     }
-  
+
     managed_actions {
       platform_update {
         perform_at   = "timeWindow"
-        time_window   = "Mon:23:50-Tue:00:20"
+        time_window  = "Mon:23:50-Tue:00:20"
         update_level = "minorAndPatch"
       }
     }
- }
+  }
 ```
 
 <a id="update-policy"></a>
@@ -915,22 +933,22 @@ Usage:
     auto_apply_tags        = false
 
     roll_config {
-      batch_size_percentage = 33
-      health_check_type     = "ELB"
-      grace_period          = 300
+      batch_size_percentage    = 33
+      health_check_type        = "ELB"
+      grace_period             = 300
       wait_for_roll_percentage = 10
       wait_for_roll_timeout    = 1500
-      
+
       strategy {
-        action = "REPLACE_SERVER"
-        should_drain_instances = false
+        action                       = "REPLACE_SERVER"
+        should_drain_instances       = false
         batch_min_healthy_percentage = 10
-          on_failure {
-                  action_type = "DETACH_NEW"
-                  should_handle_all_batches = true
-                  draining_timeout = 600
-                  should_decrement_target_capacity = true
-         }
+        on_failure {
+          action_type                      = "DETACH_NEW"
+          should_handle_all_batches        = true
+          draining_timeout                 = 600
+          should_decrement_target_capacity = true
+        }
       }
     }
   }
