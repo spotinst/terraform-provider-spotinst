@@ -1,4 +1,4 @@
-## 1.21.0 (Unreleased)
+## 1.21.0 (August 04, 2020)
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `block_device_mappings`
