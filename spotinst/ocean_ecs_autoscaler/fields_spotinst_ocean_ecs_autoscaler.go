@@ -2,6 +2,7 @@ package ocean_ecs_autoscaler
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -34,7 +35,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(MaxScaleDownPercentage): {
-									Type:     schema.TypeInt,
+									Type:     schema.TypeFloat,
 									Optional: true,
 								},
 							},
@@ -255,8 +256,8 @@ func expandOceanAWSAutoScalerDown(data interface{}) (*aws.ECSAutoScalerDown, err
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(MaxScaleDownPercentage)].(int); ok && v > 0 {
-				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Int(v))
+			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
+				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
 			}
 		}
 		return autoScaleDown, nil
@@ -297,7 +298,7 @@ func flattenAutoscaler(autoScaler *aws.ECSAutoScaler) []interface{} {
 
 func flattenAutoScaleDown(autoScaleDown *aws.ECSAutoScalerDown) []interface{} {
 	down := make(map[string]interface{})
-	down[string(MaxScaleDownPercentage)] = spotinst.IntValue(autoScaleDown.MaxScaleDownPercentage)
+	down[string(MaxScaleDownPercentage)] = spotinst.Float64Value(autoScaleDown.MaxScaleDownPercentage)
 
 	return []interface{}{down}
 }

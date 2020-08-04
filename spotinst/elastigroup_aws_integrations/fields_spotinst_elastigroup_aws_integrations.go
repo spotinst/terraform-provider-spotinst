@@ -60,8 +60,8 @@ func expandAWSGroupAutoScaleDown(data interface{}) (*aws.AutoScaleDown, error) {
 				autoScaleDown.SetEvaluationPeriods(spotinst.Int(v))
 			}
 
-			if v, ok := m[string(MaxScaleDownPercentage)].(int); ok && v > 0 {
-				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Int(v))
+			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
+				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
 			}
 		}
 		return autoScaleDown, nil

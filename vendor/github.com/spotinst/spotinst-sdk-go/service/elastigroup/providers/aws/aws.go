@@ -174,8 +174,8 @@ type AutoScaleHeadroom struct {
 }
 
 type AutoScaleDown struct {
-	EvaluationPeriods      *int `json:"evaluationPeriods,omitempty"`
-	MaxScaleDownPercentage *int `json:"maxScaleDownPercentage,omitempty"`
+	EvaluationPeriods      *int     `json:"evaluationPeriods,omitempty"`
+	MaxScaleDownPercentage *float64 `json:"maxScaleDownPercentage,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -2214,7 +2214,7 @@ func (o *AutoScaleDown) SetEvaluationPeriods(v *int) *AutoScaleDown {
 	return o
 }
 
-func (o *AutoScaleDown) SetMaxScaleDownPercentage(v *int) *AutoScaleDown {
+func (o *AutoScaleDown) SetMaxScaleDownPercentage(v *float64) *AutoScaleDown {
 	if o.MaxScaleDownPercentage = v; o.MaxScaleDownPercentage == nil {
 		o.nullFields = append(o.nullFields, "MaxScaleDownPercentage")
 	}
