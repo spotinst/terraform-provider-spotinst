@@ -87,7 +87,7 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 
 								string(MaxScaleDownPercentage): {
-									Type:     schema.TypeInt,
+									Type:     schema.TypeFloat,
 									Optional: true,
 								},
 							},
@@ -255,7 +255,7 @@ func flattenAutoScaleHeadroom(autoScaleHeadroom *aws.AutoScaleHeadroom) []interf
 func flattenAutoScaleDown(autoScaleDown *aws.AutoScaleDown) []interface{} {
 	down := make(map[string]interface{})
 	down[string(EvaluationPeriods)] = spotinst.IntValue(autoScaleDown.EvaluationPeriods)
-	down[string(MaxScaleDownPercentage)] = spotinst.IntValue(autoScaleDown.MaxScaleDownPercentage)
+	down[string(MaxScaleDownPercentage)] = spotinst.Float64Value(autoScaleDown.MaxScaleDownPercentage)
 	return []interface{}{down}
 }
 

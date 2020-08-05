@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"testing"
-
-	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
@@ -2836,7 +2835,7 @@ const testIntegrationCodeDeployGroupConfig_EmptyFields = `
 
 // endregion
 
-// region Elastigroup: Route53 integration
+// region Elastigroup: Route53 Integration
 func TestAccSpotinstElastigroupAWS_IntegrationRoute53(t *testing.T) {
 	groupName := "test-acc-eg-integration-route53"
 	resourceName := createElastigroupResourceName(groupName)
@@ -2860,10 +2859,10 @@ func TestAccSpotinstElastigroupAWS_IntegrationRoute53(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2768511080.hosted_zone_id", "id_create"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2768511080.record_sets.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2768511080.record_sets.3654964686.name", "test_create"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2768511080.record_sets.3654964686.use_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3700001715.hosted_zone_id", "id_create"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3700001715.record_sets.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3700001715.record_sets.3142519941.name", "test_create"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3700001715.record_sets.3142519941.use_public_ip", "false"),
 				),
 			},
 			{
@@ -2877,20 +2876,65 @@ func TestAccSpotinstElastigroupAWS_IntegrationRoute53(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.hosted_zone_id", "id_update"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.record_sets.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.record_sets.2650004135.name", "test_update"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.record_sets.2650004135.use_public_ip", "true"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.record_sets.567353526.name", "test_update_two"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.record_sets.567353526.use_public_ip", "false"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.record_sets.241835256.name", "test_update_three"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.522430925.record_sets.241835256.use_public_ip", "false"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3045402889.hosted_zone_id", "new_domain_on_update"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3045402889.record_sets.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3045402889.record_sets.2523873097.name", "new_set"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3045402889.record_sets.2523873097.use_public_ip", "true"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3045402889.record_sets.981666619.name", "test_update_default_ip"),
-					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3045402889.record_sets.981666619.use_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.hosted_zone_id", "id_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.record_sets.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.record_sets.324056474.name", "test_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.record_sets.324056474.use_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.record_sets.409274120.name", "test_update_two"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.record_sets.409274120.use_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.record_sets.2501457915.name", "test_update_three"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.983253016.record_sets.2501457915.use_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3115620618.hosted_zone_id", "new_domain_on_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3115620618.record_sets.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3115620618.record_sets.2228261234.name", "new_set"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3115620618.record_sets.2228261234.use_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3115620618.record_sets.4062604560.name", "test_update_default_ip"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.3115620618.record_sets.4062604560.use_public_ip", "false"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRoute53GroupConfigWithRecordSetType_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2712068702.hosted_zone_id", "id_create"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2712068702.record_set_type", "cname"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2712068702.record_sets.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2712068702.record_sets.1411234404.name", "test_create"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.2712068702.record_sets.1411234404.use_public_dns", "true"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testIntegrationRoute53GroupConfigWithRecordSetType_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.hosted_zone_id", "id_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_set_type", "cname"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_sets.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_sets.3843633722.name", "test_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_sets.3843633722.use_public_dns", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_sets.4147622377.name", "test_update_two"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_sets.4147622377.use_public_dns", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_sets.2051768602.name", "test_update_three"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1076157528.record_sets.2051768602.use_public_dns", "true"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1647748265.hosted_zone_id", "new_domain_on_update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1647748265.record_set_type", "cname"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1647748265.record_sets.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1647748265.record_sets.1922635474.name", "new_set"),
+					resource.TestCheckResourceAttr(resourceName, "integration_route53.0.domains.1647748265.record_sets.1922635474.use_public_dns", "true"),
 				),
 			},
 			{
@@ -2914,7 +2958,7 @@ const testIntegrationRoute53GroupConfig_Create = `
 integration_route53 {
 	domains {
 		hosted_zone_id   = "id_create"
-    spotinst_acct_id = "act-123456"
+    	spotinst_acct_id = "act-123456"
 		record_sets {
 			name = "test_create"
 			use_public_ip = false
@@ -2950,6 +2994,52 @@ integration_route53 {
 		}
 		record_sets {
 			name = "test_update_default_ip"
+		}
+	}
+}
+// ------------------------------------
+`
+const testIntegrationRoute53GroupConfigWithRecordSetType_Create = `
+// --- INTEGRATION: ROUTE53 ----------
+integration_route53 {
+	domains {
+		hosted_zone_id   = "id_create"
+    	spotinst_acct_id = "act-123456"
+		record_set_type  = "cname"
+		record_sets {
+			name = "test_create"
+			use_public_dns = true
+		}
+	}
+}
+// ------------------------------------
+`
+const testIntegrationRoute53GroupConfigWithRecordSetType_Update = `
+// --- INTEGRATION: ROUTE53 ----------
+integration_route53 {
+	domains {
+		hosted_zone_id = "id_update"
+		record_set_type  = "cname"
+		record_sets {
+			name = "test_update"
+			use_public_dns = true
+		}
+		record_sets {
+			name = "test_update_two"
+			use_public_dns = true
+		}
+		record_sets {
+			name = "test_update_three"
+			use_public_dns = true
+		}
+	}
+
+	domains {
+		hosted_zone_id = "new_domain_on_update"
+		record_set_type  = "cname"
+		record_sets {
+			name = "new_set"
+			use_public_dns = true
 		}
 	}
 }
@@ -3498,7 +3588,7 @@ const testIntegrationNomadGroupConfig_EmptyFields = `
 
 // endregion
 
-// region Docker Swarm integration
+// region Elastigroup: Docker Swarm Integration
 
 func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
 	groupName := "test-acc-eg-integration-docker-swarm"

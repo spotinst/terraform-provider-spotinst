@@ -1,4 +1,13 @@
 ## 1.22.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added support for `CNAME` records in `integration_route53`
+* resource/spotinst_managed_instance_aws: added support for `CNAME` records in `integration_route53`
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: eliminate unmarshalling errors by fixing the type of `maxScaleDownPercentage`
+* resource/resource_spotinst_ocean_ecs: eliminate unmarshalling errors by fixing the type of `maxScaleDownPercentage` 
+
 ## 1.21.0 (August 04, 2020)
 
 ENHANCEMENTS:

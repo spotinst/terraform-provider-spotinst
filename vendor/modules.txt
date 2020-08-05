@@ -338,7 +338,7 @@ github.com/posener/complete/match
 # github.com/spf13/afero v1.2.2
 github.com/spf13/afero
 github.com/spf13/afero/mem
-# github.com/spotinst/spotinst-sdk-go v1.54.0
+# github.com/spotinst/spotinst-sdk-go v1.57.0
 ## explicit
 github.com/spotinst/spotinst-sdk-go/service/elastigroup
 github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws

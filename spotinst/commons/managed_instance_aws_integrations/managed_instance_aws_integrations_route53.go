@@ -1,8 +1,6 @@
 package managed_instance_aws_integrations
 
 import (
-	"errors"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/managedinstance/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -37,12 +35,22 @@ func SetupRoute53(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Optional: true,
 								},
 
+								string(RecordSetType): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
 								string(RecordSets): {
 									Type:     schema.TypeSet,
 									Required: true,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(UsePublicIP): {
+												Type:     schema.TypeBool,
+												Optional: true,
+											},
+
+											string(UsePublicDNS): {
 												Type:     schema.TypeBool,
 												Optional: true,
 											},
@@ -126,11 +134,11 @@ func expandAWSManagedInstanceRoute53IntegrationDomains(data interface{}) ([]*aws
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
-		domain := &aws.Domain{}
-
 		if !ok {
 			continue
 		}
+
+		domain := new(aws.Domain)
 
 		if v, ok := attr[string(HostedZoneId)].(string); ok && v != "" {
 			domain.SetHostedZoneId(spotinst.String(v))
@@ -140,6 +148,10 @@ func expandAWSManagedInstanceRoute53IntegrationDomains(data interface{}) ([]*aws
 			domain.SetSpotinstAccountId(spotinst.String(v))
 		}
 
+		if v, ok := attr[string(RecordSetType)].(string); ok && v != "" {
+			domain.SetRecordSetType(spotinst.String(v))
+		}
+
 		if r, ok := attr[string(RecordSets)]; ok {
 			if recordSets, err := expandAWSManagedInstanceRoute53IntegrationDomainsRecordSets(r); err != nil {
 				return nil, err
@@ -147,8 +159,10 @@ func expandAWSManagedInstanceRoute53IntegrationDomains(data interface{}) ([]*aws
 				domain.SetRecordSets(recordSets)
 			}
 		}
+
 		domains = append(domains, domain)
 	}
+
 	return domains, nil
 }
 
@@ -158,25 +172,26 @@ func expandAWSManagedInstanceRoute53IntegrationDomainsRecordSets(data interface{
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
-
 		if !ok {
 			continue
 		}
 
-		if _, ok := attr[string(UsePublicIP)]; !ok {
-			return nil, errors.New("invalid record set attributes: use_public_ip missing")
+		recordSet := new(aws.RecordSet)
+
+		if v, ok := attr[string(Route53Name)].(string); ok {
+			recordSet.SetName(spotinst.String(v))
 		}
 
-		if _, ok := attr[string(Route53Name)]; !ok {
-			return nil, errors.New("invalid record set attributes: name missing")
+		if v, ok := attr[string(UsePublicIP)].(bool); ok && v {
+			recordSet.SetUsePublicIP(spotinst.Bool(v))
 		}
 
-		recordSet := &aws.RecordSet{
-			UsePublicIP: spotinst.Bool(attr[string(UsePublicIP)].(bool)),
-			Name:        spotinst.String(attr[string(Route53Name)].(string)),
+		if v, ok := attr[string(UsePublicDNS)].(bool); ok && v {
+			recordSet.SetUsePublicDNS(spotinst.Bool(v))
 		}
 
 		recordSets = append(recordSets, recordSet)
 	}
+
 	return recordSets, nil
 }
