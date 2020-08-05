@@ -1,4 +1,4 @@
-## 1.22.0 (Unreleased)
+## 1.22.0 (August 05, 2020)
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added support for `CNAME` records in `integration_route53`
