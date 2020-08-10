@@ -902,6 +902,57 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[InstanceTypes] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		InstanceTypes,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			MinItems: 1,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value []string = nil
+			if launchSpec.InstanceTypes != nil {
+				value = launchSpec.InstanceTypes
+			}
+			if err := resourceData.Set(string(InstanceTypes), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceTypes), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceTypes)); ok {
+				if instanceTypes, err := expandInstanceTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetInstanceTypes(instanceTypes)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceTypes)); ok {
+				if instanceTypes, err := expandInstanceTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetInstanceTypes(instanceTypes)
+				}
+			} else {
+				launchSpec.SetInstanceTypes(nil)
+			}
+
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[RootVolumeSize] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
 		RootVolumeSize,
@@ -1106,6 +1157,18 @@ func expandSubnetIDs(data interface{}) ([]string, error) {
 	for _, v := range list {
 		if subnetID, ok := v.(string); ok && subnetID != "" {
 			result = append(result, subnetID)
+		}
+	}
+	return result, nil
+}
+
+func expandInstanceTypes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if instanceTypes, ok := v.(string); ok && instanceTypes != "" {
+			result = append(result, instanceTypes)
 		}
 	}
 	return result, nil

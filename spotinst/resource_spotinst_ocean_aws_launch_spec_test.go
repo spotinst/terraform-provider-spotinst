@@ -177,6 +177,10 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.1785420166.effect", "NoSchedule"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.0", "m3.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.1", "m4.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.2", "m5.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 				),
 			},
@@ -204,6 +208,12 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-f6758eab"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.#", "5"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.0", "m3.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.1", "m4.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.2", "m4.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.3", "m5.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instace_types.4", "m5.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 				),
 			},
@@ -221,6 +231,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world"
   iam_instance_profile = "test"
   subnet_ids = ["subnet-bce60ec4"]
+  instance_types = ["m3.xlarge", "m4.2xlarge", "m5.2xlarge"]
   root_volume_size = 20 
   labels {
     key = "label key"
@@ -246,6 +257,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world updated"
   iam_instance_profile = "updated"
   subnet_ids = ["subnet-f6758eab", "subnet-d47f6a9f"]
+  instance_types = ["m3.2xlarge", "m4.2xlarge", "m4.xlarge", "m5.xlarge", "m5.2xlarge"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
   root_volume_size = 30
   name = "launch spec name test update"
