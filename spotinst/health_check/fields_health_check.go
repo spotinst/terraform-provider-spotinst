@@ -14,7 +14,6 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-
 	fieldsMap[Name] = commons.NewGenericField(
 		commons.HealthCheck,
 		Name,
@@ -181,7 +180,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 					string(Endpoint): {
 						Type:     schema.TypeString,
-						Required: true,
+						Optional: true,
+					},
+
+					string(EndPoint): {
+						Type:     schema.TypeString,
+						Optional: true,
 					},
 
 					string(Interval): {
@@ -191,7 +195,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 					string(Timeout): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
+					},
+
+					string(TimeOut): {
+						Type:     schema.TypeInt,
+						Optional: true,
 					},
 
 					string(Unhealthy): {
@@ -207,25 +216,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			hcWrapper := resourceObject.(*commons.HealthCheckWrapper)
-			healthCheck := hcWrapper.GetHealthCheck()
-			var result []interface{} = nil
-			if healthCheck != nil && healthCheck.Check != nil {
-				result = flattencheck(healthCheck.Check)
-			}
-
-			if result != nil {
-				if err := resourceData.Set(string(Check), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Check), err)
-				}
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			hcWrapper := resourceObject.(*commons.HealthCheckWrapper)
 			healthCheck := hcWrapper.GetHealthCheck()
 			if v, ok := resourceData.GetOk(string(Check)); ok {
-				if check, err := expandcheck(v); err != nil {
+				if check, err := expandCheck(v); err != nil {
 					return err
 				} else {
 					healthCheck.SetCheck(check)
@@ -238,7 +235,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			healthCheck := hcWrapper.GetHealthCheck()
 			var value *healthcheck.Check = nil
 			if v, ok := resourceData.GetOk(string(Check)); ok {
-				if integration, err := expandcheck(v); err != nil {
+				if integration, err := expandCheck(v); err != nil {
 					return err
 				} else {
 					value = integration
@@ -255,7 +252,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func expandcheck(data interface{}) (*healthcheck.Check, error) {
+func expandCheck(data interface{}) (*healthcheck.Check, error) {
 	check := &healthcheck.Check{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
@@ -275,6 +272,10 @@ func expandcheck(data interface{}) (*healthcheck.Check, error) {
 
 	if v, ok := m[string(Endpoint)].(string); ok && v != "" {
 		check.SetEndpoint(spotinst.String(v))
+	} else if v, ok := m[string(EndPoint)].(string); ok && v != "" {
+		check.SetEndpoint(spotinst.String(v))
+	} else {
+		check.SetEndpoint(nil)
 	}
 
 	if v, ok := m[string(Interval)].(int); ok && v > 0 {
@@ -284,6 +285,8 @@ func expandcheck(data interface{}) (*healthcheck.Check, error) {
 	}
 
 	if v, ok := m[string(Timeout)].(int); ok && v > 0 {
+		check.SetTimeout(spotinst.Int(v))
+	} else if v, ok := m[string(TimeOut)].(int); ok && v > 0 {
 		check.SetTimeout(spotinst.Int(v))
 	} else {
 		check.SetTimeout(nil)
@@ -302,17 +305,4 @@ func expandcheck(data interface{}) (*healthcheck.Check, error) {
 	}
 
 	return check, nil
-}
-
-func flattencheck(check *healthcheck.Check) []interface{} {
-	result := make(map[string]interface{})
-	result[string(Protocol)] = spotinst.StringValue(check.Protocol)
-	result[string(Port)] = spotinst.IntValue(check.Port)
-	result[string(Endpoint)] = spotinst.StringValue(check.Endpoint)
-	result[string(Interval)] = spotinst.IntValue(check.Interval)
-	result[string(Timeout)] = spotinst.IntValue(check.Timeout)
-	result[string(Unhealthy)] = spotinst.IntValue(check.Unhealthy)
-	result[string(Healthy)] = spotinst.IntValue(check.Healthy)
-
-	return []interface{}{result}
 }
