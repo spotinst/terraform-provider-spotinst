@@ -15,4 +15,12 @@ const (
 	Timeout    commons.FieldName = "timeout"
 	Unhealthy  commons.FieldName = "unhealthy"
 	Healthy    commons.FieldName = "healthy"
+
+	// Deprecated: EndPoint is obsolete, exists for backward compatibility only,
+	// and should not be used. Please use Endpoint instead.
+	EndPoint commons.FieldName = "end_point"
+
+	// Deprecated: TimeOut is obsolete, exists for backward compatibility only,
+	// and should not be used. Please use Timeout instead.
+	TimeOut commons.FieldName = "time_out"
 )
