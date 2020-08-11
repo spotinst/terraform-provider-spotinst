@@ -1,4 +1,11 @@
 ## 1.23.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `instance_types`
+
+BUG FIXES:
+* resource/spotinst_health_check: fixed backward compatibility in `end_point` and `time_out`
+ 
 ## 1.22.0 (August 05, 2020)
 
 ENHANCEMENTS:
