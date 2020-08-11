@@ -1,4 +1,4 @@
-## 1.23.0 (Unreleased)
+## 1.23.0 (August 11, 2020)
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `instance_types`
