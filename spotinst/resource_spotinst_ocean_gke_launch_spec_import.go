@@ -21,7 +21,7 @@ func resourceSpotinstOceanGKELaunchSpecImport() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceSpotinstOceanGKELaunchSpecImportCreate,
 		Read:   resourceSpotinstOceanGKELaunchSpecImportRead,
-		Update: resourceSpotinstOceanGKELaunchSpecImportUpdate,
+		//Update: resourceSpotinstOceanGKELaunchSpecImportUpdate,
 		Delete: resourceSpotinstOceanGKELaunchSpecImportDelete,
 
 		Importer: &schema.ResourceImporter{

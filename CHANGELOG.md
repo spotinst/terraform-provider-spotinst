@@ -1,4 +1,9 @@
 ## 1.24.0 (Unreleased)
+
+BUG FIXES:
+* resource/ocean_aws: resolved error with `spot_percentage` not applying 0 as value 
+* resource/ocean_gke_launch_spec_import: `OceanId` and `NodePoolName` are now flagged with ForceNew
+
 ## 1.23.0 (August 11, 2020)
 
 ENHANCEMENTS:
