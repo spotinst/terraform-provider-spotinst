@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
 )
@@ -115,13 +116,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSStrategy,
 		SpotPercentage,
 		&schema.Schema{
-			Type:     schema.TypeFloat,
-			Optional: true,
+			Type:         schema.TypeFloat,
+			Optional:     true,
+			Default:      -1,
+			ValidateFunc: validation.FloatAtLeast(-1),
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var value *float64 = nil
+			//Force setting -1 as default value if it's not exists in initial creation,
+			// to allow initialization of the field to 0
+			value := spotinst.Float64(-1)
 			if cluster.Strategy != nil && cluster.Strategy.SpotPercentage != nil {
 				value = cluster.Strategy.SpotPercentage
 			}
@@ -133,7 +138,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(float64); ok {
+			if v := resourceData.Get(string(SpotPercentage)).(float64); v > -1 {
 				cluster.Strategy.SetSpotPercentage(spotinst.Float64(v))
 			}
 			return nil
@@ -141,7 +146,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(float64); ok {
+			if v := resourceData.Get(string(SpotPercentage)).(float64); v > -1 {
 				cluster.Strategy.SetSpotPercentage(spotinst.Float64(v))
 			}
 			return nil
