@@ -1,5 +1,9 @@
 ## 1.25.0 (Unreleased)
-## 1.24.0 (August 20, 2020)
+
+BUG FIXES:
+* resource/ocean_aws: resolved error with `spot_percentage` applying 0 automatically.
+
+## 1.24.0 (Unreleased)
 
 BUG FIXES:
 * resource/ocean_aws: resolved error with `spot_percentage` not applying 0 as value 
