@@ -1,4 +1,8 @@
 ## 1.26.0 (Unreleased)
+
+FEATURES:
+* *New Resource*: `elastigroup_aws_suspend_processes`
+
 ## 1.25.0 (August 26, 2020)
 
 BUG FIXES:

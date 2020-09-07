@@ -118,6 +118,8 @@ const (
 
 	HealthCheck ResourceAffinity = "Health_Check"
 
+	SuspendProcesses ResourceAffinity = "Suspend_Processes"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

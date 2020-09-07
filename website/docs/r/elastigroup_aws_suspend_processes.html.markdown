@@ -1,0 +1,40 @@
+---
+layout: "spotinst"
+page_title: "Spotinst: elastigroup_aws_suspend_processes"
+subcategory: "Elastigroup"
+description: |-
+  Provides a Processes suspensions to Spotinst AWS group resource.
+---
+
+# spotinst\_elastigroup\_aws\_susoend_processes
+
+Suspend AWS Elastigroup processes. This resource provide the capavility of
+suspending elastigroup processes using Terraform.
+
+For supported processes please visit: [Suspend Processes API reference](https://help.spot.io/spotinst-api/elastigroup/amazon-web-services/suspend-processes/)
+## Example Usage
+
+```hcl
+# Create an Elastigroup
+resource "spotinst_elastigroup_aws_suspend_processes" "resource_name" {
+
+  group_id = "sig-12345678"
+  suspension {
+        name = "OUT_OF_STRATEGY"
+    }
+  suspension {
+          name = "REVERT_PREFERRED"
+    }
+  suspension  {
+          name = "PREVENTIVE_REPLACEMENT"
+    }
+}
+```
+
+## Argument Reference
+
+The following arguments are supported:
+
+* `group_id` - (Required; string) Elastigroup ID to apply the suspensions on.
+* `suspension` - (Required; at least one block is required) block of single process to suspend.
+    * `name` - (Required; string) The name of process to suspend. Valid values: `"AUTO_HEALING" , "OUT_OF_STRATEGY", "PREVENTIVE_REPLACEMENT", "REVERT_PREFERRED", or "SCHEDULING"`. 
