@@ -113,7 +113,7 @@ func createSuspendProcessesTerraform(ccm *SuspendProcessesMetadata, formatToUse 
 }
 
 // region SuspendProcesses: Baseline
-func TestAccSpotinstSuspendProcessesBaseline(t *testing.T) {
+func TestAccSpotinstSuspendProcessesElastigroupAWS_Baseline(t *testing.T) {
 	groupId := "sig-05d0a009"
 	resourceName := createSuspendProcessesResourceName(groupId)
 
@@ -202,7 +202,7 @@ resource "` + string(commons.SuspendProcessesResourceName) + `" "%v" {
 // endregion
 
 // region SuspendProcesses: RemoveSuspension
-func TestAccSpotinstSuspendProcessesRemoveSuspension(t *testing.T) {
+func TestAccSpotinstSuspendProcessesElastigroupAWS_RemoveSuspension(t *testing.T) {
 	groupId := "sig-05d0a009"
 	resourceName := createSuspendProcessesResourceName(groupId)
 

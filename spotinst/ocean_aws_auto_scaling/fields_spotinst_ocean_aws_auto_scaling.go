@@ -201,8 +201,12 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 		autoscaler.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
-	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > 0 {
-		autoscaler.SetAutoHeadroomPercentage(spotinst.Int(v))
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v >= 0 {
+		if v == 0 {
+			autoscaler.SetAutoHeadroomPercentage(nil)
+		} else {
+			autoscaler.SetAutoHeadroomPercentage(spotinst.Int(v))
+		}
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {

@@ -51,7 +51,8 @@ resource "spotinst_ocean_aws" "example" {
   fallback_to_ondemand       = true
   draining_timeout           = 120
   utilize_reserved_instances = false
-  grace_period = 600
+  grace_period               = 600
+  spot_percentage            = 100
   // ---------------------------------
 
   tags {
@@ -94,6 +95,8 @@ The following arguments are supported:
 * `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, Ocean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `grace_period` - (Optional, Default: 600) The amount of time, in seconds, after the instance has launched to start checking its health.
+* `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
+
 
 <a id="auto-scaler"></a>
 ## Auto Scaler

@@ -18,18 +18,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSStrategy,
 		SpotPercentage,
 		&schema.Schema{
-			Type:          schema.TypeFloat,
+			Type:          schema.TypeInt,
 			Optional:      true,
 			ConflictsWith: []string{string(OnDemandCount)},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			//Risk is configured as int in the API but float on Go-SDK (currently not aligning because of breaking changes effects)
+			//There for value is of type float and cast as necessary
 			var value *float64 = nil
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Risk != nil {
 				value = elastigroup.Strategy.Risk
 			}
-			if err := resourceData.Set(string(SpotPercentage), spotinst.Float64Value(value)); err != nil {
+			//Casting from float to int
+			if err := resourceData.Set(string(SpotPercentage), spotinst.Int(int(*value))); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
 			}
 			return nil
@@ -37,16 +40,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(float64); ok && v >= 0 {
-				elastigroup.Strategy.SetRisk(spotinst.Float64(v))
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v >= 0 {
+				//Casting from int to float
+				elastigroup.Strategy.SetRisk(spotinst.Float64(float64(v)))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(float64); ok && v >= 0 {
-				elastigroup.Strategy.SetRisk(spotinst.Float64(v))
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v >= 0 {
+				//Casting from int to float
+				elastigroup.Strategy.SetRisk(spotinst.Float64(float64(v)))
 			}
 			return nil
 		},

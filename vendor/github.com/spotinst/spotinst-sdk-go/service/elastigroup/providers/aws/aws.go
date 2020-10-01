@@ -132,7 +132,7 @@ type AutoScale struct {
 }
 
 type AutoScaleECS struct {
-	AutoScale                                             // embedding
+	AutoScale
 	Attributes                     []*AutoScaleAttributes `json:"attributes,omitempty"`
 	ShouldScaleDownNonServiceTasks *bool                  `json:"shouldScaleDownNonServiceTasks,omitempty"`
 
@@ -141,15 +141,15 @@ type AutoScaleECS struct {
 }
 
 type AutoScaleKubernetes struct {
-	AutoScale                   // embedding
-	Labels    []*AutoScaleLabel `json:"labels,omitempty"`
+	AutoScale
+	Labels []*AutoScaleLabel `json:"labels,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
 }
 
 type AutoScaleNomad struct {
-	AutoScale                          // embedding
+	AutoScale
 	Constraints []*AutoScaleConstraint `json:"constraints,omitempty"`
 
 	forceSendFields []string
@@ -157,7 +157,7 @@ type AutoScaleNomad struct {
 }
 
 type AutoScaleDockerSwarm struct {
-	AutoScale // embedding
+	AutoScale
 
 	forceSendFields []string
 	nullFields      []string
@@ -286,6 +286,14 @@ type RancherIntegration struct {
 type EC2ContainerServiceIntegration struct {
 	ClusterName *string       `json:"clusterName,omitempty"`
 	AutoScale   *AutoScaleECS `json:"autoScale,omitempty"`
+	Batch       *Batch        `json:"batch,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Batch struct {
+	JobQueueNames []string `json:"jobQueueNames,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1980,17 +1988,28 @@ func (o *EC2ContainerServiceIntegration) SetClusterName(v *string) *EC2Container
 	return o
 }
 
-func (o AutoScaleECS) MarshalJSON() ([]byte, error) {
-	type noMethod AutoScaleECS
-	raw := noMethod(o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
 func (o *EC2ContainerServiceIntegration) SetAutoScale(v *AutoScaleECS) *EC2ContainerServiceIntegration {
 	if o.AutoScale = v; o.AutoScale == nil {
 		o.nullFields = append(o.nullFields, "AutoScale")
 	}
 	return o
+}
+
+func (o *EC2ContainerServiceIntegration) SetBatch(v *Batch) *EC2ContainerServiceIntegration {
+	if o.Batch = v; o.Batch == nil {
+		o.nullFields = append(o.nullFields, "Batch")
+	}
+	return o
+}
+
+// endregion
+
+// region AutoScaleECS
+
+func (o AutoScaleECS) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleECS
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
 func (o *AutoScaleECS) SetAttributes(v []*AutoScaleAttributes) *AutoScaleECS {
@@ -2009,7 +2028,24 @@ func (o *AutoScaleECS) SetShouldScaleDownNonServiceTasks(v *bool) *AutoScaleECS 
 
 // endregion
 
-// region Docker Swarm
+// region Batch
+
+func (o Batch) MarshalJSON() ([]byte, error) {
+	type noMethod Batch
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Batch) SetJobQueueNames(v []string) *Batch {
+	if o.JobQueueNames = v; o.JobQueueNames == nil {
+		o.nullFields = append(o.nullFields, "JobQueueNames")
+	}
+	return o
+}
+
+// endregion
+
+// region DockerSwarmIntegration
 
 func (o DockerSwarmIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod DockerSwarmIntegration

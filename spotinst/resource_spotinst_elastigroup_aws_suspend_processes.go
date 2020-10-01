@@ -21,7 +21,7 @@ func resourceSpotinstElastigroupSuspendProcesses() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceSpotinstAWSSuspendProcessesCreate,
 		Read:   resourceSpotinstAWSSuspendProcessesRead,
-		Update: resourceSpotinstSuspendProcessesUpdate,
+		Update: resourceSpotinstAWSSuspendProcessesUpdate,
 		Delete: resourceSpotinstAWSSuspendProcessesDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -47,8 +47,8 @@ const ErrCodeSuspendProcessesNotFound = "SUSPEND_PROCESSES_DOESNT_EXIST"
 
 func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, meta interface{}) error {
 	if resourceData.Id() == "" {
-		resourceData.SetId(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupId)).(string))
-		resourceData.Set("group_id", resourceData.Get(string(elastigroup_aws_suspend_processes.GroupId)))
+		resourceData.SetId(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)).(string))
+		resourceData.Set("group_id", resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)))
 	}
 
 	log.Printf(string(commons.ResourceOnRead), commons.SuspendProcessesResource.GetName(), resourceData.Id())
@@ -121,7 +121,7 @@ func createSuspendProcesses(resourceData *schema.ResourceData, suspendProcesses 
 		log.Printf("===> SuspendProcesses create configuration: %s", json)
 	}
 	input := &aws.CreateSuspensionsInput{Suspensions: suspendProcesses.Suspensions}
-	input.GroupID = spotinst.String(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupId)).(string))
+	input.GroupID = spotinst.String(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)).(string))
 
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
 		_, err := spotinstClient.elastigroup.CloudProviderAWS().CreateSuspensions(context.Background(), input)
@@ -185,7 +185,7 @@ func deleteSuspendProcesses(resourceData *schema.ResourceData, meta interface{})
 //            Update
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-func resourceSpotinstSuspendProcessesUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstAWSSuspendProcessesUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.SuspendProcessesResource.GetName(), resourceId)
 

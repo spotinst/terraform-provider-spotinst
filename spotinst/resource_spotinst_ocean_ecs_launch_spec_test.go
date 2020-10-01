@@ -169,15 +169,23 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
-					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
-					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
-					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "50"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
+					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
 				),
 			},
 			{
@@ -192,7 +200,17 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world updated")),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.base_size", "50"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.size_per_resource_unit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
@@ -219,6 +237,17 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
     key = "key"
     value = "value"
   }
+
+block_device_mappings {
+    device_name = "/dev/xvda1"
+    ebs {
+      delete_on_termination = "true"
+      kms_key_id = "kms-key"
+      encrypted = "false"
+      volume_type = "gp2"
+      volume_size = 50
+    }
+  }
  %v
 }
 `
@@ -242,6 +271,21 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   	key = "key2"
   	value = "value2"
   }
+
+  block_device_mappings {
+        device_name = "/dev/xvda1"
+        ebs {
+          delete_on_termination = "true"
+          kms_key_id = "kms-key"
+          encrypted = "false"
+          volume_type = "gp2"
+          dynamic_volume_size {
+            base_size = 50
+            resource = "CPU"
+            size_per_resource_unit = 20
+          }
+        }
+      }
 
 %v
 }

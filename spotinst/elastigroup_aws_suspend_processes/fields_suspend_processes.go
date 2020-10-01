@@ -14,9 +14,9 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[GroupId] = commons.NewGenericField(
+	fieldsMap[GroupID] = commons.NewGenericField(
 		commons.SuspendProcesses,
-		GroupId,
+		GroupID,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
@@ -26,23 +26,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			spWrapper := resourceObject.(*commons.SuspendProcessesWrapper)
 
 			var value *string = nil
-			value = spotinst.String(resourceData.Get(string(GroupId)).(string))
+			value = spotinst.String(resourceData.Get(string(GroupID)).(string))
 
 			spWrapper.GroupID = value
 
-			if err := resourceData.Set(string(GroupId), value); err != nil {
-				return fmt.Errorf(commons.FailureFieldReadPattern, string(GroupId), err)
+			if err := resourceData.Set(string(GroupID), value); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(GroupID), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			spWrapper := resourceObject.(*commons.SuspendProcessesWrapper)
-			spWrapper.GroupID = spotinst.String(resourceData.Get(string(GroupId)).(string))
+			spWrapper.GroupID = spotinst.String(resourceData.Get(string(GroupID)).(string))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			spWrapper := resourceObject.(*commons.SuspendProcessesWrapper)
-			spWrapper.GroupID = spotinst.String(resourceData.Get(string(GroupId)).(string))
+			spWrapper.GroupID = spotinst.String(resourceData.Get(string(GroupID)).(string))
 			return nil
 		},
 		nil,

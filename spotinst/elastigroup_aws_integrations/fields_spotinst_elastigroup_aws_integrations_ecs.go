@@ -112,6 +112,21 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 						Set: attributeHashKV,
 					},
+
+					string(Batch): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(JobQueueNames): {
+									Type:     schema.TypeList,
+									Required: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -241,7 +256,43 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 			integration.AutoScale.SetAttributes(attributes)
 		}
 	}
+
+	if v, ok := m[string(Batch)]; ok {
+		batch, err := expandECSBatch(v)
+		if err != nil {
+			return nil, err
+		}
+		if batch != nil {
+			integration.SetBatch(batch)
+		} else {
+			integration.SetBatch(nil)
+		}
+	}
 	return integration, nil
+}
+
+func expandECSBatch(data interface{}) (*aws.Batch, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		batch := &aws.Batch{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			var jobQueueNames []string = nil
+			if v, ok := m[string(JobQueueNames)].([]interface{}); ok && v != nil {
+				if len(v) > 0 {
+					jobQueueNamesList := make([]string, 0, len(v))
+					for _, jobQueueName := range v {
+						if v, ok := jobQueueName.(string); ok {
+							jobQueueNamesList = append(jobQueueNamesList, v)
+						}
+					}
+					jobQueueNames = jobQueueNamesList
+				}
+			}
+			batch.SetJobQueueNames(jobQueueNames)
+		}
+		return batch, nil
+	}
+	return nil, nil
 }
 
 func flattenAutoScaleHeadroom(autoScaleHeadroom *aws.AutoScaleHeadroom) []interface{} {
@@ -300,6 +351,10 @@ func flattenECSIntegration(ecs *aws.EC2ContainerServiceIntegration) []interface{
 		}
 	}
 
+	if ecs.Batch != nil {
+		result[string(Batch)] = flattenECSBatch(ecs.Batch)
+	}
+
 	return []interface{}{result}
 }
 
@@ -325,6 +380,14 @@ func expandECSAutoScaleAttributes(data interface{}) ([]*aws.AutoScaleAttributes,
 		out = append(out, c)
 	}
 	return out, nil
+}
+
+func flattenECSBatch(batch *aws.Batch) []interface{} {
+	result := make(map[string]interface{})
+	if len(batch.JobQueueNames) > 0 {
+		result[string(JobQueueNames)] = batch.JobQueueNames
+	}
+	return []interface{}{result}
 }
 
 func attributeHashKV(v interface{}) int {
