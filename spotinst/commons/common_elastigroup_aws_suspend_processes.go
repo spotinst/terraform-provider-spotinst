@@ -2,16 +2,17 @@ package commons
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
-	"log"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Variables
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
-	SuspendProcessesResourceName ResourceName = "spotinst_elastigroup_aws_suspend_processes"
+	SuspendProcessesResourceName ResourceName = "spotinst_elastigroup_aws_suspension"
 )
 
 var SuspendProcessesResource *SuspendProcessesTerraformResource

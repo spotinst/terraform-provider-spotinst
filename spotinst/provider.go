@@ -65,7 +65,7 @@ func Provider() terraform.ResourceProvider {
 			// HealthCheck
 			string(commons.HealthCheckResourceName): resourceSpotinstHealthCheck(),
 
-			//suspendProcesses
+			//SuspendProcesses
 			string(commons.SuspendProcessesResourceName): resourceSpotinstElastigroupSuspendProcesses(),
 		},
 	}

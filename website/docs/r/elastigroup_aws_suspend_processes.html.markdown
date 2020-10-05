@@ -15,8 +15,8 @@ For supported processes please visit: [Suspend Processes API reference](https://
 ## Example Usage
 
 ```hcl
-# Create an Elastigroup
-resource "spotinst_elastigroup_aws_suspend_processes" "resource_name" {
+# Create a process suspension for Elastigroup
+resource "spotinst_elastigroup_aws_suspension" "resource_name" {
 
   group_id = "sig-12345678"
   suspension {

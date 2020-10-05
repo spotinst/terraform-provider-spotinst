@@ -2,6 +2,7 @@ package elastigroup_aws_suspend_processes
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -25,9 +26,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			spWrapper := resourceObject.(*commons.SuspendProcessesWrapper)
 
-			var value *string = nil
-			value = spotinst.String(resourceData.Get(string(GroupID)).(string))
-
+			value := spotinst.String(resourceData.Get(string(GroupID)).(string))
 			spWrapper.GroupID = value
 
 			if err := resourceData.Set(string(GroupID), value); err != nil {
@@ -48,9 +47,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[Suspensions] = commons.NewGenericField(
+	fieldsMap[Suspension] = commons.NewGenericField(
 		commons.SuspendProcesses,
-		Suspensions,
+		Suspension,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Required: true,
@@ -70,14 +69,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if spWrapper.SuspendProcesses != nil {
 				result = flattenSuspensions(spWrapper.SuspendProcesses.Suspensions)
 			}
-			if err := resourceData.Set(string(Suspensions), result); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Suspensions), err)
+			if err := resourceData.Set(string(Suspension), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Suspension), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			spWrapper := resourceObject.(*commons.SuspendProcessesWrapper)
-			if v, ok := resourceData.GetOk(string(Suspensions)); ok {
+			if v, ok := resourceData.GetOk(string(Suspension)); ok {
 				if v, err := expandSuspensions(v); err != nil {
 					return err
 				} else {
@@ -89,7 +88,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			spWrapper := resourceObject.(*commons.SuspendProcessesWrapper)
 			var value []*aws.Suspension = nil
-			if v, ok := resourceData.GetOk(string(Suspensions)); ok {
+			if v, ok := resourceData.GetOk(string(Suspension)); ok {
 				if v, err := expandSuspensions(v); err != nil {
 					return err
 				} else {

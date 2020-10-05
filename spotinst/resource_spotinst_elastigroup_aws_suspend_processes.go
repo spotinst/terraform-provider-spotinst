@@ -3,16 +3,18 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/elastigroup_aws_suspend_processes"
-	"time"
+
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"log"
 )
 
 func resourceSpotinstElastigroupSuspendProcesses() *schema.Resource {
@@ -40,9 +42,9 @@ func setupSuspendProcesses() {
 	commons.SuspendProcessesResource = commons.NewSuspendProcessesResource(fieldsMap)
 }
 
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-////          Read
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//          Read
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeSuspendProcessesNotFound = "SUSPEND_PROCESSES_DOESNT_EXIST"
 
 func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -88,9 +90,9 @@ func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, 
 	return nil
 }
 
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-////            Create
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//           Create
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstAWSSuspendProcessesCreate(resourceData *schema.ResourceData, meta interface{}) error {
 
@@ -162,7 +164,7 @@ func deleteSuspendProcesses(resourceData *schema.ResourceData, meta interface{})
 
 	curr, err := meta.(*Client).elastigroup.CloudProviderAWS().ListSuspensions(context.Background(), listInput)
 	if err != nil {
-		return fmt.Errorf("[ERROR] failed to update suspend processes")
+		return fmt.Errorf("[ERROR] failed to update suspend processes: %v", err)
 	}
 
 	delInput := &aws.DeleteSuspensionsInput{}
@@ -223,13 +225,13 @@ func updateSuspendProcesses(suspendProcesses *aws.SuspendProcesses, resourceData
 
 	curr, err := meta.(*Client).elastigroup.CloudProviderAWS().ListSuspensions(context.Background(), req)
 	if err != nil {
-		return fmt.Errorf("[ERROR] failed to update suspend processes")
+		return fmt.Errorf("[ERROR] failed to update suspend processes: %v", err)
 	}
 
 	currProcesses := curr.SuspendProcesses.Processes
 
 	for _, process := range currProcesses {
-		if _, exists := Find(processesInput, process); !exists {
+		if _, exists := findString(processesInput, process); !exists {
 			processesToDelete = append(processesToDelete, process)
 		}
 	}
@@ -237,7 +239,7 @@ func updateSuspendProcesses(suspendProcesses *aws.SuspendProcesses, resourceData
 	var processesToCreate []string = nil
 
 	for _, process := range processesInput {
-		if _, exists := Find(currProcesses, process); !exists {
+		if _, exists := findString(currProcesses, process); !exists {
 			processesToCreate = append(processesToCreate, process)
 		}
 	}
@@ -255,7 +257,7 @@ func updateSuspendProcesses(suspendProcesses *aws.SuspendProcesses, resourceData
 
 		_, err = meta.(*Client).elastigroup.CloudProviderAWS().CreateSuspensions(context.Background(), createReqBody)
 		if err != nil {
-			return fmt.Errorf("[ERROR] failed to update suspend processes")
+			return fmt.Errorf("[ERROR] failed to update suspend processes: %v", err)
 		}
 	}
 
@@ -273,7 +275,7 @@ func updateSuspendProcesses(suspendProcesses *aws.SuspendProcesses, resourceData
 	return nil
 }
 
-func Find(slice []string, val string) (int, bool) {
+func findString(slice []string, val string) (int, bool) {
 	for i, item := range slice {
 		if item == val {
 			return i, true

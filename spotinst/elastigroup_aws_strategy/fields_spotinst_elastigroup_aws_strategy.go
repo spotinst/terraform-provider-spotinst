@@ -31,7 +31,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Risk != nil {
 				value = elastigroup.Strategy.Risk
 			}
-			//Casting from float to int
 			if err := resourceData.Set(string(SpotPercentage), spotinst.Int(int(*value))); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
 			}
@@ -41,7 +40,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v >= 0 {
-				//Casting from int to float
 				elastigroup.Strategy.SetRisk(spotinst.Float64(float64(v)))
 			}
 			return nil
@@ -50,7 +48,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v >= 0 {
-				//Casting from int to float
 				elastigroup.Strategy.SetRisk(spotinst.Float64(float64(v)))
 			}
 			return nil

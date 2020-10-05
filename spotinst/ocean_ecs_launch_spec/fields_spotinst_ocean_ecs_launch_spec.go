@@ -625,10 +625,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value []*aws.ECSBlockDeviceMapping = nil
 
 			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
-				if blockdevicemappings, err := expandBlockDeviceMappings(v); err != nil {
+				if blockDeviceMappings, err := expandBlockDeviceMappings(v); err != nil {
 					return err
 				} else {
-					value = blockdevicemappings
+					value = blockDeviceMappings
 				}
 			}
 			launchSpec.SetBlockDeviceMappings(value)
@@ -800,11 +800,11 @@ func expandBlockDeviceMappings(data interface{}) ([]*aws.ECSBlockDeviceMapping, 
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
-		bdm := &aws.ECSBlockDeviceMapping{}
-
 		if !ok {
 			continue
 		}
+
+		bdm := &aws.ECSBlockDeviceMapping{}
 
 		if v, ok := attr[string(DeviceName)].(string); ok && v != "" {
 			bdm.SetDeviceName(spotinst.String(v))

@@ -262,11 +262,7 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 		if err != nil {
 			return nil, err
 		}
-		if batch != nil {
-			integration.SetBatch(batch)
-		} else {
-			integration.SetBatch(nil)
-		}
+		integration.SetBatch(batch)
 	}
 	return integration, nil
 }
@@ -277,16 +273,14 @@ func expandECSBatch(data interface{}) (*aws.Batch, error) {
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 			var jobQueueNames []string = nil
-			if v, ok := m[string(JobQueueNames)].([]interface{}); ok && v != nil {
-				if len(v) > 0 {
-					jobQueueNamesList := make([]string, 0, len(v))
-					for _, jobQueueName := range v {
-						if v, ok := jobQueueName.(string); ok {
-							jobQueueNamesList = append(jobQueueNamesList, v)
-						}
+			if v, ok := m[string(JobQueueNames)].([]interface{}); ok && len(v) > 0 {
+				jobQueueNamesList := make([]string, 0, len(v))
+				for _, jobQueueName := range v {
+					if v, ok := jobQueueName.(string); ok {
+						jobQueueNamesList = append(jobQueueNamesList, v)
 					}
-					jobQueueNames = jobQueueNamesList
 				}
+				jobQueueNames = jobQueueNamesList
 			}
 			batch.SetJobQueueNames(jobQueueNames)
 		}
