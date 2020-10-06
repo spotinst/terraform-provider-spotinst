@@ -103,12 +103,12 @@ func resourceSpotinstAWSSuspendProcessesCreate(resourceData *schema.ResourceData
 		return err
 	}
 
-	SuspendProcessesId, err := createSuspendProcesses(resourceData, suspendProcesses, meta.(*Client))
+	suspendProcessesId, err := createSuspendProcesses(resourceData, suspendProcesses, meta.(*Client))
 	if err != nil {
 		return err
 	}
 
-	resourceData.SetId(spotinst.StringValue(SuspendProcessesId))
+	resourceData.SetId(spotinst.StringValue(suspendProcessesId))
 
 	log.Printf("===> SuspendProcesses created successfully for Elastigroup: %s <===", resourceData.Id())
 

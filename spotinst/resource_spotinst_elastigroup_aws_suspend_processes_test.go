@@ -26,7 +26,7 @@ func testSuspendProcessesDestroy(s *terraform.State) error {
 		input := &aws.DeleteSuspensionsInput{GroupID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.elastigroup.CloudProviderAWS().DeleteSuspensions(context.Background(), input)
 		if err == nil && resp != nil {
-			return fmt.Errorf("Suspend Processes still exists")
+			return fmt.Errorf("suspensions still exist")
 		}
 	}
 	return nil

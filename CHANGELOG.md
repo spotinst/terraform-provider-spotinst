@@ -1,7 +1,7 @@
 ## 1.26.0 (Unreleased)
 
 FEATURES:
-* *New Resource*: `elastigroup_aws_suspend_processes`
+* *New Resource*: `lastigroup_aws_suspension`
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs_launch_spec: added `block_device_mappings`

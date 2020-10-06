@@ -1,12 +1,12 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: elastigroup_aws_suspend_processes"
+page_title: "Spotinst: elastigroup_aws_suspension"
 subcategory: "Elastigroup"
 description: |-
-  Provides a Processes suspensions to Spotinst AWS group resource.
+  Provides a processes suspensions to Spotinst AWS group resources.
 ---
 
-# spotinst\_elastigroup\_aws\_susoend_processes
+# spotinst\_elastigroup\_aws\_suspension
 
 Suspend AWS Elastigroup processes. This resource provide the capavility of
 suspending elastigroup processes using Terraform.

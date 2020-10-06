@@ -22,7 +22,6 @@ type SuspendProcessesTerraformResource struct {
 }
 
 type SuspendProcessesWrapper struct {
-	//suspend processes is in the /aws/ec2/group/ route and groupID required as path param
 	GroupID          *string
 	SuspendProcesses *aws.SuspendProcesses
 }

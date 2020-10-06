@@ -132,7 +132,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if cluster.Strategy != nil && cluster.Strategy.SpotPercentage != nil {
 				value = cluster.Strategy.SpotPercentage
 			}
-			//Casting from float to int
 			if err := resourceData.Set(string(SpotPercentage), spotinst.Int(int(*value))); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
 			}
@@ -142,7 +141,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
-				//Casting from int to float
 				cluster.Strategy.SetSpotPercentage(spotinst.Float64(float64(v)))
 			}
 			return nil
@@ -151,7 +149,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
-				//Casting from int to float
 				cluster.Strategy.SetSpotPercentage(spotinst.Float64(float64(v)))
 			}
 			return nil
