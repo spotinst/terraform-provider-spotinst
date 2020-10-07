@@ -20,6 +20,21 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
   iam_instance_profile = "iam-profile"
   security_group_ids = ["awseb-12345"]
   
+  block_device_mappings {
+        device_name = "/dev/xvda1"
+        ebs {
+          delete_on_termination = "true"
+          encrypted = "false"
+          volume_type = "gp2"
+          volume_size = 50
+          dynamic_volume_size {
+            base_size = 50
+            resource = "CPU"
+            size_per_resource_unit = 20
+          }
+        }
+     }
+
   attributes {
     key   = "fakeKey"
     value = "fakeValue"
@@ -49,6 +64,22 @@ The following arguments are supported:
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_group_ids` - (Optional) One or more security group ids.
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
+
+* `block_device_mappings`- (Optional) Object. Array list of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
+    * `device_name` - (Optional) String. Set device name. (Example: "/dev/xvda1").
+    * `ebs`- (Optional) Object. Set Elastic Block Store properties .
+        * `delete_on_termination`- (Optional) Boolean. Flag to delete the EBS on instance termination. 
+        * `encrypted`- (Optional) Boolean. Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
+        * `iops`- (Required for requests to create io1 volumes; it is not used in requests to create gp2, st1, sc1, or standard volumes) Int. The number of I/O operations per second (IOPS) that the volume supports.
+        * `kms_key_id`- (Optional) String. Identifier (key ID, key alias, ID ARN, or alias ARN) for a customer managed CMK under which the EBS volume is encrypted.
+        * `snapshot_id`- (Optional) (Optional) String. The Snapshot ID to mount by. 
+        * `volume_type`- (Optional, Default: `"standard"`) String. The type of the volume (example: "gp2").
+        * `volume_size`- (Optional) Int. The size, in GB of the volume.
+        * `dynamic_volume_size`- (Optional) Object. Set dynamic volume size properties. When using this object, you cannot use volumeSize. You must use one or the other.
+            * `base_size`- (Required) Int. Initial size for volume. (Example: 50)
+            * `resource`- (Required) String. Resource type to increase volume size dynamically by. (valid values: "CPU")
+            * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: baseSize= 50, sizePerResourceUnit=20, and instance with 2 CPU is launched - its total disk size will be: 90GB)
+        * `no_device`- (Optional) String. suppresses the specified device included in the block device mapping of the AMI.
 
 * `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The label key.

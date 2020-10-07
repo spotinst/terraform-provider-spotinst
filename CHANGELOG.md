@@ -1,4 +1,19 @@
 ## 1.26.0 (Unreleased)
+
+FEATURES:
+* *New Resource*: `lastigroup_aws_suspension`
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `block_device_mappings`
+* resource/spotinst_elastigroup_aws: added `batch` for `integration_ecs` 
+
+BUG FIXES:
+* resource/ocean_aws: resolved error with `auto_headroom_percentage` under `auto_scaler`.
+* resource/spotinst_elastigroup_aws: resolved error with `target_scaling_policy` under `auto_scaler`.
+
+NOTES: 
+* documentation: resource/spotinst_mrscaler_aws: fixed usage example and documentation for `retries`. 
+
 ## 1.25.0 (August 26, 2020)
 
 BUG FIXES:

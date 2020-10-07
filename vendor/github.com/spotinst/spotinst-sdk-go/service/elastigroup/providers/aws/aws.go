@@ -132,7 +132,7 @@ type AutoScale struct {
 }
 
 type AutoScaleECS struct {
-	AutoScale                                             // embedding
+	AutoScale
 	Attributes                     []*AutoScaleAttributes `json:"attributes,omitempty"`
 	ShouldScaleDownNonServiceTasks *bool                  `json:"shouldScaleDownNonServiceTasks,omitempty"`
 
@@ -141,15 +141,15 @@ type AutoScaleECS struct {
 }
 
 type AutoScaleKubernetes struct {
-	AutoScale                   // embedding
-	Labels    []*AutoScaleLabel `json:"labels,omitempty"`
+	AutoScale
+	Labels []*AutoScaleLabel `json:"labels,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
 }
 
 type AutoScaleNomad struct {
-	AutoScale                          // embedding
+	AutoScale
 	Constraints []*AutoScaleConstraint `json:"constraints,omitempty"`
 
 	forceSendFields []string
@@ -157,7 +157,7 @@ type AutoScaleNomad struct {
 }
 
 type AutoScaleDockerSwarm struct {
-	AutoScale // embedding
+	AutoScale
 
 	forceSendFields []string
 	nullFields      []string
@@ -286,6 +286,14 @@ type RancherIntegration struct {
 type EC2ContainerServiceIntegration struct {
 	ClusterName *string       `json:"clusterName,omitempty"`
 	AutoScale   *AutoScaleECS `json:"autoScale,omitempty"`
+	Batch       *Batch        `json:"batch,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type Batch struct {
+	JobQueueNames []string `json:"jobQueueNames,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -1980,17 +1988,28 @@ func (o *EC2ContainerServiceIntegration) SetClusterName(v *string) *EC2Container
 	return o
 }
 
-func (o AutoScaleECS) MarshalJSON() ([]byte, error) {
-	type noMethod AutoScaleECS
-	raw := noMethod(o)
-	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
-}
-
 func (o *EC2ContainerServiceIntegration) SetAutoScale(v *AutoScaleECS) *EC2ContainerServiceIntegration {
 	if o.AutoScale = v; o.AutoScale == nil {
 		o.nullFields = append(o.nullFields, "AutoScale")
 	}
 	return o
+}
+
+func (o *EC2ContainerServiceIntegration) SetBatch(v *Batch) *EC2ContainerServiceIntegration {
+	if o.Batch = v; o.Batch == nil {
+		o.nullFields = append(o.nullFields, "Batch")
+	}
+	return o
+}
+
+// endregion
+
+// region AutoScaleECS
+
+func (o AutoScaleECS) MarshalJSON() ([]byte, error) {
+	type noMethod AutoScaleECS
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
 func (o *AutoScaleECS) SetAttributes(v []*AutoScaleAttributes) *AutoScaleECS {
@@ -2009,7 +2028,24 @@ func (o *AutoScaleECS) SetShouldScaleDownNonServiceTasks(v *bool) *AutoScaleECS 
 
 // endregion
 
-// region Docker Swarm
+// region Batch
+
+func (o Batch) MarshalJSON() ([]byte, error) {
+	type noMethod Batch
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Batch) SetJobQueueNames(v []string) *Batch {
+	if o.JobQueueNames = v; o.JobQueueNames == nil {
+		o.nullFields = append(o.nullFields, "JobQueueNames")
+	}
+	return o
+}
+
+// endregion
+
+// region DockerSwarmIntegration
 
 func (o DockerSwarmIntegration) MarshalJSON() ([]byte, error) {
 	type noMethod DockerSwarmIntegration
@@ -4037,4 +4073,187 @@ func (s *ServiceOp) Scale(ctx context.Context, input *ScaleGroupInput) (*ScaleGr
 	return output, err
 }
 
-//endregion
+// endregion
+
+// region SuspendProcesses
+
+type SuspendProcesses struct {
+	Suspensions []*Suspension `json:"suspensions,omitempty"`
+	Processes   []string      `json:"processes,omitempty"`
+}
+
+type Suspension struct {
+	Name         *string `json:"name,omitempty"`
+	TTLInMinutes *int    `json:"ttlInMinutes,omitempty"`
+
+	// Read-only fields.
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type CreateSuspensionsInput struct {
+	GroupID     *string       `json:"groupId,omitempty"`
+	Suspensions []*Suspension `json:"suspensions,omitempty"`
+}
+
+type CreateSuspensionsOutput struct {
+	SuspendProcesses *SuspendProcesses `json:"suspendProcesses,omitempty"`
+}
+
+type ListSuspensionsInput struct {
+	GroupID *string `json:"groupId,omitempty"`
+}
+
+type ListSuspensionsOutput struct {
+	SuspendProcesses *SuspendProcesses `json:"suspendProcesses,omitempty"`
+}
+
+type DeleteSuspensionsInput struct {
+	GroupID   *string  `json:"groupId,omitempty"`
+	Processes []string `json:"processes,omitempty"`
+}
+
+type DeleteSuspensionsOutput struct{}
+
+func suspendProcessesFromHttpResponse(resp *http.Response) ([]*SuspendProcesses, error) {
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return suspendProcessesFromJSON(body)
+}
+
+func suspendProcessesObjFromJSON(in []byte) (*SuspendProcesses, error) {
+	v := new(SuspendProcesses)
+	if err := json.Unmarshal(in, v); err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+func suspendProcessesFromJSON(in []byte) ([]*SuspendProcesses, error) {
+	var rw client.Response
+	if err := json.Unmarshal(in, &rw); err != nil {
+		return nil, err
+	}
+	out := make([]*SuspendProcesses, len(rw.Response.Items))
+	if len(out) == 0 {
+		return out, nil
+	}
+	for i, rb := range rw.Response.Items {
+		v, err := suspendProcessesObjFromJSON(rb)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = v
+	}
+	return out, nil
+}
+
+func (s *ServiceOp) CreateSuspensions(ctx context.Context, input *CreateSuspensionsInput) (*CreateSuspensionsOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/suspension", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.GroupID = nil
+
+	r := client.NewRequest(http.MethodPost, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	suspendProcesses, err := suspendProcessesFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(CreateSuspensionsOutput)
+	if len(suspendProcesses) > 0 {
+		output.SuspendProcesses = suspendProcesses[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) ListSuspensions(ctx context.Context, input *ListSuspensionsInput) (*ListSuspensionsOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/suspension", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := client.NewRequest(http.MethodGet, path)
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	suspendProcesses, err := suspendProcessesFromHttpResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	output := new(ListSuspensionsOutput)
+	if len(suspendProcesses) > 0 {
+		output.SuspendProcesses = suspendProcesses[0]
+	}
+
+	return output, nil
+}
+
+func (s *ServiceOp) DeleteSuspensions(ctx context.Context, input *DeleteSuspensionsInput) (*DeleteSuspensionsOutput, error) {
+	path, err := uritemplates.Expand("/aws/ec2/group/{groupId}/suspension", uritemplates.Values{
+		"groupId": spotinst.StringValue(input.GroupID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// We do not need the ID anymore so let's drop it.
+	input.GroupID = nil
+
+	r := client.NewRequest(http.MethodDelete, path)
+	r.Obj = input
+
+	resp, err := client.RequireOK(s.Client.Do(ctx, r))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return &DeleteSuspensionsOutput{}, nil
+}
+
+func (o Suspension) MarshalJSON() ([]byte, error) {
+	type noMethod Suspension
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *Suspension) SetName(v *string) *Suspension {
+	if o.Name = v; o.Name == nil {
+		o.nullFields = append(o.nullFields, "Name")
+	}
+	return o
+}
+
+func (o *Suspension) SetTTLInMinutes(v *int) *Suspension {
+	if o.TTLInMinutes = v; o.TTLInMinutes == nil {
+		o.nullFields = append(o.nullFields, "TTLInMinutes")
+	}
+	return o
+}
+
+// endregion

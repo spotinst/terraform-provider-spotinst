@@ -186,18 +186,19 @@ func baseScalingPolicySchema() *schema.Schema {
 				string(Statistic): {
 					Type:     schema.TypeString,
 					Optional: true,
-					Computed: true,
+					Default:  "average",
 				},
 
 				string(Unit): {
 					Type:     schema.TypeString,
-					Required: true,
+					Optional: true,
+					Default:  "percent",
 				},
 
 				string(Cooldown): {
 					Type:     schema.TypeInt,
 					Optional: true,
-					Computed: true,
+					Default:  300,
 				},
 
 				string(Dimensions): {

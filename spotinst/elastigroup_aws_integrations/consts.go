@@ -41,6 +41,8 @@ const (
 	IntegrationEcs                 commons.FieldName = "integration_ecs"
 	ClusterName                    commons.FieldName = "cluster_name"
 	AutoscaleAttributes            commons.FieldName = "autoscale_attributes"
+	Batch                          commons.FieldName = "batch"
+	JobQueueNames                  commons.FieldName = "job_queue_names"
 	// -----------------------------------
 
 	// - KUBERNETES ----------------------
