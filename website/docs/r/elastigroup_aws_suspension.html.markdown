@@ -3,7 +3,7 @@ layout: "spotinst"
 page_title: "Spotinst: elastigroup_aws_suspension"
 subcategory: "Elastigroup"
 description: |-
-  Provides a processes suspensions to Spotinst AWS group resources.
+  Provides a process suspension to Spotinst AWS group resources.
 ---
 
 # spotinst\_elastigroup\_aws\_suspension
@@ -15,19 +15,21 @@ For supported processes please visit: [Suspend Processes API reference](https://
 ## Example Usage
 
 ```hcl
-# Create a process suspension for Elastigroup
+# Create a suspension for Elastigroup
 resource "spotinst_elastigroup_aws_suspension" "resource_name" {
-
   group_id = "sig-12345678"
+
   suspension {
-        name = "OUT_OF_STRATEGY"
-    }
+    name = "OUT_OF_STRATEGY"
+  }
+
   suspension {
-          name = "REVERT_PREFERRED"
-    }
+    name = "REVERT_PREFERRED"
+  }
+
   suspension  {
-          name = "PREVENTIVE_REPLACEMENT"
-    }
+    name = "PREVENTIVE_REPLACEMENT"
+  }
 }
 ```
 
