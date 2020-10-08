@@ -3088,6 +3088,9 @@ func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.key", "test.key.ecs"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2966515502.value", "test.value.ecs"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.batch.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.batch.0.job_queue_names.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.batch.0.job_queue_names.0", "job-name"),
 				),
 			},
 			{
@@ -3113,6 +3116,9 @@ func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 					//resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_scale_down_non_service_tasks", "true"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.key", "test.key.ecs.update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.autoscale_attributes.2266469793.value", "test.value.ecs.update"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.batch.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.batch.0.job_queue_names.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "integration_ecs.0.batch.0.job_queue_names.0", "job-name-update"),
 				),
 			},
 			//{
@@ -3155,6 +3161,12 @@ const testIntegrationECSGroupConfig_Create = `
       key   = "test.key.ecs"
       value = "test.value.ecs"
     }
+
+    batch{
+      job_queue_names = [
+        "job-name"
+      ]
+    }
   }
  // --------------------------------
 `
@@ -3182,6 +3194,12 @@ const testIntegrationECSGroupConfig_Update = `
     autoscale_attributes {
       key   = "test.key.ecs.update"
       value = "test.value.ecs.update"
+    }
+
+    batch{
+      job_queue_names = [
+        "job-name-update"
+      ]
     }
   }
  // --------------------------------

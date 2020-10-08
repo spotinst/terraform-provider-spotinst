@@ -470,7 +470,7 @@ func (o *LaunchSpec) SetResourceLimits(v *ResourceLimits) *LaunchSpec {
 
 // endregion
 
-// region BlockDeviceMappings
+// region BlockDeviceMapping
 
 func (o BlockDeviceMapping) MarshalJSON() ([]byte, error) {
 	type noMethod BlockDeviceMapping
@@ -572,9 +572,9 @@ func (o *EBS) SetDynamicVolumeSize(v *DynamicVolumeSize) *EBS {
 	return o
 }
 
-// end region
+// endregion
 
-// region Dynamic Volume Size
+// region DynamicVolumeSize
 
 func (o DynamicVolumeSize) MarshalJSON() ([]byte, error) {
 	type noMethod DynamicVolumeSize
@@ -603,7 +603,7 @@ func (o *DynamicVolumeSize) SetSizePerResourceUnit(v *int) *DynamicVolumeSize {
 	return o
 }
 
-// end region
+// endregion
 
 // region ResourceLimits
 
@@ -677,7 +677,7 @@ func (o *Taint) SetEffect(v *string) *Taint {
 
 // endregion
 
-//region AutoScale
+// region AutoScale
 
 func (o AutoScale) MarshalJSON() ([]byte, error) {
 	type noMethod AutoScale

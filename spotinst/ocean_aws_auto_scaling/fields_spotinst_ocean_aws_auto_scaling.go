@@ -2,6 +2,7 @@ package ocean_aws_auto_scaling
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -201,8 +202,12 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 		autoscaler.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
-	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > 0 {
-		autoscaler.SetAutoHeadroomPercentage(spotinst.Int(v))
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v >= 0 {
+		if v == 0 {
+			autoscaler.SetAutoHeadroomPercentage(nil)
+		} else {
+			autoscaler.SetAutoHeadroomPercentage(spotinst.Int(v))
+		}
 	}
 
 	if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {

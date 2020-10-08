@@ -116,21 +116,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSStrategy,
 		SpotPercentage,
 		&schema.Schema{
-			Type:         schema.TypeFloat,
+			Type:         schema.TypeInt,
 			Optional:     true,
 			Default:      -1,
-			ValidateFunc: validation.FloatAtLeast(-1),
+			ValidateFunc: validation.IntAtLeast(-1),
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			//Force setting -1 as default value if it's not exists in initial creation,
 			// to allow initialization of the field to 0
+			//SpotPercentage is configured as int in the API but float on Go-SDK (currently not aligning because of breaking changes effects)
+			//There for value is of type float and cast as necessary
 			value := spotinst.Float64(-1)
 			if cluster.Strategy != nil && cluster.Strategy.SpotPercentage != nil {
 				value = cluster.Strategy.SpotPercentage
 			}
-			if err := resourceData.Set(string(SpotPercentage), spotinst.Float64Value(value)); err != nil {
+			if err := resourceData.Set(string(SpotPercentage), spotinst.Int(int(*value))); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
 			}
 			return nil
@@ -138,16 +140,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v := resourceData.Get(string(SpotPercentage)).(float64); v > -1 {
-				cluster.Strategy.SetSpotPercentage(spotinst.Float64(v))
+			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
+				cluster.Strategy.SetSpotPercentage(spotinst.Float64(float64(v)))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v := resourceData.Get(string(SpotPercentage)).(float64); v > -1 {
-				cluster.Strategy.SetSpotPercentage(spotinst.Float64(v))
+			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
+				cluster.Strategy.SetSpotPercentage(spotinst.Float64(float64(v)))
 			}
 			return nil
 		},

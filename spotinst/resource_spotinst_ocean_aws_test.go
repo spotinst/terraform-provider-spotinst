@@ -606,6 +606,7 @@ const testStrategyConfig_Update = `
 
 const testStrategyConfig_EmptyFields = `
  // --- STRATEGY --------------------
+ spot_percentage = 0
  // ---------------------------------
 `
 
@@ -995,6 +996,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
 `
 
 const testUpdatePolicyAWSClusterConfig_EmptyFields = `
+ spot_percentage = 0
  // --- UPDATE POLICY ----------------
  // ----------------------------------
 `
