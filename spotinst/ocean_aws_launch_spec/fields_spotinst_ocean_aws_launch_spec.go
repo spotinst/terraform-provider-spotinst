@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
@@ -318,7 +319,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[ElasticIpPool] = commons.NewGenericField(
-		commons.OceanAWSLaunchConfiguration,
+		commons.OceanAWSLaunchSpec,
 		ElasticIpPool,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -993,6 +994,67 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Strategy] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		Strategy,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(SpotPercentage): {
+						Type:         schema.TypeInt,
+						Optional:     true,
+						Default:      -1,
+						ValidateFunc: validation.IntAtLeast(-1),
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.Strategy != nil {
+				strategy := launchSpec.Strategy
+				result = flattenStrategy(strategy)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Strategy), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Strategy), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(Strategy)); ok {
+				if strategy, err := expandStrategy(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetStrategy(strategy)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value *aws.LaunchSpecStrategy = nil
+
+			if v, ok := resourceData.GetOk(string(Strategy)); ok {
+				if strategy, err := expandStrategy(v); err != nil {
+					return err
+				} else {
+					value = strategy
+				}
+			}
+			launchSpec.SetStrategy(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -1466,4 +1528,37 @@ func expandResourceLimits(data interface{}) (*aws.ResourceLimits, error) {
 	}
 
 	return nil, nil
+}
+
+func expandStrategy(data interface{}) (*aws.LaunchSpecStrategy, error) {
+	if list := data.(*schema.Set).List(); len(list) > 0 {
+		strategy := &aws.LaunchSpecStrategy{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(SpotPercentage)].(int); ok && v > -1 {
+				strategy.SetSpotPercentage(spotinst.Int(v))
+			} else {
+				strategy.SetSpotPercentage(nil)
+			}
+		}
+		return strategy, nil
+	}
+	return nil, nil
+}
+
+func flattenStrategy(strategy *aws.LaunchSpecStrategy) []interface{} {
+	var out []interface{}
+
+	if strategy != nil {
+		result := make(map[string]interface{})
+
+		if strategy.SpotPercentage != nil {
+			result[string(SpotPercentage)] = spotinst.IntValue(strategy.SpotPercentage)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }

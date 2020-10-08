@@ -31,6 +31,7 @@ type LaunchSpec struct {
 	Labels              []*Label              `json:"labels,omitempty"`
 	Taints              []*Taint              `json:"taints,omitempty"`
 	Tags                []*Tag                `json:"tags,omitempty"`
+	Strategy 			*LaunchSpecStrategy   `json:"strategy,omitempty"`
 
 	// Read-only fields.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -179,6 +180,13 @@ type DeleteLaunchSpecInput struct {
 }
 
 type DeleteLaunchSpecOutput struct{}
+
+type LaunchSpecStrategy struct {
+	SpotPercentage *int `json:"spotPercentage,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
 
 func launchSpecFromJSON(in []byte) (*LaunchSpec, error) {
 	b := new(LaunchSpec)
@@ -464,6 +472,13 @@ func (o *LaunchSpec) SetTags(v []*Tag) *LaunchSpec {
 func (o *LaunchSpec) SetResourceLimits(v *ResourceLimits) *LaunchSpec {
 	if o.ResourceLimits = v; o.ResourceLimits == nil {
 		o.nullFields = append(o.nullFields, "ResourceLimits")
+	}
+	return o
+}
+
+func (o *LaunchSpec) SetStrategy(v *LaunchSpecStrategy) *LaunchSpec {
+	if o.Strategy = v; o.Strategy == nil {
+		o.nullFields = append(o.nullFields, "Strategy")
 	}
 	return o
 }
@@ -772,3 +787,21 @@ func (o *TagSelector) SetTagValue(v *string) *TagSelector {
 }
 
 // endregion
+
+// region Strategy
+
+func (o LaunchSpecStrategy) MarshalJSON() ([]byte, error) {
+	type noMethod LaunchSpecStrategy
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *LaunchSpecStrategy) SetSpotPercentage(v *int) *LaunchSpecStrategy {
+	if o.SpotPercentage = v; o.SpotPercentage == nil {
+		o.nullFields = append(o.nullFields, "SpotPercentage")
+	}
+	return o
+}
+
+
+//endregion
