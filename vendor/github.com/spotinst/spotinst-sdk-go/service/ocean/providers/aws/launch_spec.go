@@ -23,6 +23,7 @@ type LaunchSpec struct {
 	SecurityGroupIDs    []string              `json:"securityGroupIds,omitempty"`
 	SubnetIDs           []string              `json:"subnetIds,omitempty"`
 	InstanceTypes       []string              `json:"instanceTypes,omitempty"`
+	Strategy            *LaunchSpecStrategy   `json:"strategy,omitempty"`
 	ResourceLimits      *ResourceLimits       `json:"resourceLimits,omitempty"`
 	IAMInstanceProfile  *IAMInstanceProfile   `json:"iamInstanceProfile,omitempty"`
 	AutoScale           *AutoScale            `json:"autoScale,omitempty"`
@@ -137,6 +138,13 @@ type ElasticIPPool struct {
 type TagSelector struct {
 	Key   *string `json:"tagKey,omitempty"`
 	Value *string `json:"tagValue,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
+type LaunchSpecStrategy struct {
+	SpotPercentage *int `json:"spotPercentage,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -468,6 +476,13 @@ func (o *LaunchSpec) SetResourceLimits(v *ResourceLimits) *LaunchSpec {
 	return o
 }
 
+func (o *LaunchSpec) SetStrategy(v *LaunchSpecStrategy) *LaunchSpec {
+	if o.Strategy = v; o.Strategy == nil {
+		o.nullFields = append(o.nullFields, "Strategy")
+	}
+	return o
+}
+
 // endregion
 
 // region BlockDeviceMapping
@@ -692,7 +707,7 @@ func (o *AutoScale) SetHeadrooms(v []*AutoScaleHeadroom) *AutoScale {
 	return o
 }
 
-//endregion
+// endregion
 
 // region AutoScaleHeadroom
 
@@ -767,6 +782,23 @@ func (o *TagSelector) SetTagKey(v *string) *TagSelector {
 func (o *TagSelector) SetTagValue(v *string) *TagSelector {
 	if o.Value = v; o.Value == nil {
 		o.nullFields = append(o.nullFields, "Value")
+	}
+	return o
+}
+
+// endregion
+
+// region Strategy
+
+func (o LaunchSpecStrategy) MarshalJSON() ([]byte, error) {
+	type noMethod LaunchSpecStrategy
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *LaunchSpecStrategy) SetSpotPercentage(v *int) *LaunchSpecStrategy {
+	if o.SpotPercentage = v; o.SpotPercentage == nil {
+		o.nullFields = append(o.nullFields, "SpotPercentage")
 	}
 	return o
 }
