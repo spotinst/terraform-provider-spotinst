@@ -494,6 +494,71 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[MetadataOptions] = commons.NewGenericField(
+		commons.ElastigroupAWSLaunchConfiguration,
+		MetadataOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(HttpTokens): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(HttpPutResponseHopLimit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []interface{} = nil
+			if elastigroup != nil && elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.MetadataOptions != nil {
+				result = flattenMetadataOptions(elastigroup.Compute.LaunchSpecification.MetadataOptions)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(MetadataOptions), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MetadataOptions), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(MetadataOptions)); ok {
+				if metaDataOptions, err := expandMetadataOptions(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetMetadataOptions(metaDataOptions)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *aws.MetadataOptions = nil
+			if v, ok := resourceData.GetOk(string(MetadataOptions)); ok {
+				if metaDataOptions, err := expandMetadataOptions(v); err != nil {
+					return err
+				} else {
+					value = metaDataOptions
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetMetadataOptions(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -524,4 +589,32 @@ func base64Encode(data string) string {
 func isBase64Encoded(data string) bool {
 	_, err := base64.StdEncoding.DecodeString(data)
 	return err == nil
+}
+
+func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
+	metadataOptions := &aws.MetadataOptions{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return metadataOptions, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(HttpTokens)].(string); ok && v != "" {
+		metadataOptions.SetHTTPTokens(spotinst.String(v))
+	}
+	if v, ok := m[string(HttpPutResponseHopLimit)].(int); ok && v >= 0 {
+		metadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
+	} else {
+		metadataOptions.SetHTTPPutResponseHopLimit(nil)
+	}
+
+	return metadataOptions, nil
+}
+
+func flattenMetadataOptions(metadataOptions *aws.MetadataOptions) []interface{} {
+	result := make(map[string]interface{})
+	result[string(HttpTokens)] = spotinst.StringValue(metadataOptions.HTTPTokens)
+	result[string(HttpPutResponseHopLimit)] = spotinst.IntValue(metadataOptions.HTTPPutResponseHopLimit)
+
+	return []interface{}{result}
 }

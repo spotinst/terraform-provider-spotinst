@@ -616,6 +616,7 @@ type LaunchSpecification struct {
 	BlockDeviceMappings                           []*BlockDeviceMapping `json:"blockDeviceMappings,omitempty"`
 	NetworkInterfaces                             []*NetworkInterface   `json:"networkInterfaces,omitempty"`
 	Tags                                          []*Tag                `json:"tags,omitempty"`
+	MetadataOptions                               *MetadataOptions      `json:"metadataOptions,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -916,6 +917,14 @@ type StopDeploymentInput struct {
 }
 
 type StopDeploymentOutput struct{}
+
+type MetadataOptions struct {
+	HTTPTokens              *string `json:"httpTokens,omitempty"`
+	HTTPPutResponseHopLimit *int    `json:"httpPutResponseHopLimit,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
 
 func deploymentStatusFromJSON(in []byte) (*RollGroupStatus, error) {
 	b := new(RollGroupStatus)
@@ -3522,6 +3531,13 @@ func (o *LaunchSpecification) SetTags(v []*Tag) *LaunchSpecification {
 	return o
 }
 
+func (o *LaunchSpecification) SetMetadataOptions(v *MetadataOptions) *LaunchSpecification {
+	if o.MetadataOptions = v; o.MetadataOptions == nil {
+		o.nullFields = append(o.nullFields, "MetadataOptions")
+	}
+	return o
+}
+
 // endregion
 
 // region LoadBalancersConfig
@@ -4252,6 +4268,30 @@ func (o *Suspension) SetName(v *string) *Suspension {
 func (o *Suspension) SetTTLInMinutes(v *int) *Suspension {
 	if o.TTLInMinutes = v; o.TTLInMinutes == nil {
 		o.nullFields = append(o.nullFields, "TTLInMinutes")
+	}
+	return o
+}
+
+// endregion
+
+// region MetadataOptions
+
+func (o MetadataOptions) MarshalJSON() ([]byte, error) {
+	type noMethod MetadataOptions
+	raw := noMethod(o)
+	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
+}
+
+func (o *MetadataOptions) SetHTTPTokens(v *string) *MetadataOptions {
+	if o.HTTPTokens = v; o.HTTPTokens == nil {
+		o.nullFields = append(o.nullFields, "HTTPTokens")
+	}
+	return o
+}
+
+func (o *MetadataOptions) SetHTTPPutResponseHopLimit(v *int) *MetadataOptions {
+	if o.HTTPPutResponseHopLimit = v; o.HTTPPutResponseHopLimit == nil {
+		o.nullFields = append(o.nullFields, "HTTPPutResponseHopLimit")
 	}
 	return o
 }

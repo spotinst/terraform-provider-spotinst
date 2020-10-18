@@ -36,6 +36,10 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   enable_monitoring     = false
   ebs_optimized         = false
   placement_tenancy     = "default"
+  metadata_options {
+    http_tokens                 = "optional"
+    http_put_response_hop_limit = 10
+  }
 
   instance_types_ondemand       = "m3.2xlarge"
   instance_types_spot           = ["m3.xlarge", "m3.2xlarge"]
@@ -148,7 +152,10 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `shutdown_script` - (Optional) The Base64-encoded shutdown script that executes prior to instance termination, for more information please see: [Shutdown Script](https://api.spotinst.com/integration-docs/elastigroup/concepts/compute-concepts/shutdown-scripts/)
 * `ebs_optimized` - (Optional) Enable high bandwidth connectivity between instances and AWS’s Elastic Block Store (EBS). For instance types that are EBS-optimized by default this parameter will be ignored.
 * `placement_tenancy` - (Optional) Enable dedicated tenancy. Note: There is a flat hourly fee for each region in which dedicated tenancy is used.
-
+* `metadata_options` - (Optional) Data that used to configure or manage the running instances:
+    * `http_tokens` - (Required)  The state of token usage for your instance metadata requests. Valid values: `optional` or `required`.
+    * `http_put_response_hop_limit` - (Optional, Default: `1`) The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further instance metadata requests can travel. Valid values: Integers from `1` to `64`.
+    
 * `instance_types_ondemand` - (Required) The type of instance determines your instance's CPU capacity, memory and storage (e.g., m1.small, c1.xlarge).
 * `instance_types_spot` - (Required) One or more instance types.
 * `instance_types_preferred_spot` - (Optional) Prioritize a subset of spot instance types. Must be a subset of the selected spot instance types.
