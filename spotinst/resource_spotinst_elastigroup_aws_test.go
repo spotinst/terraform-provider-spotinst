@@ -538,13 +538,13 @@ const testLaunchConfigurationGroupConfig_Update = `
 `
 
 const testLaunchConfigurationGroupConfig_EmptyFields = `
-// --- LAUNCH CONFIGURATION --------------
-image_id        = "ami-31394949"
-user_data       = "cannot set empty user data"
-shutdown_script = "cannot set empty shutdown script"
-key_name        = "cannot set empty key name"
-security_groups = ["sg-123456"]
-// ---------------------------------------
+ // --- LAUNCH CONFIGURATION --------------
+ image_id        = "ami-31394949"
+ user_data       = "cannot set empty user data"
+ shutdown_script = "cannot set empty shutdown script"
+ key_name        = "cannot set empty key name"
+ security_groups = ["sg-123456"]
+ // ---------------------------------------
 `
 
 // endregion
