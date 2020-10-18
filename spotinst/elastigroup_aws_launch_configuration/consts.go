@@ -17,7 +17,7 @@ const (
 	EbsOptimized       commons.FieldName = "ebs_optimized"
 	PlacementTenancy   commons.FieldName = "placement_tenancy"
 	CPUCredits         commons.FieldName = "cpu_credits"
-	MetadataOptions    commons.FieldName = "meta_data_options"
+	MetadataOptions    commons.FieldName = "metadata_options"
 
 	// - MetadataOptions -----------------------------
 	HttpTokens              commons.FieldName = "http_tokens"

@@ -600,12 +600,12 @@ func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(HttpTokens)].(string); ok && v != "" {
-		metadataOptions.SetHttpTokens(spotinst.String(v))
+		metadataOptions.SetHTTPTokens(spotinst.String(v))
 	}
 	if v, ok := m[string(HttpPutResponseHopLimit)].(int); ok && v >= 0 {
-		metadataOptions.SetHttpPutResponseHopLimit(spotinst.Int(v))
+		metadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
 	} else {
-		metadataOptions.SetHttpPutResponseHopLimit(nil)
+		metadataOptions.SetHTTPPutResponseHopLimit(nil)
 	}
 
 	return metadataOptions, nil
@@ -613,8 +613,8 @@ func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
 
 func flattenMetadataOptions(metadataOptions *aws.MetadataOptions) []interface{} {
 	result := make(map[string]interface{})
-	result[string(HttpTokens)] = spotinst.StringValue(metadataOptions.HttpTokens)
-	result[string(HttpPutResponseHopLimit)] = spotinst.IntValue(metadataOptions.HttpPutResponseHopLimit)
+	result[string(HttpTokens)] = spotinst.StringValue(metadataOptions.HTTPTokens)
+	result[string(HttpPutResponseHopLimit)] = spotinst.IntValue(metadataOptions.HTTPPutResponseHopLimit)
 
 	return []interface{}{result}
 }

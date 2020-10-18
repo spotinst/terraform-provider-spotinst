@@ -919,8 +919,8 @@ type StopDeploymentInput struct {
 type StopDeploymentOutput struct{}
 
 type MetadataOptions struct {
-	HttpTokens              *string `json:"httpTokens,omitempty"`
-	HttpPutResponseHopLimit *int    `json:"httpPutResponseHopLimit,omitempty"`
+	HTTPTokens              *string `json:"httpTokens,omitempty"`
+	HTTPPutResponseHopLimit *int    `json:"httpPutResponseHopLimit,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -4282,16 +4282,16 @@ func (o MetadataOptions) MarshalJSON() ([]byte, error) {
 	return jsonutil.MarshalJSON(raw, o.forceSendFields, o.nullFields)
 }
 
-func (o *MetadataOptions) SetHttpTokens(v *string) *MetadataOptions {
-	if o.HttpTokens = v; o.HttpTokens == nil {
-		o.nullFields = append(o.nullFields, "HttpTokens")
+func (o *MetadataOptions) SetHTTPTokens(v *string) *MetadataOptions {
+	if o.HTTPTokens = v; o.HTTPTokens == nil {
+		o.nullFields = append(o.nullFields, "HTTPTokens")
 	}
 	return o
 }
 
-func (o *MetadataOptions) SetHttpPutResponseHopLimit(v *int) *MetadataOptions {
-	if o.HttpPutResponseHopLimit = v; o.HttpPutResponseHopLimit == nil {
-		o.nullFields = append(o.nullFields, "HttpPutResponseHopLimit")
+func (o *MetadataOptions) SetHTTPPutResponseHopLimit(v *int) *MetadataOptions {
+	if o.HTTPPutResponseHopLimit = v; o.HTTPPutResponseHopLimit == nil {
+		o.nullFields = append(o.nullFields, "HTTPPutResponseHopLimit")
 	}
 	return o
 }
