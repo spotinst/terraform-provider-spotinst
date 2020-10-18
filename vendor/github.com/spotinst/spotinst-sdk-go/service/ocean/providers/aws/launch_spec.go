@@ -23,6 +23,7 @@ type LaunchSpec struct {
 	SecurityGroupIDs    []string              `json:"securityGroupIds,omitempty"`
 	SubnetIDs           []string              `json:"subnetIds,omitempty"`
 	InstanceTypes       []string              `json:"instanceTypes,omitempty"`
+	Strategy            *LaunchSpecStrategy   `json:"strategy,omitempty"`
 	ResourceLimits      *ResourceLimits       `json:"resourceLimits,omitempty"`
 	IAMInstanceProfile  *IAMInstanceProfile   `json:"iamInstanceProfile,omitempty"`
 	AutoScale           *AutoScale            `json:"autoScale,omitempty"`
@@ -31,7 +32,6 @@ type LaunchSpec struct {
 	Labels              []*Label              `json:"labels,omitempty"`
 	Taints              []*Taint              `json:"taints,omitempty"`
 	Tags                []*Tag                `json:"tags,omitempty"`
-	Strategy 			*LaunchSpecStrategy   `json:"strategy,omitempty"`
 
 	// Read-only fields.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -143,6 +143,13 @@ type TagSelector struct {
 	nullFields      []string
 }
 
+type LaunchSpecStrategy struct {
+	SpotPercentage *int `json:"spotPercentage,omitempty"`
+
+	forceSendFields []string
+	nullFields      []string
+}
+
 type ListLaunchSpecsInput struct {
 	OceanID *string `json:"oceanId,omitempty"`
 }
@@ -180,13 +187,6 @@ type DeleteLaunchSpecInput struct {
 }
 
 type DeleteLaunchSpecOutput struct{}
-
-type LaunchSpecStrategy struct {
-	SpotPercentage *int `json:"spotPercentage,omitempty"`
-
-	forceSendFields []string
-	nullFields      []string
-}
 
 func launchSpecFromJSON(in []byte) (*LaunchSpec, error) {
 	b := new(LaunchSpec)
@@ -707,7 +707,7 @@ func (o *AutoScale) SetHeadrooms(v []*AutoScaleHeadroom) *AutoScale {
 	return o
 }
 
-//endregion
+// endregion
 
 // region AutoScaleHeadroom
 
@@ -803,5 +803,4 @@ func (o *LaunchSpecStrategy) SetSpotPercentage(v *int) *LaunchSpecStrategy {
 	return o
 }
 
-
-//endregion
+// endregion

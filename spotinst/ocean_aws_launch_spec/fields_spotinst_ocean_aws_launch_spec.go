@@ -28,8 +28,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *string = nil
 			if launchSpec.OceanID != nil {
 				value = launchSpec.OceanID
@@ -40,14 +40,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			launchSpec.SetOceanId(spotinst.String(resourceData.Get(string(OceanID)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			launchSpec.SetOceanId(spotinst.String(resourceData.Get(string(OceanID)).(string)))
 			return nil
 		},
@@ -62,8 +62,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *string = nil
 			if launchSpec.ImageID != nil {
 				value = launchSpec.ImageID
@@ -74,16 +74,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(ImageID)); ok && value != nil {
 				launchSpec.SetImageId(spotinst.String(resourceData.Get(string(ImageID)).(string)))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(ImageID)); ok && value != nil {
 				launchSpec.SetImageId(spotinst.String(resourceData.Get(string(ImageID)).(string)))
 			}
@@ -100,8 +100,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *string = nil
 			if launchSpec.Name != nil {
 				value = launchSpec.Name
@@ -112,16 +112,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(Name)); ok && value != nil {
 				launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(Name)); ok && value != nil {
 				launchSpec.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			}
@@ -147,8 +147,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			StateFunc: Base64StateFunc,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value = ""
 			if launchSpec.UserData != nil {
 				userData := launchSpec.UserData
@@ -168,8 +168,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
 				userData := spotinst.String(base64Encode(v))
 				launchSpec.SetUserData(userData)
@@ -177,8 +177,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var userData *string = nil
 			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
 				userData = spotinst.String(base64Encode(v))
@@ -210,8 +210,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec.Labels != nil {
 				labels := launchSpec.Labels
@@ -225,8 +225,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(Labels)); ok {
 				if labels, err := expandLabels(value); err != nil {
 					return err
@@ -237,8 +237,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var labelList []*aws.Label = nil
 			if value, ok := resourceData.GetOk(string(Labels)); ok {
 				if labels, err := expandLabels(value); err != nil {
@@ -275,8 +275,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec.Tags != nil {
 				tags := launchSpec.Tags
@@ -290,8 +290,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(Tags)); ok {
 				if tags, err := expandTags(value); err != nil {
 					return err
@@ -302,8 +302,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var tagsToAdd []*aws.Tag = nil
 			if value, ok := resourceData.GetOk(string(Tags)); ok {
 				if tags, err := expandTags(value); err != nil {
@@ -351,8 +351,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec.ElasticIPPool != nil {
 				elasticIpPool := launchSpec.ElasticIPPool
@@ -366,8 +366,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(ElasticIpPool)); ok {
 				if elasticIpPool, err := expandElasticIpPool(value); err != nil {
 					return err
@@ -378,8 +378,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *aws.ElasticIPPool = nil
 
 			if v, ok := resourceData.GetOk(string(ElasticIpPool)); ok {
@@ -497,8 +497,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 
 			if launchSpec != nil && launchSpec.BlockDeviceMappings != nil {
@@ -514,8 +514,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
 				if v, err := expandBlockDeviceMappings(v); err != nil {
 					return err
@@ -527,8 +527,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value []*aws.BlockDeviceMapping = nil
 
 			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
@@ -562,8 +562,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec.ResourceLimits != nil {
 				resourceLimits := launchSpec.ResourceLimits
@@ -577,8 +577,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(ResourceLimits)); ok {
 				if resourceLimits, err := expandResourceLimits(value); err != nil {
 					return err
@@ -589,8 +589,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *aws.ResourceLimits = nil
 
 			if v, ok := resourceData.GetOk(string(ResourceLimits)); ok {
@@ -615,8 +615,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value []string = nil
 			if launchSpec.SecurityGroupIDs != nil {
 				value = launchSpec.SecurityGroupIDs
@@ -627,8 +627,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
 				ids := make([]string, len(v))
 				for i, j := range v {
@@ -639,8 +639,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.Get(string(SecurityGroups)).([]interface{}); ok {
 				ids := make([]string, len(v))
 				for i, j := range v {
@@ -678,8 +678,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec.Labels != nil {
 				taints := launchSpec.Taints
@@ -693,8 +693,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(Taints)); ok {
 				if labels, err := expandTaints(value); err != nil {
 					return err
@@ -705,8 +705,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var taintList []*aws.Taint = nil
 			if value, ok := resourceData.GetOk(string(Taints)); ok {
 				if taints, err := expandTaints(value); err != nil {
@@ -729,8 +729,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value = ""
 			if launchSpec.IAMInstanceProfile != nil {
 
@@ -747,8 +747,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.Get(string(IamInstanceProfile)).(string); ok && v != "" {
 				iamInstanceProf := &aws.IAMInstanceProfile{}
 				if InstanceProfileArnRegex.MatchString(v) {
@@ -761,8 +761,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.Get(string(IamInstanceProfile)).(string); ok && v != "" {
 				iamInstanceProf := &aws.IAMInstanceProfile{}
 				if InstanceProfileArnRegex.MatchString(v) {
@@ -810,8 +810,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec.AutoScale != nil && launchSpec.AutoScale.Headrooms != nil {
 				headrooms := launchSpec.AutoScale.Headrooms
@@ -825,8 +825,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
 				if headrooms, err := expandHeadrooms(value); err != nil {
 					return err
@@ -837,8 +837,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var headroomList []*aws.AutoScaleHeadroom = nil
 			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
 				if expandedList, err := expandHeadrooms(value); err != nil {
@@ -862,8 +862,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value []string = nil
 			if launchSpec.SubnetIDs != nil {
 				value = launchSpec.SubnetIDs
@@ -874,8 +874,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(SubnetIDs)); ok {
 				if subnetIDs, err := expandSubnetIDs(v); err != nil {
 					return err
@@ -886,8 +886,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(SubnetIDs)); ok {
 				if subnetIDs, err := expandSubnetIDs(v); err != nil {
 					return err
@@ -913,8 +913,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value []string = nil
 			if launchSpec.InstanceTypes != nil {
 				value = launchSpec.InstanceTypes
@@ -925,8 +925,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(InstanceTypes)); ok {
 				if instanceTypes, err := expandInstanceTypes(v); err != nil {
 					return err
@@ -937,8 +937,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(InstanceTypes)); ok {
 				if instanceTypes, err := expandInstanceTypes(v); err != nil {
 					return err
@@ -962,8 +962,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *int = nil
 			if launchSpec.RootVolumeSize != nil {
 				value = launchSpec.RootVolumeSize
@@ -974,16 +974,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.Get(string(RootVolumeSize)).(int); ok && v > 0 {
 				launchSpec.SetRootVolumeSize(spotinst.Int(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *int = nil
 			if v, ok := resourceData.Get(string(RootVolumeSize)).(int); ok && v > 0 {
 				value = spotinst.Int(v)
@@ -1012,8 +1012,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec.Strategy != nil {
 				strategy := launchSpec.Strategy
@@ -1027,8 +1027,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if value, ok := resourceData.GetOk(string(Strategy)); ok {
 				if strategy, err := expandStrategy(value); err != nil {
 					return err
@@ -1039,8 +1039,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var value *aws.LaunchSpecStrategy = nil
 
 			if v, ok := resourceData.GetOk(string(Strategy)); ok {
