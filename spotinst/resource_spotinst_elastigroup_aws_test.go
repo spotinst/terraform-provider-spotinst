@@ -445,6 +445,9 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "standard"),
+					resource.TestCheckResourceAttr(resourceName, "meta_data_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "meta_data_options.0.http_put_response_hop_limit", "10"),
+					resource.TestCheckResourceAttr(resourceName, "meta_data_options.0.http_tokens", "required"),
 				),
 			},
 			{
@@ -467,6 +470,9 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "unlimited"),
+					resource.TestCheckResourceAttr(resourceName, "meta_data_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "meta_data_options.0.http_put_response_hop_limit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "meta_data_options.0.http_tokens", "optional"),
 				),
 			},
 			{
@@ -505,6 +511,10 @@ const testLaunchConfigurationGroupConfig_Create = `
  ebs_optimized        = false
  placement_tenancy    = "default"
  cpu_credits          = "standard"
+ meta_data_options {
+ 	http_tokens = "required"
+    http_put_response_hop_limit = 10
+ }
  // ---------------------------------------
 `
 
@@ -520,17 +530,21 @@ const testLaunchConfigurationGroupConfig_Update = `
  ebs_optimized        = true
  placement_tenancy    = "default"
  cpu_credits          = "unlimited"
+ meta_data_options {
+ 	http_tokens = "optional"
+    http_put_response_hop_limit = 20
+ }
  // ---------------------------------------
 `
 
 const testLaunchConfigurationGroupConfig_EmptyFields = `
- // --- LAUNCH CONFIGURATION --------------
- image_id        = "ami-31394949"
- user_data       = "cannot set empty user data"
- shutdown_script = "cannot set empty shutdown script"
- key_name        = "cannot set empty key name"
- security_groups = ["sg-123456"]
- // ---------------------------------------
+// --- LAUNCH CONFIGURATION --------------
+image_id        = "ami-31394949"
+user_data       = "cannot set empty user data"
+shutdown_script = "cannot set empty shutdown script"
+key_name        = "cannot set empty key name"
+security_groups = ["sg-123456"]
+// ---------------------------------------
 `
 
 // endregion
