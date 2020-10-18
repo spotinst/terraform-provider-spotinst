@@ -503,12 +503,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(HttpTokens): {
+					string(HTTPTokens): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(HttpPutResponseHopLimit): {
+					string(HTTPPutResponseHopLimit): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
@@ -599,10 +599,10 @@ func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
 	}
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(HttpTokens)].(string); ok && v != "" {
+	if v, ok := m[string(HTTPTokens)].(string); ok && v != "" {
 		metadataOptions.SetHTTPTokens(spotinst.String(v))
 	}
-	if v, ok := m[string(HttpPutResponseHopLimit)].(int); ok && v >= 0 {
+	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok && v >= 0 {
 		metadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
 	} else {
 		metadataOptions.SetHTTPPutResponseHopLimit(nil)
@@ -613,8 +613,8 @@ func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
 
 func flattenMetadataOptions(metadataOptions *aws.MetadataOptions) []interface{} {
 	result := make(map[string]interface{})
-	result[string(HttpTokens)] = spotinst.StringValue(metadataOptions.HTTPTokens)
-	result[string(HttpPutResponseHopLimit)] = spotinst.IntValue(metadataOptions.HTTPPutResponseHopLimit)
+	result[string(HTTPTokens)] = spotinst.StringValue(metadataOptions.HTTPTokens)
+	result[string(HTTPPutResponseHopLimit)] = spotinst.IntValue(metadataOptions.HTTPPutResponseHopLimit)
 
 	return []interface{}{result}
 }

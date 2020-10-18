@@ -20,7 +20,7 @@ const (
 	MetadataOptions    commons.FieldName = "metadata_options"
 
 	// - MetadataOptions -----------------------------
-	HttpTokens              commons.FieldName = "http_tokens"
-	HttpPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
+	HTTPTokens              commons.FieldName = "http_tokens"
+	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
 	// -----------------------------------
 )
