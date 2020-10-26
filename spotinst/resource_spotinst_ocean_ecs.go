@@ -12,14 +12,14 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_aws"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_autoscaler"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_instance_types"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_launch_specification"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_scheduling"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_ecs_strategy"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_ecs"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_ecs_autoscaler"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_ecs_instance_types"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_ecs_launch_specification"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_ecs_scheduling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_ecs_strategy"
 )
 
 func resourceSpotinstOceanECS() *schema.Resource {

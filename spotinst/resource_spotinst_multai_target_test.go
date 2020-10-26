@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 func init() {

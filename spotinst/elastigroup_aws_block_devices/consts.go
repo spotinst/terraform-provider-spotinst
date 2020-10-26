@@ -1,6 +1,6 @@
 package elastigroup_aws_block_devices
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Prefix = "ebs_block_device"

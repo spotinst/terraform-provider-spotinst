@@ -1,6 +1,6 @@
 package mrscaler_aws_instance_groups
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	TaskInstanceTypes  commons.FieldName = "task_instance_types"

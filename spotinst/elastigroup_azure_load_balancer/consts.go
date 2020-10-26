@@ -1,6 +1,6 @@
 package elastigroup_azure_load_balancer
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Prefix = "azure_load_balancer_"

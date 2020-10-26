@@ -1,6 +1,6 @@
 package mrscaler_aws_strategy
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Clone = "clone"

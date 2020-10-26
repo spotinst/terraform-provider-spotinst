@@ -1,6 +1,6 @@
 package elastigroup_gcp_integrations
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	// - DOCKER-SWARM --------------------
