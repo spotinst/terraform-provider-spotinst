@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_ecs
 
-Provides a Spotinst Ocean ECS resource.
+Manages a Spotinst Ocean ECS resource.
 
 ## Example Usage
 
@@ -42,6 +42,11 @@ resource "spotinst_ocean_ecs" "example" {
       key   = "fakeKey"
       value = "fakeValue"
     }
+}
+```
+```
+output "ocean_id" {
+  value = spotinst_ocean_ecs.example.id
 }
 ```
 
@@ -158,3 +163,8 @@ The following arguments are supported:
     }
   }
 ```
+
+## Attributes Reference
+
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Spotinst Ocean ID.

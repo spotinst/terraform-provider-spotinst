@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_aws\_launch\_spec
 
-Provides a custom Spotinst Ocean AWS Launch Spec resource.
+Manages a custom Spotinst Ocean AWS Launch Spec resource.
 
 ## Example Usage
 
@@ -77,6 +77,12 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   } 
 }
 ```
+```
+output "ocean_launchspec_id" {
+  value = spotinst_ocean_aws_launch_spec.example.id
+}
+```
+
 
 ## Argument Reference
 
@@ -132,4 +138,7 @@ The following arguments are supported:
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) set a maximum number of instances per launch specification. Can be null. If set, value must be greater than or equal to 0.
     
+## Attributes Reference
 
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Spotinst LaunchSpec ID.

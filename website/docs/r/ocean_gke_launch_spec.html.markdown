@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_gke\_launch\_spec
 
-Provides a custom Spotinst Ocean GKE Launch Spec resource.
+Manages a custom Spotinst Ocean GKE Launch Spec resource.
 
 ## Example Usage
 
@@ -41,6 +41,11 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
   }
 }
 ```
+```
+output "ocean_launchspec_id" {
+  value = spotinst_ocean_gke_launch_spec.example.id
+}
+```
 
 ## Argument Reference
 
@@ -56,3 +61,9 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate for each headroom unit.
+
+
+## Attributes Reference
+
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Spotinst LaunchSpec ID.
