@@ -3,7 +3,7 @@ package elastigroup_gcp_integrations
 import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

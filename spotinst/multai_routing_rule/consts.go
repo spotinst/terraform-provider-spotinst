@@ -1,6 +1,6 @@
 package multai_routing_rule
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	BalancerID    commons.FieldName = "balancer_id"

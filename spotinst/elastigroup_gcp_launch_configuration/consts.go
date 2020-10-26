@@ -1,6 +1,6 @@
 package elastigroup_gcp_launch_configuration
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 type LabelField string
 type MetadataField string

@@ -1,0 +1,28 @@
+name: Website
+on: [push, pull_request]
+
+jobs:
+  website:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+
+      # https://help.github.com/en/actions/reference/workflow-commands-for-github-actions
+      - name: Set up Go variables for backwards compatibility
+        run: |
+          echo "GOPATH=$GITHUB_WORKSPACE/go" >> $GITHUB_ENV
+          echo "GOBIN=$GITHUB_WORKSPACE/go/bin" >> $GITHUB_ENV
+          echo "$GITHUB_WORKSPACE/go/bin" >> $GITHUB_PATH
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: go/src/github.com/${{ github.repository }}
+
+      - name: Test Website
+        run: |
+          make -C $GOPATH/src/github.com/${{ github.repository }} website-test

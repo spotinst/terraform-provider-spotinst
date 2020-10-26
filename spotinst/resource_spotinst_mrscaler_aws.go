@@ -12,14 +12,14 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_cluster"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_instance_groups"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_scaling_policies"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_scheduled_task"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/mrscaler_aws_terminationPolicies"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_cluster"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_instance_groups"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_scaling_policies"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_scheduled_task"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_terminationPolicies"
 )
 
 func resourceSpotinstMRScalerAWS() *schema.Resource {

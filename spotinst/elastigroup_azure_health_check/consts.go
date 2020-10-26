@@ -1,6 +1,6 @@
 package elastigroup_azure_health_check
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Prefix = "health_check"

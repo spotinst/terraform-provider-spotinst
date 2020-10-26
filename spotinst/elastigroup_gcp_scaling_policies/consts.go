@@ -1,6 +1,6 @@
 package elastigroup_gcp_scaling_policies
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	ScalingDownPolicy commons.FieldName = "scaling_down_policy"

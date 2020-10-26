@@ -1,7 +1,7 @@
 package ocean_aws_strategy
 
 import (
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 const (

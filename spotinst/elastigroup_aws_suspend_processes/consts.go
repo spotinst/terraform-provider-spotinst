@@ -1,6 +1,6 @@
 package elastigroup_aws_suspend_processes
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	GroupID    commons.FieldName = "group_id"
