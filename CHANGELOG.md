@@ -1,4 +1,6 @@
-## 1.26.0 (Unreleased)
+## Unreleased
+
+## 1.26.0 (October 27, 2020)
 
 FEATURES:
 * *New Resource*: `elastigroup_aws_suspension`
