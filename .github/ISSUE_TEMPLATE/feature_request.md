@@ -12,7 +12,7 @@ tracker reserved for bug reports and feature requests. For general usage
 questions, please see: https://www.terraform.io/community.html.
 -->
 
-### Terraform version
+### Terraform Version
 
 <!--
 Run `terraform version` to show the version, and include the output below.
@@ -40,7 +40,7 @@ Please keep this section focused on the problem and not on the suggested
 solution. We'll get to that in a moment, below!
 -->
 
-### Potential Terraform configuration
+### Potential Terraform Configuration
 
 <!--
 Information about code formatting:
@@ -61,11 +61,9 @@ create a list below that mentions each of them. For example:
 - #6017
 -->
 
-### Community note
+### Community Note
 
-* Please vote on this issue by adding a 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/)
-  to the original issue to help the community and maintainers prioritize this request.
-* If you are interested in working on this issue or have submitted a pull
-  request, please leave a comment.
+* Please vote on this issue by adding a 👍 [reaction](https://blog.github.com/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) to help the community and maintainers prioritize this request.
+* If you are interested in working on this issue or have submitted a pull request, please leave a comment.
 
 <!--- Thank you for keeping this note for the community --->
