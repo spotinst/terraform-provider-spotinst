@@ -17,6 +17,9 @@ test: fmtcheck
 testacc: fmtcheck
 	TF_ACC=1 go test $(TEST) -v -count 1 -parallel 20 $(TESTARGS) -timeout 120m
 
+vet:
+	go vet ./...
+
 fmt:
 	@gofmt -s -w ./$(PKG_NAME)
 
