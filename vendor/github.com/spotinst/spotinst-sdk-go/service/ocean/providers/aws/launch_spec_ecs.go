@@ -25,6 +25,7 @@ type ECSLaunchSpec struct {
 	Attributes          []*ECSAttribute          `json:"attributes,omitempty"`
 	BlockDeviceMappings []*ECSBlockDeviceMapping `json:"blockDeviceMappings,omitempty"`
 	Tags                []*Tag                   `json:"tags,omitempty"`
+	InstanceTypes       []string                 `json:"instanceTypes,omitempty"`
 
 	// Read-only fields.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -384,6 +385,13 @@ func (o *ECSLaunchSpec) SetBlockDeviceMappings(v []*ECSBlockDeviceMapping) *ECSL
 func (o *ECSLaunchSpec) SetTags(v []*Tag) *ECSLaunchSpec {
 	if o.Tags = v; o.Tags == nil {
 		o.nullFields = append(o.nullFields, "Tags")
+	}
+	return o
+}
+
+func (o *ECSLaunchSpec) SetInstanceTypes(v []string) *ECSLaunchSpec {
+	if o.InstanceTypes = v; o.InstanceTypes == nil {
+		o.nullFields = append(o.nullFields, "InstanceTypes")
 	}
 	return o
 }

@@ -104,15 +104,16 @@ type ECSInstanceTypes struct {
 }
 
 type ECSLaunchSpecification struct {
-	AssociatePublicIPAddress *bool                  `json:"associatePublicIpAddress,omitempty"`
-	SecurityGroupIDs         []string               `json:"securityGroupIds,omitempty"`
-	ImageID                  *string                `json:"imageId,omitempty"`
-	KeyPair                  *string                `json:"keyPair,omitempty"`
-	UserData                 *string                `json:"userData,omitempty"`
-	IAMInstanceProfile       *ECSIAMInstanceProfile `json:"iamInstanceProfile,omitempty"`
-	Tags                     []*Tag                 `json:"tags,omitempty"`
-	Monitoring               *bool                  `json:"monitoring,omitempty"`
-	EBSOptimized             *bool                  `json:"ebsOptimized,omitempty"`
+	AssociatePublicIPAddress *bool                    `json:"associatePublicIpAddress,omitempty"`
+	SecurityGroupIDs         []string                 `json:"securityGroupIds,omitempty"`
+	ImageID                  *string                  `json:"imageId,omitempty"`
+	KeyPair                  *string                  `json:"keyPair,omitempty"`
+	UserData                 *string                  `json:"userData,omitempty"`
+	IAMInstanceProfile       *ECSIAMInstanceProfile   `json:"iamInstanceProfile,omitempty"`
+	Tags                     []*Tag                   `json:"tags,omitempty"`
+	Monitoring               *bool                    `json:"monitoring,omitempty"`
+	EBSOptimized             *bool                    `json:"ebsOptimized,omitempty"`
+	BlockDeviceMappings      []*ECSBlockDeviceMapping `json:"blockDeviceMappings,omitempty"`
 
 	forceSendFields []string
 	nullFields      []string
@@ -773,6 +774,13 @@ func (o *ECSLaunchSpecification) SetMonitoring(v *bool) *ECSLaunchSpecification 
 func (o *ECSLaunchSpecification) SetEBSOptimized(v *bool) *ECSLaunchSpecification {
 	if o.EBSOptimized = v; o.EBSOptimized == nil {
 		o.nullFields = append(o.nullFields, "EBSOptimized")
+	}
+	return o
+}
+
+func (o *ECSLaunchSpecification) SetBlockDeviceMappings(v []*ECSBlockDeviceMapping) *ECSLaunchSpecification {
+	if o.BlockDeviceMappings = v; o.BlockDeviceMappings == nil {
+		o.nullFields = append(o.nullFields, "BlockDeviceMappings")
 	}
 	return o
 }

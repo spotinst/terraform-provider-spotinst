@@ -3653,6 +3653,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.max_scale_down_percentage", "70"),
 				),
 			},
 			{
@@ -3674,6 +3675,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.max_scale_down_percentage", "20"),
 				),
 			},
 			{
@@ -3708,7 +3710,8 @@ const testIntegrationDockerSwarmGroupConfig_Create = `
     }
 
     autoscale_down {
-      evaluation_periods = 300
+      evaluation_periods = 300 
+      max_scale_down_percentage = 70
     }
  }
  // -------------------------------------
@@ -3731,6 +3734,7 @@ const testIntegrationDockerSwarmGroupConfig_Update = `
 
     autoscale_down {
       evaluation_periods = 150
+	  max_scale_down_percentage = 20
     }
   }
  // -------------------------------------

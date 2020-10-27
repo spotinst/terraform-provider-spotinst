@@ -62,6 +62,8 @@ func expandAWSGroupAutoScaleDown(data interface{}) (*aws.AutoScaleDown, error) {
 
 			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
 				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
+			} else {
+				autoScaleDown.SetMaxScaleDownPercentage(nil)
 			}
 		}
 		return autoScaleDown, nil

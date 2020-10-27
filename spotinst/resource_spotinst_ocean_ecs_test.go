@@ -355,6 +355,14 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "key_pair", "spotinst-labs-oregon"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "50"),
 				),
 			},
 			{
@@ -372,6 +380,17 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "key_pair", ""),
 					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.base_size", "50"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.size_per_resource_unit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
 				),
 			},
 		},
@@ -387,6 +406,16 @@ const testLaunchSpecECSConfig_Create = `
  user_data 					 = "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
  associate_public_ip_address = false
 
+block_device_mappings {
+    device_name = "/dev/xvda1"
+    ebs {
+      delete_on_termination = "true"
+      kms_key_id = "kms-key"
+      encrypted = "false"
+      volume_type = "gp2"
+      volume_size = 50
+    }
+  }
 // ---------------------------------------
 `
 
@@ -399,6 +428,20 @@ const testLaunchSpecECSConfig_Update = `
  user_data					 = "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
  associate_public_ip_address = true
 
+  block_device_mappings {
+        device_name = "/dev/xvda1"
+        ebs {
+          delete_on_termination = "true"
+          kms_key_id = "kms-key"
+          encrypted = "false"
+          volume_type = "gp2"
+          dynamic_volume_size {
+            base_size = 50
+            resource = "CPU"
+            size_per_resource_unit = 20
+          }
+        }
+      }
 // ---------------------------------------
 `
 

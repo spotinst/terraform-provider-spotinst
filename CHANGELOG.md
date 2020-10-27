@@ -1,3 +1,23 @@
+## 1.29.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_specification: added `block_device_mappings` 
+* resource/spotinst_elastigroup_aws: added `max_scale_down_percentage` to `integration_docker_swarm`
+* resource/spotinst_ocean_ecs_launch_spec: added `instance_types`.
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved error with `max_scale_down_percentage` under third party integrations.
+
+## 1.28.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `metadata_options`.
+
+## 1.27.0 (Unreleased)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `spot_percentege` under `strategy`
+
 ## 1.26.0 (Unreleased)
 
 FEATURES:
