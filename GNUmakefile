@@ -101,7 +101,7 @@ endif
 
 release:
 	@git commit -a -m "chore(release): $(RELEASE)"
-	@git tag -f -s -m "chore(release): $(RELEASE)" $(RELEASE)
+	@git tag -f -m    "chore(release): $(RELEASE)" $(RELEASE)
 	@git push --follow-tags
 
 .PHONY: build gen sweep test testacc vet fmt fmtcheck lint tools test-compile website website-lint website-test depscheck docscheck release
