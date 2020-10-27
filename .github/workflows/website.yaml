@@ -24,4 +24,5 @@ jobs:
 
       - name: Test Website
         run: |
-          make -C $GOPATH/src/github.com/${{ github.repository }} website-test
+          cd $GOPATH/src/github.com/${{ github.repository }}
+          make website-test
