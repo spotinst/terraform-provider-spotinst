@@ -1,6 +1,6 @@
 package elastigroup_gke
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Name      commons.FieldName = "name"

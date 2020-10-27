@@ -1,6 +1,6 @@
 package elastigroup_azure_scaling_policies
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 type DimensionField string
 

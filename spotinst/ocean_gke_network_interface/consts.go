@@ -1,6 +1,6 @@
 package ocean_gke_network_interface
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	NetworkInterface commons.FieldName = "network_interface"

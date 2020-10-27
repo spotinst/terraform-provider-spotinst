@@ -1,6 +1,6 @@
 package elastigroup_azure_scheduled_task
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	ScheduledTask        commons.FieldName = "scheduled_task"

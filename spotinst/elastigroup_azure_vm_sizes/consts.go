@@ -1,6 +1,6 @@
 package elastigroup_azure_vm_sizes
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Prefix = "azure_vm_sizes_"

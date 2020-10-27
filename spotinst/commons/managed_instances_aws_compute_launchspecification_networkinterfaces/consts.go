@@ -1,6 +1,6 @@
 package managed_instances_aws_compute_launchspecification_networkinterfaces
 
-import "github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
+import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	NetworkInterface         commons.FieldName = "network_interface"

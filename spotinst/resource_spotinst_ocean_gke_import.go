@@ -6,16 +6,16 @@ import (
 	"log"
 	"time"
 
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_import_autoscaler"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_autoscaler"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/commons"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_import"
-	"github.com/terraform-providers/terraform-provider-spotinst/spotinst/ocean_gke_import_scheduling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_scheduling"
 )
 
 func resourceSpotinstOceanGKEImport() *schema.Resource {

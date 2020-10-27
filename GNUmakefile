@@ -1,7 +1,9 @@
 TEST?=./...
-GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
+GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 PKG_NAME=spotinst
 WEBSITE_REPO=github.com/hashicorp/terraform-website
+VERSION?=$(shell grep -oP '(?<=Version = ).+' version/version.go | xargs)
+RELEASE?=v$(VERSION)
 
 default: build
 
@@ -17,6 +19,9 @@ test: fmtcheck
 testacc: fmtcheck
 	TF_ACC=1 go test $(TEST) -v -count 1 -parallel 20 $(TESTARGS) -timeout 120m
 
+vet:
+	go vet ./...
+
 fmt:
 	@gofmt -s -w ./$(PKG_NAME)
 
@@ -31,10 +36,6 @@ depscheck:
 	@go mod tidy
 	@git diff --exit-code -- go.mod go.sum || \
 		(echo; echo "Unexpected difference in go.mod/go.sum files. Run 'go mod tidy' command or revert any go.mod/go.sum changes and commit."; exit 1)
-	@echo "==> Checking source code with go mod vendor..."
-	@go mod vendor
-	@git diff --compact-summary --exit-code -- vendor || \
-		(echo; echo "Unexpected difference in vendor/ directory. Run 'go mod vendor' command or revert any go.mod/go.sum/vendor changes and commit."; exit 1)
 
 docscheck:
 	@tfproviderdocs check \
@@ -98,4 +99,9 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build gen sweep test testacc fmt fmtcheck lint tools test-compile website website-lint website-test depscheck docscheck
+release:
+	@git commit -a -m "chore(release): $(RELEASE)"
+	@git tag -f -s -m "chore(release): $(RELEASE)" $(RELEASE)
+	@git push
+
+.PHONY: build gen sweep test testacc vet fmt fmtcheck lint tools test-compile website website-lint website-test depscheck docscheck release

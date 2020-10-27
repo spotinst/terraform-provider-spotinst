@@ -1,4 +1,6 @@
-## 1.26.0 (Unreleased)
+## Unreleased
+
+## 1.26.0 (October 27, 2020)
 
 FEATURES:
 * *New Resource*: `elastigroup_aws_suspension`
@@ -13,6 +15,7 @@ BUG FIXES:
 
 NOTES: 
 * documentation: resource/spotinst_mrscaler_aws: fixed usage example and documentation for `retries`. 
+* documentation: ownership of this repository has been transferred from @terraform-providers to @spotinst
 
 ## 1.25.0 (August 26, 2020)
 
