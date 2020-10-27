@@ -75,6 +75,10 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
      key   = "Env"
      value = "production"
   } 
+
+ strategy {
+    spot_percentage = 70
+ }
 }
 ```
 
@@ -132,4 +136,5 @@ The following arguments are supported:
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) set a maximum number of instances per launch specification. Can be null. If set, value must be greater than or equal to 0.
     
-
+* `strategy` - (Optional) 
+    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of spot instances out of all the Launch spec instances.
