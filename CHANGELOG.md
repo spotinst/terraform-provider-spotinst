@@ -1,5 +1,9 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `spot_percentage` under `strategy`
+* resource/spotinst_ocean_ecs_launch_specification: added `block_device_mappings`
+
 ## 1.26.0 (October 27, 2020)
 
 FEATURES:

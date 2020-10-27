@@ -445,6 +445,9 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "standard"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "10"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "required"),
 				),
 			},
 			{
@@ -467,6 +470,9 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "unlimited"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "optional"),
 				),
 			},
 			{
@@ -505,6 +511,10 @@ const testLaunchConfigurationGroupConfig_Create = `
  ebs_optimized        = false
  placement_tenancy    = "default"
  cpu_credits          = "standard"
+ metadata_options {
+ 	http_tokens = "required"
+    http_put_response_hop_limit = 10
+ }
  // ---------------------------------------
 `
 
@@ -520,6 +530,10 @@ const testLaunchConfigurationGroupConfig_Update = `
  ebs_optimized        = true
  placement_tenancy    = "default"
  cpu_credits          = "unlimited"
+ metadata_options {
+ 	http_tokens = "optional"
+    http_put_response_hop_limit = 20
+ }
  // ---------------------------------------
 `
 
