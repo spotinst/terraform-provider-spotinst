@@ -50,6 +50,7 @@ const (
 	TagSelectorValue   commons.FieldName = "tag_value"
 	ResourceLimits     commons.FieldName = "resource_limits"
 	MaxInstanceCount   commons.FieldName = "max_instance_count"
+	Strategy           commons.FieldName = "strategy"
 )
 
 const (
@@ -69,4 +70,8 @@ const (
 	VolumeType          commons.FieldName = "volume_type"
 	NoDevice            commons.FieldName = "no_device"
 	VirtualName         commons.FieldName = "virtual_name"
+)
+
+const (
+	SpotPercentage commons.FieldName = "spot_percentage"
 )
