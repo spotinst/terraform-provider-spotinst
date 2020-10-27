@@ -2,6 +2,8 @@ TEST?=./...
 GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
 PKG_NAME=spotinst
 WEBSITE_REPO=github.com/hashicorp/terraform-website
+VERSION?=$(shell grep -oP '(?<=Version = ).+' version/version.go | xargs)
+RELEASE?=v$(VERSION)
 
 default: build
 
@@ -97,4 +99,9 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build gen sweep test testacc vet fmt fmtcheck lint tools test-compile website website-lint website-test depscheck docscheck
+release:
+	@git commit -a -m "chore(release): $(RELEASE)"
+	@git tag -f -s -m "chore(release): $(RELEASE)" $(RELEASE)
+	@git push
+
+.PHONY: build gen sweep test testacc vet fmt fmtcheck lint tools test-compile website website-lint website-test depscheck docscheck release
