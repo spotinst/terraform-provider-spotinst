@@ -4,7 +4,7 @@ before:
 
 builds:
   - env:
-      # goreleaser does not work with CGO, it could also complicate
+      # GoReleaser does not work with CGO, it could also complicate
       # usage by users in CI/CD systems like Terraform Cloud where
       # they are unable to install libraries.
       - CGO_ENABLED=0
@@ -47,8 +47,12 @@ signs:
       - "--detach-sign"
       - "${artifact}"
 
-release:
-   draft: true
-
 changelog:
-  skip: true
+  sort: asc
+  filters:
+    exclude:
+      - Merge pull request
+      - Merge branch
+
+release:
+  draft: true

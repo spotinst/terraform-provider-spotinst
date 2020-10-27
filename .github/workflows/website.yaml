@@ -4,7 +4,6 @@ on: [push, pull_request]
 jobs:
   website:
     runs-on: ubuntu-latest
-
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
