@@ -637,6 +637,57 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[InstanceTypes] = commons.NewGenericField(
+		commons.OceanECSLaunchSpec,
+		InstanceTypes,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			MinItems: 1,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value []string = nil
+			if launchSpec.InstanceTypes != nil {
+				value = launchSpec.InstanceTypes
+			}
+			if err := resourceData.Set(string(InstanceTypes), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceTypes), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceTypes)); ok {
+				if instanceTypes, err := expandInstanceTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetInstanceTypes(instanceTypes)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceTypes)); ok {
+				if instanceTypes, err := expandInstanceTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetInstanceTypes(instanceTypes)
+				}
+			} else {
+				launchSpec.SetInstanceTypes(nil)
+			}
+
+			return nil
+		},
+		nil,
+	)
+
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -945,4 +996,16 @@ func flattenDynamicVolumeSize(dvs *aws.ECSDynamicVolumeSize) interface{} {
 	DynamicVS[string(SizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
 
 	return []interface{}{DynamicVS}
+}
+
+func expandInstanceTypes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if instanceTypes, ok := v.(string); ok && instanceTypes != "" {
+			result = append(result, instanceTypes)
+		}
+	}
+	return result, nil
 }
