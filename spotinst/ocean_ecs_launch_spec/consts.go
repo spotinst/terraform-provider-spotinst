@@ -24,6 +24,7 @@ const (
 	AttributeValue     commons.FieldName = "value"
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
 	Tags               commons.FieldName = "tags"
+	InstanceTypes      commons.FieldName = "instance_types"
 )
 
 const (

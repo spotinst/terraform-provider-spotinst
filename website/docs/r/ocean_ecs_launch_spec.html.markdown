@@ -19,6 +19,10 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
   security_group_ids = ["awseb-12345"]
+  instance_types = ["m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge",
+      "m4.4xlarge", "m4.2xlarge", "m4.10xlarge", "m4.16xlarge", "m5.large", 
+      "m5.xlarge", "m5.2xlarge", "m5.4xlarge", "m5.12xlarge", "m5.24xlarge"
+    ]
   
   block_device_mappings {
         device_name = "/dev/xvda1"
@@ -64,6 +68,7 @@ The following arguments are supported:
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_group_ids` - (Optional) One or more security group ids.
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
+* `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the Ocean cluster.
 
 * `block_device_mappings`- (Optional) Object. Array list of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
     * `device_name` - (Optional) String. Set device name. (Example: "/dev/xvda1").
