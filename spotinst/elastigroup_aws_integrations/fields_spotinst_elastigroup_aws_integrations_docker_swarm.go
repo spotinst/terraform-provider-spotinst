@@ -74,6 +74,11 @@ func SetupDockerSwarm(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
+
+								string(MaxScaleDownPercentage): {
+									Type:     schema.TypeFloat,
+									Optional: true,
+								},
 							},
 						},
 					},
