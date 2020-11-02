@@ -415,7 +415,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Required: true,
 					},
 
-					string(Ebs): {
+					string(EBS): {
 						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
@@ -599,7 +599,7 @@ func expandBlockDeviceMappings(data interface{}) ([]*aws.ECSBlockDeviceMapping, 
 			bdm.SetDeviceName(spotinst.String(v))
 		}
 
-		if r, ok := attr[string(Ebs)]; ok {
+		if r, ok := attr[string(EBS)]; ok {
 			if ebs, err := expandEBS(r); err != nil {
 				return nil, err
 			} else {
@@ -699,7 +699,7 @@ func flattenBlockDeviceMappings(bdms []*aws.ECSBlockDeviceMapping) []interface{}
 		m := make(map[string]interface{})
 		m[string(DeviceName)] = spotinst.StringValue(bdm.DeviceName)
 		if bdm.EBS != nil {
-			m[string(Ebs)] = flattenEbs(bdm.EBS)
+			m[string(EBS)] = flattenEbs(bdm.EBS)
 		}
 		m[string(NoDevice)] = spotinst.StringValue(bdm.NoDevice)
 		m[string(VirtualName)] = spotinst.StringValue(bdm.VirtualName)
