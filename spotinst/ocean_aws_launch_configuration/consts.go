@@ -16,4 +16,5 @@ const (
 	RootVolumeSize           commons.FieldName = "root_volume_size"
 	Monitoring               commons.FieldName = "monitoring"
 	EBSOptimized             commons.FieldName = "ebs_optimized"
+	UseAsTemplateOnly        commons.FieldName = "use_as_template_only"
 )
