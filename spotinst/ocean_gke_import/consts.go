@@ -16,5 +16,8 @@ const (
 	MaxSize             commons.FieldName = "max_size"
 	MinSize             commons.FieldName = "min_size"
 	DesiredCapacity     commons.FieldName = "desired_capacity"
+	ControllerClusterID commons.FieldName = "controller_cluster_id"
+
+	// Deprecated: Please use ControllerClusterID instead.
 	ClusterControllerID commons.FieldName = "cluster_controller_id"
 )

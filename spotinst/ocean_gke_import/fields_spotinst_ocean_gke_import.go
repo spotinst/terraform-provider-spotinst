@@ -325,6 +325,34 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 		nil,
 	)
+
+	fieldsMap[ControllerClusterID] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		ControllerClusterID,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if err := resourceData.Set(string(ControllerClusterID), spotinst.StringValue(cluster.ControllerClusterID)); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(ControllerClusterID), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(ControllerClusterID)); ok {
+				cluster.SetControllerClusterId(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
