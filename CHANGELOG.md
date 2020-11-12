@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.28.0 (November 12, 2020)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs_launch_specification: added `block_device_mappings`
 * resource/spotinst_ocean_gke_import: added `controller_cluster_id`
