@@ -185,6 +185,8 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
+					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "t3.medium"),
 				),
 			},
 			{
@@ -215,6 +217,9 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.key", "key2"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.value", "value2"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "m4.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types.1", "m4.2xlarge"),
 				),
 			},
 		},
@@ -231,6 +236,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-082b5a644766e0e6f"
   security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
   iam_instance_profile = "ecsInstanceRole"
+  instance_types = ["t3.medium"]
 
   attributes {
     key = "key"
@@ -260,6 +266,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   user_data = "hello world updated"
   image_id = "ami-082b5a644766e0e6f"
   iam_instance_profile = "ecsInstanceRole"
+  instance_types = ["m4.xlarge","m4.2xlarge"]
 
   attributes {
     key = "key"
