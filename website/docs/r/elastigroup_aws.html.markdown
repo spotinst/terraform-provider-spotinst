@@ -713,7 +713,7 @@ Usage:
         * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) Number of periods over which data is compared. Minimum 3, Measured in consecutive minutes.
-            
+        * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.  
 Usage:
 
 ```hcl
@@ -730,7 +730,8 @@ integration_docker_swarm {
     }
     
     autoscale_down {
-        evaluation_periods = 3
+        evaluation_periods        = 3
+        max_scale_down_percentage = 30
     } 
 }
 ```
