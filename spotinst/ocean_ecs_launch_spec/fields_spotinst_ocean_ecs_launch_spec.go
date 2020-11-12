@@ -1003,8 +1003,8 @@ func expandInstanceTypes(data interface{}) ([]string, error) {
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
-		if instanceTypes, ok := v.(string); ok && instanceTypes != "" {
-			result = append(result, instanceTypes)
+		if instanceType, ok := v.(string); ok && instanceType != "" {
+			result = append(result, instanceType)
 		}
 	}
 	return result, nil
