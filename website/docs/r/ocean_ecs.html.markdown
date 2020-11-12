@@ -38,6 +38,21 @@ resource "spotinst_ocean_ecs" "example" {
     monitoring                  = true
     ebs_optimized               = true
 
+  block_device_mappings {
+      device_name = "/dev/xvda1"
+      ebs {
+        delete_on_termination = "true"
+        encrypted = "false"
+        volume_type = "gp2"
+        volume_size = 50
+        dynamic_volume_size {
+          base_size = 50
+          resource = "CPU"
+          size_per_resource_unit = 20
+        }
+      }
+   }
+
     tags {
       key   = "fakeKey"
       value = "fakeValue"
@@ -67,11 +82,26 @@ The following arguments are supported:
 * `key_pair` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
-* `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, OCean will utilize them before launching Spot instances.
+* `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, Ocean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
-* `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
+* `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
-
+* `block_device_mappings` - (Optional) Object. List of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
+    * `device_name` - (Optional) String. Set device name. Example: `/dev/xvda1`.
+    * `ebs` - (Optional) Object. Set Elastic Block Store properties.
+        * `delete_on_termination` - (Optional) Boolean. Toggles EBS deletion upon instance termination. 
+        * `encrypted` - (Optional) Boolean. Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
+        * `iops` - (Required for requests to create `io1` volumes; it is not used in requests to create `gp2`, `st1`, `sc1`, or standard volumes) Int. The number of I/O operations per second (IOPS) that the volume supports.
+        * `kms_key_id` - (Optional) String. Identifier (key ID, key alias, ID ARN, or alias ARN) for a customer managed CMK under which the EBS volume is encrypted.
+        * `snapshot_id` - (Optional) (Optional) String. The snapshot ID to mount by. 
+        * `volume_type` - (Optional, Default: `standard`) String. The type of the volume. Example: `gp2`.
+        * `volume_size` - (Optional) Int. The size (in GB) of the volume.
+        * `dynamic_volume_size` - (Optional) Object. Set dynamic volume size properties. When using this object, you cannot use volumeSize. You must use one or the other.
+            * `base_size` - (Required) Int. Initial size for volume. Example: `50`.
+            * `resource` - (Required) String. Resource type to increase volume size dynamically by. Valid values: `CPU`.
+            * `size_per_resource_unit` - (Required) Int. Additional size (in GB) per resource unit. Example: When the `baseSize=50`, `sizePerResourceUnit=20`, and instance with two CPUs is launched, its total disk size will be: 90GB.
+    * `no_device` - (Optional) String. Suppresses the specified device included in the block device mapping of the AMI.
+        
 <a id="auto-scaler"></a>
 ## Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean ECS autoscaler.
@@ -83,7 +113,7 @@ The following arguments are supported:
         * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
         * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
     * `down` - (Optional) Auto Scaling scale down operations.
-        * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100
+        * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
     * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
         * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
@@ -135,15 +165,11 @@ The following arguments are supported:
 * `scheduled_task` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.
-                                     Example: True
-        * `time_windows` - (Required) Set time windows for shutdown hours. specify a list of 'timeWindows' with at least one time window Each string is in the format of - ddd:hh:mm-ddd:hh:mm ddd = day of week = Sun | Mon | Tue | Wed | Thu | Fri | Sat hh = hour 24 = 0 -23 mm = minute = 0 - 59. Time windows should not overlap. required on cluster.scheduling.isEnabled = True. API Times are in UTC
-                                      Example: Fri:15:30-Wed:14:30
+        * `time_windows` - (Required) Set time windows for shutdown hours. Specify a list of `timeWindows` with at least one time window Each string is in the format of `ddd:hh:mm-ddd:hh:mm` (ddd = day of week = Sun | Mon | Tue | Wed | Thu | Fri | Sat hh = hour 24 = 0 -23 mm = minute = 0 - 59). Time windows should not overlap. Required when `cluster.scheduling.isEnabled` is true. API Times are in UTC. Example: `Fri:15:30-Wed:14:30`.
     * `tasks` - (Optional) The scheduling tasks for the cluster.
-        * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for cluster.scheduling.tasks object.
-        * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ".The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of ‘frequency’ or ‘cronExpression’ should be used at a time. Required for cluster.scheduling.tasks object
-                                         Example: 0 1 * * *.
-        * `task_type` - (Required) Valid values: "clusterRoll". Required for cluster.scheduling.tasks object
-                                   Example: clusterRoll.
+        * `is_enabled` - (Required) Describes whether the task is enabled. When true the task should run when false it should not run. Required for `cluster.scheduling.tasks` object.
+        * `cron_expression` - (Required) A valid cron expression. The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of `frequency` or `cronExpression` should be used at a time. Required for `cluster.scheduling.tasks` object. Example: `0 1 * * *`.
+        * `task_type` - (Required) Valid values: "clusterRoll". Required for `cluster.scheduling.tasks object`. Example: `clusterRoll`.
              
 ```hcl
   scheduled_task  {
