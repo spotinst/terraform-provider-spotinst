@@ -1,14 +1,19 @@
 ## Unreleased
 
+## 1.28.0 (November 12, 2020)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs_launch_specification: added `block_device_mappings`
+* resource/spotinst_ocean_gke_import: added `controller_cluster_id`
+
+DEPRECATIONS:
+* resource/spotinst_ocean_gke_import: deprecated `cluster_controller_id`
 
 ## 1.27.0 (October 28, 2020)
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `spot_percentage` under `strategy`
 * resource/spotinst_elastigroup_aws_launch_configuration: added `metadata_options`.
-
 
 ## 1.26.0 (October 27, 2020)
 
