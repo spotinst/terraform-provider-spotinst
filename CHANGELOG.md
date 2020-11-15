@@ -1,5 +1,9 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `instance_types`
+* resource/spotinst_elastigroup_aws_integrations_docker_swarm: added `max_scale_down_percentage`
+
 ## 1.28.0 (November 12, 2020)
 
 ENHANCEMENTS:
