@@ -409,20 +409,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-
 					string(DeviceName): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
 
-					string(Ebs): {
+					string(EBS): {
 						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
-
 							Schema: map[string]*schema.Schema{
-
 								string(DeleteOnTermination): {
 									Type:     schema.TypeBool,
 									Optional: true,
@@ -467,7 +464,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
-
 											string(BaseSize): {
 												Type:     schema.TypeInt,
 												Required: true,
@@ -583,7 +579,6 @@ func isBase64Encoded(data string) bool {
 }
 
 func expandBlockDeviceMappings(data interface{}) ([]*aws.ECSBlockDeviceMapping, error) {
-
 	list := data.([]interface{})
 	bdms := make([]*aws.ECSBlockDeviceMapping, 0, len(list))
 
@@ -599,7 +594,7 @@ func expandBlockDeviceMappings(data interface{}) ([]*aws.ECSBlockDeviceMapping, 
 			bdm.SetDeviceName(spotinst.String(v))
 		}
 
-		if r, ok := attr[string(Ebs)]; ok {
+		if r, ok := attr[string(EBS)]; ok {
 			if ebs, err := expandEBS(r); err != nil {
 				return nil, err
 			} else {
@@ -616,11 +611,11 @@ func expandBlockDeviceMappings(data interface{}) ([]*aws.ECSBlockDeviceMapping, 
 		}
 		bdms = append(bdms, bdm)
 	}
+
 	return bdms, nil
 }
 
 func expandEBS(data interface{}) (*aws.ECSEBS, error) {
-
 	ebs := &aws.ECSEBS{}
 	list := data.([]interface{})
 
@@ -666,12 +661,14 @@ func expandEBS(data interface{}) (*aws.ECSEBS, error) {
 			}
 		}
 	}
+
 	return ebs, nil
 }
 
 func expandDynamicVolumeSize(data interface{}) (*aws.ECSDynamicVolumeSize, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		dvs := &aws.ECSDynamicVolumeSize{}
+
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
@@ -687,8 +684,10 @@ func expandDynamicVolumeSize(data interface{}) (*aws.ECSDynamicVolumeSize, error
 				dvs.SetSizePerResourceUnit(spotinst.Int(v))
 			}
 		}
+
 		return dvs, nil
 	}
+
 	return nil, nil
 }
 
@@ -699,18 +698,18 @@ func flattenBlockDeviceMappings(bdms []*aws.ECSBlockDeviceMapping) []interface{}
 		m := make(map[string]interface{})
 		m[string(DeviceName)] = spotinst.StringValue(bdm.DeviceName)
 		if bdm.EBS != nil {
-			m[string(Ebs)] = flattenEbs(bdm.EBS)
+			m[string(EBS)] = flattenEbs(bdm.EBS)
 		}
 		m[string(NoDevice)] = spotinst.StringValue(bdm.NoDevice)
 		m[string(VirtualName)] = spotinst.StringValue(bdm.VirtualName)
 		result = append(result, m)
 	}
+
 	return result
 
 }
 
 func flattenEbs(ebs *aws.ECSEBS) []interface{} {
-
 	elasticBS := make(map[string]interface{})
 	elasticBS[string(DeleteOnTermination)] = spotinst.BoolValue(ebs.DeleteOnTermination)
 	elasticBS[string(Encrypted)] = spotinst.BoolValue(ebs.Encrypted)
@@ -719,6 +718,7 @@ func flattenEbs(ebs *aws.ECSEBS) []interface{} {
 	elasticBS[string(SnapshotID)] = spotinst.StringValue(ebs.SnapshotID)
 	elasticBS[string(VolumeType)] = spotinst.StringValue(ebs.VolumeType)
 	elasticBS[string(VolumeSize)] = spotinst.IntValue(ebs.VolumeSize)
+
 	if ebs.DynamicVolumeSize != nil {
 		elasticBS[string(DynamicVolumeSize)] = flattenDynamicVolumeSize(ebs.DynamicVolumeSize)
 	}
@@ -727,11 +727,9 @@ func flattenEbs(ebs *aws.ECSEBS) []interface{} {
 }
 
 func flattenDynamicVolumeSize(dvs *aws.ECSDynamicVolumeSize) interface{} {
-
-	DynamicVS := make(map[string]interface{})
-	DynamicVS[string(BaseSize)] = spotinst.IntValue(dvs.BaseSize)
-	DynamicVS[string(Resource)] = spotinst.StringValue(dvs.Resource)
-	DynamicVS[string(SizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
-
-	return []interface{}{DynamicVS}
+	vs := make(map[string]interface{})
+	vs[string(BaseSize)] = spotinst.IntValue(dvs.BaseSize)
+	vs[string(Resource)] = spotinst.StringValue(dvs.Resource)
+	vs[string(SizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
+	return []interface{}{vs}
 }

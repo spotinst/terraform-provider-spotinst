@@ -16,7 +16,7 @@ const (
 const (
 	BlockDeviceMappings commons.FieldName = "block_device_mappings"
 	DeviceName          commons.FieldName = "device_name"
-	Ebs                 commons.FieldName = "ebs"
+	EBS                 commons.FieldName = "ebs"
 	DeleteOnTermination commons.FieldName = "delete_on_termination"
 	Encrypted           commons.FieldName = "encrypted"
 	IOPS                commons.FieldName = "iops"

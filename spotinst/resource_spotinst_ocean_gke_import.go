@@ -6,8 +6,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_autoscaler"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
@@ -15,6 +13,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_autoscaler"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_scheduling"
 )
 
@@ -165,8 +164,13 @@ func resourceSpotinstClusterGKEImportRead(resourceData *schema.ResourceData, met
 
 	// Expose the controller cluster identifier.
 	if clusterResponse.ControllerClusterID != nil {
-		if err := resourceData.Set("cluster_controller_id", *clusterResponse.ControllerClusterID); err != nil {
-			log.Printf("[ERROR] Failed to set cluster_controller_id")
+		for _, key := range []commons.FieldName{
+			ocean_gke_import.ControllerClusterID,
+			ocean_gke_import.ClusterControllerID, // maintains backward compatibility
+		} {
+			if err := resourceData.Set(string(key), *clusterResponse.ControllerClusterID); err != nil {
+				log.Printf("[ERROR] Failed to set %q", string(key))
+			}
 		}
 	}
 

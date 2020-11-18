@@ -432,6 +432,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "24"),
 					resource.TestCheckResourceAttr(resourceName, "monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
 				),
 			},
 			{
@@ -494,6 +495,7 @@ const testLaunchConfigAWSConfig_Update = `
   root_volume_size            = 24
   monitoring                  = false
   ebs_optimized               = false
+  use_as_template_only        = false
 
   load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"

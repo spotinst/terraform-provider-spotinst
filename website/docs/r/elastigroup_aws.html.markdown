@@ -730,7 +730,7 @@ integration_docker_swarm {
     }
     
     autoscale_down {
-        evaluation_periods = 3
+        evaluation_periods        = 3
         max_scale_down_percentage = 30
     } 
 }
