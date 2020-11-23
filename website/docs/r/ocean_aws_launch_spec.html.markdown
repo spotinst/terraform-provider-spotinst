@@ -26,6 +26,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
       "m5.xlarge", "m5.2xlarge", "m5.4xlarge", "m5.12xlarge", "m5.24xlarge"
     ]
   root_volume_size = 30
+  associate_public_ip_address = true
 
   labels {
     key   = "fakeKey"
@@ -96,6 +97,7 @@ The following arguments are supported:
 * `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the Ocean cluster. 
 * `root_volume_size` - (Optional) Set root volume size (in GB).
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
+* `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
 
 * `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The tag key.

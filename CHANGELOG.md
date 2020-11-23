@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_configuration: added `use_as_template_only`
+* resource/spotinst_ocean_aws_launch_spec: added `associate_public_ip_address`
 
 ## 1.29.0 (November 15, 2020)
 
