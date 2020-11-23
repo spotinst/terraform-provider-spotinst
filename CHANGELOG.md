@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.30.0 (November 23, 2020)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_configuration: added `use_as_template_only`
 
