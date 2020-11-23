@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_gke\_launch\_spec_import
 
-Provides a custom Spotinst Ocean GKE Launch Spec Import resource.
+Manages a custom Spotinst Ocean GKE Launch Spec Import resource.
 
 ## Example Usage
 
@@ -18,6 +18,11 @@ resource "spotinst_ocean_gke_launch_spec_import" "example" {
   node_pool_name  = "default-pool"
 }
 ```
+```
+output "ocean_launchspec_id" {
+  value = spotinst_ocean_gke_launch_spec_import.example.id
+}
+```
 
 ## Argument Reference
 
@@ -25,3 +30,8 @@ The following arguments are supported:
 
 * `ocean_id`       - (Required) The Ocean cluster ID required for launchSpec create. 
 * `node_pool_name` - (Required) The node pool you wish to use in your launchSpec.
+
+## Attributes Reference
+
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Spotinst LaunchSpec ID.
