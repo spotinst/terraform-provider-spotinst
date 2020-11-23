@@ -782,3 +782,82 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 `
 
 //endregion
+
+// region OceanAWSLaunchSpec: Strategy
+func TestAccSpotinstOceanAWSLaunchSpec_Strategy(t *testing.T) {
+	oceanID := "o-6b3f7a6d"
+	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
+
+	var launchSpec aws.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID: oceanID,
+				}, testStrategyOceanAWSLaunchSpecConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.1715817961.spot_percentage", "70"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testStrategyOceanAWSLaunchSpecConfig_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.1632429365.spot_percentage", "30"),
+				),
+			},
+		},
+	})
+}
+
+const testStrategyOceanAWSLaunchSpecConfig_Create = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+ strategy {
+  spot_percentage = 70
+}
+
+%v
+}
+
+`
+
+const testStrategyOceanAWSLaunchSpecConfig_Update = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+ 
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+ strategy {
+  spot_percentage = 30
+}
+%v
+}
+
+`
+
+//endregion

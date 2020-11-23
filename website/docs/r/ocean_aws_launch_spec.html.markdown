@@ -75,6 +75,10 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
      key   = "Env"
      value = "production"
   } 
+
+ strategy {
+    spot_percentage = 70
+ }
 }
 ```
 ```
@@ -141,4 +145,6 @@ The following arguments are supported:
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
-* `id` - The Spotinst LaunchSpec ID.
+* `id` - The Launch Spec ID.
+* `strategy` - (Optional) 
+    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Launch Spec instances.

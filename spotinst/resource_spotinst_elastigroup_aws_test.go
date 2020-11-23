@@ -445,6 +445,9 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "standard"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "10"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "required"),
 				),
 			},
 			{
@@ -467,6 +470,9 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "unlimited"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "optional"),
 				),
 			},
 			{
@@ -505,6 +511,10 @@ const testLaunchConfigurationGroupConfig_Create = `
  ebs_optimized        = false
  placement_tenancy    = "default"
  cpu_credits          = "standard"
+ metadata_options {
+ 	http_tokens = "required"
+    http_put_response_hop_limit = 10
+ }
  // ---------------------------------------
 `
 
@@ -520,6 +530,10 @@ const testLaunchConfigurationGroupConfig_Update = `
  ebs_optimized        = true
  placement_tenancy    = "default"
  cpu_credits          = "unlimited"
+ metadata_options {
+ 	http_tokens = "optional"
+    http_put_response_hop_limit = 20
+ }
  // ---------------------------------------
 `
 
@@ -3639,6 +3653,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.max_scale_down_percentage", "70"),
 				),
 			},
 			{
@@ -3660,6 +3675,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationDockerSwarm(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_docker_swarm.0.autoscale_down.0.max_scale_down_percentage", "20"),
 				),
 			},
 			{
@@ -3694,7 +3710,8 @@ const testIntegrationDockerSwarmGroupConfig_Create = `
     }
 
     autoscale_down {
-      evaluation_periods = 300
+      evaluation_periods = 300 
+      max_scale_down_percentage = 70
     }
  }
  // -------------------------------------
@@ -3717,6 +3734,7 @@ const testIntegrationDockerSwarmGroupConfig_Update = `
 
     autoscale_down {
       evaluation_periods = 150
+	  max_scale_down_percentage = 20
     }
   }
  // -------------------------------------

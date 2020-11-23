@@ -1,5 +1,31 @@
 ## Unreleased
 
+## 1.30.0 (November 23, 2020)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_configuration: added `use_as_template_only`
+
+## 1.29.0 (November 15, 2020)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `instance_types`
+* resource/spotinst_elastigroup_aws_integrations_docker_swarm: added `max_scale_down_percentage`
+
+## 1.28.0 (November 12, 2020)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_specification: added `block_device_mappings`
+* resource/spotinst_ocean_gke_import: added `controller_cluster_id`
+
+DEPRECATIONS:
+* resource/spotinst_ocean_gke_import: deprecated `cluster_controller_id`
+
+## 1.27.0 (October 28, 2020)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `spot_percentage` under `strategy`
+* resource/spotinst_elastigroup_aws_launch_configuration: added `metadata_options`.
+
 ## 1.26.0 (October 27, 2020)
 
 FEATURES:
