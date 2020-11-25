@@ -1056,9 +1056,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[AssociatePublicIpAddress] = commons.NewGenericField(
+	fieldsMap[AssociatePublicIPAddress] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
-		AssociatePublicIpAddress,
+		AssociatePublicIPAddress,
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
@@ -1071,8 +1071,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				value = launchSpec.AssociatePublicIpAddress
 			}
 			if value != nil {
-				if err := resourceData.Set(string(AssociatePublicIpAddress), spotinst.BoolValue(value)); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AssociatePublicIpAddress), err)
+				if err := resourceData.Set(string(AssociatePublicIPAddress), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AssociatePublicIPAddress), err)
 				}
 			}
 			return nil
@@ -1080,7 +1080,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.GetOkExists(string(AssociatePublicIpAddress)); ok && v != nil {
+			if v, ok := resourceData.GetOkExists(string(AssociatePublicIPAddress)); ok && v != nil {
 				associatePublicIpAddress := spotinst.Bool(v.(bool))
 				launchSpec.SetAssociatePublicIpAddress(associatePublicIpAddress)
 			}
@@ -1090,7 +1090,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var associatePublicIpAddress *bool = nil
-			if v, ok := resourceData.GetOkExists(string(AssociatePublicIpAddress)); ok && v != nil {
+			if v, ok := resourceData.GetOkExists(string(AssociatePublicIPAddress)); ok && v != nil {
 
 				associatePublicIpAddress = spotinst.Bool(v.(bool))
 			}

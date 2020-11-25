@@ -51,7 +51,7 @@ const (
 	ResourceLimits           commons.FieldName = "resource_limits"
 	MaxInstanceCount         commons.FieldName = "max_instance_count"
 	Strategy                 commons.FieldName = "strategy"
-	AssociatePublicIpAddress commons.FieldName = "associate_public_ip_address"
+	AssociatePublicIPAddress commons.FieldName = "associate_public_ip_address"
 )
 
 const (
