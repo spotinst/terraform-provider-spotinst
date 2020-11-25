@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_gke\_import
 
-Provides a Spotinst Ocean GKE import resource.
+Manages a Spotinst Ocean GKE resource.
 
 ## Example Usage
 
@@ -37,8 +37,8 @@ resource "spotinst_ocean_gke_import" "example" {
 ```
 
 ```
-output "controller_cluster_id" {
-  value = "${spotinst_ocean_gke_import.ocean-gke-example.cluster_controller_id}"
+output "ocean_id" {
+  value = spotinst_ocean_gke_import.example.id
 }
 ```
 
@@ -137,3 +137,8 @@ The following arguments are supported:
     }
   }
 ```
+
+## Attributes Reference
+
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Spotinst Ocean ID.
