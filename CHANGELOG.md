@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.31.0 (November 20, 2020)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `associate_public_ip_address`
 
