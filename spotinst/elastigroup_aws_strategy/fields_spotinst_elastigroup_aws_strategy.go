@@ -370,6 +370,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[UtilizeCommitments] = commons.NewGenericField(
+		commons.ElastigroupAWSStrategy,
+		UtilizeCommitments,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *bool = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.UtilizeCommitments != nil {
+				value = elastigroup.Strategy.UtilizeCommitments
+			}
+			if err := resourceData.Set(string(UtilizeCommitments), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeCommitments), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+				uc := v.(bool)
+				utilizeCommitments := spotinst.Bool(uc)
+				elastigroup.Strategy.SetUtilizeCommitments(utilizeCommitments)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var utilizeCommitments *bool = nil
+			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+				uc := v.(bool)
+				utilizeCommitments = spotinst.Bool(uc)
+			}
+			elastigroup.Strategy.SetUtilizeCommitments(utilizeCommitments)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
