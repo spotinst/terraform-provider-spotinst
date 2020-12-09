@@ -60,6 +60,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
         encrypted = "false"
         volume_type = "gp2"
         volume_size = 50
+        throughput = 500
         dynamic_volume_size {
           base_size = 50
           resource = "CPU"
@@ -129,6 +130,7 @@ The following arguments are supported:
         * `snapshot_id`- (Optional) (Optional) String. The Snapshot ID to mount by. 
         * `volume_type`- (Optional, Default: `"standard"`) String. The type of the volume (example: "gp2").
         * `volume_size`- (Optional) Int. The size, in GB of the volume.
+        * `throughput`- (Optional) The amount of data transferred to or from a storage device per second, you can use this param just in a case that `volume_type` = gp3.
         * `dynamic_volume_size`- (Optional) Object. Set dynamic volume size properties. When using this object, you cannot use volumeSize. You must use one or the other.
             * `base_size`- (Required) Int. Initial size for volume. (Example: 50)
             * `resource`- (Required) String. Resource type to increase volume size dynamically by. (valid values: "CPU")

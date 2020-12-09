@@ -2485,9 +2485,11 @@ func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.iops", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.snapshot_id", ""),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.volume_size", "10"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.volume_type", "sc1"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.volume_type", "gp3"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.4217292875.device_name", "/dev/xvdc"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.4217292875.virtual_name", "ephemeral1"),
+					//TODO - check hash code with v11
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.throughput", "500"),
 				),
 			},
 			{
@@ -2539,14 +2541,15 @@ const testElastigroupBlockDevices_Create = `
 const testElastigroupBlockDevices_Update = `
  // --- EBS BLOCK DEVICE -----------------
  ebs_block_device {
-   device_name 				   = "/dev/sda"
-   snapshot_id 				   = ""
-   volume_type 				   = "sc1"
-   volume_size 				   = 10
-   iops 					       = 1
+   device_name 		     = "/dev/sda"
+   snapshot_id 			 = ""
+   volume_type 			 = "gp3"
+   volume_size 			 = 10
+   iops 				 = 1
    delete_on_termination = true
-   encrypted 				     = true
-   kms_key_id 				   = "acceptance-kms-key"
+   encrypted 		     = true
+   kms_key_id 			 = "acceptance-kms-key"
+   throughput            = 500
  }
  // --------------------------------------
 

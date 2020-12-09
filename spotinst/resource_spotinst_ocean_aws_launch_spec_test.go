@@ -590,7 +590,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.0.size_per_resource_unit", "20"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
-					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp3"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.throughput", "500"),
 				),
 			},
 			{
@@ -655,7 +656,8 @@ image_id = "ami-79826301"
           delete_on_termination = "true"
           kms_key_id = "kms-key"
           encrypted = "false"
-          volume_type = "gp2"
+          volume_type = "gp3"
+          throughput = 500
 		  dynamic_volume_size {
             base_size = 50
             resource = "CPU"
