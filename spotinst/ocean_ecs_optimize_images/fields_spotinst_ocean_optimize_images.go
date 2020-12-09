@@ -2,6 +2,8 @@ package ocean_ecs_optimize_images
 
 import (
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -12,138 +14,118 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[PerformAt] = commons.NewGenericField(
+	fieldsMap[OptimizeImages] = commons.NewGenericField(
 		commons.OceanECSOptimizeImages,
-		PerformAt,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			var value = ""
-			if cluster.Compute != nil && cluster.Compute.OptimizeImages != nil &&
-				cluster.Compute.OptimizeImages.PerformAt != nil {
-				oi := cluster.Compute.OptimizeImages
-				value = spotinst.StringValue(oi.PerformAt)
-			}
-			if err := resourceData.Set(string(PerformAt), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PerformAt), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			if v, ok := resourceData.Get(string(PerformAt)).(string); ok && v != "" {
-				cluster.Compute.OptimizeImages.SetPerformAt(spotinst.String(v))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			var performAt *string = nil
-			if v, ok := resourceData.Get(string(PerformAt)).(string); ok && v != "" {
-				performAt = spotinst.String(v)
-			}
-			cluster.Compute.OptimizeImages.SetPerformAt(performAt)
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[TimeWindows] = commons.NewGenericField(
-		commons.OceanECSOptimizeImages,
-		TimeWindows,
+		OptimizeImages,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
-			Elem:     &schema.Schema{Type: schema.TypeString},
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(PerformAt): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(TimeWindows): {
+						Type:     schema.TypeList,
+						MinItems: 1,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+					string(ShouldOptimizeECSAMI): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+				},
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
-			var result []string
-			if cluster.Compute != nil && cluster.Compute.OptimizeImages != nil &&
-				cluster.Compute.OptimizeImages.TimeWindows != nil {
-				result = append(result, cluster.Compute.OptimizeImages.TimeWindows...)
+			var result []interface{} = nil
+			if cluster.Compute != nil && cluster.Compute.OptimizeImages != nil {
+				compute := cluster.Compute
+				result = flattenOptimizeImages(compute.OptimizeImages)
 			}
-			if err := resourceData.Set(string(TimeWindows), result); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(TimeWindows), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			if v, ok := resourceData.GetOk(string(TimeWindows)); ok {
-				tw := v.([]interface{})
-				timeWindows := make([]string, len(tw))
-				for i, j := range tw {
-					timeWindows[i] = j.(string)
-				}
-				cluster.Compute.OptimizeImages.SetTimeWindows(timeWindows)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			var timeWindows []string = nil
-			if v, ok := resourceData.GetOk(string(TimeWindows)); ok {
-				tw := v.([]interface{})
-				timeWindows = make([]string, len(tw))
-				for i, v := range tw {
-					timeWindows[i] = v.(string)
+			if len(result) > 0 {
+				if err := resourceData.Set(string(OptimizeImages), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OptimizeImages), err)
 				}
 			}
-			cluster.Compute.OptimizeImages.SetTimeWindows(timeWindows)
 			return nil
 		},
-		nil,
-	)
 
-	fieldsMap[ShouldOptimizeECSAMI] = commons.NewGenericField(
-		commons.OceanECSOptimizeImages,
-		ShouldOptimizeECSAMI,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Required: true,
-		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
-			var value *bool = nil
-			if cluster.Compute != nil && cluster.Compute.OptimizeImages != nil &&
-				cluster.Compute.OptimizeImages.ShouldOptimizeECSAMI != nil {
-				value = cluster.Compute.OptimizeImages.ShouldOptimizeECSAMI
-			}
-			if err := resourceData.Set(string(ShouldOptimizeECSAMI), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShouldOptimizeECSAMI), err)
+			if v, ok := resourceData.GetOk(string(OptimizeImages)); ok {
+				if v, err := expandOptimizeImages(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.SetOptimizeImages(v)
+				}
 			}
 			return nil
 		},
+
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
-			if v, ok := resourceData.GetOkExists(string(ShouldOptimizeECSAMI)); ok {
-				cluster.Compute.OptimizeImages.SetShouldOptimizeECSAMI(spotinst.Bool(v.(bool)))
+			var value *aws.ECSOptimizeImages = nil
+			if v, ok := resourceData.GetOk(string(OptimizeImages)); ok {
+				if otimizeImages, err := expandOptimizeImages(v); err != nil {
+					return err
+				} else {
+					value = otimizeImages
+				}
 			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			var shouldOptimizeECSAMI *bool = nil
-			if v, ok := resourceData.GetOkExists(string(ShouldOptimizeECSAMI)); ok {
-				soea := v.(bool)
-				shouldOptimizeECSAMI = spotinst.Bool(soea)
-			}
-			cluster.Compute.OptimizeImages.SetShouldOptimizeECSAMI(shouldOptimizeECSAMI)
+			cluster.Compute.SetOptimizeImages(value)
 			return nil
 		},
 		nil,
 	)
+}
+
+func flattenOptimizeImages(oi *aws.ECSOptimizeImages) []interface{} {
+	optimizeImages := make(map[string]interface{})
+
+	optimizeImages[string(PerformAt)] = spotinst.StringValue(oi.PerformAt)
+	optimizeImages[string(TimeWindows)] = spotinst.StringSlice(oi.TimeWindows)
+	optimizeImages[string(ShouldOptimizeECSAMI)] = spotinst.BoolValue(oi.ShouldOptimizeECSAMI)
+
+	return []interface{}{optimizeImages}
+}
+
+func expandOptimizeImages(data interface{}) (*aws.ECSOptimizeImages, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		oi := &aws.ECSOptimizeImages{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(PerformAt)].(string); ok && v != "" {
+				oi.SetPerformAt(spotinst.String(v))
+			}
+
+			var timeWindows []string = nil
+			if v, ok := m[string(TimeWindows)].([]interface{}); ok && len(v) > 0 {
+				timeWindowList := make([]string, 0, len(v))
+				for _, timeWindow := range v {
+					if v, ok := timeWindow.(string); ok && len(v) > 0 {
+						timeWindowList = append(timeWindowList, v)
+					}
+				}
+				timeWindows = timeWindowList
+			}
+			oi.SetTimeWindows(timeWindows)
+
+			if v, ok := m[string(ShouldOptimizeECSAMI)].(bool); ok {
+				oi.SetShouldOptimizeECSAMI(spotinst.Bool(v))
+			}
+		}
+		return oi, nil
+	}
+
+	return nil, nil
 }

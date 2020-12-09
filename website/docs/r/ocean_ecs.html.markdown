@@ -53,6 +53,12 @@ resource "spotinst_ocean_ecs" "example" {
       }
    }
 
+  optimize_images {
+    perform_at              = "timeWindow"
+    time_windows            = ["Sun:02:00-Sun:12:00","Sun:05:00-Sun:16:00"]
+    should_optimize_ecs_ami = true
+  }
+
     tags {
       key   = "fakeKey"
       value = "fakeValue"
@@ -106,7 +112,11 @@ The following arguments are supported:
             * `resource` - (Required) String. Resource type to increase volume size dynamically by. Valid values: `CPU`.
             * `size_per_resource_unit` - (Required) Int. Additional size (in GB) per resource unit. Example: When the `baseSize=50`, `sizePerResourceUnit=20`, and instance with two CPUs is launched, its total disk size will be: 90GB.
     * `no_device` - (Optional) String. Suppresses the specified device included in the block device mapping of the AMI.
-        
+* `optimize_images` - (Optional) Object. Set auto image update settings.
+    * `perform_at` - (Required) String. Valid values: "always" "never" "timeWindow".
+    * `time_windows` - (Optional; Required if not using `perform_at` = timeWindow) Array of strings. Set time windows for image update, at least one time window. Each string is in the format of ddd:hh:mm-ddd:hh:mm ddd. Time windows should not overlap.
+    * `should_optimize_ecs_ami` - (Required) Boolean. Enable auto image (AMI) update for the ECS container instances. The auto update applies for ECS-Optimized AMIs.
+
 <a id="auto-scaler"></a>
 ## Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean ECS autoscaler.
