@@ -104,6 +104,7 @@ type ECSClusterConfigMetadata struct {
 	name                 string
 	clusterName          string
 	instanceWhitelist    string
+	optimizeImages       string
 	instanceBlacklist    string
 	launchSpec           string
 	variables            string
@@ -136,6 +137,7 @@ func createOceanECSTerraform(ccm *ECSClusterConfigMetadata) string {
 			ccm.name,
 			ccm.instanceBlacklist,
 			ccm.instanceWhitelist,
+			ccm.optimizeImages,
 			ccm.launchSpec,
 			ccm.fieldsToAppend,
 		)
@@ -147,6 +149,7 @@ func createOceanECSTerraform(ccm *ECSClusterConfigMetadata) string {
 			ccm.clusterName,
 			ccm.name,
 			ccm.instanceWhitelist,
+			ccm.optimizeImages,
 			ccm.instanceBlacklist,
 			ccm.launchSpec,
 			ccm.fieldsToAppend,
@@ -833,6 +836,82 @@ update_policy {
 const testUpdatePolicyECSClusterConfig_EmptyFields = `
 // --- UPDATE POLICY ----------------
 // ----------------------------------
+`
+
+// endregion
+
+// region OceanECS: Optimize Images
+func TestAccSpotinstOceanECS_OptimizeImages(t *testing.T) {
+	name := "test-acc-cluster-optimize-images"
+	clusterName := "optimize-images-cluster-name"
+	resourceName := createOceanECSResourceName(clusterName)
+
+	var cluster aws.ECSCluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					name:           name,
+					clusterName:    clusterName,
+					optimizeImages: testOptimizeImagesECSConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.perform_at", "timeWindow"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.time_windows.0", "Sun:02:00-Sun:12:00"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.time_windows.1", "Sun:05:00-Sun:16:00"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.should_optimize_ecs_ami", "true"),
+				),
+			},
+			//{
+			//	Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+			//		name:              name,
+			//		clusterName:       clusterName,
+			//		optimizeImages: testOptimizeImagesECSConfig_Update,
+			//	}),
+			//	Check: resource.ComposeTestCheckFunc(
+			//		testCheckOceanECSExists(&cluster, resourceName),
+			//		testCheckOceanECSAttributes(&cluster, name),
+			//		resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
+			//		resource.TestCheckResourceAttr(resourceName, "whitelist.0", "t1.micro"),
+			//	),
+			//},
+			//{
+			//	Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+			//		name:              name,
+			//		clusterName:       clusterName,
+			//		optimizeImages: testOptimizeImagesECSConfig_EmptyFields,
+			//	}),
+			//	Check: resource.ComposeTestCheckFunc(
+			//		testCheckOceanECSExists(&cluster, resourceName),
+			//		testCheckOceanECSAttributes(&cluster, name),
+			//		resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
+			//	),
+			//},
+		},
+	})
+}
+
+const testOptimizeImagesECSConfig_Create = `
+   optimize_images {
+    perform_at = "timeWindow"
+    time_windows = ["Sun:02:00-Sun:12:00","Sun:05:00-Sun:16:00"]
+    should_optimize_ecs_ami = true
+  }
+`
+
+const testOptimizeImagesECSConfig_Update = `
+ whitelist = ["t1.micro"]
+`
+
+const testOptimizeImagesECSConfig_EmptyFields = `
 `
 
 // endregion
