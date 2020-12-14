@@ -1055,6 +1055,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[AssociatePublicIPAddress] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		AssociatePublicIPAddress,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *bool = nil
+			if launchSpec.AssociatePublicIPAddress != nil {
+				value = launchSpec.AssociatePublicIPAddress
+			}
+			if value != nil {
+				if err := resourceData.Set(string(AssociatePublicIPAddress), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AssociatePublicIPAddress), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOkExists(string(AssociatePublicIPAddress)); ok && v != nil {
+				associatePublicIPAddress := spotinst.Bool(v.(bool))
+				launchSpec.SetAssociatePublicIPAddress(associatePublicIPAddress)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var associatePublicIPAddress *bool = nil
+			if v, ok := resourceData.GetOkExists(string(AssociatePublicIPAddress)); ok && v != nil {
+				associatePublicIPAddress = spotinst.Bool(v.(bool))
+			}
+			launchSpec.SetAssociatePublicIPAddress(associatePublicIPAddress)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

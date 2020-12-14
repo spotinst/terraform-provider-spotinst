@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_aws\_launch\_spec
 
-Provides a custom Spotinst Ocean AWS Launch Spec resource.
+Manages a custom Spotinst Ocean AWS Launch Spec resource.
 
 ## Example Usage
 
@@ -26,6 +26,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
       "m5.xlarge", "m5.2xlarge", "m5.4xlarge", "m5.12xlarge", "m5.24xlarge"
     ]
   root_volume_size = 30
+  associate_public_ip_address = true
 
   labels {
     key   = "fakeKey"
@@ -81,6 +82,12 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
  }
 }
 ```
+```
+output "ocean_launchspec_id" {
+  value = spotinst_ocean_aws_launch_spec.example.id
+}
+```
+
 
 ## Argument Reference
 
@@ -96,6 +103,7 @@ The following arguments are supported:
 * `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the Ocean cluster. 
 * `root_volume_size` - (Optional) Set root volume size (in GB).
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
+* `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
 
 * `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The tag key.
@@ -136,5 +144,9 @@ The following arguments are supported:
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) set a maximum number of instances per launch specification. Can be null. If set, value must be greater than or equal to 0.
     
+## Attributes Reference
+
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Launch Spec ID.
 * `strategy` - (Optional) 
-    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of spot instances out of all the Launch spec instances.
+    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Launch Spec instances.

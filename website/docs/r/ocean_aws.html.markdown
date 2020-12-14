@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_aws
 
-Provides a Spotinst Ocean AWS resource.
+Manages a Spotinst Ocean AWS resource.
 
 ## Example Usage
 
@@ -60,6 +60,11 @@ resource "spotinst_ocean_aws" "example" {
     key   = "fakeKey"
     value = "fakeValue"
   }
+}
+```
+```
+output "ocean_id" {
+  value = spotinst_ocean_aws.example.id
 }
 ```
 
@@ -189,3 +194,8 @@ The following arguments are supported:
     }
   }
 ```
+
+## Attributes Reference
+
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Spotinst Ocean ID.

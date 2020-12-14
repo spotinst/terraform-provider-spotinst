@@ -140,7 +140,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 
 * `max_size` - (Optional; Required if using scaling policies) The maximum number of instances the group should have at any time.
 * `min_size` - (Optional; Required if using scaling policies) The minimum number of instances the group should have at any time.
-* `desired_capacity` - (Optional) The desired number of instances the group should have at any time.
+* `desired_capacity` - (Required) The desired number of instances the group should have at any time.
 * `capacity_unit` - (Optional, Default: `"instance"`) The capacity unit to launch instances by. If not specified, when choosing the weight unit, each instance will weight as the number of its vCPUs.
 
 * `security_groups` - (Required) A list of associated security group IDS.

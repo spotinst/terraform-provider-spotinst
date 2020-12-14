@@ -1,6 +1,16 @@
 ## Unreleased
 
 ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws_strategy: added `utilize_commitments`
+
+## 1.31.0 (November 29, 2020)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `associate_public_ip_address`
+
+## 1.30.0 (November 23, 2020)
+
+ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_configuration: added `use_as_template_only`
 
 ## 1.29.0 (November 15, 2020)

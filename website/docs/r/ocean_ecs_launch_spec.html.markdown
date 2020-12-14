@@ -8,7 +8,7 @@ description: |-
 
 # spotinst\_ocean\_ecs\_launch\_spec
 
-Provides a custom Spotinst Ocean ECS Launch Spec resource.
+Manages a custom Spotinst Ocean ECS Launch Spec resource.
 
 ## Example Usage
 
@@ -56,6 +56,11 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
   } 
 }
 ```
+```
+output "ocean_launchspec_id" {
+  value = spotinst_ocean_ecs_launch_spec.example.id
+}
+```
 
 ## Argument Reference
 
@@ -94,3 +99,8 @@ The following arguments are supported:
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in CPU units, where 1024 units = 1 vCPU.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+
+## Attributes Reference
+
+In addition to all arguments above, the following attributes are exported:
+* `id` - The Spotinst LaunchSpec ID.
