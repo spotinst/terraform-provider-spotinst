@@ -1,6 +1,10 @@
 ## Unreleased
 
 ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_specification: added `throughput` under `block_device_mappings`
+* resource/spotinst_ocean_aws_launch_spec: added `throughput` under `block_device_mappings`
+* resource/spotinst_ocean_ecs_launch_spec: added `throughput` under `block_device_mappings`
+* resource/spotinst_elastigroup_aws_block_devices: added `throughput` under `ebs_block_device`
 * resource/spotinst_elastigroup_aws_strategy: added `utilize_commitments`
 
 ## 1.31.0 (November 29, 2020)
