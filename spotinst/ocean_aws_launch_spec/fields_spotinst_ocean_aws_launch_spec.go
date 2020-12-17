@@ -481,6 +481,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 										},
 									},
 								},
+
+								string(Throughput): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
 							},
 						},
 					},
@@ -1462,6 +1467,10 @@ func expandEbs(data interface{}) (*aws.EBS, error) {
 			}
 		}
 	}
+
+	if v, ok := m[string(Throughput)].(int); ok && v > 0 {
+		ebs.SetThroughput(spotinst.Int(v))
+	}
 	return ebs, nil
 }
 
@@ -1515,6 +1524,7 @@ func flattenEbs(ebs *aws.EBS) []interface{} {
 	elasticBS[string(SnapshotID)] = spotinst.StringValue(ebs.SnapshotID)
 	elasticBS[string(VolumeType)] = spotinst.StringValue(ebs.VolumeType)
 	elasticBS[string(VolumeSize)] = spotinst.IntValue(ebs.VolumeSize)
+	elasticBS[string(Throughput)] = spotinst.IntValue(ebs.Throughput)
 	if ebs.DynamicVolumeSize != nil {
 		elasticBS[string(DynamicVolumeSize)] = flattenDynamicVolumeSize(ebs.DynamicVolumeSize)
 	}

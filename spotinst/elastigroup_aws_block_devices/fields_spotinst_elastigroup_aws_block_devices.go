@@ -66,6 +66,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Computed: true,
 					},
+
+					string(Throughput): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
 				},
 			},
 			Set: hashAWSGroupEBSBlockDevice,
@@ -195,10 +200,12 @@ func hashAWSGroupEBSBlockDevice(v interface{}) int {
 	m := v.(map[string]interface{})
 	buf.WriteString(fmt.Sprintf("%s-", m[string(DeviceName)].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m[string(SnapshotId)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(VolumeType)].(string)))
 	buf.WriteString(fmt.Sprintf("%d-", m[string(VolumeSize)].(int)))
 	buf.WriteString(fmt.Sprintf("%t-", m[string(DeleteOnTermination)].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m[string(Encrypted)].(bool)))
 	buf.WriteString(fmt.Sprintf("%d-", m[string(Iops)].(int)))
+	buf.WriteString(fmt.Sprintf("%d-", m[string(Throughput)].(int)))
 	return hashcode.String(buf.String())
 }
 
@@ -215,6 +222,7 @@ func flattenAWSGroupEBSBlockDevices(devices []*aws.BlockDeviceMapping) []interfa
 			m[string(SnapshotId)] = spotinst.StringValue(dev.EBS.SnapshotID)
 			m[string(VolumeType)] = spotinst.StringValue(dev.EBS.VolumeType)
 			m[string(VolumeSize)] = spotinst.IntValue(dev.EBS.VolumeSize)
+			m[string(Throughput)] = spotinst.IntValue(dev.EBS.Throughput)
 			result = append(result, m)
 		}
 	}
@@ -271,6 +279,10 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 
 		if v, ok := m[string(Iops)].(int); ok && v > 0 {
 			device.EBS.SetIOPS(spotinst.Int(v))
+		}
+
+		if v, ok := m[string(Throughput)].(int); ok && v > 0 {
+			device.EBS.SetThroughput(spotinst.Int(v))
 		}
 		devices = append(devices, device)
 	}

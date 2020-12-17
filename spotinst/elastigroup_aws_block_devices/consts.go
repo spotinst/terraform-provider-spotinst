@@ -21,6 +21,7 @@ const (
 	Encrypted           commons.FieldName = "encrypted"
 	KmsKeyId            commons.FieldName = "kms_key_id"
 	NoDevice            commons.FieldName = "nodevice"
+	Throughput          commons.FieldName = "throughput"
 	// --------------------------------------------------------------
 
 	// - EPHEMERAL --------------------------------------------------

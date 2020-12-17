@@ -2455,20 +2455,22 @@ func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.delete_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.device_name", "/dev/sdb"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.encrypted", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.iops", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.snapshot_id", ""),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.volume_size", "12"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.272394590.volume_type", "gp2"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.delete_on_termination", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.device_name", "/dev/sda"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.encrypted", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.iops", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.snapshot_id", ""),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.volume_size", "8"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3570307215.volume_type", "io1"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.device_name", "/dev/sdb"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.iops", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.snapshot_id", ""),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.volume_size", "12"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.volume_type", "GP3"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3975842660.throughput", "500"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.delete_on_termination", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.device_name", "/dev/sda"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.encrypted", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.iops", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.snapshot_id", ""),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.volume_size", "8"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.volume_type", "GP3"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.throughput", "500"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.3796236554.device_name", "/dev/xvdc"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.3796236554.virtual_name", "ephemeral0"),
 				),
@@ -2482,13 +2484,14 @@ func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.delete_on_termination", "true"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.device_name", "/dev/sda"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.encrypted", "true"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.iops", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.snapshot_id", ""),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.volume_size", "10"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.66039894.volume_type", "sc1"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.device_name", "/dev/sda"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.encrypted", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.iops", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.snapshot_id", ""),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.volume_size", "10"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.volume_type", "GP3"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3081006569.throughput", "500"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.4217292875.device_name", "/dev/xvdc"),
 					resource.TestCheckResourceAttr(resourceName, "ephemeral_block_device.4217292875.virtual_name", "ephemeral1"),
 				),
@@ -2514,7 +2517,8 @@ const testElastigroupBlockDevices_Create = `
 	ebs_block_device {
 	 device_name 			     = "/dev/sdb"
 	 snapshot_id 				   = ""
-	 volume_type 				   = "gp2"
+	 volume_type 				   = "GP3"
+     throughput            = 500
 	 volume_size 				   = 12
 	 iops 					       = 1
 	 delete_on_termination = true
@@ -2523,7 +2527,9 @@ const testElastigroupBlockDevices_Create = `
 	ebs_block_device {
 	 device_name 			     = "/dev/sda"
 	 snapshot_id 				   = ""
-	 volume_type 				   = "io1"
+	 volume_type 				   = "GP3"
+     throughput            = 500
+
 	 volume_size 				   = 8
 	 iops 					       = 1
 	 delete_on_termination = false
@@ -2542,14 +2548,15 @@ const testElastigroupBlockDevices_Create = `
 const testElastigroupBlockDevices_Update = `
  // --- EBS BLOCK DEVICE -----------------
  ebs_block_device {
-   device_name 				   = "/dev/sda"
-   snapshot_id 				   = ""
-   volume_type 				   = "sc1"
-   volume_size 				   = 10
-   iops 					       = 1
+   device_name 		     = "/dev/sda"
+   snapshot_id 			 = ""
+   volume_type 			 = "GP3"
+   throughput            = 500
+   volume_size 			 = 10
+   iops 				 = 1
    delete_on_termination = true
-   encrypted 				     = true
-   kms_key_id 				   = "acceptance-kms-key"
+   encrypted 		     = true
+   kms_key_id 			 = "acceptance-kms-key"
  }
  // --------------------------------------
 
