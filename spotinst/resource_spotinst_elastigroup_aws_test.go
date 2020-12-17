@@ -655,6 +655,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.terminate_at_end_of_billing_hour", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "default"),
+					resource.TestCheckResourceAttr(resourceName, "utilize_commitments", "true"),
 				),
 			},
 			{
@@ -675,6 +676,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.terminate_at_end_of_billing_hour", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "newestInstance"),
+					resource.TestCheckResourceAttr(resourceName, "utilize_commitments", "false"),
 				),
 			},
 			{
@@ -707,6 +709,7 @@ const testStrategyGroupConfig_Create = `
 	lifetime_period	 		 			 = ""
 	draining_timeout 		 			 = 300
 	utilize_reserved_instances = false
+	utilize_commitments = true
 
 	scaling_strategy {
 	 terminate_at_end_of_billing_hour = true
@@ -723,7 +726,7 @@ const testStrategyGroupConfig_Update = `
 	lifetime_period 		     	= ""
 	draining_timeout 					= 600
 	utilize_reserved_instances = true
-	
+	utilize_commitments = false
 	scaling_strategy {
 	 terminate_at_end_of_billing_hour = false
 	 termination_policy = "newestInstance"

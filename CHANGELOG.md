@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws_strategy: added `utilize_commitments`
+
 ## 1.31.0 (November 29, 2020)
 
 ENHANCEMENTS:
