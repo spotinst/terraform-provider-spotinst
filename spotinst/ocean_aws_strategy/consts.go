@@ -10,4 +10,5 @@ const (
 	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
 	DrainingTimeout          commons.FieldName = "draining_timeout"
 	GracePeriod              commons.FieldName = "grace_period"
+	UtilizeCommitments       commons.FieldName = "utilize_commitments"
 )

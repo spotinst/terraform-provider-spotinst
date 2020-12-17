@@ -105,4 +105,47 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[UtilizeCommitments] = commons.NewGenericField(
+		commons.OceanECSStrategy,
+		UtilizeCommitments,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var value *bool = nil
+			if cluster.Strategy != nil && cluster.Strategy.UtilizeCommitments != nil {
+				value = cluster.Strategy.UtilizeCommitments
+			}
+			if err := resourceData.Set(string(UtilizeCommitments), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UtilizeCommitments), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+				uc := v.(bool)
+				utilizeCommitments := spotinst.Bool(uc)
+				cluster.Strategy.SetUtilizeCommitments(utilizeCommitments)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var utilizeCommitments *bool = nil
+			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+				uc := v.(bool)
+				utilizeCommitments = spotinst.Bool(uc)
+			}
+			cluster.Strategy.SetUtilizeCommitments(utilizeCommitments)
+			return nil
+		},
+		nil,
+	)
 }
