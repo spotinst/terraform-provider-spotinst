@@ -84,9 +84,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var imageId *string = nil
 			if value, ok := resourceData.GetOk(string(ImageID)); ok && value != nil {
-				launchSpec.SetImageId(spotinst.String(resourceData.Get(string(ImageID)).(string)))
+				imageId = spotinst.String(resourceData.Get(string(ImageID)).(string))
 			}
+			launchSpec.SetImageId(imageId)
 			return nil
 		},
 		nil,
