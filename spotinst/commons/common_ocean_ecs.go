@@ -114,7 +114,6 @@ func NewECSClusterWrapper() *ECSClusterWrapper {
 			Compute: &aws.ECSCompute{
 				LaunchSpecification: &aws.ECSLaunchSpecification{},
 				InstanceTypes:       &aws.ECSInstanceTypes{},
-				OptimizeImages:      &aws.ECSOptimizeImages{},
 			},
 			Strategy:   &aws.ECSStrategy{},
 			Scheduling: &aws.ECSScheduling{},
