@@ -458,7 +458,7 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 	rollID := spotinst.StringValue(getRollStatus(rollOut))
 
 	if pctTimeout <= 0 || pctComplete <= 0 {
-		return fmt.Errorf("invalid timeout/complete durations: timeout=%d, complete=%d", pctTimeout, pctComplete)
+		return fmt.Errorf("invalid timeout/complete durations: timeout=%d, complete=%f", pctTimeout, pctComplete)
 	}
 	if rollID == "" {
 		return fmt.Errorf("invalid roll id: %s", rollID)
@@ -485,7 +485,7 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 		}
 
 		if spotinst.Float64Value(rollStatus.RollGroupStatus[0].Progress.Value) < pctComplete {
-			log.Printf("awaitReadyRoll() Waiting for at least %d%% of batches to complete, current status: %d%%",
+			log.Printf("awaitReadyRoll() Waiting for at least %f%% of batches to complete, current status: %f%%",
 				pctComplete, spotinst.Float64Value(rollStatus.RollGroupStatus[0].Progress.Value))
 
 			return resource.RetryableError(fmt.Errorf("roll at %v%% complete",
