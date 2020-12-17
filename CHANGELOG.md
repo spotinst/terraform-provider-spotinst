@@ -1,6 +1,8 @@
 ## Unreleased
 
 ENHANCEMENTS:
+* resource/spotinst_ocean_aws_strategy: added `utilize_commitments`
+* resource/spotinst_ocean_ecs_strategy: added `utilize_commitments`
 * resource/spotinst_elastigroup_aws_strategy: added `utilize_commitments`
 
 ## 1.31.0 (November 29, 2020)
