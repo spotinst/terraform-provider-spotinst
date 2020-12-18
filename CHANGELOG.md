@@ -1,6 +1,11 @@
 ## Unreleased
 
 ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_specification: added `throughput` under `block_device_mappings`
+* resource/spotinst_ocean_aws_launch_spec: added `throughput` under `block_device_mappings`
+* resource/spotinst_ocean_ecs_launch_spec: added `throughput` under `block_device_mappings`
+* resource/spotinst_lastigroup_aws_block_devices: added `throughput` under `ebs_block_device`
+* resource/spotinst_ocean_ecs: added `optimize_images`
 * resource/spotinst_ocean_aws_strategy: added `utilize_commitments`
 * resource/spotinst_ocean_ecs_strategy: added `utilize_commitments`
 * resource/spotinst_elastigroup_aws_strategy: added `utilize_commitments`
@@ -11,6 +16,10 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_ecs_launch_spec: added `throughput` under `block_device_mappings`
 * resource/spotinst_ocean_ecs_launch_specification: added `throughput` under `block_device_mappings`
 * resource/spotinst_ocean_ecs_strategy: added `utilize_commitments`
+
+BUG FIXES:
+* resource/spotinst_ocean_aws_launchspec: resolved errors with `image_id`
+* resource/spotinst_elastigroup_aws: resolved errors with `wait_for_roll_percentage`
 
 BUG FIXES:
 * resource/spotinst_ocean_aws_launchspec: resolved errors with `image_id`
