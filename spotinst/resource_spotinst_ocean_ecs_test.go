@@ -838,3 +838,70 @@ const testUpdatePolicyECSClusterConfig_EmptyFields = `
 `
 
 // endregion
+
+// region OceanECS: Optimize Images
+func TestAccSpotinstOceanECS_OptimizeImages(t *testing.T) {
+	name := "test-acc-cluster-optimize-images"
+	clusterName := "optimize-images-cluster-name"
+	resourceName := createOceanECSResourceName(clusterName)
+
+	var cluster aws.ECSCluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					name:           name,
+					clusterName:    clusterName,
+					fieldsToAppend: testOptimizeImagesECSConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.perform_at", "timeWindow"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.time_windows.0", "Sun:02:00-Sun:12:00"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.time_windows.1", "Sun:05:00-Sun:16:00"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.should_optimize_ecs_ami", "true"),
+				),
+			},
+			{
+				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
+					name:           name,
+					clusterName:    clusterName,
+					fieldsToAppend: testOptimizeImagesECSConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSExists(&cluster, resourceName),
+					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.perform_at", "never"),
+					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.should_optimize_ecs_ami", "false"),
+				),
+			},
+		},
+	})
+}
+
+const testOptimizeImagesECSConfig_Create = `
+// --- OPTIMIZE IMAGES ----------------
+  optimize_images {
+   perform_at = "timeWindow"
+   time_windows = ["Sun:02:00-Sun:12:00","Sun:05:00-Sun:16:00"]
+   should_optimize_ecs_ami = true
+// ----OPTIMIZE IMAGES ----------------
+ }
+`
+
+const testOptimizeImagesECSConfig_Update = `
+// --- OPTIMIZE IMAGES ----------------
+  optimize_images {
+   perform_at = "never"
+   should_optimize_ecs_ami = false
+// ----OPTIMIZE IMAGES ----------------
+ }
+`

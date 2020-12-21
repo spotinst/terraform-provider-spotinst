@@ -47,6 +47,7 @@ const (
 	OceanECSLaunchSpecification ResourceAffinity = "Ocean_ECS_Launch_Specification"
 	OceanECSStrategy            ResourceAffinity = "Ocean_ECS_Strategy"
 	OceanECSScheduling          ResourceAffinity = "Ocean_ECS_Scheduling"
+	OceanECSOptimizeImages      ResourceAffinity = "Ocean_ECS_Optimize_Images"
 
 	OceanECSLaunchSpec ResourceAffinity = "Ocean_ECS_Launch_Spec"
 
