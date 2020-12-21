@@ -472,6 +472,7 @@ Each `ebs_block_device` supports the following:
 * `delete_on_termination` - (Optional) Whether the volume should be destroyed on instance termination.
 * `encrypted` - (Optional) Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
 * `kms_key_id` - (Optional) ID for a user managed CMK under which the EBS Volume is encrypted
+* `throughput`- (Optional) The amount of data transferred to or from a storage device per second, you can use this param just in a case that `volume_type` = gp3.
 
 Modifying any `ebs_block_device` currently requires resource replacement.
 
@@ -492,12 +493,13 @@ Usage:
    ebs_block_device {
      device_name           = "/dev/sdc" 
      snapshot_id           = "" 
-     volume_type           = "gp2"  
+     volume_type           = "gp3"  
      volume_size           = 8  
      iops                  = 1
      delete_on_termination = true
      encrypted             = true
      kms_key_id            = "kms-key-02"
+     throughput            = 500
   }
 ```
 

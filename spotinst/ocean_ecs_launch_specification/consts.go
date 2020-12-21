@@ -30,4 +30,5 @@ const (
 	VolumeType          commons.FieldName = "volume_type"
 	NoDevice            commons.FieldName = "no_device"
 	VirtualName         commons.FieldName = "virtual_name"
+	Throughput          commons.FieldName = "throughput"
 )
