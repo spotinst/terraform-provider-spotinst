@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.32.0 (December 21, 2020)
+
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws_strategy: added `utilize_commitments`
 * resource/spotinst_lastigroup_aws_block_devices: added `throughput` under `ebs_block_device`
