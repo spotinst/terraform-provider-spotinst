@@ -1050,7 +1050,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 
 								string(WaitForRollPct): {
-									Type:     schema.TypeInt,
+									Type:     schema.TypeFloat,
 									Optional: true,
 								},
 
