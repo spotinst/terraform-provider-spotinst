@@ -29,6 +29,10 @@ BUG FIXES:
 * resource/spotinst_ocean_aws_launchspec: resolved errors with `image_id`
 * resource/spotinst_elastigroup_aws: resolved errors with `wait_for_roll_percentage`
 
+BUG FIXES:
+* resource/spotinst_ocean_aws_launchspec: resolved errors with `image_id`
+* resource/spotinst_elastigroup_aws: resolved errors with `wait_for_roll_percentage`
+
 ## 1.31.0 (November 29, 2020)
 
 ENHANCEMENTS:
