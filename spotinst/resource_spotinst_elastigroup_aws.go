@@ -454,11 +454,11 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 	log.Printf("awaitReadyRoll() Waiting for deployment of group: %s", groupID)
 
 	pctTimeout := spotinst.IntValue(getRollTimeout(rollConfig))
-	pctComplete := spotinst.IntValue(getRollMinPct(rollConfig))
+	pctComplete := spotinst.Float64Value(getRollMinPct(rollConfig))
 	rollID := spotinst.StringValue(getRollStatus(rollOut))
 
 	if pctTimeout <= 0 || pctComplete <= 0 {
-		return fmt.Errorf("invalid timeout/complete durations: timeout=%d, complete=%d", pctTimeout, pctComplete)
+		return fmt.Errorf("invalid timeout/complete durations: timeout=%d, complete=%f", pctTimeout, pctComplete)
 	}
 	if rollID == "" {
 		return fmt.Errorf("invalid roll id: %s", rollID)
@@ -484,12 +484,12 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 			return resource.NonRetryableError(fmt.Errorf("call to roll status of group %q failed: %v", groupID, rollErr))
 		}
 
-		if spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value) < pctComplete {
-			log.Printf("awaitReadyRoll() Waiting for at least %d%% of batches to complete, current status: %d%%",
-				pctComplete, spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value))
+		if spotinst.Float64Value(rollStatus.RollGroupStatus[0].Progress.Value) < pctComplete {
+			log.Printf("awaitReadyRoll() Waiting for at least %f%% of batches to complete, current status: %f%%",
+				pctComplete, spotinst.Float64Value(rollStatus.RollGroupStatus[0].Progress.Value))
 
 			return resource.RetryableError(fmt.Errorf("roll at %v%% complete",
-				spotinst.IntValue(rollStatus.RollGroupStatus[0].Progress.Value)))
+				spotinst.Float64Value(rollStatus.RollGroupStatus[0].Progress.Value)))
 		}
 
 		return nil
@@ -619,14 +619,14 @@ func getRollTimeout(data interface{}) *int {
 	return timeout
 }
 
-func getRollMinPct(data interface{}) *int {
-	var minPct *int
+func getRollMinPct(data interface{}) *float64 {
+	var minPct *float64
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(elastigroup_aws.WaitForRollPct)].(int); ok {
-			minPct = spotinst.Int(v)
+		if v, ok := m[string(elastigroup_aws.WaitForRollPct)].(float64); ok {
+			minPct = spotinst.Float64(v)
 		}
 	}
 	return minPct
