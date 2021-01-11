@@ -587,7 +587,7 @@ func expandOnFailure(data interface{}) (*aws.OnFailure, error) {
 				onFailure.ShouldHandleAllBatches = spotinst.Bool(v)
 			}
 
-			if v, ok := m[string(elastigroup_aws.BatchNum)].(int); ok && v >= 0 {
+			if v, ok := m[string(elastigroup_aws.BatchNum)].(int); ok && v > 0 {
 				onFailure.BatchNum = spotinst.Int(v)
 			}
 
