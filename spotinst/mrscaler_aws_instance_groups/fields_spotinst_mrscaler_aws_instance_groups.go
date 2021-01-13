@@ -5,13 +5,19 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Setup
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-	SetupCoreGroup(fieldsMap)
+	wrapStrategy := fieldsMap[mrscaler_aws_strategy.Wrap]
+	sreategy := fieldsMap[mrscaler_aws_strategy.Strategy]
+
+	if sreategy != wrapStrategy {
+		SetupCoreGroup(fieldsMap)
+	}
 	SetupMasterGroup(fieldsMap)
 	SetupTaskGroup(fieldsMap)
 }
