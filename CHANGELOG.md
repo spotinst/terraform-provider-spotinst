@@ -1,5 +1,9 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_elastigroup_aws resolved errors with `batch_num`
+* resource/spotinst_elastigroup_aws_block_devices resolved errors with `volume_type`
+
 ## 1.32.0 (December 21, 2020)
 
 ENHANCEMENTS:
