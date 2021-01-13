@@ -2463,7 +2463,7 @@ func TestAccSpotinstElastigroupAWS_BlockDevices(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.1523824956.volume_size", "12"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.1523824956.volume_type", "GP3"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.1523824956.throughput", "500"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3086322863.delete_on_termination", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3299715593.delete_on_termination", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3299715593.device_name", "/dev/sda"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3299715593.encrypted", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_block_device.3299715593.iops", "1"),
