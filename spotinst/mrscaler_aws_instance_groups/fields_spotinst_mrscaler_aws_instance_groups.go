@@ -13,9 +13,9 @@ import (
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	wrapStrategy := fieldsMap[mrscaler_aws_strategy.Wrap]
-	sreategy := fieldsMap[mrscaler_aws_strategy.Strategy]
+	strategy := fieldsMap[mrscaler_aws_strategy.Strategy]
 
-	if sreategy != wrapStrategy {
+	if strategy != wrapStrategy {
 		SetupCoreGroup(fieldsMap)
 	}
 	SetupMasterGroup(fieldsMap)
