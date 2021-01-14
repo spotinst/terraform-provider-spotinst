@@ -54,13 +54,20 @@ The following arguments are supported:
 * `ocean_id` - (Required) The Ocean cluster ID required for launchSpec create. 
 * `source_image` - (Required) Image URL.
 * `metadata` - (Required) Cluster's metadata.
-* `taints` - (Optional) Cluster's taints.
-* `labels` - (Optional) Cluster's labels.
+    * `key` - (Required) The metadata key.
+    * `value` - (Required) The metadata value.
+* `taints` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
+    * `key` - (Required) The taint key.
+    * `value` - (Required) The taint value.
+    * `effect` - (Required) The effect of the taint. Valid values: `"NoSchedule"`, `"PreferNoSchedule"`, `"NoExecute"`.
+* `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
+    * `key` - (Required) The label key.
+    * `value` - (Required) The label value.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
-    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate for each headroom unit.
+    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 
 
 ## Attributes Reference

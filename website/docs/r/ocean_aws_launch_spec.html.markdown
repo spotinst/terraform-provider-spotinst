@@ -105,21 +105,17 @@ The following arguments are supported:
 * `root_volume_size` - (Optional) Set root volume size (in GB).
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
-
 * `labels` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
-    * `key` - (Required) The tag key.
-    * `value` - (Required) The tag value.
-    
+    * `key` - (Required) The label key.
+    * `value` - (Required) The label value.
 * `taints` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
-    * `key` - (Required) The tag key.
-    * `value` - (Required) The tag value.
+    * `key` - (Required) The taint key.
+    * `value` - (Required) The taint value.
     * `effect` - (Required) The effect of the taint. Valid values: `"NoSchedule"`, `"PreferNoSchedule"`, `"NoExecute"`.
-
 * `elastic_ip_pool` - (Optional) Assign an Elastic IP to the instances spun by the launch spec. Can be null.
     * `tag_selector` - (Optional) Key-value object, which defines an Elastic IP from the customer pool. Can be null.
         * `tag_key` - (Required) Elastic IP tag key. The launch spec will consider all elastic IPs tagged with this tag as a part of the elastic IP pool to use.
-        * `tag_value` - (Optional) Elastic IP tag value. Can be null.
-        
+        * `tag_value` - (Optional) Elastic IP tag value. Can be null.    
 * `block_device_mappings`- (Optional) Object. Array list of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
     * `device_name` - (Optional) String. Set device name. (Example: "/dev/xvda1").
     * `ebs`- (Optional) Object. Set Elastic Block Store properties .
@@ -136,13 +132,11 @@ The following arguments are supported:
             * `resource`- (Required) String. Resource type to increase volume size dynamically by. (valid values: "CPU")
             * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: baseSize= 50, sizePerResourceUnit=20, and instance with 2 CPU is launched - its total disk size will be: 90GB)
         * `no_device`- (Optional) String. suppresses the specified device included in the block device mapping of the AMI.
-   
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
-
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) set a maximum number of instances per launch specification. Can be null. If set, value must be greater than or equal to 0.
     

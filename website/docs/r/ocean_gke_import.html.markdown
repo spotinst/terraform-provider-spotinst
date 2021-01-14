@@ -61,9 +61,8 @@ The following arguments are supported:
         * `port_name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
 
-
 <a id="scheduled-task"></a>
-## scheduled task
+## Scheduled task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.
@@ -98,21 +97,21 @@ The following arguments are supported:
 ## Autoscaler
 
 * `autoscaler` - (Optional) The Ocean Kubernetes Autoscaler object.
-* `is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Autoscaler.
-* `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
-* `auto_headroom_percentage` - Optionally set the auto headroom percentage, set a number between 0-200 to control the headroom % from the cluster. Relevant when isAutoConfig=true.
-* `cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
-* `headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
-* `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
-* `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate the headroom.
-* `gpu_per_unit` - (Optional) How much GPU allocate for headroom unit.
-* `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
-* `down` - (Optional) Auto Scaling scale down operations.
-* `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
-* `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
-* `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
-* `max_vcpu` - (Optional) The maximum cpu in vCpu units that can be allocated to the cluster.
-* `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
+    * `is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Autoscaler.
+    * `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
+    * `auto_headroom_percentage` - Optionally set the auto headroom percentage, set a number between 0-200 to control the headroom % from the cluster. Relevant when isAutoConfig=true.
+    * `cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
+    * `headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
+        * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+        * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate the headroom.
+        * `gpu_per_unit` - (Optional) How much GPU allocate for headroom unit.
+        * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
+    * `down` - (Optional) Auto Scaling scale down operations.
+        * `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
+        * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
+    * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
+        * `max_vcpu` - (Optional) The maximum cpu in vCpu units that can be allocated to the cluster.
+        * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
 
 ```hcl
   autoscaler {
