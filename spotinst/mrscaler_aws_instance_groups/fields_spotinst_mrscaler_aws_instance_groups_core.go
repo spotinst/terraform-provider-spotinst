@@ -7,6 +7,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
 )
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -36,6 +37,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.Get(string(CoreMin)).(int); ok && v >= 0 {
@@ -50,6 +54,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.Get(string(CoreMin)).(int); ok && v >= 0 {
@@ -89,6 +96,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.Get(string(CoreMax)).(int); ok && v >= 0 {
@@ -103,6 +113,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.Get(string(CoreMax)).(int); ok && v >= 0 {
@@ -142,6 +155,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.Get(string(CoreTarget)).(int); ok && v >= 0 {
@@ -156,6 +172,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.Get(string(CoreTarget)).(int); ok && v >= 0 {
@@ -226,6 +245,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 
@@ -241,6 +263,9 @@ func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+				return nil
+			}
 			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
 				string(CoreUnit))
 			return err
