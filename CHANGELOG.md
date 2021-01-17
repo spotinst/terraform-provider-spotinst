@@ -1,6 +1,7 @@
 ## Unreleased
 
 BUG FIXES:
+* resource/fields_spotinst_mrscaler_aws_instance_groups_core resolved errors with wrap strategy
 * resource/spotinst_elastigroup_aws resolved errors with `batch_num`
 * resource/spotinst_elastigroup_aws_block_devices resolved errors with `volume_type`
 
