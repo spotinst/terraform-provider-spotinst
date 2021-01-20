@@ -61,7 +61,7 @@ The following arguments are supported:
 
 
 <a id="scheduled-task"></a>
-## scheduled task
+### scheduled task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.
@@ -93,7 +93,7 @@ The following arguments are supported:
 ```
 
 <a id="autoscaler"></a>
-## Autoscaler
+### Autoscaler
 
 * `autoscaler` - (Optional) The Ocean Kubernetes Autoscaler object.
 * `is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Autoscaler.

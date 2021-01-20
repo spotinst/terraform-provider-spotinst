@@ -17,7 +17,7 @@ Provides a Spotinst AWS group resource.
 resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   name        = "default-elastigroup"
-  description = "created by Terraform"
+  description = "created by Pulumi"
   product     = "Linux/UNIX"
 
   max_size          = 0
@@ -188,7 +188,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
     * `time_windows` - (Optional) Specify a list of time windows for to execute revertToSpot strategy. Time window format: `ddd:hh:mm-ddd:hh:mm`. Example: `Mon:03:00-Wed:02:30`
 
 <a id="load-balancers"></a>
-## Load Balancers
+### Load Balancers
     
 * `elastic_load_balancers` - (Optional) List of Elastic Load Balancers names (ELB).
 * `target_group_arns` - (Optional) List of Target Group ARNs to register the instances to.
@@ -214,7 +214,7 @@ Usage:
 ```
 
 <a id="signal"></a>
-## Signals
+### Signals
 
 Each `signal` supports the following:
 
@@ -231,7 +231,7 @@ Usage:
 ```
 
 <a id="scheduled-task"></a>
-## Scheduled Tasks
+### Scheduled Tasks
 
 Each `scheduled_task` supports the following:
 
@@ -272,7 +272,7 @@ Usage:
 ```
 
 <a id="scaling-policy"></a>
-## Scaling Policies
+### Scaling Policies
 
 `scaling_up_policy` supports the following:
 
@@ -424,7 +424,7 @@ Usage:
 ```
 
 <a id="network-interface"></a>
-## Network Interfaces
+### Network Interfaces
 
 Each of the `network_interface` attributes controls a portion of the AWS
 Instance's "Elastic Network Interfaces". It's a good idea to familiarize yourself with [AWS's Elastic Network
@@ -455,7 +455,7 @@ Usage:
 ```
 
 <a id="block-devices"></a>
-## Block Devices
+### Block Devices
 
 Each of the `*_block_device` attributes controls a portion of the AWS
 Instance's "Block Device Mapping". It's a good idea to familiarize yourself with [AWS's Block Device
@@ -519,7 +519,7 @@ Usage:
 ```
 
 <a id="stateful"></a>
-## Stateful
+### Stateful
 
 We support instance persistence via the following configurations. all values are boolean.
 For more information on instance persistence please see: [Stateful configuration](https://api.spotinst.com/integration-docs/elastigroup/concepts/stateful-concepts/introduction/)
@@ -541,7 +541,7 @@ Usage:
 ```
 
 <a id="stateful-deallocation"></a>
-## Stateful Deallocation
+### Stateful Deallocation
 
 * `stateful_deallocation` - (Optional)
     * `should_delete_images` - (Optional) For stateful groups: remove persistent images.
@@ -561,7 +561,7 @@ Usage:
 ```    
 
 <a id="health-check"></a>
-## Health Check
+### Health Check
 
 * `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health
@@ -576,7 +576,7 @@ Usage:
 ```
 
 <a id="third-party-integrations"></a>
-## Third-Party Integrations
+### Third-Party Integrations
 
 * `integration_rancher` - (Optional) Describes the [Rancher](http://rancherlabs.com/) integration.
 
@@ -913,7 +913,7 @@ Usage:
 ```
 
 <a id="update-policy"></a>
-## Update Policy
+### Update Policy
 
 * `update_policy` - (Optional)
 
@@ -964,7 +964,7 @@ Usage:
   }
 ```       
        
-## Attributes Reference
+### Attributes Reference
 
 The following attributes are exported:
 

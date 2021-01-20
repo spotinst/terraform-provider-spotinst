@@ -10,14 +10,16 @@ description: |-
 
 Provides a Spotinst AWS MrScaler resource.
 
-## Example Usage - New Strategy
+## Example Usage
+
+### New Strategy
 
 ```hcl
 # Create a Mr Scaler with New strategy
 
-resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
-  name        = "Terraform-MrScaler-01"
-  description = "Testing MrScaler creation via Terraform"
+resource "spotinst_mrscaler_aws" "sample-MrScaler-01" {
+  name        = "sample-MrScaler-01"
+  description = "Testing MrScaler creation"
   region      = "us-west-2"
   strategy    = "new"
   release_label = "emr-5.17.0"
@@ -85,7 +87,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
   }
 
   bootstrap_actions_file {
-    bucket = "terraform-emr-test"
+    bucket = "sample-emr-test"
     key = "bootstrap-actions.json"
   }
 // -------------------------
@@ -137,28 +139,28 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
 // --- TAGS -------------------
   tags {
       key   = "Creator"
-      value = "Terraform"
+      value = "Pulumi"
   }
 // ----------------------------
 }
 ```
 
-## Example Usage - Clone Strategy
+### Clone Strategy
 
 ```hcl
 # Create a Mr Scaler with Clone strategy and Task scaling
 
 output "mrscaler-name" {
-  value = "${spotinst_mrscaler_aws.Terraform-MrScaler-01.name}"
+  value = "${spotinst_mrscaler_aws.sample-MrScaler-01.name}"
 }
 
 output "mrscaler-created-cluster-id" {
-  value = "${spotinst_mrscaler_aws.Terraform-MrScaler-01.output_cluster_id}"
+  value = "${spotinst_mrscaler_aws.sample-MrScaler-01.output_cluster_id}"
 }
 
-resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
-  name        = "Terraform-MrScaler-01"
-  description = "Testing MrScaler creation via Terraform"
+resource "spotinst_mrscaler_aws" "sample-MrScaler-01" {
+  name        = "sample-MrScaler-01"
+  description = "Testing MrScaler creation"
   region      = "us-west-2"
   strategy    = "clone"
   
@@ -214,7 +216,7 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
 // --- TAGS -------------------
   tags {
       key   = "Creator"
-      value = "Terraform"
+      value = "Pulumi"
   }
 // ----------------------------
 
@@ -248,14 +250,14 @@ resource "spotinst_mrscaler_aws" "Terraform-MrScaler-01" {
 }
 ```
 
-## Example Usage - Wrap Strategy
+### Wrap Strategy
 
 ```hcl
 # Create a Mr Scaler with Wrap strategy
 
 resource "spotinst_mrscaler_aws" "example-scaler-2" {
   name        = "spotinst-mr-scaler-2"
-  description = "created by Terraform"
+  description = "created by Pulumi"
   region      = "us-west-2"
   strategy    = "wrap"
   cluster_id  = "j-27UVDEHXL4OQM"
@@ -287,15 +289,15 @@ The following arguments are supported:
 * `region` - (Required) The MrScaler region.
 * `strategy` - (Required) The MrScaler strategy. Allowed values are `new` `clone` and `wrap`.
 * `cluster_id` - (Optional) The MrScaler cluster id.
-* `expose_cluster_id` - (Optional) Allow the `cluster_id` to set a Terraform output variable.
+* `expose_cluster_id` - (Optional) Allow the `cluster_id` to set a provider output variable.
 
 <a id="provisioning-timeout"></a>
-## Provisioning Timeout (Clone, New strategies)
+### Provisioning Timeout (Clone, New strategies)
 * `timeout` - (Optional) The amount of time (minutes) after which the cluster is automatically terminated if it's still in provisioning status. Minimum: '15'.
 * `timeout_action` - (Optional) The action to take if the timeout is exceeded. Valid values: `terminate`, `terminateAndRetry`.
 
 <a id="cluster-config"></a>
-## Cluster Configuration (New strategy only)
+### Cluster Configuration (New strategy only)
 * `log_uri` - (Optional) The path to the Amazon S3 location where logs for this cluster are stored.
 * `additional_info` - (Optional) This is meta information about third-party applications that third-party vendors use for testing purposes.
 * `security_config` - (Optional) The name of the security configuration applied to the cluster.
@@ -306,7 +308,7 @@ The following arguments are supported:
 * `retries` - (Optional; Requires: `timeout_action` is set to `terminateAndRetry`) Specifies the maximum number of times a capacity provisioning should be retried if the provisioning timeout is exceeded. Valid values: `1-5`. 
 
 <a id="task-group"></a>
-## Task Group (Wrap, Clone, and New strategies)
+### Task Group (Wrap, Clone, and New strategies)
 * `task_instance_types` - (Required) The MrScaler instance types for the task nodes.
 * `task_target` - (Required) amount of instances in task group.
 * `task_maximum` - (Optional) maximal amount of instances in task group.
@@ -321,7 +323,7 @@ The following arguments are supported:
     * `iops` - (Optional) IOPS for the volume. Required in some volume types, such as io1.
 
 <a id="core-group"></a>
-## Core Group (Clone, New strategies)
+### Core Group (Clone, New strategies)
 * `core_instance_types` - (Required) The MrScaler instance types for the core nodes.
 * `core_target` - (Required) amount of instances in core group.
 * `core_maximum` - (Optional) maximal amount of instances in core group.
@@ -336,7 +338,7 @@ The following arguments are supported:
     * `iops` - (Optional) IOPS for the volume. Required in some volume types, such as io1.
 
 <a id="master-group"></a>
-## Master Group (Clone, New strategies)
+### Master Group (Clone, New strategies)
 * `master_instance_types` - (Required) The MrScaler instance types for the master nodes.
 * `master_lifecycle` - (Required) The MrScaler lifecycle for instances in master group. Allowed values are 'SPOT' and 'ON_DEMAND'.
 * `master_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
@@ -347,13 +349,13 @@ The following arguments are supported:
     * `iops` - (Optional) IOPS for the volume. Required in some volume types, such as io1.
 
 <a id="tags"></a>
-## Tags (Clone, New strategies)
+### Tags (Clone, New strategies)
 * `tags` - (Optional) A list of tags to assign to the resource. You may define multiple tags.
     * `key` - (Required) Tag key.
     * `value` - (Required) Tag value.
 
 <a id="Optional Compute Parameters"></a>  
-## Optional Compute Parameters (New strategy)
+### Optional Compute Parameters (New strategy)
 * `managed_primary_security_group` - (Optional) EMR Managed Security group that will be set to the primary instance group.
 * `managed_replica_security_group` - (Optional) EMR Managed Security group that will be set to the replica instance group.
 * `service_access_security_group` - (Optional) The identifier of the Amazon EC2 security group for the Amazon EMR service to access clusters in VPC private subnets.
@@ -371,31 +373,31 @@ The following arguments are supported:
     * `weighted_capacity` - (Required) The weight given to the associated instance type. 
 
 <a id="availability-zone"></a>
-## Availability Zones (Clone, New strategies)
+### Availability Zones (Clone, New strategies)
 
 * `availability_zones` - (Required in Clone) List of AZs and their subnet Ids. See example above for usage.
 
 <a id="configurations"></a>
-## Configurations (Clone, New strategies)
+### Configurations (Clone, New strategies)
 
 * `configurations_file` - (Optional) Describes path to S3 file containing description of configurations. [More Information](https://api.spotinst.com/elastigroup-for-aws/services-integrations/elastic-mapreduce/import-an-emr-cluster/advanced/)
     * `bucket` - (Required) S3 Bucket name for configurations.
     * `key`- (Required) S3 key for configurations.
     
 <a id="steps"></a>
-## Steps (Clone, New strategies)
+### Steps (Clone, New strategies)
 * `steps_file` - (Optional) Steps from S3.
     * `bucket` - (Required) S3 Bucket name for steps.
     * `key`- (Required) S3 key for steps.
     
 <a id="boostrap-actions"></a>
-## Bootstrap Actions (Clone, New strategies)   
+### Bootstrap Actions (Clone, New strategies)   
 * `bootstrap_actions_file` - (Optional) Describes path to S3 file containing description of bootstrap actions. [More Information](https://api.spotinst.com/elastigroup-for-aws/services-integrations/elastic-mapreduce/import-an-emr-cluster/advanced/)
     * `bucket` - (Required) S3 Bucket name for bootstrap actions.
     * `key`- (Required) S3 key for bootstrap actions.
 
 <a id="scaling-policy"></a>
-## Scaling Policies
+### Scaling Policies
 
 Possible task group scaling policies (Wrap, Clone, and New strategies):
 * `task_scaling_up_policy`
@@ -427,7 +429,7 @@ Each `*_scaling_*_policy` supports the following:
 * `action_type` - (Required) The type of action to perform. Allowed values are : 'adjustment', 'setMinTarget', 'setMaxTarget', 'updateCapacity', 'percentageAdjustment'
 
 <a id="scheduled-task"></a>
-## Scheduled Tasks
+### Scheduled Tasks
 
 * `scheduled_task` - (Optional) An array of scheduled tasks.
 * `is_enabled` - (Optional) Enable/Disable the specified scheduling task.
@@ -439,9 +441,9 @@ Each `*_scaling_*_policy` supports the following:
 * `max_capacity` - (Optional) New max capacity for the elastigroup.
 
 <a id="termination-policies"></a>
-## termination policies
+### termination policies
 
-## Example Usage
+#### Example Usage
 
 ```hcl
   termination_policies {

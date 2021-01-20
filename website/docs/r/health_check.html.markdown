@@ -14,7 +14,7 @@ Provides a Spotinst Health Check resource.
 
 ```hcl 
 resource "spotinst_health_check" "http_check" {
-  name        = "terraform_healt_cheack"
+  name        = "sample_healt_check"
   resource_id = "sig-123"
 
   check {

@@ -9,7 +9,7 @@ description: |-
 # spotinst\_elastigroup\_aws\_suspension
 
 Suspend AWS Elastigroup processes. This resource provide the capavility of
-suspending elastigroup processes using Terraform.
+suspending elastigroup processes using this provider.
 
 For supported processes please visit: [Suspend Processes API reference](https://help.spot.io/spotinst-api/elastigroup/amazon-web-services/suspend-processes/)
 ## Example Usage

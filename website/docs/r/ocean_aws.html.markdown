@@ -106,7 +106,7 @@ The following arguments are supported:
 
 
 <a id="auto-scaler"></a>
-## Auto Scaler
+### Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.
 * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes autoscaler.
 * `autoscale_is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
@@ -149,7 +149,7 @@ The following arguments are supported:
 ```
 
 <a id="update-policy"></a>
-## Update Policy
+### Update Policy
 
 * `update_policy` - (Optional)
     * `should_roll` - (Required) Enables the roll.
@@ -167,7 +167,7 @@ The following arguments are supported:
 ```
 
 <a id="scheduled-task"></a>
-## scheduled task
+### scheduled task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.

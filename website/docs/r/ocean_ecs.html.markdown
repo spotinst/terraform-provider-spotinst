@@ -15,8 +15,8 @@ Manages a Spotinst Ocean ECS resource.
 ```hcl
 resource "spotinst_ocean_ecs" "example" {
     region = "us-west-2"
-    name = "terraform-ecs-cluster"
-    cluster_name = "terraform-ecs-cluster"
+    name = "sample-ecs-cluster"
+    cluster_name = "sample-ecs-cluster"
   
     min_size         = "0"
     max_size         = "1"
@@ -120,7 +120,7 @@ The following arguments are supported:
     * `should_optimize_ecs_ami` - (Required) Boolean. Enable auto image (AMI) update for the ECS container instances. The auto update applies for ECS-Optimized AMIs.
 
 <a id="auto-scaler"></a>
-## Auto Scaler
+### Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean ECS autoscaler.
     * `is_enabled` - (Optional, Default: `true`) Enable the Ocean ECS autoscaler.
     * `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
@@ -160,7 +160,7 @@ The following arguments are supported:
 
 
 <a id="update-policy"></a>
-## Update Policy
+### Update Policy
 * `update_policy` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `should_roll` - (Required) Enables the roll.
     * `roll_config` - (Required) 
@@ -178,7 +178,7 @@ The following arguments are supported:
 
 
 <a id="scheduled-task"></a>
-## scheduled task
+### scheduled task
 * `scheduled_task` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.

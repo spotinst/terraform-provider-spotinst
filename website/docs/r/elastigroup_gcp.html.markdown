@@ -140,7 +140,7 @@ The following arguments are supported:
 * `tags` - (Optional) Tags to mark created instances.
 
 <a id="GPU"></a>
-## GPU
+### GPU
 
 * `gpu` - (Optional) Defines the GPU configuration.
     * `type` - (Required) The type of GPU instance. Valid values: `nvidia-tesla-v100`, `nvidia-tesla-p100`, `nvidia-tesla-k80`.
@@ -156,7 +156,7 @@ Usage:
 ```
 
 <a id="health-check"></a>
-## Health Check
+### Health Check
 
 * `auto_healing` - (Optional) Enable auto-replacement of unhealthy instances.
 * `health_check_grace_period` - (Optional) Period of time (seconds) to wait for VM to reach healthiness before monitoring for unhealthiness.
@@ -171,7 +171,7 @@ Usage:
   ```
 
 <a id="backend-services"></a>
-## Backend Services
+### Backend Services
 
 * `backend_services` - (Optional) Describes the backend service configurations.
     * `service_name` - (Required) The name of the backend service.
@@ -198,7 +198,7 @@ Usage:
 ```
 
 <a id="disks"></a>
-## Disks
+### Disks
 
 * `disks` - (Optional) Array of disks associated with this instance. Persistent disks must be created before you can assign them.
     * `auto_delete` - (Optional) Specifies whether the disk will be auto-deleted when the instance is deleted.
@@ -235,7 +235,7 @@ Usage:
 ```
 
 <a id="network-interface"></a>
-## Network Interfaces
+### Network Interfaces
 
 Each of the `network_interface` attributes controls a portion of the GCP
 Instance's "Network Interfaces". It's a good idea to familiarize yourself with [GCP's Network
@@ -265,7 +265,7 @@ to understand the implications of using these attributes.
 ```
 
 <a id="scaling-policy"></a>
-## Scaling Policies
+### Scaling Policies
 
 * `scaling_up_policy` - (Optional) Contains scaling policies for scaling the Elastigroup up.
 * `scaling_down_policy` - (Optional) Contains scaling policies for scaling the Elastigroup down.
@@ -321,7 +321,7 @@ Usage:
 ```
 
 <a id="third-party-integrations"></a>
-## Third-Party Integrations
+### Third-Party Integrations
 
 * `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
     * `master_host` - (Required) IP or FQDN of one of your swarm managers.
@@ -337,7 +337,7 @@ integration_docker_swarm = {
 ```
 
 <a id="scheduled-task"></a>
-## Scheduled Tasks
+### Scheduled Tasks
 
 Each `scheduled_task` supports the following:
 

@@ -183,7 +183,7 @@ The following arguments are supported:
 * `draining_timeout` - (Optional, Default `120`) Time (seconds) to allow the instance to be drained from incoming TCP connections and detached from MLB before terminating it during a scale-down operation.
 
 <a id="load-balancers"></a>
-## Load Balancers
+### Load Balancers
 
 * `load_balancers` - (Required) Describes a set of one or more classic load balancer target groups and/or Multai load balancer target sets.
 * `type` - (Required) The resource type. Valid values: CLASSIC, TARGET_GROUP, MULTAI_TARGET_SET.
@@ -201,7 +201,7 @@ The following arguments are supported:
 ```
 
 <a id="image"></a>
-## Image
+### Image
 
 * `image` - (Required) Image of a VM. An image is a template for creating new VMs. Choose from Azure image catalogue (marketplace) or use a custom image.
 * `publisher` - (Optional) Image publisher. Required if resource_group_name is not specified.
@@ -230,7 +230,7 @@ The following arguments are supported:
 ```
 
 <a id="health-check"></a>
-## Health Check
+### Health Check
 
 * `health_check` - (Optional) Describes the health check configuration.
 * `health_check_type` - (Optional) Health check used to validate VM health. Valid values: “INSTANCE_STATE”.
@@ -246,7 +246,7 @@ The following arguments are supported:
 ```
 
 <a id="network"></a>
-## Network
+### Network
 
 * `network` - (Required) Defines the Virtual Network and Subnet for your Elastigroup.
 * `virtual_network_name` - (Required) Name of Vnet.
@@ -272,7 +272,7 @@ The following arguments are supported:
 ```
 
 <a id="login"></a>
-## Login
+### Login
 
 ```hcl
   network {
@@ -284,7 +284,7 @@ The following arguments are supported:
 ```
 
 <a id="login"></a>
-## Login
+### Login
 
 * `login` - (Required) Describes the login configuration.
 * `user_name` - (Required) Set admin access for accessing your VMs.
@@ -299,7 +299,7 @@ The following arguments are supported:
 ```
 
 <a id="scaling-policy"></a>
-## Scaling Policies
+### Scaling Policies
 
 Each `scaling_*_policy` supports the following:
 
@@ -508,7 +508,7 @@ Usage:
 ```
 
 <a id="scheduling"></a>
-## Scheduling
+### Scheduling
 
 * `scheduled_task` - (Optional) Describes the configuration of one or more scheduled tasks.
 * `is_enabled` - (Optional, Default: `true`) Describes whether the task is enabled. When true the task should run when false it should not run.
@@ -540,7 +540,7 @@ Usage:
 ```
 
 <a id="update-policy"></a>
-## Update Policy
+### Update Policy
 
 * `update_policy` - (Optional)
 
@@ -563,7 +563,7 @@ Usage:
 ```        
 
 <a id="third-party-integrations"></a>
-## Third-Party Integrations
+### Third-Party Integrations
 
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.
     * `cluster_identifier` - (Required) The cluster ID.

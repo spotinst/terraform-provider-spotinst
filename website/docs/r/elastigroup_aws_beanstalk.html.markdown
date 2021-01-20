@@ -80,7 +80,7 @@ For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VP
       * `update_level` - (Required) - Level to update
 
 <a id="scheduled-task"></a>
-## Scheduled Tasks
+### Scheduled Tasks
 
 Each `scheduled_task` supports the following:
 

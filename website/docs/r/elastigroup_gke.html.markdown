@@ -23,7 +23,7 @@ There are two main differences:
 ```hcl
 resource "spotinst_elastigroup_gke" "example-gke-elastigroup" {
  name              = "example-gke"
- // cluster_id        = "terraform-acc-test-cluster" // deprecated
+ // cluster_id        = "sample-acc-test-cluster" // deprecated
  cluster_zone_name = "us-central1-a"
  node_image        = "COS"
 
@@ -86,7 +86,7 @@ All `spotisnt_elastigroup_gcp` arguments are supported. Please be sure to includ
 * `node_image` - (Optional, Default: `COS`) The image that will be used for the node VMs. Possible values: COS, UBUNTU.
 
 <a id="third-party-integrations"></a>
-## Third-Party Integrations
+### Third-Party Integrations
 
 * `integration_gke` - (Required) Describes the [GKE]() integration.
 
@@ -114,7 +114,7 @@ Usage:
 ```hcl
  integration_gke {
   location                 = "us-central1-a"
-  cluster_id               = "terraform-acc-test-cluster"
+  cluster_id               = "sample-acc-test-cluster"
   autoscale_is_enabled     = true
   autoscale_is_auto_config = false
   autoscale_cooldown       = 300
@@ -137,7 +137,7 @@ Usage:
 ```
 
 <a id="diff-suppressed-parameters"></a>
-## Diff-suppressed Parameters
+### Diff-suppressed Parameters
 The following parameters are created remotely and imported. The diffs have been suppressed in order to maintain plan legibility. You may update the values of these
 imported parameters by defining them in your template with your desired new value (including null values).
 
