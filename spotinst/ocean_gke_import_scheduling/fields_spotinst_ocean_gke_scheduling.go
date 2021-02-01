@@ -130,7 +130,7 @@ func expandShutdownHours(data interface{}) (*gcp.ShutdownHours, error) {
 		}
 		runner.SetIsEnabled(isEnabled)
 
-		var timeWindows []string = nil
+		var timeWindows []string
 		if v, ok := m[string(TimeWindows)].([]interface{}); ok && len(v) > 0 {
 			timeWindowList := make([]string, 0, len(v))
 			for _, timeWindow := range v {
