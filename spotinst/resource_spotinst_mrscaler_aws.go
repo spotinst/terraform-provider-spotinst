@@ -43,8 +43,8 @@ func setupMRScalerAWSResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	mrscaler_aws.Setup(fieldsMap)
-	mrscaler_aws_instance_groups.Setup(fieldsMap)
 	mrscaler_aws_strategy.Setup(fieldsMap)
+	mrscaler_aws_instance_groups.Setup(fieldsMap)
 	mrscaler_aws_cluster.Setup(fieldsMap)
 	mrscaler_aws_scaling_policies.Setup(fieldsMap)
 	mrscaler_aws_scheduled_task.Setup(fieldsMap)

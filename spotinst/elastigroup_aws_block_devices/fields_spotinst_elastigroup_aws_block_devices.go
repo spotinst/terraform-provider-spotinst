@@ -200,7 +200,6 @@ func hashAWSGroupEBSBlockDevice(v interface{}) int {
 	m := v.(map[string]interface{})
 	buf.WriteString(fmt.Sprintf("%s-", m[string(DeviceName)].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m[string(SnapshotId)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(VolumeType)].(string)))
 	buf.WriteString(fmt.Sprintf("%d-", m[string(VolumeSize)].(int)))
 	buf.WriteString(fmt.Sprintf("%t-", m[string(DeleteOnTermination)].(bool)))
 	buf.WriteString(fmt.Sprintf("%t-", m[string(Encrypted)].(bool)))
