@@ -106,18 +106,9 @@ func flattenAzureGroupStrategy(strategy *v3.Strategy) []interface{} {
 	result[string(OnDemandCount)] = spotinst.IntValue(strategy.OnDemandCount)
 	result[string(DrainingTimeout)] = spotinst.IntValue(strategy.DrainingTimeout)
 	result[string(FallbackToOnDemand)] = spotinst.BoolValue(strategy.FallbackToOnDemand)
-	//if strategy.RevertToSpot != nil {
-	//	result[string(RevertToSpot)] = flattenAzureGroupRevertToSpot(strategy.RevertToSpot)
-	//}
 
 	return []interface{}{result}
 }
-
-//func flattenAzureGroupRevertToSpot(revertToSpot *v3.RevertToSpot) []interface{} {
-//	result := make(map[string]interface{})
-//	result[string(PerformAt)] = spotinst.StringValue(revertToSpot.PerformAt)
-//	return []interface{}{result}
-//}
 
 func expandAzureGroupStrategy(data interface{}) (*v3.Strategy, error) {
 	strategy := &v3.Strategy{}
@@ -137,28 +128,7 @@ func expandAzureGroupStrategy(data interface{}) (*v3.Strategy, error) {
 		if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
 			strategy.SetFallbackToOnDemand(spotinst.Bool(v))
 		}
-		//if v, ok := m[string(RevertToSpot)]; ok {
-		//	if revertToSpot, err := expandAzureGroupRevertToSpot(v); err != nil {
-		//		return nil, err
-		//	} else {
-		//		strategy.SetRevertToSpot(revertToSpot)
-		//	}
-		//}
 	}
 
 	return strategy, nil
 }
-
-//func expandAzureGroupRevertToSpot(data interface{}) (*v3.RevertToSpot, error) {
-//	if list := data.([]interface{}); len(list) > 0 {
-//		revertToSpot := &v3.RevertToSpot{}
-//		if list != nil && list[0] != nil {
-//			m := list[0].(map[string]interface{})
-//			if v, ok := m[string(PerformAt)].(string); ok && v != "" {
-//				revertToSpot.SetPerformAt(spotinst.String(v))
-//			}
-//		}
-//		return revertToSpot, nil
-//	}
-//	return nil, nil
-//}
