@@ -39,8 +39,10 @@ func Provider() terraform.ResourceProvider {
 			string(commons.ElastigroupGKEResourceName):          resourceSpotinstElastigroupGKE(),
 			string(commons.ElastigroupAWSBeanstalkResourceName): resourceSpotinstElastigroupAWSBeanstalk(),
 			string(commons.ElastigroupAzureResourceName):        resourceSpotinstElastigroupAzure(),
-			string(commons.SubscriptionResourceName):            resourceSpotinstSubscription(),
-			string(commons.MRScalerAWSResourceName):             resourceSpotinstMRScalerAWS(),
+			string(commons.ElastigroupAzureV3ResourceName):      resourceSpotinstElastigroupAzureV3(),
+
+			string(commons.SubscriptionResourceName): resourceSpotinstSubscription(),
+			string(commons.MRScalerAWSResourceName):  resourceSpotinstMRScalerAWS(),
 
 			// Ocean.
 			string(commons.OceanAWSResourceName):                 resourceSpotinstOceanAWS(),
