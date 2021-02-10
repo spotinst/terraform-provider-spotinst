@@ -39,19 +39,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
-					//string(RevertToSpot): {
-					//	Type:     schema.TypeList,
-					//	Optional: true,
-					//	MaxItems: 1,
-					//	Elem: &schema.Resource{
-					//		Schema: map[string]*schema.Schema{
-					//			string(PerformAt): {
-					//				Type:     schema.TypeString,
-					//				Required: true,
-					//			},
-					//		},
-					//	},
-					//},
 				},
 			},
 		},

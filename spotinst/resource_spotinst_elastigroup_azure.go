@@ -16,6 +16,7 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_azure"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_azure_health_check"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_azure_image"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_azure_integrations"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_azure_launch_configuration"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_azure_load_balancer"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_azure_login"
@@ -49,7 +50,7 @@ func setupElastigroupAzureResource() {
 	elastigroup_azure.Setup(fieldsMap)
 	elastigroup_azure_health_check.Setup(fieldsMap)
 	elastigroup_azure_image.Setup(fieldsMap)
-	//elastigroup_azure_integrations.Setup(fieldsMap)
+	elastigroup_azure_integrations.Setup(fieldsMap)
 	elastigroup_azure_launch_configuration.Setup(fieldsMap)
 	elastigroup_azure_load_balancer.Setup(fieldsMap)
 	elastigroup_azure_login.Setup(fieldsMap)

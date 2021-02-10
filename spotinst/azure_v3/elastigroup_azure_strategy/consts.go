@@ -12,6 +12,4 @@ const (
 	OnDemandCount      commons.FieldName = "od_count"
 	DrainingTimeout    commons.FieldName = "draining_timeout"
 	FallbackToOnDemand commons.FieldName = "fallback_to_on_demand"
-	RevertToSpot       commons.FieldName = "revert__to_spot"
-	PerformAt          commons.FieldName = "perform_at"
 )
