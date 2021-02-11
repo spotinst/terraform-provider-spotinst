@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws_strategy: added `minimum_instance_lifetime`
+
 ## 1.33.0 (January 18, 2021)
 
 BUG FIXES:
