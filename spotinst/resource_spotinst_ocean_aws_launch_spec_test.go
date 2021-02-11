@@ -183,6 +183,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "true"),
 				),
 			},
 			{
@@ -217,6 +218,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
+					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "false"),
 				),
 			},
 		},
@@ -236,6 +238,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   instance_types = ["m3.xlarge", "m4.2xlarge", "m5.2xlarge"]
   root_volume_size = 20 
   associate_public_ip_address = true
+  restrict_scale_down = true
 
   labels {
     key = "label key"
@@ -266,6 +269,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   root_volume_size = 30
   name = "launch spec name test update"
   associate_public_ip_address = false
+  restrict_scale_down = false
 
   labels {
     key = "label key updated"

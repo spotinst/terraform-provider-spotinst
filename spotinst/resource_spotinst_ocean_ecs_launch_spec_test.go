@@ -187,6 +187,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "t3.medium"),
+					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "true"),
 				),
 			},
 			{
@@ -221,6 +222,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.1", "m4.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "false"),
 				),
 			},
 		},
@@ -238,6 +240,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
   iam_instance_profile = "ecsInstanceRole"
   instance_types = ["t3.medium"]
+  restrict_scale_down = true
 
   attributes {
     key = "key"
@@ -268,6 +271,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-082b5a644766e0e6f"
   iam_instance_profile = "ecsInstanceRole"
   instance_types = ["m4.xlarge","m4.2xlarge"]
+  restrict_scale_down = false
 
   attributes {
     key = "key"
