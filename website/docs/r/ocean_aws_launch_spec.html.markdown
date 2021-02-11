@@ -139,10 +139,10 @@ The following arguments are supported:
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) set a maximum number of instances per launch specification. Can be null. If set, value must be greater than or equal to 0.
-    
+* `strategy` - (Optional) 
+    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Launch Spec instances.
+
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Launch Spec ID.
-* `strategy` - (Optional) 
-    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Launch Spec instances.
