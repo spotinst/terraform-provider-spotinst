@@ -96,6 +96,7 @@ The following arguments are supported:
 
 * `ocean_id` - (Required) The ocean cluster you wish to 
 * `name` - (Optional) Set Launch Specification name 
+* `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Optional) ID of the image used to launch the instances.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_groups` - (Optional) Optionally adds security group IDs.
@@ -144,11 +145,10 @@ The following arguments are supported:
 
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) set a maximum number of instances per launch specification. Can be null. If set, value must be greater than or equal to 0.
-
-* `strategy` - (Optional) 
-    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Launch Spec instances.
-  
+    
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Launch Spec ID.
+* `strategy` - (Optional) 
+    * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Launch Spec instances.
