@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.33.0 (January 18, 2021)
+
+BUG FIXES:
+* resource/fields_spotinst_mrscaler_aws_instance_groups_core resolved errors with wrap strategy
+* resource/spotinst_elastigroup_aws resolved errors with `batch_num`
+* resource/spotinst_elastigroup_aws_block_devices resolved errors with `volume_type`
+
 ## 1.32.0 (December 21, 2020)
 
 ENHANCEMENTS:
