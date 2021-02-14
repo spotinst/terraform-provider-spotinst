@@ -168,7 +168,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "metadata.1537634279.value", "update_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.2322445456.key", "gci-ensure-gke-docker"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.2322445456.value", "true"),
-					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "true"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 				),
 			},
 			{
@@ -180,7 +180,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1537634279.key", "gci-update-strategy"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1537634279.value", "update_disabled"),
-					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "false"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
 				),
 			},
 		},
@@ -193,7 +193,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
-  restrict_scale_down = true
+ restrict_scale_down = true
 
  metadata {
      key = "gci-update-strategy"
@@ -226,7 +226,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
  ocean_id = "%v"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
-  restrict_scale_down = false
+ restrict_scale_down = false
  metadata {
      key = "gci-update-strategy"
      value = "update_disabled"
