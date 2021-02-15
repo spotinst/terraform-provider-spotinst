@@ -697,7 +697,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "600"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "null"),
+					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "0"),
 				),
 			},
 		},
