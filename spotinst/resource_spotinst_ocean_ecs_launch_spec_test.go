@@ -187,7 +187,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "t3.medium"),
-					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "true"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 				),
 			},
 			{
@@ -222,7 +222,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.1", "m4.2xlarge"),
-					resource.TestCheckResourceAttr(resourceName, "  restrict_scale_down", "false"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
 				),
 			},
 		},
