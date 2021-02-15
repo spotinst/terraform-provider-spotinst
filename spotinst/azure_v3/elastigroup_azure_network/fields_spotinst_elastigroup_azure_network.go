@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -118,7 +118,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func flattenAzureGroupNetwork(network *v3.Network) []interface{} {
+func flattenAzureGroupNetwork(network *azurev3.Network) []interface{} {
 	result := make(map[string]interface{})
 
 	result[string(VirtualNetworkName)] = spotinst.StringValue(network.VirtualNetworkName)
@@ -130,7 +130,7 @@ func flattenAzureGroupNetwork(network *v3.Network) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenAzureGroupNetworkInterfaces(networkInterfaces []*v3.NetworkInterface) []interface{} {
+func flattenAzureGroupNetworkInterfaces(networkInterfaces []*azurev3.NetworkInterface) []interface{} {
 	result := make([]interface{}, 0, len(networkInterfaces))
 
 	for _, inter := range networkInterfaces {
@@ -147,7 +147,7 @@ func flattenAzureGroupNetworkInterfaces(networkInterfaces []*v3.NetworkInterface
 	return result
 }
 
-func flattenAzureAdditionalIPConfigs(additionalIPConfigs []*v3.AdditionalIPConfig) []interface{} {
+func flattenAzureAdditionalIPConfigs(additionalIPConfigs []*azurev3.AdditionalIPConfig) []interface{} {
 	result := make([]interface{}, 0, len(additionalIPConfigs))
 
 	for _, additionalIPConfig := range additionalIPConfigs {
@@ -160,8 +160,8 @@ func flattenAzureAdditionalIPConfigs(additionalIPConfigs []*v3.AdditionalIPConfi
 	return result
 }
 
-func expandAzureGroupNetwork(data interface{}) (*v3.Network, error) {
-	network := &v3.Network{}
+func expandAzureGroupNetwork(data interface{}) (*azurev3.Network, error) {
+	network := &azurev3.Network{}
 	list := data.([]interface{})
 
 	if list != nil && list[0] != nil {
@@ -184,13 +184,13 @@ func expandAzureGroupNetwork(data interface{}) (*v3.Network, error) {
 	return network, nil
 }
 
-func expandAzureGroupNetworkInterfaces(data interface{}) ([]*v3.NetworkInterface, error) {
+func expandAzureGroupNetworkInterfaces(data interface{}) ([]*azurev3.NetworkInterface, error) {
 	list := data.([]interface{})
-	networkInterfaces := make([]*v3.NetworkInterface, 0, len(list))
+	networkInterfaces := make([]*azurev3.NetworkInterface, 0, len(list))
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
-		networkInterface := &v3.NetworkInterface{}
+		networkInterface := &azurev3.NetworkInterface{}
 		if !ok {
 			continue
 		}
@@ -216,16 +216,16 @@ func expandAzureGroupNetworkInterfaces(data interface{}) ([]*v3.NetworkInterface
 	return networkInterfaces, nil
 }
 
-func expandAzureGroupAddlConfigs(data interface{}) ([]*v3.AdditionalIPConfig, error) {
+func expandAzureGroupAddlConfigs(data interface{}) ([]*azurev3.AdditionalIPConfig, error) {
 	list := data.([]interface{})
-	addlConfigs := make([]*v3.AdditionalIPConfig, 0, len(list))
+	addlConfigs := make([]*azurev3.AdditionalIPConfig, 0, len(list))
 
 	for _, item := range list {
 		attr, ok := item.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		cfg := &v3.AdditionalIPConfig{}
+		cfg := &azurev3.AdditionalIPConfig{}
 		if v, ok := attr[string(Name)].(string); ok && v != "" {
 			cfg.SetName(spotinst.String(v))
 		}

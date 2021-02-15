@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -85,7 +85,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func flattenAzureGroupLogin(login *v3.Login) []interface{} {
+func flattenAzureGroupLogin(login *azurev3.Login) []interface{} {
 	result := make(map[string]interface{})
 	result[string(UserName)] = spotinst.StringValue(login.UserName)
 	result[string(SSHPublicKey)] = spotinst.StringValue(login.SSHPublicKey)
@@ -93,8 +93,8 @@ func flattenAzureGroupLogin(login *v3.Login) []interface{} {
 	return []interface{}{result}
 }
 
-func expandAzureGroupLogin(data interface{}) (*v3.Login, error) {
-	login := &v3.Login{}
+func expandAzureGroupLogin(data interface{}) (*azurev3.Login, error) {
+	login := &azurev3.Login{}
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})

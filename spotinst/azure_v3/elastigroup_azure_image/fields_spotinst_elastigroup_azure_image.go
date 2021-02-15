@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -100,7 +100,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value *v3.Image = nil
+			var value *azurev3.Image = nil
 			if v, ok := resourceData.GetOk(string(Image)); ok {
 				if image, err := expandAzureGroupImage(v); err != nil {
 					return err
@@ -116,7 +116,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenAzureGroupImage(image *v3.Image) []interface{} {
+func flattenAzureGroupImage(image *azurev3.Image) []interface{} {
 	result := make(map[string]interface{})
 	if image.Custom != nil {
 		result[string(Custom)] = flattenAzureGroupCustomImage(image.Custom)
@@ -127,7 +127,7 @@ func flattenAzureGroupImage(image *v3.Image) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenAzureGroupMarketplaceImage(image *v3.MarketPlaceImage) []interface{} {
+func flattenAzureGroupMarketplaceImage(image *azurev3.MarketPlaceImage) []interface{} {
 	result := make(map[string]interface{})
 	result[string(Offer)] = spotinst.StringValue(image.Offer)
 	result[string(Publisher)] = spotinst.StringValue(image.Publisher)
@@ -136,15 +136,15 @@ func flattenAzureGroupMarketplaceImage(image *v3.MarketPlaceImage) []interface{}
 	return []interface{}{result}
 }
 
-func flattenAzureGroupCustomImage(image *v3.CustomImage) []interface{} {
+func flattenAzureGroupCustomImage(image *azurev3.CustomImage) []interface{} {
 	result := make(map[string]interface{})
 	result[string(ImageName)] = spotinst.StringValue(image.Name)
 	result[string(ResourceGroupName)] = spotinst.StringValue(image.ResourceGroupName)
 	return []interface{}{result}
 }
 
-func expandAzureGroupImage(data interface{}) (*v3.Image, error) {
-	image := &v3.Image{}
+func expandAzureGroupImage(data interface{}) (*azurev3.Image, error) {
+	image := &azurev3.Image{}
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
@@ -180,8 +180,8 @@ func expandAzureGroupImage(data interface{}) (*v3.Image, error) {
 	return image, nil
 }
 
-func expandAzureGroupMarketplaceImage(data interface{}) (*v3.MarketPlaceImage, error) {
-	market := &v3.MarketPlaceImage{}
+func expandAzureGroupMarketplaceImage(data interface{}) (*azurev3.MarketPlaceImage, error) {
+	market := &azurev3.MarketPlaceImage{}
 	if list := data.([]interface{}); len(list) > 0 {
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -207,9 +207,9 @@ func expandAzureGroupMarketplaceImage(data interface{}) (*v3.MarketPlaceImage, e
 	return nil, nil
 }
 
-func expandAzureGroupCustomImage(data interface{}) (*v3.CustomImage, error) {
+func expandAzureGroupCustomImage(data interface{}) (*azurev3.CustomImage, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		custom := &v3.CustomImage{}
+		custom := &azurev3.CustomImage{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 			if v, ok := m[string(ImageName)].(string); ok && v != "" {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -86,7 +86,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //            Utils
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-func flattenAzureGroupStrategy(strategy *v3.Strategy) []interface{} {
+func flattenAzureGroupStrategy(strategy *azurev3.Strategy) []interface{} {
 	result := make(map[string]interface{})
 
 	result[string(SpotPercentage)] = spotinst.IntValue(strategy.SpotPercentage)
@@ -97,8 +97,8 @@ func flattenAzureGroupStrategy(strategy *v3.Strategy) []interface{} {
 	return []interface{}{result}
 }
 
-func expandAzureGroupStrategy(data interface{}) (*v3.Strategy, error) {
-	strategy := &v3.Strategy{}
+func expandAzureGroupStrategy(data interface{}) (*azurev3.Strategy, error) {
+	strategy := &azurev3.Strategy{}
 	list := data.([]interface{})
 
 	if list != nil && list[0] != nil {

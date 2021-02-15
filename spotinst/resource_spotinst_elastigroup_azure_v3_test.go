@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -29,7 +29,7 @@ func testSweepElastigroupAzureV3(region string) error {
 
 	conn := client.(*Client).elastigroup.CloudProviderAzureV3()
 
-	input := &v3.ListGroupsInput{}
+	input := &azurev3.ListGroupsInput{}
 	if resp, err := conn.List(context.Background(), input); err != nil {
 		return fmt.Errorf("error getting list of groups to sweep")
 	} else {
@@ -38,7 +38,7 @@ func testSweepElastigroupAzureV3(region string) error {
 		}
 		for _, group := range resp.Groups {
 			if strings.Contains(spotinst.StringValue(group.Name), "test-acc-") {
-				if _, err := conn.Delete(context.Background(), &v3.DeleteGroupInput{GroupID: group.ID}); err != nil {
+				if _, err := conn.Delete(context.Background(), &azurev3.DeleteGroupInput{GroupID: group.ID}); err != nil {
 					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(group.ID))
 				} else {
 					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(group.ID))
@@ -59,7 +59,7 @@ func testElastigroupAzureV3Destroy(s *terraform.State) error {
 		if rs.Type != string(commons.ElastigroupAzureV3ResourceName) {
 			continue
 		}
-		input := &v3.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
+		input := &azurev3.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.elastigroup.CloudProviderAzureV3().Read(context.Background(), input)
 		if err == nil && resp != nil && resp.Group != nil {
 			return fmt.Errorf("group still exists")
@@ -68,7 +68,7 @@ func testElastigroupAzureV3Destroy(s *terraform.State) error {
 	return nil
 }
 
-func testCheckElastigroupAzureV3Attributes(group *v3.Group, expectedName string) resource.TestCheckFunc {
+func testCheckElastigroupAzureV3Attributes(group *azurev3.Group, expectedName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if spotinst.StringValue(group.Name) != expectedName {
 			return fmt.Errorf("bad content: %v", group.Name)
@@ -77,7 +77,7 @@ func testCheckElastigroupAzureV3Attributes(group *v3.Group, expectedName string)
 	}
 }
 
-func testCheckElastigroupAzureV3Exists(group *v3.Group, resourceName string) resource.TestCheckFunc {
+func testCheckElastigroupAzureV3Exists(group *azurev3.Group, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -87,7 +87,7 @@ func testCheckElastigroupAzureV3Exists(group *v3.Group, resourceName string) res
 			return fmt.Errorf("no resource ID is set")
 		}
 		client := testAccProviderAzure.Meta().(*Client)
-		input := &v3.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
+		input := &azurev3.ReadGroupInput{GroupID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.elastigroup.CloudProviderAzureV3().Read(context.Background(), input)
 		if err != nil {
 			return err
@@ -180,7 +180,7 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 	groupName := "test-acc-eg-azure-v3-baseline"
 	resourceName := createElastigroupAzureV3ResourceName(groupName)
 
-	var group v3.Group
+	var group azurev3.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
