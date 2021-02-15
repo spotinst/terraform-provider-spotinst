@@ -656,6 +656,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.terminate_at_end_of_billing_hour", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "default"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_commitments", "true"),
+					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "1"),
 				),
 			},
 			{
@@ -677,6 +678,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.terminate_at_end_of_billing_hour", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "newestInstance"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_commitments", "false"),
+					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "12"),
 				),
 			},
 			{
@@ -695,6 +697,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "600"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "0"),
 				),
 			},
 		},
@@ -710,6 +713,8 @@ const testStrategyGroupConfig_Create = `
 	draining_timeout 		 			 = 300
 	utilize_reserved_instances = false
 	utilize_commitments = true
+  	minimum_instance_lifetime = 1
+
 
 	scaling_strategy {
 	 terminate_at_end_of_billing_hour = true
@@ -727,6 +732,8 @@ const testStrategyGroupConfig_Update = `
 	draining_timeout 					= 600
 	utilize_reserved_instances = true
 	utilize_commitments = false
+  	minimum_instance_lifetime = 12
+
 	scaling_strategy {
 	 terminate_at_end_of_billing_hour = false
 	 termination_policy = "newestInstance"
@@ -739,6 +746,7 @@ const testStrategyGroupConfig_EmptyFields = `
 	fallback_to_ondemand = true
 	orientation 		     = "costOriented"
 	draining_timeout 	   = 600
+  	minimum_instance_lifetime = 0
 	// ---------------------------------
 `
 
