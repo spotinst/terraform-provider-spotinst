@@ -1,5 +1,10 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: added `restrict_scale_down`
+* resource/spotinst_ocean_ecs_launch_spec: added `restrict_scale_down`
+* resource/spotinst_ocean_aws_launch_spec: added `restrict_scale_down`
+
 ## 1.33.0 (January 18, 2021)
 
 BUG FIXES:
