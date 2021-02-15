@@ -256,10 +256,6 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  %v
  %v
  %v
- %v
- %v
- %v
- %v
 }
 
 `
