@@ -9,7 +9,6 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/go-version v1.2.1
 	github.com/hashicorp/terraform-plugin-sdk v1.16.0
-	github.com/spotinst/spotinst-sdk-go v1.76.0
+	github.com/spotinst/spotinst-sdk-go v1.78.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 )
-replace github.com/spotinst/spotinst-sdk-go v1.76.0 => /Users/liron.arad/.go/src/github.com/spotinst/spotinst-sdk-go

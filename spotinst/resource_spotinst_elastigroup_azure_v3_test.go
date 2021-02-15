@@ -218,7 +218,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  provider = "%v"
 
  name 				 = "%v"
- product 			 = "Linux"
+ os 			 = "Linux"
  region              = "eastus"
  resource_group_name = "alex-test"
 
@@ -233,9 +233,6 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  %v
  %v
  %v
- %v
- %v
- %v
 }
 
 `
@@ -245,7 +242,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  provider = "%v"
 
  name 				 = "%v"
- product 			 = "Linux"
+ os 			 = "Linux"
  region              = "eastus"
  resource_group_name = "alex-test"
 
@@ -270,35 +267,36 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
 // endregion
 
 // region Azure Elastigroup: Image
-//func TestAccSpotinstElastigroupAzure_Image(t *testing.T) {
-//	groupName := "test-acc-eg-azure-image"
-//	resourceName := createElastigroupAzureResourceName(groupName)
-//
-//	var group azure.Group
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
-//		CheckDestroy: testElastigroupAzureDestroy,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
-//					groupName: groupName,
-//					image:     testAzureImageGroupConfig_Create,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupAzureExists(&group, resourceName),
-//					testCheckElastigroupAzureAttributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "image.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.offer", "UbuntuServer"),
-//					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.publisher", "Canonical"),
-//					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.sku", "16.04-LTS"),
-//				),
-//			},
-//		},
-//	})
-//}
+func TestAccSpotinstElastigroupAzure_Image(t *testing.T) {
+	groupName := "test-acc-eg-azure-v3-image"
+	resourceName := createElastigroupAzureV3ResourceName(groupName)
+
+	var group azurev3.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupAzureDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName: groupName,
+					image:     testAzureImageGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "image.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.offer", "UbuntuServer"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.publisher", "Canonical"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.sku", "18.04-LTS"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.version", "latest"),
+				),
+			},
+		},
+	})
+}
 
 const testAzureV3ImageGroupConfig_Create = `
 // --- IMAGES --------------------------------
@@ -307,6 +305,7 @@ const testAzureV3ImageGroupConfig_Create = `
       publisher = "Canonical"
       offer = "UbuntuServer"
       sku = "16.04-LTS"
+      version = "latest"
     }
   }
 // ---------------------------------------------
@@ -315,53 +314,56 @@ const testAzureV3ImageGroupConfig_Create = `
 // endregion
 
 // region Azure Elastigroup: Network
-//func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
-//	groupName := "test-acc-eg-azure-v3-network"
-//	resourceName := createElastigroupAzureV3ResourceName(groupName)
-//
-//	var group azure.Group
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
-//		CheckDestroy:  testElastigroupAzureV3Destroy,
-//		IDRefreshName: resourceName,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				ResourceName: resourceName,
-//				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
-//					groupName: groupName,
-//					network:   testAzureV3NetworkGroupConfig_Create,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupAzureV3Exists(&group, resourceName),
-//					testCheckElastigroupAzureV3Attributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "network.0.assign_public_ip", "true"),
-//					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "alex-test"),
-//					resource.TestCheckResourceAttr(resourceName, "network.0.subnet_name", "alex-test-subnet"),
-//					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "alex-test-netwrk"),
-//					resource.TestCheckResourceAttr(resourceName, "network.0.additional_ip_configs.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "network.0.additional_ip_configs.0.name", "test"),
-//					resource.TestCheckResourceAttr(resourceName, "network.0.additional_ip_configs.0.private_ip_version", "IPV4"),
-//				),
-//			},
-//		},
-//	})
-//}
+func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
+	groupName := "test-acc-eg-azure-v3-network"
+	resourceName := createElastigroupAzureV3ResourceName(groupName)
+
+	var group azurev3.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureV3Destroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName: groupName,
+					network:   testAzureV3NetworkGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "alex-test-netwrk"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "alex-test"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.assign_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.subnet_name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.is_primary", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.name", "terraformTestSecondaryIpConfig"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.private_ip_version", "IPV4"),
+				),
+			},
+		},
+	})
+}
 
 const testAzureV3NetworkGroupConfig_Create = `
 // --- NETWORK ---------------------------------
   network {
     virtual_network_name = "alex-test-netwrk"
-    subnet_name = "alex-test-subnet"                 
     resource_group_name = "alex-test"         
-    assign_public_ip = true
-
-    additional_ip_configs {
-      name = "test"
-      private_ip_version = "IPv4"
-    }
+    network_interfaces {
+      subnet_name = "default"
+      assign_public_ip = false
+      is_primary = true
+      additional_ip_configs {
+        name = "terraformTestSecondaryIpConfig"
+		private_ip_version = "IPV4"
+      }
   }
 // ---------------------------------------------
 `
@@ -369,52 +371,54 @@ const testAzureV3NetworkGroupConfig_Create = `
 // endregion
 
 // region Azure Elastigroup: Strategy
-//func TestAccSpotinstElastigroupAzureV3_Strategy(t *testing.T) {
-//	groupName := "test-acc-eg-azure-v3-strategy"
-//	resourceName := createElastigroupAzureV3ResourceName(groupName)
-//
-//	var group v3.Group
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
-//		CheckDestroy: testElastigroupAzureV3Destroy,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
-//					groupName: groupName,
-//					strategy:  testAzureV3StrategyGroupConfig_Create,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupAzureV3Exists(&group, resourceName),
-//					testCheckElastigroupAzureV3Attributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "strategy.0.low_priority_percentage", "100"),
-//					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "180"),
-//				),
-//			},
-//			{
-//				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
-//					groupName: groupName,
-//					strategy:  testAzureV3StrategyGroupConfig_Update,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupAzureV3Exists(&group, resourceName),
-//					testCheckElastigroupAzureV3Attributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "strategy.0.od_count", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "240"),
-//				),
-//			},
-//		},
-//	})
-//}
+func TestAccSpotinstElastigroupAzureV3_Strategy(t *testing.T) {
+	groupName := "test-acc-eg-azure-v3-strategy"
+	resourceName := createElastigroupAzureV3ResourceName(groupName)
+
+	var group azurev3.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupAzureV3Destroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName: groupName,
+					strategy:  testAzureV3StrategyGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "65"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "30"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "true"),
+				),
+			},
+			//{
+			//	Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+			//		groupName: groupName,
+			//		strategy:  testAzureV3StrategyGroupConfig_Update,
+			//	}),
+			//	Check: resource.ComposeTestCheckFunc(
+			//		testCheckElastigroupAzureV3Exists(&group, resourceName),
+			//		testCheckElastigroupAzureV3Attributes(&group, groupName),
+			//		resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+			//		resource.TestCheckResourceAttr(resourceName, "strategy.0.od_count", "1"),
+			//		resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "240"),
+			//	),
+			//},
+		},
+	})
+}
 
 const testAzureV3StrategyGroupConfig_Create = `
 // --- STRATEGY --------------------------------
   strategy {
-    low_priority_percentage = 100
-    draining_timeout = 180
+    spot_percentage = 65
+    draining_timeout = 30
+    fallback_to_on_demand = true
   }
 // ---------------------------------------------
 `
@@ -431,55 +435,53 @@ const testAzureV3StrategyGroupConfig_Create = `
 // endregion
 
 // region Azure Elastigroup: VM Sizes
-//func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
-//	groupName := "test-acc-eg-azure-v3-vm-sizes"
-//	resourceName := createElastigroupAzureV3ResourceName(groupName)
-//
-//	var group v3.Group
-//	resource.Test(t, resource.TestCase{
-//		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
-//		CheckDestroy: testElastigroupAzureV3Destroy,
-//
-//		Steps: []resource.TestStep{
-//			{
-//				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
-//					groupName: groupName,
-//					vmSizes:   testAzureV3VMSizesGroupConfig_Create,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupAzureV3Exists(&group, resourceName),
-//					testCheckElastigroupAzureV3Attributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "basic_a1"),
-//					resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.#", "3"),
-//					resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.0", "basic_a2"),
-//					resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.1", "basic_a1"),
-//					resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.2", "basic_a3"),
-//				),
-//			},
-//			{
-//				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
-//					groupName: groupName,
-//					vmSizes:   testAzureV3MSizesGroupConfig_Update,
-//				}),
-//				Check: resource.ComposeTestCheckFunc(
-//					testCheckElastigroupAzureV3Exists(&group, resourceName),
-//					testCheckElastigroupAzureV3Attributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "basic_a2"),
-//					resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.#", "1"),
-//					resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.0", "basic_a2"),
-//				),
-//			},
-//		},
-//	})
-//}
+func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
+	groupName := "test-acc-eg-azure-v3-vm-sizes"
+	resourceName := createElastigroupAzureV3ResourceName(groupName)
+
+	var group azurev3.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupAzureV3Destroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName: groupName,
+					vmSizes:   testAzureV3VMSizesGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "standard_a1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.0", "standard_a1_v2"),
+				),
+			},
+			//{
+			//	Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+			//		groupName: groupName,
+			//		vmSizes:   testAzureV3MSizesGroupConfig_Update,
+			//	}),
+			//	Check: resource.ComposeTestCheckFunc(
+			//		testCheckElastigroupAzureV3Exists(&group, resourceName),
+			//		testCheckElastigroupAzureV3Attributes(&group, groupName),
+			//		resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
+			//		resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "basic_a2"),
+			//		resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.#", "1"),
+			//		resource.TestCheckResourceAttr(resourceName, "low_priority_sizes.0", "basic_a2"),
+			//	),
+			//},
+		},
+	})
+}
 
 const testAzureV3VMSizesGroupConfig_Create = `
 // --- VM SIZES --------------------------------------------
- od_sizes           = ["basic_a1"]
- low_priority_sizes = ["basic_a2", "basic_a1", "basic_a3"]
+  od_sizes = ["standard_a1_v2"]
+  spot_sizes = ["standard_a1_v2"]
 // ---------------------------------------------------------
 `
 
