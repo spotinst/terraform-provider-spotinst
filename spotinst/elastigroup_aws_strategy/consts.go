@@ -18,4 +18,5 @@ const (
 	TerminateAtEndOfBillingHour commons.FieldName = "terminate_at_end_of_billing_hour"
 	TerminationPolicy           commons.FieldName = "termination_policy"
 	UtilizeCommitments          commons.FieldName = "utilize_commitments"
+	MinimumInstanceLifetime     commons.FieldName = "minimum_instance_lifetime"
 )

@@ -25,6 +25,7 @@ const (
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
 	Tags               commons.FieldName = "tags"
 	InstanceTypes      commons.FieldName = "instance_types"
+	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
 )
 
 const (

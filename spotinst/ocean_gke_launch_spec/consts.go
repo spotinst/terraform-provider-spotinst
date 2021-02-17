@@ -31,4 +31,5 @@ const (
 	Labels             commons.FieldName = "labels"
 	Taints             commons.FieldName = "taints"
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
+	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
 )

@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.34.0 (February 16, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws_strategy: added `minimum_instance_lifetime`
+* resource/spotinst_ocean_gke_launch_spec: added `restrict_scale_down`
+* resource/spotinst_ocean_ecs_launch_spec: added `restrict_scale_down`
+* resource/spotinst_ocean_aws_launch_spec: added `restrict_scale_down`
+
 ## 1.33.0 (January 18, 2021)
 
 BUG FIXES:

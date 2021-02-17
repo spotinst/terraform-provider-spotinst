@@ -58,6 +58,8 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   orientation           = "balanced"
   fallback_to_ondemand  = false
   cpu_credits           = "unlimited"
+  minimum_instance_lifetime = 12
+
 
   wait_for_capacity         = 5
   wait_for_capacity_timeout = 300
@@ -172,6 +174,8 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `utilize_reserved_instances` - (Optional) In a case of any available reserved instances, Elastigroup will utilize them first before purchasing Spot instances.
+* `minimum_instance_lifetime` - (Optional) Defines the preferred minimum instance lifetime. Markets which comply with this preference will be prioritized. Optional values: 1, 3, 6, 12, 24. 
+
 * `scaling_strategy` - (Optional) Set termination policy.
     * `terminate_at_end_of_billing_hour` - (Optional) Specify whether to terminate instances at the end of each billing hour.
     * `termination_policy` - (Optional) - Determines whether to terminate the newest instances when performing a scaling action. Valid values: `"default"`, `"newestInstance"`.
