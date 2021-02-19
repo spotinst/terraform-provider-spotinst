@@ -823,7 +823,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if value, ok := resourceData.GetOk(string(AddlPrimarySecurityGroups)); ok {
+			if value, ok := resourceData.GetOk(string(AddlReplicaSecurityGroups)); ok {
 				if groups, err := expandGenericList(value); err != nil {
 					return err
 				} else {
