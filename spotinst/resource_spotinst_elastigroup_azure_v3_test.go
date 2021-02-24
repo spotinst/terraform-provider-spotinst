@@ -108,6 +108,7 @@ type AzureV3GroupConfigMetadata struct {
 	strategy             string
 	image                string
 	network              string
+	login                string
 	fieldsToAppend       string
 	updateBaselineFields bool
 }
@@ -137,6 +138,10 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 		gcm.network = testAzureV3NetworkGroupConfig_Create
 	}
 
+	if gcm.login == "" {
+		gcm.login = testAzureV3LoginGroupConfig_Create
+	}
+
 	template := `provider "azure" {
  account = "fake"
  token = "fake"
@@ -151,6 +156,7 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 			gcm.strategy,
 			gcm.image,
 			gcm.network,
+			gcm.login,
 			gcm.fieldsToAppend,
 		)
 	} else {
@@ -163,6 +169,7 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 			gcm.strategy,
 			gcm.image,
 			gcm.network,
+			gcm.login,
 			gcm.fieldsToAppend,
 		)
 	}
@@ -196,19 +203,20 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 				),
 			},
-			{
-				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{groupName: groupName, updateBaselineFields: true}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupAzureV3Exists(&group, resourceName),
-					testCheckElastigroupAzureV3Attributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
-					resource.TestCheckResourceAttr(resourceName, "max_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
-				),
-			},
+			//{
+			//	Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{groupName: groupName, updateBaselineFields: true}),
+			//	Check: resource.ComposeTestCheckFunc(
+			//		testCheckElastigroupAzureV3Exists(&group, resourceName),
+			//		testCheckElastigroupAzureV3Attributes(&group, groupName),
+			//		resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
+			//		resource.TestCheckResourceAttr(resourceName, "max_size", "0"),
+			//		resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
+			//		resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+			//	),
+			//},
 		},
 	})
 }
@@ -220,7 +228,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  name 				 = "%v"
  os 			 = "Linux"
  region              = "eastus"
- resource_group_name = "alex-test"
+ resource_group_name = "AutomationResourceGroup"
 
  // --- CAPACITY ------------
  max_size 		  = 0
@@ -228,6 +236,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  desired_capacity = 0
  // -------------------------
  
+ %v
  %v
  %v
  %v
@@ -244,7 +253,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  name 				 = "%v"
  os 			 = "Linux"
  region              = "eastus"
- resource_group_name = "alex-test"
+ resource_group_name = "AutomationResourceGroup"
 
  // --- CAPACITY ------------
  max_size 		  = 0
@@ -332,15 +341,15 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "alex-test-netwrk"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "alex-test"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "automationVN"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.assign_public_ip", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.subnet_name", "default"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.is_primary", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.name", "terraformTestSecondaryIpConfig"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.private_ip_version", "IPV4"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.private_ip_version", "IPv4"),
 				),
 			},
 		},
@@ -350,16 +359,16 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 const testAzureV3NetworkGroupConfig_Create = `
 // --- NETWORK ---------------------------------
   network {
-    virtual_network_name = "alex-test-netwrk"
-    resource_group_name = "alex-test"         
+    virtual_network_name = "automationVN"
+    resource_group_name = "AutomationResourceGroup"         
     network_interfaces {
       subnet_name = "default"
       assign_public_ip = false
       is_primary = true
       additional_ip_configs {
         name = "terraformTestSecondaryIpConfig"
-		private_ip_version = "IPV4"
       }
+  	}
   }
 // ---------------------------------------------
 `
@@ -487,5 +496,57 @@ const testAzureV3VMSizesGroupConfig_Create = `
 // low_priority_sizes = ["basic_a2"]
 //// ---------------------------------------------
 //`
+
+// endregion
+
+// region Azure Elastigroup: Login
+func TestAccSpotinstElastigroupAzure_Login(t *testing.T) {
+	groupName := "test-acc-eg-azure-v3-login"
+	resourceName := createElastigroupAzureV3ResourceName(groupName)
+
+	var group azurev3.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupAzureDestroy,
+
+		Steps: []resource.TestStep{
+			//{
+			//	Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+			//		groupName: groupName,
+			//		image:     testAzureV3LoginGroupConfig_Create,
+			//	}),
+			//	Check: resource.ComposeTestCheckFunc(
+			//		testCheckElastigroupAzureV3Exists(&group, resourceName),
+			//		testCheckElastigroupAzureV3Attributes(&group, groupName),
+			//		resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
+			//		resource.TestCheckResourceAttr(resourceName, "login.0.user_name.#", "azure_v3_terraform"),
+			//		resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfWrinLRVHx+KB57pb1mEYBueGfPzyVa2qPpCPZYbpcuL45nDKU2B14twX91+/cJ2m7DmUa8LLk2EVwBW8FBTfg5Fuwj8+kTnk4PMo4G+T0UgFt7NuD47I5fxg3sD9WQFUbXlO44Flp+k5MHlv+hF8iHz/QRz2QDDKxPGLWM1mh10LtLz4T+im/73RviTgbJhCZQr0+Yx7Uz1ZlWkrPThLUa9/4Br5mKLk3zEYa8mbg4LblJXIgknFsZ3cXlqtN5WofxJEDLy9QiKMxDJ2PZfR73IscpWtPnAMZjcTf6aI02FKAg+iEs0mdh3bGVGLxNi5w32lWOiiqKKJGKa1ctWb automation"),
+			//	),
+			//},
+			{
+				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
+					groupName: groupName,
+					login:     testAzureV3LoginGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "user_name", "azure_v3_terraform"),
+					resource.TestCheckResourceAttr(resourceName, "ssh_public_key", "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfWrinLRVHx+KB57pb1mEYBueGfPzyVa2qPpCPZYbpcuL45nDKU2B14twX91+/cJ2m7DmUa8LLk2EVwBW8FBTfg5Fuwj8+kTnk4PMo4G+T0UgFt7NuD47I5fxg3sD9WQFUbXlO44Flp+k5MHlv+hF8iHz/QRz2QDDKxPGLWM1mh10LtLz4T+im/73RviTgbJhCZQr0+Yx7Uz1ZlWkrPThLUa9/4Br5mKLk3zEYa8mbg4LblJXIgknFsZ3cXlqtN5WofxJEDLy9QiKMxDJ2PZfR73IscpWtPnAMZjcTf6aI02FKAg+iEs0mdh3bGVGLxNi5w32lWOiiqKKJGKa1ctWb automation"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureV3LoginGroupConfig_Create = `
+// --- LOGIN --------------------------------
+  login {
+    user_name = "azure_v3_terraform"
+    ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfWrinLRVHx+KB57pb1mEYBueGfPzyVa2qPpCPZYbpcuL45nDKU2B14twX91+/cJ2m7DmUa8LLk2EVwBW8FBTfg5Fuwj8+kTnk4PMo4G+T0UgFt7NuD47I5fxg3sD9WQFUbXlO44Flp+k5MHlv+hF8iHz/QRz2QDDKxPGLWM1mh10LtLz4T+im/73RviTgbJhCZQr0+Yx7Uz1ZlWkrPThLUa9/4Br5mKLk3zEYa8mbg4LblJXIgknFsZ3cXlqtN5WofxJEDLy9QiKMxDJ2PZfR73IscpWtPnAMZjcTf6aI02FKAg+iEs0mdh3bGVGLxNi5w32lWOiiqKKJGKa1ctWb automation"
+  }
+// ---------------------------------------------
+`
 
 // endregion

@@ -2,8 +2,6 @@ package elastigroup_azure_network
 
 import (
 	"fmt"
-	"strings"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -57,10 +55,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(PrivateIPVersion): {
 									Type:     schema.TypeString,
 									Optional: true,
-									StateFunc: func(v interface{}) string {
-										value := v.(string)
-										return strings.ToUpper(value)
-									},
 								},
 							},
 						},
