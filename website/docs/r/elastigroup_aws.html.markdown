@@ -938,7 +938,7 @@ Usage:
                * `action_type` - (Required) Sets the action that will take place, Accepted values are: `DETACH_OLD`, `DETACH_NEW`.
                * `should_handle_all_batches` - (Optional, Default: `false`) Indicator if the action should apply to all batches of the deployment or only the latest batch.
                * `draining_timeout` - (Optional, Default: The Elastigroups draining time out) Indicates (in seconds) the timeout to wait until instance are detached.
-               * `action_type` - (Optional, Default: `true`) Decrementing the group target capacity after detaching the instances.
+               * `should_decrement_target_capacity` - (Optional, Default: `true`) Decrementing the group target capacity after detaching the instances.
 
 ```hcl
   update_policy {
