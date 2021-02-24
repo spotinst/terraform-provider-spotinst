@@ -413,6 +413,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[MinimumInstanceLifetime] = commons.NewGenericField(
+		commons.ElastigroupAWSStrategy,
+		MinimumInstanceLifetime,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *int = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.MinimumInstanceLifetime != nil {
+				value = elastigroup.Strategy.MinimumInstanceLifetime
+			}
+			if value != nil {
+				if err := resourceData.Set(string(MinimumInstanceLifetime), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MinimumInstanceLifetime), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+				value := v.(int)
+				elastigroup.Strategy.SetMinimumInstanceLifetime(spotinst.Int(value))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var minimumInstanceLifetime *int
+			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+				if value, ok := v.(int); ok && value > 0 {
+					minimumInstanceLifetime = spotinst.Int(value)
+				}
+			}
+			elastigroup.Strategy.SetMinimumInstanceLifetime(minimumInstanceLifetime)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

@@ -16,7 +16,8 @@ Manages a custom Spotinst Ocean GKE Launch Spec resource.
 resource "spotinst_ocean_gke_launch_spec" "example" {
   ocean_id     = "o-123456"
   source_image = "image"
-  
+  restrict_scale_down = true
+
   metadata {
     key   = "gci-update-strategy"
     value = "update_disabled"
@@ -56,6 +57,7 @@ The following arguments are supported:
 * `metadata` - (Required) Cluster's metadata.
 * `taints` - (Optional) Cluster's taints.
 * `labels` - (Optional) Cluster's labels.
+* `restrict_scale_down`- (Optional) Boolean. When set to “True”, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
