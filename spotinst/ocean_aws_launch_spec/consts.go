@@ -52,6 +52,7 @@ const (
 	MaxInstanceCount         commons.FieldName = "max_instance_count"
 	Strategy                 commons.FieldName = "strategy"
 	AssociatePublicIPAddress commons.FieldName = "associate_public_ip_address"
+	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
 )
 
 const (

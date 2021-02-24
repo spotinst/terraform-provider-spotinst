@@ -693,6 +693,48 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RestrictScaleDown] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		RestrictScaleDown,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *bool = nil
+			if launchSpec.RestrictScaleDown != nil {
+				value = launchSpec.RestrictScaleDown
+			}
+			if value != nil {
+				if err := resourceData.Set(string(RestrictScaleDown), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RestrictScaleDown), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+				restrictScaleDown := spotinst.Bool(v.(bool))
+				launchSpec.SetRestrictScaleDown(restrictScaleDown)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var restrictScaleDown *bool = nil
+			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+				restrictScaleDown = spotinst.Bool(v.(bool))
+			}
+			launchSpec.SetRestrictScaleDown(restrictScaleDown)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
