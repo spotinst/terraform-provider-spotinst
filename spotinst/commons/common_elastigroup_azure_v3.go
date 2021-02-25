@@ -2,7 +2,7 @@ package commons
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -22,7 +22,7 @@ type ElastigroupAzureV3TerraformResource struct {
 }
 
 type ElastigroupAzureV3Wrapper struct {
-	elastigroup *v3.Group
+	elastigroup *azurev3.Group
 }
 
 func NewElastigroupAzureV3Resource(fieldsMap map[FieldName]*GenericField) *ElastigroupAzureV3TerraformResource {
@@ -35,7 +35,7 @@ func NewElastigroupAzureV3Resource(fieldsMap map[FieldName]*GenericField) *Elast
 }
 
 func (res *ElastigroupAzureV3TerraformResource) OnRead(
-	elastigroup *v3.Group,
+	elastigroup *azurev3.Group,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -60,7 +60,7 @@ func (res *ElastigroupAzureV3TerraformResource) OnRead(
 
 func (res *ElastigroupAzureV3TerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*v3.Group, error) {
+	meta interface{}) (*azurev3.Group, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -82,7 +82,7 @@ func (res *ElastigroupAzureV3TerraformResource) OnCreate(
 
 func (res *ElastigroupAzureV3TerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *v3.Group, error) {
+	meta interface{}) (bool, *azurev3.Group, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -112,23 +112,23 @@ func (res *ElastigroupAzureV3TerraformResource) OnUpdate(
 // Wrapper struct intended to help reflecting these fields state properly into the elastigroup object.
 func NewElastigroupAzureV3Wrapper() *ElastigroupAzureV3Wrapper {
 	return &ElastigroupAzureV3Wrapper{
-		elastigroup: &v3.Group{
-			Compute: &v3.Compute{
-				LaunchSpecification: &v3.LaunchSpecification{
+		elastigroup: &azurev3.Group{
+			Compute: &azurev3.Compute{
+				LaunchSpecification: &azurev3.LaunchSpecification{
 					//LoadBalancersConfig: &v3.LoadBalancersConfig{},
 				},
-				VMSizes: &v3.VMSizes{},
+				VMSizes: &azurev3.VMSizes{},
 			},
-			Capacity: &v3.Capacity{},
-			Strategy: &v3.Strategy{},
+			Capacity: &azurev3.Capacity{},
+			Strategy: &azurev3.Strategy{},
 		},
 	}
 }
 
-func (egWrapper *ElastigroupAzureV3Wrapper) GetElastigroup() *v3.Group {
+func (egWrapper *ElastigroupAzureV3Wrapper) GetElastigroup() *azurev3.Group {
 	return egWrapper.elastigroup
 }
 
-func (egWrapper *ElastigroupAzureV3Wrapper) SetElastigroup(elastigroup *v3.Group) {
+func (egWrapper *ElastigroupAzureV3Wrapper) SetElastigroup(elastigroup *azurev3.Group) {
 	egWrapper.elastigroup = elastigroup
 }
