@@ -561,7 +561,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[CPUOptions] = commons.NewGenericField( //////////////from here
+	fieldsMap[CPUOptions] = commons.NewGenericField(
 		commons.ElastigroupAWSLaunchConfiguration,
 		CPUOptions,
 		&schema.Schema{
@@ -583,7 +583,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []interface{} = nil
 			if elastigroup != nil && elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.CPUOptions != nil {
-				result = flattenCPUOptions(elastigroup.Compute.LaunchSpecification.CPUOptions) //todo - understand and create flatten method
+				result = flattenCPUOptions(elastigroup.Compute.LaunchSpecification.CPUOptions)
 			}
 
 			if result != nil {
@@ -597,7 +597,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(CPUOptions)); ok {
-				if cpuOptions, err := expandCPUOptions(v); err != nil { //todo - understand and create expand method
+				if cpuOptions, err := expandCPUOptions(v); err != nil {
 					return err
 				} else {
 					elastigroup.Compute.LaunchSpecification.SetCPUOptions(cpuOptions)
