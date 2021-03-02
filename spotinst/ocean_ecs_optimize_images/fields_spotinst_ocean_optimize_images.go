@@ -2,6 +2,7 @@ package ocean_ecs_optimize_images
 
 import (
 	"fmt"
+
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
