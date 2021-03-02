@@ -1,7 +1,9 @@
 ## Unreleased
 
-ENHANCEMENTS:
-* resource/spotinst_elastigroup_aws_launch_configuration: added `cpu_options`.
+## 1.34.1 (February 23, 2021)
+
+BUG FIXES:
+* resource/spotinst_mrscaler_aws: set additional replica security groups (#156)
 
 ## 1.34.0 (February 16, 2021)
 
