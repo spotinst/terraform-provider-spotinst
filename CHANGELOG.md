@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.35.0 (March 1, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws_launch_configuration: added `cpu_options`.
 
