@@ -1,5 +1,9 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_elastigroup_aws resolved errors with `max_scale_down_percentage`
+* resource/spotinst_elastigroup_aws resolved errors with `key_name`
+
 ## 1.35.0 (March 1, 2021)
 
 ENHANCEMENTS:
