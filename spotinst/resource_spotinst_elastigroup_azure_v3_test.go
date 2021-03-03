@@ -526,19 +526,6 @@ func TestAccSpotinstElastigroupAzure_Login(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "login.0.password", "terraform-provider-password"),
 				),
 			},
-			{
-				Config: createElastigroupAzureTerraform(&AzureGroupConfigMetadata{
-					groupName: groupName,
-					login:     testAzureV3LoginGroupConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupAzureV3Exists(&group, resourceName),
-					testCheckElastigroupAzureV3Attributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.user_name.#", "azure_v3_terraform"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.password", "terraform-provider-password"),
-				),
-			},
 		},
 	})
 }
@@ -547,7 +534,7 @@ const testAzureV3LoginGroupConfig_Create = `
 // --- LOGIN --------------------------------
   login {
     user_name = "azure_v3_terraform"
-	password  = "terraform-provider-password"" 
+	password  = "terraform-password"" 
   }
 // ---------------------------------------------
 `
