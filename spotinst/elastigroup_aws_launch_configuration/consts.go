@@ -18,9 +18,14 @@ const (
 	PlacementTenancy   commons.FieldName = "placement_tenancy"
 	CPUCredits         commons.FieldName = "cpu_credits"
 	MetadataOptions    commons.FieldName = "metadata_options"
+	CPUOptions         commons.FieldName = "cpu_options"
 
 	// - MetadataOptions -----------------------------
 	HTTPTokens              commons.FieldName = "http_tokens"
 	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
+	// -----------------------------------
+
+	// - CPUOptions -----------------------------
+	ThreadsPerCore commons.FieldName = "threads_per_core"
 	// -----------------------------------
 )

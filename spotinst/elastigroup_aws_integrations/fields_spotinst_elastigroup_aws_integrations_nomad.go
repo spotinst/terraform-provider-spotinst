@@ -197,7 +197,7 @@ func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadI
 	}
 
 	if v, ok := m[string(AutoscaleDown)]; ok {
-		down, err := expandAWSGroupAutoScaleDown(v)
+		down, err := expandAWSGroupAutoScaleDown(v, false)
 		if err != nil {
 			return nil, err
 		}

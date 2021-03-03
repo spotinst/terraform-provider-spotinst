@@ -50,19 +50,27 @@ func expandAWSGroupAutoScaleHeadroom(data interface{}) (*aws.AutoScaleHeadroom, 
 	return nil, nil
 }
 
-func expandAWSGroupAutoScaleDown(data interface{}) (*aws.AutoScaleDown, error) {
+func expandAWSGroupAutoScaleDown(data interface{}, isMaxScaleDownPercentageExist bool) (*aws.AutoScaleDown, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		autoScaleDown := &aws.AutoScaleDown{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
+			var maxScaleDownPercentage *float64 = nil
 
 			if v, ok := m[string(EvaluationPeriods)].(int); ok && v > 0 {
 				autoScaleDown.SetEvaluationPeriods(spotinst.Int(v))
 			}
 
 			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
-				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
+				maxScaleDownPercentage = spotinst.Float64(v)
 			}
+			if isMaxScaleDownPercentageExist {
+				autoScaleDown.SetMaxScaleDownPercentage(maxScaleDownPercentage)
+			}
+
+			//if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
+			//	return nil
+			//}
 		}
 		return autoScaleDown, nil
 	}

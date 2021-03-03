@@ -145,9 +145,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
 			if v, ok := resourceData.Get(string(KeyName)).(string); ok && v != "" {
-				elastigroup.Compute.LaunchSpecification.SetKeyPair(spotinst.String(v))
+				value = spotinst.String(v)
 			}
+			elastigroup.Compute.LaunchSpecification.SetKeyPair(value)
 			return nil
 		},
 		nil,
@@ -494,6 +496,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
 	fieldsMap[MetadataOptions] = commons.NewGenericField(
 		commons.ElastigroupAWSLaunchConfiguration,
 		MetadataOptions,
@@ -559,6 +562,67 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[CPUOptions] = commons.NewGenericField(
+		commons.ElastigroupAWSLaunchConfiguration,
+		CPUOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ThreadsPerCore): {
+						Type:     schema.TypeInt,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []interface{} = nil
+			if elastigroup != nil && elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.CPUOptions != nil {
+				result = flattenCPUOptions(elastigroup.Compute.LaunchSpecification.CPUOptions)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(CPUOptions), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CPUOptions), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(CPUOptions)); ok {
+				if cpuOptions, err := expandCPUOptions(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetCPUOptions(cpuOptions)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *aws.CPUOptions = nil
+			if v, ok := resourceData.GetOk(string(CPUOptions)); ok {
+				if cpuOptions, err := expandCPUOptions(v); err != nil {
+					return err
+				} else {
+					value = cpuOptions
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetCPUOptions(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -615,6 +679,30 @@ func flattenMetadataOptions(metadataOptions *aws.MetadataOptions) []interface{} 
 	result := make(map[string]interface{})
 	result[string(HTTPTokens)] = spotinst.StringValue(metadataOptions.HTTPTokens)
 	result[string(HTTPPutResponseHopLimit)] = spotinst.IntValue(metadataOptions.HTTPPutResponseHopLimit)
+
+	return []interface{}{result}
+}
+
+func expandCPUOptions(data interface{}) (*aws.CPUOptions, error) {
+	cpuOptions := &aws.CPUOptions{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return cpuOptions, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(ThreadsPerCore)].(int); ok && v >= 0 {
+		cpuOptions.SetThreadsPerCore(spotinst.Int(v))
+	} else {
+		cpuOptions.SetThreadsPerCore(nil)
+	}
+
+	return cpuOptions, nil
+}
+
+func flattenCPUOptions(cpuOptions *aws.CPUOptions) []interface{} {
+	result := make(map[string]interface{})
+	result[string(ThreadsPerCore)] = spotinst.IntValue(cpuOptions.ThreadsPerCore)
 
 	return []interface{}{result}
 }
