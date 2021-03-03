@@ -526,7 +526,7 @@ Usage:
 ## Stateful
 
 We support instance persistence via the following configurations. all values are boolean.
-For more information on instance persistence please see: [Stateful configuration](https://api.spotinst.com/integration-docs/elastigroup/concepts/stateful-concepts/introduction/)
+For more information on instance persistence please see: [Stateful configuration](https://docs.spot.io/elastigroup/features/stateful-instance/stateful-instances)
 
 * `persist_root_device` - (Optional) Boolean, should the instance maintain its root device volumes.
 * `persist_block_devices` - (Optional) Boolean, should the instance maintain its Data volumes.

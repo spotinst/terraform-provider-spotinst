@@ -232,7 +232,7 @@ func expandAWSGroupEC2ContainerServiceIntegration(data interface{}) (*aws.EC2Con
 	}
 
 	if v, ok := m[string(AutoscaleDown)]; ok {
-		down, err := expandAWSGroupAutoScaleDown(v)
+		down, err := expandAWSGroupAutoScaleDown(v, true)
 		if err != nil {
 			return nil, err
 		}

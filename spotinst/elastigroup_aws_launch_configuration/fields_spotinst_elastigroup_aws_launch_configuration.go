@@ -145,9 +145,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
 			if v, ok := resourceData.Get(string(KeyName)).(string); ok && v != "" {
-				elastigroup.Compute.LaunchSpecification.SetKeyPair(spotinst.String(v))
+				value = spotinst.String(v)
 			}
+			elastigroup.Compute.LaunchSpecification.SetKeyPair(value)
 			return nil
 		},
 		nil,
