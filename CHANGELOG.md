@@ -2,6 +2,9 @@
 
 BUG FIXES:
 * resource/spotinst_ocean_gke_import: resolved error with `desired_capacity` not applying 0 as value
+* resource/spotinst_elastigroup_aws: resolved errors with `max_scale_down_percentage`
+* resource/spotinst_elastigroup_aws: resolved errors with `key_name`
+* resource/spotinst_ocean_strategy: resolved errors with `spot_percentage`
 
 ## 1.35.0 (March 1, 2021)
 
