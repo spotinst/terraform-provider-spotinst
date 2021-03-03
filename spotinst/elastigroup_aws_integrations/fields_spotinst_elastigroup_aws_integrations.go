@@ -64,13 +64,10 @@ func expandAWSGroupAutoScaleDown(data interface{}, isMaxScaleDownPercentageExist
 			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
 				maxScaleDownPercentage = spotinst.Float64(v)
 			}
+
 			if isMaxScaleDownPercentageExist {
 				autoScaleDown.SetMaxScaleDownPercentage(maxScaleDownPercentage)
 			}
-
-			//if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
-			//	return nil
-			//}
 		}
 		return autoScaleDown, nil
 	}
