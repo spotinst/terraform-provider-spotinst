@@ -236,10 +236,12 @@ func createElastigroupAzureTerraform(gcm *AzureGroupConfigMetadata) string {
 const testBaselineAzureGroupConfig_Create = `
 resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
  provider = "%v"
+
  name 				 = "%v"
  product 			 = "Linux"
  region              = "eastus"
  resource_group_name = "alex-test"
+
  // --- CAPACITY ------------
  max_size 		  = 0
  min_size 		  = 0
@@ -255,15 +257,18 @@ resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
  %v
  %v
 }
+
 `
 
 const testBaselineAzureGroupConfig_Update = `
 resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
  provider = "%v"
+
  name 				 = "%v"
  product 			 = "Linux"
  region              = "eastus"
  resource_group_name = "alex-test"
+
  // --- CAPACITY ------------
  max_size 		  = 0
  min_size 		  = 0
@@ -279,6 +284,7 @@ resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
  %v
  %v
 }
+
 `
 
 // endregion
@@ -472,6 +478,7 @@ const testAzureLaunchConfigurationGroupConfig_Create = `
  user_data       = "hello world"
  shutdown_script = "goodbye world"
  custom_data     = "custom world"
+
  managed_service_identities {
    resource_group_name = "alex-test"
    name = "terraform-test-identity"
@@ -690,6 +697,7 @@ const testAzureNetworkGroupConfig_Create = `
     subnet_name = "alex-test-subnet"                 
     resource_group_name = "alex-test"         
     assign_public_ip = true
+
     additional_ip_configs {
       name = "test"
       private_ip_version = "IPv4"
