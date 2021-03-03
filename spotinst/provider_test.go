@@ -1,7 +1,6 @@
 package spotinst
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -51,7 +50,7 @@ func testAccPreCheck(t *testing.T, provider string) {
 		"aws":   os.Getenv("SPOTINST_TOKEN_AWS"),
 		"azure": os.Getenv("SPOTINST_TOKEN_AZURE"),
 	}
-	fmt.Printf(tokens["azureV3"])
+
 	if tokens[provider] == "" {
 		t.Fatal(ErrNoValidCredentials.Error())
 	}
