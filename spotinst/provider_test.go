@@ -85,8 +85,8 @@ func providerConfigureAzure(d *schema.ResourceData) (interface{}, error) {
 
 func providerConfigureAzureV3(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Token:   "eeab5e1e5e9b5dcbb1aba6d7023d2ae981c6b48dd13784439bb6061f8beb053a",
-		Account: "act-e929c6e7",
+		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
+		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),
 	}
 
 	return config.Client()
