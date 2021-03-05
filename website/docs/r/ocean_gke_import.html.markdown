@@ -16,18 +16,18 @@ Manages a Spotinst Ocean GKE resource.
 resource "spotinst_ocean_gke_import" "example" {
   cluster_name = "example-cluster-name"
   location     = "us-central1-a"
-  
+
   min_size = 0
   max_size = 2
   desired_capacity = 0
-  
+
   whitelist = ["n1-standard-1", "n1-standard-2"]
-  
+
   backend_services {
     service_name  = "example-backend-service"
     location_type = "regional"
     scheme        = "INTERNAL"
-    
+
     named_ports {
       name  = "http"
       ports = [80, 8080]
@@ -47,10 +47,11 @@ output "ocean_id" {
 The following arguments are supported:
 
 * `cluster_name` - (Required) The GKE cluster name.
-* `location` - (Required) The zone the master cluster is located in. 
+* `location` - (Required) The zone the master cluster is located in.
 * `max_size` - (Optional, Default: `1000`) The upper limit of instances the cluster can scale up to.
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
-* `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster. 
+* `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster.
+* `whitelist` - (Optional) Instance types allowed in the Ocean cluster.
 * `backend_services` - (Optional) Describes the backend service configurations.
     * `service_name` - (Required) The name of the backend service.
     * `location_type` - (Optional) Sets which location the backend services will be active. Valid values: `regional`, `global`.
@@ -58,7 +59,6 @@ The following arguments are supported:
     * `named_port` - (Optional) Describes a named port and a list of ports.
         * `port_name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
-
 
 <a id="scheduled-task"></a>
 ### scheduled task
@@ -75,8 +75,8 @@ The following arguments are supported:
         * `task_type` - (Required) Valid values: "clusterRoll". Required for cluster.scheduling.tasks object.
         * `batch_size_percentage` - (Optional)  Value in % to set size of batch in roll. Valid values are 0-100
                                                 Example: 20.
-                          
-             
+
+
 ```hcl
   scheduled_task  {
     shutdown_hours  {
@@ -96,21 +96,21 @@ The following arguments are supported:
 ### Autoscaler
 
 * `autoscaler` - (Optional) The Ocean Kubernetes Autoscaler object.
-* `is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Autoscaler.
-* `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
-* `auto_headroom_percentage` - Optionally set the auto headroom percentage, set a number between 0-200 to control the headroom % from the cluster. Relevant when isAutoConfig=true.
-* `cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
-* `headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
-* `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
-* `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate the headroom.
-* `gpu_per_unit` - (Optional) How much GPU allocate for headroom unit.
-* `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
-* `down` - (Optional) Auto Scaling scale down operations.
-* `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
-* `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
-* `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
-* `max_vcpu` - (Optional) The maximum cpu in vCpu units that can be allocated to the cluster.
-* `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
+    * `is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Autoscaler.
+    * `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
+    * `auto_headroom_percentage` - Optionally set the auto headroom percentage, set a number between 0-200 to control the headroom % from the cluster. Relevant when isAutoConfig=true.
+    * `cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
+    * `headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
+        * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+        * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate the headroom.
+        * `gpu_per_unit` - (Optional) How much GPU allocate for headroom unit.
+        * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
+    * `down` - (Optional) Auto Scaling scale down operations.
+        * `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
+        * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
+    * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
+        * `max_vcpu` - (Optional) The maximum cpu in vCpu units that can be allocated to the cluster.
+        * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
 
 ```hcl
   autoscaler {

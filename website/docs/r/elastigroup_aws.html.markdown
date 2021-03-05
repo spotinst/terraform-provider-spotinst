@@ -40,6 +40,9 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     http_tokens                 = "optional"
     http_put_response_hop_limit = 10
   }
+  cpu_options {
+    threads_per_core    = 1
+  }
 
   instance_types_ondemand       = "m3.2xlarge"
   instance_types_spot           = ["m3.xlarge", "m3.2xlarge"]
@@ -157,7 +160,9 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `metadata_options` - (Optional) Data that used to configure or manage the running instances:
     * `http_tokens` - (Required) The state of token usage for your instance metadata requests. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional, Default: `1`) The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further instance metadata requests can travel. Valid values: Integers from `1` to `64`.
-    
+* `cpu_options` - (Optional) The CPU options for the instances that are launched within the group:
+    * `threads_per_core` - (Required) The ability to define the number of threads per core in instances that allow this.
+
 * `instance_types_ondemand` - (Required) The type of instance determines your instance's CPU capacity, memory and storage (e.g., m1.small, c1.xlarge).
 * `instance_types_spot` - (Required) One or more instance types.
 * `instance_types_preferred_spot` - (Optional) Prioritize a subset of spot instance types. Must be a subset of the selected spot instance types.
@@ -938,7 +943,7 @@ Usage:
                * `action_type` - (Required) Sets the action that will take place, Accepted values are: `DETACH_OLD`, `DETACH_NEW`.
                * `should_handle_all_batches` - (Optional, Default: `false`) Indicator if the action should apply to all batches of the deployment or only the latest batch.
                * `draining_timeout` - (Optional, Default: The Elastigroups draining time out) Indicates (in seconds) the timeout to wait until instance are detached.
-               * `action_type` - (Optional, Default: `true`) Decrementing the group target capacity after detaching the instances.
+               * `should_decrement_target_capacity` - (Optional, Default: `true`) Decrementing the group target capacity after detaching the instances.
 
 ```hcl
   update_policy {

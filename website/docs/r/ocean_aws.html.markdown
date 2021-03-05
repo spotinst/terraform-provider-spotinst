@@ -96,8 +96,8 @@ The following arguments are supported:
     * `name` - (Optional) Required if type is set to CLASSIC
     * `type` - (Required) Can be set to CLASSIC or TARGET_GROUP
 * `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
-* `key` - (Optional) The tag key.
-* `value` - (Optional) The tag value.
+    * `key` - (Optional) The tag key.
+    * `value` - (Optional) The tag value.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If not Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
 * `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, Ocean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
@@ -108,20 +108,20 @@ The following arguments are supported:
 <a id="auto-scaler"></a>
 ### Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.
-* `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes autoscaler.
-* `autoscale_is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
-* `autoscale_cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
-* `auto_headroom_percentage` - (Optional) Set the auto headroom percentage (a number in the range [0, 200]) which controls the percentage of headroom from the cluster. Relevant only when `autoscale_is_auto_config` toggled on.
-* `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
-* `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
-* `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate the headroom.
-* `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
-* `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
-* `autoscale_down` - (Optional) Auto Scaling scale down operations.
-* `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
-* `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
-* `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
-* `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
+    * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes autoscaler.
+    * `autoscale_is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
+    * `autoscale_cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
+    * `auto_headroom_percentage` - (Optional) Set the auto headroom percentage (a number in the range [0, 200]) which controls the percentage of headroom from the cluster. Relevant only when `autoscale_is_auto_config` toggled on.
+    * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
+        * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+        * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate the headroom.
+        * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MB) to allocate the headroom.
+        * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
+    * `autoscale_down` - (Optional) Auto Scaling scale down operations.
+        * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
+    * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
+        * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
+        * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
 
 ```hcl
   autoscaler {
