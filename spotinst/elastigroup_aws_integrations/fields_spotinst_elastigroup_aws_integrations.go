@@ -67,10 +67,6 @@ func expandAWSGroupAutoScaleDown(data interface{}, isMaxScaleDownPercentageExist
 			if isMaxScaleDownPercentageExist {
 				autoScaleDown.SetMaxScaleDownPercentage(maxScaleDownPercentage)
 			}
-
-			//if strategy, ok := resourceData.GetOk(string(mrscaler_aws_strategy.Strategy)); ok && strategy == mrscaler_aws_strategy.Wrap {
-			//	return nil
-			//}
 		}
 		return autoScaleDown, nil
 	}
