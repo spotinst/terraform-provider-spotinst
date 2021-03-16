@@ -1,5 +1,8 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_ocean_gke_import: resolved error with `desired_capacity` not applying 0 as value
+
 ## 1.35.0 (March 1, 2021)
 
 ENHANCEMENTS:
