@@ -171,6 +171,9 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.1", "n1-standard-2"),
+					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
+					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 				),
 			},
 			{
@@ -196,6 +199,9 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  location     = "us-central1-a"
 
  whitelist = ["n1-standard-1", "n1-standard-2"]
+ min_size = 0
+ max_size = 2
+ desired_capacity = 0
  %v
 }
 
