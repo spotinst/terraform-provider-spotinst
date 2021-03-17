@@ -51,6 +51,10 @@ changelog:
   sort: asc
   filters:
     exclude:
+      - ^chore
+      - ^ci
+      - ^doc
+      - ^test
       - Merge pull request
       - Merge branch
 
