@@ -30,10 +30,3 @@ jobs:
             -S017 \
             -S019 \
             ./...
-
-  tfproviderdocs:
-    runs-on: ubuntu-latest
-    container: bflad/tfproviderdocs:0.8
-    steps:
-      - uses: actions/checkout@v2
-      - run: tfproviderdocs check -require-resource-subcategory
