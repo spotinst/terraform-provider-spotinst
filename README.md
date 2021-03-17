@@ -9,7 +9,7 @@
 ## Requirements
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.12.x
--	[Go](https://golang.org/doc/install) 1.15 (to build the provider plugin)
+-	[Go](https://golang.org/doc/install) 1.16 (to build the provider plugin)
 
 ## Building the Provider
 
@@ -24,8 +24,8 @@ Choose your build method:
 
 #### 1. `make build` and install it globally
 
-If you don't mind installing the development version of the provider globally, 
-you can use `make build` in the provider directory which will build and link the 
+If you don't mind installing the development version of the provider globally,
+you can use `make build` in the provider directory which will build and link the
 binary into your `$GOPATH/bin` directory.
 
 ```sh
@@ -35,8 +35,8 @@ $ make build
 
 #### 2. `go build` and install it local to your changes
 
-If you would rather install the provider locally and not impact the stable 
-version you already have installed, you can use the `~/.terraformrc` file to tell 
+If you would rather install the provider locally and not impact the stable
+version you already have installed, you can use the `~/.terraformrc` file to tell
 Terraform where your provider is. You do this by building the provider using Go.
 
 ```sh
@@ -52,8 +52,8 @@ providers {
 }
 ```
 
-A caveat with this approach is that you will need to run `terraform init` 
-whenever the provider is rebuilt. You'll also need to remember to comment 
+A caveat with this approach is that you will need to run `terraform init`
+whenever the provider is rebuilt. You'll also need to remember to comment
 it/remove it when it's not in use to avoid tripping yourself up.
 
 ## Developing the Provider
@@ -83,8 +83,8 @@ $ make testacc
 
 ## Dependencies
 
-Terraform providers use [Go modules](https://github.com/golang/go/wiki/Modules) 
-to manage the dependencies. To add or update a dependency, you would run the 
+Terraform providers use [Go modules](https://github.com/golang/go/wiki/Modules)
+to manage the dependencies. To add or update a dependency, you would run the
 following (`v1.2.3` of `foo` is a new package we want to add):
 
 ```
@@ -94,10 +94,10 @@ $ go mod tidy
 
 Stepping through the above commands:
 
-- `go get foo@v1.2.3` fetches version `v1.2.3` from the source (if needed) and 
+- `go get foo@v1.2.3` fetches version `v1.2.3` from the source (if needed) and
 adds it to the `go.mod` file for use.
-- `go mod tidy` cleans up any dangling dependencies or references that aren't 
+- `go mod tidy` cleans up any dangling dependencies or references that aren't
 defined in your module file.
 
-If you wish to remove a dependency, you can remove the reference from `go.mod` 
+If you wish to remove a dependency, you can remove the reference from `go.mod`
 and use the same commands above but omit the initial `go get`.
