@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.36.0 (March 18, 2021)
+
 FEATURES:
 * **New Resource:** `spotinst_elastigroup_azure_v3`
 
