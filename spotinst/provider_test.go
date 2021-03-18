@@ -13,20 +13,24 @@ var TestAccProviders map[string]terraform.ResourceProvider
 var testAccProviderGCP *schema.Provider
 var testAccProviderAWS *schema.Provider
 var testAccProviderAzure *schema.Provider
+var testAccProviderAzureV3 *schema.Provider
 
 func init() {
 	testAccProviderGCP = Provider().(*schema.Provider)
 	testAccProviderAWS = Provider().(*schema.Provider)
 	testAccProviderAzure = Provider().(*schema.Provider)
+	testAccProviderAzureV3 = Provider().(*schema.Provider)
 
 	testAccProviderGCP.ConfigureFunc = providerConfigureGCP
 	testAccProviderAWS.ConfigureFunc = providerConfigureAWS
 	testAccProviderAzure.ConfigureFunc = providerConfigureAzure
+	testAccProviderAzureV3.ConfigureFunc = providerConfigureAzure
 
 	TestAccProviders = map[string]terraform.ResourceProvider{
-		"gcp":   testAccProviderGCP,
-		"aws":   testAccProviderAWS,
-		"azure": testAccProviderAzure,
+		"gcp":     testAccProviderGCP,
+		"aws":     testAccProviderAWS,
+		"azure":   testAccProviderAzure,
+		"azureV3": testAccProviderAzureV3,
 	}
 }
 

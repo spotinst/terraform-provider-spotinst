@@ -10,6 +10,7 @@ exclude_files=(
 	"docs/resources/elastigroup_aws_beanstalk.md"
 	"docs/resources/elastigroup_aws_suspension.md"
 	"docs/resources/elastigroup_azure.md"
+	"docs/resources/elastigroup_azure_v3.md"
 	"docs/resources/elastigroup_gcp.md"
 	"docs/resources/elastigroup_gke.md"
 	"docs/resources/health_check.md"

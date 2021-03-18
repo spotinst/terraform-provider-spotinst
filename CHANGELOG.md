@@ -1,5 +1,8 @@
 ## Unreleased
 
+FEATURES:
+* **New Resource:** `spotinst_elastigroup_azure_v3`
+
 BUG FIXES:
 * resource/spotinst_ocean_gke_import: resolved error with `desired_capacity` not applying 0 as value
 * resource/spotinst_elastigroup_aws: resolved errors with `max_scale_down_percentage`
