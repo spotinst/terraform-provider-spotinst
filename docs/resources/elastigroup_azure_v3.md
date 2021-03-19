@@ -90,8 +90,7 @@ The following arguments are supported:
 * `od_sizes` - (Required) Available On-Demand sizes
 * `spot_sizes` - (Required) Available Low-Priority sizes.
 
-<a id="strategy"></a>
-## Strategy
+### Strategy
 
 * `strategy` - (Required) Describes the deployment strategy.
     * `spot_percentage` - TODO
@@ -107,8 +106,7 @@ The following arguments are supported:
     od_count              = 1
   }
 ```
-<a id="image"></a>
-## Image
+### Image
 
 * `image` - (Required) Image of a VM. An image is a template for creating new VMs. Choose from Azure image catalogue (marketplace) or use a custom image.
     * `publisher` - (Optional) Image publisher. Required if resource_group_name is not specified.
@@ -138,8 +136,7 @@ The following arguments are supported:
   } 
 ```
 
-<a id="network"></a>
-## Network
+### Network
 
 * `network` - (Required) Defines the Virtual Network and Subnet for your Elastigroup.
     * `virtual_network_name` - (Required) Name of Vnet.
@@ -168,8 +165,7 @@ The following arguments are supported:
   }
 ```
 
-<a id="login"></a>
-## Login
+### Login
 
 * `login` - (Required) Describes the login configuration.
     * `user_name` - (Required) Set admin access for accessing your VMs.
@@ -182,10 +178,3 @@ The following arguments are supported:
     ssh_public_key = "33a2s1f3g5a1df5g1ad21651sag56dfg=="
   }
 ```
-
-
-
-
-    
-
-

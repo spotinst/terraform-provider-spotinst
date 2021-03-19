@@ -85,7 +85,6 @@ All `spotisnt_elastigroup_gcp` arguments are supported. Please be sure to includ
 * `cluster_id` - (Required) The name of the GKE cluster you wish to import.
 * `node_image` - (Optional, Default: `COS`) The image that will be used for the node VMs. Possible values: COS, UBUNTU.
 
-<a id="third-party-integrations"></a>
 ### Third-Party Integrations
 
 * `integration_gke` - (Required) Describes the [GKE]() integration.
@@ -136,7 +135,6 @@ Usage:
  }
 ```
 
-<a id="diff-suppressed-parameters"></a>
 ### Diff-suppressed Parameters
 The following parameters are created remotely and imported. The diffs have been suppressed in order to maintain plan legibility. You may update the values of these
 imported parameters by defining them in your template with your desired new value (including null values).

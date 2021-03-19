@@ -182,7 +182,6 @@ The following arguments are supported:
 * `od_count` - (Optional) Number of On-Demand instances to maintain. Required if low_priority_percentage is not specified.
 * `draining_timeout` - (Optional, Default `120`) Time (seconds) to allow the instance to be drained from incoming TCP connections and detached from MLB before terminating it during a scale-down operation.
 
-<a id="load-balancers"></a>
 ### Load Balancers
 
 * `load_balancers` - (Required) Describes a set of one or more classic load balancer target groups and/or Multai load balancer target sets.
@@ -200,7 +199,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="image"></a>
 ### Image
 
 * `image` - (Required) Image of a VM. An image is a template for creating new VMs. Choose from Azure image catalogue (marketplace) or use a custom image.
@@ -229,7 +227,6 @@ The following arguments are supported:
   } 
 ```
 
-<a id="health-check"></a>
 ### Health Check
 
 * `health_check` - (Optional) Describes the health check configuration.
@@ -245,7 +242,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="network"></a>
 ### Network
 
 * `network` - (Required) Defines the Virtual Network and Subnet for your Elastigroup.
@@ -271,7 +267,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="login"></a>
 ### Login
 
 ```hcl
@@ -283,7 +278,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="login"></a>
 ### Login
 
 * `login` - (Required) Describes the login configuration.
@@ -298,7 +292,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="scaling-policy"></a>
 ### Scaling Policies
 
 Each `scaling_*_policy` supports the following:
@@ -507,7 +500,6 @@ Usage:
 // ----------------------------------------
 ```
 
-<a id="scheduling"></a>
 ### Scheduling
 
 * `scheduled_task` - (Optional) Describes the configuration of one or more scheduled tasks.
@@ -539,7 +531,6 @@ Usage:
   }
 ```
 
-<a id="update-policy"></a>
 ### Update Policy
 
 * `update_policy` - (Optional)
@@ -562,7 +553,6 @@ Usage:
   }
 ```        
 
-<a id="third-party-integrations"></a>
 ### Third-Party Integrations
 
 * `integration_kubernetes` - (Optional) Describes the [Kubernetes](https://kubernetes.io/) integration.

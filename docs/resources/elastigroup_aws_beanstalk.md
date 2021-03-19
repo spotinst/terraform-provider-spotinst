@@ -78,8 +78,7 @@ For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VP
       * `perform_at` - (Required) Actions to perform (options: timeWindow, never)
       * `time_window` - (Required) Time Window for when action occurs ex. Mon:23:50-Tue:00:20
       * `update_level` - (Required) - Level to update
-
-<a id="scheduled-task"></a>
+    
 ### Scheduled Tasks
 
 Each `scheduled_task` supports the following:

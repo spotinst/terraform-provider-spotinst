@@ -195,8 +195,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
     * `perform_at` - (Required) In the event of a fallback to On-Demand instances, select the time period to revert back to Spot. Supported Arguments – always (default), timeWindow, never. For timeWindow or never to be valid the group must have availabilityOriented OR persistence defined.
     * `time_windows` - (Optional) Specify a list of time windows for to execute revertToSpot strategy. Time window format: `ddd:hh:mm-ddd:hh:mm`. Example: `Mon:03:00-Wed:02:30`
-
-<a id="load-balancers"></a>
+    
 ### Load Balancers
     
 * `elastic_load_balancers` - (Optional) List of Elastic Load Balancers names (ELB).
@@ -222,7 +221,6 @@ Usage:
   }
 ```
 
-<a id="signal"></a>
 ### Signals
 
 Each `signal` supports the following:
@@ -239,7 +237,6 @@ Usage:
   }
 ```
 
-<a id="scheduled-task"></a>
 ### Scheduled Tasks
 
 Each `scheduled_task` supports the following:
@@ -280,7 +277,6 @@ Usage:
   }
 ```
 
-<a id="scaling-policy"></a>
 ### Scaling Policies
 
 `scaling_up_policy` supports the following:
@@ -432,7 +428,6 @@ Usage:
   }
 ```
 
-<a id="network-interface"></a>
 ### Network Interfaces
 
 Each of the `network_interface` attributes controls a portion of the AWS
@@ -463,7 +458,6 @@ Usage:
   }
 ```
 
-<a id="block-devices"></a>
 ### Block Devices
 
 Each of the `*_block_device` attributes controls a portion of the AWS
@@ -527,7 +521,6 @@ Usage:
   }
 ```
 
-<a id="stateful"></a>
 ### Stateful
 
 We support instance persistence via the following configurations. all values are boolean.
@@ -549,7 +542,6 @@ Usage:
   private_ips           = ["1.1.1.1", "2.2.2.2"]
 ```
 
-<a id="stateful-deallocation"></a>
 ### Stateful Deallocation
 
 * `stateful_deallocation` - (Optional)
@@ -569,7 +561,6 @@ Usage:
    }
 ```    
 
-<a id="health-check"></a>
 ### Health Check
 
 * `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
@@ -584,7 +575,6 @@ Usage:
   health_check_unhealthy_duration_before_replacement = 120
 ```
 
-<a id="third-party-integrations"></a>
 ### Third-Party Integrations
 
 * `integration_rancher` - (Optional) Describes the [Rancher](http://rancherlabs.com/) integration.
@@ -921,7 +911,6 @@ Usage:
   }
 ```
 
-<a id="update-policy"></a>
 ### Update Policy
 
 * `update_policy` - (Optional)

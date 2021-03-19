@@ -139,7 +139,6 @@ The following arguments are supported:
     * `value` - (Optional) Labels value.
 * `tags` - (Optional) Tags to mark created instances.
 
-<a id="GPU"></a>
 ### GPU
 
 * `gpu` - (Optional) Defines the GPU configuration.
@@ -155,7 +154,6 @@ Usage:
   }
 ```
 
-<a id="health-check"></a>
 ### Health Check
 
 * `auto_healing` - (Optional) Enable auto-replacement of unhealthy instances.
@@ -170,7 +168,6 @@ Usage:
   unhealthy_duration        = ""
   ```
 
-<a id="backend-services"></a>
 ### Backend Services
 
 * `backend_services` - (Optional) Describes the backend service configurations.
@@ -197,7 +194,6 @@ Usage:
   ]
 ```
 
-<a id="disks"></a>
 ### Disks
 
 * `disks` - (Optional) Array of disks associated with this instance. Persistent disks must be created before you can assign them.
@@ -234,7 +230,6 @@ Usage:
   ]
 ```
 
-<a id="network-interface"></a>
 ### Network Interfaces
 
 Each of the `network_interface` attributes controls a portion of the GCP
@@ -264,7 +259,6 @@ to understand the implications of using these attributes.
   }]
 ```
 
-<a id="scaling-policy"></a>
 ### Scaling Policies
 
 * `scaling_up_policy` - (Optional) Contains scaling policies for scaling the Elastigroup up.
@@ -320,7 +314,6 @@ Usage:
     }
 ```
 
-<a id="third-party-integrations"></a>
 ### Third-Party Integrations
 
 * `integration_docker_swarm` - (Optional) Describes the [Docker Swarm](https://api.spotinst.com/integration-docs/elastigroup/container-management/docker-swarm/docker-swarm-integration/) integration.
@@ -336,7 +329,6 @@ integration_docker_swarm = {
 }
 ```
 
-<a id="scheduled-task"></a>
 ### Scheduled Tasks
 
 Each `scheduled_task` supports the following:

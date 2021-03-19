@@ -118,8 +118,7 @@ The following arguments are supported:
     * `perform_at` - (Required) String. Valid values: "always" "never" "timeWindow".
     * `time_windows` - (Optional; Required if not using `perform_at` = timeWindow) Array of strings. Set time windows for image update, at least one time window. Each string is in the format of ddd:hh:mm-ddd:hh:mm ddd. Time windows should not overlap.
     * `should_optimize_ecs_ami` - (Required) Boolean. Enable auto image (AMI) update for the ECS container instances. The auto update applies for ECS-Optimized AMIs.
-
-<a id="auto-scaler"></a>
+    
 ### Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean ECS autoscaler.
     * `is_enabled` - (Optional, Default: `true`) Enable the Ocean ECS autoscaler.
@@ -158,8 +157,6 @@ The following arguments are supported:
   }
 ```
 
-
-<a id="update-policy"></a>
 ### Update Policy
 * `update_policy` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `should_roll` - (Required) Enables the roll.
@@ -176,8 +173,6 @@ The following arguments are supported:
   }
 ```
 
-
-<a id="scheduled-task"></a>
 ### scheduled task
 * `scheduled_task` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.

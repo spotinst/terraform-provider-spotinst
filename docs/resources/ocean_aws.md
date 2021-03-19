@@ -105,7 +105,6 @@ The following arguments are supported:
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 
 
-<a id="auto-scaler"></a>
 ### Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes autoscaler.
     * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes autoscaler.
@@ -148,7 +147,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="update-policy"></a>
 ### Update Policy
 
 * `update_policy` - (Optional)
@@ -166,7 +164,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="scheduled-task"></a>
 ### scheduled task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.

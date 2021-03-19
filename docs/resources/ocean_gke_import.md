@@ -59,8 +59,7 @@ The following arguments are supported:
     * `named_port` - (Optional) Describes a named port and a list of ports.
         * `port_name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
-
-<a id="scheduled-task"></a>
+    
 ### scheduled task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
@@ -92,7 +91,6 @@ The following arguments are supported:
   }
 ```
 
-<a id="autoscaler"></a>
 ### Autoscaler
 
 * `autoscaler` - (Optional) The Ocean Kubernetes Autoscaler object.
