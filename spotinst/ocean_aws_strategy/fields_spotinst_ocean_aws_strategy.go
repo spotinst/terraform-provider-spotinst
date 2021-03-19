@@ -148,8 +148,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
+			var spotPercentage *float64 = nil
 			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
-				cluster.Strategy.SetSpotPercentage(spotinst.Float64(float64(v)))
+				if v > 0 {
+					spotPercentage = spotinst.Float64(float64(v))
+				}
+				cluster.Strategy.SetSpotPercentage(spotPercentage)
 			}
 			return nil
 		},

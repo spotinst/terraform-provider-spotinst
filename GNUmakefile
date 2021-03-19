@@ -1,49 +1,62 @@
 TEST?=./...
-GOFMT_FILES?=$$(find . -name '*.go' | grep -v vendor)
-PKG_NAME=spotinst
-WEBSITE_REPO=github.com/hashicorp/terraform-website
+PKGNAME?=spotinst
 VERSION?=$(shell grep -oP '(?<=Version = ).+' version/version.go | xargs)
 RELEASE?=v$(VERSION)
 
 default: build
 
+.PHONY: build
 build: fmtcheck
 	go install
 
-gen:
-	go generate ./...
-
+.PHONY: test
 test: fmtcheck
 	go test $(TEST) -timeout=30s -parallel=4
 
+.PHONY: testacc
 testacc: fmtcheck
 	TF_ACC=1 go test $(TEST) -v -count 1 -parallel 20 $(TESTARGS) -timeout 120m
 
+.PHONY: testcompile
+testcompile:
+	@if [ "$(TEST)" = "./..." ]; then \
+		echo "ERROR: Set TEST to a specific package. For example,"; \
+		echo "  make test-compile TEST=./$(PKGNAME)"; \
+		exit 1; \
+	fi
+	go test -c $(TEST) $(TESTARGS)
+
+.PHONY: vet
 vet:
 	go vet ./...
 
+.PHONY: fmt
 fmt:
-	@gofmt -s -w ./$(PKG_NAME)
+	@gofmt -s -w ./$(PKGNAME)
 
+.PHONY: fmtcheck
 fmtcheck:
 	@sh -c "'$(CURDIR)/scripts/gofmtcheck.sh'"
 
-websitefmtcheck:
-	@sh -c "'$(CURDIR)/scripts/websitefmtcheck.sh'"
-
+.PHONY: depscheck
 depscheck:
 	@echo "==> Checking source code with go mod tidy..."
 	@go mod tidy
 	@git diff --exit-code -- go.mod go.sum || \
 		(echo; echo "Unexpected difference in go.mod/go.sum files. Run 'go mod tidy' command or revert any go.mod/go.sum changes and commit."; exit 1)
 
-docscheck:
-	@tfproviderdocs check \
-		-require-resource-subcategory
+.PHONY: docs
+docs: tools
+	@sh -c "'$(CURDIR)/scripts/generate-docs.sh'"
 
+.PHONY: docscheck
+docscheck: docs
+	@tfplugindocs validate
+
+.PHONY: lint
 lint:
 	@echo "==> Checking source code against linters..."
-	@golint ./$(PKG_NAME)/...
+	@golint ./$(PKGNAME)/...
 	@tfproviderlint \
 		-c 1 \
 		-AT001 \
@@ -65,43 +78,14 @@ lint:
 		-S016 \
 		-S017 \
 		-S019 \
-		./$(PKG_NAME)
+		./$(PKGNAME)
 
+.PHONY: tools
 tools:
-	GO111MODULE=on go install github.com/bflad/tfproviderdocs
-	GO111MODULE=on go install github.com/bflad/tfproviderlint/cmd/tfproviderlint
-	GO111MODULE=on go install github.com/client9/misspell/cmd/misspell
-	GO111MODULE=on go install golang.org/x/lint/golint
+	@go generate -tags tools tools.go
 
-test-compile:
-	@if [ "$(TEST)" = "./..." ]; then \
-		echo "ERROR: Set TEST to a specific package. For example,"; \
-		echo "  make test-compile TEST=./$(PKG_NAME)"; \
-		exit 1; \
-	fi
-	go test -c $(TEST) $(TESTARGS)
-
-website: website-init
-	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
-
-website-test: website-init
-	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
-
-website-lint:
-	@echo "==> Checking website against linters..."
-	@misspell -error -source=text website/
-
-website-init:
-ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
-	@echo "$(WEBSITE_REPO) not found in your GOPATH (necessary for layouts and assets), get-ting..."
-	@git clone https://$(WEBSITE_REPO) $(GOPATH)/src/$(WEBSITE_REPO)
-endif
-	@ln -sf ../../../../ext/providers/$(PKG_NAME)/website/docs $(GOPATH)/src/$(WEBSITE_REPO)/content/source/docs/providers/$(PKG_NAME)
-	@ln -sf ../../../ext/providers/$(PKG_NAME)/website/$(PKG_NAME).erb $(GOPATH)/src/$(WEBSITE_REPO)/content/source/layouts/$(PKG_NAME).erb
-
+.PHONY: release
 release:
 	@git commit -a -m "chore(release): $(RELEASE)"
 	@git tag -f -m    "chore(release): $(RELEASE)" $(RELEASE)
 	@git push --follow-tags
-
-.PHONY: build gen sweep test testacc vet fmt fmtcheck lint tools test-compile website website-lint website-test depscheck docscheck release
