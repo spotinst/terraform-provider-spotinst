@@ -651,8 +651,8 @@ Usage:
       job_queue_names = [
         "first-job",
         "second-job"
-        ]
-      }
+      ]
+    }
   }
 ```
 
