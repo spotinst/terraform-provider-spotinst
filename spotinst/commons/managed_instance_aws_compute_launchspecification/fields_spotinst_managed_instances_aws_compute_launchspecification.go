@@ -15,7 +15,6 @@ import (
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-
 	fieldsMap[EBSOptimized] = commons.NewGenericField(
 		commons.ManagedInstanceAWSLaunchSpecification,
 		EBSOptimized,
@@ -137,9 +136,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-	fieldsMap[SecurityGroupIds] = commons.NewGenericField(
+	fieldsMap[SecurityGroupIDs] = commons.NewGenericField(
 		commons.ManagedInstanceAWSLaunchSpecification,
-		SecurityGroupIds,
+		SecurityGroupIDs,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -153,15 +152,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				managedInstance.Compute.LaunchSpecification.SecurityGroupIDs != nil {
 				value = managedInstance.Compute.LaunchSpecification.SecurityGroupIDs
 			}
-			if err := resourceData.Set(string(SecurityGroupIds), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SecurityGroupIds), err)
+			if err := resourceData.Set(string(SecurityGroupIDs), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SecurityGroupIDs), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.Get(string(SecurityGroupIds)).([]interface{}); ok {
+			if v, ok := resourceData.Get(string(SecurityGroupIDs)).([]interface{}); ok {
 				ids := make([]string, len(v))
 				for i, j := range v {
 					ids[i] = j.(string)
@@ -173,7 +172,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.Get(string(SecurityGroupIds)).([]interface{}); ok {
+			if v, ok := resourceData.Get(string(SecurityGroupIDs)).([]interface{}); ok {
 				ids := make([]string, len(v))
 				for i, j := range v {
 					ids[i] = j.(string)
@@ -185,9 +184,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[ImageId] = commons.NewGenericField(
+	fieldsMap[ImageID] = commons.NewGenericField(
 		commons.ManagedInstanceAWSLaunchSpecification,
-		ImageId,
+		ImageID,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
@@ -200,15 +199,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				managedInstance.Compute.LaunchSpecification.ImageID != nil {
 				value = managedInstance.Compute.LaunchSpecification.ImageID
 			}
-			if err := resourceData.Set(string(ImageId), spotinst.StringValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ImageId), err)
+			if err := resourceData.Set(string(ImageID), spotinst.StringValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ImageID), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.Get(string(ImageId)).(string); ok && v != "" {
+			if v, ok := resourceData.Get(string(ImageID)).(string); ok && v != "" {
 				managedInstance.Compute.LaunchSpecification.SetImageId(spotinst.String(v))
 			}
 			return nil
@@ -216,7 +215,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.Get(string(ImageId)).(string); ok && v != "" {
+			if v, ok := resourceData.Get(string(ImageID)).(string); ok && v != "" {
 				managedInstance.Compute.LaunchSpecification.SetImageId(spotinst.String(v))
 			}
 			return nil
@@ -279,7 +278,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 			StateFunc: Base64StateFunc,
 		},
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
@@ -341,7 +339,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 			StateFunc: Base64StateFunc,
 		},
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
@@ -387,9 +384,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[IamInstanceProfile] = commons.NewGenericField(
+	fieldsMap[IAMInstanceProfile] = commons.NewGenericField(
 		commons.ManagedInstanceAWSLaunchSpecification,
-		IamInstanceProfile,
+		IAMInstanceProfile,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
@@ -408,15 +405,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = spotinst.StringValue(lc.IAMInstanceProfile.Name)
 				}
 			}
-			if err := resourceData.Set(string(IamInstanceProfile), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IamInstanceProfile), err)
+			if err := resourceData.Set(string(IAMInstanceProfile), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IAMInstanceProfile), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.Get(string(IamInstanceProfile)).(string); ok && v != "" {
+			if v, ok := resourceData.Get(string(IAMInstanceProfile)).(string); ok && v != "" {
 				iamInstanceProf := &aws.IAMInstanceProfile{}
 				if InstanceProfileArnRegex.MatchString(v) {
 					iamInstanceProf.SetArn(spotinst.String(v))
@@ -430,7 +427,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.Get(string(IamInstanceProfile)).(string); ok && v != "" {
+			if v, ok := resourceData.Get(string(IAMInstanceProfile)).(string); ok && v != "" {
 				iamInstanceProf := &aws.IAMInstanceProfile{}
 				if InstanceProfileArnRegex.MatchString(v) {
 					iamInstanceProf.SetArn(spotinst.String(v))
@@ -558,6 +555,105 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[BlockDeviceMappings] = commons.NewGenericField(
+		commons.OceanECSLaunchSpec,
+		BlockDeviceMappings,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(DeviceName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(EBS): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(DeleteOnTermination): {
+									Type:     schema.TypeBool,
+									Optional: true,
+									Computed: true,
+								},
+
+								string(IOPS): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(VolumeSize): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(VolumeType): {
+									Type:     schema.TypeString,
+									Optional: true,
+									Computed: true,
+								},
+
+								string(Throughput): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			var result []interface{} = nil
+			if managedInstance != nil && managedInstance.Compute.LaunchSpecification != nil &&
+				managedInstance.Compute.LaunchSpecification.BlockDeviceMappings != nil {
+				blockDeviceMappings := managedInstance.Compute.LaunchSpecification.BlockDeviceMappings
+				result = flattenBlockDeviceMappings(blockDeviceMappings)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(BlockDeviceMappings), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(BlockDeviceMappings), err)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
+				if v, err := expandBlockDeviceMappings(v); err != nil {
+					return err
+				} else {
+					managedInstance.Compute.LaunchSpecification.SetBlockDeviceMappings(v)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			var value []*aws.BlockDeviceMapping = nil
+			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
+				if blockDeviceMappings, err := expandBlockDeviceMappings(v); err != nil {
+					return err
+				} else {
+					value = blockDeviceMappings
+				}
+			}
+			managedInstance.Compute.LaunchSpecification.SetBlockDeviceMappings(value)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -632,4 +728,90 @@ func expandTags(data interface{}) ([]*aws.Tag, error) {
 		tags = append(tags, tag)
 	}
 	return tags, nil
+}
+
+func expandBlockDeviceMappings(data interface{}) ([]*aws.BlockDeviceMapping, error) {
+	list := data.([]interface{})
+	bdms := make([]*aws.BlockDeviceMapping, 0, len(list))
+
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		bdm := &aws.BlockDeviceMapping{}
+
+		if v, ok := attr[string(DeviceName)].(string); ok && v != "" {
+			bdm.SetDeviceName(spotinst.String(v))
+		}
+
+		if r, ok := attr[string(EBS)]; ok {
+			if ebs, err := expandEBS(r); err != nil {
+				return nil, err
+			} else {
+				bdm.SetEBS(ebs)
+			}
+		}
+
+		bdms = append(bdms, bdm)
+	}
+
+	return bdms, nil
+}
+
+func expandEBS(data interface{}) (*aws.EBS, error) {
+	ebs := &aws.EBS{}
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return ebs, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(DeleteOnTermination)].(bool); ok {
+		ebs.SetDeleteOnTermination(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(IOPS)].(int); ok && v > 0 {
+		ebs.SetIOPS(spotinst.Int(v))
+	}
+
+	if v, ok := m[string(VolumeSize)].(int); ok && v > 0 {
+		ebs.SetVolumeSize(spotinst.Int(v))
+	}
+
+	if v, ok := m[string(VolumeType)].(string); ok && v != "" {
+		ebs.SetVolumeType(spotinst.String(v))
+	}
+
+	if v, ok := m[string(Throughput)].(int); ok && v > 0 {
+		ebs.SetThroughput(spotinst.Int(v))
+	}
+
+	return ebs, nil
+}
+
+func flattenBlockDeviceMappings(bdms []*aws.BlockDeviceMapping) []interface{} {
+	result := make([]interface{}, 0, len(bdms))
+	for _, bdm := range bdms {
+		m := make(map[string]interface{})
+		m[string(DeviceName)] = spotinst.StringValue(bdm.DeviceName)
+		if bdm.EBS != nil {
+			m[string(EBS)] = flattenEBS(bdm.EBS)
+		}
+		result = append(result, m)
+	}
+	return result
+
+}
+
+func flattenEBS(ebs *aws.EBS) []interface{} {
+	e := make(map[string]interface{})
+	e[string(DeleteOnTermination)] = spotinst.BoolValue(ebs.DeleteOnTermination)
+	e[string(IOPS)] = spotinst.IntValue(ebs.IOPS)
+	e[string(VolumeType)] = spotinst.StringValue(ebs.VolumeType)
+	e[string(VolumeSize)] = spotinst.IntValue(ebs.VolumeSize)
+	e[string(Throughput)] = spotinst.IntValue(ebs.Throughput)
+	return []interface{}{e}
 }
