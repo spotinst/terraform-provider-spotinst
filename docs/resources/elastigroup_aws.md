@@ -620,7 +620,7 @@ Usage:
         * `max_scale_down_percentage` - (Optional) Represents the maximum percent to scale-down. Number between 1-100.
     * `autoscale_attributes` - (Optional) A key/value mapping of tags to assign to the resource.
     * `batch` - (Optional) - object
-        * `job_queue_names` - (Required) Array of strings
+        * `job_queue_names` - (Required) Array of strings.
 
 Usage:
 
