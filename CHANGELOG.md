@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.37.0 (April 5, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_managed_instance_aws: added support for `block_device_mappings`
 
