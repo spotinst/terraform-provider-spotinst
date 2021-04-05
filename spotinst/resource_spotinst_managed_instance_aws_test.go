@@ -445,7 +445,13 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1006920623.device_index", "0"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1006920623.associate_public_ip_address", "false"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.1006920623.associate_ipv6_address", "false"),
-				),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvdcz"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "IO1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "50"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.iops", "100")),
 			},
 			{
 				ResourceName: resourceName,
@@ -473,7 +479,14 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "unlimited"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.3418395336.device_index", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.3418395336.associate_public_ip_address", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.3418395336.associate_ipv6_address", "true")),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.3418395336.associate_ipv6_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvdcz"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "IO1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "60"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.iops", "150")),
 			},
 		},
 	})
@@ -510,8 +523,17 @@ network_interface {
    associate_ipv6_address = "false"
    }
 
-`
+block_device_mappings {
+	device_name = "/dev/xvdcz"
+	ebs {
+		delete_on_termination = "true"
+		volume_size = 50
+		volume_type = "IO1"
+		iops = 100
+	}
+}
 
+`
 const managedInstanceCompute_Update = `
 elastic_ip = "eipalloc-123456"
 //private_ip = "pip"
@@ -538,7 +560,15 @@ network_interface {
    associate_ipv6_address = "true"
    }
  
-
+block_device_mappings {
+	device_name = "/dev/xvdcz"
+	ebs {
+		delete_on_termination = "true"
+		volume_size = 60
+		volume_type = "IO1"
+		iops = 150
+	}
+}
 `
 
 // endregion

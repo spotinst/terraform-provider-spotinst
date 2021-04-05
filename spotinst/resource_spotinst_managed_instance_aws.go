@@ -131,7 +131,7 @@ func createManagedInstance(resourceData *schema.ResourceData, mangedInstance *aw
 	} else {
 		log.Printf("===> ManagedInstance create configuration: %s", json)
 	}
-	if v, ok := resourceData.Get(string(managed_instance_aws_compute_launchspecification.IamInstanceProfile)).(string); ok && v != "" {
+	if v, ok := resourceData.Get(string(managed_instance_aws_compute_launchspecification.IAMInstanceProfile)).(string); ok && v != "" {
 		time.Sleep(5 * time.Second)
 	}
 	input := &aws.CreateManagedInstanceInput{ManagedInstance: mangedInstance}
