@@ -52,6 +52,7 @@ The following arguments are supported:
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster. 
 * `whitelist` - (Optional) Instance types allowed in the Ocean cluster.
+* `draining_timeout` - (Optional) The draining timeout (in seconds) before terminating the instance.
 * `backend_services` - (Optional) Describes the backend service configurations.
     * `service_name` - (Required) The name of the backend service.
     * `location_type` - (Optional) Sets which location the backend services will be active. Valid values: `regional`, `global`.
