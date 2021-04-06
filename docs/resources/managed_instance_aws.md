@@ -76,6 +76,17 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
     key   = "explicit2"
     value = "value2"
   }
+  
+  block_device_mappings {
+      device_name = "/dev/xvdcz"
+      ebs {
+        delete_on_termination = "true"
+        volume_type = "gp3"
+        volume_size = 50
+        iops = 100
+        throughput = 125
+      }
+    }
 }
 ```
 
@@ -122,7 +133,7 @@ Default: false
 * `placement_tenancy` - (Optional) Valid values: `"default"`, `"dedicated"`.
 Default: default
 * `iam_instance_profile` - (Optional) Set IAM profile to instance. Set only one of ARN or Name.
-* `security_group_ids` - (Optional)  One or more security group IDs.
+* `security_group_ids` - (Optional) One or more security group IDs.
 * `image_id` - (Required) The ID of the image used to launch the instance.
 * `key_pair` - (Optional) Specify a Key Pair to attach to the instances.
 * `tags` - (Optional) Set tags for the instance. Items should be unique.
@@ -131,6 +142,14 @@ Default: default
 * `user_data` - (Optional) The Base64-encoded MIME user data to make available to the instances.
 * `shutdown_script` - (Optional) The Base64-encoded shutdown script to execute prior to instance termination.
 * `cpu_credits` - (Optional) cpuCredits can have one of two values: `"unlimited"`, `"standard"`.
+* `block_device_mappings` - (Optional) Attributes controls a portion of the AWS:
+    * `device_name` - (Required) The name of the device to mount.
+    * `volume_type` - (Optional, Default: `"standard"`) The type of volume. Can be `"standard"`, `"gp2"`, `"gp3"`, `"io1"`, `"st1"` or `"sc1"`.
+    * `volume_size` - (Optional) The size of the volume in gigabytes.
+    * `iops` - (Optional) The amount of provisioned [IOPS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-io-characteristics.html). This must be set with a `volume_type` of `"io1"`.
+    * `delete_on_termination` - (Optional) Whether the volume should be destroyed on instance termination.
+    * `throughput`- (Optional) The amount of data transferred to or from a storage device per second. Valid only if `volume_type` is set to `"gp3"`.
+
 Default: unlimited
   
 ### Network Interface - (Optional) List of network interfaces in an EC2 instance.

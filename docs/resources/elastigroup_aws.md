@@ -609,6 +609,8 @@ Usage:
         * `evaluation_periods` - (Optional, Default: `5`) Amount of cooldown evaluation periods for scale down.
         * `max_scale_down_percentage` - (Optional) Represents the maximum percent to scale-down. Number between 1-100.
     * `autoscale_attributes` - (Optional) A key/value mapping of tags to assign to the resource.
+    * `batch` - (Optional) Batch configuration object:
+        * `job_queue_names` - (Required) Array of strings.
 
 Usage:
 
@@ -633,6 +635,13 @@ Usage:
     autoscale_attributes {
       key   = "test.ecs.key"
       value = "test.ecs.value"
+    }
+
+    batch {
+      job_queue_names = [
+        "first-job",
+        "second-job"
+      ]
     }
   }
 ```
