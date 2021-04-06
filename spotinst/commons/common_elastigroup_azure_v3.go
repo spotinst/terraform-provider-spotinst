@@ -2,9 +2,8 @@ package commons
 
 import (
 	"fmt"
-	"log"
-
 	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )

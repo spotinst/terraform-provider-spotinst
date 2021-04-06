@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	v3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure"
