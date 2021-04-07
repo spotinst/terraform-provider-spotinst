@@ -41,6 +41,13 @@ const (
 	OceanGKELaunchSpecImport ResourceAffinity = "Ocean_GKE_Launch_Spec_Import"
 	OceanGKENetworkInterface ResourceAffinity = "Ocean_GKE_Network_Interface"
 
+	OceanAKS      ResourceAffinity = "Ocean_AKS"
+	OceanAKSLogin ResourceAffinity = "Ocean_AKS_Login"
+
+	OceanAKSVirtualNodeGroup                    ResourceAffinity = "Ocean_AKS_virtual_node_group"
+	OceanAKSVirtualNodeGroupAutoScaling         ResourceAffinity = "Ocean_AKS_virtual_node_group_Auto_Scaling"
+	OceanAKSVirtualNodeGroupLaunchSpecification ResourceAffinity = "Ocean_AKS_virtual_node_group_launch_specification"
+
 	OceanECS                    ResourceAffinity = "Ocean_ECS"
 	OceanECSAutoScaler          ResourceAffinity = "Ocean_ECS_Auto_Scaler"
 	OceanECSInstanceTypes       ResourceAffinity = "Ocean_ECS_Instance_Types"

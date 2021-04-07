@@ -89,12 +89,12 @@ func resourceSpotinstClusterGKEImportCreate(resourceData *schema.ResourceData, m
 		return err
 	}
 
-	clusterId, err := createGKEImportedCluster(cluster, meta.(*Client))
+	clusterID, err := createGKEImportedCluster(cluster, meta.(*Client))
 	if err != nil {
 		return err
 	}
 
-	resourceData.SetId(spotinst.StringValue(clusterId))
+	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> GKE imported cluster created successfully: %s <===", resourceData.Id())
 	return resourceSpotinstClusterGKEImportRead(resourceData, meta)
@@ -209,7 +209,7 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 		Cluster: cluster,
 	}
 
-	clusterId := resourceData.Id()
+	clusterID := resourceData.Id()
 
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
@@ -218,7 +218,7 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 	}
 
 	if _, err := meta.(*Client).ocean.CloudProviderGCP().UpdateCluster(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to update GKE cluster [%v]: %v", clusterId, err)
+		return fmt.Errorf("[ERROR] Failed to update GKE cluster [%v]: %v", clusterID, err)
 	}
 
 	return nil
@@ -242,9 +242,9 @@ func resourceSpotinstClusterGKEImportDelete(resourceData *schema.ResourceData, m
 }
 
 func deleteGKEImportCluster(resourceData *schema.ResourceData, meta interface{}) error {
-	clusterId := resourceData.Id()
+	clusterID := resourceData.Id()
 	input := &gcp.DeleteClusterInput{
-		ClusterID: spotinst.String(clusterId),
+		ClusterID: spotinst.String(clusterID),
 	}
 
 	if json, err := commons.ToJson(input); err != nil {
