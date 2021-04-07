@@ -1,5 +1,19 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks: added support for `resource_group_name` 
+* resource/spotinst_ocean_aks: added support for `custom_data`
+* resource/spotinst_ocean_aks: added support for `vm_sizes` 
+* resource/spotinst_ocean_aks: added support for `os_disk` 
+* resource/spotinst_ocean_aks: added support for `image` 
+* resource/spotinst_ocean_aks: added support for `strategy` 
+* resource/spotinst_ocean_aks: added support for `health` 
+* resource/spotinst_ocean_aks: added support for `network` 
+* resource/spotinst_ocean_aks: added support for `extension` 
+* resource/spotinst_ocean_aks: added support for `load_balancer` 
+* resource/spotinst_ocean_aks: added support for `autoscaler`
+* resource/spotinst_ocean_aks: added support for `tag`
+		
 ## 1.47.0 (June 6, 2021)
 
 ENHANCEMENTS:

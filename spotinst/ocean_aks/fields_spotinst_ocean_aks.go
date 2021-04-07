@@ -136,8 +136,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *string = nil
-			if cluster.AKS != nil && cluster.AKS.Name != nil {
-				value = cluster.AKS.Name
+			if cluster.AKS != nil && cluster.AKS.ResourceGroupName != nil {
+				value = cluster.AKS.ResourceGroupName
 			}
 			if err := resourceData.Set(string(AKSResourceGroupName), value); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AKSResourceGroupName), err)

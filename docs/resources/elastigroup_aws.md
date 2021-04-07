@@ -49,12 +49,12 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   instance_types_preferred_spot = ["m3.xlarge"]
 
   instance_types_weights {
-    instance_type = "c3.large"
+    instance_type = "m3.xlarge"
     weight        = 10
   }
   
   instance_types_weights {
-    instance_type = "c4.xlarge"
+    instance_type = "m3.2xlarge"
     weight        = 16
   }
 
@@ -143,10 +143,10 @@ Note: This parameter is required if you specify subnets (through subnet_ids). Th
 * `preferred_availability_zones` - The AZs to prioritize when launching Spot instances. If no markets are available in the Preferred AZs, Spot instances are launched in the non-preferred AZs. 
 Note: Must be a sublist of `availability_zones` and `orientation` value must not be `"equalAzDistribution"`.
 
-* `max_size` - (Optional; Required if using scaling policies) The maximum number of instances the group should have at any time.
-* `min_size` - (Optional; Required if using scaling policies) The minimum number of instances the group should have at any time.
+* `max_size` - (Optional, Required if using scaling policies) The maximum number of instances the group should have at any time.
+* `min_size` - (Optional, Required if using scaling policies) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
-* `capacity_unit` - (Optional, Default: `"instance"`) The capacity unit to launch instances by. If not specified, when choosing the weight unit, each instance will weight as the number of its vCPUs.
+* `capacity_unit` - (Optional, Default: `instance`) The capacity unit to launch instances by. If not specified, when choosing the weight unit, each instance will weight as the number of its vCPUs. Valid values: `instance`, `weight`.
 
 * `security_groups` - (Required) A list of associated security group IDS.
 * `image_id` - (Optional) The ID of the AMI used to launch the instance.
@@ -156,7 +156,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `user_data` - (Optional) The user data to provide when launching the instance.
 * `shutdown_script` - (Optional) The Base64-encoded shutdown script that executes prior to instance termination, for more information please see: [Shutdown Script](https://api.spotinst.com/integration-docs/elastigroup/concepts/compute-concepts/shutdown-scripts/)
 * `ebs_optimized` - (Optional) Enable high bandwidth connectivity between instances and AWS’s Elastic Block Store (EBS). For instance types that are EBS-optimized by default this parameter will be ignored.
-* `placement_tenancy` - (Optional) Enable dedicated tenancy. Note: There is a flat hourly fee for each region in which dedicated tenancy is used.
+* `placement_tenancy` - (Optional, Default: "default") Enable dedicated tenancy. Note: There is a flat hourly fee for each region in which dedicated tenancy is used. Valid values: "default", "dedicated" .
 * `metadata_options` - (Optional) Data that used to configure or manage the running instances:
     * `http_tokens` - (Required) The state of token usage for your instance metadata requests. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional, Default: `1`) The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further instance metadata requests can travel. Valid values: Integers from `1` to `64`.
@@ -174,13 +174,12 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.
 * `wait_for_capacity` - (Optional) Minimum number of instances in a 'HEALTHY' status that is required before continuing. This is ignored when updating with blue/green deployment. Cannot exceed `desired_capacity`.
 * `wait_for_capacity_timeout` - (Optional) Time (seconds) to wait for instances to report a 'HEALTHY' status. Useful for plans with multiple dependencies that take some time to initialize. Leave undefined or set to `0` to indicate no wait. This is ignored when updating with blue/green deployment. 
-* `orientation` - (Required, Default: `"balanced"`) Select a prediction strategy. Valid values: `"balanced"`, `"costOriented"`, `"equalAzDistribution"`, `"availabilityOriented"`.    
+* `orientation` - (Required, Default: `balanced`) Select a prediction strategy. Valid values: `balanced`, `costOriented`, `equalAzDistribution`, `availabilityOriented`. You can read more in our documentation.
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `utilize_reserved_instances` - (Optional) In a case of any available reserved instances, Elastigroup will utilize them first before purchasing Spot instances.
-* `minimum_instance_lifetime` - (Optional) Defines the preferred minimum instance lifetime. Markets which comply with this preference will be prioritized. Optional values: 1, 3, 6, 12, 24. 
-
+* `minimum_instance_lifetime` - (Optional) Defines the preferred minimum instance lifetime in hours. Markets which comply with this preference will be prioritized. Optional values: 1, 3, 6, 12, 24.
 * `scaling_strategy` - (Optional) Set termination policy.
     * `terminate_at_end_of_billing_hour` - (Optional) Specify whether to terminate instances at the end of each billing hour.
     * `termination_policy` - (Optional) - Determines whether to terminate the newest instances when performing a scaling action. Valid values: `"default"`, `"newestInstance"`.

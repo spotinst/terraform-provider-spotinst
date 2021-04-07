@@ -41,6 +41,9 @@ func (res *OceanAKSTerraformResource) OnCreate(
 	clusterWrapper := NewAKSClusterWrapper()
 
 	if importedCluster != nil {
+		// This is the merge part of the import action
+		// onCreate on every field is the override action on top of what returned from Spot API
+		buildEmptyAKSClusterImportRequirements(importedCluster)
 		clusterWrapper.SetCluster(importedCluster)
 	}
 
@@ -113,6 +116,27 @@ func NewAKSClusterWrapper() *AKSClusterWrapper {
 			VirtualNodeGroupTemplate: &azure.VirtualNodeGroupTemplate{
 				LaunchSpecification: &azure.LaunchSpecification{
 					Login: &azure.Login{},
+					Image: &azure.Image{
+						MarketplaceImage: &azure.MarketplaceImage{},
+					},
+					Extensions: []*azure.Extension{},
+					Network: &azure.Network{
+						NetworkInterfaces: []*azure.NetworkInterface{},
+					},
+					LoadBalancersConfig: &azure.LoadBalancersConfig{
+						LoadBalancers: []*azure.LoadBalancer{},
+					},
+					Tags: []*azure.Tag{},
+				},
+				VMSizes: &azure.VMSizes{},
+			},
+			Strategy: &azure.Strategy{},
+			Health:   &azure.Health{},
+			AutoScaler: &azure.AutoScaler{
+				ResourceLimits: &azure.ResourceLimits{},
+				Down:           &azure.Down{},
+				Headroom: &azure.Headroom{
+					Automatic: &azure.Automatic{},
 				},
 			},
 		},
@@ -125,4 +149,22 @@ func (clusterWrapper *AKSClusterWrapper) GetCluster() *azure.Cluster {
 
 func (clusterWrapper *AKSClusterWrapper) SetCluster(cluster *azure.Cluster) {
 	clusterWrapper.cluster = cluster
+}
+
+func buildEmptyAKSClusterImportRequirements(cluster *azure.Cluster) {
+	if cluster == nil {
+		return
+	}
+
+	if cluster.Strategy == nil {
+		cluster.SetStrategy(&azure.Strategy{})
+	}
+
+	if cluster.AutoScaler == nil {
+		cluster.SetAutoScaler(&azure.AutoScaler{})
+	}
+
+	if cluster.Health == nil {
+		cluster.SetHealth(&azure.Health{})
+	}
 }

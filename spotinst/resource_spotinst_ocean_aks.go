@@ -14,7 +14,17 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_auto_scaling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_extensions"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_health"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_image"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_launch_specification"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_load_balancers"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_login"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_network"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_os_disk"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_strategy"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_vm_sizes"
 )
 
 func resourceSpotinstOceanAKS() *schema.Resource {
@@ -39,6 +49,16 @@ func setupClusterAKSResource() {
 
 	ocean_aks.Setup(fieldsMap)
 	ocean_aks_login.Setup(fieldsMap)
+	ocean_aks_launch_specification.Setup(fieldsMap)
+	ocean_aks_auto_scaling.Setup(fieldsMap)
+	ocean_aks_strategy.Setup(fieldsMap)
+	ocean_aks_health.Setup(fieldsMap)
+	ocean_aks_vm_sizes.Setup(fieldsMap)
+	ocean_aks_os_disk.Setup(fieldsMap)
+	ocean_aks_image.Setup(fieldsMap)
+	ocean_aks_extensions.Setup(fieldsMap)
+	ocean_aks_load_balancers.Setup(fieldsMap)
+	ocean_aks_network.Setup(fieldsMap)
 
 	commons.OceanAKSResource = commons.NewOceanAKSResource(fieldsMap)
 }
