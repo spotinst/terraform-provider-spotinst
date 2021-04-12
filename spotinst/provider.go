@@ -51,6 +51,8 @@ func Provider() terraform.ResourceProvider {
 			string(commons.OceanGKELaunchSpecImportResourceName): resourceSpotinstOceanGKELaunchSpecImport(),
 			string(commons.OceanECSResourceName):                 resourceSpotinstOceanECS(),
 			string(commons.OceanECSLaunchSpecResourceName):       resourceSpotinstOceanECSLaunchSpec(),
+			string(commons.OceanAKSResourceName):                 resourceSpotinstOceanAKS(),
+			string(commons.OceanAKSVirtualNodeGroupResourceName): resourceSpotinstOceanAKSVirtualNodeGroup(),
 
 			// Multai.
 			string(commons.MultaiBalancerResourceName):    resourceSpotinstMultaiBalancer(),

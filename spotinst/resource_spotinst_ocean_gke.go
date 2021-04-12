@@ -59,12 +59,12 @@ func resourceSpotinstClusterGKECreate(resourceData *schema.ResourceData, meta in
 		return err
 	}
 
-	clusterId, err := createGKECluster(cluster, meta.(*Client))
+	clusterID, err := createGKECluster(cluster, meta.(*Client))
 	if err != nil {
 		return err
 	}
 
-	resourceData.SetId(spotinst.StringValue(clusterId))
+	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 	return resourceSpotinstClusterGKERead(resourceData, meta)
@@ -167,7 +167,7 @@ func updateGKECluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, m
 		Cluster: cluster,
 	}
 
-	clusterId := resourceData.Id()
+	clusterID := resourceData.Id()
 
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
@@ -176,7 +176,7 @@ func updateGKECluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, m
 	}
 
 	if _, err := meta.(*Client).ocean.CloudProviderGCP().UpdateCluster(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterId, err)
+		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterID, err)
 	}
 
 	return nil
@@ -200,9 +200,9 @@ func resourceSpotinstClusterGKEDelete(resourceData *schema.ResourceData, meta in
 }
 
 func deleteGKECluster(resourceData *schema.ResourceData, meta interface{}) error {
-	clusterId := resourceData.Id()
+	clusterID := resourceData.Id()
 	input := &gcp.DeleteClusterInput{
-		ClusterID: spotinst.String(clusterId),
+		ClusterID: spotinst.String(clusterID),
 	}
 
 	if json, err := commons.ToJson(input); err != nil {

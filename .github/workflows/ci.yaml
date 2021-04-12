@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        make_target: [test, vet]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # https://help.github.com/en/actions/reference/workflow-commands-for-github-actions
+      - name: Set build variables
+        run: |
+          echo "MAKE_TARGET=${{ matrix.make_target }}" >> $GITHUB_ENV
+
+      - name: Run ${{matrix.make_target}}
+        run: |
+          make $MAKE_TARGET
+
+  lint:
+    runs-on: ubuntu-latest
+    container: bflad/tfproviderlint:0.19
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          tfproviderlint \
+            -c 1 \
+            -AT001 \
+            -AT002 \
+            -S001 \
+            -S002 \
+            -S003 \
+            -S004 \
+            -S005 \
+            -S007 \
+            -S008 \
+            -S009 \
+            -S010 \
+            -S011 \
+            -S012 \
+            -S013 \
+            -S014 \
+            -S015 \
+            -S016 \
+            -S017 \
+            -S019 \
+            ./...
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Docscheck
+        run: |
+          make docscheck
