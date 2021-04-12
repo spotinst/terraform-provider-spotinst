@@ -1,5 +1,9 @@
 ## Unreleased
 
+FEATURES:
+* **New Resource:** `spotinst_ocean_aks`
+* **New Resource:** `spotinst_ocean_aks_virtual_node_group`
+
 ## 1.37.0 (April 5, 2021)
 
 ENHANCEMENTS:
