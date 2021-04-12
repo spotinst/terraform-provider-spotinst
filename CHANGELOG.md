@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.38.0 (April 12, 2021)
+
 FEATURES:
 * **New Resource:** `spotinst_ocean_aks`
 * **New Resource:** `spotinst_ocean_aks_virtual_node_group`
