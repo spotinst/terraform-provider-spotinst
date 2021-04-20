@@ -1,7 +1,13 @@
 ## Unreleased
 
 BUG FIXES:
-* resource/spotinst_ocean_ecs: resolved error with update`capacity` fields to 0 
+* resource/spotinst_ocean_ecs: resolved error with update `capacity` fields to 0 
+
+## 1.39.0 (April 20, 2021)
+
+BUG FIXES:
+
+* resource/spotinst_ocean_aks: retry failed import
 
 ## 1.38.0 (April 12, 2021)
 

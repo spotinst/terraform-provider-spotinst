@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -76,16 +74,7 @@ func createAKSVirtualNodeGroup(ctx context.Context, virtualNodeGroup *azure.Virt
 		VirtualNodeGroup: virtualNodeGroup,
 	}
 
-	var output *azure.CreateVirtualNodeGroupOutput
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
-		o, err := spotinstClient.ocean.CloudProviderAzure().CreateVirtualNodeGroup(ctx, input)
-		if err != nil {
-			// Some other error, report it.
-			return resource.NonRetryableError(err)
-		}
-		output = o
-		return nil
-	})
+	output, err := spotinstClient.ocean.CloudProviderAzure().CreateVirtualNodeGroup(ctx, input)
 	if err != nil {
 		return nil, fmt.Errorf("ocean/aks: failed to create cluster: %v", err)
 	}
@@ -129,8 +118,8 @@ func readAKSVirtualNodeGroup(ctx context.Context, virtualNodeGroupID string, spo
 
 	output, err := spotinstClient.ocean.CloudProviderAzure().ReadVirtualNodeGroup(ctx, input)
 	if err != nil {
-		// If the virtualNodeGroup was not found, return nil so that we can show
-		// that it does not exist
+		// If the virtual node group was not found, return nil so that we can
+		// show that it does not exist.
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
 				if err.Code == ErrCodeAKSVirtualNodeGroupNotFound {
