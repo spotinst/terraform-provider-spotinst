@@ -1,5 +1,8 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_ocean_ecs: resolved error with update`capacity` fields to 0 
+
 ## 1.38.0 (April 12, 2021)
 
 FEATURES:
