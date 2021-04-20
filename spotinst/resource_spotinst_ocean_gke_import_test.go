@@ -14,7 +14,7 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-var GcpClusterName = "terraform-tests-do-not-delete"
+var GcpClusterName = "terraform-tests-do-not-delete-2"
 
 func init() {
 	resource.AddTestSweepers("resource_spotinst_ocean_gke_import", &resource.Sweeper{
@@ -151,7 +151,7 @@ func createOceanGKEImportTerraform(clusterMeta *OceanGKEImportMetadata) string {
 
 // region Ocean GKE Import: Baseline
 func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete"
+	spotClusterName := "terraform-tests-do-not-delete-2"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
@@ -195,7 +195,7 @@ const testBaselineOceanGKEImportConfig_Create = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
- cluster_name = "terraform-tests-do-not-delete"
+ cluster_name = "terraform-tests-do-not-delete-2"
  location     = "us-central1-a"
 
  whitelist = ["n1-standard-1", "n1-standard-2"]
@@ -211,7 +211,7 @@ const testBaselineOceanGKEImportConfig_Update = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
- cluster_name = "terraform-tests-do-not-delete"
+ cluster_name = "terraform-tests-do-not-delete-2"
  location     = "us-central1-a"
 
  whitelist = ["n1-standard-1"]
@@ -224,7 +224,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
 
 //region Ocean GKE Import: BackendServices
 func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete"
+	spotClusterName := "terraform-tests-do-not-delete-2"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
@@ -305,7 +305,7 @@ const testBackendServicesOceanGKEImportConfig_Update = `
 
 // region Ocean GKE Import: Scheduling
 func TestAccSpotinstOceanGKEImport_Scheduling(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete"
+	spotClusterName := "terraform-tests-do-not-delete-2"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
@@ -396,7 +396,7 @@ const testOceanGKEScheduling_Update = `
 
 // region Ocean GKE Import: autoscaler
 func TestAccSpotinstOceanGKEImport_Autoscaler(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete"
+	spotClusterName := "terraform-tests-do-not-delete-2"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster

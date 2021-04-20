@@ -569,15 +569,17 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 			},
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+
 					clusterName:         clusterName,
 					controllerClusterID: controllerClusterID,
 					strategy:            testStrategyConfig_EmptyFields,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
-					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "0"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "-1"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
 				),
@@ -959,6 +961,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					controllerClusterID: controllerClusterID,
 					fieldsToAppend:      testUpdatePolicyAWSClusterConfig_EmptyFields,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
