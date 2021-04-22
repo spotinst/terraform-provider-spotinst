@@ -201,7 +201,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
-					resource.TestCheckResourceAttr(resourceName, "min_size", "2"),
+					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
 				),
 			},
@@ -239,7 +239,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   region = "us-west-2"
 
   max_size         = 10
-  min_size         = 2
+  min_size         = 0
   desired_capacity = 2
 
   subnet_ids      = ["subnet-bce60ec4"]
@@ -569,15 +569,17 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 			},
 			{
 				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+
 					clusterName:         clusterName,
 					controllerClusterID: controllerClusterID,
 					strategy:            testStrategyConfig_EmptyFields,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
-					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "0"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "-1"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
 				),
@@ -959,6 +961,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					controllerClusterID: controllerClusterID,
 					fieldsToAppend:      testUpdatePolicyAWSClusterConfig_EmptyFields,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
