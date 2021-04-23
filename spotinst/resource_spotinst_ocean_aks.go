@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -79,16 +80,7 @@ func createAKSCluster(cluster *azure.Cluster, spotinstClient *Client) (*string, 
 		Cluster: cluster,
 	}
 
-	var output *azure.CreateClusterOutput
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
-		o, err := spotinstClient.ocean.CloudProviderAzure().CreateCluster(context.TODO(), input)
-		if err != nil {
-			// Some other error, report it.
-			return resource.NonRetryableError(err)
-		}
-		output = o
-		return nil
-	})
+	output, err := spotinstClient.ocean.CloudProviderAzure().CreateCluster(context.TODO(), input)
 	if err != nil {
 		return nil, fmt.Errorf("ocean/aks: failed to create cluster: %v", err)
 	}
@@ -136,8 +128,8 @@ func readAKSCluster(ctx context.Context, clusterID string, spotinstClient *Clien
 
 	output, err := spotinstClient.ocean.CloudProviderAzure().ReadCluster(ctx, input)
 	if err != nil {
-		// If the virtualNodeGroup was not found, return nil so that we can show
-		// that it does not exist
+		// If the cluster was not found, return nil so that we can show that it
+		// does not exist.
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
 				if err.Code == ErrCodeClusterNotFound {
@@ -246,19 +238,25 @@ func importAKSCluster(resourceData *schema.ResourceData, spotinstClient *Client)
 			}},
 	}
 
-	output, err := spotinstClient.ocean.CloudProviderAzure().ImportCluster(context.TODO(), input)
-	if err != nil {
-		// If the cluster was not found, return nil so that we can show
-		// that the cluster is gone.
-		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
-			for _, err := range errs {
-				if err.Code == ErrCodeClusterNotFound {
-					resourceData.SetId("")
-					return nil, err
+	var output *azure.ImportClusterOutput
+	err := resource.Retry(time.Hour, func() *resource.RetryError {
+		o, err := spotinstClient.ocean.CloudProviderAzure().ImportCluster(context.TODO(), input)
+		if err != nil {
+			// Check whether the request should be retried.
+			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+				for _, e := range errs {
+					if strings.Contains(e.Code, "FAILED_TO_IMPORT_OCEAN_CLUSTER") {
+						return resource.RetryableError(e)
+					}
 				}
 			}
+			// Some other error, report it.
+			return resource.NonRetryableError(err)
 		}
-		// Some other error, report it.
+		output = o
+		return nil
+	})
+	if err != nil {
 		return nil, fmt.Errorf("ocean/aks: failed to import cluster: %v", err)
 	}
 
