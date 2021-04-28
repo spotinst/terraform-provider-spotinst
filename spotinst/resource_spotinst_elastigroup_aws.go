@@ -221,7 +221,11 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 				for _, err := range errs {
 					if err.Code == "InvalidParameterValue" &&
-						strings.Contains(err.Message, "Invalid IAM Instance Profile") {
+						strings.Contains(strings.ToLower(err.Message), "invalid iam instance profile") {
+						return resource.RetryableError(err)
+					}
+					if err.Code == "CANT_CREATE_GROUP" &&
+						strings.Contains(strings.ToLower(err.Message), "failed to create group") {
 						return resource.RetryableError(err)
 					}
 				}
