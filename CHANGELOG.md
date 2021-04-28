@@ -1,5 +1,8 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: retry creation for `cant_create_group` errors 
+
 ## 1.40.0 (April 25, 2021)
 
 BUG FIXES:
