@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.42.0 (April 29, 2021)
+
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: retry creation for `cant_validate_image` errors
 
