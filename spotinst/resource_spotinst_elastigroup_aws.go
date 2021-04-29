@@ -228,6 +228,10 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 						strings.Contains(strings.ToLower(err.Message), "failed to create group") {
 						return resource.RetryableError(err)
 					}
+					if err.Code == "CANT_VALIDATE_IMAGE" &&
+						strings.Contains(strings.ToLower(err.Message), "can't validate ami") {
+						return resource.RetryableError(err)
+					}
 				}
 			}
 
