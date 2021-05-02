@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added support for `initial_nodes`
+
 ## 1.41.0 (April 28, 2021)
 
 BUG FIXES:

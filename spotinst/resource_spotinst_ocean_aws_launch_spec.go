@@ -51,7 +51,7 @@ func resourceSpotinstOceanAWSLaunchSpecCreate(resourceData *schema.ResourceData,
 		return err
 	}
 
-	launchSpecId, err := createLaunchSpec(launchSpec, meta.(*Client))
+	launchSpecId, err := createLaunchSpec(resourceData, launchSpec, meta.(*Client))
 	if err != nil {
 		return err
 	}
@@ -60,7 +60,7 @@ func resourceSpotinstOceanAWSLaunchSpecCreate(resourceData *schema.ResourceData,
 	return resourceSpotinstOceanAWSLaunchSpecRead(resourceData, meta)
 }
 
-func createLaunchSpec(launchSpec *aws.LaunchSpec, spotinstClient *Client) (*string, error) {
+func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchSpec, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(launchSpec); err != nil {
 		return nil, err
 	} else {
@@ -68,6 +68,17 @@ func createLaunchSpec(launchSpec *aws.LaunchSpec, spotinstClient *Client) (*stri
 	}
 
 	input := &aws.CreateLaunchSpecInput{LaunchSpec: launchSpec}
+
+	if createActions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.CreateActions)); exists {
+		list := createActions.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if initialNodes, ok := m[string(ocean_aws_launch_spec.InitialNodes)].(int); ok && initialNodes > 0 {
+				input.InitialNodes = spotinst.Int(initialNodes)
+			}
+		}
+	}
 
 	var resp *aws.CreateLaunchSpecOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
