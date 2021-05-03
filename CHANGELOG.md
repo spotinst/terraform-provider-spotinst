@@ -1,7 +1,12 @@
 ## Unreleased
 
 ENHANCEMENTS:
-* resource/spotinst_ocean_aws_launch_spec: added support for `initial_nodes`
+* resource/spotinst_ocean_aws_launch_spec: added support for `initial_noodes`
+
+## 1.42.0 (April 29, 2021)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: retry creation for `cant_validate_image` errors
 
 ## 1.41.0 (April 28, 2021)
 
