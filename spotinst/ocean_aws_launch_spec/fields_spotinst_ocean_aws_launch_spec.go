@@ -1148,6 +1148,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[CreateOptions] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		CreateOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(InitialNodes): {
+						Type:     schema.TypeInt,
+						Required: true,
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
