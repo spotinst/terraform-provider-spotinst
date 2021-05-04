@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added support for `initial_noodes`
+
 ## 1.42.0 (April 29, 2021)
 
 BUG FIXES:

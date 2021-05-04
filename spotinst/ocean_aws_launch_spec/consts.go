@@ -78,3 +78,8 @@ const (
 const (
 	SpotPercentage commons.FieldName = "spot_percentage"
 )
+
+const (
+	CreateOptions commons.FieldName = "create_options"
+	InitialNodes  commons.FieldName = "initial_nodes"
+)
