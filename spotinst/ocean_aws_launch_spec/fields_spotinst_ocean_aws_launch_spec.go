@@ -1149,9 +1149,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[CreateActions] = commons.NewGenericField(
+	fieldsMap[CreateOptions] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
-		CreateActions,
+		CreateOptions,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,

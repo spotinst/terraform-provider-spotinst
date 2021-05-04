@@ -86,7 +86,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     spot_percentage = 70
   }
   
-  create_actions {
+  create_options {
     initial_nodes = 1
   }
 }

@@ -80,6 +80,6 @@ const (
 )
 
 const (
-	CreateActions commons.FieldName = "create_actions"
+	CreateOptions commons.FieldName = "create_options"
 	InitialNodes  commons.FieldName = "initial_nodes"
 )

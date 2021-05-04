@@ -69,8 +69,8 @@ func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchS
 
 	input := &aws.CreateLaunchSpecInput{LaunchSpec: launchSpec}
 
-	if createActions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.CreateActions)); exists {
-		list := createActions.([]interface{})
+	if createOptions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.CreateOptions)); exists {
+		list := createOptions.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
