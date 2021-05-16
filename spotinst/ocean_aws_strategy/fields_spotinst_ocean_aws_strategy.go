@@ -120,6 +120,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional:     true,
 			Default:      -1,
 			ValidateFunc: validation.IntAtLeast(-1),
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				if old == "-1" && new == "0" {
+					return true
+				}
+				return false
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
