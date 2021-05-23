@@ -30,14 +30,16 @@ const (
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
 
-	OceanGKE                 ResourceAffinity = "Ocean_GKE"
-	OceanGKEImport           ResourceAffinity = "Ocean_GKE_Import"
-	OceanGKEImportScheduling ResourceAffinity = "Ocean_GKE_Import_Scheduling"
-	OceanGKEImportAutoScaler ResourceAffinity = "Ocean_GKE_Import_Auto_Scaler"
-	OceanGKEInstanceTypes    ResourceAffinity = "Ocean_GKE_Instance_Types"
-	OceanGKEAutoScaling      ResourceAffinity = "Ocean_GKE_Auto_Scaling"
-	OceanGKEStrategy         ResourceAffinity = "Ocean_GKE_Strategy"
-	OceanGKELaunchSpec       ResourceAffinity = "Ocean_GKE_Launch_Spec"
+	OceanGKE                   ResourceAffinity = "Ocean_GKE"
+	OceanGKEImport             ResourceAffinity = "Ocean_GKE_Import"
+	OceanGKEImportScheduling   ResourceAffinity = "Ocean_GKE_Import_Scheduling"
+	OceanGKEImportAutoScaler   ResourceAffinity = "Ocean_GKE_Import_Auto_Scaler"
+	OceanGKEInstanceTypes      ResourceAffinity = "Ocean_GKE_Instance_Types"
+	OceanGKEAutoScaling        ResourceAffinity = "Ocean_GKE_Auto_Scaling"
+	OceanGKEStrategy           ResourceAffinity = "Ocean_GKE_Strategy"
+	OceanGKELaunchSpec         ResourceAffinity = "Ocean_GKE_Launch_Spec"
+	OceanGKELaunchSpecStrategy ResourceAffinity = "Ocean_GKE_Launch_Spec_Strategy"
+
 	OceanGKELaunchSpecImport ResourceAffinity = "Ocean_GKE_Launch_Spec_Import"
 	OceanGKENetworkInterface ResourceAffinity = "Ocean_GKE_Network_Interface"
 
