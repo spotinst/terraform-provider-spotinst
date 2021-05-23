@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec"
-
 	"log"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec_strategy"
 )
 
 func resourceSpotinstOceanGKELaunchSpec() *schema.Resource {
@@ -36,6 +36,7 @@ func setupOceanGKELaunchSpecResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	ocean_gke_launch_spec.Setup(fieldsMap)
+	ocean_gke_launch_spec_strategy.Setup(fieldsMap)
 
 	commons.OceanGKELaunchSpecResource = commons.NewOceanGKELaunchSpecResource(fieldsMap)
 }

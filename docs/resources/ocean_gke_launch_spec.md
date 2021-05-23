@@ -40,6 +40,10 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
     gpu_per_unit = 0
     memory_per_unit = 2048
   }
+
+  strategy {
+    preemptible_percentage = 30
+  }
 }
 ```
 ```
@@ -52,7 +56,7 @@ output "ocean_launchspec_id" {
 
 The following arguments are supported:
 
-* `ocean_id` - (Required) The Ocean cluster ID required for launchSpec create. 
+* `ocean_id` - (Required) The Ocean cluster ID. 
 * `source_image` - (Required) Image URL.
 * `metadata` - (Required) Cluster's metadata.
     * `key` - (Required) The metadata key.
@@ -70,6 +74,8 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+* `strategy` - (Optional) The Ocean Launch Spec Strategy object.
+    * `preemptible_percentage` - (Optional) Defines the desired preemptible percentage for this launch specification.
 
 
 ## Attributes Reference
