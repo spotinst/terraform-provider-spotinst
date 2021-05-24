@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.44.0 (May 24, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: added support for `strategy` ([#190](https://github.com/spotinst/terraform-provider-spotinst/pull/190))
+
 ## 1.43.0 (May 4, 2021)
 
 ENHANCEMENTS:
