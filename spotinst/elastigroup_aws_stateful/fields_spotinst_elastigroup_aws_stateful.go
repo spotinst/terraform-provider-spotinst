@@ -257,6 +257,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+
+	fieldsMap[StatefulApiOperations] = commons.NewGenericField(
+		commons.ElastigroupAWSStateful,
+		StatefulApiOperations,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StatefulInstanceID): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(PauseStatefulInstance): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						//ConflictsWith: []string{string(ResumeStatefulInstance), string(RecycleStatefulInstance), string(DeallocateStatefulInstance)},
+					},
+
+					string(ResumeStatefulInstance): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						//ConflictsWith: []string{string(PauseStatefulInstance), string(RecycleStatefulInstance), string(DeallocateStatefulInstance)},
+					},
+
+					string(RecycleStatefulInstance): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						//ConflictsWith: []string{string(ResumeStatefulInstance), string(PauseStatefulInstance), string(DeallocateStatefulInstance)},
+					},
+					string(DeAllocateStatefulInstance): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						//ConflictsWith: []string{string(ResumeStatefulInstance), string(PauseStatefulInstance), string(RecycleStatefulInstance)},
+					},
+				},
+			},
+		},
+		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

@@ -20,4 +20,13 @@ const (
 	ShouldDeleteVolumes           commons.FieldName = "should_delete_volumes"
 	ShouldDeleteSnapshots         commons.FieldName = "should_delete_snapshots"
 	// ----------------------------------------
+
+	// - API Operations -------------------------
+	StatefulApiOperations      commons.FieldName = "stateful_api_operations"
+	StatefulInstanceID         commons.FieldName = "stateful_instance_id"
+	PauseStatefulInstance      commons.FieldName = "pause_stateful_instance"
+	ResumeStatefulInstance     commons.FieldName = "resume_stateful_instance"
+	RecycleStatefulInstance    commons.FieldName = "recycle_stateful_instance"
+	DeAllocateStatefulInstance commons.FieldName = "de_allocate_stateful_instance"
+	// ----------------------------------------
 )

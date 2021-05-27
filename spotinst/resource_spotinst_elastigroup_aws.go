@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"log"
 	"strings"
 	"time"
@@ -261,6 +262,8 @@ func resourceSpotinstElastigroupAWSUpdate(resourceData *schema.ResourceData, met
 		return err
 	}
 
+	log.Printf("should update is %s", stringutil.Stringify(shouldUpdate))
+
 	if shouldUpdate {
 		elastigroup.SetId(spotinst.String(id))
 		if err := updateGroup(elastigroup, resourceData, meta); err != nil {
@@ -300,6 +303,46 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	}
 
+	if statefulApiOperations, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulApiOperations)); exists {
+		log.Printf("update stateful instances")
+		list := statefulApiOperations.([]interface{})
+		for idx, _ := range list {
+			m := list[idx].(map[string]interface{})
+
+			if pauseStateful, ok := m[string(elastigroup_aws_stateful.PauseStatefulInstance)].(bool); ok && pauseStateful == true {
+				log.Printf("Pausing stateful instance [%v]...", elastigroup_aws_stateful.StatefulInstanceID)
+				if err := pauseStatefulInstance(resourceData, meta, m); err != nil {
+					log.Printf("[ERROR] Stateful instance [%v] pause failed, error: %v", elastigroup_aws_stateful.StatefulInstanceID, err)
+					return err
+				}
+			}
+
+			if resumeStateful, ok := m[string(elastigroup_aws_stateful.ResumeStatefulInstance)].(bool); ok && resumeStateful == true {
+				log.Printf("Resuming stateful instance [%v]...", elastigroup_aws_stateful.StatefulInstanceID)
+				if err := resumeStatefulInstance(resourceData, meta, m); err != nil {
+					log.Printf("[ERROR] Stateful instance [%v] resume failed, error: %v", elastigroup_aws_stateful.StatefulInstanceID, err)
+					return err
+				}
+			}
+
+			if recycleStateful, ok := m[string(elastigroup_aws_stateful.RecycleStatefulInstance)].(bool); ok && recycleStateful == true {
+				log.Printf("Recycling stateful instance [%v]...", elastigroup_aws_stateful.StatefulInstanceID)
+				if err := recycleStatefulInstance(resourceData, meta, m); err != nil {
+					log.Printf("[ERROR] Stateful instance [%v] recycle failed, error: %v", elastigroup_aws_stateful.StatefulInstanceID, err)
+					return err
+				}
+			}
+
+			if deAllocateStateful, ok := m[string(elastigroup_aws_stateful.DeAllocateStatefulInstance)].(bool); ok && deAllocateStateful == true {
+				log.Printf("De-allocating stateful instance [%v]...", elastigroup_aws_stateful.StatefulInstanceID)
+				if err := deAllocateStatefulInstance(resourceData, meta, m); err != nil {
+					log.Printf("[ERROR] Stateful instance [%v] de-allocate failed, error: %v", elastigroup_aws_stateful.StatefulInstanceID, err)
+					return err
+				}
+			}
+		}
+	}
+
 	if json, err := commons.ToJson(elastigroup); err != nil {
 		return err
 	} else {
@@ -331,6 +374,114 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	}
 	return nil
+}
+
+func pauseStatefulInstance(resourceData *schema.ResourceData, meta interface{}, m map[string]interface{}) error {
+	var err error
+
+	ctx := context.Background()
+	groupID := resourceData.Id()
+
+	statefulInstanceID := m[string(elastigroup_aws_stateful.StatefulInstanceID)].(string)
+	log.Printf("stateful instance id is %v", statefulInstanceID)
+
+	var input = &aws.PauseStatefulInstanceInput{
+		GroupID:            &groupID,
+		StatefulInstanceID: spotinst.String(statefulInstanceID),
+	}
+
+	svc := meta.(*Client).elastigroup.CloudProviderAWS()
+
+	_, err = svc.PauseStatefulInstance(ctx, input)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] onPauseInstance() -> Field pausing [%v] instance for group [%v]", statefulInstanceID, groupID)
+	}
+
+	log.Printf("onPauseInstance() -> Successfully paused group [%v]", statefulInstanceID)
+	return nil
+
+}
+
+func resumeStatefulInstance(resourceData *schema.ResourceData, meta interface{}, m map[string]interface{}) error {
+	var err error
+
+	ctx := context.Background()
+	groupID := resourceData.Id()
+
+	statefulInstanceID := m[string(elastigroup_aws_stateful.StatefulInstanceID)].(string)
+	log.Printf("stateful instance id is %v", statefulInstanceID)
+
+	var input = &aws.ResumeStatefulInstanceInput{
+		GroupID:            &groupID,
+		StatefulInstanceID: spotinst.String(statefulInstanceID),
+	}
+
+	svc := meta.(*Client).elastigroup.CloudProviderAWS()
+
+	_, err = svc.ResumeStatefulInstance(ctx, input)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] onResumeInstance() -> Field resuming [%v] instance for group [%v]", statefulInstanceID, groupID)
+	}
+
+	log.Printf("onResumeInstance() -> Successfully resumed instance [%v]", statefulInstanceID)
+	return nil
+
+}
+
+func recycleStatefulInstance(resourceData *schema.ResourceData, meta interface{}, m map[string]interface{}) error {
+	var err error
+
+	ctx := context.Background()
+	groupID := resourceData.Id()
+
+	statefulInstanceID := m[string(elastigroup_aws_stateful.StatefulInstanceID)].(string)
+	log.Printf("stateful instance id is %v", statefulInstanceID)
+
+	var input = &aws.RecycleStatefulInstanceInput{
+		GroupID:            &groupID,
+		StatefulInstanceID: spotinst.String(statefulInstanceID),
+	}
+
+	svc := meta.(*Client).elastigroup.CloudProviderAWS()
+
+	_, err = svc.RecycleStatefulInstance(ctx, input)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] onRecycleInstance() -> Field recycling [%v] instance for group [%v]", statefulInstanceID, groupID)
+	}
+
+	log.Printf("onRecycleInstance() -> Successfully recycled instance [%v]", statefulInstanceID)
+	return nil
+
+}
+
+func deAllocateStatefulInstance(resourceData *schema.ResourceData, meta interface{}, m map[string]interface{}) error {
+	var err error
+
+	ctx := context.Background()
+	groupID := resourceData.Id()
+
+	statefulInstanceID := m[string(elastigroup_aws_stateful.StatefulInstanceID)].(string)
+	log.Printf("stateful instance id is %v", statefulInstanceID)
+
+	var input = &aws.DeallocateStatefulInstanceInput{
+		GroupID:            &groupID,
+		StatefulInstanceID: spotinst.String(statefulInstanceID),
+	}
+
+	svc := meta.(*Client).elastigroup.CloudProviderAWS()
+
+	_, err = svc.DeallocateStatefulInstance(ctx, input)
+
+	if err != nil {
+		return fmt.Errorf("[ERROR] onDeallocateInstance() -> Field de-allocating [%v] instance for group [%v]", statefulInstanceID, groupID)
+	}
+
+	log.Printf("onDeallocateInstance() -> Successfully de-allocated group [%v]", statefulInstanceID)
+	return nil
+
 }
 
 func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {

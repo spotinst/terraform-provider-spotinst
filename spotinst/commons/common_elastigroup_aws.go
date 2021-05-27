@@ -101,6 +101,7 @@ func (res *ElastigroupTerraformResource) OnUpdate(
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
+			log.Printf("on update is nill")
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
