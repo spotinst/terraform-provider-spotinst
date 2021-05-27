@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.44.1 (May 28, 2021)
+
 BUG FIXES:
 * resource/spotinst_ocean_gke_launch_spec: fix `preemptiblePercentage.onUpdate` ([#191](https://github.com/spotinst/terraform-provider-spotinst/pull/191))
 
