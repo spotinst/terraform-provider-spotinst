@@ -569,6 +569,30 @@ Usage:
    }
 ```    
 
+<a id="stateful-api-operations"></a>
+## Stateful API Operations
+
+* `stateful_api_action` - (Optional) Can contain only one action
+    * `stateful_instance_id` - (Required) String, Should be the instance on which we want to perform the action.
+    * `pause_stateful_instance` - (Optional) Boolean, Pause the desired stateful instance.
+    * `resume_stateful_instance` - (Optional) Boolean, Resume the desired stateful instance.
+    * `recycle_stateful_instance` - (Optional) Boolean, Recycle the desired stateful instance.
+    * `de_allocate_stateful_instance` - (Optional) Boolean, De-allocate the desired stateful instance.
+
+Usage:
+
+```hcl
+  stateful_api_action {
+     stateful_instance_id = ssi-.......
+     pause_stateful_instance = true
+   }
+   
+  stateful_api_action {
+     stateful_instance_id = ssi-.......
+     recycle_stateful_instance = true
+   }
+```  
+
 <a id="health-check"></a>
 ## Health Check
 

@@ -274,24 +274,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(PauseStatefulInstance): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						//ConflictsWith: []string{string(ResumeStatefulInstance), string(RecycleStatefulInstance), string(DeallocateStatefulInstance)},
+						//ConflictsWith: []string{string(ResumeStatefulInstance)},
 					},
 
 					string(ResumeStatefulInstance): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						//ConflictsWith: []string{string(PauseStatefulInstance), string(RecycleStatefulInstance), string(DeallocateStatefulInstance)},
+						//ConflictsWith: []string{string(PauseStatefulInstance)},
 					},
 
 					string(RecycleStatefulInstance): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						//ConflictsWith: []string{string(ResumeStatefulInstance), string(PauseStatefulInstance), string(DeallocateStatefulInstance)},
 					},
 					string(DeAllocateStatefulInstance): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						//ConflictsWith: []string{string(ResumeStatefulInstance), string(PauseStatefulInstance), string(RecycleStatefulInstance)},
 					},
 				},
 			},
