@@ -258,9 +258,95 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil, nil, nil, nil,
 	)
 
-	fieldsMap[StatefulApiOperations] = commons.NewGenericField(
+	fieldsMap[StatefulInstancesActions] = commons.NewGenericField(
 		commons.ElastigroupAWSStateful,
-		StatefulApiOperations,
+		StatefulInstancesActions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StatefulInstancePauseAction): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(StatefulInstanceID): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(PauseStatefulInstance): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+							},
+						},
+					},
+					string(StatefulInstanceResumeAction): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(StatefulInstanceID): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(ResumeStatefulInstance): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+							},
+						},
+					},
+					string(StatefulInstanceRecycleAction): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(StatefulInstanceID): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(RecycleStatefulInstance): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+							},
+						},
+					},
+					string(StatefulInstanceDeAllocateAction): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(StatefulInstanceID): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(DeAllocateStatefulInstance): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	/*fieldsMap[StatefulInstancePauseAction] = commons.NewGenericField(
+		commons.ElastigroupAWSStateful,
+		StatefulInstancePauseAction,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -272,34 +358,103 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(PauseStatefulInstance): {
-						Type:     schema.TypeBool,
-						Optional: true,
-						//ConflictsWith: []string{string(ResumeStatefulInstance)},
-					},
-
-					string(ResumeStatefulInstance): {
-						Type:     schema.TypeBool,
-						Optional: true,
-						//ConflictsWith: []string{string(PauseStatefulInstance)},
-					},
-
-					string(RecycleStatefulInstance): {
-						Type:     schema.TypeBool,
-						Optional: true,
-					},
-					string(DeAllocateStatefulInstance): {
-						Type:     schema.TypeBool,
-						Optional: true,
+						Type:          schema.TypeBool,
+						Optional:      true,
 					},
 				},
 			},
 		},
+
 		nil, nil,
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
 		},
 		nil,
 	)
+
+	fieldsMap[StatefulInstanceResumeAction] = commons.NewGenericField(
+		commons.ElastigroupAWSStateful,
+		StatefulInstanceResumeAction,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StatefulInstanceID): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(ResumeStatefulInstance): {
+						Type:          schema.TypeBool,
+						Optional:      true,
+					},
+				},
+			},
+		},
+
+		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[StatefulInstanceRecycleAction] = commons.NewGenericField(
+		commons.ElastigroupAWSStateful,
+		StatefulInstanceRecycleAction,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StatefulInstanceID): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(RecycleStatefulInstance): {
+						Type:          schema.TypeBool,
+						Optional:      true,
+					},
+				},
+			},
+		},
+
+		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[StatefulInstanceDeAllocateAction] = commons.NewGenericField(
+		commons.ElastigroupAWSStateful,
+		StatefulInstanceDeAllocateAction,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StatefulInstanceID): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(DeAllocateStatefulInstance): {
+						Type:          schema.TypeBool,
+						Optional:      true,
+					},
+				},
+			},
+		},
+
+		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)*/
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

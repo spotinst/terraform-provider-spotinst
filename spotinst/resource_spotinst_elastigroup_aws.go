@@ -303,9 +303,9 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	}
 
-	if statefulApiOperations, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulApiOperations)); exists {
+	if instancePauseAction, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulInstancePauseAction)); exists {
 		log.Printf("update stateful instances")
-		list := statefulApiOperations.([]interface{})
+		list := instancePauseAction.([]interface{})
 		for idx, _ := range list {
 			m := list[idx].(map[string]interface{})
 
@@ -316,6 +316,14 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 					return err
 				}
 			}
+		}
+	}
+
+	if instanceResumeAction, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulInstanceResumeAction)); exists {
+		log.Printf("update stateful instances")
+		list := instanceResumeAction.([]interface{})
+		for idx, _ := range list {
+			m := list[idx].(map[string]interface{})
 
 			if resumeStateful, ok := m[string(elastigroup_aws_stateful.ResumeStatefulInstance)].(bool); ok && resumeStateful == true {
 				log.Printf("Resuming stateful instance [%v]...", elastigroup_aws_stateful.StatefulInstanceID)
@@ -324,6 +332,14 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 					return err
 				}
 			}
+		}
+	}
+
+	if instanceRecycleAction, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulInstanceRecycleAction)); exists {
+		log.Printf("update stateful instances")
+		list := instanceRecycleAction.([]interface{})
+		for idx, _ := range list {
+			m := list[idx].(map[string]interface{})
 
 			if recycleStateful, ok := m[string(elastigroup_aws_stateful.RecycleStatefulInstance)].(bool); ok && recycleStateful == true {
 				log.Printf("Recycling stateful instance [%v]...", elastigroup_aws_stateful.StatefulInstanceID)
@@ -332,6 +348,14 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 					return err
 				}
 			}
+		}
+	}
+
+	if instanceDeAllocateAction, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulInstanceDeAllocateAction)); exists {
+		log.Printf("update stateful instances")
+		list := instanceDeAllocateAction.([]interface{})
+		for idx, _ := range list {
+			m := list[idx].(map[string]interface{})
 
 			if deAllocateStateful, ok := m[string(elastigroup_aws_stateful.DeAllocateStatefulInstance)].(bool); ok && deAllocateStateful == true {
 				log.Printf("De-allocating stateful instance [%v]...", elastigroup_aws_stateful.StatefulInstanceID)
