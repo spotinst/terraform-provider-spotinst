@@ -59,8 +59,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
 			var value *gcp.LaunchSpecStrategy = nil
-			if value, ok := resourceData.GetOk(string(Strategy)); ok {
-				if strategy, err := expandStrategy(value); err != nil {
+			if v, ok := resourceData.GetOk(string(Strategy)); ok {
+				if strategy, err := expandStrategy(v); err != nil {
 					return err
 				} else {
 					value = strategy
