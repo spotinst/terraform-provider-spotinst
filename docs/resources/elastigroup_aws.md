@@ -570,7 +570,7 @@ Usage:
 ```    
 
 <a id="stateful-api-operations"></a>
-## Stateful API Operations
+## Stateful API Operations - need to be fixed
 
 * `stateful_api_action` - (Optional) Can contain only one action
     * `stateful_instance_id` - (Required) String, Should be the instance on which we want to perform the action.
