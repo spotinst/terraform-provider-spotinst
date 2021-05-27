@@ -248,6 +248,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+
 					string(ShouldDeleteSnapshots): {
 						Type:     schema.TypeBool,
 						Optional: true,
@@ -257,6 +258,34 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+
+	fieldsMap[StatefulInstanceAction] = commons.NewGenericField(
+		commons.ElastigroupAWSStateful,
+		StatefulInstanceAction,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StatefulInstanceID): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(ActionType): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
