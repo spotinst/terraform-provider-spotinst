@@ -48,6 +48,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeBool,
 									Required: true,
 								},
+
 								string(AssignPublicIP): {
 									Type:     schema.TypeBool,
 									Required: true,
@@ -70,6 +71,24 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 													value := v.(string)
 													return strings.ToUpper(value)
 												},
+											},
+										},
+									},
+								},
+
+								string(ApplicationSecurityGroup): {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Name): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+
+											string(ResourceGroupName): {
+												Type:     schema.TypeString,
+												Required: true,
 											},
 										},
 									},
@@ -141,6 +160,9 @@ func flattenAzureGroupNetworkInterfaces(networkInterfaces []*azurev3.NetworkInte
 		if inter.AdditionalIPConfigs != nil {
 			m[string(AdditionalIPConfigs)] = flattenAzureAdditionalIPConfigs(inter.AdditionalIPConfigs)
 		}
+		if inter.ApplicationSecurityGroups != nil {
+			m[string(ApplicationSecurityGroup)] = flattenApplicationSecurityGroups(inter.ApplicationSecurityGroups)
+		}
 		result = append(result, m)
 	}
 
@@ -154,6 +176,19 @@ func flattenAzureAdditionalIPConfigs(additionalIPConfigs []*azurev3.AdditionalIP
 		m := make(map[string]interface{})
 		m[string(Name)] = spotinst.StringValue(additionalIPConfig.Name)
 		m[string(PrivateIPVersion)] = spotinst.StringValue(additionalIPConfig.PrivateIPAddressVersion)
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenApplicationSecurityGroups(applicationSecurityGroups []*azurev3.ApplicationSecurityGroup) []interface{} {
+	result := make([]interface{}, 0, len(applicationSecurityGroups))
+
+	for _, applicationSecurityGroup := range applicationSecurityGroups {
+		m := make(map[string]interface{})
+		m[string(Name)] = spotinst.StringValue(applicationSecurityGroup.Name)
+		m[string(ResourceGroupName)] = spotinst.StringValue(applicationSecurityGroup.ResourceGroupName)
 		result = append(result, m)
 	}
 
@@ -210,6 +245,13 @@ func expandAzureGroupNetworkInterfaces(data interface{}) ([]*azurev3.NetworkInte
 				networkInterface.SetAdditionalIPConfigs(additionalIPConfigs)
 			}
 		}
+		if v, ok := attr[string(ApplicationSecurityGroup)]; ok {
+			if ApplicationSecurityGroups, err := expandApplicationSecurityGroups(v); err != nil {
+				return nil, err
+			} else {
+				networkInterface.SetApplicationSecurityGroups(ApplicationSecurityGroups)
+			}
+		}
 		networkInterfaces = append(networkInterfaces, networkInterface)
 	}
 
@@ -236,4 +278,26 @@ func expandAzureGroupAddlConfigs(data interface{}) ([]*azurev3.AdditionalIPConfi
 	}
 
 	return addlConfigs, nil
+}
+
+func expandApplicationSecurityGroups(data interface{}) ([]*azurev3.ApplicationSecurityGroup, error) {
+	list := data.(*schema.Set).List()
+	applicationSecurityGroups := make([]*azurev3.ApplicationSecurityGroup, 0, len(list))
+
+	for _, item := range list {
+		attr, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		applicationSecurityGroup := &azurev3.ApplicationSecurityGroup{}
+		if v, ok := attr[string(Name)].(string); ok && v != "" {
+			applicationSecurityGroup.SetName(spotinst.String(v))
+		}
+		if v, ok := attr[string(ResourceGroupName)].(string); ok && v != "" {
+			applicationSecurityGroup.SetResourceGroupName(spotinst.String(v))
+		}
+		applicationSecurityGroups = append(applicationSecurityGroups, applicationSecurityGroup)
+	}
+
+	return applicationSecurityGroups, nil
 }

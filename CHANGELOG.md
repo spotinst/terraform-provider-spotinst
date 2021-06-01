@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: added support for `application_security_group` ([#196](https://github.com/spotinst/terraform-provider-spotinst/pull/196))
+
 ## 1.46.0 (June 3, 2021)
 
 ENHANCEMENTS:
