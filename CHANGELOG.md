@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.45.1 (June 2, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: fix(elastigroup/aws): stateful: fix log messages
+
 ## 1.45.0 (June 2, 2021)
 
 ENHANCEMENTS:
