@@ -303,7 +303,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 	if instanceActions, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulInstanceAction)); exists {
 		actionList := instanceActions.([]interface{})
 		if err := checkStatefulActionUniqueness(actionList); err != nil {
-			log.Printf("[ERROR] Multiple actions are not allowed for the same instance, error: %v", err)
+			log.Printf("[ERROR] Uniqueness check failed with error: %v", err)
 			return err
 		}
 
@@ -330,7 +330,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 				err = fmt.Errorf("unsupported action %q on instance %q", actionType, instanceID)
 			}
 			if err != nil {
-				log.Printf("[ERROR] Stateful instance [%v] action failed with error: %v", instanceID, err)
+				log.Printf("[ERROR] Stateful instance (%s) action failed with error: %v", instanceID, err)
 				return err
 			}
 		}
@@ -391,7 +391,7 @@ func pauseStatefulInstance(ctx context.Context, svc aws.Service, groupID, instan
 	}
 	_, err := svc.PauseStatefulInstance(ctx, input)
 	if err != nil {
-		return fmt.Errorf("failed to pause  instance (%s): %v", instanceID, err)
+		return fmt.Errorf("failed to pause instance (%s): %v", instanceID, err)
 	}
 
 	log.Printf("Successfully paused instance (%s)", instanceID)
@@ -407,7 +407,7 @@ func resumeStatefulInstance(ctx context.Context, svc aws.Service, groupID, insta
 	}
 	_, err := svc.ResumeStatefulInstance(ctx, input)
 	if err != nil {
-		return fmt.Errorf("failed to resume  instance (%s): %v", instanceID, err)
+		return fmt.Errorf("failed to resume instance (%s): %v", instanceID, err)
 	}
 
 	log.Printf("Successfully resumed instance (%s)", instanceID)
@@ -423,7 +423,7 @@ func recycleStatefulInstance(ctx context.Context, svc aws.Service, groupID, inst
 	}
 	_, err := svc.RecycleStatefulInstance(ctx, input)
 	if err != nil {
-		return fmt.Errorf("failed to recycle  instance (%s): %v", instanceID, err)
+		return fmt.Errorf("failed to recycle instance (%s): %v", instanceID, err)
 	}
 
 	log.Printf("Successfully recycled instance (%s)", instanceID)
@@ -439,7 +439,7 @@ func deallocateStatefulInstance(ctx context.Context, svc aws.Service, groupID, i
 	}
 	_, err := svc.DeallocateStatefulInstance(ctx, input)
 	if err != nil {
-		return fmt.Errorf("failed to deallocate  instance (%s): %v", instanceID, err)
+		return fmt.Errorf("failed to deallocate instance (%s): %v", instanceID, err)
 	}
 
 	log.Printf("Successfully deallocated instance (%s)", instanceID)
