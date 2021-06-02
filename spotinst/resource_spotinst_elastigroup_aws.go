@@ -300,6 +300,42 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	}
 
+	if instanceActions, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulInstanceAction)); exists {
+		actionList := instanceActions.([]interface{})
+		if err := checkStatefulActionUniqueness(actionList); err != nil {
+			log.Printf("[ERROR] Multiple actions are not allowed for the same instance, error: %v", err)
+			return err
+		}
+
+		ctx := context.TODO()
+		svc := meta.(*Client).elastigroup.CloudProviderAWS()
+
+		for _, action := range actionList {
+			var (
+				actionMap  = action.(map[string]interface{})
+				actionType = actionMap[string(elastigroup_aws_stateful.ActionType)].(string)
+				instanceID = actionMap[string(elastigroup_aws_stateful.StatefulInstanceID)].(string)
+				err        error
+			)
+			switch strings.ToLower(actionType) {
+			case "pause":
+				err = pauseStatefulInstance(ctx, svc, resourceData.Id(), instanceID)
+			case "resume":
+				err = resumeStatefulInstance(ctx, svc, resourceData.Id(), instanceID)
+			case "recycle":
+				err = recycleStatefulInstance(ctx, svc, resourceData.Id(), instanceID)
+			case "deallocate":
+				err = deallocateStatefulInstance(ctx, svc, resourceData.Id(), instanceID)
+			default:
+				err = fmt.Errorf("unsupported action %q on instance %q", actionType, instanceID)
+			}
+			if err != nil {
+				log.Printf("[ERROR] Stateful instance [%v] action failed with error: %v", instanceID, err)
+				return err
+			}
+		}
+	}
+
 	if json, err := commons.ToJson(elastigroup); err != nil {
 		return err
 	} else {
@@ -330,6 +366,83 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 			}
 		}
 	}
+	return nil
+}
+
+func checkStatefulActionUniqueness(actionList []interface{}) error {
+	seenIDs := make(map[string]struct{})
+	for _, action := range actionList {
+		actionMap := action.(map[string]interface{})
+		instanceID := actionMap[string(elastigroup_aws_stateful.StatefulInstanceID)].(string)
+		if _, seen := seenIDs[instanceID]; seen {
+			return fmt.Errorf("multiple actions are not allowed for the same instance (%v)", instanceID)
+		}
+		seenIDs[instanceID] = struct{}{}
+	}
+	return nil
+}
+
+func pauseStatefulInstance(ctx context.Context, svc aws.Service, groupID, instanceID string) error {
+	log.Printf("Pausing instance (%s)", instanceID)
+
+	input := &aws.PauseStatefulInstanceInput{
+		GroupID:            spotinst.String(groupID),
+		StatefulInstanceID: spotinst.String(instanceID),
+	}
+	_, err := svc.PauseStatefulInstance(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to pause  instance (%s): %v", instanceID, err)
+	}
+
+	log.Printf("Successfully paused instance (%s)", instanceID)
+	return nil
+}
+
+func resumeStatefulInstance(ctx context.Context, svc aws.Service, groupID, instanceID string) error {
+	log.Printf("Resuming instance (%s)", instanceID)
+
+	input := &aws.ResumeStatefulInstanceInput{
+		GroupID:            spotinst.String(groupID),
+		StatefulInstanceID: spotinst.String(instanceID),
+	}
+	_, err := svc.ResumeStatefulInstance(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to resume  instance (%s): %v", instanceID, err)
+	}
+
+	log.Printf("Successfully resumed instance (%s)", instanceID)
+	return nil
+}
+
+func recycleStatefulInstance(ctx context.Context, svc aws.Service, groupID, instanceID string) error {
+	log.Printf("Recycling instance (%s)", instanceID)
+
+	input := &aws.RecycleStatefulInstanceInput{
+		GroupID:            spotinst.String(groupID),
+		StatefulInstanceID: spotinst.String(instanceID),
+	}
+	_, err := svc.RecycleStatefulInstance(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to recycle  instance (%s): %v", instanceID, err)
+	}
+
+	log.Printf("Successfully recycled instance (%s)", instanceID)
+	return nil
+}
+
+func deallocateStatefulInstance(ctx context.Context, svc aws.Service, groupID, instanceID string) error {
+	log.Printf("Deallocating instance (%s)", instanceID)
+
+	input := &aws.DeallocateStatefulInstanceInput{
+		GroupID:            spotinst.String(groupID),
+		StatefulInstanceID: spotinst.String(instanceID),
+	}
+	_, err := svc.DeallocateStatefulInstance(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to deallocate  instance (%s): %v", instanceID, err)
+	}
+
+	log.Printf("Successfully deallocated instance (%s)", instanceID)
 	return nil
 }
 

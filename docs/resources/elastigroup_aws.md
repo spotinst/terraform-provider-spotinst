@@ -569,6 +569,27 @@ Usage:
    }
 ```    
 
+<a id="stateful_instance_action"></a>
+## Stateful Instance Action
+
+* `stateful_instance_action` - (Optional)
+    * `stateful_instance_id` - (Required) String, Stateful Instance ID on which the action should be performed.
+    * `type` - (Required) String, Action type. Supported action types: `pause`, `resume`, `recycle`, `deallocate`.
+
+Usage:
+
+```hcl
+  stateful_instance_action {
+    type                 = "pause"
+    stateful_instance_id = "ssi-foo"
+  }
+
+  stateful_instance_action {
+    type                 = "recycle"
+    stateful_instance_id = "ssi-bar"
+  }    
+```  
+
 <a id="health-check"></a>
 ## Health Check
 

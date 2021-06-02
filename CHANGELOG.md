@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added support for stateful instance actions: `pause`, `resume`, `recycle`, `deallocate` ([#192](https://github.com/spotinst/terraform-provider-spotinst/pull/192))
+
 ## 1.44.1 (May 28, 2021)
 
 BUG FIXES:
