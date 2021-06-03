@@ -574,7 +574,6 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					controllerClusterID: controllerClusterID,
 					strategy:            testStrategyConfig_EmptyFields,
 				}),
-				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
@@ -961,7 +960,6 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					controllerClusterID: controllerClusterID,
 					fieldsToAppend:      testUpdatePolicyAWSClusterConfig_EmptyFields,
 				}),
-				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),

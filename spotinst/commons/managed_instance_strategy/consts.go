@@ -11,4 +11,5 @@ const (
 	OptimizationWindows      commons.FieldName = "optimization_windows"
 	RevertToSpot             commons.FieldName = "revert_to_spot"
 	PerformAt                commons.FieldName = "perform_at"
+	MinimumInstanceLifetime  commons.FieldName = "minimum_instance_lifetime"
 )

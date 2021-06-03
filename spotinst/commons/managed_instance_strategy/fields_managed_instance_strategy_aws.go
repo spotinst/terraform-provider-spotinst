@@ -311,6 +311,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[MinimumInstanceLifetime] = commons.NewGenericField(
+		commons.ManagedInstanceAWSStrategy,
+		MinimumInstanceLifetime,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			var value *int = nil
+			if managedInstance.Strategy != nil && managedInstance.Strategy.MinimumInstanceLifetime != nil {
+				value = managedInstance.Strategy.MinimumInstanceLifetime
+			}
+			if value != nil {
+				if err := resourceData.Set(string(MinimumInstanceLifetime), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MinimumInstanceLifetime), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+				value := v.(int)
+				managedInstance.Strategy.SetMinimumInstanceLifetime(spotinst.Int(value))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			var minimumInstanceLifetime *int
+			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+				if value, ok := v.(int); ok && value > 0 {
+					minimumInstanceLifetime = spotinst.Int(value)
+				}
+			}
+			managedInstance.Strategy.SetMinimumInstanceLifetime(minimumInstanceLifetime)
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandOptimizationWindows(data interface{}) ([]string, error) {
