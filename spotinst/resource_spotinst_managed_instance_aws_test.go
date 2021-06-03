@@ -289,6 +289,7 @@ func TestAccSpotinstManagedInstanceStrategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0", "Mon:03:00-Wed:02:20"),
 					resource.TestCheckResourceAttr(resourceName, "revert_to_spot.0.perform_at", "never"),
+					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "1"),
 				),
 			},
 			{
@@ -309,6 +310,7 @@ func TestAccSpotinstManagedInstanceStrategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0", "Mon:03:30-Wed:02:30"),
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.1", "Mon:00:30-Wed:01:30"),
 					resource.TestCheckResourceAttr(resourceName, "revert_to_spot.0.perform_at", "always"),
+					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "3"),
 				),
 			},
 		},
@@ -325,6 +327,7 @@ const managedInstanceStrategy_Create = `
  revert_to_spot {   
   perform_at = "never"
  }
+ minimum_instance_lifetime = "1"
 `
 
 const managedInstanceStrategy_Update = `
@@ -337,6 +340,7 @@ const managedInstanceStrategy_Update = `
  revert_to_spot { 
  perform_at = "always"
 }
+ minimum_instance_lifetime = "3"
 `
 
 // endregion

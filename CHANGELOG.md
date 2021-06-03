@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.46.0 (June 3, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_namaged_instance_aws: added support for `minimum_instance_lifetime` ([#193](https://github.com/spotinst/terraform-provider-spotinst/pull/193))
+
 ## 1.45.1 (June 2, 2021)
 
 ENHANCEMENTS:
