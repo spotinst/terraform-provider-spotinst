@@ -1,5 +1,20 @@
 ## Unreleased
 
+## 1.45.1 (June 2, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: fix(elastigroup/aws): stateful: fix log messages
+
+## 1.45.0 (June 2, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added support for stateful instance actions: `pause`, `resume`, `recycle`, `deallocate` ([#192](https://github.com/spotinst/terraform-provider-spotinst/pull/192))
+
+## 1.44.1 (May 28, 2021)
+
+BUG FIXES:
+* resource/spotinst_ocean_gke_launch_spec: fix `preemptiblePercentage.onUpdate` ([#191](https://github.com/spotinst/terraform-provider-spotinst/pull/191))
+
 ## 1.44.0 (May 24, 2021)
 
 ENHANCEMENTS:

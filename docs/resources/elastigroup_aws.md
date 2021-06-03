@@ -561,6 +561,26 @@ Usage:
    }
 ```    
 
+### Stateful Instance Action
+
+* `stateful_instance_action` - (Optional)
+    * `stateful_instance_id` - (Required) String, Stateful Instance ID on which the action should be performed.
+    * `type` - (Required) String, Action type. Supported action types: `pause`, `resume`, `recycle`, `deallocate`.
+
+Usage:
+
+```hcl
+  stateful_instance_action {
+    type                 = "pause"
+    stateful_instance_id = "ssi-foo"
+  }
+
+  stateful_instance_action {
+    type                 = "recycle"
+    stateful_instance_id = "ssi-bar"
+  }    
+```  
+
 ### Health Check
 
 * `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
