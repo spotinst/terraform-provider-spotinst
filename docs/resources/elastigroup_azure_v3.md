@@ -54,13 +54,20 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   network {
     virtual_network_name = "VirtualNetworkName"
     resource_group_name  = "ResourceGroup"
+
     network_interfaces {
       subnet_name      = "default"
       assign_public_ip = false
       is_primary       = true
+
       additional_ip_configs {
         name             = "SecondaryIPConfig"
         PrivateIPVersion = "IPv4"
+      }
+
+      application_security_group {
+        name                = "ApplicationSecurityGroupName"
+        resource_group_name = "ResourceGroup"
       }
     }
   }
@@ -72,7 +79,7 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
     ssh_public_key = "33a2s1f3g5a1df5g1ad3f2g1adfg56dfg=="
   }
   // -------------------------------------------------------------------
-   
+}
 ```
 
 ## Argument Reference
@@ -82,7 +89,7 @@ The following arguments are supported:
 * `name` - (Required) The group name.
 * `region` - (Required) The region your Azure group will be created in.
 * `resource_group_name` - (Required) Name of the Resource Group for Elastigroup.
-* `os` - (Required) Operation system type. Valid values: `"Linux"`, `"Windows"`.
+* `os` - (Required) Type of the operating system. Valid values: `"Linux"`, `"Windows"`.
 * `max_size` - (Required) The maximum number of instances the group should have at any time.
 * `min_size` - (Required) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
@@ -150,19 +157,29 @@ The following arguments are supported:
         * `is_primary` - 
         * `additional_ip_configs` - (Optional) Array of additional IP configuration objects.
             * `name` - (Required) The IP configuration name.
-            * `private_ip_version` - (Optional) Available from Azure Api-Version 2017-03-30 onwards, it represents whether the specific ipconfiguration is IPv4 or IPv6. Valid values: `IPv4`, `IPv6`.
-
+            * `private_ip_version` - (Optional) Available from Azure Api-Version 2017-03-30 onwards, it represents whether the specific ip configuration is IPv4 or IPv6. Valid values: `IPv4`, `IPv6`.
+        * `application_security_group` - (Optional) - List of Application Security Groups that will be associated to the primary ip configuration of the network interface.
+            * `name` - (Required) - The name of the Application Security group.
+            * `resource_group_name` - (Required) - The resource group of the Application Security Group.
+      }
 ```hcl
   network {
     virtual_network_name = "VirtualNetworkName"
     resource_group_name  = "ResourceGroup"
+
     network_interfaces {
       subnet_name      = "default"
       assign_public_ip = false
       is_primary       = true
+
       additional_ip_configs {
         name             = "SecondaryIPConfig"
         PrivateIPVersion = "IPv4"
+      }
+
+      application_security_group {
+        name                = "ApplicationSecurityGroupName"
+        resource_group_name = "ResourceGroup"
       }
     }
   }

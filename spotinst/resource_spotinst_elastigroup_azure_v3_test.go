@@ -356,6 +356,9 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.is_primary", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.name", "terraformTestSecondaryIpConfig"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.574810785.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.574810785.name", "automation-application-security-group-DO-NOT-DELETE"),
 				),
 			},
 		},
@@ -371,9 +374,16 @@ const testAzureV3NetworkGroupConfig_Create = `
       subnet_name = "default"
       assign_public_ip = false
       is_primary = true
+
       additional_ip_configs {
         name = "terraformTestSecondaryIpConfig"
       }
+
+      application_security_group {
+        name = "automation-application-security-group-DO-NOT-DELETE"
+        resource_group_name = "AutomationResourceGroup"
+      }
+
   	}
   }
 // ---------------------------------------------
