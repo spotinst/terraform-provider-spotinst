@@ -1,5 +1,8 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_ocean_aks_virtual_node_group: make headroom fields optional
+
 ## 1.48.0 (June 10, 2021)
 
 ENHANCEMENTS:

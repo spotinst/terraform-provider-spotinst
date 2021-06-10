@@ -68,7 +68,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.VirtualNodeGroupAKSWrapper)
 			cluster := clusterWrapper.GetVirtualNodeGroup()
 			if v, ok := resourceData.GetOk(string(Autoscale)); ok {
-				if autoscaler, err := expandAutoScale(v); err != nil {
+				if autoscaler, err := expandAutoScale(v, false); err != nil {
 					return err
 				} else {
 					cluster.SetAutoScale(autoscaler)
@@ -81,7 +81,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetVirtualNodeGroup()
 			var value *azure.VirtualNodeGroupAutoScale = nil
 			if v, ok := resourceData.GetOk(string(Autoscale)); ok {
-				if autoscale, err := expandAutoScale(v); err != nil {
+				if autoscale, err := expandAutoScale(v, true); err != nil {
 					return err
 				} else {
 					value = autoscale
@@ -95,7 +95,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func expandAutoScale(data interface{}) (*azure.VirtualNodeGroupAutoScale, error) {
+func expandAutoScale(data interface{}, nullify bool) (*azure.VirtualNodeGroupAutoScale, error) {
 	autoscale := &azure.VirtualNodeGroupAutoScale{}
 	list := data.([]interface{})
 
@@ -106,7 +106,7 @@ func expandAutoScale(data interface{}) (*azure.VirtualNodeGroupAutoScale, error)
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(Headrooms)]; ok {
-		headroom, err := expandHeadrooms(v)
+		headroom, err := expandHeadrooms(v, nullify)
 		if err != nil {
 			return nil, err
 		}
@@ -136,7 +136,7 @@ func flattenAutoScale(autoScale *azure.VirtualNodeGroupAutoScale) []interface{} 
 	return out
 }
 
-func expandHeadrooms(data interface{}) ([]*azure.VirtualNodeGroupHeadroom, error) {
+func expandHeadrooms(data interface{}, nullify bool) ([]*azure.VirtualNodeGroupHeadroom, error) {
 	list := data.([]interface{})
 	headrooms := make([]*azure.VirtualNodeGroupHeadroom, 0, len(list))
 
@@ -147,30 +147,30 @@ func expandHeadrooms(data interface{}) ([]*azure.VirtualNodeGroupHeadroom, error
 		}
 
 		headroom := &azure.VirtualNodeGroupHeadroom{}
-		var cpuPerUnit *int
-		var memoryPerUnit *int
-		var numOfUnits *int
-		var gpuPerUnit *int
 
 		if v, ok := m[string(CPUPerUnit)].(int); ok && v > 0 {
-			cpuPerUnit = spotinst.Int(v)
+			headroom.SetCPUPerUnit(spotinst.Int(v))
+		} else if nullify {
+			headroom.SetCPUPerUnit(nil)
 		}
-		headroom.SetCPUPerUnit(cpuPerUnit)
 
 		if v, ok := m[string(MemoryPerUnit)].(int); ok && v > 0 {
-			memoryPerUnit = spotinst.Int(v)
+			headroom.SetMemoryPerUnit(spotinst.Int(v))
+		} else if nullify {
+			headroom.SetMemoryPerUnit(nil)
 		}
-		headroom.SetMemoryPerUnit(memoryPerUnit)
 
 		if v, ok := m[string(GPUPerUnit)].(int); ok && v > 0 {
-			gpuPerUnit = spotinst.Int(v)
+			headroom.SetGPUPerUnit(spotinst.Int(v))
+		} else if nullify {
+			headroom.SetGPUPerUnit(nil)
 		}
-		headroom.SetGPUPerUnit(gpuPerUnit)
 
 		if v, ok := m[string(NumOfUnits)].(int); ok && v > 0 {
-			numOfUnits = spotinst.Int(v)
+			headroom.SetNumOfUnits(spotinst.Int(v))
+		} else if nullify {
+			headroom.SetNumOfUnits(nil)
 		}
-		headroom.SetNumOfUnits(numOfUnits)
 
 		headrooms = append(headrooms, headroom)
 	}
