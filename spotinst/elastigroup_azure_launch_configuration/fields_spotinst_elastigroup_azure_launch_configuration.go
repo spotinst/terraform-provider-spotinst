@@ -207,7 +207,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern), string(UserData))
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern), string(CustomData))
 			return err
 		},
 		nil,
