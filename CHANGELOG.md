@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.48.0 (June 10, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks: added support for `resource_group_name` 
 * resource/spotinst_ocean_aks: added support for `custom_data`
