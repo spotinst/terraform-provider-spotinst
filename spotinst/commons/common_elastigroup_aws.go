@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	ElastigroupAWSResourceName ResourceName = "spotinst_elastigroup_aws"
 )
@@ -18,7 +15,7 @@ const (
 var ElastigroupResource *ElastigroupTerraformResource
 
 type ElastigroupTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type ElastigroupWrapper struct {

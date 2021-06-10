@@ -50,9 +50,6 @@ func setupClusterAWSResource() {
 	commons.OceanAWSResource = commons.NewOceanAWSResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanAWSResource.GetName())
@@ -111,9 +108,6 @@ func createAWSCluster(resourceData *schema.ResourceData, cluster *aws.Cluster, s
 	return resp.Cluster.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeClusterNotFound = "CLUSTER_DOESNT_EXIST"
 
 func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -154,9 +148,6 @@ func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta inte
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -254,9 +245,6 @@ func rollCluster(resourceData *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
@@ -288,10 +276,6 @@ func deleteAWSCluster(resourceData *schema.ResourceData, meta interface{}) error
 	}
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func expandOceanRollConfig(data interface{}, clusterID *string) (*aws.RollClusterInput, error) {
 	i := &aws.RollClusterInput{Roll: &aws.Roll{ClusterID: clusterID}}

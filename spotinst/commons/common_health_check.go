@@ -15,7 +15,7 @@ const (
 var HealthCheckResource *HealthCheckTerraformResource
 
 type HealthCheckTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type HealthCheckWrapper struct {

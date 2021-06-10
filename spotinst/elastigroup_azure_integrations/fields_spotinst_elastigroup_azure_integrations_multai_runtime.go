@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationMultaiRuntime] = commons.NewGenericField(
@@ -78,9 +75,6 @@ func SetupMultaiRuntime(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAzureGroupMultaiIntegration(data interface{}) (*azure.MultaiIntegration, error) {
 	integration := &azure.MultaiIntegration{}
 	list := data.([]interface{})

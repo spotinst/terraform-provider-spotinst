@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/managedinstance/providers/aws"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	ManagedInstanceAWSResourceName ResourceName = "spotinst_managed_instance_aws"
 )
@@ -18,7 +15,7 @@ const (
 var ManagedInstanceResource *ManagedInstanceTerraformResource
 
 type ManagedInstanceTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type MangedInstanceAWSWrapper struct {

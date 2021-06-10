@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	MultaiTargetSetResourceName ResourceName = "spotinst_multai_target_set"
 )
@@ -18,7 +15,7 @@ const (
 var MultaiTargetSetResource *MultaiTargetSetTerraformResource
 
 type MultaiTargetSetTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type MultaiTargetSetWrapper struct {

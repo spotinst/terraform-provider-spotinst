@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	OceanGKEResourceName ResourceName = "spotinst_ocean_gke"
 )
@@ -18,7 +15,7 @@ const (
 var OceanGKEResource *OceanGKETerraformResource
 
 type OceanGKETerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type GKEClusterWrapper struct {

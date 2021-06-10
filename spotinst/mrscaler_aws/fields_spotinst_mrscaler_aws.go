@@ -14,9 +14,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
@@ -944,9 +941,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//             Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandMRScalerAWSAvailabilityZones(data interface{}) ([]*mrscaler.AvailabilityZone, error) {
 	list := data.([]interface{})
 	zones := make([]*mrscaler.AvailabilityZone, 0, len(list))

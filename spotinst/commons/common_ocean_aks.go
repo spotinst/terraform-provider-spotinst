@@ -13,7 +13,7 @@ const OceanAKSResourceName ResourceName = "spotinst_ocean_aks"
 var OceanAKSResource *OceanAKSTerraformResource
 
 type OceanAKSTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type AKSClusterWrapper struct {

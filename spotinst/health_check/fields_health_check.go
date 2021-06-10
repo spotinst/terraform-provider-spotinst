@@ -9,10 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Name] = commons.NewGenericField(
 		commons.HealthCheck,
@@ -249,9 +245,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandCheck(data interface{}) (*healthcheck.Check, error) {
 	check := &healthcheck.Check{}
 	list := data.([]interface{})

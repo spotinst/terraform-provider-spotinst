@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	SuspendProcessesResourceName ResourceName = "spotinst_elastigroup_aws_suspension"
 )
@@ -18,7 +15,7 @@ const (
 var SuspendProcessesResource *SuspendProcessesTerraformResource
 
 type SuspendProcessesTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type SuspendProcessesWrapper struct {

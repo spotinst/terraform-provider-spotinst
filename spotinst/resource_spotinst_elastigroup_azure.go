@@ -63,9 +63,6 @@ func setupElastigroupAzureResource() {
 	commons.ElastigroupAzureResource = commons.NewElastigroupAzureResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAzureCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupAzureResource.GetName())
@@ -114,9 +111,6 @@ func createAzureGroup(group *azure.Group, spotinstClient *Client) (*string, erro
 	return resp.Group.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAzureRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceFieldOnRead),
@@ -154,9 +148,6 @@ func resourceSpotinstElastigroupAzureRead(resourceData *schema.ResourceData, met
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAzureUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -263,9 +254,6 @@ func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	return errResult
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAzureDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
@@ -298,9 +286,6 @@ func deleteAzureGroup(resourceData *schema.ResourceData, meta interface{}) error
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Fields Expand
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandElastigroupAzureRollConfig(data interface{}, groupID *string) (*azure.RollGroupInput, error) {
 	i := &azure.RollGroupInput{GroupID: groupID}
 	list := data.([]interface{})

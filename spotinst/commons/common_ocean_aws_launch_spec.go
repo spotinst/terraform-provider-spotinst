@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	OceanAWSLaunchSpecResourceName ResourceName = "spotinst_ocean_aws_launch_spec"
 )
@@ -18,7 +15,7 @@ const (
 var OceanAWSLaunchSpecResource *OceanAWSLaunchSpecTerraformResource
 
 type OceanAWSLaunchSpecTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type LaunchSpecWrapper struct {

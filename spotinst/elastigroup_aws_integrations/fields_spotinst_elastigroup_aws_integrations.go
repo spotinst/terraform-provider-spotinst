@@ -6,9 +6,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupEcs(fieldsMap)
 	SetupNomad(fieldsMap)
@@ -23,9 +20,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupElasticBeanstalk(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupAutoScaleHeadroom(data interface{}) (*aws.AutoScaleHeadroom, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		headroom := &aws.AutoScaleHeadroom{}

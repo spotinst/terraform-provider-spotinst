@@ -12,9 +12,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationKubernetes] = commons.NewGenericField(
@@ -153,9 +150,6 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesIntegration, error) {
 	integration := &aws.KubernetesIntegration{}
 	list := data.([]interface{})

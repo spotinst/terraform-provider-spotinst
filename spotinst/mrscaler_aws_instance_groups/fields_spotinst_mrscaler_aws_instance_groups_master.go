@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[MasterLifecycle] = commons.NewGenericField(
 		commons.MRScalerAWSMasterGroup,

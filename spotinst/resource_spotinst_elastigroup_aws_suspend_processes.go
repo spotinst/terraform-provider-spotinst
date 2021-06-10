@@ -40,9 +40,6 @@ func setupSuspendProcesses() {
 	commons.SuspendProcessesResource = commons.NewSuspendProcessesResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//          Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeSuspendProcessesNotFound = "SUSPEND_PROCESSES_DOESNT_EXIST"
 
 func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -88,12 +85,7 @@ func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, 
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//           Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstAWSSuspendProcessesCreate(resourceData *schema.ResourceData, meta interface{}) error {
-
 	log.Printf(string(commons.ResourceOnCreate), commons.SuspendProcessesResource.GetName())
 
 	suspendProcesses, err := commons.SuspendProcessesResource.OnCreate(resourceData, meta)
@@ -138,9 +130,6 @@ func createSuspendProcesses(resourceData *schema.ResourceData, suspendProcesses 
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//           Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstAWSSuspendProcessesDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.SuspendProcessesResource.GetName(), resourceId)
@@ -180,10 +169,6 @@ func deleteSuspendProcesses(resourceData *schema.ResourceData, meta interface{})
 	}
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstAWSSuspendProcessesUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	resourceId := resourceData.Id()

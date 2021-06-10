@@ -161,10 +161,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func expandAutoscaler(data interface{}) (*gcp.AutoScaler, error) {
 	autoscaler := &gcp.AutoScaler{}
 	list := data.([]interface{})

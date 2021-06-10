@@ -59,10 +59,6 @@ func setupElastigroupGCPResource() {
 	commons.ElastigroupGCPResource = commons.NewElastigroupGCPResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 // resourceSpotinstElastigroupGCPCreate begins the creation request and
 // creates an object representing the newly created group or returns an error.
 func resourceSpotinstElastigroupGCPCreate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -111,10 +107,6 @@ func createGCPGroup(elastigroup *gcp.Group, spotinstClient *Client) (*string, er
 	return resp.Group.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 // resourceSpotinstElastigroupGCPRead creates an object representing an existing elastigroup
 // by making a get request using the Spotinst API or returns an error.
 func resourceSpotinstElastigroupGCPRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -159,10 +151,6 @@ func resourceSpotinstElastigroupGCPRead(resourceData *schema.ResourceData, meta 
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 // resourceSpotinstElastigroupGCPUpdate updates an existing elastigroup
 // and creates an object representing the updated group or returns an error.
 func resourceSpotinstElastigroupGCPUpdate(resourceData *schema.ResourceData, meta interface{}) error {
@@ -203,10 +191,6 @@ func updateGCPGroup(elastigroup *gcp.Group, resourceData *schema.ResourceData, m
 
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // resourceSpotinstElastigroupGCPDelete deletes a specific elastigroup or returns an error.
 func resourceSpotinstElastigroupGCPDelete(resourceData *schema.ResourceData, meta interface{}) error {

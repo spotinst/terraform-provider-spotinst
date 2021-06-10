@@ -39,10 +39,6 @@ func setupMultaiDeploymentResource() {
 	commons.MultaiDeploymentResource = commons.NewMultaiDeploymentResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiDeploymentCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiDeploymentResource.GetName())
@@ -88,10 +84,6 @@ func createDeployment(deployment *multai.Deployment, spotinstClient *Client) (*s
 	return resp.Deployment.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiDeploymentRead(resourceData *schema.ResourceData, meta interface{}) error {
 	deploymentId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -117,10 +109,6 @@ func resourceSpotinstMultaiDeploymentRead(resourceData *schema.ResourceData, met
 	log.Printf("===> Deployment read successfully: %s <===", deploymentId)
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiDeploymentUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	deploymentId := resourceData.Id()
@@ -159,10 +147,6 @@ func updateDeployment(deployment *multai.Deployment, resourceData *schema.Resour
 
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiDeploymentDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	deploymentId := resourceData.Id()

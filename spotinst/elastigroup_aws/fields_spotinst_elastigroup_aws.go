@@ -14,9 +14,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
@@ -1149,9 +1146,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 var TargetGroupArnRegex = regexp.MustCompile(`arn:aws:elasticloadbalancing:.*:\d{12}:targetgroup/(.*)/.*`)
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Fields Expand
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, error) {
 	list := data.([]interface{})
 	zones := make([]*aws.AvailabilityZone, 0, len(list))
@@ -1493,9 +1487,6 @@ func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{
 	return result
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utilities
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func hashKV(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})

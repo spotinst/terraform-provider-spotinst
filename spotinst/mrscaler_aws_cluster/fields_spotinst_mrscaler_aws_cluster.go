@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[LogURI] = commons.NewGenericField(
@@ -306,10 +303,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utilities
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func flattenMRScalerAWSCluster(cluster *mrscaler.Cluster) []interface{} {
 	result := make(map[string]interface{})

@@ -7,9 +7,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[NetworkInterface] = commons.NewGenericField(
@@ -94,10 +91,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Expand Fields
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // expandNetworkInterface sets the values from the plan as objects
 func expandNetworkInterface(data interface{}) ([]*gcp.NetworkInterface, error) {

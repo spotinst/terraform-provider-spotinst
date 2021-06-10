@@ -97,9 +97,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func flattenAzureGroupMarketplaceImage(image *azure.MarketPlaceImage) []interface{} {
 	result := make(map[string]interface{})
 	result[string(Offer)] = spotinst.StringValue(image.Offer)

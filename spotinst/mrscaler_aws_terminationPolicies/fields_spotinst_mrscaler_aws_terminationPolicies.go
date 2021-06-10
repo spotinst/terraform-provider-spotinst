@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[TerminationPolicies] = commons.NewGenericField(
 		commons.MRScalerAWSTerminationPolicies,
@@ -120,9 +117,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utilities
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandTerminationPolicies(data interface{}) ([]*mrscaler.TerminationPolicy, error) {
 	list := data.([]interface{})
 	terminationPolicies := make([]*mrscaler.TerminationPolicy, 0, len(list))

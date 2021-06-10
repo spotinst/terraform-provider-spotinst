@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Strategy] = commons.NewGenericField(
 		commons.MRScalerAWSStrategy,
@@ -183,10 +180,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Utilities
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func expandProvisioningTimeout(data interface{}) (*mrscaler.ProvisioningTimeout, error) {
 	pt := &mrscaler.ProvisioningTimeout{}

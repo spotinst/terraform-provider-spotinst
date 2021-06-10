@@ -1,32 +1,27 @@
 package commons
 
 import (
+	"encoding/json"
 	"log"
 	"math/rand"
 	"time"
 
-	"encoding/json"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Init
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func init() {
 	rand.Seed(time.Now().UnixNano())
 
-	// Remove timestamp from provider logger, use the timestamp from the terraform logger
+	// Remove timestamp from provider logger, use the timestamp from the Terraform logger.
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//             Types
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-type hasFieldChange func(resourceData *schema.ResourceData, meta interface{}) bool
-type onFieldRead func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
-type onFieldCreate func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
-type onFieldUpdate func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
+type (
+	hasFieldChange func(resourceData *schema.ResourceData, meta interface{}) bool
+	onFieldRead    func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
+	onFieldCreate  func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
+	onFieldUpdate  func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error
+)
 
 type GenericResource struct {
 	fields       *GenericFields
@@ -49,9 +44,6 @@ type GenericFields struct {
 	schemaMap map[string]*schema.Schema
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//          Constructors
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func NewGenericField(
 	resourceAffinity ResourceAffinity,
 	fieldName FieldName,
@@ -59,7 +51,8 @@ func NewGenericField(
 	onRead onFieldRead,
 	onCreate onFieldCreate,
 	onUpdate onFieldUpdate,
-	hasChangeCustom hasFieldChange) *GenericField {
+	hasChangeCustom hasFieldChange,
+) *GenericField {
 
 	return &GenericField{
 		resourceAffinity: resourceAffinity,
@@ -86,9 +79,6 @@ func NewGenericFields(fieldsMap map[FieldName]*GenericField) *GenericFields {
 	}
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//      Methods: GenericField
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func (field *GenericField) GetSchema() *schema.Schema {
 	return field.schema
 }
@@ -100,9 +90,6 @@ func (field *GenericField) hasFieldChange(resourceData *schema.ResourceData, met
 	return resourceData.HasChange(field.fieldNameStr)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//   Methods: GenericResource
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func (res *GenericResource) GetField(fieldName FieldName) *GenericField {
 	if res.fields != nil && res.fields.fieldsMap != nil {
 		return res.fields.fieldsMap[fieldName]

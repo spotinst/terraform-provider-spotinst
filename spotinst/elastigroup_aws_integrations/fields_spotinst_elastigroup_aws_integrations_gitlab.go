@@ -7,9 +7,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationGitlab] = commons.NewGenericField(
@@ -70,9 +67,6 @@ func SetupGitlab(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupGitlabIntegration(data interface{}) (*aws.GitlabIntegration, error) {
 	integration := &aws.GitlabIntegration{}
 	list := data.([]interface{})

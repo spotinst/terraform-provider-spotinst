@@ -59,9 +59,6 @@ func setupMangedInstanceResource() {
 	commons.ManagedInstanceResource = commons.NewManagedInstanceResource(fieldsMap)
 }
 
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-////          Read
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeManagedInstanceDoesntExist = "MANAGED_INSTANCE_DOESNT_EXIST"
 
 func resourceSpotinstManagedInstanceAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -101,9 +98,6 @@ func resourceSpotinstManagedInstanceAWSRead(resourceData *schema.ResourceData, m
 	return nil
 }
 
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-////            Create
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstManagedInstanceAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ManagedInstanceResource.GetName())
@@ -163,9 +157,6 @@ func createManagedInstance(resourceData *schema.ResourceData, mangedInstance *aw
 	return resp.ManagedInstance.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstManagedInstanceAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -206,9 +197,6 @@ func updateAWSManagedInstance(managedInstance *aws.ManagedInstance, resourceData
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//           Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstManagedInstanceAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),

@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	OceanECSResourceName ResourceName = "spotinst_ocean_ecs"
 )
@@ -18,7 +15,7 @@ const (
 var OceanECSResource *OceanECSTerraformResource
 
 type OceanECSTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type ECSClusterWrapper struct {
