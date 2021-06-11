@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[HealthCheck] = commons.NewGenericField(
 		commons.ElastigroupAzureHealthCheck,
@@ -81,9 +78,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utilities
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func flattenAzureGroupHealthCheck(healthcheck *azure.Health) []interface{} {
 	result := make(map[string]interface{})
 	result[string(AutoHealing)] = spotinst.BoolValue(healthcheck.AutoHealing)

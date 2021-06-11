@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Strategy] = commons.NewGenericField(
@@ -83,9 +80,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func flattenAzureGroupStrategy(strategy *azurev3.Strategy) []interface{} {
 	result := make(map[string]interface{})
 

@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	SubscriptionResourceName ResourceName = "spotinst_subscription"
 )
@@ -18,7 +15,7 @@ const (
 var SubscriptionResource *SubscriptionTerraformResource
 
 type SubscriptionTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 func NewSubscriptionResource(

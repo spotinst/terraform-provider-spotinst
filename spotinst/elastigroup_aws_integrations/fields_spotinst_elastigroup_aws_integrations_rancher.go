@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationRancher] = commons.NewGenericField(
@@ -93,9 +90,6 @@ func SetupRancher(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func flattenAWSGroupRancherIntegration(integration *aws.RancherIntegration) []interface{} {
 	result := make(map[string]interface{})
 	result[string(MasterHost)] = spotinst.StringValue(integration.MasterHost)

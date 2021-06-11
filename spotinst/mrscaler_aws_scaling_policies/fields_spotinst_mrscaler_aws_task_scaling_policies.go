@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupTaskScalingPolicies(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[TaskScalingUpPolicy] = commons.NewGenericField(

@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupTaskGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[TaskMin] = commons.NewGenericField(
 		commons.MRScalerAWSTaskGroup,

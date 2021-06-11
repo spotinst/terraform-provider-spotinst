@@ -14,9 +14,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[BackendServices] = commons.NewGenericField(
@@ -486,10 +483,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utilities
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 // hashKV hashes the key value pairs
 func hashKV(v interface{}) int {
 	var buf bytes.Buffer
@@ -524,10 +517,6 @@ func isBase64Encoded(data string) bool {
 	return err == nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Flatten Fields
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 // flattenLabels flattens the labels struct
 func flattenLabels(labels []*gcp.Label) []interface{} {
 	result := make([]interface{}, 0, len(labels))
@@ -553,10 +542,6 @@ func flattenMetadata(metadata []*gcp.Metadata) []interface{} {
 	}
 	return result
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Expand Fields
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // expandLabels sets the values from the plan
 func expandLabels(data interface{}) ([]*gcp.Label, error) {

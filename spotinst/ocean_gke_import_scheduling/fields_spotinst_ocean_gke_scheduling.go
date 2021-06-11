@@ -116,9 +116,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandShutdownHours(data interface{}) (*gcp.ShutdownHours, error) {
 	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
 		runner := &gcp.ShutdownHours{}

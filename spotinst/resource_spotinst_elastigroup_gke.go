@@ -57,11 +57,7 @@ func setupElastigroupGKEResource() {
 	commons.ElastigroupGKEResource = commons.NewElastigroupGKEResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//     Import GKE Group
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func importGKEGroup(resourceData *schema.ResourceData, meta interface{}) (*gcp.Group, error) {
-
 	// first build a GCP group from the user's template
 	templateGroup, err := commons.ElastigroupGKEResource.OnCreate(resourceData, meta)
 	if err != nil {
@@ -120,10 +116,6 @@ func importGKEGroup(resourceData *schema.ResourceData, meta interface{}) (*gcp.G
 
 	return resp.Group, err
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // resourceSpotinstElastigroupGKECreate begins the creation request and
 // creates an object representing the newly created group or returns an error.
@@ -191,10 +183,6 @@ func createGKEGroup(gkeGroup *gcp.Group, spotinstClient *Client) (*string, error
 	return resp.Group.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 // resourceSpotinstElastigroupGKERead creates an object representing an existing elastigroup
 // by making a get request using the Spotinst API or returns an error.
 func resourceSpotinstElastigroupGKERead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -233,10 +221,6 @@ func resourceSpotinstElastigroupGKERead(resourceData *schema.ResourceData, meta 
 	log.Printf("===> Elastigroup read successfully: %s <===", groupId)
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // resourceSpotinstElastigroupGKEUpdate updates an existing elastigroup
 // and creates an object representing the updated group or returns an error.
@@ -286,10 +270,6 @@ func updateGKEGroup(elastigroup *gcp.Group, resourceData *schema.ResourceData, m
 
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // resourceSpotinstElastigroupGKEDelete deletes a specific elastigroup or returns an error.
 func resourceSpotinstElastigroupGKEDelete(resourceData *schema.ResourceData, meta interface{}) error {

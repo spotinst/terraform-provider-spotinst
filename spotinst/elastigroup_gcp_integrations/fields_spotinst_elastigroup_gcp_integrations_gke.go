@@ -12,9 +12,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupGKE(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationGKE] = commons.NewGenericField(
@@ -149,9 +146,6 @@ func SetupGKE(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func ExpandGCPGroupGKEIntegration(data interface{}) (*gcp.GKEIntegration, error) {
 	integration := &gcp.GKEIntegration{}
 	list := data.([]interface{})

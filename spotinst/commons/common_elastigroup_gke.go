@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	ElastigroupGKEResourceName ResourceName = "spotinst_elastigroup_gke"
 )
@@ -18,7 +15,7 @@ const (
 var ElastigroupGKEResource *ElastigroupGKETerraformResource
 
 type ElastigroupGKETerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type ElastigroupGKEWrapper struct {
@@ -42,13 +39,6 @@ func NewElastigroupGKEResource(fieldMap map[FieldName]*GenericField) *Elastigrou
 		},
 	}
 }
-
-// import constructs a specialized group and makes an import call
-// it returns a standard gcp group with pre-filled fields
-// this group is passed to OnCreate
-// OnCreate reconciles the generated fields with user-defined fields in the plan
-//  - what do we do if field is undefined?
-// OnCreate sends the reconciled group to the create API endpoint
 
 func (res *ElastigroupGKETerraformResource) OnImport(
 	templateGroup *gcp.Group,

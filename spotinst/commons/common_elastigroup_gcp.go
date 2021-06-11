@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	ElastigroupGCPResourceName ResourceName = "spotinst_elastigroup_gcp"
 )
@@ -18,7 +15,7 @@ const (
 var ElastigroupGCPResource *ElastigroupGCPTerraformResource
 
 type ElastigroupGCPTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type ElastigroupGCPWrapper struct {

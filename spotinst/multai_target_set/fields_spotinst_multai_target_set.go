@@ -15,9 +15,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[BalancerID] = commons.NewGenericField(
@@ -387,10 +384,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func expandTargetSetHealthCheck(data interface{}) (*multai.TargetSetHealthCheck, error) {
 	list := data.(*schema.Set).List()

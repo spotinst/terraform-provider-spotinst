@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	ElastigroupAzureResourceName ResourceName = "spotinst_elastigroup_azure"
 )
@@ -18,7 +15,7 @@ const (
 var ElastigroupAzureResource *ElastigroupAzureTerraformResource
 
 type ElastigroupAzureTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type ElastigroupAzureWrapper struct {

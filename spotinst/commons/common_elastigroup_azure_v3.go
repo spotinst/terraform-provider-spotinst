@@ -9,9 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	ElastigroupAzureV3ResourceName ResourceName = "spotinst_elastigroup_azure_v3"
 )
@@ -19,7 +16,7 @@ const (
 var ElastigroupAzureV3Resource *ElastigroupAzureV3TerraformResource
 
 type ElastigroupAzureV3TerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type ElastigroupAzureV3Wrapper struct {

@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[ScalingUpPolicy] = commons.NewGenericField(
@@ -153,9 +150,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//             Schema
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func baseScalingPolicySchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeSet,
@@ -316,9 +310,6 @@ func targetScalingPolicySchema() *schema.Schema {
 	return o
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//             Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, error) {
 	list := data.(*schema.Set).List()
 	policies := make([]*aws.ScalingPolicy, 0, len(list))

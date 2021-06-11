@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	MultaiDeploymentResourceName ResourceName = "spotinst_multai_deployment"
 )
@@ -18,7 +15,7 @@ const (
 var MultaiDeploymentResource *MultaiDeploymentTerraformResource
 
 type MultaiDeploymentTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type MultaiDeploymentWrapper struct {

@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	OceanAWSResourceName ResourceName = "spotinst_ocean_aws"
 )
@@ -18,7 +15,7 @@ const (
 var OceanAWSResource *OceanAWSTerraformResource
 
 type OceanAWSTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type AWSClusterWrapper struct {

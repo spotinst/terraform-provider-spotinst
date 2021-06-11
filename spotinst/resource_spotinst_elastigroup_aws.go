@@ -59,9 +59,6 @@ func setupElastigroupResource() {
 	commons.ElastigroupResource = commons.NewElastigroupResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
@@ -120,9 +117,6 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // ErrCodeGroupNotFound for service response error code "GROUP_DOESNT_EXIST".
 const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
 
@@ -163,9 +157,6 @@ func resourceSpotinstElastigroupAWSRead(resourceData *schema.ResourceData, meta 
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupResource.GetName())
@@ -248,9 +239,6 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 	return resp.Group.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstElastigroupAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -623,9 +611,6 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Fields Expand
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandElastigroupRollConfig(data interface{}, groupID *string) (*aws.RollGroupInput, error) {
 	i := &aws.RollGroupInput{GroupID: groupID}
 	list := data.([]interface{})

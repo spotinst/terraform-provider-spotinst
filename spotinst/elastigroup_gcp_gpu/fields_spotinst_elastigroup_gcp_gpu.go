@@ -7,9 +7,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[GPU] = commons.NewGenericField(
 		commons.ElastigroupGCPGPU,
@@ -66,11 +63,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utilities
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-// expandDisks sets the values from the plan
 func expandGPU(data interface{}) (*gcp.GPU, error) {
 	list := data.(*schema.Set).List()
 	gpu := &gcp.GPU{}

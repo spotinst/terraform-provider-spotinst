@@ -10,6 +10,27 @@ description: |-
 
 Manages a Spotinst Ocean GKE resource.
 
+## Prerequisites
+
+Installation of the Ocean controller is required by this resource. You can accomplish this by using the [spotinst/ocean-controller](https://registry.terraform.io/modules/spotinst/ocean-controller/spotinst) module as follows:
+
+```hcl
+module "ocean-controller" {
+  source = "spotinst/ocean-controller/spotinst"
+
+  # Credentials.
+  spotinst_token   = "redacted"
+  spotinst_account = "redacted"
+
+  # Configuration.
+  cluster_identifier = "ocean-dev"
+}
+```
+
+> NOTE: You must configure the same `cluster_identifier` both for the Ocean controller and for the `spotinst_ocean_gke_import` resource.
+
+To learn more about how to integrate existing Kubernetes clusters into Ocean using Terraform, watch [this video](https://youtu.be/ffGmMlpPsPE).
+
 ## Example Usage
 
 ```hcl

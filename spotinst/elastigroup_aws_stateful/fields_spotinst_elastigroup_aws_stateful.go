@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[PersistRootDevice] = commons.NewGenericField(
@@ -288,9 +285,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupPrivateIPs(data interface{}) ([]string, error) {
 	list := data.([]interface{})
 	pips := make([]string, 0, len(list))

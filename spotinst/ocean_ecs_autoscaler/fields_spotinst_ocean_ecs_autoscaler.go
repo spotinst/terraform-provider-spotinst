@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Autoscaler] = commons.NewGenericField(
 		commons.OceanECSAutoScaler,
@@ -145,9 +142,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAutoscaler(data interface{}, nullify bool) (*aws.ECSAutoScaler, error) {
 	autoscaler := &aws.ECSAutoScaler{}
 	list := data.([]interface{})

@@ -1,5 +1,31 @@
 ## Unreleased
 
+## 1.48.1 (June 10, 2021)
+
+BUG FIXES:
+* resource/spotinst_ocean_aks_virtual_node_group: make headroom fields optional
+
+## 1.48.0 (June 10, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks: added support for `resource_group_name` 
+* resource/spotinst_ocean_aks: added support for `custom_data`
+* resource/spotinst_ocean_aks: added support for `vm_sizes` 
+* resource/spotinst_ocean_aks: added support for `os_disk` 
+* resource/spotinst_ocean_aks: added support for `image` 
+* resource/spotinst_ocean_aks: added support for `strategy` 
+* resource/spotinst_ocean_aks: added support for `health` 
+* resource/spotinst_ocean_aks: added support for `network` 
+* resource/spotinst_ocean_aks: added support for `extension` 
+* resource/spotinst_ocean_aks: added support for `load_balancer` 
+* resource/spotinst_ocean_aks: added support for `autoscaler`
+* resource/spotinst_ocean_aks: added support for `tag`
+		
+## 1.47.0 (June 6, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: added support for `application_security_group` ([#196](https://github.com/spotinst/terraform-provider-spotinst/pull/196))
+
 ## 1.46.0 (June 3, 2021)
 
 ENHANCEMENTS:

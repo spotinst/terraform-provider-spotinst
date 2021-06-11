@@ -10,9 +10,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Strategy] = commons.NewGenericField(
 		commons.OceanGKELaunchSpecStrategy,
@@ -76,9 +73,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandStrategy(data interface{}) (*gcp.LaunchSpecStrategy, error) {
 	strategy := &gcp.LaunchSpecStrategy{}
 	list := data.([]interface{})

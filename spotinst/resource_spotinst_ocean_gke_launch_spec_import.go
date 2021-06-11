@@ -40,9 +40,6 @@ func setupOceanGKELaunchSpecImportResource() {
 	commons.OceanGKELaunchSpecImportResource = commons.NewOceanGKELaunchSpecImportResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanGKELaunchSpecImportCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecImportResource.GetName())
 
@@ -85,9 +82,6 @@ func createGKELaunchSpecImport(launchSpec *gcp.LaunchSpec, spotinstClient *Clien
 	}
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanGKELaunchSpecImportRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanGKELaunchSpecImportResource.GetName(), id)
@@ -125,9 +119,6 @@ func resourceSpotinstOceanGKELaunchSpecImportRead(resourceData *schema.ResourceD
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanGKELaunchSpecImportUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanGKELaunchSpecImportResource.GetName(), id)
@@ -167,9 +158,6 @@ func updateGKELaunchSpecImport(launchSpec *gcp.LaunchSpec, resourceData *schema.
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanGKELaunchSpecImportDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),

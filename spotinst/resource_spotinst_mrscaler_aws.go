@@ -53,10 +53,6 @@ func setupMRScalerAWSResource() {
 	commons.MRScalerAWSResource = commons.NewMRScalerAWSResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMRScalerAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MRScalerAWSResource.GetName())
@@ -114,10 +110,6 @@ func createScaler(scaler *mrscaler.Scaler, spotinstClient *Client) (*string, err
 	return resp.Scaler.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMRScalerAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	time.Sleep(10 * time.Second)
@@ -150,10 +142,6 @@ func resourceSpotinstMRScalerAWSRead(resourceData *schema.ResourceData, meta int
 	log.Printf("===> MRScaler read successfully: %s <===", id)
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMRScalerAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
@@ -195,9 +183,6 @@ func updateScaler(scaler *mrscaler.Scaler, resourceData *schema.ResourceData, me
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstMRScalerAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
@@ -229,10 +214,6 @@ func deleteScaler(resourceData *schema.ResourceData, meta interface{}) error {
 	}
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func exposeMrScalerClusterId(resourceData *schema.ResourceData, meta interface{}) error {
 	spotinstClient := meta.(*Client)

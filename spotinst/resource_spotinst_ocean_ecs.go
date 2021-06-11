@@ -52,9 +52,6 @@ func setupClusterECSResource() {
 	commons.OceanECSResource = commons.NewOceanECSResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterECSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanECSResource.GetName())
@@ -114,9 +111,6 @@ func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster
 	return resp.Cluster.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeECSClusterNotFound = "CANT_GET_OCEAN_CLUSTER"
 
 func resourceSpotinstClusterECSRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -157,9 +151,6 @@ func resourceSpotinstClusterECSRead(resourceData *schema.ResourceData, meta inte
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterECSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -257,9 +248,6 @@ func rollECSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterECSDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
@@ -291,10 +279,6 @@ func deleteECSCluster(resourceData *schema.ResourceData, meta interface{}) error
 	}
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func expandECSOceanRollConfig(data interface{}, clusterID *string) (*aws.ECSRollClusterInput, error) {
 	i := &aws.ECSRollClusterInput{Roll: &aws.ECSRoll{ClusterID: clusterID}}

@@ -39,10 +39,6 @@ func setupMultaiListenerResource() {
 	commons.MultaiListenerResource = commons.NewMultaiListenerResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiListenerCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiListenerResource.GetName())
@@ -88,10 +84,6 @@ func createListener(listener *multai.Listener, spotinstClient *Client) (*string,
 	return resp.Listener.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiListenerRead(resourceData *schema.ResourceData, meta interface{}) error {
 	listenerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -117,10 +109,6 @@ func resourceSpotinstMultaiListenerRead(resourceData *schema.ResourceData, meta 
 	log.Printf("===> Listener read successfully: %s <===", listenerId)
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiListenerUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	listenerId := resourceData.Id()
@@ -159,10 +147,6 @@ func updateListener(listener *multai.Listener, resourceData *schema.ResourceData
 
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiListenerDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	listenerId := resourceData.Id()

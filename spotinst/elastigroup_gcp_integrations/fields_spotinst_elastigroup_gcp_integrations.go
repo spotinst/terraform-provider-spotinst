@@ -6,17 +6,11 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupDockerSwarm(fieldsMap)
 	SetupGKE(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandGCPGroupAutoScaleHeadroom(data interface{}) (*gcp.AutoScaleHeadroom, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		headroom := &gcp.AutoScaleHeadroom{}

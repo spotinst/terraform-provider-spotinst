@@ -12,9 +12,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
@@ -387,9 +384,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandSubnetIDs(data interface{}) ([]string, error) {
 	list := data.([]interface{})
 	result := make([]string, 0, len(list))

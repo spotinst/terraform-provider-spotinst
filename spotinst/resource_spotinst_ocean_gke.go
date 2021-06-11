@@ -47,9 +47,6 @@ func setupClusterGKEResource() {
 	commons.OceanGKEResource = commons.NewOceanGKEResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterGKECreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanGKEResource.GetName())
@@ -97,10 +94,6 @@ func createGKECluster(cluster *gcp.Cluster, spotinstClient *Client) (*string, er
 	return resp.Cluster.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstClusterGKERead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -139,9 +132,6 @@ func resourceSpotinstClusterGKERead(resourceData *schema.ResourceData, meta inte
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterGKEUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -182,9 +172,6 @@ func updateGKECluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, m
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterGKEDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),

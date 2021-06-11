@@ -7,9 +7,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupRoute53(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[IntegrationRoute53] = commons.NewGenericField(
 		commons.ManagedInstanceAWSIntegrations,
@@ -106,9 +103,6 @@ func SetupRoute53(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSManagedInstanceRoute53Integration(data interface{}) (*aws.Route53Integration, error) {
 	integration := &aws.Route53Integration{}
 	list := data.([]interface{})

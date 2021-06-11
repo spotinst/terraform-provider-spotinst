@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	MultaiListenerResourceName ResourceName = "spotinst_multai_listener"
 )
@@ -18,7 +15,7 @@ const (
 var MultaiListenerResource *MultaiListenerTerraformResource
 
 type MultaiListenerTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type MultaiListenerWrapper struct {

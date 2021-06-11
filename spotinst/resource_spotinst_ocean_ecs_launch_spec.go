@@ -40,9 +40,6 @@ func setupOceanECSLaunchSpecResource() {
 	commons.OceanECSLaunchSpecResource = commons.NewOceanECSLaunchSpecResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanECSLaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanECSLaunchSpecResource.GetName())
 
@@ -95,9 +92,6 @@ func createECSLaunchSpec(launchSpec *aws.ECSLaunchSpec, spotinstClient *Client) 
 	return resp.LaunchSpec.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeECSLaunchSpecNotFound = "CANT_GET_OCEAN_ECS_LAUNCH_SPEC"
 
 func resourceSpotinstOceanECSLaunchSpecRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -137,9 +131,6 @@ func resourceSpotinstOceanECSLaunchSpecRead(resourceData *schema.ResourceData, m
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanECSLaunchSpecUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanECSLaunchSpecResource.GetName(), id)
@@ -178,9 +169,6 @@ func updateECSLaunchSpec(launchSpec *aws.ECSLaunchSpec, resourceData *schema.Res
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanECSLaunchSpecDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),

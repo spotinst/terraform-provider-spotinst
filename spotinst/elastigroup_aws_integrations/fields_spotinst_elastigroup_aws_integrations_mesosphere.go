@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationMesosphere] = commons.NewGenericField(
@@ -78,9 +75,6 @@ func SetupMesosphere(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupMesosphereIntegration(data interface{}) (*aws.MesosphereIntegration, error) {
 	integration := &aws.MesosphereIntegration{}
 	list := data.([]interface{})

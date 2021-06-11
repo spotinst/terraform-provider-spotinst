@@ -109,9 +109,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func flattenScheduledTasks(scheduling *aws.Scheduling) []interface{} {
 	var out []interface{}
 

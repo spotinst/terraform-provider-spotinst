@@ -12,9 +12,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationNomad] = commons.NewGenericField(
@@ -144,9 +141,6 @@ func SetupNomad(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupNomadIntegration(data interface{}, nullify bool) (*aws.NomadIntegration, error) {
 	integration := &aws.NomadIntegration{}
 	list := data.([]interface{})

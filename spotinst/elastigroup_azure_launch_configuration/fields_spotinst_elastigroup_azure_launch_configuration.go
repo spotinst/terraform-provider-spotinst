@@ -10,9 +10,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[UserData] = commons.NewGenericField(
 		commons.ElastigroupAzureLaunchConfiguration,
@@ -207,16 +204,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern), string(UserData))
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern), string(CustomData))
 			return err
 		},
 		nil,
 	)
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func Base64StateFunc(v interface{}) string {
 	if isBase64Encoded(v.(string)) {

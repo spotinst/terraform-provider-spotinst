@@ -7,17 +7,11 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupTaskScalingPolicies(fieldsMap)
 	SetupCoreScalingPolicies(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//             Schema
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func baseScalingPolicySchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeSet,
@@ -130,9 +124,6 @@ func upDownScalingPolicySchema() *schema.Schema {
 	return o
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//             Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandMRScalerAWSScalingPolicies(data interface{}) ([]*mrscaler.ScalingPolicy, error) {
 	list := data.(*schema.Set).List()
 	policies := make([]*mrscaler.ScalingPolicy, 0, len(list))

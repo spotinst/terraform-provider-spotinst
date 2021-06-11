@@ -12,9 +12,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[NetworkInterface] = commons.NewGenericField(
@@ -119,9 +116,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func flattenAWSGroupNetworkInterfaces(networkInterfaces []*aws.NetworkInterface) []interface{} {
 	result := make([]interface{}, 0, len(networkInterfaces))
 	for _, iface := range networkInterfaces {

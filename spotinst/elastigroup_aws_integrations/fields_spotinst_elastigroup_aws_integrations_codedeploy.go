@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[IntegrationCodeDeploy] = commons.NewGenericField(
@@ -86,9 +83,6 @@ func SetupCodeDeploy(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupCodeDeployIntegration(data interface{}) (*aws.CodeDeployIntegration, error) {
 	integration := &aws.CodeDeployIntegration{}
 	list := data.([]interface{})

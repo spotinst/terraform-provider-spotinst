@@ -89,11 +89,6 @@ func SetupLoadBalancers(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-//
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-////            Utils
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func expandLoadBalancers(data interface{}) (*aws.LoadBalancersConfig, error) {
 	list := data.(*schema.Set).List()
 	balancers := make([]*aws.LoadBalancer, 0, len(list))

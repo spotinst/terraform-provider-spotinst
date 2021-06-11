@@ -13,9 +13,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
@@ -609,9 +606,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandServices(data interface{}) ([]*gcp.BackendService, error) {
 	list := data.(*schema.Set).List()
 	out := make([]*gcp.BackendService, 0, len(list))

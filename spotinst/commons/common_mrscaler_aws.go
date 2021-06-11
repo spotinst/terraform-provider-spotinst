@@ -8,10 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 const (
 	MRScalerAWSResourceName ResourceName = "spotinst_mrscaler_aws"
 )
@@ -19,7 +15,7 @@ const (
 var MRScalerAWSResource *MRScalerAWSTerraformResource
 
 type MRScalerAWSTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type MRScalerAWSWrapper struct {

@@ -39,10 +39,6 @@ func setupMultaiBalancerResource() {
 	commons.MultaiBalancerResource = commons.NewMultaiBalancerResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiBalancerCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiBalancerResource.GetName())
@@ -88,10 +84,6 @@ func createBalancer(balancer *multai.LoadBalancer, spotinstClient *Client) (*str
 	return resp.Balancer.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiBalancerRead(resourceData *schema.ResourceData, meta interface{}) error {
 	balancerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -117,10 +109,6 @@ func resourceSpotinstMultaiBalancerRead(resourceData *schema.ResourceData, meta 
 	log.Printf("===> Balancer read successfully: %s <===", balancerId)
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiBalancerUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	balancerId := resourceData.Id()
@@ -159,10 +147,6 @@ func updateBalancer(balancer *multai.LoadBalancer, resourceData *schema.Resource
 
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiBalancerDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	balancerId := resourceData.Id()

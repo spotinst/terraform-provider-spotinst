@@ -40,9 +40,6 @@ func setupHealthCheckResource() {
 	commons.HealthCheckResource = commons.NewHealthCheckResource(fieldsMap)
 }
 
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-////          Read
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeHealthCheckNotFound = "HEALTH_CHECK_DOESNT_EXIST"
 
 func resourceSpotinstHealthCheckRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -79,9 +76,6 @@ func resourceSpotinstHealthCheckRead(resourceData *schema.ResourceData, meta int
 	return nil
 }
 
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-////            Create
-////-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstHealthCheckCreate(resourceData *schema.ResourceData, meta interface{}) error {
 
 	log.Printf(string(commons.ResourceOnCreate), commons.HealthCheckResource.GetName())
@@ -138,9 +132,6 @@ func createHealthCheck(resourceData *schema.ResourceData, healthCheck *healthche
 
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstHealthCheckUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.HealthCheckResource.GetName(), resourceId)
@@ -179,9 +170,6 @@ func updateHealthCheck(healthCheck *healthcheck.HealthCheck, resourceData *schem
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//           Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstHealthCheckDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.HealthCheckResource.GetName(), resourceId)

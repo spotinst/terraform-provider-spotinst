@@ -41,9 +41,6 @@ func setupOceanGKELaunchSpecResource() {
 	commons.OceanGKELaunchSpecResource = commons.NewOceanGKELaunchSpecResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecResource.GetName())
 
@@ -77,9 +74,6 @@ func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*s
 	}
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const ErrCodeGKELaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
 func resourceSpotinstOceanGKELaunchSpecRead(resourceData *schema.ResourceData, meta interface{}) error {
@@ -119,9 +113,6 @@ func resourceSpotinstOceanGKELaunchSpecRead(resourceData *schema.ResourceData, m
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanGKELaunchSpecUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanGKELaunchSpecResource.GetName(), id)
@@ -161,9 +152,6 @@ func updateGKELaunchSpec(launchSpec *gcp.LaunchSpec, resourceData *schema.Resour
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstOceanGKELaunchSpecDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),

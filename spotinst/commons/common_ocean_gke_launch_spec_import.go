@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	OceanGKELaunchSpecImportResourceName ResourceName = "spotinst_ocean_gke_launch_spec_import"
 )
@@ -18,7 +15,7 @@ const (
 var OceanGKELaunchSpecImportResource *OceanGKELaunchSpecImportTerraformResource
 
 type OceanGKELaunchSpecImportTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type GKELaunchSpecImportWrapper struct {

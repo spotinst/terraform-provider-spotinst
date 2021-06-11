@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	MultaiBalancerResourceName ResourceName = "spotinst_multai_balancer"
 )
@@ -18,7 +15,7 @@ const (
 var MultaiBalancerResource *MultaiBalancerTerraformResource
 
 type MultaiBalancerTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type MultaiBalancerWrapper struct {

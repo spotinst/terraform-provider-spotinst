@@ -39,10 +39,6 @@ func setupMultaiTargetResource() {
 	commons.MultaiTargetResource = commons.NewMultaiTargetResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiTargetCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiTargetResource.GetName())
@@ -88,10 +84,6 @@ func createTarget(target *multai.Target, spotinstClient *Client) (*string, error
 	return resp.Target.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiTargetRead(resourceData *schema.ResourceData, meta interface{}) error {
 	targetId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -117,10 +109,6 @@ func resourceSpotinstMultaiTargetRead(resourceData *schema.ResourceData, meta in
 	log.Printf("===> Target read successfully: %s <===", targetId)
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiTargetUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	targetId := resourceData.Id()
@@ -159,10 +147,6 @@ func updateTarget(target *multai.Target, resourceData *schema.ResourceData, meta
 
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiTargetDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	targetId := resourceData.Id()

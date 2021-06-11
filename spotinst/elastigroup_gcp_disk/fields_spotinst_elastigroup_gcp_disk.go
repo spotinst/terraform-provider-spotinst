@@ -7,9 +7,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Disk] = commons.NewGenericField(
@@ -111,10 +108,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // expandDisks sets the values from the plan
 func expandDisks(data interface{}) ([]*gcp.Disk, error) {

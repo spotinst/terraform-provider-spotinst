@@ -10,12 +10,33 @@ description: |-
 
 Manages a Spotinst Ocean AWS resource.
 
+## Prerequisites
+
+Installation of the Ocean controller is required by this resource. You can accomplish this by using the [spotinst/ocean-controller](https://registry.terraform.io/modules/spotinst/ocean-controller/spotinst) module as follows:
+
+```hcl
+module "ocean-controller" {
+  source = "spotinst/ocean-controller/spotinst"
+
+  # Credentials.
+  spotinst_token   = "redacted"
+  spotinst_account = "redacted"
+
+  # Configuration.
+  cluster_identifier = "ocean-dev"
+}
+```
+
+> NOTE: You must configure the same `cluster_identifier` both for the Ocean controller and for the `spotinst_ocean_aws` resource.
+
+To learn more about how to integrate existing Kubernetes clusters into Ocean using Terraform, watch [this video](https://youtu.be/ffGmMlpPsPE).
+
 ## Example Usage
 
 ```hcl
 resource "spotinst_ocean_aws" "example" {
   name          = "demo"
-  controller_id = "fakeClusterId"
+  controller_id = "ocean-dev"
   region        = "us-west-2"
 
   max_size         = 2
@@ -43,7 +64,7 @@ resource "spotinst_ocean_aws" "example" {
     type = "TARGET_GROUP"
   }
   load_balancers {
-    name = "AntonK"
+    name = "example"
     type = "CLASSIC"
   }
   // endregion
@@ -73,7 +94,7 @@ output "ocean_id" {
 The following arguments are supported:
 
 * `name` - (Required) The cluster name.
-* `controller_id` - (Required) The Ocean cluster identifier. Example: `ocean.k8s`
+* `controller_id` - (Required) A unique identifier used for connecting the Ocean SaaS platform and the Kubernetes cluster. Typically, the cluster name is used as its identifier.
 * `region` - (Required) The region the cluster will run in.
 * `max_size` - (Optional, Default: `1000`) The upper limit of instances the cluster can scale up to.
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.

@@ -14,9 +14,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
@@ -241,10 +238,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func expandCnameAliases(data interface{}) ([]string, error) {
 	list := data.([]interface{})

@@ -42,9 +42,6 @@ func setupElastigroupAWSBeanstalk() {
 	commons.ElastigroupAWSBeanstalkResource = commons.NewElastigroupAWSBeanstalkResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//     Import Beanstalk Group
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func importBeanstalkGroup(resourceData *schema.ResourceData, meta interface{}) (*aws.Group, error) {
 	var input *aws.ImportBeanstalkInput
 
@@ -129,9 +126,6 @@ func toggleMaintenanceMode(resourceData *schema.ResourceData, meta interface{}, 
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstAWSBeanstalkGroupCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Print(string(commons.ResourceOnCreate),
 		commons.ElastigroupAWSBeanstalkResource.GetName())
@@ -196,9 +190,6 @@ func createBeanstalkGroup(beanstalkGroup *aws.Group, spotinstClient *Client) (*s
 	return resp.Group.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstAWSBeanstalkGroupRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.ElastigroupAWSBeanstalkResource.GetName(), id)
@@ -236,9 +227,6 @@ func resourceSpotinstAWSBeanstalkGroupRead(resourceData *schema.ResourceData, me
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstAWSBeanstalkGroupUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -269,9 +257,6 @@ func resourceSpotinstAWSBeanstalkGroupUpdate(resourceData *schema.ResourceData, 
 	return resourceSpotinstAWSBeanstalkGroupRead(resourceData, meta)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstAWSBeanstalkGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting group: %s", d.Id())
 	input := &aws.DeleteGroupInput{GroupID: spotinst.String(d.Id())}

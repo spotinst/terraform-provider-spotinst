@@ -8,9 +8,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Variables
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 const (
 	MultaiRoutingRuleResourceName ResourceName = "spotinst_multai_routing_rule"
 )
@@ -18,7 +15,7 @@ const (
 var MultaiRoutingRuleResource *MultaiRoutingRuleTerraformResource
 
 type MultaiRoutingRuleTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type MultaiRoutingRuleWrapper struct {

@@ -13,7 +13,7 @@ const OceanAKSVirtualNodeGroupResourceName ResourceName = "spotinst_ocean_aks_vi
 var OceanAKSVirtualNodeGroupResource *OceanAKSVirtualNodeGroupTerraformResource
 
 type OceanAKSVirtualNodeGroupTerraformResource struct {
-	GenericResource // embedding
+	GenericResource
 }
 
 type VirtualNodeGroupAKSWrapper struct {

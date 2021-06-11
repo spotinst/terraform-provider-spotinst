@@ -39,10 +39,6 @@ func setupMultaiRoutingRuleResource() {
 	commons.MultaiRoutingRuleResource = commons.NewMultaiRoutingRuleResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiRoutingRuleCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiRoutingRuleResource.GetName())
@@ -88,10 +84,6 @@ func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) 
 	return resp.RoutingRule.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstMultaiRoutingRuleRead(resourceData *schema.ResourceData, meta interface{}) error {
 	routingRuleId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -117,10 +109,6 @@ func resourceSpotinstMultaiRoutingRuleRead(resourceData *schema.ResourceData, me
 	log.Printf("===> Routing Rule read successfully: %s <===", routingRuleId)
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiRoutingRuleUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	routingRuleId := resourceData.Id()
@@ -159,10 +147,6 @@ func updateRoutingRule(routingRule *multai.RoutingRule, resourceData *schema.Res
 
 	return nil
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func resourceSpotinstMultaiRoutingRuleDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	routingRuleId := resourceData.Id()

@@ -43,9 +43,6 @@ func setupClusterGKEImportResource() {
 	commons.OceanGKEImportResource = commons.NewOceanGKEImportResource(fieldsMap)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//         Import Ocean GKE
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func importOceanGKECluster(resourceData *schema.ResourceData, meta interface{}) (*gcp.Cluster, error) {
 	input := &gcp.ImportOceanGKEClusterInput{
 		ClusterName: spotinst.String(resourceData.Get("cluster_name").(string)),
@@ -72,9 +69,6 @@ func importOceanGKECluster(resourceData *schema.ResourceData, meta interface{}) 
 	return resp.Cluster, err
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Create
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterGKEImportCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanGKEImportResource.GetName())
@@ -127,10 +121,6 @@ func createGKEImportedCluster(cluster *gcp.Cluster, spotinstClient *Client) (*st
 	return resp.Cluster.ID, nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Read
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 func resourceSpotinstClusterGKEImportRead(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -181,9 +171,6 @@ func resourceSpotinstClusterGKEImportRead(resourceData *schema.ResourceData, met
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Update
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
@@ -224,9 +211,6 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 	return nil
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Delete
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func resourceSpotinstClusterGKEImportDelete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),

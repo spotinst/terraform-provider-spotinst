@@ -9,9 +9,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[OnDemand] = commons.NewGenericField(
@@ -167,10 +164,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 }
-
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 func flattenCustom(customInstances []*gcp.CustomInstance) []interface{} {
 	result := make([]interface{}, 0, len(customInstances))

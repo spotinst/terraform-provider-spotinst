@@ -7,9 +7,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupElasticBeanstalk(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[IntegrationBeanstalk] = commons.NewGenericField(
 		commons.ElastigroupAWSIntegrations,
@@ -141,9 +138,6 @@ func SetupElasticBeanstalk(fieldsMap map[commons.FieldName]*commons.GenericField
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupElasticBeanstalkIntegration(data interface{}, nullify bool) (*aws.ElasticBeanstalkIntegration, error) {
 	integration := &aws.ElasticBeanstalkIntegration{}
 	list := data.([]interface{})

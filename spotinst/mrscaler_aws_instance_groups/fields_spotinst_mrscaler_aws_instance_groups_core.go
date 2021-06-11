@@ -10,9 +10,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/mrscaler_aws_strategy"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupCoreGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[CoreMin] = commons.NewGenericField(
 		commons.MRScalerAWSCoreGroup,

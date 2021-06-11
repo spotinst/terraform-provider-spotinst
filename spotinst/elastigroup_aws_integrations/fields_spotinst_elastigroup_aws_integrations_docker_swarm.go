@@ -7,9 +7,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Setup
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func SetupDockerSwarm(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[IntegrationDockerSwarm] = commons.NewGenericField(
 		commons.ElastigroupAWSIntegrations,
@@ -123,9 +120,6 @@ func SetupDockerSwarm(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-//            Utils
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 func expandAWSGroupDockerSwarmIntegration(data interface{}, nullify bool) (*aws.DockerSwarmIntegration, error) {
 	integration := &aws.DockerSwarmIntegration{}
 	list := data.([]interface{})
