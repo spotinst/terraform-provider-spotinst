@@ -199,6 +199,8 @@ func hashAWSGroupEBSBlockDevice(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%t-", m[string(Encrypted)].(bool)))
 	buf.WriteString(fmt.Sprintf("%d-", m[string(Iops)].(int)))
 	buf.WriteString(fmt.Sprintf("%d-", m[string(Throughput)].(int)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(VolumeType)].(string)))
+
 	return hashcode.String(buf.String())
 }
 
