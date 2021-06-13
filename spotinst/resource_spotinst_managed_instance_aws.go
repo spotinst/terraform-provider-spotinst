@@ -183,7 +183,34 @@ func updateAWSManagedInstance(managedInstance *aws.ManagedInstance, resourceData
 		ManagedInstance: managedInstance,
 	}
 
-	groupId := resourceData.Id()
+	if instanceActions, exists := resourceData.GetOk(string(managed_instance_aws.ManagedInstanceAction)); exists {
+		actionList := instanceActions.([]interface{})
+
+		ctx := context.TODO()
+		svc := meta.(*Client).managedInstance.CloudProviderAWS()
+
+		for _, action := range actionList {
+			var (
+				actionMap  = action.(map[string]interface{})
+				actionType = actionMap[string(managed_instance_aws.ActionType)].(string)
+				err        error
+			)
+			switch strings.ToLower(actionType) {
+			case "pause":
+				err = pauseManagedInstance(ctx, svc, resourceData.Id())
+			case "resume":
+				err = resumeManagedInstance(ctx, svc, resourceData.Id())
+			case "recycle":
+				err = recycleManagedInstance(ctx, svc, resourceData.Id())
+			default:
+				err = fmt.Errorf("unsupported action %q on managed instance %q", actionType, resourceData.Id())
+			}
+			if err != nil {
+				log.Printf("[ERROR] managed instance (%s) action failed with error: %v", resourceData.Id(), err)
+				return err
+			}
+		}
+	}
 
 	if json, err := commons.ToJson(managedInstance); err != nil {
 		return err
@@ -192,8 +219,54 @@ func updateAWSManagedInstance(managedInstance *aws.ManagedInstance, resourceData
 	}
 
 	if _, err := meta.(*Client).managedInstance.CloudProviderAWS().Update(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to update ManagedInstance [%v]: %v", groupId, err)
+		return fmt.Errorf("[ERROR] Failed to update managed instance [%v]: %v", resourceData.Id(), err)
 	}
+
+	return nil
+}
+
+func pauseManagedInstance(ctx context.Context, svc aws.Service, instanceID string) error {
+	log.Printf("Pausing managed instance (%s)", instanceID)
+
+	input := &aws.PauseManagedInstanceInput{
+		ManagedInstanceID: spotinst.String(instanceID),
+	}
+	_, err := svc.Pause(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to pause managed instance (%s): %v", instanceID, err)
+	}
+
+	log.Printf("Successfully paused managed instance (%s)", instanceID)
+	return nil
+}
+
+func resumeManagedInstance(ctx context.Context, svc aws.Service, instanceID string) error {
+	log.Printf("Resuming managed instance (%s)", instanceID)
+
+	input := &aws.ResumeManagedInstanceInput{
+		ManagedInstanceID: spotinst.String(instanceID),
+	}
+	_, err := svc.Resume(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to resume managed instance (%s): %v", instanceID, err)
+	}
+
+	log.Printf("Successfully resumed managed instance (%s)", instanceID)
+	return nil
+}
+
+func recycleManagedInstance(ctx context.Context, svc aws.Service, instanceID string) error {
+	log.Printf("Recycling managed instance (%s)", instanceID)
+
+	input := &aws.RecycleManagedInstanceInput{
+		ManagedInstanceID: spotinst.String(instanceID),
+	}
+	_, err := svc.Recycle(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to recycle managed instance (%s): %v", instanceID, err)
+	}
+
+	log.Printf("Successfully recycled managed instance (%s)", instanceID)
 	return nil
 }
 
@@ -215,6 +288,15 @@ func deleteManagedInstance(resourceData *schema.ResourceData, meta interface{}) 
 	managedInstanceId := resourceData.Id()
 	input := &aws.DeleteManagedInstanceInput{
 		ManagedInstanceID: spotinst.String(managedInstanceId),
+		AMIBackup: &aws.AMIBackup{
+			ShouldDeleteImages: spotinst.Bool(true),
+		},
+		DeallocationConfig: &aws.DeallocationConfig{
+			ShouldDeleteImages:            spotinst.Bool(true),
+			ShouldTerminateInstance:       spotinst.Bool(true),
+			ShouldDeleteVolumes:           spotinst.Bool(true),
+			ShouldDeleteNetworkInterfaces: spotinst.Bool(true),
+		},
 	}
 	if json, err := commons.ToJson(input); err != nil {
 		return err

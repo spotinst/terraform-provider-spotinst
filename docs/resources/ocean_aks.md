@@ -122,14 +122,6 @@ resource "spotinst_ocean_aks" "example" {
 
   // --- Extensions -------------------------------------------------------
   extension {
-    api_version                = "2.0"
-    minor_version_auto_upgrade = false
-    name                       = "OceanAKS"
-    publisher                  = "Microsoft.Azure.Extensions"
-    type                       = "customScript"
-  }
-
-  extension {
     api_version                = "1.0"
     minor_version_auto_upgrade = true
     name                       = "extension-name"
