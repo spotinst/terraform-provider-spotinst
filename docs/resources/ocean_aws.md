@@ -27,7 +27,7 @@ module "ocean-controller" {
 }
 ```
 
-> NOTE: You must configure the same `cluster_identifier` both for the Ocean controller and for the `spotinst_ocean_aws` resource.
+~> You must configure the same `cluster_identifier` both for the Ocean controller and for the `spotinst_ocean_aws` resource.
 
 To learn more about how to integrate existing Kubernetes clusters into Ocean using Terraform, watch [this video](https://youtu.be/ffGmMlpPsPE).
 
