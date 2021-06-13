@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.49.0 (June 13, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_managed_instance_aws: added support for managed instance actions: `pause`, `resume`, `recycle`
 * resource/spotinst_managed_instance_aws: added default deletion configuration to managed instances
