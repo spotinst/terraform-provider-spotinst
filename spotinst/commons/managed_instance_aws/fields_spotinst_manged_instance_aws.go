@@ -119,4 +119,27 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ManagedInstanceAction] = commons.NewGenericField(
+		commons.ManagedInstanceAWS,
+		ManagedInstanceAction,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ActionType): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
 }

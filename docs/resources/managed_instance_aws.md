@@ -15,7 +15,6 @@ Provides a Spotinst AWS ManagedInstance resource.
 ```hcl
 # Create a Manged Instance
 resource "spotinst_managed_instance_aws" "default-managed-instance" {
-
   name        = "default-managed-instance"
   description = "created by Pulumi"
   product     = "Linux/UNIX"
@@ -77,17 +76,17 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
     key   = "explicit2"
     value = "value2"
   }
-  
+
   block_device_mappings {
-      device_name = "/dev/xvdcz"
-      ebs {
-        delete_on_termination = "true"
-        volume_type = "gp3"
-        volume_size = 50
-        iops = 100
-        throughput = 125
-      }
+    device_name = "/dev/xvdcz"
+    ebs {
+      delete_on_termination = "true"
+      volume_type           = "gp3"
+      volume_size           = 50
+      iops                  = 100
+      throughput            = 125
     }
+  }
 }
 ```
 
@@ -264,4 +263,18 @@ Usage:
     }
 
   }
+```
+
+<a id="managed_instance_action"></a>
+## Managed Instance Action
+
+* `managed_instance_action` - (Optional)
+    * `type` - (Required) String, Action type. Supported action types: `pause`, `resume`, `recycle`.
+
+Usage:
+
+```hcl
+  managed_instance_action {
+    type  = "pause"
+  }    
 ```

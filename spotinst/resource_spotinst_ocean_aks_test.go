@@ -1137,17 +1137,12 @@ func TestAccSpotinstOceanAKS_Extensions(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSExists(&cluster, resourceName),
 					testCheckOceanAKSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "extension.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "1.0"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "true"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.api_version", "2.0"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.minor_version_auto_upgrade", "false"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.name", "OceanAKS"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.publisher", "Microsoft.Azure.Extensions"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.type", "customScript"),
 				),
 			},
 			{
@@ -1160,7 +1155,7 @@ func TestAccSpotinstOceanAKS_Extensions(t *testing.T) {
 				}),
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "extension.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.api_version", "2.0"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.minor_version_auto_upgrade", "false"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1991015590.name", "OceanAKS"),
@@ -1181,19 +1176,10 @@ const testExtensionsOceanAKSConfig_Create = `
       publisher = "Microsoft.Azure.Extensions"
       type = "Linux"
     }
-
-    extension {
-      api_version = "2.0"
-      minor_version_auto_upgrade = false
-      name = "OceanAKS"
-      publisher = "Microsoft.Azure.Extensions"
-      type = "customScript"
-    }
 `
-
 const testExtensionsOceanAKSConfig_Update = `
  // --- Extensions ----------------------------------------------------
- 	extension {
+    extension {
       api_version = "2.0"
       minor_version_auto_upgrade = false
       name = "OceanAKS"
