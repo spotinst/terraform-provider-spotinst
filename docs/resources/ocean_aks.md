@@ -10,6 +10,8 @@ description: |-
 
 Manages a Spotinst Ocean AKS resource.
 
+-> This resource contains arguments (such as `image` and `extension`) that are automatically populated from the data reported by the Ocean AKS Connector deployed into your cluster. You can override the upstream configuration by defining the corresponding arguments.
+
 ## Prerequisites
 
 Installation of the Ocean controller is required by this resource. You can accomplish this by using the [spotinst/ocean-controller](https://registry.terraform.io/modules/spotinst/ocean-controller/spotinst) module as follows:
@@ -28,7 +30,7 @@ module "ocean-controller" {
 }
 ```
 
-> NOTE: You must configure the same `cluster_identifier` and `acd_identifier` both for the Ocean controller and for the `spotinst_ocean_aks` resource.
+~> You must configure the same `cluster_identifier` and `acd_identifier` both for the Ocean controller and for the `spotinst_ocean_aks` resource.
 
 To learn more about how to integrate existing Kubernetes clusters into Ocean using Terraform, watch [this video](https://youtu.be/ffGmMlpPsPE).
 
@@ -119,14 +121,6 @@ resource "spotinst_ocean_aks" "example" {
   // ----------------------------------------------------------------------
 
   // --- Extensions -------------------------------------------------------
-  extension {
-    api_version                = "2.0"
-    minor_version_auto_upgrade = false
-    name                       = "OceanAKS"
-    publisher                  = "Microsoft.Azure.Extensions"
-    type                       = "customScript"
-  }
-
   extension {
     api_version                = "1.0"
     minor_version_auto_upgrade = true
