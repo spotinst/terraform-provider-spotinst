@@ -123,9 +123,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
-				string(Network))
-			return err
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *azurev3.Network = nil
+			if v, ok := resourceData.GetOk(string(Network)); ok {
+				if network, err := expandAzureGroupNetwork(v); err != nil {
+					return err
+				} else {
+					value = network
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetNetwork(value)
+			return nil
 		},
 		nil,
 	)

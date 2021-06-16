@@ -1,5 +1,9 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_ocean_aws: enable setting `spot_percentage` to 0
+* resource/spotinst_elastigroup_azure_v3: resolved errors with `network`
+
 ## 1.49.0 (June 13, 2021)
 
 ENHANCEMENTS:
