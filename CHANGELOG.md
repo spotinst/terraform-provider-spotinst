@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.50.0 (June 21, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs_launch_spec: added `subnet_ids`
 
