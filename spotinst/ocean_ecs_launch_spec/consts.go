@@ -26,6 +26,7 @@ const (
 	Tags               commons.FieldName = "tags"
 	InstanceTypes      commons.FieldName = "instance_types"
 	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
+	SubnetIDs          commons.FieldName = "subnet_ids"
 )
 
 const (

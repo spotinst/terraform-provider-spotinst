@@ -470,13 +470,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if value, ok := resourceData.GetOk(string(SubnetIDs)); ok && value != nil {
-				if subnetIds, err := expandSubnetIDs(value); err != nil {
+			var value []string = nil
+			if v, ok := resourceData.GetOk(string(SubnetIDs)); ok && v != nil {
+				if subnetIds, err := expandSubnetIDs(v); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.SetSubnetIDs(subnetIds)
+					value = subnetIds
 				}
 			}
+			elastigroup.Compute.SetSubnetIDs(value)
 			return nil
 		},
 		nil,
