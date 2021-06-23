@@ -80,6 +80,17 @@ The following arguments are supported:
 * `restrict_scale_down`- (Optional) Boolean. When set to “True”, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in the array should be a subnet ID.
 
+* `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
+    * `key` - (Required) The label key.
+    * `value` - (Required) The label value.
+
+* `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
+    * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
+    * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in CPU units, where 1024 units = 1 vCPU.
+    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+
+<a id="block-devices"></a>
+## Block Devices
 * `block_device_mappings`- (Optional) Object. Array list of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
     * `device_name` - (Optional) String. Set device name. (Example: "/dev/xvda1").
     * `ebs`- (Optional) Object. Set Elastic Block Store properties .
@@ -97,14 +108,6 @@ The following arguments are supported:
             * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: baseSize= 50, sizePerResourceUnit=20, and instance with 2 CPU is launched - its total disk size will be: 90GB)
         * `no_device`- (Optional) String. suppresses the specified device included in the block device mapping of the AMI.
 
-* `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
-    * `key` - (Required) The label key.
-    * `value` - (Required) The label value.
-   
-* `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
-    * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
-    * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in CPU units, where 1024 units = 1 vCPU.
-    * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 
 ## Attributes Reference
 
