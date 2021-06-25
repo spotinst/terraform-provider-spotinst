@@ -18,6 +18,7 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
   image_id  = "ami-123456"
   user_data = "echo hello world"
   iam_instance_profile = "iam-profile"
+  subnet_ids = ["subnet-12345"]
   security_group_ids = ["awseb-12345"]
   restrict_scale_down = true
   instance_types = ["m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge",
@@ -77,6 +78,7 @@ The following arguments are supported:
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the Ocean cluster.
 * `restrict_scale_down`- (Optional) Boolean. When set to “True”, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
+* `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in the array should be a subnet ID.
 
 * `block_device_mappings`- (Optional) Object. Array list of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
     * `device_name` - (Optional) String. Set device name. (Example: "/dev/xvda1").

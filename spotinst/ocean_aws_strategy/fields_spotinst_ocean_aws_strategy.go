@@ -118,7 +118,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Default:      -1,
 			ValidateFunc: validation.IntAtLeast(-1),
 			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				if old == "-1" && new == "0" {
+				if old == "-1" && new == "null" {
 					return true
 				}
 				return false
@@ -153,11 +153,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetCluster()
 			var spotPercentage *float64 = nil
 			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
-				if v > 0 {
-					spotPercentage = spotinst.Float64(float64(v))
-				}
-				cluster.Strategy.SetSpotPercentage(spotPercentage)
+				spotPercentage = spotinst.Float64(float64(v))
 			}
+			cluster.Strategy.SetSpotPercentage(spotPercentage)
 			return nil
 		},
 		nil,
