@@ -45,7 +45,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
 
   autoscale_headrooms {
     num_of_units    = 5
-    cpu_per_nit     = 1000
+    cpu_per_unit     = 1000
     gpu_per_unit    = 0
     memory_per_unit = 2048
   }
@@ -149,7 +149,7 @@ The following arguments are supported:
     * `max_instance_count` - (Optional) Set a maximum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
 * `strategy` - (Optional) 
     * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Virtual Node Group instances.
-* `create_actions` - (Optional)
+* `create_options` - (Optional)
     * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created virtual node group.
     
 ## Attributes Reference
