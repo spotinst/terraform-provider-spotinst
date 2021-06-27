@@ -43,7 +43,6 @@ func (res *OceanGKELaunchSpecImportTerraformResource) OnCreate(
 	launchSpecWrapper := NewGKELaunchSpecImportWrapper()
 
 	if importedLaunchSpec != nil {
-		buildEmptyGKELaunchSpecRequirements(importedLaunchSpec)
 		launchSpecWrapper.SetLaunchSpec(importedLaunchSpec)
 	}
 
@@ -112,14 +111,7 @@ func (res *OceanGKELaunchSpecImportTerraformResource) OnUpdate(
 
 func NewGKELaunchSpecImportWrapper() *GKELaunchSpecImportWrapper {
 	return &GKELaunchSpecImportWrapper{
-		launchSpec: &gcp.LaunchSpec{
-			Metadata: []*gcp.Metadata{},
-			Labels:   []*gcp.Label{},
-			Taints:   []*gcp.Taint{},
-			AutoScale: &gcp.AutoScale{
-				Headrooms: []*gcp.AutoScaleHeadroom{},
-			},
-		},
+		launchSpec: &gcp.LaunchSpec{},
 	}
 }
 
@@ -129,30 +121,4 @@ func (launchSpecImportWrapper *GKELaunchSpecImportWrapper) GetLaunchSpec() *gcp.
 
 func (launchSpecImportWrapper *GKELaunchSpecImportWrapper) SetLaunchSpec(launchSpecImport *gcp.LaunchSpec) {
 	launchSpecImportWrapper.launchSpec = launchSpecImport
-}
-
-func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
-	if launchSpec == nil {
-		return
-	}
-
-	if launchSpec.Strategy == nil {
-		launchSpec.SetStrategy(&gcp.LaunchSpecStrategy{})
-	}
-
-	if launchSpec.Labels == nil {
-		launchSpec.SetLabels([]*gcp.Label{})
-	}
-
-	if launchSpec.Taints == nil {
-		launchSpec.SetTaints([]*gcp.Taint{})
-	}
-
-	if launchSpec.AutoScale == nil {
-		launchSpec.SetAutoScale(&gcp.AutoScale{})
-	}
-
-	if launchSpec.AutoScale.Headrooms == nil {
-		launchSpec.AutoScale.SetHeadrooms([]*gcp.AutoScaleHeadroom{})
-	}
 }
