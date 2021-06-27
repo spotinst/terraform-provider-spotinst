@@ -130,3 +130,29 @@ func (launchSpecWrapper *LaunchSpecGKEWrapper) GetLaunchSpec() *gcp.LaunchSpec {
 func (launchSpecWrapper *LaunchSpecGKEWrapper) SetLaunchSpec(launchSpec *gcp.LaunchSpec) {
 	launchSpecWrapper.launchSpec = launchSpec
 }
+
+func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
+	if launchSpec == nil {
+		return
+	}
+
+	if launchSpec.Strategy == nil {
+		launchSpec.SetStrategy(&gcp.LaunchSpecStrategy{})
+	}
+
+	if launchSpec.Labels == nil {
+		launchSpec.SetLabels([]*gcp.Label{})
+	}
+
+	if launchSpec.Taints == nil {
+		launchSpec.SetTaints([]*gcp.Taint{})
+	}
+
+	if launchSpec.AutoScale == nil {
+		launchSpec.SetAutoScale(&gcp.AutoScale{})
+	}
+
+	if launchSpec.AutoScale.Headrooms == nil {
+		launchSpec.AutoScale.SetHeadrooms([]*gcp.AutoScaleHeadroom{})
+	}
+}
