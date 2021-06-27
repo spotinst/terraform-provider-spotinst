@@ -2,9 +2,7 @@ package ocean_gke_launch_spec
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
@@ -14,7 +12,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[OceanId] = commons.NewGenericField(
+	/*fieldsMap[OceanId] = commons.NewGenericField(
 		commons.OceanGKELaunchSpec,
 		OceanId,
 		&schema.Schema{
@@ -50,6 +48,52 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		nil,
+	)*/
+
+	fieldsMap[OceanId] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		OceanId,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+			ForceNew: true,
+			//Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(OceanId))
+			return err
+		},
+		nil,
+	)
+
+	fieldsMap[NodePoolName] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		NodePoolName,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+			ForceNew: true,
+			//Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(NodePoolName))
+			return err
+		},
+		nil,
 	)
 
 	fieldsMap[SourceImage] = commons.NewGenericField(
@@ -63,12 +107,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			ls := lsWrapper.GetLaunchSpec()
 			var value *string = nil
+
 			if ls != nil && ls.SourceImage != nil {
 				value = ls.SourceImage
 			}
+
 			if err := resourceData.Set(string(SourceImage), spotinst.StringValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SourceImage), err)
 			}
+
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -96,16 +143,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Required: true,
+			//Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(MetadataKey): {
 						Type:     schema.TypeString,
 						Required: true,
+						//Computed: true,
 					},
 
 					string(MetadataValue): {
 						Type:     schema.TypeString,
 						Required: true,
+						//Computed: true,
 					},
 				},
 			},
@@ -129,11 +179,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			ls := lsWrapper.GetLaunchSpec()
-			if value, ok := resourceData.GetOk(string(Metadata)); ok {
-				if metadata, err := expandMetadata(value); err != nil {
-					return err
-				} else {
-					ls.SetMetadata(metadata)
+			var value []*gcp.Metadata = nil
+
+			if v, ok := resourceData.GetOk(string(Metadata)); ok {
+				var metadata []*gcp.Metadata
+
+				if ls != nil {
+					if ls.Metadata != nil {
+						metadata = ls.Metadata
+					}
+
+					if metadata, err := expandMetadata(v, metadata); err != nil {
+						return err
+					} else {
+						value = metadata
+					}
+
+					ls.SetMetadata(value)
 				}
 			}
 			return nil
@@ -141,15 +203,26 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			ls := lsWrapper.GetLaunchSpec()
-			var metadataList []*gcp.Metadata
-			if value, ok := resourceData.GetOk(string(Metadata)); ok {
-				if metadata, err := expandMetadata(value); err != nil {
-					return err
-				} else {
-					metadataList = metadata
+			var value []*gcp.Metadata = nil
+
+			if v, ok := resourceData.GetOk(string(Metadata)); ok {
+				var metadata []*gcp.Metadata
+
+				if ls != nil {
+					if ls.Metadata != nil {
+						metadata = ls.Metadata
+					}
+
+					if metadata, err := expandMetadata(v, metadata); err != nil {
+						return err
+					} else {
+						value = metadata
+					}
+
+					ls.SetMetadata(value)
 				}
 			}
-			ls.SetMetadata(metadataList)
+
 			return nil
 		},
 		nil,
@@ -161,16 +234,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(LabelKey): {
 						Type:     schema.TypeString,
 						Required: true,
+						//Computed: true,
 					},
 
 					string(LabelValue): {
 						Type:     schema.TypeString,
 						Required: true,
+						//Computed: true,
 					},
 				},
 			},
@@ -194,11 +270,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			ls := lsWrapper.GetLaunchSpec()
-			if value, ok := resourceData.GetOk(string(Labels)); ok {
-				if labels, err := expandLabels(value); err != nil {
-					return err
-				} else {
-					ls.SetLabels(labels)
+			var value []*gcp.Label = nil
+
+			if v, ok := resourceData.GetOk(string(Labels)); ok {
+				var labels []*gcp.Label
+
+				if ls != nil {
+					if ls.Labels != nil {
+						labels = ls.Labels
+					}
+
+					if labels, err := expandLabels(v, labels); err != nil {
+						return err
+					} else {
+						value = labels
+					}
+
+					ls.SetLabels(value)
 				}
 			}
 			return nil
@@ -206,15 +294,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			ls := lsWrapper.GetLaunchSpec()
-			var labelList []*gcp.Label = nil
-			if value, ok := resourceData.GetOk(string(Labels)); ok {
-				if labels, err := expandLabels(value); err != nil {
-					return err
-				} else {
-					labelList = labels
+			var value []*gcp.Label = nil
+
+			if v, ok := resourceData.GetOk(string(Labels)); ok {
+				var labels []*gcp.Label
+
+				if ls != nil {
+					if ls.Labels != nil {
+						labels = ls.Labels
+					}
+
+					if labels, err := expandLabels(v, labels); err != nil {
+						return err
+					} else {
+						value = labels
+					}
+
+					ls.SetLabels(value)
 				}
 			}
-			ls.SetLabels(labelList)
 			return nil
 		},
 		nil,
@@ -226,21 +324,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(TaintKey): {
 						Type:     schema.TypeString,
 						Required: true,
+						//Computed: true,
 					},
 
 					string(TaintValue): {
 						Type:     schema.TypeString,
 						Required: true,
+						//Computed: true,
 					},
 
 					string(TaintEffect): {
 						Type:     schema.TypeString,
 						Required: true,
+						//Computed: true,
 					},
 				},
 			},
@@ -264,11 +366,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			ls := lsWrapper.GetLaunchSpec()
-			if value, ok := resourceData.GetOk(string(Taints)); ok {
-				if taints, err := expandTaints(value); err != nil {
-					return err
-				} else {
-					ls.SetTaints(taints)
+			var value []*gcp.Taint = nil
+
+			if v, ok := resourceData.GetOk(string(Taints)); ok {
+				var taints []*gcp.Taint
+
+				if ls != nil {
+					if ls.Taints != nil {
+						taints = ls.Taints
+					}
+
+					if taints, err := expandTaints(v, taints); err != nil {
+						return err
+					} else {
+						value = taints
+					}
+
+					ls.SetTaints(value)
 				}
 			}
 			return nil
@@ -276,15 +390,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			ls := lsWrapper.GetLaunchSpec()
-			var taintsList []*gcp.Taint = nil
-			if value, ok := resourceData.GetOk(string(Taints)); ok {
-				if taints, err := expandTaints(value); err != nil {
-					return err
-				} else {
-					taintsList = taints
+			var value []*gcp.Taint = nil
+
+			if v, ok := resourceData.GetOk(string(Taints)); ok {
+				var taints []*gcp.Taint
+
+				if ls != nil {
+					if ls.Taints != nil {
+						taints = ls.Taints
+					}
+
+					if taints, err := expandTaints(v, taints); err != nil {
+						return err
+					} else {
+						value = taints
+					}
+
+					ls.SetTaints(value)
 				}
 			}
-			ls.SetTaints(taintsList)
 			return nil
 		},
 		nil,
@@ -296,26 +420,31 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(CPUPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Computed: true,
 					},
 
 					string(GPUPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Computed: true,
 					},
 
 					string(MemoryPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Computed: true,
 					},
 
 					string(NumOfUnits): {
 						Type:     schema.TypeInt,
 						Required: true,
+						//Computed: true,
 					},
 				},
 			},
@@ -336,29 +465,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
-				if headrooms, err := expandHeadrooms(value); err != nil {
-					return err
-				} else {
-					launchSpec.AutoScale.SetHeadrooms(headrooms)
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var value []*gcp.AutoScaleHeadroom = nil
+
+			if v, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
+				var autoScaleHeadrooms []*gcp.AutoScaleHeadroom
+
+				if ls != nil && ls.AutoScale != nil {
+					if ls.AutoScale.Headrooms != nil {
+						autoScaleHeadrooms = ls.AutoScale.Headrooms
+					}
+
+					if autoScaleHeadrooms, err := expandHeadrooms(v, autoScaleHeadrooms); err != nil {
+						return err
+					} else {
+						value = autoScaleHeadrooms
+					}
+
+					ls.AutoScale.SetHeadrooms(value)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			var headroomList []*gcp.AutoScaleHeadroom = nil
-			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
-				if expandedList, err := expandHeadrooms(value); err != nil {
-					return err
-				} else {
-					headroomList = expandedList
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var value []*gcp.AutoScaleHeadroom = nil
+
+			if v, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
+				var autoScaleHeadrooms []*gcp.AutoScaleHeadroom
+
+				if ls != nil && ls.AutoScale != nil {
+					if ls.AutoScale.Headrooms != nil {
+						autoScaleHeadrooms = ls.AutoScale.Headrooms
+					}
+
+					if autoScaleHeadrooms, err := expandHeadrooms(v, autoScaleHeadrooms); err != nil {
+						return err
+					} else {
+						value = autoScaleHeadrooms
+					}
+
+					ls.AutoScale.SetHeadrooms(value)
 				}
 			}
-			launchSpec.AutoScale.SetHeadrooms(headroomList)
 			return nil
 		},
 		nil,
@@ -370,6 +521,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
+			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
@@ -425,80 +577,75 @@ func hashKVTaints(v interface{}) int {
 	return hashcode.String(buf.String())
 }
 
-func expandTaints(data interface{}) ([]*gcp.Taint, error) {
+func expandTaints(data interface{}, taints []*gcp.Taint) ([]*gcp.Taint, error) {
 	list := data.(*schema.Set).List()
-	taints := make([]*gcp.Taint, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		if _, ok := attr[string(TaintKey)]; !ok {
-			return nil, errors.New("invalid taint attributes: key missing")
+
+		taint := &gcp.Taint{}
+
+		if v, ok := attr[string(TaintKey)].(string); ok && v != "" {
+			taint.SetKey(spotinst.String(v))
 		}
 
-		if _, ok := attr[string(TaintValue)]; !ok {
-			return nil, errors.New("invalid taint attributes: value missing")
+		if v, ok := attr[string(TaintValue)].(string); ok && v != "" {
+			taint.SetValue(spotinst.String(v))
 		}
 
-		if _, ok := attr[string(TaintEffect)]; !ok {
-			return nil, errors.New("invalid taint attributes: effect missing")
+		if v, ok := attr[string(TaintEffect)].(string); ok && v != "" {
+			taint.SetValue(spotinst.String(v))
 		}
 
-		taint := &gcp.Taint{
-			Key:    spotinst.String(attr[string(TaintKey)].(string)),
-			Value:  spotinst.String(attr[string(TaintValue)].(string)),
-			Effect: spotinst.String(attr[string(TaintEffect)].(string)),
-		}
 		taints = append(taints, taint)
 	}
 	return taints, nil
 }
 
-func expandLabels(data interface{}) ([]*gcp.Label, error) {
+func expandLabels(data interface{}, labels []*gcp.Label) ([]*gcp.Label, error) {
 	list := data.(*schema.Set).List()
-	labels := make([]*gcp.Label, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		if _, ok := attr[string(LabelKey)]; !ok {
-			return nil, errors.New("invalid label attributes: key missing")
+
+		label := &gcp.Label{}
+
+		if v, ok := attr[string(LabelKey)].(string); ok && v != "" {
+			label.SetKey(spotinst.String(v))
 		}
 
-		if _, ok := attr[string(LabelValue)]; !ok {
-			return nil, errors.New("invalid label attributes: value missing")
+		if v, ok := attr[string(LabelValue)].(string); ok && v != "" {
+			label.SetValue(spotinst.String(v))
 		}
-		label := &gcp.Label{
-			Key:   spotinst.String(attr[string(LabelKey)].(string)),
-			Value: spotinst.String(attr[string(LabelValue)].(string)),
-		}
+
 		labels = append(labels, label)
 	}
 	return labels, nil
 }
 
-func expandMetadata(data interface{}) ([]*gcp.Metadata, error) {
+func expandMetadata(data interface{}, metadata []*gcp.Metadata) ([]*gcp.Metadata, error) {
 	list := data.(*schema.Set).List()
-	metadata := make([]*gcp.Metadata, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		if _, ok := attr[string(MetadataKey)]; !ok {
-			return nil, errors.New("invalid metadata attributes: key missing")
+
+		md := &gcp.Metadata{}
+
+		if v, ok := attr[string(MetadataKey)].(string); ok && v != "" {
+			md.SetKey(spotinst.String(v))
 		}
 
-		if _, ok := attr[string(MetadataValue)]; !ok {
-			return nil, errors.New("invalid metadata attributes: value missing")
+		if v, ok := attr[string(MetadataValue)].(string); ok && v != "" {
+			md.SetValue(spotinst.String(v))
 		}
-		metaObject := &gcp.Metadata{
-			Key:   spotinst.String(attr[string(MetadataKey)].(string)),
-			Value: spotinst.String(attr[string(MetadataValue)].(string)),
-		}
-		metadata = append(metadata, metaObject)
+
+		metadata = append(metadata, md)
 	}
 	return metadata, nil
 }
@@ -540,26 +687,35 @@ func flattenMetadata(metadata []*gcp.Metadata) []interface{} {
 	return result
 }
 
-func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {
+func expandHeadrooms(data interface{}, autoScaleHeadrooms []*gcp.AutoScaleHeadroom) ([]*gcp.AutoScaleHeadroom, error) {
 	list := data.(*schema.Set).List()
-	headrooms := make([]*gcp.AutoScaleHeadroom, 0, len(list))
-
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		headroom := &gcp.AutoScaleHeadroom{
-			CPUPerUnit:    spotinst.Int(attr[string(CPUPerUnit)].(int)),
-			GPUPerUnit:    spotinst.Int(attr[string(GPUPerUnit)].(int)),
-			NumOfUnits:    spotinst.Int(attr[string(NumOfUnits)].(int)),
-			MemoryPerUnit: spotinst.Int(attr[string(MemoryPerUnit)].(int)),
+		autoScaleHeadroom := &gcp.AutoScaleHeadroom{}
+
+		if v, ok := attr[string(CPUPerUnit)].(int); ok && v >= 0 {
+			autoScaleHeadroom.SetCPUPerUnit(spotinst.Int(v))
 		}
 
-		headrooms = append(headrooms, headroom)
+		if v, ok := attr[string(GPUPerUnit)].(int); ok && v >= 0 {
+			autoScaleHeadroom.SetGPUPerUnit(spotinst.Int(v))
+		}
+
+		if v, ok := attr[string(NumOfUnits)].(int); ok && v >= 0 {
+			autoScaleHeadroom.SetNumOfUnits(spotinst.Int(v))
+		}
+
+		if v, ok := attr[string(MemoryPerUnit)].(int); ok && v >= 0 {
+			autoScaleHeadroom.SetMemoryPerUnit(spotinst.Int(v))
+		}
+
+		autoScaleHeadrooms = append(autoScaleHeadrooms, autoScaleHeadroom)
 	}
-	return headrooms, nil
+	return autoScaleHeadrooms, nil
 }
 
 func flattenHeadrooms(headrooms []*gcp.AutoScaleHeadroom) []interface{} {

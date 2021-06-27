@@ -33,3 +33,7 @@ const (
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
 	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
 )
+
+const (
+	NodePoolName commons.FieldName = "node_pool_name"
+)

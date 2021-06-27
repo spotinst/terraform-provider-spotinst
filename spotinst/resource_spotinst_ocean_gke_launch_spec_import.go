@@ -36,6 +36,7 @@ func setupOceanGKELaunchSpecImportResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	ocean_gke_launch_spec_import.Setup(fieldsMap)
+	ocean_gke_launch_spec_import.Setup(fieldsMap)
 
 	commons.OceanGKELaunchSpecImportResource = commons.NewOceanGKELaunchSpecImportResource(fieldsMap)
 }

@@ -46,19 +46,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			if value, ok := resourceData.GetOk(string(Strategy)); ok {
-				if strategy, err := expandStrategy(value); err != nil {
+			var value *gcp.LaunchSpecStrategy = nil
+
+			if v, ok := resourceData.GetOk(string(Strategy)); ok {
+				if strategy, err := expandStrategy(v); err != nil {
 					return err
 				} else {
-					launchSpec.SetStrategy(strategy)
+					value = strategy
 				}
 			}
+			launchSpec.SetStrategy(value)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
 			var value *gcp.LaunchSpecStrategy = nil
+
 			if v, ok := resourceData.GetOk(string(Strategy)); ok {
 				if strategy, err := expandStrategy(v); err != nil {
 					return err
