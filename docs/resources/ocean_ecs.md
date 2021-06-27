@@ -98,6 +98,10 @@ The following arguments are supported:
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
+
+
+<a id="block-devices"></a>
+## Block Devices
 * `block_device_mappings` - (Optional) Object. List of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
     * `device_name` - (Optional) String. Set device name. Example: `/dev/xvda1`.
     * `ebs` - (Optional) Object. Set Elastic Block Store properties.
@@ -118,6 +122,7 @@ The following arguments are supported:
     * `perform_at` - (Required) String. Valid values: "always" "never" "timeWindow".
     * `time_windows` - (Optional; Required if not using `perform_at` = timeWindow) Array of strings. Set time windows for image update, at least one time window. Each string is in the format of ddd:hh:mm-ddd:hh:mm ddd. Time windows should not overlap.
     * `should_optimize_ecs_ami` - (Required) Boolean. Enable auto image (AMI) update for the ECS container instances. The auto update applies for ECS-Optimized AMIs.
+    
 
 <a id="auto-scaler"></a>
 ## Auto Scaler
@@ -177,8 +182,8 @@ The following arguments are supported:
 ```
 
 
-<a id="scheduled-task"></a>
-## scheduled task
+<a id="scheduled-tasks"></a>
+## Scheduled Tasks
 * `scheduled_task` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional)  Flag to enable / disable the shutdown hours.
@@ -202,7 +207,7 @@ The following arguments are supported:
   }
 ```
 
-## Attributes Reference
 
+## Attributes Reference
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Spotinst Ocean ID.

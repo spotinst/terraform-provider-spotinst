@@ -609,7 +609,7 @@ const testStrategyConfig_Update = `
 
 const testStrategyConfig_EmptyFields = `
  // --- STRATEGY --------------------
- spot_percentage = 0
+ spot_percentage = null
  // ---------------------------------
 `
 
