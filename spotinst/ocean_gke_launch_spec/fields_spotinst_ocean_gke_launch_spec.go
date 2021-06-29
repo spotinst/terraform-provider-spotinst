@@ -8,6 +8,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"log"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
@@ -55,9 +56,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		OceanId,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 			ForceNew: true,
-			//Computed: true,
+			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -101,7 +102,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		SourceImage,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
+			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
@@ -142,20 +144,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Metadata,
 		&schema.Schema{
 			Type:     schema.TypeSet,
-			Required: true,
-			//Computed: true,
+			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(MetadataKey): {
 						Type:     schema.TypeString,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 
 					string(MetadataValue): {
 						Type:     schema.TypeString,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 				},
 			},
@@ -239,14 +241,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(LabelKey): {
 						Type:     schema.TypeString,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 
 					string(LabelValue): {
 						Type:     schema.TypeString,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 				},
 			},
@@ -329,20 +331,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(TaintKey): {
 						Type:     schema.TypeString,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 
 					string(TaintValue): {
 						Type:     schema.TypeString,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 
 					string(TaintEffect): {
 						Type:     schema.TypeString,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 				},
 			},
@@ -443,8 +445,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 					string(NumOfUnits): {
 						Type:     schema.TypeInt,
-						Required: true,
-						//Computed: true,
+						Optional: true,
+						Computed: true,
 					},
 				},
 			},
@@ -638,14 +640,23 @@ func expandMetadata(data interface{}, metadata []*gcp.Metadata) ([]*gcp.Metadata
 		md := &gcp.Metadata{}
 
 		if v, ok := attr[string(MetadataKey)].(string); ok && v != "" {
+			log.Printf("metadata key is: %v", v)
 			md.SetKey(spotinst.String(v))
 		}
 
 		if v, ok := attr[string(MetadataValue)].(string); ok && v != "" {
+			log.Printf("metadata val is: %v", v)
 			md.SetValue(spotinst.String(v))
 		}
 
-		metadata = append(metadata, md)
+		v := checkMetadataUniqueness(md, metadata)
+		if v == true {
+			metadata = append(metadata, md)
+
+		}
+		log.Printf("new metadata object key is: %v", spotinst.StringValue(md.Key))
+		log.Printf("new metadata object val is: %v", spotinst.StringValue(md.Value))
+
 	}
 	return metadata, nil
 }
@@ -732,4 +743,15 @@ func flattenHeadrooms(headrooms []*gcp.AutoScaleHeadroom) []interface{} {
 	}
 
 	return result
+}
+
+func checkMetadataUniqueness(md *gcp.Metadata, metadata []*gcp.Metadata) bool {
+	for _, mdElement := range metadata {
+		if spotinst.StringValue(mdElement.Key) == spotinst.StringValue(md.Key) {
+			if spotinst.StringValue(mdElement.Value) == spotinst.StringValue(md.Value) {
+				return false
+			}
+		}
+	}
+	return true
 }
