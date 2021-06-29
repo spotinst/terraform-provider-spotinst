@@ -422,31 +422,26 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
-			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(CPUPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true,
 					},
 
 					string(GPUPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true,
 					},
 
 					string(MemoryPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true,
 					},
 
 					string(NumOfUnits): {
 						Type:     schema.TypeInt,
-						Optional: true,
-						Computed: true,
+						Required: true,
 					},
 				},
 			},
@@ -467,51 +462,29 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			ls := lsWrapper.GetLaunchSpec()
-			var value []*gcp.AutoScaleHeadroom = nil
-
-			if v, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
-				var autoScaleHeadrooms []*gcp.AutoScaleHeadroom
-
-				if ls != nil && ls.AutoScale != nil {
-					if ls.AutoScale.Headrooms != nil {
-						autoScaleHeadrooms = ls.AutoScale.Headrooms
-					}
-
-					if autoScaleHeadrooms, err := expandHeadrooms(v, autoScaleHeadrooms); err != nil {
-						return err
-					} else {
-						value = autoScaleHeadrooms
-					}
-
-					ls.AutoScale.SetHeadrooms(value)
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
+				if headrooms, err := expandHeadrooms(value); err != nil {
+					return err
+				} else {
+					launchSpec.AutoScale.SetHeadrooms(headrooms)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			ls := lsWrapper.GetLaunchSpec()
-			var value []*gcp.AutoScaleHeadroom = nil
-
-			if v, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
-				var autoScaleHeadrooms []*gcp.AutoScaleHeadroom
-
-				if ls != nil && ls.AutoScale != nil {
-					if ls.AutoScale.Headrooms != nil {
-						autoScaleHeadrooms = ls.AutoScale.Headrooms
-					}
-
-					if autoScaleHeadrooms, err := expandHeadrooms(v, autoScaleHeadrooms); err != nil {
-						return err
-					} else {
-						value = autoScaleHeadrooms
-					}
-
-					ls.AutoScale.SetHeadrooms(value)
+			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var headroomList []*gcp.AutoScaleHeadroom = nil
+			if value, ok := resourceData.GetOk(string(AutoscaleHeadrooms)); ok {
+				if expandedList, err := expandHeadrooms(value); err != nil {
+					return err
+				} else {
+					headroomList = expandedList
 				}
 			}
+			launchSpec.AutoScale.SetHeadrooms(headroomList)
 			return nil
 		},
 		nil,
