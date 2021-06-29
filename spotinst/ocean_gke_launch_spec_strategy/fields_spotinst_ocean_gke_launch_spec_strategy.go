@@ -17,7 +17,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
-			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(PreemptiblePercentage): {
@@ -47,23 +46,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
-			var value *gcp.LaunchSpecStrategy = nil
-
-			if v, ok := resourceData.GetOk(string(Strategy)); ok {
-				if strategy, err := expandStrategy(v); err != nil {
+			if value, ok := resourceData.GetOk(string(Strategy)); ok {
+				if strategy, err := expandStrategy(value); err != nil {
 					return err
 				} else {
-					value = strategy
+					launchSpec.SetStrategy(strategy)
 				}
 			}
-			launchSpec.SetStrategy(value)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			LaunchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
 			var value *gcp.LaunchSpecStrategy = nil
-
 			if v, ok := resourceData.GetOk(string(Strategy)); ok {
 				if strategy, err := expandStrategy(v); err != nil {
 					return err
