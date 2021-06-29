@@ -671,35 +671,26 @@ func flattenMetadata(metadata []*gcp.Metadata) []interface{} {
 	return result
 }
 
-func expandHeadrooms(data interface{}, autoScaleHeadrooms []*gcp.AutoScaleHeadroom) ([]*gcp.AutoScaleHeadroom, error) {
+func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {
 	list := data.(*schema.Set).List()
+	headrooms := make([]*gcp.AutoScaleHeadroom, 0, len(list))
+
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		autoScaleHeadroom := &gcp.AutoScaleHeadroom{}
-
-		if v, ok := attr[string(CPUPerUnit)].(int); ok && v >= 0 {
-			autoScaleHeadroom.SetCPUPerUnit(spotinst.Int(v))
+		headroom := &gcp.AutoScaleHeadroom{
+			CPUPerUnit:    spotinst.Int(attr[string(CPUPerUnit)].(int)),
+			GPUPerUnit:    spotinst.Int(attr[string(GPUPerUnit)].(int)),
+			NumOfUnits:    spotinst.Int(attr[string(NumOfUnits)].(int)),
+			MemoryPerUnit: spotinst.Int(attr[string(MemoryPerUnit)].(int)),
 		}
 
-		if v, ok := attr[string(GPUPerUnit)].(int); ok && v >= 0 {
-			autoScaleHeadroom.SetGPUPerUnit(spotinst.Int(v))
-		}
-
-		if v, ok := attr[string(NumOfUnits)].(int); ok && v >= 0 {
-			autoScaleHeadroom.SetNumOfUnits(spotinst.Int(v))
-		}
-
-		if v, ok := attr[string(MemoryPerUnit)].(int); ok && v >= 0 {
-			autoScaleHeadroom.SetMemoryPerUnit(spotinst.Int(v))
-		}
-
-		autoScaleHeadrooms = append(autoScaleHeadrooms, autoScaleHeadroom)
+		headrooms = append(headrooms, headroom)
 	}
-	return autoScaleHeadrooms, nil
+	return headrooms, nil
 }
 
 func flattenHeadrooms(headrooms []*gcp.AutoScaleHeadroom) []interface{} {
