@@ -140,14 +140,6 @@ func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
 		launchSpec.SetStrategy(&gcp.LaunchSpecStrategy{})
 	}
 
-	if launchSpec.Labels == nil {
-		launchSpec.SetLabels([]*gcp.Label{})
-	}
-
-	if launchSpec.Taints == nil {
-		launchSpec.SetTaints([]*gcp.Taint{})
-	}
-
 	if launchSpec.AutoScale == nil {
 		launchSpec.SetAutoScale(&gcp.AutoScale{})
 	}

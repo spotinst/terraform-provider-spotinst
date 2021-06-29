@@ -598,7 +598,7 @@ func expandTaints(data interface{}, taints []*gcp.Taint) ([]*gcp.Taint, error) {
 		}
 
 		if v, ok := attr[string(TaintEffect)].(string); ok && v != "" {
-			taint.SetValue(spotinst.String(v))
+			taint.SetEffect(spotinst.String(v))
 		}
 
 		taints = append(taints, taint)
