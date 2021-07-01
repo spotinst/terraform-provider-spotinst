@@ -52,13 +52,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)*/
 
 	fieldsMap[OceanId] = commons.NewGenericField(
-		commons.OceanGKELaunchSpec,
+		commons.OceanGKELaunchSpecImport,
 		OceanId,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
 			ForceNew: true,
-			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -184,16 +183,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value []*gcp.Metadata = nil
 
 			if v, ok := resourceData.GetOk(string(Metadata)); ok {
-				var metadata []*gcp.Metadata
 
 				if ls != nil {
-					if ls.Metadata != nil {
-						metadata = ls.Metadata
-					}
+					/*if ls.Metadata != nil {
+						value = ls.Metadata
+					}*/
 
-					if metadata, err := expandMetadata(v, metadata); err != nil {
+					if metadata, err := expandMetadata(v); err != nil {
 						return err
-					} else {
+					} else if metadata != nil {
 						value = metadata
 					}
 
@@ -208,14 +206,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value []*gcp.Metadata = nil
 
 			if v, ok := resourceData.GetOk(string(Metadata)); ok {
-				var metadata []*gcp.Metadata
 
 				if ls != nil {
 					if ls.Metadata != nil {
-						metadata = ls.Metadata
+						value = ls.Metadata
 					}
 
-					if metadata, err := expandMetadata(v, metadata); err != nil {
+					if metadata, err := expandMetadata(v); err != nil {
 						return err
 					} else {
 						value = metadata
@@ -574,7 +571,10 @@ func expandTaints(data interface{}, taints []*gcp.Taint) ([]*gcp.Taint, error) {
 			taint.SetEffect(spotinst.String(v))
 		}
 
-		taints = append(taints, taint)
+		v := checkTaintKeyExists(taint, taints)
+		if v == false {
+			taints = append(taints, taint)
+		}
 	}
 	return taints, nil
 }
@@ -597,12 +597,16 @@ func expandLabels(data interface{}, labels []*gcp.Label) ([]*gcp.Label, error) {
 			label.SetValue(spotinst.String(v))
 		}
 
-		labels = append(labels, label)
+		v := checkLabelKeyExists(label, labels)
+		if v == false {
+			labels = append(labels, label)
+		}
 	}
 	return labels, nil
 }
 
-func expandMetadata(data interface{}, metadata []*gcp.Metadata) ([]*gcp.Metadata, error) {
+func expandMetadata(data interface{}) ([]*gcp.Metadata, error) {
+	var metadata []*gcp.Metadata
 	list := data.(*schema.Set).List()
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
@@ -631,7 +635,11 @@ func expandMetadata(data interface{}, metadata []*gcp.Metadata) ([]*gcp.Metadata
 		log.Printf("new metadata object val is: %v", spotinst.StringValue(md.Value))
 
 	}
-	return metadata, nil
+	if len(metadata) > 0 {
+		return metadata, nil
+	} else {
+		return nil, nil
+	}
 }
 
 func flattenTaints(taints []*gcp.Taint) []interface{} {
@@ -718,4 +726,28 @@ func checkMetadataUniqueness(md *gcp.Metadata, metadata []*gcp.Metadata) bool {
 		}
 	}
 	return true
+}
+
+func checkLabelKeyExists(label *gcp.Label, labels []*gcp.Label) bool {
+	for index, labelElement := range labels {
+		if spotinst.StringValue(labelElement.Key) == spotinst.StringValue(label.Key) {
+			labels[index].SetValue(spotinst.String(*label.Value))
+			log.Printf("lbael val is now: %v", spotinst.String(*label.Value))
+			return true
+		}
+	}
+	return false
+}
+
+func checkTaintKeyExists(taint *gcp.Taint, taints []*gcp.Taint) bool {
+	for index, taintElement := range taints {
+		if spotinst.StringValue(taintElement.Key) == spotinst.StringValue(taint.Key) {
+			taints[index].SetValue(spotinst.String(*taint.Value))
+			taints[index].SetEffect(spotinst.String(*taint.Effect))
+			log.Printf("taint val is now: %v", spotinst.String(*taint.Value))
+			log.Printf("lbael effect is now: %v", spotinst.String(*taint.Effect))
+			return true
+		}
+	}
+	return false
 }
