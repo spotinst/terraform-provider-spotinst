@@ -78,7 +78,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		NodePoolName,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 			ForceNew: true,
 			//Computed: true,
 		},
