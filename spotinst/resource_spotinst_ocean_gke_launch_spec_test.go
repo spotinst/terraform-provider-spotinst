@@ -147,7 +147,7 @@ func createOceanGKELaunchSpecTerraform(lscm *GKELaunchSpecConfigMetadata, format
 
 // region OceanGKELaunchSpec: Baseline
 func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-9cc4a148"
+	oceanID := "o-2244b135"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -255,7 +255,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Labels
 func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
-	oceanID := "o-9cc4a148"
+	oceanID := "o-2244b135"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -270,7 +270,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "labels.2480521734.key", "testKey2"),
 					resource.TestCheckResourceAttr(resourceName, "labels.2480521734.value", "testVal2"),
@@ -283,7 +282,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "labels.940728818.key", "testKey"),
 					resource.TestCheckResourceAttr(resourceName, "labels.940728818.value", "testVal"),
@@ -349,7 +347,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Taints
 func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
-	oceanID := "o-9cc4a148"
+	oceanID := "o-2244b135"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -364,7 +362,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1137791537.key", "testTaintKey"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1137791537.value", "testTaintVal"),
@@ -376,7 +373,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "taints.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1137791537.key", "testTaintKey"),
 					resource.TestCheckResourceAttr(resourceName, "taints.1137791537.value", "testTaintVal"),
@@ -449,7 +445,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: AutoScale
 func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-9cc4a148"
+	oceanID := "o-2244b135"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -464,7 +460,6 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
@@ -481,7 +476,6 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
@@ -494,7 +488,6 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
 				),
 			},
@@ -590,7 +583,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Strategy
 func TestAccSpotinstOceanGKELaunchSpec_Strategy(t *testing.T) {
-	oceanID := "o-9cc4a148"
+	oceanID := "o-2244b135"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -605,7 +598,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
@@ -624,7 +616,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
@@ -639,7 +630,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "0"),
 				),
 			},
