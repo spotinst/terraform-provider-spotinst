@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.51.0 (July 4, 2021)
+
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: resolved errors with `spot_percentage`
 
