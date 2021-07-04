@@ -136,10 +136,6 @@ func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
 		return
 	}
 
-	if launchSpec.Strategy == nil {
-		launchSpec.SetStrategy(&gcp.LaunchSpecStrategy{})
-	}
-
 	if launchSpec.AutoScale == nil {
 		launchSpec.SetAutoScale(&gcp.AutoScale{})
 	}

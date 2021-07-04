@@ -44,7 +44,7 @@ func setupOceanGKELaunchSpecResource() {
 func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecImportResource.GetName())
 
-	importedLaunchSpec, err := importOceanGKELaunchSpec(resourceData, meta)
+	importedLaunchSpec, err := importGKELaunchSpec(resourceData, meta)
 
 	if err != nil {
 		return err
@@ -194,7 +194,7 @@ func deleteGKELaunchSpec(resourceData *schema.ResourceData, meta interface{}) er
 }
 
 //region Import Ocean GKE Launch Spec
-func importOceanGKELaunchSpec(resourceData *schema.ResourceData, meta interface{}) (*gcp.LaunchSpec, error) {
+func importGKELaunchSpec(resourceData *schema.ResourceData, meta interface{}) (*gcp.LaunchSpec, error) {
 	input := &gcp.ImportOceanGKELaunchSpecInput{
 		OceanId:      spotinst.String(resourceData.Get("ocean_id").(string)),
 		NodePoolName: spotinst.String(resourceData.Get("node_pool_name").(string)),
