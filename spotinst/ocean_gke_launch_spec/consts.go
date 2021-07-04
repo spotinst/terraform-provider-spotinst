@@ -32,6 +32,9 @@ const (
 	Taints             commons.FieldName = "taints"
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
 	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
+	RootVolumeType     commons.FieldName = "root_volume_type"
+	RootVolumeSizeInGB commons.FieldName = "root_volume_size"
+	InstanceTypes      commons.FieldName = "instance_types"
 )
 
 const (

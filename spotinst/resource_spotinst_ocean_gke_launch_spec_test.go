@@ -170,6 +170,9 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "metadata.2322445456.key", "gci-ensure-gke-docker"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.2322445456.value", "true"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "10"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "1"),
 				),
 			},
 			{
@@ -183,6 +186,9 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "metadata.1537634279.key", "gci-update-strategy"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1537634279.value", "update_disabled"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "12"),
+					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "2"),
 				),
 			},
 		},
@@ -197,6 +203,9 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
  restrict_scale_down = true
+ root_volume_type = "pd-standard"
+ root_volume_size = 10
+ instance_types = ["n1-standard-1"]
 
  metadata {
      key = "gci-update-strategy"
@@ -231,6 +240,10 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
  restrict_scale_down = false
+ root_volume_type = "pd-standard"
+ root_volume_size = 12
+ instance_types = ["n1-standard-1", "n1-standard-2"]
+
  metadata {
      key = "gci-update-strategy"
      value = "update_disabled"

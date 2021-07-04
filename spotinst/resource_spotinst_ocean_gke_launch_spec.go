@@ -42,7 +42,7 @@ func setupOceanGKELaunchSpecResource() {
 }
 
 func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
-	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecImportResource.GetName())
+	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecResource.GetName())
 
 	importedLaunchSpec, err := importGKELaunchSpec(resourceData, meta)
 
@@ -64,7 +64,7 @@ func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData,
 
 	resourceData.SetId(spotinst.StringValue(launchSpecId))
 
-	return resourceSpotinstOceanGKELaunchSpecImportRead(resourceData, meta)
+	return resourceSpotinstOceanGKELaunchSpecRead(resourceData, meta)
 }
 
 func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*string, error) {
