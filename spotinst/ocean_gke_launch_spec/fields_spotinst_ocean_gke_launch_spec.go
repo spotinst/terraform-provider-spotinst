@@ -13,7 +13,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	/*fieldsMap[OceanId] = commons.NewGenericField(
+	fieldsMap[OceanId] = commons.NewGenericField(
 		commons.OceanGKELaunchSpec,
 		OceanId,
 		&schema.Schema{
@@ -49,29 +49,29 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		nil,
-	)*/
-
-	fieldsMap[OceanId] = commons.NewGenericField(
-		commons.OceanGKELaunchSpecImport,
-		OceanId,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-			ForceNew: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
-				string(OceanId))
-			return err
-		},
-		nil,
 	)
+
+	//fieldsMap[OceanId] = commons.NewGenericField(
+	//	commons.OceanGKELaunchSpecImport,
+	//	OceanId,
+	//	&schema.Schema{
+	//		Type:     schema.TypeString,
+	//		Required: true,
+	//		ForceNew: true,
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		return nil
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		return nil
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+	//			string(OceanId))
+	//		return err
+	//	},
+	//	nil,
+	//)
 
 	fieldsMap[NodePoolName] = commons.NewGenericField(
 		commons.OceanGKELaunchSpec,
