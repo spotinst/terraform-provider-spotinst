@@ -184,9 +184,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if v, ok := resourceData.GetOk(string(Metadata)); ok {
 
 				if ls != nil {
-					/*if ls.Metadata != nil {
+					if ls.Metadata != nil {
 						value = ls.Metadata
-					}*/
+					}
 
 					if metadata, err := expandMetadata(v); err != nil {
 						return err
