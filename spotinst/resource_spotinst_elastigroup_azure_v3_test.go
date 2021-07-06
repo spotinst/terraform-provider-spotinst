@@ -380,7 +380,7 @@ const testAzureV3NetworkGroupConfig_Create = `
       }
 
       application_security_group {
-        name = "automation-application-security-group-DO-NOT-DELETE"
+        name = "terraform-application-security-group-DO-NOT-DELETE"
         resource_group_name = "AutomationResourceGroup"
       }
 
