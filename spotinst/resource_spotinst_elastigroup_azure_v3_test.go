@@ -358,7 +358,7 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.name", "terraformTestSecondaryIpConfig"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.574810785.resource_group_name", "AutomationResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.574810785.name", "automation-application-security-group-DO-NOT-DELETE"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.574810785.name", "terraform-application-security-group-DO-NOT-DELETE"),
 				),
 			},
 		},
