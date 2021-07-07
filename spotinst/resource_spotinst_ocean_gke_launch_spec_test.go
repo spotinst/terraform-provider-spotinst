@@ -309,7 +309,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -335,7 +334,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -404,7 +402,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -426,7 +423,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -513,7 +509,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -548,7 +543,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -576,7 +570,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -655,7 +648,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -694,7 +686,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {
@@ -726,7 +717,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
 
  metadata {

@@ -10,6 +10,8 @@ description: |-
 
 Manages a custom Spotinst Ocean GKE Launch Spec resource.
 
+-> This resource can be imported from GKE node pool or not. . If you want to import the node pool and create the VNG from it, please provide `node_pool_name`.
+
 ## Example Usage
 
 ```hcl
@@ -61,7 +63,7 @@ output "ocean_launchspec_id" {
 The following arguments are supported:
 
 * `ocean_id` - (Required) The Ocean cluster ID.
-* `node_pool_name` - (Required) The node pool you wish to use in your launchSpec.
+* `node_pool_name` - (Optional) The node pool you wish to use in your launchSpec.
 * `source_image` - (Required) Image URL.
 * `metadata` - (Required) Cluster's metadata.
     * `key` - (Required) The metadata key.
