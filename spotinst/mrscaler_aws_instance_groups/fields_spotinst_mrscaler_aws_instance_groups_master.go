@@ -213,8 +213,8 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		MasterTarget,
 		&schema.Schema{
 			Type:     schema.TypeInt,
-			Required: true,
-			//ForceNew: true,
+			Optional: true,
+			Default:  1,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
