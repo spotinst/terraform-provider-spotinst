@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.52.0 (July 7, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added support for merging between the imported data and the user explicitly inserted data
 * resource/spotinst_ocean_gke_launch_spec: added support for: `root_volume_size`
