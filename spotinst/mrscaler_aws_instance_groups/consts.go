@@ -16,6 +16,7 @@ const (
 	MasterLifecycle      commons.FieldName = "master_lifecycle"
 	MasterEBSBlockDevice commons.FieldName = "master_ebs_block_device"
 	MasterEBSOptimized   commons.FieldName = "master_ebs_optimized"
+	MasterTarget         commons.FieldName = "master_target"
 
 	CoreInstanceTypes  commons.FieldName = "core_instance_types"
 	CoreMin            commons.FieldName = "core_min_size"

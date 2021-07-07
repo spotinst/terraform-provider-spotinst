@@ -42,6 +42,7 @@ const (
 	AutoscaleHeadrooms       commons.FieldName = "autoscale_headrooms"
 	SubnetIDs                commons.FieldName = "subnet_ids"
 	InstanceTypes            commons.FieldName = "instance_types"
+	PreferredSpotTypes       commons.FieldName = "preferred_spot_types"
 	RootVolumeSize           commons.FieldName = "root_volume_size"
 	Tags                     commons.FieldName = "tags"
 	ElasticIpPool            commons.FieldName = "elastic_ip_pool"
