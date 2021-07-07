@@ -5,7 +5,7 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added support for: `root_volume_size`
 * resource/spotinst_ocean_gke_launch_spec: added support for: `root_volume_type`
 * resource/spotinst_ocean_gke_launch_spec: added support for: `instance_types`
-* resource/spotinst_ocean_aws_launch_spec: added support for: `preferred_spot_types`
+* resource/spotinst_mrscaler_aws: added support for: `master_target`
 
 ## 1.51.0 (July 4, 2021)
 
