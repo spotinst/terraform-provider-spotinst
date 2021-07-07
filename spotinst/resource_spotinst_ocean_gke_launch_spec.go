@@ -44,10 +44,16 @@ func setupOceanGKELaunchSpecResource() {
 func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecResource.GetName())
 
-	importedLaunchSpec, err := importGKELaunchSpec(resourceData, meta)
+	var importedLaunchSpec *gcp.LaunchSpec
+	var err error
 
-	if err != nil {
-		return err
+	if v, ok := resourceData.Get(string(ocean_gke_launch_spec.NodePoolName)).(string); ok && v != "" {
+		importedLaunchSpec, err = importGKELaunchSpec(resourceData, meta)
+
+		if err != nil {
+			return err
+		}
+
 	}
 
 	launchSpec, err := commons.OceanGKELaunchSpecResource.OnCreate(importedLaunchSpec, resourceData, meta.(*Client))
