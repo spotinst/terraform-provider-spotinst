@@ -30,6 +30,9 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   spot_sizes = ["standard_a1_v1", "standard_a1_v2"]
   // -------------------------------------------------------------------
 
+  // --- LAUNCH SPEC ---------------------------------------------------
+  custom_data = "IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
+  
   // --- IMAGE ---------------------------------------------------------
   image {
     marketplace {
@@ -93,6 +96,7 @@ The following arguments are supported:
 * `max_size` - (Required) The maximum number of instances the group should have at any time.
 * `min_size` - (Required) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
+* `custom_data` - (Optional) Custom init script file or text in Base64 encoded format.
 
 * `od_sizes` - (Required) Available On-Demand sizes
 * `spot_sizes` - (Required) Available Low-Priority sizes.
@@ -102,7 +106,7 @@ The following arguments are supported:
 
 * `strategy` - (Required) Describes the deployment strategy.
     * `spot_percentage` - TODO
-    * `od_count` - (Optional) Number of On-Demand instances to maintain. Required if low_priority_percentage is not specified.
+    * `od_count` - (Optional) Number of On-Demand instances to maintain. Required if `low_priority_percentage` is not specified.
     * `fallback_to_on_demand` - 
     * `draining_timeout` - (Optional, Default `120`) Time (seconds) to allow the instance to be drained from incoming TCP connections and detached from MLB before terminating it during a scale-down operation.
 
@@ -204,5 +208,3 @@ The following arguments are supported:
 
 
     
-
-

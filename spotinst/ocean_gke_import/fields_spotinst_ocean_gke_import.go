@@ -353,6 +353,44 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 		nil,
 	)
+
+	fieldsMap[UpdatePolicy] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		UpdatePolicy,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldRoll): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+
+					string(RollConfig): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(BatchSizePercentage): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+								string(LaunchSpecIDs): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
 }
 
 func expandServices(data interface{}) ([]*gcp.BackendService, error) {
