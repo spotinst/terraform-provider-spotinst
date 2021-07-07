@@ -63,7 +63,7 @@ output "ocean_launchspec_id" {
 The following arguments are supported:
 
 * `ocean_id` - (Required) The Ocean cluster ID.
-* `node_pool_name` - (Optional) The node pool you wish to use in your launchSpec.
+* `node_pool_name` - (Optional) The node pool you wish to use in your Launch Spec.
 * `source_image` - (Required) Image URL.
 * `metadata` - (Required) Cluster's metadata.
     * `key` - (Required) The metadata key.
@@ -76,9 +76,9 @@ The following arguments are supported:
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.
 * `restrict_scale_down` - (Optional) Boolean. When set to `true`, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
-* `root_volume_type` - (Optional) Set the root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`.
-* `root_volume_size` - (Optional) Set root volume size (in GB).
-* `instance_types` - (Optional) A array of supported machine types for the Launch Spec.
+* `root_volume_type` - (Optional) Root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`.
+* `root_volume_size` - (Optional) Root volume size (in GB).
+* `instance_types` - (Optional) List of supported machine types for the Launch Spec.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
