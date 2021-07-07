@@ -77,7 +77,7 @@ The following arguments are supported:
     * `value` - (Required) The label value.
 * `restrict_scale_down` - (Optional) Boolean. When set to `true`, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `root_volume_type` - (Optional) Set the root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`.
-* `root_volume_size` - (Optional) Set root volume size (in GB).
+* `root_volume_size` - (Optional) Root volume size (in GB).
 * `instance_types` - (Optional) List of supported machine types for the Launch Spec.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
