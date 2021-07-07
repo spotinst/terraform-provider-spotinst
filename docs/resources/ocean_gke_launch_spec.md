@@ -63,7 +63,7 @@ output "ocean_launchspec_id" {
 The following arguments are supported:
 
 * `ocean_id` - (Required) The Ocean cluster ID.
-* `node_pool_name` - (Optional) The node pool you wish to use in your launchSpec.
+* `node_pool_name` - (Optional) The node pool you wish to use in your Launch Spec.
 * `source_image` - (Required) Image URL.
 * `metadata` - (Required) Cluster's metadata.
     * `key` - (Required) The metadata key.
