@@ -10,7 +10,7 @@ description: |-
 
 Manages a custom Spotinst Ocean GKE Launch Spec resource.
 
--> This resource can be imported from GKE node pool or not. . If you want to import the node pool and create the VNG from it, please provide `node_pool_name`.
+-> This resource can be imported from GKE node pool or not. If you want to import the node pool and create the VNG from it, please provide `node_pool_name`.
 
 ## Example Usage
 
