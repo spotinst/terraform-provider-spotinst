@@ -6,7 +6,7 @@ description: |-
   Provides a Spotinst Ocean Launch Spec Import resource using GKE.
 ---
 
-# spotinst\_ocean\_gke\_launch\_spec_import
+# spotinst\_ocean\_gke\_launch\_spec_import (legacy)
 
 Manages a custom Spotinst Ocean GKE Launch Spec Import resource.
 
