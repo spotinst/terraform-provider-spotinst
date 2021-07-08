@@ -183,6 +183,7 @@ func TestAccSpotinstNewMRScalerAWS_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "master_ebs_block_device.2770074213.volumes_per_instance", "1"),
 					resource.TestCheckResourceAttr(resourceName, "master_ebs_block_device.2770074213.volume_type", "gp2"),
 					resource.TestCheckResourceAttr(resourceName, "master_ebs_block_device.2770074213.size_in_gb", "10"),
+					resource.TestCheckResourceAttr(resourceName, "master_target", "1"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "core_instance_types.0", "c3.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "core_min_size", "1"),
@@ -297,6 +298,7 @@ resource "` + string(commons.MRScalerAWSResourceName) + `" "%v" {
  service_role = "Core-Services-Admin-Role"
  master_instance_types = ["c3.xlarge"]
  master_lifecycle      = "ON_DEMAND"
+ master_target     = 1
  
  master_ebs_block_device   {
    volumes_per_instance = 1
@@ -366,6 +368,7 @@ resource "` + string(commons.MRScalerAWSResourceName) + `" "%v" {
 
  master_instance_types = ["c3.xlarge"]
  master_lifecycle      = "ON_DEMAND"
+ master_target     = 1
 
  master_ebs_block_device   {
     volumes_per_instance = 1
