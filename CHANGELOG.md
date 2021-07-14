@@ -1,5 +1,14 @@
 ## Unreleased
 
+## 1.52.0 (July 7, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: added support for merging between the imported data and the user explicitly inserted data
+* resource/spotinst_ocean_gke_launch_spec: added support for: `root_volume_size`
+* resource/spotinst_ocean_gke_launch_spec: added support for: `root_volume_type`
+* resource/spotinst_ocean_gke_launch_spec: added support for: `instance_types`
+* resource/spotinst_mrscaler_aws: added support for: `master_target`
+
 ## 1.51.0 (July 4, 2021)
 
 BUG FIXES:

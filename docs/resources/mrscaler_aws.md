@@ -96,6 +96,7 @@ resource "spotinst_mrscaler_aws" "sample-MrScaler-01" {
   master_instance_types = ["c3.xlarge"]
   master_lifecycle      = "SPOT"
   master_ebs_optimized  = true
+  master_target         = 1
   
   master_ebs_block_device {
     volumes_per_instance = 1
@@ -173,6 +174,7 @@ resource "spotinst_mrscaler_aws" "sample-MrScaler-01" {
   master_instance_types = ["c3.xlarge"]
   master_lifecycle      = "SPOT"
   master_ebs_optimized  = true
+  master_target         = 1
   
   master_ebs_block_device {
     volumes_per_instance = 1
@@ -336,6 +338,7 @@ The following arguments are supported:
 ### Master Group (Clone, New strategies)
 * `master_instance_types` - (Required) The MrScaler instance types for the master nodes.
 * `master_lifecycle` - (Required) The MrScaler lifecycle for instances in master group. Allowed values are 'SPOT' and 'ON_DEMAND'.
+* `master_target` - (Optional; Default 1) Number of instances in the master group.
 * `master_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
 * `master_ebs_block_device` - (Required) This determines the ebs configuration for your master group instances. Only a single block is allowed.
     * `volumes_per_instance` - (Optional; Default 1) Amount of volumes per instance in the master group.

@@ -44,15 +44,30 @@ func setupOceanGKELaunchSpecResource() {
 func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecResource.GetName())
 
-	launchSpec, err := commons.OceanGKELaunchSpecResource.OnCreate(resourceData, meta)
+	var importedLaunchSpec *gcp.LaunchSpec
+	var err error
+
+	if v, ok := resourceData.Get(string(ocean_gke_launch_spec.NodePoolName)).(string); ok && v != "" {
+		importedLaunchSpec, err = importGKELaunchSpec(resourceData, meta)
+
+		if err != nil {
+			return err
+		}
+
+	}
+
+	launchSpec, err := commons.OceanGKELaunchSpecResource.OnCreate(importedLaunchSpec, resourceData, meta.(*Client))
+
 	if err != nil {
 		return err
 	}
 
 	launchSpecId, err := createGKELaunchSpec(launchSpec, meta.(*Client))
+
 	if err != nil {
 		return err
 	}
+
 	resourceData.SetId(spotinst.StringValue(launchSpecId))
 
 	return resourceSpotinstOceanGKELaunchSpecRead(resourceData, meta)
@@ -183,3 +198,32 @@ func deleteGKELaunchSpec(resourceData *schema.ResourceData, meta interface{}) er
 	}
 	return nil
 }
+
+//region Import Ocean GKE Launch Spec
+func importGKELaunchSpec(resourceData *schema.ResourceData, meta interface{}) (*gcp.LaunchSpec, error) {
+	input := &gcp.ImportOceanGKELaunchSpecInput{
+		OceanId:      spotinst.String(resourceData.Get("ocean_id").(string)),
+		NodePoolName: spotinst.String(resourceData.Get("node_pool_name").(string)),
+	}
+
+	resp, err := meta.(*Client).ocean.CloudProviderGCP().ImportOceanGKELaunchSpec(context.Background(), input)
+
+	if err != nil {
+		// If the group was not found, return nil so that we can show
+		// that the group is gone.
+		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+			for _, err := range errs {
+				if err.Code == ErrCodeGroupNotFound {
+					resourceData.SetId("")
+					return nil, err
+				}
+			}
+		}
+		// Some other error, report it.
+		return nil, fmt.Errorf("ocean GKE: import failed to read group: %s", err)
+	}
+
+	return resp.LaunchSpec, err
+}
+
+//endregion

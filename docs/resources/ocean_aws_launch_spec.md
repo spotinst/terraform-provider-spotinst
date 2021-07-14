@@ -32,6 +32,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     "m4.4xlarge",
   ]
 
+  preferred_spot_types = [
+    "m4.large",
+    "m4.xlarge"
+  ]
+  
   labels {
     key   = "key1"
     value = "value1"
@@ -108,7 +113,8 @@ The following arguments are supported:
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_groups` - (Optional) Optionally adds security group IDs.
 * `subnet_ids` - (Optional) A list of subnet IDs.
-* `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the cluster. 
+* `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the cluster.
+* `preferred_spot_types` - (Optional) A list of instance types. Takes the preferred types into consideration while maintaining a variety of machine types running for optimized distribution.
 * `root_volume_size` - (Optional) Set root volume size (in GB).
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
