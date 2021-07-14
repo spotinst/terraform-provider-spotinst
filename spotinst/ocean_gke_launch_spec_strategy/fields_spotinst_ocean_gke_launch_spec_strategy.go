@@ -91,6 +91,10 @@ func expandStrategy(data interface{}) (*gcp.LaunchSpecStrategy, error) {
 
 func flattenStrategy(ebs *gcp.LaunchSpecStrategy) []interface{} {
 	strategy := make(map[string]interface{})
-	strategy[string(PreemptiblePercentage)] = spotinst.IntValue(ebs.PreemptiblePercentage)
+	if spotinst.IntValue(ebs.PreemptiblePercentage) > -1 {
+		strategy[string(PreemptiblePercentage)] = spotinst.IntValue(ebs.PreemptiblePercentage)
+	} else {
+		strategy[string(PreemptiblePercentage)] = nil
+	}
 	return []interface{}{strategy}
 }

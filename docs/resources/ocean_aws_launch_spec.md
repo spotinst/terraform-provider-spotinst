@@ -32,6 +32,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     "m4.4xlarge",
   ]
 
+  preferred_spot_types = [
+    "m4.large",
+    "m4.xlarge"
+  ]
+  
   labels {
     key   = "key1"
     value = "value1"
@@ -45,7 +50,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
 
   autoscale_headrooms {
     num_of_units    = 5
-    cpu_per_nit     = 1000
+    cpu_per_unit     = 1000
     gpu_per_unit    = 0
     memory_per_unit = 2048
   }
@@ -108,7 +113,8 @@ The following arguments are supported:
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_groups` - (Optional) Optionally adds security group IDs.
 * `subnet_ids` - (Optional) A list of subnet IDs.
-* `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the cluster. 
+* `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the cluster.
+* `preferred_spot_types` - (Optional) A list of instance types. Takes the preferred types into consideration while maintaining a variety of machine types running for optimized distribution.
 * `root_volume_size` - (Optional) Set root volume size (in GB).
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
@@ -149,7 +155,7 @@ The following arguments are supported:
     * `max_instance_count` - (Optional) Set a maximum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
 * `strategy` - (Optional) 
     * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Virtual Node Group instances.
-* `create_actions` - (Optional)
+* `create_options` - (Optional)
     * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created virtual node group.
     
 ## Attributes Reference

@@ -28,8 +28,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if elastigroup.Strategy != nil && elastigroup.Strategy.Risk != nil {
 				value = elastigroup.Strategy.Risk
 			}
-			if err := resourceData.Set(string(SpotPercentage), spotinst.Int(int(*value))); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
+			if value != nil {
+				if err := resourceData.Set(string(SpotPercentage), spotinst.Int(int(*value))); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
+				}
 			}
 			return nil
 		},

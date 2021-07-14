@@ -36,7 +36,7 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.Get(string(MasterLifecycle)).(string); ok && v != "" {
 				if scaler.Compute.InstanceGroups.MasterGroup == nil {
-					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{Target: spotinst.Int(1)})
+					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
 				}
 				scaler.Compute.InstanceGroups.MasterGroup.SetLifeCycle(spotinst.String(v))
 			}
@@ -78,7 +78,7 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if v, ok := resourceData.GetOk(string(MasterInstanceTypes)); ok {
 				instances := expandInstanceTypesList(v)
 				if scaler.Compute.InstanceGroups.MasterGroup == nil {
-					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{Target: spotinst.Int(1)})
+					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
 				}
 				scaler.Compute.InstanceGroups.MasterGroup.SetInstanceTypes(instances)
 			}
@@ -107,7 +107,7 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.GetOkExists(string(MasterEBSOptimized)); ok {
 				if scaler.Compute.InstanceGroups.MasterGroup == nil {
-					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{Target: spotinst.Int(1)})
+					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.MasterGroup.EBSConfiguration == nil {
 					scaler.Compute.InstanceGroups.MasterGroup.SetEBSConfiguration(&mrscaler.EBSConfiguration{})
@@ -186,7 +186,7 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			scaler := mrsWrapper.GetMRScalerAWS()
 			if v, ok := resourceData.GetOk(string(MasterEBSBlockDevice)); ok {
 				if scaler.Compute.InstanceGroups.MasterGroup == nil {
-					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{Target: spotinst.Int(1)})
+					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
 				}
 				if scaler.Compute.InstanceGroups.MasterGroup.EBSConfiguration == nil {
 					scaler.Compute.InstanceGroups.MasterGroup.SetEBSConfiguration(&mrscaler.EBSConfiguration{})
@@ -203,6 +203,46 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
 				string(MasterInstanceTypes))
+			return err
+		},
+		nil,
+	)
+
+	fieldsMap[MasterTarget] = commons.NewGenericField(
+		commons.MRScalerAWSMasterGroup,
+		MasterTarget,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+			Default:  1,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
+			scaler := mrsWrapper.GetMRScalerAWS()
+			var value *int = nil
+			if scaler.Compute.InstanceGroups != nil && scaler.Compute.InstanceGroups.MasterGroup != nil &&
+				scaler.Compute.InstanceGroups.MasterGroup.Target != nil {
+				value = scaler.Compute.InstanceGroups.MasterGroup.Target
+			}
+			if err := resourceData.Set(string(MasterTarget), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MasterTarget), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
+			scaler := mrsWrapper.GetMRScalerAWS()
+			if v, ok := resourceData.Get(string(MasterTarget)).(int); ok && v > 0 {
+				if scaler.Compute.InstanceGroups.MasterGroup == nil {
+					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
+				}
+				scaler.Compute.InstanceGroups.MasterGroup.SetTarget(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(MasterTarget))
 			return err
 		},
 		nil,

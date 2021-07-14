@@ -32,6 +32,7 @@ func NewOceanGKELaunchSpecResource(fieldsMap map[FieldName]*GenericField) *Ocean
 }
 
 func (res *OceanGKELaunchSpecTerraformResource) OnCreate(
+	importedLaunchSpec *gcp.LaunchSpec,
 	resourceData *schema.ResourceData,
 	meta interface{}) (*gcp.LaunchSpec, error) {
 
@@ -39,7 +40,12 @@ func (res *OceanGKELaunchSpecTerraformResource) OnCreate(
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	launchSpecWrapper := NewLaunchSpecGKEWrapper()
+	launchSpecWrapper := NewGKELaunchSpecWrapper()
+
+	if importedLaunchSpec != nil {
+		buildEmptyGKELaunchSpecRequirements(importedLaunchSpec)
+		launchSpecWrapper.SetLaunchSpec(importedLaunchSpec)
+	}
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
@@ -62,7 +68,7 @@ func (res *OceanGKELaunchSpecTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	launchSpecWrapper := NewLaunchSpecGKEWrapper()
+	launchSpecWrapper := NewGKELaunchSpecWrapper()
 	launchSpecWrapper.SetLaunchSpec(launchSpec)
 
 	for _, field := range res.fields.fieldsMap {
@@ -86,7 +92,7 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	launchSpecWrapper := NewLaunchSpecGKEWrapper()
+	launchSpecWrapper := NewGKELaunchSpecWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -104,10 +110,15 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 	return hasChanged, launchSpecWrapper.GetLaunchSpec(), nil
 }
 
-func NewLaunchSpecGKEWrapper() *LaunchSpecGKEWrapper {
+func NewGKELaunchSpecWrapper() *LaunchSpecGKEWrapper {
 	return &LaunchSpecGKEWrapper{
 		launchSpec: &gcp.LaunchSpec{
-			AutoScale: &gcp.AutoScale{},
+			Metadata: []*gcp.Metadata{},
+			Labels:   []*gcp.Label{},
+			Taints:   []*gcp.Taint{},
+			AutoScale: &gcp.AutoScale{
+				Headrooms: []*gcp.AutoScaleHeadroom{},
+			},
 		},
 	}
 }
@@ -118,4 +129,18 @@ func (launchSpecWrapper *LaunchSpecGKEWrapper) GetLaunchSpec() *gcp.LaunchSpec {
 
 func (launchSpecWrapper *LaunchSpecGKEWrapper) SetLaunchSpec(launchSpec *gcp.LaunchSpec) {
 	launchSpecWrapper.launchSpec = launchSpec
+}
+
+func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
+	if launchSpec == nil {
+		return
+	}
+
+	if launchSpec.AutoScale == nil {
+		launchSpec.SetAutoScale(&gcp.AutoScale{})
+	}
+
+	if launchSpec.AutoScale.Headrooms == nil {
+		launchSpec.AutoScale.SetHeadrooms([]*gcp.AutoScaleHeadroom{})
+	}
 }
