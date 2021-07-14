@@ -17,10 +17,10 @@ resource "spotinst_ocean_ecs" "example" {
     region = "us-west-2"
     name = "sample-ecs-cluster"
     cluster_name = "sample-ecs-cluster"
-  
+
     min_size         = "0"
     max_size         = "1"
-    desired_capacity = "0" 
+    desired_capacity = "0"
 
     subnet_ids = ["subnet-12345"]
     whitelist = ["t3.medium"]
@@ -29,7 +29,7 @@ resource "spotinst_ocean_ecs" "example" {
     security_group_ids = ["sg-12345"]
     image_id = "ami-12345"
     iam_instance_profile = "iam-profile"
-  
+
     key_pair = "KeyPair"
     user_data = "echo hello world"
     associate_public_ip_address = false
@@ -98,14 +98,17 @@ The following arguments are supported:
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
+
+
+### Block Devices
 * `block_device_mappings` - (Optional) Object. List of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
     * `device_name` - (Optional) String. Set device name. Example: `/dev/xvda1`.
     * `ebs` - (Optional) Object. Set Elastic Block Store properties.
-        * `delete_on_termination` - (Optional) Boolean. Toggles EBS deletion upon instance termination. 
+        * `delete_on_termination` - (Optional) Boolean. Toggles EBS deletion upon instance termination.
         * `encrypted` - (Optional) Boolean. Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
         * `iops` - (Required for requests to create `io1` volumes; it is not used in requests to create `gp2`, `st1`, `sc1`, or standard volumes) Int. The number of I/O operations per second (IOPS) that the volume supports.
         * `kms_key_id` - (Optional) String. Identifier (key ID, key alias, ID ARN, or alias ARN) for a customer managed CMK under which the EBS volume is encrypted.
-        * `snapshot_id` - (Optional) (Optional) String. The snapshot ID to mount by. 
+        * `snapshot_id` - (Optional) (Optional) String. The snapshot ID to mount by.
         * `volume_type` - (Optional, Default: `standard`) String. The type of the volume. Example: `gp2`.
         * `volume_size` - (Optional) Int. The size (in GB) of the volume.
         * `throughput`- (Optional) The amount of data transferred to or from a storage device per second, you can use this param just in a case that `volume_type` = gp3.
@@ -118,7 +121,7 @@ The following arguments are supported:
     * `perform_at` - (Required) String. Valid values: "always" "never" "timeWindow".
     * `time_windows` - (Optional; Required if not using `perform_at` = timeWindow) Array of strings. Set time windows for image update, at least one time window. Each string is in the format of ddd:hh:mm-ddd:hh:mm ddd. Time windows should not overlap.
     * `should_optimize_ecs_ami` - (Required) Boolean. Enable auto image (AMI) update for the ECS container instances. The auto update applies for ECS-Optimized AMIs.
-    
+
 ### Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean ECS autoscaler.
     * `is_enabled` - (Optional, Default: `true`) Enable the Ocean ECS autoscaler.
@@ -160,13 +163,13 @@ The following arguments are supported:
 ### Update Policy
 * `update_policy` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `should_roll` - (Required) Enables the roll.
-    * `roll_config` - (Required) 
+    * `roll_config` - (Required)
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
 
 ```hcl
   update_policy {
     should_roll = false
-    
+
     roll_config {
       batch_size_percentage = 33
     }
@@ -182,7 +185,7 @@ The following arguments are supported:
         * `is_enabled` - (Required) Describes whether the task is enabled. When true the task should run when false it should not run. Required for `cluster.scheduling.tasks` object.
         * `cron_expression` - (Required) A valid cron expression. The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of `frequency` or `cronExpression` should be used at a time. Required for `cluster.scheduling.tasks` object. Example: `0 1 * * *`.
         * `task_type` - (Required) Valid values: "clusterRoll". Required for `cluster.scheduling.tasks object`. Example: `clusterRoll`.
-             
+
 ```hcl
   scheduled_task  {
     shutdown_hours  {
@@ -197,7 +200,7 @@ The following arguments are supported:
   }
 ```
 
-## Attributes Reference
 
+## Attributes Reference
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Spotinst Ocean ID.

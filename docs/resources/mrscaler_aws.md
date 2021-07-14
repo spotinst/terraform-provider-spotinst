@@ -419,13 +419,13 @@ Each `*_scaling_*_policy` supports the following:
 ### Scheduled Tasks
 
 * `scheduled_task` - (Optional) An array of scheduled tasks.
-* `is_enabled` - (Optional) Enable/Disable the specified scheduling task.
-* `task_type` - (Required) The type of task to be scheduled. Valid values: `setCapacity`.
-* `instance_group_type` - (Required) Select the EMR instance groups to execute the scheduled task on. Valid values: `task`.
-* `cron` - (Required) A cron expression representing the schedule for the task.
-* `desired_capacity` - (Optional) New desired capacity for the elastigroup.
-* `min_capacity` - (Optional) New min capacity for the elastigroup.
-* `max_capacity` - (Optional) New max capacity for the elastigroup.
+  * `is_enabled` - (Optional) Enable/Disable the specified scheduling task.
+  * `task_type` - (Required) The type of task to be scheduled. Valid values: `setCapacity`.
+  * `instance_group_type` - (Required) Select the EMR instance groups to execute the scheduled task on. Valid values: `task`.
+  * `cron` - (Required) A cron expression representing the schedule for the task.
+  * `desired_capacity` - (Optional) New desired capacity for the elastigroup.
+  * `min_capacity` - (Optional) New min capacity for the elastigroup.
+  * `max_capacity` - (Optional) New max capacity for the elastigroup.
 
 ### termination policies
 
@@ -472,16 +472,16 @@ Each `*_scaling_*_policy` supports the following:
 ## Argument Reference
 
 * `termination_policies` - (Optional) Allows defining termination policies for EMR clusters based on CloudWatch Metrics.
-* `statements` - (Required) 
-* `namespace` - (Required) Must contain the value: `AWS/ElasticMapReduce`.
-* `metric_name` - (Required) The name of the metric in CloudWatch which the statement will be based on.
-* `statistic` - (Optional, Default: `sum`) The aggregation method of the given metric. Valid Values: `average` | `sum` | `sampleCount` | `maximum` | `minimum`                 
-* `unit` - (Optional, Default: `count`) The unit for a given metric. Valid Values: `seconds` | `microseconds` | `milliseconds` | `bytes` | `kilobytes` | `megabytes` | `gigabytes` | `terabytes` | `bits` | `kilobits` | `megabits` | `gigabits` | `terabits` | `percent` | `count` | `bytes/second` | `kilobytes/second` | `megabytes/second` | `gigabytes/second` | `terabytes/second` | `bits/second` | `kilobits/second` | `megabits/second` | `gigabits/second` | `terabits/second` | `count/second` | `none`                     
-* `threshold` - (Required) The value that the specified statistic is compared to.
-* `period` - (Optional, Default: `300`) The time window in seconds over which the statistic is applied.
-* `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
-* `operator` - (Optional, Default: `gte`) The operator to use in order to determine if the policy is applicable. Valid values: `gt` | `gte` | `lt` | `lte`
-                          
+  * `statements` - (Required) 
+    * `namespace` - (Required) Must contain the value: `AWS/ElasticMapReduce`.
+    * `metric_name` - (Required) The name of the metric in CloudWatch which the statement will be based on.
+    * `statistic` - (Optional, Default: `sum`) The aggregation method of the given metric. Valid Values: `average` | `sum` | `sampleCount` | `maximum` | `minimum`                 
+    * `unit` - (Optional, Default: `count`) The unit for a given metric. Valid Values: `seconds` | `microseconds` | `milliseconds` | `bytes` | `kilobytes` | `megabytes` | `gigabytes` | `terabytes` | `bits` | `kilobits` | `megabits` | `gigabits` | `terabits` | `percent` | `count` | `bytes/second` | `kilobytes/second` | `megabytes/second` | `gigabytes/second` | `terabytes/second` | `bits/second` | `kilobits/second` | `megabits/second` | `gigabits/second` | `terabits/second` | `count/second` | `none`                     
+    * `threshold` - (Required) The value that the specified statistic is compared to.
+    * `period` - (Optional, Default: `300`) The time window in seconds over which the statistic is applied.
+    * `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
+    * `operator` - (Optional, Default: `gte`) The operator to use in order to determine if the policy is applicable. Valid values: `gt` | `gte` | `lt` | `lte`
+                              
 ## Attributes Reference
 
 The following attributes are exported:

@@ -29,8 +29,6 @@ module "ocean-controller" {
 
 ~> You must configure the same `cluster_identifier` both for the Ocean controller and for the `spotinst_ocean_gke_import` resource.
 
-To learn more about how to integrate existing Kubernetes clusters into Ocean using Terraform, watch [this video](https://youtu.be/ffGmMlpPsPE).
-
 ## Example Usage
 
 ```hcl
