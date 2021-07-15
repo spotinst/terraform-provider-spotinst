@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks: added support for `managed_service_identity` 
+
 ## 1.52.0 (July 7, 2021)
 
 ENHANCEMENTS:
