@@ -1,5 +1,8 @@
 ## Unreleased
 
+BUG FIXES:
+* resource/spotinst_*: ensure same state on all retries
+
 ## 1.53.0 (July 15, 2021)
 
 ENHANCEMENTS:

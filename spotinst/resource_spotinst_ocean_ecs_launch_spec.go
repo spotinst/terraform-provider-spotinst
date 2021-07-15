@@ -64,10 +64,9 @@ func createECSLaunchSpec(launchSpec *aws.ECSLaunchSpec, spotinstClient *Client) 
 		log.Printf("===> LaunchSpec create configuration: %s", json)
 	}
 
-	input := &aws.CreateECSLaunchSpecInput{LaunchSpec: launchSpec}
-
 	var resp *aws.CreateECSLaunchSpecOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.CreateECSLaunchSpecInput{LaunchSpec: launchSpec}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateECSLaunchSpec(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry launchSpec creation.

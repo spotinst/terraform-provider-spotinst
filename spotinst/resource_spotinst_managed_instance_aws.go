@@ -128,10 +128,10 @@ func createManagedInstance(resourceData *schema.ResourceData, mangedInstance *aw
 	if v, ok := resourceData.Get(string(managed_instance_aws_compute_launchspecification.IAMInstanceProfile)).(string); ok && v != "" {
 		time.Sleep(5 * time.Second)
 	}
-	input := &aws.CreateManagedInstanceInput{ManagedInstance: mangedInstance}
 
 	var resp *aws.CreateManagedInstanceOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.CreateManagedInstanceInput{ManagedInstance: mangedInstance}
 		r, err := spotinstClient.managedInstance.CloudProviderAWS().Create(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry the group creation.

@@ -66,10 +66,9 @@ func createListener(listener *multai.Listener, spotinstClient *Client) (*string,
 		log.Printf("===> Listener create configuration: %s", json)
 	}
 
-	input := &multai.CreateListenerInput{Listener: listener}
-
 	var resp *multai.CreateListenerOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &multai.CreateListenerInput{Listener: listener}
 		r, err := spotinstClient.multai.CreateListener(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(err)

@@ -78,9 +78,9 @@ func importBeanstalkGroup(resourceData *schema.ResourceData, meta interface{}) (
 
 func toggleMaintenanceMode(resourceData *schema.ResourceData, meta interface{}, op string) error {
 	id := resourceData.Id()
-	input := &aws.BeanstalkMaintenanceInput{GroupID: spotinst.String(id)}
 
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.BeanstalkMaintenanceInput{GroupID: spotinst.String(id)}
 		if status, err := meta.(*Client).elastigroup.CloudProviderAWS().GetBeanstalkMaintenanceStatus(context.Background(), input); err == nil {
 			if op == "START" {
 				if *status == "AWAIT_USER_UPDATE" {
@@ -161,10 +161,9 @@ func createBeanstalkGroup(beanstalkGroup *aws.Group, spotinstClient *Client) (*s
 		log.Printf("===> Group create configuration: %s", json)
 	}
 
-	input := &aws.CreateGroupInput{Group: beanstalkGroup}
-
 	var resp *aws.CreateGroupOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.CreateGroupInput{Group: beanstalkGroup}
 		r, err := spotinstClient.elastigroup.CloudProviderAWS().Create(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry the group creation.

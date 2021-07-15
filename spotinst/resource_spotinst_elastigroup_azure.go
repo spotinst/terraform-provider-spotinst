@@ -91,10 +91,9 @@ func createAzureGroup(group *azure.Group, spotinstClient *Client) (*string, erro
 		log.Printf("===> Group create configuration: %s", json)
 	}
 
-	input := &azure.CreateGroupInput{Group: group}
-
 	var resp *azure.CreateGroupOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &azure.CreateGroupInput{Group: group}
 		r, err := spotinstClient.elastigroup.CloudProviderAzure().Create(context.Background(), input)
 		if err != nil {
 			log.Printf("error: %v", err)

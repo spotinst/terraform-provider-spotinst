@@ -66,10 +66,9 @@ func createBalancer(balancer *multai.LoadBalancer, spotinstClient *Client) (*str
 		log.Printf("===> Balancer create configuration: %s", json)
 	}
 
-	input := &multai.CreateLoadBalancerInput{Balancer: balancer}
-
 	var resp *multai.CreateLoadBalancerOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &multai.CreateLoadBalancerInput{Balancer: balancer}
 		r, err := spotinstClient.multai.CreateLoadBalancer(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(err)

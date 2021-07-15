@@ -89,11 +89,9 @@ func createGCPGroup(elastigroup *gcp.Group, spotinstClient *Client) (*string, er
 	} else {
 		log.Printf("===> Group create configuration: %s", json)
 	}
-
-	input := &gcp.CreateGroupInput{Group: elastigroup}
-
 	var resp *gcp.CreateGroupOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &gcp.CreateGroupInput{Group: elastigroup}
 		r, err := spotinstClient.elastigroup.CloudProviderGCP().Create(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(err)

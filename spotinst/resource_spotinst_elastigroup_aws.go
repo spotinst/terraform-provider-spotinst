@@ -202,10 +202,10 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 		// Wait for IAM instance profile to be ready.
 		time.Sleep(10 * time.Second)
 	}
-	input := &aws.CreateGroupInput{Group: group}
 
 	var resp *aws.CreateGroupOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.CreateGroupInput{Group: group}
 		r, err := spotinstClient.elastigroup.CloudProviderAWS().Create(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry the group creation.
@@ -528,8 +528,9 @@ func awaitReady(groupId *string, timeout int, capacity int, client *Client) erro
 	if capacity == 0 || timeout == 0 {
 		return nil
 	}
-	input := &aws.GetInstanceHealthinessInput{GroupID: spotinst.String(*groupId)}
+
 	err := resource.Retry(time.Second*time.Duration(timeout), func() *resource.RetryError {
+		input := &aws.GetInstanceHealthinessInput{GroupID: spotinst.String(*groupId)}
 		numHealthy := 0
 		status, err := client.elastigroup.CloudProviderAWS().GetInstanceHealthiness(context.Background(), input)
 		if err != nil {
@@ -573,16 +574,15 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 		return fmt.Errorf("invalid roll id: %s", rollID)
 	}
 
-	deployStatusInput := &aws.DeploymentStatusInput{
-		GroupID: spotinst.String(groupID),
-		RollID:  spotinst.String(rollID),
-	}
-
 	svc := client.elastigroup.CloudProviderAWS()
 	err := resource.Retry(time.Second*time.Duration(pctTimeout), func() *resource.RetryError {
 		var rollStatus *aws.RollGroupOutput
 		var rollErr error
 
+		deployStatusInput := &aws.DeploymentStatusInput{
+			GroupID: spotinst.String(groupID),
+			RollID:  spotinst.String(rollID),
+		}
 		if rollECS {
 			rollStatus, rollErr = svc.DeploymentStatusECS(ctx, deployStatusInput)
 		} else {
