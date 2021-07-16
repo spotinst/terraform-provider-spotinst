@@ -309,9 +309,9 @@ The following arguments are supported:
 
 ### Task Group (Wrap, Clone, and New strategies)
 * `task_instance_types` - (Required) The MrScaler instance types for the task nodes.
-* `task_target` - (Required) amount of instances in task group.
-* `task_maximum` - (Optional) maximal amount of instances in task group.
-* `task_minimum` - (Optional) The minimal amount of instances in task group.
+* `task_desired_capacity` - (Required) amount of instances in task group.
+* `task_max_size` - (Optional) maximal amount of instances in task group.
+* `task_min_size` - (Optional) The minimal amount of instances in task group.
 * `task_unit` - (Optional, Default: `instance`) Unit of task group for target, min and max. The unit could be `instance` or `weight`. instance - amount of instances. weight - amount of vCPU.
 * `task_lifecycle` - (Required) The MrScaler lifecycle for instances in task group. Allowed values are 'SPOT' and 'ON_DEMAND'.
 * `task_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
@@ -323,9 +323,9 @@ The following arguments are supported:
   
 ### Core Group (Clone, New strategies)
 * `core_instance_types` - (Required) The MrScaler instance types for the core nodes.
-* `core_target` - (Required) amount of instances in core group.
-* `core_maximum` - (Optional) maximal amount of instances in core group.
-* `core_minimum` - (Optional) The minimal amount of instances in core group.
+* `core_desired_capacity` - (Required) amount of instances in core group.
+* `core_max_size` - (Optional) maximal amount of instances in core group.
+* `core_min_size` - (Optional) The minimal amount of instances in core group.
 * `core_unit` - (Optional, Default: `instance`) Unit of task group for target, min and max. The unit could be `instance` or `weight`. instance - amount of instances. weight - amount of vCPU.
 * `core_lifecycle` - (Required) The MrScaler lifecycle for instances in core group. Allowed values are 'SPOT' and 'ON_DEMAND'.
 * `core_ebs_optimized` - (Optional) EBS Optimization setting for instances in group.
