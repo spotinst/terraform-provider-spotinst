@@ -66,10 +66,9 @@ func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) 
 		log.Printf("===> Routing Rule create configuration: %s", json)
 	}
 
-	input := &multai.CreateRoutingRuleInput{RoutingRule: routingRule}
-
 	var resp *multai.CreateRoutingRuleOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &multai.CreateRoutingRuleInput{RoutingRule: routingRule}
 		r, err := spotinstClient.multai.CreateRoutingRule(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(err)

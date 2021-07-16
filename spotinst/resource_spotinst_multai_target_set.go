@@ -66,10 +66,9 @@ func createTargetSet(targetSet *multai.TargetSet, spotinstClient *Client) (*stri
 		log.Printf("===> Target Set create configuration: %s", json)
 	}
 
-	input := &multai.CreateTargetSetInput{TargetSet: targetSet}
-
 	var resp *multai.CreateTargetSetOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &multai.CreateTargetSetInput{TargetSet: targetSet}
 		r, err := spotinstClient.multai.CreateTargetSet(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(err)
@@ -184,8 +183,8 @@ func deleteTargetSet(resourceData *schema.ResourceData, meta interface{}) error 
 }
 
 func awaitTargetSetDeleted(targetSetId *string, client *Client) error {
-	input := &multai.ReadTargetSetInput{TargetSetID: spotinst.String(*targetSetId)}
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &multai.ReadTargetSetInput{TargetSetID: spotinst.String(*targetSetId)}
 		resp, err := client.multai.ReadTargetSet(context.Background(), input)
 		if err == nil && resp != nil && resp.TargetSet != nil {
 			return resource.RetryableError(fmt.Errorf("===> waiting for target set to delete <==="))

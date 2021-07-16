@@ -104,10 +104,9 @@ func createHealthCheck(resourceData *schema.ResourceData, healthCheck *healthche
 	} else {
 		log.Printf("===> HealthCheck create configuration: %s", json)
 	}
-	input := &healthcheck.CreateHealthCheckInput{HealthCheck: healthCheck}
-
 	var resp *healthcheck.CreateHealthCheckOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &healthcheck.CreateHealthCheckInput{HealthCheck: healthCheck}
 		r, err := spotinstClient.healthCheck.Create(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry the HealthCheck creation.

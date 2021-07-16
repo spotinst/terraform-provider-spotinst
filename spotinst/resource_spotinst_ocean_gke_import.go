@@ -101,10 +101,9 @@ func createGKEImportedCluster(cluster *gcp.Cluster, spotinstClient *Client) (*st
 		log.Printf("===> Cluster GKE import configuration: %s", json)
 	}
 
-	input := &gcp.CreateClusterInput{Cluster: cluster}
-
 	var resp *gcp.CreateClusterOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &gcp.CreateClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderGCP().CreateCluster(context.Background(), input)
 		if err != nil {
 

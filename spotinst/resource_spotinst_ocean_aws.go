@@ -77,13 +77,14 @@ func createAWSCluster(resourceData *schema.ResourceData, cluster *aws.Cluster, s
 		log.Printf("===> Cluster create configuration: %s", json)
 	}
 
-	input := &aws.CreateClusterInput{Cluster: cluster}
 	if v, ok := resourceData.Get(string(ocean_aws_launch_configuration.IAMInstanceProfile)).(string); ok && v != "" {
 		// Wait for IAM instance profile to be ready.
 		time.Sleep(10 * time.Second)
 	}
+
 	var resp *aws.CreateClusterOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.CreateClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateCluster(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry cluster creation.

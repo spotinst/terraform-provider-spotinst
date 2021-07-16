@@ -74,10 +74,9 @@ func createGKECluster(cluster *gcp.Cluster, spotinstClient *Client) (*string, er
 		log.Printf("===> Cluster create configuration: %s", json)
 	}
 
-	input := &gcp.CreateClusterInput{Cluster: cluster}
-
 	var resp *gcp.CreateClusterOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &gcp.CreateClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderGCP().CreateCluster(context.Background(), input)
 		if err != nil {
 

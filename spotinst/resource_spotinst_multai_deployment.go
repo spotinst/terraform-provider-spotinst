@@ -66,10 +66,9 @@ func createDeployment(deployment *multai.Deployment, spotinstClient *Client) (*s
 		log.Printf("===> Deployment create configuration: %s", json)
 	}
 
-	input := &multai.CreateDeploymentInput{Deployment: deployment}
-
 	var resp *multai.CreateDeploymentOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &multai.CreateDeploymentInput{Deployment: deployment}
 		r, err := spotinstClient.multai.CreateDeployment(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(err)

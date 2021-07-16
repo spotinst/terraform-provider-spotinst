@@ -54,6 +54,11 @@ resource "spotinst_ocean_aks" "example" {
   resource_group_name = "some-resource-group-name"
   custom_data         = "[... redacted ...]"
 
+  managed_service_identity {
+    resource_group_name = "MC_ocean-westus-dev_ocean-westus-dev-aks_westus"
+    name                = "ocean-westus-dev-aks-agentpool"
+  }
+
   tag {
     key   = "Environment"
     value = "Dev"
@@ -184,6 +189,9 @@ The following arguments are supported:
 * `user_name` - (Optional) Username for admin access to VMs.
 * `resource_group_name` - (Optional) Name of the Azure Resource Group into which VMs will be launched. Cannot be updated.
 * `custom_data` - (Optional) Must contain a valid Base64 encoded string.
+* `managed_service_identity` - (Optional) List of Managed Service Identity objects.
+    * `resource_group_name` - (Required) Name of the Azure Resource Group where the Managed Service Identity is located.
+    * `name` - (Required) Name of the Managed Service Identity.
 * `tag` - (Optional) Unique key-value pairs that will be used to tag VMs that are launched in the cluster.
     * `key` - (Optional) Tag key.
     * `value` - (Optional) Tag value.

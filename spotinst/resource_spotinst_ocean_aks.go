@@ -248,19 +248,18 @@ func deleteAKSCluster(clusterID string, spotinstClient *Client) error {
 // region Import
 
 func importAKSCluster(resourceData *schema.ResourceData, spotinstClient *Client) (*azure.Cluster, error) {
-	input := &azure.ImportClusterInput{
-		ACDIdentifier: spotinst.String(resourceData.Get("acd_identifier").(string)),
-		Cluster: &azure.ImportCluster{
-			Name: spotinst.String(resourceData.Get("name").(string)),
-			AKS: &azure.AKS{
-				Name:              spotinst.String(resourceData.Get("aks_name").(string)),
-				ResourceGroupName: spotinst.String(resourceData.Get("aks_resource_group_name").(string)),
-			}},
-	}
-
-	var output *azure.ImportClusterOutput
+	var cluster *azure.Cluster
 	err := resource.Retry(time.Hour, func() *resource.RetryError {
-		o, err := spotinstClient.ocean.CloudProviderAzure().ImportCluster(context.TODO(), input)
+		input := &azure.ImportClusterInput{
+			ACDIdentifier: spotinst.String(resourceData.Get("acd_identifier").(string)),
+			Cluster: &azure.ImportCluster{
+				Name: spotinst.String(resourceData.Get("name").(string)),
+				AKS: &azure.AKS{
+					Name:              spotinst.String(resourceData.Get("aks_name").(string)),
+					ResourceGroupName: spotinst.String(resourceData.Get("aks_resource_group_name").(string)),
+				}},
+		}
+		output, err := spotinstClient.ocean.CloudProviderAzure().ImportCluster(context.TODO(), input)
 		if err != nil {
 			// Check whether the request should be retried.
 			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
@@ -273,14 +272,13 @@ func importAKSCluster(resourceData *schema.ResourceData, spotinstClient *Client)
 			// Some other error, report it.
 			return resource.NonRetryableError(err)
 		}
-		output = o
+		cluster = output.Cluster
 		return nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("ocean/aks: failed to import cluster: %v", err)
 	}
-
-	return output.Cluster, err
+	return cluster, err
 }
 
 // endregion

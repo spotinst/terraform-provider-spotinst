@@ -81,10 +81,9 @@ func createScaler(scaler *mrscaler.Scaler, spotinstClient *Client) (*string, err
 		log.Printf("===> Scaler create configuration: %s", json)
 	}
 
-	input := &mrscaler.CreateScalerInput{Scaler: scaler}
-
 	var resp *mrscaler.CreateScalerOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &mrscaler.CreateScalerInput{Scaler: scaler}
 		r, err := spotinstClient.mrscaler.Create(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry the scaler creation.
