@@ -557,7 +557,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[BlockDeviceMappings] = commons.NewGenericField(
-		commons.OceanECSLaunchSpec,
+		commons.ManagedInstanceAWSLaunchSpecification,
 		BlockDeviceMappings,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -649,6 +649,78 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 			}
 			managedInstance.Compute.LaunchSpecification.SetBlockDeviceMappings(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ResourceTagSpecification] = commons.NewGenericField(
+		commons.ManagedInstanceAWSLaunchSpecification,
+		ResourceTagSpecification,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldTagVolumes): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldTagAMIs): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldTagENIs): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldTagSnapshots): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			var result []interface{} = nil
+			if managedInstance != nil && managedInstance.Compute.LaunchSpecification != nil &&
+				managedInstance.Compute.LaunchSpecification.ResourceTagSpecification != nil {
+				resourceTagSpecification := managedInstance.Compute.LaunchSpecification.ResourceTagSpecification
+				result = flattenResourceTagSpecification(resourceTagSpecification)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(ResourceTagSpecification), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ResourceTagSpecification), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			if v, ok := resourceData.GetOk(string(ResourceTagSpecification)); ok {
+				if v, err := expandResourceTagSpecification(v); err != nil {
+					return err
+				} else {
+					managedInstance.Compute.LaunchSpecification.SetResourceTagSpecification(v)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
+			managedInstance := miWrapper.GetManagedInstance()
+			var value *aws.ResourceTagSpecification = nil
+			if v, ok := resourceData.GetOk(string(ResourceTagSpecification)); ok {
+				if resourceTagSpecification, err := expandResourceTagSpecification(v); err != nil {
+					return err
+				} else {
+					value = resourceTagSpecification
+				}
+			}
+			managedInstance.Compute.LaunchSpecification.SetResourceTagSpecification(value)
 			return nil
 		},
 		nil,
@@ -789,6 +861,42 @@ func expandEBS(data interface{}) (*aws.EBS, error) {
 	return ebs, nil
 }
 
+func expandResourceTagSpecification(data interface{}) (*aws.ResourceTagSpecification, error) {
+	resourceTagSpecification := &aws.ResourceTagSpecification{}
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return resourceTagSpecification, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(ShouldTagVolumes)].(bool); ok {
+		volumes := &aws.Volumes{}
+		resourceTagSpecification.SetVolumes(volumes)
+		resourceTagSpecification.Volumes.SetShouldTag(spotinst.Bool(v))
+
+	}
+	if v, ok := m[string(ShouldTagAMIs)].(bool); ok {
+		anis := &aws.AMIs{}
+		resourceTagSpecification.SetAMIs(anis)
+		resourceTagSpecification.AMIs.SetShouldTag(spotinst.Bool(v))
+
+	}
+	if v, ok := m[string(ShouldTagENIs)].(bool); ok {
+		enis := &aws.ENIs{}
+		resourceTagSpecification.SetENIs(enis)
+		resourceTagSpecification.ENIs.SetShouldTag(spotinst.Bool(v))
+	}
+	if v, ok := m[string(ShouldTagSnapshots)].(bool); ok {
+		snapshots := &aws.Snapshots{}
+		resourceTagSpecification.SetSnapshots(snapshots)
+		resourceTagSpecification.Snapshots.SetShouldTag(spotinst.Bool(v))
+
+	}
+
+	return resourceTagSpecification, nil
+}
+
 func flattenBlockDeviceMappings(bdms []*aws.BlockDeviceMapping) []interface{} {
 	result := make([]interface{}, 0, len(bdms))
 	for _, bdm := range bdms {
@@ -811,4 +919,22 @@ func flattenEBS(ebs *aws.EBS) []interface{} {
 	e[string(VolumeSize)] = spotinst.IntValue(ebs.VolumeSize)
 	e[string(Throughput)] = spotinst.IntValue(ebs.Throughput)
 	return []interface{}{e}
+}
+
+func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSpecification) []interface{} {
+	result := make(map[string]interface{})
+	if resourceTagSpecification != nil && resourceTagSpecification.Snapshots != nil {
+		result[string(ShouldTagSnapshots)] = spotinst.BoolValue(resourceTagSpecification.Snapshots.ShouldTag)
+	}
+	if resourceTagSpecification != nil && resourceTagSpecification.ENIs != nil {
+		result[string(ShouldTagENIs)] = spotinst.BoolValue(resourceTagSpecification.ENIs.ShouldTag)
+	}
+	if resourceTagSpecification != nil && resourceTagSpecification.AMIs != nil {
+		result[string(ShouldTagAMIs)] = spotinst.BoolValue(resourceTagSpecification.AMIs.ShouldTag)
+	}
+	if resourceTagSpecification != nil && resourceTagSpecification.Volumes != nil {
+		result[string(ShouldTagVolumes)] = spotinst.BoolValue(resourceTagSpecification.Volumes.ShouldTag)
+	}
+
+	return []interface{}{result}
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_autoscaler"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_launch_specification"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_scheduling"
 )
 
@@ -39,6 +40,7 @@ func setupClusterGKEImportResource() {
 	ocean_gke_import.Setup(fieldsMap)
 	ocean_gke_import_scheduling.Setup(fieldsMap)
 	ocean_gke_import_autoscaler.Setup(fieldsMap)
+	ocean_gke_import_launch_specification.Setup(fieldsMap)
 
 	commons.OceanGKEImportResource = commons.NewOceanGKEImportResource(fieldsMap)
 }
