@@ -3,7 +3,7 @@ module github.com/spotinst/terraform-provider-spotinst
 go 1.16
 
 require (
-	github.com/bflad/tfproviderlint v0.27.0
+	github.com/bflad/tfproviderlint v0.27.1
 	github.com/client9/misspell v0.3.4
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-version v1.3.0
