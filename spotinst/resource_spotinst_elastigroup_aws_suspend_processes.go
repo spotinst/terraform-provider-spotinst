@@ -112,10 +112,12 @@ func createSuspendProcesses(resourceData *schema.ResourceData, suspendProcesses 
 	} else {
 		log.Printf("===> SuspendProcesses create configuration: %s", json)
 	}
-	input := &aws.CreateSuspensionsInput{Suspensions: suspendProcesses.Suspensions}
-	input.GroupID = spotinst.String(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)).(string))
-
+	groupID := spotinst.String(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)).(string))
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.CreateSuspensionsInput{
+			GroupID:     groupID,
+			Suspensions: suspendProcesses.Suspensions,
+		}
 		_, err := spotinstClient.elastigroup.CloudProviderAWS().CreateSuspensions(context.Background(), input)
 		if err != nil {
 			// an error occurred, no retryable errors for this resource.
@@ -126,7 +128,7 @@ func createSuspendProcesses(resourceData *schema.ResourceData, suspendProcesses 
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create SuspendProcesses for Elastigroup: %s", err)
 	}
-	return input.GroupID, nil
+	return groupID, nil
 
 }
 

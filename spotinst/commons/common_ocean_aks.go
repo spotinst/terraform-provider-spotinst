@@ -119,7 +119,8 @@ func NewAKSClusterWrapper() *AKSClusterWrapper {
 					Image: &azure.Image{
 						MarketplaceImage: &azure.MarketplaceImage{},
 					},
-					Extensions: []*azure.Extension{},
+					ManagedServiceIdentities: []*azure.ManagedServiceIdentity{},
+					Extensions:               []*azure.Extension{},
 					Network: &azure.Network{
 						NetworkInterfaces: []*azure.NetworkInterface{},
 					},

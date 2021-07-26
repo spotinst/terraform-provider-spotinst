@@ -79,14 +79,14 @@ func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster
 		log.Printf("===> Cluster create configuration: %s", json)
 	}
 
-	input := &aws.CreateECSClusterInput{Cluster: cluster}
 	if v, ok := resourceData.Get(string(ocean_ecs_launch_specification.IamInstanceProfile)).(string); ok && v != "" {
 		// Wait for IAM instance profile to be ready.
 		time.Sleep(10 * time.Second)
 	}
+
 	var resp *aws.CreateECSClusterOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
-
+		input := &aws.CreateECSClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateECSCluster(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry cluster creation.

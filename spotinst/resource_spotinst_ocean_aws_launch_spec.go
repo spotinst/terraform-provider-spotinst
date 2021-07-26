@@ -64,21 +64,18 @@ func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchS
 		log.Printf("===> LaunchSpec create configuration: %s", json)
 	}
 
-	input := &aws.CreateLaunchSpecInput{LaunchSpec: launchSpec}
-
-	if createOptions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.CreateOptions)); exists {
-		list := createOptions.([]interface{})
-		if len(list) > 0 && list[0] != nil {
-			m := list[0].(map[string]interface{})
-
-			if initialNodes, ok := m[string(ocean_aws_launch_spec.InitialNodes)].(int); ok && initialNodes > 0 {
-				input.InitialNodes = spotinst.Int(initialNodes)
-			}
-		}
-	}
-
 	var resp *aws.CreateLaunchSpecOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &aws.CreateLaunchSpecInput{LaunchSpec: launchSpec}
+		if createOptions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.CreateOptions)); exists {
+			list := createOptions.([]interface{})
+			if len(list) > 0 && list[0] != nil {
+				m := list[0].(map[string]interface{})
+				if initialNodes, ok := m[string(ocean_aws_launch_spec.InitialNodes)].(int); ok && initialNodes > 0 {
+					input.InitialNodes = spotinst.Int(initialNodes)
+				}
+			}
+		}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateLaunchSpec(context.Background(), input)
 		if err != nil {
 			// Checks whether we should retry launchSpec creation.

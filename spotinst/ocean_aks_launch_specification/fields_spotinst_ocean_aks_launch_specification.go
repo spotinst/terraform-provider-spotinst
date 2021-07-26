@@ -108,6 +108,72 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ManagedServiceIdentity] = commons.NewGenericField(
+		commons.OceanAKSLaunchSpecification,
+		ManagedServiceIdentity,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ManagedServiceIdentityResourceGroupName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(ManagedServiceIdentityName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value []interface{}
+			if cluster.VirtualNodeGroupTemplate != nil &&
+				cluster.VirtualNodeGroupTemplate.LaunchSpecification != nil &&
+				cluster.VirtualNodeGroupTemplate.LaunchSpecification.ManagedServiceIdentities != nil {
+				value = flattenManagedServiceIdentities(cluster.VirtualNodeGroupTemplate.LaunchSpecification.ManagedServiceIdentities)
+			}
+			if err := resourceData.Set(string(ManagedServiceIdentity), value); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(ManagedServiceIdentity), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(ManagedServiceIdentity)); ok {
+				if msis, err := expandManagedServiceIdentities(v); err != nil {
+					return err
+				} else {
+					cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetManagedServiceIdentities(msis)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value []*azure.ManagedServiceIdentity
+			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil &&
+				cluster.VirtualNodeGroupTemplate.LaunchSpecification != nil &&
+				cluster.VirtualNodeGroupTemplate.LaunchSpecification.ManagedServiceIdentities != nil {
+				if v, ok := resourceData.GetOk(string(ManagedServiceIdentity)); ok {
+					if msis, err := expandManagedServiceIdentities(v); err != nil {
+						return err
+					} else {
+						value = msis
+					}
+				}
+				cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetManagedServiceIdentities(value)
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[Tag] = commons.NewGenericField(
 		commons.OceanAKSLaunchSpecification,
 		Tag,
@@ -235,6 +301,33 @@ func flattenTags(tags []*azure.Tag) []interface{} {
 		m[string(TagKey)] = spotinst.StringValue(tag.Key)
 		m[string(TagValue)] = spotinst.StringValue(tag.Value)
 
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandManagedServiceIdentities(data interface{}) ([]*azure.ManagedServiceIdentity, error) {
+	list := data.(*schema.Set).List()
+	msis := make([]*azure.ManagedServiceIdentity, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		msis = append(msis, &azure.ManagedServiceIdentity{
+			ResourceGroupName: spotinst.String(attr[string(ManagedServiceIdentityResourceGroupName)].(string)),
+			Name:              spotinst.String(attr[string(ManagedServiceIdentityName)].(string)),
+		})
+	}
+	return msis, nil
+}
+
+func flattenManagedServiceIdentities(msis []*azure.ManagedServiceIdentity) []interface{} {
+	result := make([]interface{}, 0, len(msis))
+	for _, msi := range msis {
+		m := make(map[string]interface{})
+		m[string(ManagedServiceIdentityResourceGroupName)] = spotinst.StringValue(msi.ResourceGroupName)
+		m[string(ManagedServiceIdentityName)] = spotinst.StringValue(msi.Name)
 		result = append(result, m)
 	}
 	return result

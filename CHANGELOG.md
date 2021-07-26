@@ -1,5 +1,15 @@
 ## Unreleased
 
+## 1.53.1 (July 15, 2021)
+
+BUG FIXES:
+* resource/spotinst_*: ensure same state on all retries
+
+## 1.53.0 (July 15, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks: added support for `managed_service_identity` 
+
 ## 1.52.0 (July 7, 2021)
 
 ENHANCEMENTS:
