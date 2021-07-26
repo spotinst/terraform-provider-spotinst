@@ -3,6 +3,7 @@ package ocean_gke_launch_spec
 import (
 	"bytes"
 	"fmt"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -675,6 +676,265 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ShieldedInstanceConfig] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		ShieldedInstanceConfig,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Computed: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(EnableSecureBoot): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Computed: true,
+					},
+					string(EnableIntegrityMonitoring): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Computed: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if ls != nil && ls.ShieldedInstanceConfig != nil {
+				shieldedInstanceConfig := ls.ShieldedInstanceConfig
+				result = flattenShieldedInstanceConfig(shieldedInstanceConfig)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(ShieldedInstanceConfig), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShieldedInstanceConfig), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var value *gcp.ShieldedInstanceConfig = nil
+
+			if v, ok := resourceData.GetOk(string(ShieldedInstanceConfig)); ok {
+
+				if ls != nil {
+					if ls.ShieldedInstanceConfig != nil {
+						value = ls.ShieldedInstanceConfig
+						log.Printf("ShieldedInstanceConfig came from cluster")
+					}
+
+					if shieldedInstanceConfig, err := expandShieldedInstanceConfig(v); err != nil {
+						log.Printf("ShieldedInstanceConfig in error")
+						return err
+					} else if shieldedInstanceConfig != nil {
+						log.Printf("ShieldedInstanceConfig came from user")
+						value = shieldedInstanceConfig
+					}
+
+					ls.SetShieldedInstanceConfig(value)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var value *gcp.ShieldedInstanceConfig = nil
+			if v, ok := resourceData.GetOk(string(ShieldedInstanceConfig)); ok {
+				if sic, err := expandShieldedInstanceConfig(v); err != nil {
+					return err
+				} else {
+					value = sic
+				}
+			}
+			ls.SetShieldedInstanceConfig(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Storage] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		Storage,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Computed: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(LocalSsdCount): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Computed: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if ls != nil && ls.Storage != nil {
+				storage := ls.Storage
+				result = flattenStorage(storage)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Storage), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Storage), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var value *gcp.Storage = nil
+
+			if v, ok := resourceData.GetOk(string(Storage)); ok {
+
+				if ls != nil {
+					if ls.Storage != nil {
+						value = ls.Storage
+						log.Printf("Storagecame from cluster")
+					}
+
+					if storage, err := expandStorage(v); err != nil {
+						log.Printf("Storage in error")
+						return err
+					} else if storage != nil {
+						log.Printf("Storage came from user")
+						value = storage
+					}
+
+					ls.SetStorage(value)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var value *gcp.Storage = nil
+			if v, ok := resourceData.GetOk(string(Storage)); ok {
+				if storage, err := expandStorage(v); err != nil {
+					return err
+				} else {
+					value = storage
+				}
+			}
+			ls.SetStorage(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ServiceAccount] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		ServiceAccount,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *string = nil
+
+			if launchSpec.ServiceAccount != nil {
+				value = launchSpec.ServiceAccount
+			}
+			if value != nil {
+				if err := resourceData.Set(string(ServiceAccount), spotinst.StringValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ServiceAccount), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			if v, ok := resourceData.GetOkExists(string(ServiceAccount)); ok && v != nil {
+				serviceAccount := spotinst.String(v.(string))
+				launchSpec.SetServiceAccount(serviceAccount)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			err := fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern),
+				string(ServiceAccount))
+			return err
+		},
+		nil,
+	)
+
+	fieldsMap[ResourceLimits] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		ResourceLimits,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(MaxInstanceCount): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if ls != nil && ls.ResourceLimits != nil {
+				resourceLimits := ls.ResourceLimits
+				result = flattenResourceLimits(resourceLimits)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(ResourceLimits), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ResourceLimits), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(ResourceLimits)); ok {
+				if resourceLimits, err := expandResourceLimits(value); err != nil {
+					return err
+				} else {
+					ls.SetResourceLimits(resourceLimits)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			ls := lsWrapper.GetLaunchSpec()
+			var resourceLimits *gcp.ResourceLimits = nil
+			if value, ok := resourceData.GetOk(string(ResourceLimits)); ok {
+				if interfaces, err := expandResourceLimits(value); err != nil {
+					return err
+				} else {
+					resourceLimits = interfaces
+				}
+			}
+			ls.SetResourceLimits(resourceLimits)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func hashKV(v interface{}) int {
@@ -783,6 +1043,98 @@ func expandMetadata(data interface{}) ([]*gcp.Metadata, error) {
 	}
 }
 
+func expandShieldedInstanceConfig(data interface{}) (*gcp.ShieldedInstanceConfig, error) {
+	var shieldedInstanceConfig *gcp.ShieldedInstanceConfig
+	updated := 0
+	list := data.(*schema.Set).List()
+	for _, v := range list {
+		log.Printf("ShieldedInstanceConfig in for")
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		sic := &gcp.ShieldedInstanceConfig{}
+
+		if v, ok := attr[string(EnableSecureBoot)].(bool); ok {
+			log.Printf("in set EnableSecureBoot")
+			updated = 1
+			sic.SetEnableSecureBoot(spotinst.Bool(v))
+		}
+
+		if v, ok := attr[string(EnableIntegrityMonitoring)].(bool); ok {
+			updated = 1
+			sic.SetEnableIntegrityMonitoring(spotinst.Bool(v))
+		}
+
+		shieldedInstanceConfig = sic
+	}
+	if updated != 0 {
+		return shieldedInstanceConfig, nil
+	} else {
+		log.Printf("ShieldedInstanceConfig return nil")
+		return nil, nil
+	}
+}
+
+func expandStorage(data interface{}) (*gcp.Storage, error) {
+	var storage *gcp.Storage
+	updated := 0
+	list := data.(*schema.Set).List()
+	for _, v := range list {
+		log.Printf("Storage in for")
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		s := &gcp.Storage{}
+
+		if v, ok := attr[string(LocalSsdCount)].(int); ok {
+			log.Printf("Storage in set LocalSsdCount")
+			updated = 1
+			s.SetLocalSsdCount(spotinst.Int(v))
+		}
+
+		storage = s
+	}
+	if updated != 0 {
+		return storage, nil
+	} else {
+		log.Printf("Storage return nil")
+		return nil, nil
+	}
+}
+
+func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
+	var resourceLimits *gcp.ResourceLimits
+	updated := 0
+	list := data.(*schema.Set).List()
+	for _, v := range list {
+		log.Printf("ResourceLimits in for")
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		r := &gcp.ResourceLimits{}
+
+		if v, ok := attr[string(MaxInstanceCount)].(int); ok {
+			log.Printf("ResourceLimits in set MaxInstanceCount")
+			updated = 1
+			r.SetMaxInstanceCount(spotinst.Int(v))
+		}
+
+		resourceLimits = r
+	}
+	if updated != 0 {
+		return resourceLimits, nil
+	} else {
+		log.Printf("ResourceLimits return nil")
+		return nil, nil
+	}
+}
+
 func flattenTaints(taints []*gcp.Taint) []interface{} {
 	result := make([]interface{}, 0, len(taints))
 	for _, taint := range taints {
@@ -818,6 +1170,59 @@ func flattenMetadata(metadata []*gcp.Metadata) []interface{} {
 		result = append(result, m)
 	}
 	return result
+}
+
+func flattenShieldedInstanceConfig(shieldedInstanceConfig *gcp.ShieldedInstanceConfig) []interface{} {
+	var out []interface{}
+
+	if shieldedInstanceConfig != nil {
+		result := make(map[string]interface{})
+
+		if shieldedInstanceConfig.EnableSecureBoot != nil {
+			result[string(EnableSecureBoot)] = spotinst.BoolValue(shieldedInstanceConfig.EnableSecureBoot)
+		}
+		if shieldedInstanceConfig.EnableIntegrityMonitoring != nil {
+			result[string(EnableIntegrityMonitoring)] = spotinst.BoolValue(shieldedInstanceConfig.EnableIntegrityMonitoring)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+
+func flattenStorage(storage *gcp.Storage) []interface{} {
+	var out []interface{}
+
+	if storage != nil {
+		result := make(map[string]interface{})
+
+		if storage.LocalSsdCount != nil {
+			result[string(LocalSsdCount)] = spotinst.IntValue(storage.LocalSsdCount)
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+
+func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
+	var out []interface{}
+
+	if resourceLimits != nil {
+		result := make(map[string]interface{})
+
+		if resourceLimits.MaxInstanceCount != nil {
+			result[string(MaxInstanceCount)] = spotinst.IntValue(resourceLimits.MaxInstanceCount)
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }
 
 func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {

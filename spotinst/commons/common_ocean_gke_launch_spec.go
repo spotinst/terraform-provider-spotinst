@@ -119,6 +119,9 @@ func NewGKELaunchSpecWrapper() *LaunchSpecGKEWrapper {
 			AutoScale: &gcp.AutoScale{
 				Headrooms: []*gcp.AutoScaleHeadroom{},
 			},
+			ShieldedInstanceConfig: &gcp.ShieldedInstanceConfig{},
+			Storage:                &gcp.Storage{},
+			//ResourceLimits: &gcp.ResourceLimits{},
 		},
 	}
 }
