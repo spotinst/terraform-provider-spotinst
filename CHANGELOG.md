@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.54.0 (July 26, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: added support for `root_volume_type`
 * resource/spotinst_elastigroup_aws: added support for `resource_tag_specification`
