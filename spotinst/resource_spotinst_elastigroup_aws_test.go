@@ -4165,6 +4165,68 @@ const testUpdatePolicyGroupConfig_EmptyFields = `
 
 // endregion
 
+// region Elastigroup: Resource Tag Specification
+func TestAccSpotinstElastigroupAWS_Resource_Tag_Specification(t *testing.T) {
+	groupName := "test-acc-eg-baseline"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testResourceTagSpecificationGroupConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_amis", "false"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_enis", "false"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_snapshots", "false"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "false")),
+			},
+			{
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testResourceTagSpecificationGroupConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_amis", "true"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_enis", "true"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_snapshots", "true"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "true")),
+			},
+		},
+	})
+}
+
+const testResourceTagSpecificationGroupConfig_Create = `
+resource_tag_specification {
+    should_tag_enis = false
+    should_tag_volumes = false
+    should_tag_snapshots = false
+    should_tag_amis = false
+  }
+`
+
+const testResourceTagSpecificationGroupConfig_Update = `
+resource_tag_specification {
+    should_tag_enis = true
+    should_tag_volumes = true
+    should_tag_snapshots = true
+    should_tag_amis = true
+  }
+`
+
+// endregion
+
 // region Wait for Capacity
 
 func TestAccSpotinstElastigroupAWS_WaitForCapacity(t *testing.T) {

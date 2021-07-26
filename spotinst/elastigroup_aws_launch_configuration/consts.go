@@ -29,3 +29,11 @@ const (
 	ThreadsPerCore commons.FieldName = "threads_per_core"
 	// -----------------------------------
 )
+
+const (
+	ResourceTagSpecification commons.FieldName = "resource_tag_specification"
+	ShouldTagVolumes         commons.FieldName = "should_tag_volumes"
+	ShouldTagSnapshots       commons.FieldName = "should_tag_snapshots"
+	ShouldTagENIs            commons.FieldName = "should_tag_enis"
+	ShouldTagAMIs            commons.FieldName = "should_tag_amis"
+)

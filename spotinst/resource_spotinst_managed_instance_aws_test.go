@@ -455,7 +455,11 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "IO1"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "50"),
-					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.iops", "100")),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.iops", "100"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_amis", "false"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_enis", "false"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_snapshots", "false"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "false")),
 			},
 			{
 				ResourceName: resourceName,
@@ -490,7 +494,11 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "IO1"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "60"),
-					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.iops", "150")),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.iops", "150"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_amis", "true"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_enis", "true"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_snapshots", "true"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "true")),
 			},
 		},
 	})
@@ -537,6 +545,12 @@ block_device_mappings {
 	}
 }
 
+resource_tag_specification {
+    should_tag_enis = false
+    should_tag_volumes = false
+    should_tag_snapshots = false
+    should_tag_amis = false
+  }
 `
 const managedInstanceCompute_Update = `
 elastic_ip = "eipalloc-123456"
@@ -573,6 +587,13 @@ block_device_mappings {
 		iops = 150
 	}
 }
+
+resource_tag_specification {
+    should_tag_enis = true
+    should_tag_volumes = true
+    should_tag_snapshots = true
+    should_tag_amis = true
+  }
 `
 
 // endregion
