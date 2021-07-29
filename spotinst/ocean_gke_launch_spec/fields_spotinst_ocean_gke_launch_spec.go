@@ -746,10 +746,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			ls := lsWrapper.GetLaunchSpec()
 			var value *gcp.ShieldedInstanceConfig = nil
 			if v, ok := resourceData.GetOk(string(ShieldedInstanceConfig)); ok {
-				if sic, err := expandShieldedInstanceConfig(v); err != nil {
+				if shieldedInstanceConfig, err := expandShieldedInstanceConfig(v); err != nil {
 					return err
 				} else {
-					value = sic
+					value = shieldedInstanceConfig
 				}
 			}
 			ls.SetShieldedInstanceConfig(value)
@@ -768,7 +768,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(LocalSsdCount): {
+					string(LocalSSDCount): {
 						Type:     schema.TypeInt,
 						Optional: true,
 						Computed: true,
@@ -1090,10 +1090,10 @@ func expandStorage(data interface{}) (*gcp.Storage, error) {
 
 		s := &gcp.Storage{}
 
-		if v, ok := attr[string(LocalSsdCount)].(int); ok {
+		if v, ok := attr[string(LocalSSDCount)].(int); ok {
 			log.Printf("Storage in set LocalSsdCount")
 			updated = 1
-			s.SetLocalSsdCount(spotinst.Int(v))
+			s.SetLocalSSDCount(spotinst.Int(v))
 		}
 
 		storage = s
@@ -1197,8 +1197,8 @@ func flattenStorage(storage *gcp.Storage) []interface{} {
 	if storage != nil {
 		result := make(map[string]interface{})
 
-		if storage.LocalSsdCount != nil {
-			result[string(LocalSsdCount)] = spotinst.IntValue(storage.LocalSsdCount)
+		if storage.LocalSSDCount != nil {
+			result[string(LocalSSDCount)] = spotinst.IntValue(storage.LocalSSDCount)
 		}
 
 		if len(result) > 0 {

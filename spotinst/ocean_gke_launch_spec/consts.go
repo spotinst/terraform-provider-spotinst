@@ -39,7 +39,7 @@ const (
 	EnableSecureBoot          commons.FieldName = "enable_secure_boot"
 	EnableIntegrityMonitoring commons.FieldName = "enable_integrity_monitoring"
 	Storage                   commons.FieldName = "storage"
-	LocalSsdCount             commons.FieldName = "local_ssd_count"
+	LocalSSDCount             commons.FieldName = "local_ssd_count"
 	ServiceAccount            commons.FieldName = "service_account"
 	ResourceLimits            commons.FieldName = "resource_limits"
 	MaxInstanceCount          commons.FieldName = "max_instance_count"
