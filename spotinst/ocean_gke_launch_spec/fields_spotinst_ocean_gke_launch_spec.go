@@ -3,8 +3,6 @@ package ocean_gke_launch_spec
 import (
 	"bytes"
 	"fmt"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
@@ -725,14 +723,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if ls != nil {
 					if ls.ShieldedInstanceConfig != nil {
 						value = ls.ShieldedInstanceConfig
-						log.Printf("ShieldedInstanceConfig came from cluster")
 					}
 
 					if shieldedInstanceConfig, err := expandShieldedInstanceConfig(v); err != nil {
-						log.Printf("ShieldedInstanceConfig in error")
 						return err
 					} else if shieldedInstanceConfig != nil {
-						log.Printf("ShieldedInstanceConfig came from user")
 						value = shieldedInstanceConfig
 					}
 
@@ -801,14 +796,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if ls != nil {
 					if ls.Storage != nil {
 						value = ls.Storage
-						log.Printf("Storagecame from cluster")
 					}
 
 					if storage, err := expandStorage(v); err != nil {
-						log.Printf("Storage in error")
 						return err
 					} else if storage != nil {
-						log.Printf("Storage came from user")
 						value = storage
 					}
 
@@ -1048,7 +1040,6 @@ func expandShieldedInstanceConfig(data interface{}) (*gcp.ShieldedInstanceConfig
 	updated := 0
 	list := data.(*schema.Set).List()
 	for _, v := range list {
-		log.Printf("ShieldedInstanceConfig in for")
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
@@ -1057,7 +1048,6 @@ func expandShieldedInstanceConfig(data interface{}) (*gcp.ShieldedInstanceConfig
 		sic := &gcp.ShieldedInstanceConfig{}
 
 		if v, ok := attr[string(EnableSecureBoot)].(bool); ok {
-			log.Printf("in set EnableSecureBoot")
 			updated = 1
 			sic.SetEnableSecureBoot(spotinst.Bool(v))
 		}
@@ -1072,7 +1062,6 @@ func expandShieldedInstanceConfig(data interface{}) (*gcp.ShieldedInstanceConfig
 	if updated != 0 {
 		return shieldedInstanceConfig, nil
 	} else {
-		log.Printf("ShieldedInstanceConfig return nil")
 		return nil, nil
 	}
 }
@@ -1082,7 +1071,6 @@ func expandStorage(data interface{}) (*gcp.Storage, error) {
 	updated := 0
 	list := data.(*schema.Set).List()
 	for _, v := range list {
-		log.Printf("Storage in for")
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
@@ -1091,7 +1079,6 @@ func expandStorage(data interface{}) (*gcp.Storage, error) {
 		s := &gcp.Storage{}
 
 		if v, ok := attr[string(LocalSSDCount)].(int); ok {
-			log.Printf("Storage in set LocalSsdCount")
 			updated = 1
 			s.SetLocalSSDCount(spotinst.Int(v))
 		}
@@ -1101,7 +1088,6 @@ func expandStorage(data interface{}) (*gcp.Storage, error) {
 	if updated != 0 {
 		return storage, nil
 	} else {
-		log.Printf("Storage return nil")
 		return nil, nil
 	}
 }
@@ -1111,7 +1097,6 @@ func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 	updated := 0
 	list := data.(*schema.Set).List()
 	for _, v := range list {
-		log.Printf("ResourceLimits in for")
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
@@ -1120,7 +1105,6 @@ func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 		r := &gcp.ResourceLimits{}
 
 		if v, ok := attr[string(MaxInstanceCount)].(int); ok {
-			log.Printf("ResourceLimits in set MaxInstanceCount")
 			updated = 1
 			r.SetMaxInstanceCount(spotinst.Int(v))
 		}
@@ -1130,7 +1114,6 @@ func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 	if updated != 0 {
 		return resourceLimits, nil
 	} else {
-		log.Printf("ResourceLimits return nil")
 		return nil, nil
 	}
 }
