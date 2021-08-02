@@ -174,6 +174,7 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-ssd"),
 				),
 			},
 			{
@@ -185,6 +186,7 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
 				),
 			},
 		},
@@ -202,6 +204,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  min_size = 0
  max_size = 2
  desired_capacity = 0
+ root_volume_type = "pd-ssd"
  %v
 }
 
@@ -215,6 +218,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  location     = "us-central1-a"
 
  whitelist = ["n1-standard-1"]
+ root_volume_type = "pd-standard"
  %v
 }
 
