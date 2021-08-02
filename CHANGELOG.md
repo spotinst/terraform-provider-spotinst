@@ -1,14 +1,11 @@
 ## Unreleased
 
+## 1.54.0 (July 26, 2021)
+
 ENHANCEMENTS:
-* resource/spotinst_ocean_gke_launch_spec: added support for: `shielded_instance_config`
-* resource/spotinst_ocean_gke_launch_spec: added support for: `enable_secure_boot`
-* resource/spotinst_ocean_gke_launch_spec: added support for: `enable_integrity_monitoring`
-* resource/spotinst_ocean_gke_launch_spec: added support for: `storage`
-* resource/spotinst_ocean_gke_launch_spec: added support for: `local_ssd_count`
-* resource/spotinst_ocean_gke_launch_spec: added support for: `resource_limits`
-* resource/spotinst_ocean_gke_launch_spec: added support for: `max_instance_count`
-* resource/spotinst_ocean_gke_launch_spec: added support for: `service_account`
+* resource/spotinst_ocean_gke_import: added support for `root_volume_type`
+* resource/spotinst_elastigroup_aws: added support for `resource_tag_specification`
+* resource/spotinst_managed_instance_aws: added support for `resource_tag_specification`
 
 ## 1.53.1 (July 15, 2021)
 

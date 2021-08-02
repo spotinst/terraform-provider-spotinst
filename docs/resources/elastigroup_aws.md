@@ -112,6 +112,13 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
      key   = "Project"
      value = "app_v2"
   }
+  resource_tag_specification {
+    should_tag_enis = true
+    should_tag_volumes = true
+    should_tag_snapshots = true
+    should_tag_amis = true
+  }
+
 
   lifecycle {
     ignore_changes = [
@@ -194,6 +201,12 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
     * `perform_at` - (Required) In the event of a fallback to On-Demand instances, select the time period to revert back to Spot. Supported Arguments – always (default), timeWindow, never. For timeWindow or never to be valid the group must have availabilityOriented OR persistence defined.
     * `time_windows` - (Optional) Specify a list of time windows for to execute revertToSpot strategy. Time window format: `ddd:hh:mm-ddd:hh:mm`. Example: `Mon:03:00-Wed:02:30`
+
+* `resource_tag_specification` - (Optional) User will specify which resources should be tagged with group tags.
+    * `should_tag_enis`      - (Optional) Tag specification for ENI resources.
+    * `should_tag_volumes`   - (Optional) Tag specification for Volume resources.
+    * `should_tag_snapshots` - (Optional) Tag specification for Snapshot resources.
+    * `should_tag_amis`      - (Optional) Tag specification for AMI resources.
 
 <a id="load-balancers"></a>
 ## Load Balancers

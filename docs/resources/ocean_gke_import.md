@@ -52,6 +52,7 @@ resource "spotinst_ocean_gke_import" "example" {
       ports = [80, 8080]
     }
   }
+ root_volume_type = "pd-ssd"
 }
 ```
 
@@ -79,6 +80,7 @@ The following arguments are supported:
     * `named_port` - (Optional) Describes a named port and a list of ports.
         * `port_name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
+* `root_volume_type` - (Optional) The root volume disk type.
 
 <a id="scheduled-task"></a>
 ## Scheduled task

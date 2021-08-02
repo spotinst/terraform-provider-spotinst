@@ -620,6 +620,78 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ResourceTagSpecification] = commons.NewGenericField(
+		commons.ElastigroupAWSLaunchConfiguration,
+		ResourceTagSpecification,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldTagVolumes): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldTagAMIs): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldTagENIs): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldTagSnapshots): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []interface{} = nil
+			if elastigroup != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.ResourceTagSpecification != nil {
+				resourceTagSpecification := elastigroup.Compute.LaunchSpecification.ResourceTagSpecification
+				result = flattenResourceTagSpecification(resourceTagSpecification)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(ResourceTagSpecification), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ResourceTagSpecification), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(ResourceTagSpecification)); ok {
+				if v, err := expandResourceTagSpecification(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetResourceTagSpecification(v)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *aws.ResourceTagSpecification = nil
+			if v, ok := resourceData.GetOk(string(ResourceTagSpecification)); ok {
+				if resourceTagSpecification, err := expandResourceTagSpecification(v); err != nil {
+					return err
+				} else {
+					value = resourceTagSpecification
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetResourceTagSpecification(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -697,6 +769,60 @@ func expandCPUOptions(data interface{}) (*aws.CPUOptions, error) {
 func flattenCPUOptions(cpuOptions *aws.CPUOptions) []interface{} {
 	result := make(map[string]interface{})
 	result[string(ThreadsPerCore)] = spotinst.IntValue(cpuOptions.ThreadsPerCore)
+
+	return []interface{}{result}
+}
+
+func expandResourceTagSpecification(data interface{}) (*aws.ResourceTagSpecification, error) {
+	resourceTagSpecification := &aws.ResourceTagSpecification{}
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return resourceTagSpecification, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(ShouldTagVolumes)].(bool); ok {
+		volumes := &aws.Volumes{}
+		resourceTagSpecification.SetVolumes(volumes)
+		resourceTagSpecification.Volumes.SetShouldTag(spotinst.Bool(v))
+
+	}
+	if v, ok := m[string(ShouldTagAMIs)].(bool); ok {
+		anis := &aws.AMIs{}
+		resourceTagSpecification.SetAMIs(anis)
+		resourceTagSpecification.AMIs.SetShouldTag(spotinst.Bool(v))
+
+	}
+	if v, ok := m[string(ShouldTagENIs)].(bool); ok {
+		enis := &aws.ENIs{}
+		resourceTagSpecification.SetENIs(enis)
+		resourceTagSpecification.ENIs.SetShouldTag(spotinst.Bool(v))
+	}
+	if v, ok := m[string(ShouldTagSnapshots)].(bool); ok {
+		snapshots := &aws.Snapshots{}
+		resourceTagSpecification.SetSnapshots(snapshots)
+		resourceTagSpecification.Snapshots.SetShouldTag(spotinst.Bool(v))
+
+	}
+
+	return resourceTagSpecification, nil
+}
+
+func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSpecification) []interface{} {
+	result := make(map[string]interface{})
+	if resourceTagSpecification != nil && resourceTagSpecification.Snapshots != nil {
+		result[string(ShouldTagSnapshots)] = spotinst.BoolValue(resourceTagSpecification.Snapshots.ShouldTag)
+	}
+	if resourceTagSpecification != nil && resourceTagSpecification.ENIs != nil {
+		result[string(ShouldTagENIs)] = spotinst.BoolValue(resourceTagSpecification.ENIs.ShouldTag)
+	}
+	if resourceTagSpecification != nil && resourceTagSpecification.AMIs != nil {
+		result[string(ShouldTagAMIs)] = spotinst.BoolValue(resourceTagSpecification.AMIs.ShouldTag)
+	}
+	if resourceTagSpecification != nil && resourceTagSpecification.Volumes != nil {
+		result[string(ShouldTagVolumes)] = spotinst.BoolValue(resourceTagSpecification.Volumes.ShouldTag)
+	}
 
 	return []interface{}{result}
 }
