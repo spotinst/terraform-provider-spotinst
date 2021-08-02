@@ -121,7 +121,6 @@ func NewGKELaunchSpecWrapper() *LaunchSpecGKEWrapper {
 			},
 			ShieldedInstanceConfig: &gcp.ShieldedInstanceConfig{},
 			Storage:                &gcp.Storage{},
-			//ResourceLimits:         &gcp.ResourceLimits{},
 		},
 	}
 }
