@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.55.0 (August 2, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added support for: `shielded_instance_config`
 * resource/spotinst_ocean_gke_launch_spec: added support for: `enable_secure_boot`
