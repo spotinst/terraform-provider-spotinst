@@ -360,6 +360,8 @@ github.com/spotinst/spotinst-sdk-go v1.96.0 h1:uyy+AMhR0heTXFeeFrIiqab9vmgMd6dU3
 github.com/spotinst/spotinst-sdk-go v1.96.0/go.mod h1:RuKksd1/RyQogMCxKFI5B75NeFRcgl3W+26DVX6S4m0=
 github.com/spotinst/spotinst-sdk-go v1.97.0 h1:BGQ3ep5dT1JegvcTn205wxbqOGz+1HvPYOConhZpCfo=
 github.com/spotinst/spotinst-sdk-go v1.97.0/go.mod h1:RuKksd1/RyQogMCxKFI5B75NeFRcgl3W+26DVX6S4m0=
+github.com/spotinst/spotinst-sdk-go v1.97.1 h1:SBVSpMoROH2i2RF/7LL+f7QkkG7HKs6iSMFQ1rjbK0M=
+github.com/spotinst/spotinst-sdk-go v1.97.1/go.mod h1:RuKksd1/RyQogMCxKFI5B75NeFRcgl3W+26DVX6S4m0=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=

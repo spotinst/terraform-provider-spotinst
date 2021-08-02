@@ -23,6 +23,21 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
   root_volume_size = 10
   root_volume_type = "pd-standard"
   instance_types: ["n1-standard-1, n1-standard-2"]
+  
+  shielded_instance_config {
+    enable_secure_boot = false
+    enable_integrity_monitoring = true
+  }
+
+  storage {
+    local_ssd_count = 5
+  }
+
+  resource_limits {
+    max_instance_count = 3
+  }
+  
+  service_account = "default"
 
   metadata {
     key   = "gci-update-strategy"
@@ -86,6 +101,14 @@ The following arguments are supported:
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 * `strategy` - (Optional) The Ocean Launch Spec Strategy object.
     * `preemptible_percentage` - (Optional) Defines the desired preemptible percentage for this launch specification.
+* `shielded_instance_config` - (Optional) The Ocean shielded instance configuration object.
+  * `enable_integrity_monitoring` - (Optional) Boolean. Enable the integrity monitoring parameter on the GCP instances.
+  * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
+* `storage` - (Optional) The Ocean virtual node group storage object.
+  * `local_ssd_count` - (Optional) Defines the number of local SSDs to be attached per node for this VNG.
+* `resource_limits` - (Optional) The Ocean virtual node group resource limits object.
+  * `max_instance_count` - (Optional) Option to set a maximum number of instances per virtual node group. Can be null. If set, the value must be greater than or equal to 0.
+* `service_account` - (Optional) The account used by applications running on the VM to call GCP APIs.
 
 
 ## Attributes Reference
