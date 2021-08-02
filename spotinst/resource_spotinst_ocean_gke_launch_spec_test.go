@@ -173,6 +173,14 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "10"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.3046986788.enable_integrity_monitoring", "false"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.3046986788.enable_secure_boot", "true"),
+					resource.TestCheckResourceAttr(resourceName, "storage.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "storage.3717536058.local_ssd_count", "3"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.4247406351.max_instance_count", "5"),
+					resource.TestCheckResourceAttr(resourceName, "service_account", "default"),
 				),
 			},
 			{
@@ -189,6 +197,13 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "12"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "storage.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "storage.2345647804.local_ssd_count", "5"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.938839985.enable_integrity_monitoring", "true"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.938839985.enable_secure_boot", "false"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.2876301449.max_instance_count", "3"),
 				),
 			},
 		},
@@ -206,6 +221,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  root_volume_type = "pd-standard"
  root_volume_size = 10
  instance_types = ["n1-standard-1"]
+ service_account = "default"
 
  metadata {
      key = "gci-update-strategy"
@@ -228,6 +244,19 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
      value = "testTaintVal"
      effect = "NoSchedule"
    }
+
+ shielded_instance_config {
+	enable_secure_boot = true
+    enable_integrity_monitoring = false
+  }
+
+ storage {
+    local_ssd_count = 3
+  }
+
+ resource_limits {
+    max_instance_count = 5
+  }
 }
 
 `
@@ -243,6 +272,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  root_volume_type = "pd-standard"
  root_volume_size = 12
  instance_types = ["n1-standard-1", "n1-standard-2"]
+ service_account = "default"
 
  metadata {
      key = "gci-update-strategy"
@@ -260,6 +290,19 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
      value = "testTaintVal2"
      effect = "NoSchedule"
    }
+
+ shielded_instance_config {
+	enable_secure_boot = false
+    enable_integrity_monitoring = true
+  }
+
+ storage {
+    local_ssd_count = 5
+  }
+
+ resource_limits {
+    max_instance_count = 3
+  }
 }
 
 `
