@@ -402,6 +402,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 					resource.TestCheckResourceAttr(resourceName, "monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "10"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "required"),
 				),
 			},
 			{
@@ -433,6 +436,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "optional"),
 				),
 			},
 			{
@@ -467,6 +473,11 @@ const testLaunchConfigAWSConfig_Create = `
   monitoring                  = true
   ebs_optimized               = true
 
+  instance_metadata_options {
+	 http_tokens = "required"
+     http_put_response_hop_limit = 10
+  }
+
   load_balancers {
      arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
       type = "TARGET_GROUP"
@@ -496,6 +507,10 @@ const testLaunchConfigAWSConfig_Update = `
   monitoring                  = false
   ebs_optimized               = false
   use_as_template_only        = false
+  instance_metadata_options {
+	  http_tokens = "optional"
+      http_put_response_hop_limit = 20
+  }
 
   load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"

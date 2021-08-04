@@ -363,6 +363,9 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "50"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "10"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "required"),
 				),
 			},
 			{
@@ -392,6 +395,9 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp3"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.throughput", "500"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "optional"),
 				),
 			},
 		},
@@ -416,6 +422,11 @@ block_device_mappings {
       volume_type = "gp2"
       volume_size = 50
     }
+  }
+
+  instance_metadata_options {
+	 http_tokens = "required"
+     http_put_response_hop_limit = 10
   }
 // ---------------------------------------
 `
@@ -444,6 +455,11 @@ const testLaunchSpecECSConfig_Update = `
           }
         }
       }
+
+  instance_metadata_options {
+	http_tokens = "optional"
+	http_put_response_hop_limit = 20
+  }
 // ---------------------------------------
 `
 
@@ -586,6 +602,7 @@ func TestAccSpotinstoceanECS_Strategy(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 				),
 			},
 			{
@@ -599,6 +616,7 @@ func TestAccSpotinstoceanECS_Strategy(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 				),
 			},
 			{
@@ -612,6 +630,7 @@ func TestAccSpotinstoceanECS_Strategy(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "-1"),
 				),
 			},
 		},
@@ -621,18 +640,20 @@ func TestAccSpotinstoceanECS_Strategy(t *testing.T) {
 const testStrategy_Create = `
 // --- STRATEGY -----------------
 	draining_timeout = 120
+	spot_percentage  = 100
 // --------------------------------
 `
 
 const testStrategy_Update = `
 // --- AUTOSCALER -----------------
 	draining_timeout = 240
+	spot_percentage  = 50
 // --------------------------------
 `
 
 const testStrategy_EmptyFields = `
 // --- STRATEGY -----------------
-
+	spot_percentage  = null
 // --------------------------------
 `
 

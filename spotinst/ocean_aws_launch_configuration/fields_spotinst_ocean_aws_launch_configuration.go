@@ -557,6 +557,72 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[InstanceMetadataOptions] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		InstanceMetadataOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(HTTPTokens): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(HTTPPutResponseHopLimit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var result []interface{} = nil
+			if cluster != nil && cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.InstanceMetadataOptions != nil {
+				result = flattenInstanceMetadataOptions(cluster.Compute.LaunchSpecification.InstanceMetadataOptions)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(InstanceMetadataOptions), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceMetadataOptions), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.LaunchSpecification.SetInstanceMetadataOptions(metaDataOptions)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *aws.InstanceMetadataOptions = nil
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					value = metaDataOptions
+				}
+			}
+			cluster.Compute.LaunchSpecification.SetInstanceMetadataOptions(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -622,4 +688,32 @@ func flattenLoadBalancers(balancers []*aws.LoadBalancer) []interface{} {
 		result = append(result, m)
 	}
 	return result
+}
+
+func expandInstanceMetadataOptions(data interface{}) (*aws.InstanceMetadataOptions, error) {
+	instanceMetadataOptions := &aws.InstanceMetadataOptions{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return instanceMetadataOptions, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(HTTPTokens)].(string); ok && v != "" {
+		instanceMetadataOptions.SetHTTPTokens(spotinst.String(v))
+	}
+	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok && v >= 0 {
+		instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
+	} else {
+		instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+	}
+
+	return instanceMetadataOptions, nil
+}
+
+func flattenInstanceMetadataOptions(instanceMetadataOptions *aws.InstanceMetadataOptions) []interface{} {
+	result := make(map[string]interface{})
+	result[string(HTTPTokens)] = spotinst.StringValue(instanceMetadataOptions.HTTPTokens)
+	result[string(HTTPPutResponseHopLimit)] = spotinst.IntValue(instanceMetadataOptions.HTTPPutResponseHopLimit)
+
+	return []interface{}{result}
 }
