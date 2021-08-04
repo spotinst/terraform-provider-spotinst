@@ -26,7 +26,7 @@ module "ocean-controller" {
 
   # Configuration.
   cluster_identifier = "ocean-westus-dev-aks"
-  acd_identifier     = "acd-12345"
+  acd_identifier     = "acd-12345678"
 }
 ```
 
@@ -40,7 +40,7 @@ resource "spotinst_ocean_aks" "example" {
   controller_cluster_id = "ocean-westus-dev-aks"
 
   // --- AKS -----------------------------------------------------------
-  acd_identifier          = "acd-12345"
+  acd_identifier          = "acd-12345678"
   aks_name                = "ocean-westus-dev-aks"
   aks_resource_group_name = "ocean-westus-dev"
   // -------------------------------------------------------------------
@@ -183,7 +183,7 @@ The following arguments are supported:
 * `name` - (Required) The Ocean cluster name.
 * `controller_cluster_id` - (Required) A unique identifier used for connecting the Ocean SaaS platform and the Kubernetes cluster. Typically, the cluster name is used as its identifier. 
 * `aks_name` - (Required) The AKS cluster name.
-* `acd_identifier` - (Required) The AKS identifier.
+* `acd_identifier` - (Required) The AKS identifier. A valid identifier should be formatted as `acd-nnnnnnnn` and previously used identifiers cannot be reused.
 * `aks_resource_group_name` - (Required) Name of the Azure Resource Group where the AKS cluster is located. 
 * `ssh_public_key` - (Required) SSH public key for admin access to Linux VMs.
 * `user_name` - (Optional) Username for admin access to VMs.

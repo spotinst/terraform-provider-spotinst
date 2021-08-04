@@ -405,7 +405,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 					string(DeviceName): {
 						Type:     schema.TypeString,
-						Required: true,
+						Optional: true,
 					},
 
 					string(Ebs): {

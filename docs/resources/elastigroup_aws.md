@@ -27,7 +27,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   region      = "us-west-2"
   subnet_ids  = ["sb-123456", "sb-456789"]
-  
+
   image_id              = "ami-a27d8fda"
   iam_instance_profile  = "iam-profile"
   key_name              = "my-key.ssh"
@@ -52,7 +52,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     instance_type = "m3.xlarge"
     weight        = 10
   }
-  
+
   instance_types_weights {
     instance_type = "m3.2xlarge"
     weight        = 16
@@ -66,7 +66,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   wait_for_capacity         = 5
   wait_for_capacity_timeout = 300
-  
+
   scaling_strategy {
     terminate_at_end_of_billing_hour = true
     termination_policy = "default"
@@ -101,17 +101,24 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   tags {
      key   = "Env"
      value = "production"
-  } 
-  
+  }
+
   tags {
      key   = "Name"
      value = "default-production"
   }
-  
+
   tags {
      key   = "Project"
      value = "app_v2"
   }
+  resource_tag_specification {
+    should_tag_enis = true
+    should_tag_volumes = true
+    should_tag_snapshots = true
+    should_tag_amis = true
+  }
+
 
   lifecycle {
     ignore_changes = [
@@ -127,7 +134,7 @@ The following arguments are supported:
 
 * `name` - (Required) The group name.
 * `description` - (Optional) The group description.
-* `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
+* `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`.
 For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
 
 * `availability_zones` - (Optional) List of Strings of availability zones. When this parameter is set, `subnet_ids` should be left unused.
@@ -140,7 +147,7 @@ Note: When this parameter is set, `availability_zones` should be left unused.
 * `region` - (Optional) The AWS region your group will be created in.
 Note: This parameter is required if you specify subnets (through subnet_ids). This parameter is optional if you specify Availability Zones (through availability_zones).
 
-* `preferred_availability_zones` - The AZs to prioritize when launching Spot instances. If no markets are available in the Preferred AZs, Spot instances are launched in the non-preferred AZs. 
+* `preferred_availability_zones` - The AZs to prioritize when launching Spot instances. If no markets are available in the Preferred AZs, Spot instances are launched in the non-preferred AZs.
 Note: Must be a sublist of `availability_zones` and `orientation` value must not be `"equalAzDistribution"`.
 
 * `max_size` - (Optional, Required if using scaling policies) The maximum number of instances the group should have at any time.
@@ -173,7 +180,7 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `cpu_credits` - (Optional) Controls how T3 instances are launched. Valid values: `standard`, `unlimited`.
 * `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.
 * `wait_for_capacity` - (Optional) Minimum number of instances in a 'HEALTHY' status that is required before continuing. This is ignored when updating with blue/green deployment. Cannot exceed `desired_capacity`.
-* `wait_for_capacity_timeout` - (Optional) Time (seconds) to wait for instances to report a 'HEALTHY' status. Useful for plans with multiple dependencies that take some time to initialize. Leave undefined or set to `0` to indicate no wait. This is ignored when updating with blue/green deployment. 
+* `wait_for_capacity_timeout` - (Optional) Time (seconds) to wait for instances to report a 'HEALTHY' status. Useful for plans with multiple dependencies that take some time to initialize. Leave undefined or set to `0` to indicate no wait. This is ignored when updating with blue/green deployment.
 * `orientation` - (Required, Default: `balanced`) Select a prediction strategy. Valid values: `balanced`, `costOriented`, `equalAzDistribution`, `availabilityOriented`. You can read more in our documentation.
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `ondemand_count` - (Optional; Required if not using `spot_percentage`) Number of on demand instances to launch in the group. All other instances will be spot instances. When this parameter is set the `spot_percentage` parameter is being ignored.
@@ -190,30 +197,36 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
-    
+
 * `revert_to_spot` - (Optional) Hold settings for strategy correction – replacing On-Demand for Spot instances. Supported Values: `"never"`, `"always"`, `"timeWindow"`
     * `perform_at` - (Required) In the event of a fallback to On-Demand instances, select the time period to revert back to Spot. Supported Arguments – always (default), timeWindow, never. For timeWindow or never to be valid the group must have availabilityOriented OR persistence defined.
     * `time_windows` - (Optional) Specify a list of time windows for to execute revertToSpot strategy. Time window format: `ddd:hh:mm-ddd:hh:mm`. Example: `Mon:03:00-Wed:02:30`
-    
+
+* `resource_tag_specification` - (Optional) User will specify which resources should be tagged with group tags.
+    * `should_tag_enis`      - (Optional) Tag specification for ENI resources.
+    * `should_tag_volumes`   - (Optional) Tag specification for Volume resources.
+    * `should_tag_snapshots` - (Optional) Tag specification for Snapshot resources.
+    * `should_tag_amis`      - (Optional) Tag specification for AMI resources.
+
 ### Load Balancers
-    
+
 * `elastic_load_balancers` - (Optional) List of Elastic Load Balancers names (ELB).
 * `target_group_arns` - (Optional) List of Target Group ARNs to register the instances to.
-* `multai_target_sets` - (Optional) Set of targets to register. 
+* `multai_target_sets` - (Optional) Set of targets to register.
     * `target_set_id` - (Required) ID of Multai target set.
     * `balancer_id` - (Required) ID of Multai Load Balancer.
-    
+
 Usage:
 
 ```hcl
   elastic_load_balancers = ["bal5", "bal2"]
   target_group_arns      = ["tg-arn"]
-  
+
   multai_target_sets {
     target_set_id = "ts-123",
     balancer_id   = "bal-123"
   }
-  
+
   multai_target_sets {
     target_set_id = "ts-234",
     balancer_id   = "bal-234"
@@ -376,35 +389,35 @@ Usage:
     statistic   = "average"
     unit        = ""
     cooldown    = 60
-    
+
     dimensions {
         name  = "name-1"
         value = "value-1"
     }
-    
+
     threshold          = 10
     operator           = "gt"
     evaluation_periods = 10
     period             = 60
-  
+
     // === MIN TARGET ===================
     action_type         = "setMinTarget"
     min_target_capacity = 1
     // ==================================
-  
+
     // === ADJUSTMENT ===================
     # action_type = "adjustment"
     # action_type = "percentageAdjustment"
     # adjustment  = "MAX(5,10)"
     // ==================================
-  
+
     // === UPDATE CAPACITY ==============
     # action_type = "updateCapacity"
     # minimum     = 0
     # maximum     = 10
     # target      = 5
     // ==================================
-  
+
   }
 ```
 
@@ -446,8 +459,8 @@ to understand the implications of using these attributes.
 Usage:
 
 ```hcl
-  network_interface { 
-    network_interface_id               = "" 
+  network_interface {
+    network_interface_id               = ""
     device_index                       = 1
     description                        = "nic description in here"
     private_ip_address                 = "1.1.1.1"
@@ -482,8 +495,8 @@ Usage:
 
 ```hcl
   ebs_block_device {
-     device_name           = "/dev/sdb" 
-     snapshot_id           = "" 
+     device_name           = "/dev/sdb"
+     snapshot_id           = ""
      volume_type           = "gp2"  
      volume_size           = 8
      iops                  = 1
@@ -491,10 +504,10 @@ Usage:
      encrypted             = false
      kms_key_id            = "kms-key-01"
    }
-   
+
    ebs_block_device {
-     device_name           = "/dev/sdc" 
-     snapshot_id           = "" 
+     device_name           = "/dev/sdc"
+     snapshot_id           = ""
      volume_type           = "gp3"  
      volume_size           = 8  
      iops                  = 1
@@ -510,7 +523,7 @@ Each `ephemeral_block_device` supports the following:
 * `device_name` - (Required) The name of the block device to mount on the instance.
 * `virtual_name` - (Required) The [Instance Store Device Name](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html#InstanceStoreDeviceNames)
   (e.g. `"ephemeral0"`).
-  
+
 Usage:
 
 ```hcl
@@ -548,7 +561,7 @@ Usage:
     * `should_delete_network_interfaces` - (Optional) For stateful groups: remove network interfaces.
     * `should_delete_volumes` - (Optional) For stateful groups: remove persistent volumes.
     * `should_delete_snapshots` - (Optional) For stateful groups: remove snapshots.
-    
+
 Usage:
 
 ```hcl
@@ -589,7 +602,7 @@ Usage:
 Usage:
 
 ```hcl
-  health_check_type                                  = "ELB" 
+  health_check_type                                  = "ELB"
   health_check_grace_period                          = 100
   health_check_unhealthy_duration_before_replacement = 120
 ```
@@ -634,23 +647,23 @@ Usage:
 Usage:
 
 ```hcl
-  integration_ecs { 
+  integration_ecs {
     cluster_name         = "ecs-cluster"
     autoscale_is_enabled = false
     autoscale_cooldown   = 300
     autoscale_scale_down_non_service_tasks = false
-    
+
     autoscale_headroom {
       cpu_per_unit    = 1024
       memory_per_unit = 512
       num_of_units    = 2
     }
-    
+
     autoscale_down {
       evaluation_periods        = 300
       max_scale_down_percentage = 70
     }
-    
+
     autoscale_attributes {
       key   = "test.ecs.key"
       value = "test.ecs.value"
@@ -679,7 +692,7 @@ Usage:
   integration_codedeploy {
     cleanup_on_failure            = false
     terminate_instance_on_failure = false
-    
+
     deployment_groups {
       application_name      = "my-app"
       deployment_group_name = "my-group"
@@ -704,7 +717,7 @@ Usage:
   integration_route53 {
 
     # Option 1: Use A records.
-    domains { 
+    domains {
       hosted_zone_id   = "zone-id"
       spotinst_acct_id = "act-123456"
       record_set_type  = "a"
@@ -716,7 +729,7 @@ Usage:
     }
 
     # Option 2: Use CNAME records.
-    domains { 
+    domains {
       hosted_zone_id   = "zone-id"
       spotinst_acct_id = "act-123456"
       record_set_type  = "cname"
@@ -751,17 +764,17 @@ integration_docker_swarm {
     master_port          = 2376
     autoscale_is_enabled = true
     autoscale_cooldown   = 180
-    
+
     autoscale_headroom {
         cpu_per_unit    = 2048
         memory_per_unit = 2048
         num_of_units    = 1
     }
-    
+
     autoscale_down {
         evaluation_periods        = 3
         max_scale_down_percentage = 30
-    } 
+    }
 }
 ```
 
@@ -788,34 +801,34 @@ Usage:
   integration_kubernetes {
     integration_mode   = "pod"
     cluster_identifier = "my-identifier.ek8s.com"
-    
+
     // === SAAS ===================
     # integration_mode = "saas"
     # api_server       = "https://api.my-identifier.ek8s.com/api/v1/namespaces/kube-system/services/..."
     # token            = "top-secret"
     // ============================
-    
+
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
     autoscale_cooldown       = 300
-    
+
     autoscale_headroom {
       cpu_per_unit    = 1024
       memory_per_unit = 512
       num_of_units    = 1
     }
-    
+
     autoscale_down {
       evaluation_periods = 300
     }
-    
+
     autoscale_labels {
       key   = "test.k8s.key"
       value = "test.k8s.value"
     }
   }
 ```
- 
+
 * `integration_nomad` - (Optional) Describes the [Nomad](https://www.nomadproject.io/) integration.
 
     * `master_host` - (Required) The URL for the Nomad master host.
@@ -840,27 +853,27 @@ Usage:
     acl_token            = "top-secret"
     autoscale_is_enabled = false
     autoscale_cooldown   = 300
-    
+
     autoscale_headroom {
       cpu_per_unit    = 1024
       memory_per_unit = 512
       num_of_units    = 2
     }
-    
+
     autoscale_down {
       evaluation_periods = 300
     }
-    
+
     autoscale_constraints {
       key   = "test.nomad.key"
       value = "test.nomad.value"
     }
   }
 ```
-         
+
 * `integration_mesosphere` - (Optional) Describes the [Mesosphere](https://mesosphere.com/) integration.
- 
-    * `api_server` - (Optional) The public IP of the DC/OS Master. 
+
+    * `api_server` - (Optional) The public IP of the DC/OS Master.
 
 Usage:
 
@@ -871,7 +884,7 @@ Usage:
 ```
 
 * `integration_multai_runtime` - (Optional) Describes the [Multai Runtime](https://spotinst.com/) integration.
- 
+
     * `deployment_id` - (Optional) The deployment id you want to get
 
 Usage:
@@ -881,12 +894,12 @@ Usage:
     deployment_id = ""
   }
 ```
-     
+
 * `integration_gitlab` - (Optional) Describes the [Gitlab](https://api.spotinst.com/integration-docs/gitlab/) integration.
- 
-    * `runner` - (Optional) Settings for Gitlab runner. 
+
+    * `runner` - (Optional) Settings for Gitlab runner.
         * `is_enabled` - (Optional, Default: `false`) Specifies whether the integration is enabled.
-  
+
 Usage:
 
 ```hcl
@@ -898,21 +911,21 @@ Usage:
 ```
 
 * `integration_beanstalk` - (Optional) Describes the [Beanstalk](https://api.spotinst.com/provisioning-ci-cd-sdk/provisioning-tools/terraform/resources/terraform-v-2/elastic-beanstalk/) integration.
-     
+
     * `deployment_preferences` - (Optional) Preferences when performing a roll
         * `automatic_roll` - (Required) Should roll perform automatically
         * `batch_size_percentage` - (Required) Percent size of each batch
         * `grace_period` - (Required) Amount of time to wait between batches
         * `strategy` - (Optional) Strategy parameters
             * `action` - (Required) Action to take
-            * `should_drain_instances` - (Required) Bool value if to wait to drain instance 
-    
+            * `should_drain_instances` - (Required) Bool value if to wait to drain instance
+
     * `managed_actions` - (Optional) Managed Actions parameters
         * `platform_update` - (Optional) Platform Update parameters
             * `perform_at` - (Required) Actions to perform (options: timeWindow, never)
             * `time_window` - (Required) Time Window for when action occurs ex. Mon:23:50-Tue:00:20
             * `update_level` - (Required) - Level to update
-            
+
 Usage:
 
 ```hcl
@@ -955,7 +968,7 @@ Usage:
         * `strategy` - (Optional) Strategy parameters
            * `action` - (Required) Action to take. Valid values: `REPLACE_SERVER`, `RESTART_SERVER`.
            * `should_drain_instances` - (Optional) Specify whether to drain incoming TCP connections before terminating a server.
-           * `batch_min_healthy_percentage` - (Optional, Default `50`) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the deployment will fail. Range `1` - `100`. 
+           * `batch_min_healthy_percentage` - (Optional, Default `50`) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the deployment will fail. Range `1` - `100`.
            * `on_failure` - (Optional) Set detach options to the deployment.
                * `action_type` - (Required) Sets the action that will take place, Accepted values are: `DETACH_OLD`, `DETACH_NEW`.
                * `should_handle_all_batches` - (Optional, Default: `false`) Indicator if the action should apply to all batches of the deployment or only the latest batch.
@@ -989,7 +1002,7 @@ Usage:
     }
   }
 ```       
-       
+
 ### Attributes Reference
 
 The following attributes are exported:

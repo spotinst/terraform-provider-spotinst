@@ -87,6 +87,14 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
       throughput            = 125
     }
   }
+
+  resource_tag_specification {
+    should_tag_enis = true
+    should_tag_volumes = true
+    should_tag_snapshots = true
+    should_tag_amis = true
+  }
+
 }
 ```
 
@@ -150,6 +158,11 @@ Default: default
     * `iops` - (Optional) The amount of provisioned [IOPS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-io-characteristics.html). This must be set with a `volume_type` of `"io1"`.
     * `delete_on_termination` - (Optional) Whether the volume should be destroyed on instance termination.
     * `throughput`- (Optional) The amount of data transferred to or from a storage device per second. Valid only if `volume_type` is set to `"gp3"`.
+* `resource_tag_specification` - (Optional) User will specify which resources should be tagged with group tags.
+    * `should_tag_enis`      - (Optional) Tag specification for ENI resources.
+    * `should_tag_volumes`   - (Optional) Tag specification for Volume resources.
+    * `should_tag_snapshots` - (Optional) Tag specification for Snapshot resources.
+    * `should_tag_amis`      - (Optional) Tag specification for AMI resources.
 
 Default: unlimited
   

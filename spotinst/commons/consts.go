@@ -30,10 +30,12 @@ const (
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
 
-	OceanGKE                   ResourceAffinity = "Ocean_GKE"
-	OceanGKEImport             ResourceAffinity = "Ocean_GKE_Import"
-	OceanGKEImportScheduling   ResourceAffinity = "Ocean_GKE_Import_Scheduling"
-	OceanGKEImportAutoScaler   ResourceAffinity = "Ocean_GKE_Import_Auto_Scaler"
+	OceanGKE                          ResourceAffinity = "Ocean_GKE"
+	OceanGKEImport                    ResourceAffinity = "Ocean_GKE_Import"
+	OceanGKEImportScheduling          ResourceAffinity = "Ocean_GKE_Import_Scheduling"
+	OceanGKEImportAutoScaler          ResourceAffinity = "Ocean_GKE_Import_Auto_Scaler"
+	OceanGKEImportLaunchSpecification ResourceAffinity = "Ocean_GKE_Import_Launch_Specification"
+
 	OceanGKEInstanceTypes      ResourceAffinity = "Ocean_GKE_Instance_Types"
 	OceanGKEAutoScaling        ResourceAffinity = "Ocean_GKE_Auto_Scaling"
 	OceanGKEStrategy           ResourceAffinity = "Ocean_GKE_Strategy"

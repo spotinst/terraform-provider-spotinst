@@ -25,6 +25,14 @@ const (
 )
 
 const (
+	ResourceTagSpecification commons.FieldName = "resource_tag_specification"
+	ShouldTagVolumes         commons.FieldName = "should_tag_volumes"
+	ShouldTagSnapshots       commons.FieldName = "should_tag_snapshots"
+	ShouldTagENIs            commons.FieldName = "should_tag_enis"
+	ShouldTagAMIs            commons.FieldName = "should_tag_amis"
+)
+
+const (
 	DeviceName          commons.FieldName = "device_name"
 	EBS                 commons.FieldName = "ebs"
 	DeleteOnTermination commons.FieldName = "delete_on_termination"
