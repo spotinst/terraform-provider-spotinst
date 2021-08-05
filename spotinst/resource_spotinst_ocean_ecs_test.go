@@ -425,8 +425,8 @@ block_device_mappings {
   }
 
   instance_metadata_options {
-	 http_tokens = "required"
-     http_put_response_hop_limit = 10
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 10
   }
 // ---------------------------------------
 `
