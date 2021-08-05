@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.56.0 (August 5, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added support for `spot_percentage`
 * resource/spotinst_ocean_ecs: added support for `instance_metadata_options`
