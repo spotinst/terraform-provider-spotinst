@@ -474,8 +474,8 @@ const testLaunchConfigAWSConfig_Create = `
   ebs_optimized               = true
 
   instance_metadata_options {
-	 http_tokens = "required"
-     http_put_response_hop_limit = 10
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 10
   }
 
   load_balancers {
