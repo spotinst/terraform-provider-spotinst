@@ -40,10 +40,10 @@ resource "spotinst_ocean_ecs" "example" {
 
     spot_percentage = 100
 
-    instance_metadata_options {
-	  http_tokens = "required"
-      http_put_response_hop_limit = 10
-    }
+  instance_metadata_options {
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 10
+  }
 
   block_device_mappings {
       device_name = "/dev/xvda1"
