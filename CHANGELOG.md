@@ -2,7 +2,7 @@
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added support for `spot_percentage`
-* resource/ocean_ecs: added support for `instance_metadata_options`
+* resource/spotinst_ocean_ecs: added support for `instance_metadata_options`
 * resource/ocean_aws: added support for `instance_metadata_options`
 
 ## 1.55.0 (August 2, 2021)
