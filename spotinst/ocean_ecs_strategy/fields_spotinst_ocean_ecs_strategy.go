@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -141,6 +142,56 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				utilizeCommitments = spotinst.Bool(uc)
 			}
 			cluster.Strategy.SetUtilizeCommitments(utilizeCommitments)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[SpotPercentage] = commons.NewGenericField(
+		commons.OceanECSStrategy,
+		SpotPercentage,
+		&schema.Schema{
+			Type:         schema.TypeInt,
+			Optional:     true,
+			Default:      -1,
+			ValidateFunc: validation.IntAtLeast(-1),
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				if old == "-1" && new == "null" {
+					return true
+				}
+				return false
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			//Force setting -1 as default value if it's not exists in initial creation,
+			// to allow initialization of the field to 0
+			value := spotinst.Int(-1)
+			if cluster.Strategy != nil && cluster.Strategy.SpotPercentage != nil {
+				value = cluster.Strategy.SpotPercentage
+			}
+			if err := resourceData.Set(string(SpotPercentage), spotinst.Int(*value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
+				cluster.Strategy.SetSpotPercentage(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var spotPercentage *int = nil
+			if v := resourceData.Get(string(SpotPercentage)).(int); v > -1 {
+				spotPercentage = spotinst.Int(v)
+			}
+			cluster.Strategy.SetSpotPercentage(spotPercentage)
 			return nil
 		},
 		nil,

@@ -6,4 +6,5 @@ const (
 	DrainingTimeout          commons.FieldName = "draining_timeout"
 	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
 	UtilizeCommitments       commons.FieldName = "utilize_commitments"
+	SpotPercentage           commons.FieldName = "spot_percentage"
 )
