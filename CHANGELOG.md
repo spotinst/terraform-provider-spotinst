@@ -1,5 +1,17 @@
 ## Unreleased
 
+## 1.56.1 (August 9, 2021)
+
+BUG FIXES:
+* resource/spotinst_mrscaler_aws: fix `instanceGroupType` json tag ([spotinst/spotinst-sdk-go#136](https://github.com/spotinst/spotinst-sdk-go/pull/136))
+
+## 1.56.0 (August 5, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added support for `spot_percentage`
+* resource/spotinst_ocean_ecs: added support for `instance_metadata_options`
+* resource/spotinst_ocean_aws: added support for `instance_metadata_options`
+
 ## 1.55.0 (August 2, 2021)
 
 ENHANCEMENTS:

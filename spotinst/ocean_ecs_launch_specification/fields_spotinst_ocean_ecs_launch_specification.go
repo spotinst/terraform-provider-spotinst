@@ -548,6 +548,72 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[InstanceMetadataOptions] = commons.NewGenericField(
+		commons.OceanECSLaunchSpecification,
+		InstanceMetadataOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(HTTPTokens): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(HTTPPutResponseHopLimit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var result []interface{} = nil
+			if cluster != nil && cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.InstanceMetadataOptions != nil {
+				result = flattenInstanceMetadataOptions(cluster.Compute.LaunchSpecification.InstanceMetadataOptions)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(InstanceMetadataOptions), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceMetadataOptions), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.LaunchSpecification.SetInstanceMetadataOptions(metaDataOptions)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var value *aws.ECSInstanceMetadataOptions = nil
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					value = metaDataOptions
+				}
+			}
+			cluster.Compute.LaunchSpecification.SetInstanceMetadataOptions(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -736,4 +802,32 @@ func flattenDynamicVolumeSize(dvs *aws.ECSDynamicVolumeSize) interface{} {
 	vs[string(Resource)] = spotinst.StringValue(dvs.Resource)
 	vs[string(SizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
 	return []interface{}{vs}
+}
+
+func expandInstanceMetadataOptions(data interface{}) (*aws.ECSInstanceMetadataOptions, error) {
+	instanceMetadataOptions := &aws.ECSInstanceMetadataOptions{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return instanceMetadataOptions, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(HTTPTokens)].(string); ok && v != "" {
+		instanceMetadataOptions.SetHTTPTokens(spotinst.String(v))
+	}
+	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok && v >= 0 {
+		instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
+	} else {
+		instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+	}
+
+	return instanceMetadataOptions, nil
+}
+
+func flattenInstanceMetadataOptions(instanceMetadataOptions *aws.ECSInstanceMetadataOptions) []interface{} {
+	result := make(map[string]interface{})
+	result[string(HTTPTokens)] = spotinst.StringValue(instanceMetadataOptions.HTTPTokens)
+	result[string(HTTPPutResponseHopLimit)] = spotinst.IntValue(instanceMetadataOptions.HTTPPutResponseHopLimit)
+
+	return []interface{}{result}
 }
