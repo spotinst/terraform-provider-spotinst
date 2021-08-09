@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.56.1 (August 9, 2021)
+
 BUG FIXES:
 * resource/spotinst_mrscaler_aws: fix `instanceGroupType` json tag ([spotinst/spotinst-sdk-go#136](https://github.com/spotinst/spotinst-sdk-go/pull/136))
 
