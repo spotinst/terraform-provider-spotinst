@@ -531,6 +531,7 @@ func expandAWSGroupScalingPolicyDimensions(data interface{}) []*aws.Dimension {
 func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdjustment {
 	list := data.([]interface{})
 	stepAdjustments := make([]*aws.StepAdjustment, 0, len(list))
+
 	for _, item := range list {
 		m := item.(map[string]interface{})
 		stepAdjustment := &aws.StepAdjustment{}
