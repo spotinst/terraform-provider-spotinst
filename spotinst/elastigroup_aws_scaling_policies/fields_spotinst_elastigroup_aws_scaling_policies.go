@@ -285,6 +285,63 @@ func upDownScalingPolicySchema() *schema.Schema {
 		Default:  true,
 	}
 
+	s[string(StepAdjustments)] = &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				string(Action): {
+					Type:     schema.TypeSet,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							string(Adjustment): {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+
+							string(Maximum): {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+
+							string(Minimum): {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+
+							string(MaxTargetCapacity): {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+
+							string(MinTargetCapacity): {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+
+							string(Target): {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+
+							string(Type): {
+								Type:     schema.TypeString,
+								Required: true,
+							},
+						},
+					},
+				},
+
+				string(Threshold): {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+			},
+		},
+	}
+
 	return o
 }
 
@@ -415,6 +472,13 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			}
 		}
 
+		if v, ok := m[string(StepAdjustments)]; ok {
+			stepAdjustments := expandAWSGroupScalingPolicyStepAdjustments(v.(interface{}))
+			if len(stepAdjustments) > 0 {
+				policy.SetStepAdjustments(stepAdjustments)
+			}
+		}
+
 		// Target scaling policy?
 		if policy.Threshold == nil {
 			if v, ok := m[string(Target)].(float64); ok && v >= 0 {
@@ -462,6 +526,75 @@ func expandAWSGroupScalingPolicyDimensions(data interface{}) []*aws.Dimension {
 		}
 	}
 	return dimensions
+}
+
+func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdjustment {
+	list := data.([]interface{})
+	stepAdjustments := make([]*aws.StepAdjustment, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		stepAdjustment := &aws.StepAdjustment{}
+
+		if v, ok := m[string(Threshold)].(int); ok && v > 0 {
+			stepAdjustment.SetThreshold(spotinst.Int(v))
+		}
+
+		if v, ok := m[string(Action)]; ok {
+			action := expandAWSGroupScalingPolicyStepAdjustmentsActions(v.(interface{}))
+			if action != nil {
+				stepAdjustment.SetAction(action)
+			}
+		}
+
+		if (stepAdjustment.Threshold != nil) && (stepAdjustment.Action != nil) {
+			stepAdjustments = append(stepAdjustments, stepAdjustment)
+		}
+	}
+	return stepAdjustments
+}
+
+func expandAWSGroupScalingPolicyStepAdjustmentsActions(data interface{}) *aws.Action {
+	list := data.([]interface{})
+	action := &aws.Action{}
+
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(Adjustment)].(string); ok && v != "" {
+			action.SetAdjustment(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Maximum)].(string); ok && v != "" {
+			action.SetMaximum(spotinst.String(v))
+		}
+
+		if v, ok := m[string(MaxTargetCapacity)].(string); ok && v != "" {
+			action.SetMaxTargetCapacity(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Minimum)].(string); ok && v != "" {
+			action.SetMinimum(spotinst.String(v))
+		}
+
+		if v, ok := m[string(MinTargetCapacity)].(string); ok && v != "" {
+			action.SetMaxTargetCapacity(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Target)].(string); ok && v != "" {
+			action.SetTarget(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Type)].(string); ok && v != "" {
+			action.SetType(spotinst.String(v))
+		}
+
+		if (action.Adjustment != nil) && (action.Minimum != nil) && (action.Maximum != nil) &&
+			(action.Target != nil) && (action.Type != nil) && (action.MinTargetCapacity != nil || action.MaxTargetCapacity != nil) {
+			return action
+		}
+
+	}
+	return nil
 }
 
 func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
@@ -519,7 +652,36 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 			m[string(IsEnabled)] = spotinst.BoolValue(policy.IsEnabled)
 		}
 
+		if policy.StepAdjustments != nil && len(policy.StepAdjustments) > 0 {
+			stepAdjMap := make([]interface{}, 0, len(policy.StepAdjustments))
+			for _, step := range policy.StepAdjustments {
+				s := make(map[string]interface{})
+				s[string(Threshold)] = spotinst.IntValue(step.Threshold)
+
+				s[string(Action)] = flattenAction(step.Action)
+
+				if (s[string(Threshold)] != nil) && (s[string(Action)] != nil) {
+					stepAdjMap = append(stepAdjMap, s)
+				}
+			}
+			m[string(StepAdjustments)] = stepAdjMap
+		}
+
 		result = append(result, m)
 	}
 	return result
+}
+
+func flattenAction(action *aws.Action) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(Adjustment)] = spotinst.StringValue(action.Adjustment)
+	result[string(MaxTargetCapacity)] = spotinst.StringValue(action.MaxTargetCapacity)
+	result[string(Maximum)] = spotinst.StringValue(action.Maximum)
+	result[string(MinTargetCapacity)] = spotinst.StringValue(action.MinTargetCapacity)
+	result[string(Minimum)] = spotinst.StringValue(action.Minimum)
+	result[string(Target)] = spotinst.StringValue(action.Target)
+	result[string(Type)] = spotinst.StringValue(action.Type)
+
+	return []interface{}{result}
 }
