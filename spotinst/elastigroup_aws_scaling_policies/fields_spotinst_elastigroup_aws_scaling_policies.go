@@ -2,6 +2,7 @@ package elastigroup_aws_scaling_policies
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -298,44 +299,44 @@ func upDownScalingPolicySchema() *schema.Schema {
 						Schema: map[string]*schema.Schema{
 							string(Adjustment): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 
 							string(Maximum): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 
 							string(Minimum): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 
 							string(MaxTargetCapacity): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 
 							string(MinTargetCapacity): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 
 							string(Target): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 
 							string(Type): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 						},
 					},
 				},
 
 				string(Threshold): {
-					Type:     schema.TypeString,
+					Type:     schema.TypeInt,
 					Optional: true,
 				},
 			},
@@ -473,6 +474,7 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 		}
 
 		if v, ok := m[string(StepAdjustments)]; ok {
+			log.Printf("in StepAdjustments def")
 			stepAdjustments := expandAWSGroupScalingPolicyStepAdjustments(v.(interface{}))
 			if len(stepAdjustments) > 0 {
 				policy.SetStepAdjustments(stepAdjustments)
@@ -529,7 +531,9 @@ func expandAWSGroupScalingPolicyDimensions(data interface{}) []*aws.Dimension {
 }
 
 func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdjustment {
-	list := data.([]interface{})
+	log.Printf("in StepAdjustments expand")
+	list := data.(*schema.Set).List()
+	log.Printf("after in StepAdjustments expand")
 	stepAdjustments := make([]*aws.StepAdjustment, 0, len(list))
 
 	for _, item := range list {
@@ -551,11 +555,12 @@ func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdj
 			stepAdjustments = append(stepAdjustments, stepAdjustment)
 		}
 	}
+	log.Printf("return StepAdjustments def")
 	return stepAdjustments
 }
 
 func expandAWSGroupScalingPolicyStepAdjustmentsActions(data interface{}) *aws.Action {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	action := &aws.Action{}
 
 	if list != nil && list[0] != nil {
@@ -578,7 +583,7 @@ func expandAWSGroupScalingPolicyStepAdjustmentsActions(data interface{}) *aws.Ac
 		}
 
 		if v, ok := m[string(MinTargetCapacity)].(string); ok && v != "" {
-			action.SetMaxTargetCapacity(spotinst.String(v))
+			action.SetMinTargetCapacity(spotinst.String(v))
 		}
 
 		if v, ok := m[string(Target)].(string); ok && v != "" {
