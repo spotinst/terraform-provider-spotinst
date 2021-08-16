@@ -32,6 +32,9 @@ const (
 	IsEnabled           commons.FieldName = "is_enabled"
 	PredictiveMode      commons.FieldName = "predictive_mode"
 	MaxCapacityPerScale commons.FieldName = "max_capacity_per_scale"
+	StepAdjustments     commons.FieldName = "step_adjustments"
+	Action              commons.FieldName = "action"
+	Type                commons.FieldName = "type"
 
 	DimensionName  DimensionField = "name"
 	DimensionValue DimensionField = "value"
