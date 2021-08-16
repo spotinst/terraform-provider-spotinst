@@ -286,7 +286,7 @@ func upDownScalingPolicySchema() *schema.Schema {
 	}
 
 	s[string(StepAdjustments)] = &schema.Schema{
-		Type:     schema.TypeList,
+		Type:     schema.TypeSet,
 		Optional: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
