@@ -2,8 +2,6 @@ package elastigroup_aws_scaling_policies
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -224,7 +222,7 @@ func upDownScalingPolicySchema() *schema.Schema {
 
 	s[string(Threshold)] = &schema.Schema{
 		Type:     schema.TypeFloat,
-		Required: true,
+		Optional: true,
 	}
 
 	s[string(Adjustment)] = &schema.Schema{
@@ -474,7 +472,6 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 		}
 
 		if v, ok := m[string(StepAdjustments)]; ok {
-			log.Printf("in StepAdjustments def")
 			stepAdjustments := expandAWSGroupScalingPolicyStepAdjustments(v.(interface{}))
 			if len(stepAdjustments) > 0 {
 				policy.SetStepAdjustments(stepAdjustments)
@@ -531,9 +528,7 @@ func expandAWSGroupScalingPolicyDimensions(data interface{}) []*aws.Dimension {
 }
 
 func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdjustment {
-	log.Printf("in StepAdjustments expand")
 	list := data.(*schema.Set).List()
-	log.Printf("after in StepAdjustments expand")
 	stepAdjustments := make([]*aws.StepAdjustment, 0, len(list))
 
 	for _, item := range list {
@@ -541,7 +536,6 @@ func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdj
 		stepAdjustment := &aws.StepAdjustment{}
 
 		if v, ok := m[string(Threshold)].(int); ok && v > 0 {
-			log.Printf("threshold is %v", v)
 			stepAdjustment.SetThreshold(spotinst.Int(v))
 		}
 
@@ -556,7 +550,6 @@ func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdj
 			stepAdjustments = append(stepAdjustments, stepAdjustment)
 		}
 	}
-	log.Printf("return StepAdjustments def")
 	return stepAdjustments
 }
 
@@ -645,7 +638,7 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 		}
 
 		// Target scaling policy?
-		if policy.Threshold == nil {
+		if policy.Threshold == nil && policy.StepAdjustments == nil {
 			m[string(Target)] = spotinst.Float64Value(policy.Target)
 
 			if policy.Predictive != nil && policy.Predictive.Mode != nil {
