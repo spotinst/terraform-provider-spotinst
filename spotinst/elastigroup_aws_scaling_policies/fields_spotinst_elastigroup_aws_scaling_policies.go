@@ -541,6 +541,7 @@ func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdj
 		stepAdjustment := &aws.StepAdjustment{}
 
 		if v, ok := m[string(Threshold)].(int); ok && v > 0 {
+			log.Printf("threshold is %v", v)
 			stepAdjustment.SetThreshold(spotinst.Int(v))
 		}
 
@@ -594,10 +595,10 @@ func expandAWSGroupScalingPolicyStepAdjustmentsActions(data interface{}) *aws.Ac
 			action.SetType(spotinst.String(v))
 		}
 
-		if (action.Adjustment != nil) && (action.Minimum != nil) && (action.Maximum != nil) &&
-			(action.Target != nil) && (action.Type != nil) && (action.MinTargetCapacity != nil || action.MaxTargetCapacity != nil) {
-			return action
-		}
+		//if (action.Adjustment != nil) && (action.Minimum != nil) && (action.Maximum != nil) &&
+		//		(action.Target != nil) && (action.Type != nil) && (action.MinTargetCapacity != nil || action.MaxTargetCapacity != nil) {
+		return action
+		//}
 
 	}
 	return nil
