@@ -588,10 +588,9 @@ func expandAWSGroupScalingPolicyStepAdjustmentsActions(data interface{}) *aws.Ac
 			action.SetType(spotinst.String(v))
 		}
 
-		//if (action.Adjustment != nil) && (action.Minimum != nil) && (action.Maximum != nil) &&
-		//		(action.Target != nil) && (action.Type != nil) && (action.MinTargetCapacity != nil || action.MaxTargetCapacity != nil) {
-		return action
-		//}
+		if action.Type != nil {
+			return action
+		}
 
 	}
 	return nil
