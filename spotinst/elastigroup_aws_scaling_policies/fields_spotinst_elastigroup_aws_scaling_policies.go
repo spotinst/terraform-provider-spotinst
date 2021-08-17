@@ -147,6 +147,129 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[MultipleMetrics] = commons.NewGenericField(
+		commons.ElastigroupAWSScalingPolicies,
+		MultipleMetrics,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Expressions): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Expression): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(Name): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+					},
+
+					string(Metrics): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Dimensions): {
+									Type: schema.TypeList,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(DimensionName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+
+											string(DimensionValue): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+										},
+									},
+									Optional: true,
+								},
+
+								string(ExtendedStatistic): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(MetricName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Name): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Namespace): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Statistic): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(Unit): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var policiesResult []interface{} = nil
+			if elastigroup.Scaling != nil && elastigroup.Scaling.MultipleMetrics != nil {
+				multipleMetrics := elastigroup.Scaling.MultipleMetrics
+				policiesResult = flattenMultipleMetrics(multipleMetrics)
+			}
+			if err := resourceData.Set(string(MultipleMetrics), policiesResult); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MultipleMetrics), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(MultipleMetrics)); ok {
+				if multipleMetrics, err := expandMultipleMetrics(v); err != nil {
+					return err
+				} else {
+					elastigroup.Scaling.SetMultipleMetrics(multipleMetrics)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *aws.MultipleMetrics = nil
+			if v, ok := resourceData.GetOk(string(MultipleMetrics)); ok && v != nil {
+				if multipleMetrics, err := expandMultipleMetrics(v); err != nil {
+					return err
+				} else {
+					value = multipleMetrics
+				}
+			}
+			elastigroup.Scaling.SetMultipleMetrics(value)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func baseScalingPolicySchema() *schema.Schema {
@@ -366,6 +489,37 @@ func targetScalingPolicySchema() *schema.Schema {
 	return o
 }
 
+func expandMultipleMetrics(data interface{}) (*aws.MultipleMetrics, error) {
+	list := data.(*schema.Set).List()
+	multipleMetrics := &aws.MultipleMetrics{}
+
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(Expressions)]; ok {
+			expressions := expandExpressions(v.(interface{}))
+			if len(expressions) > 0 {
+				multipleMetrics.SetExpressions(expressions)
+			}
+		}
+
+		if v, ok := m[string(Metrics)]; ok {
+			if metrics, err := expandAWSGroupScalingPolicies(v.(interface{})); err != nil {
+				return nil, err
+			} else {
+				multipleMetrics.SetMetrics(metrics)
+			}
+		}
+
+		if multipleMetrics.Expressions != nil || multipleMetrics.Metrics != nil {
+			return multipleMetrics, nil
+		}
+
+	}
+
+	return nil, nil
+}
+
 func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, error) {
 	list := data.(*schema.Set).List()
 	policies := make([]*aws.ScalingPolicy, 0, len(list))
@@ -491,6 +645,14 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			if v, ok := m[string(MaxCapacityPerScale)].(string); ok && v != "" {
 				policy.SetMaxCapacityPerScale(spotinst.String(v))
 			}
+		}
+
+		if v, ok := m[string(Name)].(string); ok {
+			policy.SetName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(ExtendedStatistic)].(string); ok {
+			policy.SetExtendedStatistic(spotinst.String(v))
 		}
 
 		if policy.Namespace != nil {
@@ -668,6 +830,61 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 
 		result = append(result, m)
 	}
+	return result
+}
+
+func flattenMultipleMetrics(multipleMetrics *aws.MultipleMetrics) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(Expressions)] = flattenExpressions(multipleMetrics.Expressions)
+	result[string(Metrics)] = flattenMetrics(multipleMetrics.Metrics)
+
+	return []interface{}{result}
+}
+
+func flattenExpressions(expressions []*aws.Expressions) []interface{} {
+	result := make([]interface{}, 0, len(expressions))
+	for _, expression := range expressions {
+		m := make(map[string]interface{})
+
+		m[string(Name)] = spotinst.StringValue(expression.Name)
+		m[string(Expression)] = spotinst.StringValue(expression.Expression)
+
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenMetrics(metrics []*aws.ScalingPolicy) []interface{} {
+	result := make([]interface{}, 0, len(metrics))
+	for _, metric := range metrics {
+		m := make(map[string]interface{})
+
+		m[string(ExtendedStatistic)] = spotinst.StringValue(metric.ExtendedStatistic)
+		m[string(MetricName)] = spotinst.StringValue(metric.MetricName)
+		m[string(Name)] = spotinst.StringValue(metric.Name)
+		m[string(Namespace)] = spotinst.StringValue(metric.Namespace)
+		m[string(Statistic)] = spotinst.StringValue(metric.Statistic)
+		m[string(Unit)] = spotinst.StringValue(metric.Unit)
+
+		if metric.Dimensions != nil && len(metric.Dimensions) > 0 {
+			dimMap := make([]interface{}, 0, len(metric.Dimensions))
+			for _, dimension := range metric.Dimensions {
+				d := make(map[string]interface{})
+				d[string(DimensionName)] = spotinst.StringValue(dimension.Name)
+				d[string(DimensionValue)] = spotinst.StringValue(dimension.Value)
+
+				if (d[string(DimensionName)] != nil) && (d[string(DimensionValue)] != nil) {
+					dimMap = append(dimMap, d)
+				}
+			}
+			m[string(Dimensions)] = dimMap
+		}
+
+		result = append(result, m)
+	}
+
 	return result
 }
 
