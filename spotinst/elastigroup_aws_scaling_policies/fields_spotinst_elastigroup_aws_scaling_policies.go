@@ -788,7 +788,7 @@ func expandMetrics(data interface{}) ([]*aws.Metrics, error) {
 			}
 		}
 
-		if (metric.Name != nil) && (metric.Namespace != nil) && (metric.Namespace != nil) {
+		if (metric.Name != nil) && (metric.Namespace != nil) && (metric.MetricName != nil) {
 			metrics = append(metrics, metric)
 		}
 	}
