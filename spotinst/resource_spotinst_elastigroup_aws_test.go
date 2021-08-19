@@ -1747,6 +1747,139 @@ const testScalingUpPolicyGroupConfig_EmptyFields = `
 
 // endregion
 
+// region Elastigroup: Scaling Up Policies With Step Adjustments
+func TestAccSpotinstElastigroupAWS_ScalingUpPolicies_StepAdjustments(t *testing.T) {
+	groupName := "test-acc-eg-scaling-up-policy-step-adjustments"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testScalingUpPolicyStepAdjustmentsGroupConfig_Create,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.source", "cloudWatch"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.step_adjustments.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.step_adjustments.1866007121.action.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.step_adjustments.1866007121.action.3582351448.adjustment", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.step_adjustments.1866007121.action.3582351448.type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.3865797491.step_adjustments.1866007121.threshold", "50"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testScalingUpPolicyStepAdjustmentsGroupConfig_Update,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.source", "cloudWatch"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.unit", "percent"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.step_adjustments.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.step_adjustments.3645223480.action.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.step_adjustments.3645223480.action.1264141123.min_target_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.step_adjustments.3645223480.action.1264141123.type", "setMinTarget"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.346394126.step_adjustments.3645223480.threshold", "50"),
+				),
+			},
+		},
+	})
+}
+
+const testScalingUpPolicyStepAdjustmentsGroupConfig_Create = `
+ // --- SCALE UP POLICY WITH STEP ADJUSTMENT------------------
+scaling_up_policy {
+    policy_name = "policy-name"
+    metric_name = "CPUUtilization"
+    namespace   = "AWS/EC2"
+    source      = "cloudWatch"
+    statistic   = "average"
+    unit        = "percent"
+    cooldown    = 60
+    is_enabled = false
+
+    dimensions {
+      name  = "name-1"
+      value = "value-1"
+    }
+
+    step_adjustments {
+      threshold = 50
+      action {
+        type = "adjustment"
+        adjustment =  "2"
+      }
+    }
+  }
+ // ----------------------------------------
+`
+
+const testScalingUpPolicyStepAdjustmentsGroupConfig_Update = `
+ // --- SCALE UP POLICY WITH STEP ADJUSTMENT------------------
+scaling_up_policy {
+    policy_name = "policy-name"
+    metric_name = "CPUUtilization"
+    namespace   = "AWS/EC2"
+    source      = "cloudWatch"
+    statistic   = "average"
+    unit        = "percent"
+    cooldown    = 60
+    is_enabled = false
+
+    dimensions {
+      name  = "name-1"
+      value = "value-1"
+    }
+
+    step_adjustments {
+      threshold = 50
+      action {
+        type = "setMinTarget"
+        min_target_capacity =  "3"
+      }
+    }
+  }
+ // ----------------------------------------
+`
+
+// endregion
+
 // region Elastigroup: Scaling Down Policies
 func TestAccSpotinstElastigroupAWS_ScalingDownPolicies(t *testing.T) {
 	groupName := "test-acc-eg-scaling-down-policy"
@@ -2059,6 +2192,128 @@ const testScalingTargetPolicyGroupConfig_Update = `
 
 const testScalingTargetPolicyGroupConfig_EmptyFields = `
  // --- SCALE TARGET POLICY ----------------
+ // ----------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Scaling Multiple Metrics
+func TestAccSpotinstElastigroupAWS_MultipleMetrics(t *testing.T) {
+	groupName := "test-acc-eg-scaling-multiple-metrics"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testScalingMultipleMetricsGroupConfig_Create,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.expressions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.expressions.1450247932.expression", "1st Metric EC2 - CPU Utilization - CPU_Utilization_Dimension_Metric_Name_Cache"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.expressions.1450247932.name", "Custom Metric 1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.dimensions.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.metric_name", "Latency"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.name", "2nd Metric ELB - Latency"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.namespace", "AWS/ELB"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.statistic", "sampleCount"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.unit", "kilobits/second"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.dimensions.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.metric_name", "NetworkOut"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.name", "1st Metric EC2 - CPU Utilization"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.unit", "bits"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testScalingMultipleMetricsGroupConfig_Update,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.expressions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.expressions.1450247932.expression", "1st Metric EC2 - CPU Utilization - CPU_Utilization_Dimension_Metric_Name_Cache"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.expressions.1450247932.name", "Custom Metric 1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.dimensions.0.name", "InstanceId"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.dimensions.0.value", "%instance-id%"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.name", "3rd Metric EC2 - CPU Utilization, with dimension"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.statistic", "minimum"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1389850874.metrics.1947352181.unit", "percent"),
+				),
+			},
+		},
+	})
+}
+
+const testScalingMultipleMetricsGroupConfig_Create = `
+ // --- MULTIPLE METRICS ------------------
+  multiple_metrics {
+    expressions {
+      name = "Custom Metric 1"
+      expression = "1st Metric EC2 - CPU Utilization - CPU_Utilization_Dimension_Metric_Name_Cache"
+    }
+    metrics {
+      name =  "1st Metric EC2 - CPU Utilization"
+      metric_name =  "NetworkOut"
+      namespace =  "AWS/EC2"
+      statistic =  "sum"
+      unit =  "bits"
+    }
+
+    metrics {
+      name =  "2nd Metric ELB - Latency"
+      metric_name =  "Latency"
+      namespace =  "AWS/ELB"
+      statistic =  "sampleCount"
+      unit =  "kilobits/second"
+    }
+ }
+
+ // ----------------------------------------
+`
+
+const testScalingMultipleMetricsGroupConfig_Update = `
+ // --- MULTIPLE METRICS ------------------
+  multiple_metrics {
+    expressions {
+      name = "Custom Metric 1"
+      expression = "1st Metric EC2 - CPU Utilization - CPU_Utilization_Dimension_Metric_Name_Cache"
+    }
+	metrics {
+      name =  "3rd Metric EC2 - CPU Utilization, with dimension"
+      metric_name =  "CPUUtilization"
+      namespace =  "AWS/EC2"
+      statistic =  "minimum"
+      unit =  "percent"
+      dimensions {
+        name  = "InstanceId"
+        value = "%instance-id%"
+      }
+    }
+ }
  // ----------------------------------------
 `
 
