@@ -176,7 +176,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(Metrics): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
@@ -821,7 +821,7 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 		}
 
 		// Target scaling policy?
-		if policy.Threshold == nil && policy.StepAdjustments == nil {
+		if policy.Threshold == nil && policy.StepAdjustments == nil && policy.Name == nil {
 			m[string(Target)] = spotinst.Float64Value(policy.Target)
 
 			if policy.Predictive != nil && policy.Predictive.Mode != nil {
