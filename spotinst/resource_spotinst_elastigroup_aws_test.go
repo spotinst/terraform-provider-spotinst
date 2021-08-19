@@ -2221,22 +2221,22 @@ func TestAccSpotinstElastigroupAWS_MultipleMetrics(t *testing.T) {
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.expressions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.expressions.1450247932.expression", "1st Metric EC2 - CPU Utilization - CPU_Utilization_Dimension_Metric_Name_Cache"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.expressions.1450247932.name", "Custom Metric 1"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.dimensions.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.metric_name", "Latency"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.name", "2nd Metric ELB - Latency"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.namespace", "AWS/ELB"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.statistic", "sampleCount"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.1097529195.unit", "kilobits/second"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.dimensions.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.metric_name", "NetworkOut"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.name", "1st Metric EC2 - CPU Utilization"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.namespace", "AWS/EC2"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1791255332.metrics.893929160.unit", "bits"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.expressions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.expressions.1450247932.expression", "1st Metric EC2 - CPU Utilization - CPU_Utilization_Dimension_Metric_Name_Cache"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.expressions.1450247932.name", "Custom Metric 1"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.1097529195.dimensions.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.1097529195.metric_name", "Latency"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.1097529195.name", "2nd Metric ELB - Latency"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.1097529195.namespace", "AWS/ELB"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.1097529195.statistic", "sampleCount"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.1097529195.unit", "kilobits/second"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.2193101319.dimensions.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.2193101319.metric_name", "NetworkOut"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.2193101319.name", "1st Metric EC2 - CPU Utilization"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.2193101319.namespace", "AWS/EC2"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.2193101319.extended_statistic", "p1.5"),
+					resource.TestCheckResourceAttr(resourceName, "multiple_metrics.1434505744.metrics.2193101319.unit", "bits"),
 				),
 			},
 			{
@@ -2279,7 +2279,7 @@ const testScalingMultipleMetricsGroupConfig_Create = `
       name =  "1st Metric EC2 - CPU Utilization"
       metric_name =  "NetworkOut"
       namespace =  "AWS/EC2"
-      statistic =  "sum"
+      extended_statistic =  "p1.5"
       unit =  "bits"
     }
 
