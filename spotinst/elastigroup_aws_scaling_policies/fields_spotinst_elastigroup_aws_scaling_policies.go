@@ -647,11 +647,11 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			}
 		}
 
-		if v, ok := m[string(Name)].(string); ok {
+		if v, ok := m[string(Name)].(string); ok && v != "" {
 			policy.SetName(spotinst.String(v))
 		}
 
-		if v, ok := m[string(ExtendedStatistic)].(string); ok {
+		if v, ok := m[string(ExtendedStatistic)].(string); ok && v != "" {
 			policy.SetExtendedStatistic(spotinst.String(v))
 		}
 
@@ -756,6 +756,28 @@ func expandAWSGroupScalingPolicyStepAdjustmentsActions(data interface{}) *aws.Ac
 
 	}
 	return nil
+}
+
+func expandExpressions(data interface{}) []*aws.Expressions {
+	list := data.(*schema.Set).List()
+	expressions := make([]*aws.Expressions, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		expression := &aws.Expressions{}
+
+		if v, ok := m[string(Name)].(string); ok && v != "" {
+			expression.SetName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Expression)].(string); ok && v != "" {
+			expression.SetExpression(spotinst.String(v))
+		}
+
+		if (expression.Name != nil) && (expression.Expression != nil) {
+			expressions = append(expressions, expression)
+		}
+	}
+	return expressions
 }
 
 func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
