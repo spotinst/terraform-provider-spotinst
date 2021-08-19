@@ -23,6 +23,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
+			ForceNew: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
