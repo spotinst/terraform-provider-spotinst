@@ -504,7 +504,7 @@ func expandMultipleMetrics(data interface{}) (*aws.MultipleMetrics, error) {
 		}
 
 		if v, ok := m[string(Metrics)]; ok {
-			if metrics, err := expandAWSGroupScalingPolicies(v.(interface{})); err != nil {
+			if metrics, err := expandMetrics(v.(interface{})); err != nil {
 				return nil, err
 			} else {
 				multipleMetrics.SetMetrics(metrics)
@@ -647,14 +647,6 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			}
 		}
 
-		if v, ok := m[string(Name)].(string); ok && v != "" {
-			policy.SetName(spotinst.String(v))
-		}
-
-		if v, ok := m[string(ExtendedStatistic)].(string); ok && v != "" {
-			policy.SetExtendedStatistic(spotinst.String(v))
-		}
-
 		if policy.Namespace != nil {
 			policies = append(policies, policy)
 		}
@@ -758,6 +750,51 @@ func expandAWSGroupScalingPolicyStepAdjustmentsActions(data interface{}) *aws.Ac
 	return nil
 }
 
+func expandMetrics(data interface{}) ([]*aws.Metrics, error) {
+	list := data.(*schema.Set).List()
+	metrics := make([]*aws.Metrics, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		metric := &aws.Metrics{}
+
+		if v, ok := m[string(Name)].(string); ok && v != "" {
+			metric.SetName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Namespace)].(string); ok && v != "" {
+			metric.SetNamespace(spotinst.String(v))
+		}
+
+		if v, ok := m[string(MetricName)].(string); ok && v != "" {
+			metric.SetMetricName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(ExtendedStatistic)].(string); ok && v != "" {
+			metric.SetExtendedStatistic(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Statistic)].(string); ok && v != "" {
+			metric.SetStatistic(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Unit)].(string); ok && v != "" {
+			metric.SetUnit(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Dimensions)]; ok {
+			dimensions := expandAWSGroupScalingPolicyDimensions(v.(interface{}))
+			if len(dimensions) > 0 {
+				metric.SetDimensions(dimensions)
+			}
+		}
+
+		if (metric.Name != nil) && (metric.Namespace != nil) && (metric.Namespace != nil) {
+			metrics = append(metrics, metric)
+		}
+	}
+	return metrics, nil
+}
+
 func expandExpressions(data interface{}) []*aws.Expressions {
 	list := data.(*schema.Set).List()
 	expressions := make([]*aws.Expressions, 0, len(list))
@@ -821,7 +858,7 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 		}
 
 		// Target scaling policy?
-		if policy.Threshold == nil && policy.StepAdjustments == nil && policy.Name == nil {
+		if policy.Threshold == nil && policy.StepAdjustments == nil {
 			m[string(Target)] = spotinst.Float64Value(policy.Target)
 
 			if policy.Predictive != nil && policy.Predictive.Mode != nil {
@@ -878,7 +915,7 @@ func flattenExpressions(expressions []*aws.Expressions) []interface{} {
 	return result
 }
 
-func flattenMetrics(metrics []*aws.ScalingPolicy) []interface{} {
+func flattenMetrics(metrics []*aws.Metrics) []interface{} {
 	result := make([]interface{}, 0, len(metrics))
 	for _, metric := range metrics {
 		m := make(map[string]interface{})
