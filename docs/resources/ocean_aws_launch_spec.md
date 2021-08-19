@@ -63,7 +63,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   }
 
   block_device_mappings {
-    device_name = "/dev/xvda1"
+    device_name = "/dev/xvda"
     ebs {
       delete_on_termination = "true"
       encrypted             = "false"
