@@ -131,7 +131,7 @@ The following arguments are supported:
         * `tag_key` - (Required) Elastic IP tag key. The Virtual Node Group will consider all Elastic IPs tagged with this tag as a part of the Elastic IP pool to use.
         * `tag_value` - (Optional) Elastic IP tag value. Can be null.    
 * `block_device_mappings` - (Optional) Object. Array list of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.   
-    * `device_name` - (Optional) String. Set device name. (Example: `/dev/xvda1`).
+    * `device_name` - (Optional) String. Set device name. (Example: `/dev/xvda`).
     * `ebs`- (Optional) Object. Set Elastic Block Store properties .
         * `delete_on_termination` - (Optional) Boolean. Flag to delete the EBS on instance termination. 
         * `encrypted` - (Optional) Boolean. Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
