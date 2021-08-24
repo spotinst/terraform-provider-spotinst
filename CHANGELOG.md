@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.57.0 (August 22, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added support for `multiple_metrics`
+* resource/spotinst_elastigroup_aws: added support for `step_adjustments`
+
 ## 1.56.1 (August 9, 2021)
 
 BUG FIXES:
