@@ -320,14 +320,14 @@ func expandOceanGKERollConfig(data interface{}, clusterID *string) (*gcp.CreateR
 		}
 
 		if v, ok := m[string(ocean_gke_import.LaunchSpecIDs)].([]string); ok {
-			i.Roll.LaunchSpecIDs = expandLaunchSpecIDs(v)
+			i.Roll.LaunchSpecIDs = expandOceanGKELaunchSpecIDs(v)
 		}
 
 	}
 	return i, nil
 }
 
-func expandLaunchSpecIDs(data interface{}) []string {
+func expandOceanGKELaunchSpecIDs(data interface{}) []string {
 	list := data.([]interface{})
 	result := make([]string, 0, len(list))
 

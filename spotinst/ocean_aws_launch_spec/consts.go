@@ -84,3 +84,11 @@ const (
 	CreateOptions commons.FieldName = "create_options"
 	InitialNodes  commons.FieldName = "initial_nodes"
 )
+
+const (
+	UpdatePolicy commons.FieldName = "update_policy"
+	ShouldRoll   commons.FieldName = "should_roll"
+
+	RollConfig          commons.FieldName = "roll_config"
+	BatchSizePercentage commons.FieldName = "batch_size_percentage"
+)

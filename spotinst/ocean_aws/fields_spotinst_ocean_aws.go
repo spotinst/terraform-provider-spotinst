@@ -374,6 +374,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Required: true,
 								},
+								string(LaunchSpecIDs): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
 							},
 						},
 					},

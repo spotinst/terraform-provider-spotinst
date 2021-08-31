@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws"
 	"log"
 	"strings"
 	"time"
@@ -141,9 +142,11 @@ func resourceSpotinstOceanAWSLaunchSpecRead(resourceData *schema.ResourceData, m
 
 func resourceSpotinstOceanAWSLaunchSpecUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
+	log.Printf("in resource update")
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAWSLaunchSpecResource.GetName(), id)
 
 	shouldUpdate, launchSpec, err := commons.OceanAWSLaunchSpecResource.OnUpdate(resourceData, meta)
+	log.Printf("should update is %v", shouldUpdate)
 	if err != nil {
 		return err
 	}
@@ -162,8 +165,27 @@ func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceD
 	var input = &aws.UpdateLaunchSpecInput{
 		LaunchSpec: launchSpec,
 	}
+	log.Printf("in update")
 
 	launchSpecId := resourceData.Id()
+	oceanId := resourceData.Get(string(ocean_aws_launch_spec.OceanID))
+	log.Printf("ocean id is %v", oceanId)
+	log.Printf("ls id is %v", launchSpecId)
+	var shouldRoll = false
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy)); exists {
+		log.Printf("in if 1")
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			log.Printf("in if 2")
+			m := list[0].(map[string]interface{})
+
+			if roll, ok := m[string(ocean_aws_launch_spec.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
+		}
+	}
+
+	log.Printf("should roll is %v", shouldRoll)
 
 	if json, err := commons.ToJson(launchSpec); err != nil {
 		return err
@@ -173,8 +195,60 @@ func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceD
 
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateLaunchSpec(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update launchSpec [%v]: %v", launchSpecId, err)
+	} else if shouldRoll {
+		if err := rollLaunchSpecAwsCluster(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", oceanId, err)
+			return err
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws_launch_spec.ShouldRoll))
 	}
 
+	return nil
+}
+
+func rollLaunchSpecAwsCluster(resourceData *schema.ResourceData, meta interface{}) error {
+	var errResult error = nil
+	launchSpecId := resourceData.Id()
+	clusterID := spotinst.String(resourceData.Get(string(ocean_aws_launch_spec.OceanID)).(string))
+
+	log.Printf("ocean id is %v", clusterID)
+	log.Printf("ls id is %v", launchSpecId)
+
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			log.Printf("in if 3")
+			updateClusterSchema := list[0].(map[string]interface{})
+			if rollConfig, ok := updateClusterSchema[string(ocean_aws_launch_spec.RollConfig)]; !ok || rollConfig == nil {
+				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_aws.RollConfig), clusterID)
+			} else {
+				if rollClusterInput, err := expandLaunchSpecAWSRollConfig(rollConfig, clusterID, launchSpecId); err != nil {
+					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for cluster [%v], error: %v", clusterID, err)
+				} else {
+					if json, err := commons.ToJson(rollConfig); err != nil {
+						return err
+					} else {
+						log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, json)
+						rollClusterInput.Roll.ClusterID = clusterID
+						log.Printf("to create roll")
+						_, err := meta.(*Client).ocean.CloudProviderAWS().CreateRoll(context.Background(), rollClusterInput)
+						if err != nil {
+							return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
+						} else {
+							log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
+						}
+					}
+				}
+			}
+		}
+	} else {
+		errResult = fmt.Errorf("[ERROR] onRoll() -> Missing update policy for cluster [%v]", clusterID)
+	}
+
+	if errResult != nil {
+		return errResult
+	}
 	return nil
 }
 
@@ -208,4 +282,24 @@ func deleteLaunchSpec(resourceData *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete launchSpecId: %s", err)
 	}
 	return nil
+}
+
+func expandLaunchSpecAWSRollConfig(data interface{}, clusterID *string, launchSpecID string) (*aws.CreateRollInput, error) {
+	i := &aws.CreateRollInput{Roll: &aws.RollSpec{ClusterID: clusterID}}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ocean_aws.BatchSizePercentage)].(int); ok {
+			i.Roll.BatchSizePercentage = spotinst.Int(v)
+		}
+
+		lsResult := make([]string, 0, 1)
+		lsResult = append(lsResult, launchSpecID)
+		log.Printf("expand ls is %v", launchSpecID)
+
+		i.Roll.LaunchSpecIDs = lsResult
+
+	}
+	return i, nil
 }
