@@ -183,6 +183,7 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 	}
 
 	if shouldUpdate {
+		log.Printf("in should update")
 		cluster.SetId(spotinst.String(id))
 		if err := updateGKEImportCluster(cluster, resourceData, meta); err != nil {
 			return err
@@ -193,11 +194,29 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 }
 
 func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
+	log.Printf("in update cluster")
 	var input = &gcp.UpdateClusterInput{
 		Cluster: cluster,
 	}
 
+	var shouldRoll = false
 	clusterID := resourceData.Id()
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy)); exists {
+		log.Printf("in if 1")
+		log.Printf("update policy is %s", updatePolicy)
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			log.Printf("in if 2")
+			m := list[0].(map[string]interface{})
+
+			if roll, ok := m[string(ocean_gke_import.ShouldRoll)].(bool); ok && roll {
+				log.Printf("in if 3")
+				shouldRoll = roll
+			}
+		}
+	}
+
+	log.Printf("should roll is %v", shouldRoll)
 
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
@@ -207,6 +226,13 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 
 	if _, err := meta.(*Client).ocean.CloudProviderGCP().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update GKE cluster [%v]: %v", clusterID, err)
+	} else if shouldRoll {
+		if err := rollOceanGkeCluster(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
+			return err
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_gke_import.ShouldRoll))
 	}
 
 	return nil
@@ -242,4 +268,73 @@ func deleteGKEImportCluster(resourceData *schema.ResourceData, meta interface{})
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete GKE cluster: %s", err)
 	}
 	return nil
+}
+
+func rollOceanGkeCluster(resourceData *schema.ResourceData, meta interface{}) error {
+	var errResult error = nil
+	clusterID := resourceData.Id()
+
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			updateClusterSchema := list[0].(map[string]interface{})
+			if rollConfig, ok := updateClusterSchema[string(ocean_gke_import.RollConfig)]; !ok || rollConfig == nil {
+				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_gke_import.RollConfig), clusterID)
+			} else {
+				if rollClusterInput, err := expandOceanGKERollConfig(rollConfig, spotinst.String(clusterID)); err != nil {
+					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for cluster [%v], error: %v", clusterID, err)
+				} else {
+					if json, err := commons.ToJson(rollConfig); err != nil {
+						return err
+					} else {
+						log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, json)
+						rollClusterInput.Roll.ClusterID = spotinst.String(clusterID)
+						_, err := meta.(*Client).ocean.CloudProviderGCP().CreateRoll(context.Background(), rollClusterInput)
+						if err != nil {
+							return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
+						} else {
+							log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
+						}
+					}
+				}
+			}
+		}
+	} else {
+		errResult = fmt.Errorf("[ERROR] onRoll() -> Missing update policy for cluster [%v]", clusterID)
+	}
+
+	if errResult != nil {
+		return errResult
+	}
+	return nil
+}
+
+func expandOceanGKERollConfig(data interface{}, clusterID *string) (*gcp.CreateRollInput, error) {
+	i := &gcp.CreateRollInput{Roll: &gcp.RollSpec{ClusterID: clusterID}}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ocean_gke_import.BatchSizePercentage)].(int); ok {
+			i.Roll.BatchSizePercentage = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(ocean_gke_import.LaunchSpecIDs)].([]string); ok {
+			i.Roll.LaunchSpecIDs = expandLaunchSpecIDs(v)
+		}
+
+	}
+	return i, nil
+}
+
+func expandLaunchSpecIDs(data interface{}) []string {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if ls, ok := v.(string); ok && ls != "" {
+			result = append(result, ls)
+		}
+	}
+	return result
 }
