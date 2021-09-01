@@ -297,8 +297,8 @@ Usage:
 * `metric_name` - (Required) The name of the metric, with or without spaces.
 * `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
 * `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
-* `threshold` - (Required) The value against which the specified statistic is compared.
-* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
+* `threshold` - (Required) The value against which the specified statistic is compared. If a `step_adjustment` object is defined, then it cannot be specified.
+* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`. If a `step_adjustment` object is defined, then it cannot be specified.
 * `namespace` - (Required) The namespace for the alarm's associated metric.
 * `is_enabled` - (Optional, Default: `true`) Specifies whether the scaling policy described in this block is enabled.
 * `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
@@ -309,6 +309,15 @@ Usage:
     * `value` - (Required) The dimension value.
 * `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) The operator to use in order to determine if the scaling policy is applicable. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
 * `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
+* `step_adjustment` - (Optional) The list of steps to define actions to take based on different thresholds. When set, policy-level `threshold` and `action_type` cannot be specified.
+    * `action` - (Required) The action to take when scale up according to step's threshold is needed.
+        * `type` - (Required) The type of the action to take when scale up is needed. Valid types: `"adjustment"`, `"updateCapacity"`, `"setMinTarget"`, `"percentageAdjustment"`.
+        * `adjustment` - (Optional)  The number/percentage associated with the specified adjustment type. Required if using `"adjustment"` or `"percentageAdjustment"` as action type.
+        * `maximum` - (Optional)  The upper limit number of instances that you can scale up to. Required if using `"updateCapacity"` as action type and neither `"target"` nor `"minimum"` are not defined.
+        * `minimum` - (Optional)  The lower limit number of instances that you can scale down to. Required if using `"updateCapacity"` as action type and neither `"target"` nor `"maximum"` are not defined.
+        * `min_target_capacity` - (Optional)  The desired target capacity of a group. Required if using `"setMinTarget"` as action type
+        * `target` - (Optional)  The desired number of instances. Required if using `"updateCapacity"` as action type and neither `"minimum"` nor `"maximum"` are not defined.
+      * `threshold` - (Required) The value against which the specified statistic is compared in order to determine if a step should be applied.
 
 
 If you do not specify an action type, you can only use – `adjustment`, `minTargetCapacity`, `maxTargetCapacity`.
@@ -332,8 +341,8 @@ When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `
 * `metric_name` - (Required) The name of the metric, with or without spaces.
 * `statistic` - (Optional, Default: `"average"`) The metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
 * `unit` - (Required) The unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
-* `threshold` - (Required) The value against which the specified statistic is compared.
-* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`.
+* `threshold` - (Required) The value against which the specified statistic is compared. If a `step_adjustment` object is defined, then it cannot be specified.
+* `action_type` - (Optional; if not using `min_target_capacity` or `max_target_capacity`) The type of action to perform for scaling. Valid values: `"adjustment"`, `"percentageAdjustment"`, `"setMaxTarget"`, `"setMinTarget"`, `"updateCapacity"`. If a `step_adjustment` object is defined, then it cannot be specified.
 * `namespace` - (Required) The namespace for the alarm's associated metric.
 * `is_enabled` - (Optional, Default: `true`) Specifies whether the scaling policy described in this block is enabled.
 * `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
@@ -344,6 +353,15 @@ When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `
     * `value` - (Required) The dimension value.
 * `operator` - (Optional, Scale Up Default: `gte`, Scale Down Default: `lte`) The operator to use in order to determine if the scaling policy is applicable. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
 * `source` - (Optional) The source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
+* `step_adjustment` - (Optional) The list of steps to define actions to take based on different thresholds. When set, policy-level `threshold` and `action_type` cannot be specified.
+    * `action` - (Required) The action to take when scale up according to step's threshold is needed.
+        * `type` - (Required) The type of the action to take when scale up is needed. Valid types: `"adjustment"`, `"updateCapacity"`, `"setMaxTarget"`, `"percentageAdjustment"`.
+        * `adjustment` - (Optional)  The number/percentage associated with the specified adjustment type. Required if using `"adjustment"` or `"percentageAdjustment"` as action type.
+        * `maximum` - (Optional)  The upper limit number of instances that you can scale up to. Required if using `"updateCapacity"` as action type and neither `"target"` nor `"minimum"` are not defined.
+        * `minimum` - (Optional)  The lower limit number of instances that you can scale down to. Required if using `"updateCapacity"` as action type and neither `"target"` nor `"maximum"` are not defined.
+        * `max_target_capacity` - (Optional)  The desired target capacity of a group. Required if using `"setMaxTarget"` as action type
+        * `target` - (Optional)  The desired number of instances. Required if using `"updateCapacity"` as action type and neither `"minimum"` nor `"maximum"` are not defined.
+    * `threshold` - (Required) The value against which the specified statistic is compared in order to determine if a step should be applied.
 
 
 If you do not specify an action type, you can only use – `adjustment`, `minTargetCapacity`, `maxTargetCapacity`.
@@ -400,6 +418,14 @@ Usage:
     evaluation_periods = 10
     period             = 60
 
+    step_adjustments {
+        threshold = 50
+        action {
+            type = "setMinTarget"
+            min_target_capacity = "3"
+        }
+    }
+
     // === MIN TARGET ===================
     action_type         = "setMinTarget"
     min_target_capacity = 1
@@ -437,6 +463,37 @@ Usage:
         name  = "name-1"
         value = "value-1"
       }
+  }
+```
+
+`scaling_multiple_metrics` supports the following:
+* `expressions` - (Optional) Array of objects (Expression config)
+    * `expression` - (Required) An expression consisting of the metric names listed in the 'metrics' array.
+    * `name` - (Required) The expression name.
+* `metrics` - (Optional) Array of objects (Metric config)
+    * `metric_name` - (Required) The name of the source metric.
+    * `name` - (Required) The expression name.
+    * `name_space` - (Required, default: `AWS/EC2`) The namespace for the alarm's associated metric.
+    * `statistic` - (Optional) The metric statistics to return. Valid values: `"average"`, `"sum"`, `"sampleCount"`, `"maximum"`, `"minimum"`, `"percentile"`.
+    * `extended_statistic` - (Optional) Percentile statistic. Valid values: `"p0.1"` - `"p100"`.
+    * `unit` - (Optional) The unit for the alarm's associated metric. Valid values: `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"percent"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.
+    * `dimensions` - (Optional) The dimensions for the alarm's associated metric. When name is "instanceId", no value is needed.
+        *`name` - (Required) the dimension name.
+        *`value` - (Optional) the dimension value.
+
+```hcl
+  multiple_metrics {
+    expressions {
+      name = "Custom Metric 1"
+      expression = "1st Metric EC2 - CPU Utilization - CPU_Utilization_Dimension_Metric_Name_Cache"
+    }
+    metrics {
+      name =  "1st Metric EC2 - CPU Utilization"
+      metric_name =  "NetworkOut"
+      namespace =  "AWS/EC2"
+      unit =  "bits"
+      extended_statistic = "p1.5"
+    }
   }
 ```
 
@@ -1003,7 +1060,7 @@ Usage:
   }
 ```       
 
-### Attributes Reference
+## Attributes Reference
 
 The following attributes are exported:
 
