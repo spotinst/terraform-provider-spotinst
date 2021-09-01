@@ -210,7 +210,7 @@ func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceD
 func rollLaunchSpecAwsCluster(resourceData *schema.ResourceData, meta interface{}) error {
 	var errResult error = nil
 	launchSpecId := resourceData.Id()
-	clusterID := spotinst.String(resourceData.Get(string(ocean_aws_launch_spec.OceanID)).(string))
+	clusterID := resourceData.Get(string(ocean_aws_launch_spec.OceanID)).(string)
 
 	log.Printf("ocean id is %v", clusterID)
 	log.Printf("ls id is %v", launchSpecId)
@@ -223,14 +223,14 @@ func rollLaunchSpecAwsCluster(resourceData *schema.ResourceData, meta interface{
 			if rollConfig, ok := updateClusterSchema[string(ocean_aws_launch_spec.RollConfig)]; !ok || rollConfig == nil {
 				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_aws.RollConfig), clusterID)
 			} else {
-				if rollClusterInput, err := expandLaunchSpecAWSRollConfig(rollConfig, clusterID, launchSpecId); err != nil {
+				if rollClusterInput, err := expandLaunchSpecAWSRollConfig(rollConfig, &clusterID, launchSpecId); err != nil {
 					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for cluster [%v], error: %v", clusterID, err)
 				} else {
 					if json, err := commons.ToJson(rollConfig); err != nil {
 						return err
 					} else {
 						log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, json)
-						rollClusterInput.Roll.ClusterID = clusterID
+						rollClusterInput.Roll.ClusterID = &clusterID
 						log.Printf("to create roll")
 						_, err := meta.(*Client).ocean.CloudProviderAWS().CreateRoll(context.Background(), rollClusterInput)
 						if err != nil {
