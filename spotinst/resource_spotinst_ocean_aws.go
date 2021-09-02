@@ -151,7 +151,6 @@ func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta inte
 
 func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
-	log.Printf("in resource update")
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
 
@@ -174,25 +173,19 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	var input = &aws.UpdateClusterInput{
 		Cluster: cluster,
 	}
-	log.Printf("in update")
 
 	var shouldRoll = false
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
-		log.Printf("in if 1")
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
-			log.Printf("in if 2")
 			m := list[0].(map[string]interface{})
 
 			if roll, ok := m[string(ocean_aws.ShouldRoll)].(bool); ok && roll {
-				log.Printf("in if 3")
 				shouldRoll = roll
 			}
 		}
 	}
-
-	log.Printf("should roll is %v", shouldRoll)
 
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
@@ -233,7 +226,6 @@ func rollOceanAwsCluster(resourceData *schema.ResourceData, meta interface{}) er
 					} else {
 						log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, json)
 						rollClusterInput.Roll.ClusterID = spotinst.String(clusterID)
-						log.Printf("to create roll")
 						_, err := meta.(*Client).ocean.CloudProviderAWS().CreateRoll(context.Background(), rollClusterInput)
 						if err != nil {
 							return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)

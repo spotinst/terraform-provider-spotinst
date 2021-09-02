@@ -183,7 +183,6 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 	}
 
 	if shouldUpdate {
-		log.Printf("in should update")
 		cluster.SetId(spotinst.String(id))
 		if err := updateGKEImportCluster(cluster, resourceData, meta); err != nil {
 			return err
@@ -194,7 +193,6 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 }
 
 func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
-	log.Printf("in update cluster")
 	var input = &gcp.UpdateClusterInput{
 		Cluster: cluster,
 	}
@@ -202,21 +200,15 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 	var shouldRoll = false
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy)); exists {
-		log.Printf("in if 1")
-		log.Printf("update policy is %s", updatePolicy)
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
-			log.Printf("in if 2")
 			m := list[0].(map[string]interface{})
 
 			if roll, ok := m[string(ocean_gke_import.ShouldRoll)].(bool); ok && roll {
-				log.Printf("in if 3")
 				shouldRoll = roll
 			}
 		}
 	}
-
-	log.Printf("should roll is %v", shouldRoll)
 
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
