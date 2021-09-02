@@ -2,6 +2,7 @@ package elastigroup_aws_launch_configuration
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"regexp"
 
@@ -692,6 +693,182 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ITF] = commons.NewGenericField(
+		commons.ElastigroupAWSLaunchConfiguration,
+		ITF,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(LoadBalancer): {
+						Type:     schema.TypeSet,
+						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(ListenerRule): {
+									Type:     schema.TypeSet,
+									Required: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(RuleARN): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+										},
+									},
+								},
+								string(LoadBalancerARN): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+					},
+					string(MigrationHealthinessThreshold): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+					string(FixedTargetGroups): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(WeightStrategy): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(TargetGroupConfig): {
+						Type:     schema.TypeList,
+						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(HealthCheckIntervalSeconds): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(HealthCheckPath): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(HealthCheckPort): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(HealthCheckProtocol): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(HealthCheckTimeoutSeconds): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(HealthyThresholdCount): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(UnhealthyThresholdCount): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(Port): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+								string(Protocol): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(ProtocolVersion): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(Matcher): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(HTTPCode): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(GRPCCode): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+										},
+									},
+								},
+								string(VPCID): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Tags): {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(TagKey): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(TagValue): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []interface{} = nil
+			if elastigroup != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.ITF != nil {
+				itf := elastigroup.Compute.LaunchSpecification.ITF
+				result = flattenITF(itf)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(ITF), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ITF), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(ITF)); ok {
+				if v, err := expandITF(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetITF(v)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *aws.ITF = nil
+			if v, ok := resourceData.GetOk(string(ITF)); ok {
+				if itf, err := expandITF(v); err != nil {
+					return err
+				} else {
+					value = itf
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetITF(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -719,6 +896,313 @@ func base64Encode(data string) string {
 func isBase64Encoded(data string) bool {
 	_, err := base64.StdEncoding.DecodeString(data)
 	return err == nil
+}
+
+func expandITF(data interface{}) (*aws.ITF, error) {
+	itf := &aws.ITF{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return itf, nil
+	}
+	m := list[0].(map[string]interface{})
+	if v, ok := m[string(FixedTargetGroups)].(bool); ok {
+		itf.SetFixedTargetGroups(spotinst.Bool(v))
+	}
+	if v, ok := m[string(WeightStrategy)].(string); ok && v != "" {
+		itf.SetWeightStrategy(spotinst.String(v))
+	}
+	if v, ok := m[string(MigrationHealthinessThreshold)].(int); ok && v >= 0 {
+		itf.SetMigrationHealthinessThreshold(spotinst.Int(v))
+	} else {
+		itf.SetMigrationHealthinessThreshold(nil)
+	}
+	if v, ok := m[string(LoadBalancer)]; ok {
+
+		loadBalancers, err := expandLoadBalancers(v)
+		if err != nil {
+			return nil, err
+		}
+		if loadBalancers != nil {
+			itf.SetLoadBalancers(loadBalancers)
+		}
+	} else {
+		itf.LoadBalancers = nil
+	}
+	if v, ok := m[string(TargetGroupConfig)]; ok {
+
+		trgetGroupConfig, err := expandTargetGroupConfig(v)
+		if err != nil {
+			return nil, err
+		}
+		if trgetGroupConfig != nil {
+			itf.SetTargetGroupConfig(trgetGroupConfig)
+		}
+	} else {
+		itf.TargetGroupConfig = nil
+	}
+
+	return itf, nil
+}
+
+func flattenITF(itf *aws.ITF) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(WeightStrategy)] = spotinst.StringValue(itf.WeightStrategy)
+	result[string(MigrationHealthinessThreshold)] = spotinst.IntValue(itf.MigrationHealthinessThreshold)
+	result[string(FixedTargetGroups)] = spotinst.BoolValue(itf.FixedTargetGroups)
+	if itf.LoadBalancers != nil {
+		result[string(LoadBalancer)] = flattenLoadBalancers(itf.LoadBalancers)
+	}
+	if itf.LoadBalancers != nil {
+		result[string(TargetGroupConfig)] = flattenTargetGroupConfig(itf.TargetGroupConfig)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenTargetGroupConfig(targetGroupConfig *aws.TargetGroupConfig) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(VPCID)] = spotinst.StringValue(targetGroupConfig.VPCID)
+	result[string(HealthCheckIntervalSeconds)] = spotinst.IntValue(targetGroupConfig.HealthCheckIntervalSeconds)
+	result[string(HealthCheckPath)] = spotinst.StringValue(targetGroupConfig.HealthCheckPath)
+	result[string(HealthCheckPort)] = spotinst.StringValue(targetGroupConfig.HealthCheckPort)
+	result[string(HealthCheckProtocol)] = spotinst.StringValue(targetGroupConfig.HealthCheckProtocol)
+	result[string(HealthCheckTimeoutSeconds)] = spotinst.IntValue(targetGroupConfig.HealthCheckTimeoutSeconds)
+	result[string(HealthyThresholdCount)] = spotinst.IntValue(targetGroupConfig.HealthyThresholdCount)
+	result[string(UnhealthyThresholdCount)] = spotinst.IntValue(targetGroupConfig.UnhealthyThresholdCount)
+	result[string(Port)] = spotinst.IntValue(targetGroupConfig.Port)
+	result[string(Protocol)] = spotinst.StringValue(targetGroupConfig.Protocol)
+	result[string(ProtocolVersion)] = spotinst.StringValue(targetGroupConfig.ProtocolVersion)
+	if targetGroupConfig.Matcher != nil {
+		result[string(Matcher)] = flattenMatcher(targetGroupConfig.Matcher)
+	}
+	if targetGroupConfig.Tags != nil {
+		result[string(Tags)] = flattenTags(targetGroupConfig.Tags)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenLoadBalancers(loadBalancers []*aws.ITFLoadBalancer) []interface{} {
+	result := make([]interface{}, 0, len(loadBalancers))
+
+	for _, loadBalancer := range loadBalancers {
+		m := make(map[string]interface{})
+		m[string(LoadBalancerARN)] = spotinst.StringValue(loadBalancer.LoadBalancerARN)
+		if loadBalancer.ListenerRules != nil {
+			m[string(ListenerRule)] = flattenListenerRules(loadBalancer.ListenerRules)
+		}
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenListenerRules(listenerRules []*aws.ListenerRule) []interface{} {
+	result := make([]interface{}, 0, len(listenerRules))
+
+	for _, listenerRule := range listenerRules {
+		m := make(map[string]interface{})
+		m[string(RuleARN)] = spotinst.StringValue(listenerRule.RuleARN)
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenMatcher(matcher *aws.Matcher) []interface{} {
+	result := make(map[string]interface{})
+	result[string(HTTPCode)] = spotinst.StringValue(matcher.HTTPCode)
+	result[string(GRPCCode)] = spotinst.StringValue(matcher.GRPCCode)
+
+	return []interface{}{result}
+}
+
+func flattenTags(tags []*aws.Tag) []interface{} {
+	result := make([]interface{}, 0, len(tags))
+	for _, tag := range tags {
+		m := make(map[string]interface{})
+		m[string(TagKey)] = spotinst.StringValue(tag.Key)
+		m[string(TagValue)] = spotinst.StringValue(tag.Value)
+
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandTargetGroupConfig(data interface{}) (*aws.TargetGroupConfig, error) {
+	targetGroupConfig := &aws.TargetGroupConfig{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return targetGroupConfig, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(VPCID)].(string); ok && v != "" {
+		targetGroupConfig.SetVPCId(spotinst.String(v))
+	}
+	if v, ok := m[string(HealthCheckIntervalSeconds)].(int); ok && v >= 0 {
+		targetGroupConfig.SetHealthCheckIntervalSeconds(spotinst.Int(v))
+	} else {
+		targetGroupConfig.SetHealthCheckIntervalSeconds(nil)
+	}
+	if v, ok := m[string(HealthCheckPath)].(string); ok && v != "" {
+		targetGroupConfig.SetHealthCheckPath(spotinst.String(v))
+	}
+	if v, ok := m[string(HealthCheckPort)].(string); ok && v != "" {
+		targetGroupConfig.SetHealthCheckPort(spotinst.String(v))
+	} else {
+		targetGroupConfig.SetHealthCheckPort(nil)
+	}
+	if v, ok := m[string(HealthCheckProtocol)].(string); ok && v != "" {
+		targetGroupConfig.SetHealthCheckProtocol(spotinst.String(v))
+	}
+	if v, ok := m[string(HealthCheckTimeoutSeconds)].(int); ok && v >= 0 {
+		targetGroupConfig.SetHealthCheckTimeoutSeconds(spotinst.Int(v))
+	} else {
+		targetGroupConfig.SetHealthCheckTimeoutSeconds(nil)
+	}
+	if v, ok := m[string(HealthyThresholdCount)].(int); ok && v >= 0 {
+		targetGroupConfig.SetHealthyThresholdCount(spotinst.Int(v))
+	} else {
+		targetGroupConfig.SetHealthyThresholdCount(nil)
+	}
+	if v, ok := m[string(UnhealthyThresholdCount)].(int); ok && v >= 0 {
+		targetGroupConfig.SetUnhealthyThresholdCount(spotinst.Int(v))
+	} else {
+		targetGroupConfig.SetUnhealthyThresholdCount(nil)
+	}
+	if v, ok := m[string(Port)].(int); ok && v >= 0 {
+		targetGroupConfig.SetPort(spotinst.Int(v))
+	} else {
+		targetGroupConfig.SetPort(nil)
+	}
+	if v, ok := m[string(Protocol)].(string); ok && v != "" {
+		targetGroupConfig.SetProtocol(spotinst.String(v))
+	}
+	if v, ok := m[string(ProtocolVersion)].(string); ok && v != "" {
+		targetGroupConfig.SetProtocolVersion(spotinst.String(v))
+	}
+	if v, ok := m[string(Matcher)]; ok {
+		matcher, err := expandMatcher(v)
+		if err != nil {
+			return nil, err
+		}
+		if matcher != nil {
+			targetGroupConfig.SetMatcher(matcher)
+		} else {
+			targetGroupConfig.SetMatcher(nil)
+		}
+	}
+	if v, ok := m[string(Tags)]; ok {
+		tags, err := expandTags(v)
+		if err != nil {
+			return nil, err
+		}
+		if tags != nil {
+			targetGroupConfig.SetTags(tags)
+		} else {
+			targetGroupConfig.SetTags(nil)
+		}
+	}
+
+	return targetGroupConfig, nil
+}
+
+func expandTags(data interface{}) ([]*aws.Tag, error) {
+	list := data.(*schema.Set).List()
+	tags := make([]*aws.Tag, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(TagKey)]; !ok {
+			return nil, errors.New("invalid tag attributes: key missing")
+		}
+
+		if _, ok := attr[string(TagValue)]; !ok {
+			return nil, errors.New("invalid tag attributes: value missing")
+		}
+		tag := &aws.Tag{
+			Key:   spotinst.String(attr[string(TagKey)].(string)),
+			Value: spotinst.String(attr[string(TagValue)].(string)),
+		}
+		tags = append(tags, tag)
+	}
+	return tags, nil
+}
+
+func expandMatcher(data interface{}) (*aws.Matcher, error) {
+	matcher := &aws.Matcher{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return matcher, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(HTTPCode)].(string); ok && v != "" {
+		matcher.SetHTTPCode(spotinst.String(v))
+	}
+	if v, ok := m[string(GRPCCode)].(string); ok && v != "" {
+		matcher.SetGRPCCode(spotinst.String(v))
+	}
+
+	return matcher, nil
+}
+
+func expandLoadBalancers(data interface{}) ([]*aws.ITFLoadBalancer, error) {
+	list := data.(*schema.Set).List()
+	loadBalancers := make([]*aws.ITFLoadBalancer, 0, len(list))
+
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+
+		if !ok {
+			continue
+		}
+
+		loadBalancer := &aws.ITFLoadBalancer{}
+
+		if v, ok := attr[string(LoadBalancerARN)].(string); ok && v != "" {
+			loadBalancer.SetLoadBalancerARN(spotinst.String(v))
+		}
+		if v, ok := attr[string(ListenerRule)]; ok {
+			listenerRules, err := expandListenerRules(v)
+			if err != nil {
+				return nil, err
+			}
+			if listenerRules != nil {
+				loadBalancer.SetListenerRules(listenerRules)
+			} else {
+				loadBalancer.SetListenerRules(nil)
+			}
+		}
+
+		loadBalancers = append(loadBalancers, loadBalancer)
+	}
+
+	return loadBalancers, nil
+}
+
+func expandListenerRules(data interface{}) ([]*aws.ListenerRule, error) {
+	list := data.(*schema.Set).List()
+	listenerRules := make([]*aws.ListenerRule, 0, len(list))
+
+	for _, item := range list {
+		attr, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		listenerRule := &aws.ListenerRule{}
+		if v, ok := attr[string(RuleARN)].(string); ok && v != "" {
+			listenerRule.SetRuleARN(spotinst.String(v))
+		}
+		listenerRules = append(listenerRules, listenerRule)
+	}
+
+	return listenerRules, nil
 }
 
 func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
