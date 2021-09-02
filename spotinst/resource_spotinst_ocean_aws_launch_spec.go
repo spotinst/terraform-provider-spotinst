@@ -3,7 +3,6 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws"
 	"log"
 	"strings"
 	"time"
@@ -169,8 +168,8 @@ func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceD
 
 	launchSpecId := resourceData.Id()
 	oceanId := resourceData.Get(string(ocean_aws_launch_spec.OceanID))
-	log.Printf("ocean id is %v", oceanId)
-	log.Printf("ls id is %v", launchSpecId)
+	log.Printf("1 - ocean id is %v", oceanId)
+	log.Printf("1 - ls id is %v", launchSpecId)
 	var shouldRoll = false
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy)); exists {
 		log.Printf("in if 1")
@@ -212,8 +211,8 @@ func rollLaunchSpecAwsCluster(resourceData *schema.ResourceData, meta interface{
 	launchSpecId := resourceData.Id()
 	clusterID := resourceData.Get(string(ocean_aws_launch_spec.OceanID)).(string)
 
-	log.Printf("ocean id is %v", clusterID)
-	log.Printf("ls id is %v", launchSpecId)
+	log.Printf("2 - ocean id is %v", clusterID)
+	log.Printf("2 - ls id is %v", launchSpecId)
 
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -221,7 +220,7 @@ func rollLaunchSpecAwsCluster(resourceData *schema.ResourceData, meta interface{
 			log.Printf("in if 3")
 			updateClusterSchema := list[0].(map[string]interface{})
 			if rollConfig, ok := updateClusterSchema[string(ocean_aws_launch_spec.RollConfig)]; !ok || rollConfig == nil {
-				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_aws.RollConfig), clusterID)
+				errResult = fmt.Errorf("[ERROR] onRoll() -> Field [%v] is missing, skipping roll for cluster [%v]", string(ocean_aws_launch_spec.RollConfig), clusterID)
 			} else {
 				if rollClusterInput, err := expandLaunchSpecAWSRollConfig(rollConfig, &clusterID, launchSpecId); err != nil {
 					errResult = fmt.Errorf("[ERROR] onRoll() -> Failed expanding roll configuration for cluster [%v], error: %v", clusterID, err)
@@ -290,7 +289,7 @@ func expandLaunchSpecAWSRollConfig(data interface{}, clusterID *string, launchSp
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(ocean_aws.BatchSizePercentage)].(int); ok {
+		if v, ok := m[string(ocean_aws_launch_spec.BatchSizePercentage)].(int); ok {
 			i.Roll.BatchSizePercentage = spotinst.Int(v)
 		}
 
