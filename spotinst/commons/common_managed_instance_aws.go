@@ -119,12 +119,6 @@ func NewManagedInstanceWrapper() *MangedInstanceAWSWrapper {
 			Compute: &aws.Compute{
 				LaunchSpecification: &aws.LaunchSpecification{
 					InstanceTypes: &aws.InstanceTypes{},
-					ResourceTagSpecification: &aws.ResourceTagSpecification{
-						Volumes:   &aws.Volumes{},
-						Snapshots: &aws.Snapshots{},
-						ENIs:      &aws.ENIs{},
-						AMIs:      &aws.AMIs{},
-					},
 				},
 			},
 		},
