@@ -125,11 +125,12 @@ func NewElastigroupWrapper() *ElastigroupWrapper {
 			Compute: &aws.Compute{
 				LaunchSpecification: &aws.LaunchSpecification{
 					LoadBalancersConfig: &aws.LoadBalancersConfig{},
-					ResourceTagSpecification: &aws.ResourceTagSpecification{
-						Volumes:   &aws.Volumes{},
-						Snapshots: &aws.Snapshots{},
-						ENIs:      &aws.ENIs{},
-						AMIs:      &aws.AMIs{},
+					ITF: &aws.ITF{
+						LoadBalancers: []*aws.ITFLoadBalancer{},
+						TargetGroupConfig: &aws.TargetGroupConfig{
+							Matcher: &aws.Matcher{},
+							Tags:    []*aws.Tag{},
+						},
 					},
 				},
 				InstanceTypes: &aws.InstanceTypes{},

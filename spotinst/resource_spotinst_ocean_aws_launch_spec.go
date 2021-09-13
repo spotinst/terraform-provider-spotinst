@@ -164,6 +164,18 @@ func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceD
 	}
 
 	launchSpecId := resourceData.Id()
+	oceanId := resourceData.Get(string(ocean_aws_launch_spec.OceanID))
+	var shouldRoll = false
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if roll, ok := m[string(ocean_aws_launch_spec.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
+		}
+	}
 
 	if json, err := commons.ToJson(launchSpec); err != nil {
 		return err
@@ -173,6 +185,55 @@ func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceD
 
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateLaunchSpec(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update launchSpec [%v]: %v", launchSpecId, err)
+	} else if shouldRoll {
+		if err := rollOceanAWSLaunchSpec(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", oceanId, err)
+			return err
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws_launch_spec.ShouldRoll))
+	}
+
+	return nil
+}
+
+func rollOceanAWSLaunchSpec(resourceData *schema.ResourceData, meta interface{}) error {
+	specID := resourceData.Id()
+	clusterID := resourceData.Get(string(ocean_aws_launch_spec.OceanID)).(string)
+
+	updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy))
+	if !exists {
+		return fmt.Errorf("ocean/aws: missing update policy for cluster %q", clusterID)
+	}
+
+	list := updatePolicy.([]interface{})
+	if len(list) > 0 && list[0] != nil {
+		updateClusterSchema := list[0].(map[string]interface{})
+
+		rollConfig, ok := updateClusterSchema[string(ocean_aws_launch_spec.RollConfig)]
+		if !ok || rollConfig == nil {
+			return fmt.Errorf("ocean/aws: missing roll configuration, "+
+				"skipping roll for cluster %q", clusterID)
+		}
+
+		rollSpec, err := expandOceanAWSLaunchSpecRollConfig(rollConfig, clusterID, specID)
+		if err != nil {
+			return fmt.Errorf("ocean/aws: failed expanding roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		rollJSON, err := commons.ToJson(rollConfig)
+		if err != nil {
+			return fmt.Errorf("ocean/aws: failed marshaling roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, rollJSON)
+		rollInput := &aws.CreateRollInput{Roll: rollSpec}
+		if _, err = meta.(*Client).ocean.CloudProviderAWS().CreateRoll(context.TODO(), rollInput); err != nil {
+			return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
+		}
+		log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
 	}
 
 	return nil
@@ -204,8 +265,36 @@ func deleteLaunchSpec(resourceData *schema.ResourceData, meta interface{}) error
 		log.Printf("===> launchSpec delete configuration: %s", json)
 	}
 
+	if deleteOptions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.DeleteOptions)); exists {
+		list := deleteOptions.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if force, ok := m[string(ocean_aws_launch_spec.ForceDelete)].(bool); ok {
+				input.ForceDelete = spotinst.Bool(force)
+			}
+		}
+	}
+
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().DeleteLaunchSpec(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete launchSpecId: %s", err)
 	}
 	return nil
+}
+
+func expandOceanAWSLaunchSpecRollConfig(data interface{}, clusterID, specID string) (*aws.RollSpec, error) {
+	list := data.([]interface{})
+	spec := &aws.RollSpec{
+		ClusterID:     spotinst.String(clusterID),
+		LaunchSpecIDs: []string{specID},
+	}
+
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ocean_aws_launch_spec.BatchSizePercentage)].(int); ok {
+			spec.BatchSizePercentage = spotinst.Int(v)
+		}
+	}
+
+	return spec, nil
 }

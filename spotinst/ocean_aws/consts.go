@@ -27,4 +27,5 @@ const (
 
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
+	LaunchSpecIDs       commons.FieldName = "launch_spec_ids"
 )

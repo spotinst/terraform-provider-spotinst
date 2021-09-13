@@ -183,14 +183,16 @@ autoscaler {
     * `should_roll` - (Required) Enables the roll.
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
+        * `launch_spec_ids` - (Optional) List of virtual node group identifiers to be rolled.
 
 ```hcl
 update_policy {
-should_roll = false
+  should_roll = false
 
-roll_config {
-  batch_size_percentage = 33
-}
+  roll_config {
+    batch_size_percentage = 33
+    launch_spec_ids = ["ols-1a2b3c4d"]
+  }
 }
 ```
 

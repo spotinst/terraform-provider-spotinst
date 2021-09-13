@@ -197,7 +197,18 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 		Cluster: cluster,
 	}
 
+	var shouldRoll = false
 	clusterID := resourceData.Id()
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if roll, ok := m[string(ocean_gke_import.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
+		}
+	}
 
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
@@ -207,6 +218,13 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 
 	if _, err := meta.(*Client).ocean.CloudProviderGCP().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update GKE cluster [%v]: %v", clusterID, err)
+	} else if shouldRoll {
+		if err := rollOceanGKECluster(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
+			return err
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_gke_import.ShouldRoll))
 	}
 
 	return nil
@@ -242,4 +260,79 @@ func deleteGKEImportCluster(resourceData *schema.ResourceData, meta interface{})
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete GKE cluster: %s", err)
 	}
 	return nil
+}
+
+func rollOceanGKECluster(resourceData *schema.ResourceData, meta interface{}) error {
+	clusterID := resourceData.Id()
+
+	updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy))
+	if !exists {
+		return fmt.Errorf("ocean/gke: missing update policy for cluster %q", clusterID)
+	}
+
+	list := updatePolicy.([]interface{})
+	if len(list) > 0 && list[0] != nil {
+		updateClusterSchema := list[0].(map[string]interface{})
+
+		rollConfig, ok := updateClusterSchema[string(ocean_gke_import.RollConfig)]
+		if !ok || rollConfig == nil {
+			return fmt.Errorf("ocean/gke: missing roll configuration, "+
+				"skipping roll for cluster %q", clusterID)
+		}
+
+		rollSpec, err := expandOceanGKEClusterRollConfig(rollConfig, clusterID)
+		if err != nil {
+			return fmt.Errorf("ocean/gke: failed expanding roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		rollJSON, err := commons.ToJson(rollConfig)
+		if err != nil {
+			return fmt.Errorf("ocean/gke: failed marshaling roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, rollJSON)
+		rollInput := &gcp.CreateRollInput{Roll: rollSpec}
+		if _, err = meta.(*Client).ocean.CloudProviderGCP().CreateRoll(context.TODO(), rollInput); err != nil {
+			return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
+		}
+		log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
+	}
+
+	return nil
+}
+
+func expandOceanGKEClusterRollConfig(data interface{}, clusterID string) (*gcp.RollSpec, error) {
+	list := data.([]interface{})
+	spec := &gcp.RollSpec{
+		ClusterID: spotinst.String(clusterID),
+	}
+
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ocean_gke_import.BatchSizePercentage)].(int); ok {
+			spec.BatchSizePercentage = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(ocean_gke_import.LaunchSpecIDs)].([]string); ok {
+			spec.LaunchSpecIDs = expandOceanGKELaunchSpecIDs(v)
+		}
+	}
+
+	return spec, nil
+}
+
+func expandOceanGKELaunchSpecIDs(data interface{}) []string {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if ls, ok := v.(string); ok && ls != "" {
+			result = append(result, ls)
+		}
+	}
+
+	return result
 }

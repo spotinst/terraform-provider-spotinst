@@ -205,6 +205,7 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
+					resource.TestCheckResourceAttr(resourceName, "custom_data", "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="),
 				),
 			},
 			{
@@ -239,6 +240,11 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  desired_capacity = 0
  // -------------------------
  
+
+ // --- LAUNCHSPEC ----------
+ custom_data = "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
+ // -------------------------
+
  %v
  %v
  %v

@@ -94,6 +94,10 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   create_options {
     initial_nodes = 1
   }
+  
+  delete_options {
+    force_delete = true
+  }
 }
 ```
 ```
@@ -156,8 +160,28 @@ The following arguments are supported:
 * `strategy` - (Optional) 
     * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Virtual Node Group instances.
 * `create_options` - (Optional)
-    * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created virtual node group.
-    
+    * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created Virtual Node Group.
+* `delete_options` - (Optional)
+    * `force_delete` - (Optional) When set to `true`, delete even if it is the last Virtual Node Group (also, the default Virtual Node Group must be configured with `useAsTemlateOnly = true`). Should be set at creation or update, but will be used only at deletion.
+
+<a id="update-policy"></a>
+## Update Policy
+
+* `update_policy` - (Optional)
+    * `should_roll` - (Required) Enables the roll.
+    * `roll_config` - (Required) Holds the roll configuration.
+        * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
+
+```hcl
+update_policy {
+  should_roll = false
+
+  roll_config {
+    batch_size_percentage = 33
+  }
+}
+```
+
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:

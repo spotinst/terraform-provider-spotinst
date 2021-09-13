@@ -448,6 +448,11 @@ const testLaunchSpecificationOceanAKSConfig_Create = `
       key = "tag-key"
       value = "tag-value"
     }
+
+	managed_service_identity {
+			name =  "terraform-cluster-DO-NOT-DELETE-agentpool"
+            resource_group_name =  "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+	}
   // -------------------------------------------------------------------
 `
 
