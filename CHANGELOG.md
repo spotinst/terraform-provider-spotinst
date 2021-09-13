@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.58.0 (September 13, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: added `update_policy` for managing rolling deployments
 * resource/spotinst_ocean_aws: added support for `launch_spec_ids` in `update_policy`
