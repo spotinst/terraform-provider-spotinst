@@ -845,7 +845,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *aws.ITF = nil
-			if v, ok := resourceData.GetOk(string(ITF)); ok {
+			if v, ok := resourceData.GetOk(string(ITF)); ok && v != nil {
 				if itf, err := expandITF(v); err != nil {
 					return err
 				} else {
