@@ -1,5 +1,8 @@
 ## Unreleased
 
+* resource/spotinst_elastigroup_aws: resolved errors with `preferred_availability_zones`
+* resource/spotinst_ocean_aws_launch_spec: resolved errors with `effect`
+
 ## 1.58.0 (September 13, 2021)
 
 ENHANCEMENTS:
