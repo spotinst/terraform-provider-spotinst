@@ -120,45 +120,6 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     should_tag_amis      = true
   }
 
-  itf {
-    migration_healthiness_threshold = 80
-    fixed_target_groups             = true
-    weight_strategy                 = "vcpu"
-
-    load_balancer {
-      load_balancer_arn = "arn:aws:elasticloadbalancing:us-west-2:253244684816:loadbalancer/app/Test-LB/c190c0adef28eb56"
-
-      listener_rule {
-        rule_arn = "arn:aws:elasticloadbalancing:us-west-2:253244684816:listener/app/Test-LB/c190c0adef28eb56/a3d549e77a844f26"
-      }
-
-      listener_rule {
-        rule_arn = "arn:aws:elasticloadbalancing:us-west-2:253244684816:listener/app/Test-LB/c190c0adef28eb56/58e11e6033a876e4"
-      }
-    }
-
-    target_group_config {
-      health_check_interval_seconds = 100
-      health_check_path             = "/server/"
-      health_check_port             = "65535"
-      health_check_protocol         = "HTTPS"
-      health_check_timeout_seconds  = 100
-      healthy_threshold_count       = 5
-      unhealthy_threshold_count     = 6
-      port                          = "3"
-      protocol                      = "HTTPS"
-      protocol_version              = "HTTP2"
-      vpc_id                        = "vpc-0410a20ec1702a537"
-      matcher {
-        http_code = "400"
-      }
-
-      tags {
-        tag_key   = "Name"
-        tag_value = "ITF"
-      }
-    }
-  }
 
   lifecycle {
     ignore_changes = [
@@ -248,84 +209,6 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
     * `should_tag_snapshots` - (Optional) Tag specification for Snapshot resources.
     * `should_tag_amis`      - (Optional) Tag specification for AMI resources.
     
-<a id="itf"></a>
-## ITF
-
-* `itf` - (Optional) 
-    * `migration_healthiness_threshold` - (Optional, Default: `50`, Integer) Threshold for the minimum healthiness level of the target groups that is needed before activating the ITF rules. representing the percentage of healthy instances within the target groups.
-    * `fixed_target_groups` - (Required, Boolean) Control whether to keep the set of target groups fixed. When set to true, all target groups will be created in advance upon create/update group, and will not be deleted even when not being used anymore. 
-    * `weight_strategy` - (Required, String) Distribution strategy,either `vCPU` or `custom` weights.
-    
-    * `load_balancer` - (Required) Contain all the load balancer properties. 
-        * `load_balancer_arn` - (Required, String) The ARN of the load balancer.
-        * `listener_rule` - (Required) Contain all the rule properties.
-            * `rule_arn` - (Required, String) The ARN of the listener rules that should be maintained by ITF.
-            
-    * `target_group_config` - (Required) Object with all the config of target group.
-        * `health_check_interval_seconds` - (Optional, Default: `30`, Integer) The approximate amount of time, in seconds, between health checks of an individual target.
-        * `health_check_path` - (Required, String) The destination for health checks on the targets.
-        * `health_check_port` - (Optional, Default: `"80"`, String) The port to use to connect with the target.
-        * `health_check_protocol` - (Optional, String) The protocol to use to connect with the target. `HTTP` or `HTTPS`.
-        * `health_check_timeout_seconds` - (Optional, Default: `5`, Integer) The amount of time, in seconds, during which no response means a failed health check.
-        * `healthy_threshold_count` - (Optional, Default: `5`, Integer) The number of consecutive health checks successes required before considering an unhealthy target healthy.
-        * `unhealthy_threshold_count` - (Optional, Default: `2`, Integer) The number of consecutive health check failures required before considering the target unhealthy.
-        * `port` - (Required, Integer) The port on which the targets are listening. Not used if the target is a Lambda function.
-        * `protocol` - (Required, Default: `HTTP`, String) The protocol to use for routing traffic to the targets. The possible values are `HTTP` or `HTTPS`.
-        * `protocol_version` - (Optional, Default: `HTTP1`, String) The protocol version. The possible values are `GRPC`, `HTTP1`, and `HTTP2`.
-        * `vpc_id` - (Required, String) The id of the Amazon Virtual Private Cloud for the creation of the target groups.
-        
-            * `matcher` - (Optional) 
-                * `http_code` - (Optional, Default: `200`, String) Codes to use when checking for a successful response from a target.
-                * `grpc_code` - (Optional, Default: `12`, String) Codes to use when checking for a successful response from a target.
-                
-        * `tags` - (Optional) The tags to assign to the target group.
-            * `tag_key` - (Required).
-            * `tag_value` - (Optional).
-
-Usage:
-
-```hcl
-  itf {
-    migration_healthiness_threshold = 80
-    fixed_target_groups             = false
-    weight_strategy                 = "vcpu"
-
-    load_balancer {
-      load_balancer_arn = "arn:aws:elasticloadbalancing:us-west-2:253244684816:loadbalancer/app/Test-LB/c190c0adef28eb56"
-
-      listener_rule {
-        rule_arn = "arn:aws:elasticloadbalancing:us-west-2:253244684816:listener/app/Test-LB/c190c0adef28eb56/a3d549e77a844f26"
-      }
-
-      listener_rule {
-        rule_arn = "arn:aws:elasticloadbalancing:us-west-2:253244684816:listener/app/Test-LB/c190c0adef28eb56/58e11e6033a876e4"
-      }
-    }
-
-    target_group_config {
-      health_check_interval_seconds = 100
-      health_check_path             = "/server/"
-      health_check_port             = "65535"
-      health_check_protocol         = "HTTPS"
-      health_check_timeout_seconds  = 100
-      healthy_threshold_count       = 5
-      unhealthy_threshold_count     = 6
-      port                          = "3"
-      protocol                      = "HTTPS"
-      protocol_version              = "HTTP2"
-      vpc_id                        = "vpc-0410a20ec1702a537"
-      matcher {
-        http_code = "400"
-      }
-
-      tags {
-        tag_key   = "Terraform_ITF"
-        tag_value = "Terraform_ITF"
-      }
-    }
-  }
-```    
-
 <a id="load-balancers"></a>
 ## Load Balancers
     

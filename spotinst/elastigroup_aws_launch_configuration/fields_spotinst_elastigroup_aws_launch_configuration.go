@@ -814,7 +814,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											},
 											string(TagValue): {
 												Type:     schema.TypeString,
-												Required: true,
+												Optional: true,
 											},
 										},
 									},
@@ -844,11 +844,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(ITF)); ok {
-				if v, err := expandITF(v); err != nil {
+			if v, ok := resourceData.GetOk(string(ITF)); ok && v != nil {
+				if itf, err := expandITF(v); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.LaunchSpecification.SetITF(v)
+					elastigroup.Compute.LaunchSpecification.SetITF(itf)
 				}
 			}
 			return nil
@@ -930,12 +930,12 @@ func expandITF(data interface{}) (*aws.ITF, error) {
 	}
 	if v, ok := m[string(TargetGroupConfig)]; ok {
 
-		trgetGroupConfig, err := expandTargetGroupConfig(v)
+		targetGroupConfig, err := expandTargetGroupConfig(v)
 		if err != nil {
 			return nil, err
 		}
-		if trgetGroupConfig != nil {
-			itf.SetTargetGroupConfig(trgetGroupConfig)
+		if targetGroupConfig != nil {
+			itf.SetTargetGroupConfig(targetGroupConfig)
 		}
 	} else {
 		itf.TargetGroupConfig = nil
@@ -953,7 +953,7 @@ func flattenITF(itf *aws.ITF) []interface{} {
 	if itf.LoadBalancers != nil {
 		result[string(LoadBalancer)] = flattenLoadBalancers(itf.LoadBalancers)
 	}
-	if itf.LoadBalancers != nil {
+	if itf.TargetGroupConfig != nil {
 		result[string(TargetGroupConfig)] = flattenTargetGroupConfig(itf.TargetGroupConfig)
 	}
 
@@ -1084,7 +1084,7 @@ func expandTargetGroupConfig(data interface{}) (*aws.TargetGroupConfig, error) {
 	if v, ok := m[string(ProtocolVersion)].(string); ok && v != "" {
 		targetGroupConfig.SetProtocolVersion(spotinst.String(v))
 	}
-	if v, ok := m[string(Matcher)]; ok {
+	if v, ok := m[string(Matcher)]; ok && v != nil {
 		matcher, err := expandMatcher(v)
 		if err != nil {
 			return nil, err
@@ -1092,7 +1092,7 @@ func expandTargetGroupConfig(data interface{}) (*aws.TargetGroupConfig, error) {
 		if matcher != nil {
 			targetGroupConfig.SetMatcher(matcher)
 		} else {
-			targetGroupConfig.SetMatcher(nil)
+			targetGroupConfig.Matcher = nil
 		}
 	}
 	if v, ok := m[string(Tags)]; ok {
@@ -1135,21 +1135,26 @@ func expandTags(data interface{}) ([]*aws.Tag, error) {
 }
 
 func expandMatcher(data interface{}) (*aws.Matcher, error) {
-	matcher := &aws.Matcher{}
-	list := data.([]interface{})
-	if list == nil || list[0] == nil {
+	if list := data.([]interface{}); len(list) > 0 {
+		matcher := &aws.Matcher{}
+		if list != nil && list[0] != nil {
+
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(HTTPCode)].(string); ok && v != "" {
+				matcher.SetHTTPCode(spotinst.String(v))
+			} else {
+				matcher.HTTPCode = nil
+			}
+			if v, ok := m[string(GRPCCode)].(string); ok && v != "" {
+				matcher.SetGRPCCode(spotinst.String(v))
+			} else {
+				matcher.GRPCCode = nil
+			}
+		}
 		return matcher, nil
 	}
-	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(HTTPCode)].(string); ok && v != "" {
-		matcher.SetHTTPCode(spotinst.String(v))
-	}
-	if v, ok := m[string(GRPCCode)].(string); ok && v != "" {
-		matcher.SetGRPCCode(spotinst.String(v))
-	}
-
-	return matcher, nil
+	return nil, nil
 }
 
 func expandLoadBalancers(data interface{}) ([]*aws.ITFLoadBalancer, error) {

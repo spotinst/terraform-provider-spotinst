@@ -493,7 +493,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			// Skip
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.PreferredAvailabilityZones != nil {
+				value = elastigroup.Compute.PreferredAvailabilityZones
+			}
+			if err := resourceData.Set(string(PreferredAvailabilityZones), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredAvailabilityZones), err)
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
