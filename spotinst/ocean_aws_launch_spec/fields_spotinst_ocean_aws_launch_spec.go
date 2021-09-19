@@ -1274,6 +1274,9 @@ func hashKV(v interface{}) int {
 	m := v.(map[string]interface{})
 	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelKey)].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelValue)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(TaintKey)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(TaintValue)].(string)))
+	buf.WriteString(fmt.Sprintf("%s-", m[string(Effect)].(string)))
 	return hashcode.String(buf.String())
 }
 
