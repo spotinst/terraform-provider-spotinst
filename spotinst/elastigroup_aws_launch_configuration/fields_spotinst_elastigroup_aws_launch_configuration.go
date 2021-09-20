@@ -844,13 +844,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var value *aws.ITF = nil
 			if v, ok := resourceData.GetOk(string(ITF)); ok && v != nil {
 				if itf, err := expandITF(v); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.LaunchSpecification.SetITF(itf)
+					value = itf
 				}
 			}
+			elastigroup.Compute.LaunchSpecification.SetITF(value)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
