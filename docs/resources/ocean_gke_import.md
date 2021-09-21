@@ -158,6 +158,26 @@ The following arguments are supported:
   }
 ```
 
+<a id="update-policy"></a>
+## Update Policy
+
+* `update_policy` - (Optional)
+    * `should_roll` - (Required) Enables the roll.
+    * `roll_config` - (Required) Holds the roll configuration.
+        * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
+        * `launch_spec_ids` - (Optional) List of Virtual Node Group identifiers to be rolled.
+
+```hcl
+update_policy {
+  should_roll = false
+
+  roll_config {
+    batch_size_percentage = 33
+    launch_spec_ids = ["ols-1a2b3c4d"]
+  }
+}
+```
+
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:

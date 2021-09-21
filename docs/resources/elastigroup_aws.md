@@ -20,28 +20,28 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   description = "created by Pulumi"
   product     = "Linux/UNIX"
 
-  max_size          = 0
-  min_size          = 0
-  desired_capacity  = 0
-  capacity_unit     = "weight"
+  max_size         = 0
+  min_size         = 0
+  desired_capacity = 0
+  capacity_unit    = "weight"
 
-  region      = "us-west-2"
-  subnet_ids  = ["sb-123456", "sb-456789"]
+  region     = "us-west-2"
+  subnet_ids = ["sb-123456", "sb-456789"]
 
-  image_id              = "ami-a27d8fda"
-  iam_instance_profile  = "iam-profile"
-  key_name              = "my-key.ssh"
-  security_groups       = ["sg-123456"]
-  user_data             = "echo hello world"
-  enable_monitoring     = false
-  ebs_optimized         = false
-  placement_tenancy     = "default"
+  image_id             = "ami-a27d8fda"
+  iam_instance_profile = "iam-profile"
+  key_name             = "my-key.ssh"
+  security_groups      = ["sg-123456"]
+  user_data            = "echo hello world"
+  enable_monitoring    = false
+  ebs_optimized        = false
+  placement_tenancy    = "default"
   metadata_options {
     http_tokens                 = "optional"
     http_put_response_hop_limit = 10
   }
   cpu_options {
-    threads_per_core    = 1
+    threads_per_core = 1
   }
 
   instance_types_ondemand       = "m3.2xlarge"
@@ -58,9 +58,9 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     weight        = 16
   }
 
-  orientation           = "balanced"
-  fallback_to_ondemand  = false
-  cpu_credits           = "unlimited"
+  orientation               = "balanced"
+  fallback_to_ondemand      = false
+  cpu_credits               = "unlimited"
   minimum_instance_lifetime = 12
 
 
@@ -69,7 +69,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   scaling_strategy {
     terminate_at_end_of_billing_hour = true
-    termination_policy = "default"
+    termination_policy               = "default"
   }
 
   scaling_up_policy {
@@ -99,24 +99,25 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   }
 
   tags {
-     key   = "Env"
-     value = "production"
+    key   = "Env"
+    value = "production"
   }
 
   tags {
-     key   = "Name"
-     value = "default-production"
+    key   = "Name"
+    value = "default-production"
   }
 
   tags {
-     key   = "Project"
-     value = "app_v2"
+    key   = "Project"
+    value = "app_v2"
   }
+
   resource_tag_specification {
-    should_tag_enis = true
-    should_tag_volumes = true
+    should_tag_enis      = true
+    should_tag_volumes   = true
     should_tag_snapshots = true
-    should_tag_amis = true
+    should_tag_amis      = true
   }
 
 

@@ -3,16 +3,14 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec_import"
-
-	"log"
-
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec_import"
 )
 
 func resourceSpotinstOceanGKELaunchSpecImport() *schema.Resource {

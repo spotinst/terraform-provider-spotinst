@@ -680,7 +680,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
@@ -1208,6 +1207,58 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(InitialNodes): {
 						Type:     schema.TypeInt,
+						Required: true,
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
+
+	fieldsMap[UpdatePolicy] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		UpdatePolicy,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldRoll): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+
+					string(RollConfig): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(BatchSizePercentage): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
+
+	fieldsMap[DeleteOptions] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		DeleteOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ForceDelete): {
+						Type:     schema.TypeBool,
 						Required: true,
 					},
 				},

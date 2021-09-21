@@ -30,6 +30,9 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   spot_sizes = ["standard_a1_v1", "standard_a1_v2"]
   // -------------------------------------------------------------------
 
+  // --- LAUNCH SPEC ---------------------------------------------------
+  custom_data = "IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
+
   // --- IMAGE ---------------------------------------------------------
   image {
     marketplace {
@@ -93,6 +96,7 @@ The following arguments are supported:
 * `max_size` - (Required) The maximum number of instances the group should have at any time.
 * `min_size` - (Required) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
+* `custom_data` - (Optional) Custom init script file or text in Base64 encoded format.
 
 * `od_sizes` - (Required) Available On-Demand sizes
 * `spot_sizes` - (Required) Available Low-Priority sizes.
@@ -101,8 +105,8 @@ The following arguments are supported:
 
 * `strategy` - (Required) Describes the deployment strategy.
     * `spot_percentage` - TODO
-    * `od_count` - (Optional) Number of On-Demand instances to maintain. Required if low_priority_percentage is not specified.
-    * `fallback_to_on_demand` - 
+    * `od_count` - (Optional) Number of On-Demand instances to maintain. Required if `low_priority_percentage` is not specified.
+    * `fallback_to_on_demand` -
     * `draining_timeout` - (Optional, Default `120`) Time (seconds) to allow the instance to be drained from incoming TCP connections and detached from MLB before terminating it during a scale-down operation.
 
 ```hcl
@@ -113,13 +117,14 @@ The following arguments are supported:
     od_count              = 1
   }
 ```
+
 ### Image
 
 * `image` - (Required) Image of a VM. An image is a template for creating new VMs. Choose from Azure image catalogue (marketplace) or use a custom image.
     * `publisher` - (Optional) Image publisher. Required if resource_group_name is not specified.
     * `offer` - (Optional) Name of the image to use. Required if publisher is specified.
     * `sku` - (Optional) Image's Stock Keeping Unit, which is the specific version of the image. Required if publisher is specified.
-    * `version` - 
+    * `version` -
     * `resource_group_name` - (Optional) Name of Resource Group for custom image. Required if publisher not specified.
     * `image_name` - (Optional) Name of the custom image. Required if resource_group_name is specified.
 
@@ -133,14 +138,14 @@ The following arguments are supported:
       version   = "latest"
     }
   }
-  
+
   // custom image
   image {
     custom {
       image_name          = "customImage"
       resource_group_name = "resourceGroup"
     }
-  } 
+  }
 ```
 
 ### Network
@@ -148,10 +153,10 @@ The following arguments are supported:
 * `network` - (Required) Defines the Virtual Network and Subnet for your Elastigroup.
     * `virtual_network_name` - (Required) Name of Vnet.
     * `resource_group_name` - (Required) Vnet Resource Group Name.
-    * `network_interfaces` - 
+    * `network_interfaces` -
         * `subnet_name` - (Required) ID of subnet.
         * `assign_public_up` - (Optional, Default: `false`) Assign a public IP to each VM in the Elastigroup.
-        * `is_primary` - 
+        * `is_primary` -
         * `additional_ip_configs` - (Optional) Array of additional IP configuration objects.
             * `name` - (Required) The IP configuration name.
             * `private_ip_version` - (Optional) Available from Azure Api-Version 2017-03-30 onwards, it represents whether the specific ip configuration is IPv4 or IPv6. Valid values: `IPv4`, `IPv6`.

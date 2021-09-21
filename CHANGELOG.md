@@ -1,5 +1,23 @@
 ## Unreleased
 
+## 1.59.1 (September 19, 2021)
+
+* resource/spotinst_elastigroup_aws: resolved errors with `preferred_availability_zones`
+* resource/spotinst_ocean_aws_launch_spec: resolved errors with `effect`
+
+## 1.58.0 (September 13, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: added `update_policy` for managing rolling deployments
+* resource/spotinst_ocean_aws: added support for `launch_spec_ids` in `update_policy`
+* resource/spotinst_ocean_aws_launch_spec: added `update_policy` for managing rolling deployments
+* resource/spotinst_ocean_aws_launch_spec: added support for `force_delete`
+* resource/spotinst_elastigroup_azure_v3: added support for `custom_data`
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: fix `resource_tag_specification` field statement in wrapper method
+* resource/spotinst_managed_instance_aws: fix `resource_tag_specification` field statement in wrapper method
+
 ## 1.57.0 (August 22, 2021)
 
 ENHANCEMENTS:

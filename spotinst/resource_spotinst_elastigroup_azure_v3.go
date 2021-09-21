@@ -13,6 +13,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_image"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_launchspecification"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_login"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_network"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_strategy"
@@ -46,6 +47,7 @@ func setupElastigroupAzureV3Resource() {
 	elastigroup_azure_network.Setup(fieldsMap)
 	elastigroup_azure_strategy.Setup(fieldsMap)
 	elastigroup_azure_vm_sizes.Setup(fieldsMap)
+	elastigroup_azure_launchspecification.Setup(fieldsMap)
 
 	commons.ElastigroupAzureV3Resource = commons.NewElastigroupAzureV3Resource(fieldsMap)
 }
