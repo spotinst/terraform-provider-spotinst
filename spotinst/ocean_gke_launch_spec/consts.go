@@ -26,6 +26,7 @@ const (
 
 const (
 	OceanId                   commons.FieldName = "ocean_id"
+	Name                      commons.FieldName = "name"
 	SourceImage               commons.FieldName = "source_image"
 	Metadata                  commons.FieldName = "metadata"
 	Labels                    commons.FieldName = "labels"

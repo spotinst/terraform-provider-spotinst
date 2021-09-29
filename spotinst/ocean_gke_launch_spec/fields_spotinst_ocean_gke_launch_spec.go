@@ -928,6 +928,53 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Name] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		Name,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *string = nil
+
+			if launchSpec.Name != nil {
+				value = launchSpec.Name
+			}
+			if value != nil {
+				if err := resourceData.Set(string(Name), spotinst.StringValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Name), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			if v, ok := resourceData.GetOkExists(string(Name)); ok && v != nil {
+				name := spotinst.String(v.(string))
+				launchSpec.SetName(name)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var name *string = nil
+
+			if v, ok := resourceData.GetOkExists(string(Name)); ok && v != nil {
+				name = spotinst.String(v.(string))
+			}
+			launchSpec.SetName(name)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func hashKV(v interface{}) int {

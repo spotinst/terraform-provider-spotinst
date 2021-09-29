@@ -181,6 +181,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.4247406351.max_instance_count", "5"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "default"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec"),
 				),
 			},
 			{
@@ -204,6 +205,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.938839985.enable_secure_boot", "false"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.2876301449.max_instance_count", "3"),
+					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec_updated"),
 				),
 			},
 		},
@@ -222,6 +224,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  root_volume_size = 10
  instance_types = ["n1-standard-1"]
  service_account = "default"
+ name = "test_ocean_gke_launch_spec"
 
  metadata {
      key = "gci-update-strategy"
@@ -273,6 +276,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  root_volume_size = 12
  instance_types = ["n1-standard-1", "n1-standard-2"]
  service_account = "default"
+ name = "test_ocean_gke_launch_spec_updated" 
 
  metadata {
      key = "gci-update-strategy"
