@@ -881,6 +881,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
+					string(MinInstanceCount): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -1157,6 +1161,11 @@ func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 			r.SetMaxInstanceCount(spotinst.Int(v))
 		}
 
+		if v, ok := attr[string(MinInstanceCount)].(int); ok {
+			updated = 1
+			r.SetMinInstanceCount(spotinst.Int(v))
+		}
+
 		resourceLimits = r
 	}
 	if updated != 0 {
@@ -1247,6 +1256,10 @@ func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
 
 		if resourceLimits.MaxInstanceCount != nil {
 			result[string(MaxInstanceCount)] = spotinst.IntValue(resourceLimits.MaxInstanceCount)
+		}
+
+		if resourceLimits.MinInstanceCount != nil {
+			result[string(MinInstanceCount)] = spotinst.IntValue(resourceLimits.MinInstanceCount)
 		}
 
 		if len(result) > 0 {

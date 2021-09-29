@@ -179,7 +179,8 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "storage.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "storage.3717536058.local_ssd_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "resource_limits.4247406351.max_instance_count", "5"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.3297250312.max_instance_count", "5"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.3297250312.min_instance_count", "0"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "default"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec"),
 				),
@@ -204,7 +205,8 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.938839985.enable_integrity_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.938839985.enable_secure_boot", "false"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "resource_limits.2876301449.max_instance_count", "3"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.811159347.max_instance_count", "3"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.811159347.min_instance_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec_updated"),
 				),
 			},
@@ -259,6 +261,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
  resource_limits {
     max_instance_count = 5
+	min_instance_count = 0
   }
 }
 
@@ -306,6 +309,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
  resource_limits {
     max_instance_count = 3
+	min_instance_count = 1
   }
 }
 

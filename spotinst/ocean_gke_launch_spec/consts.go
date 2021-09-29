@@ -44,6 +44,7 @@ const (
 	ServiceAccount            commons.FieldName = "service_account"
 	ResourceLimits            commons.FieldName = "resource_limits"
 	MaxInstanceCount          commons.FieldName = "max_instance_count"
+	MinInstanceCount          commons.FieldName = "min_instance_count"
 )
 
 const (
