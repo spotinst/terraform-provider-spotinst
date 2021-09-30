@@ -18,6 +18,7 @@ Manages a custom Spotinst Ocean GKE Launch Spec resource.
 resource "spotinst_ocean_gke_launch_spec" "example" {
   ocean_id     = "o-123456"
   node_pool_name  = "default-pool"
+  name = "specialty.nodes.spotk8s.com"
   source_image = "image"
   restrict_scale_down = true
   root_volume_size = 10
@@ -35,6 +36,7 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
 
   resource_limits {
     max_instance_count = 3
+    min_instance_count = 0
   }
   
   service_account = "default"
@@ -79,6 +81,7 @@ The following arguments are supported:
 
 * `ocean_id` - (Required) The Ocean cluster ID.
 * `node_pool_name` - (Optional) The node pool you wish to use in your Launch Spec.
+* `name` - (Optional) The launch specification name.
 * `source_image` - (Required) Image URL.
 * `metadata` - (Required) Cluster's metadata.
     * `key` - (Required) The metadata key.
@@ -108,6 +111,7 @@ The following arguments are supported:
   * `local_ssd_count` - (Optional) Defines the number of local SSDs to be attached per node for this VNG.
 * `resource_limits` - (Optional) The Ocean virtual node group resource limits object.
   * `max_instance_count` - (Optional) Option to set a maximum number of instances per virtual node group. Can be null. If set, the value must be greater than or equal to 0.
+  * `min_instance_count` - (Optional) Option to set a minimum number of instances per virtual node group. Can be null. If set, the value must be greater than or equal to 0.
 * `service_account` - (Optional) The account used by applications running on the VM to call GCP APIs.
 
 
