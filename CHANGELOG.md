@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.60.0 (September 30, 2021)
+
 * resource/spotinst_ocean_gke_launch_spec: added support for `min_instance_count`
 * resource/spotinst_ocean_gke_launch_spec: added support for `name`
 * resource/spotinst_ocean_aws_launch_spec: added support for `min_instance_count`
