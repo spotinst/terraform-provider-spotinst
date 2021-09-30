@@ -933,7 +933,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Name] = commons.NewGenericField(
-		commons.OceanAWSLaunchSpec,
+		commons.OceanGKELaunchSpec,
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
