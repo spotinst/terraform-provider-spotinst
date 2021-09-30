@@ -881,6 +881,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
+					string(MinInstanceCount): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -923,6 +927,53 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 			}
 			ls.SetResourceLimits(resourceLimits)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Name] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		Name,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *string = nil
+
+			if launchSpec.Name != nil {
+				value = launchSpec.Name
+			}
+			if value != nil {
+				if err := resourceData.Set(string(Name), spotinst.StringValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Name), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			if v, ok := resourceData.GetOkExists(string(Name)); ok && v != nil {
+				name := spotinst.String(v.(string))
+				launchSpec.SetName(name)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var name *string = nil
+
+			if v, ok := resourceData.GetOkExists(string(Name)); ok && v != nil {
+				name = spotinst.String(v.(string))
+			}
+			launchSpec.SetName(name)
 			return nil
 		},
 		nil,
@@ -1110,6 +1161,11 @@ func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 			r.SetMaxInstanceCount(spotinst.Int(v))
 		}
 
+		if v, ok := attr[string(MinInstanceCount)].(int); ok {
+			updated = 1
+			r.SetMinInstanceCount(spotinst.Int(v))
+		}
+
 		resourceLimits = r
 	}
 	if updated != 0 {
@@ -1200,6 +1256,10 @@ func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
 
 		if resourceLimits.MaxInstanceCount != nil {
 			result[string(MaxInstanceCount)] = spotinst.IntValue(resourceLimits.MaxInstanceCount)
+		}
+
+		if resourceLimits.MinInstanceCount != nil {
+			result[string(MinInstanceCount)] = spotinst.IntValue(resourceLimits.MinInstanceCount)
 		}
 
 		if len(result) > 0 {
