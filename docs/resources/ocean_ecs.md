@@ -149,6 +149,7 @@ The following arguments are supported:
     * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
         * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
+    * `auto_headroom_percentage` - (Optional) The auto-headroom percentage. Set a number between 0-200 to control the headroom % of the cluster. Relevant when `isAutoConfig`= true.
 
 ```hcl
   autoscaler {
@@ -170,6 +171,8 @@ The following arguments are supported:
       max_vcpu       = 1024
       max_memory_gib = 20
     }
+   
+    auto_headroom_percentage = 10
   }
 ```
 

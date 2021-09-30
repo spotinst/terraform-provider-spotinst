@@ -1,5 +1,10 @@
 ## Unreleased
 
+* resource/spotinst_ocean_gke_launch_spec: added support for `min_instance_count`
+* resource/spotinst_ocean_gke_launch_spec: added support for `name`
+* resource/spotinst_ocean_aws_launch_spec: added support for `min_instance_count`
+* resource/spotinst_ocean_ecs: added support for `auto_headroom_percentage`
+
 ## 1.59.1 (September 19, 2021)
 
 * resource/spotinst_elastigroup_aws: resolved errors with `preferred_availability_zones`
