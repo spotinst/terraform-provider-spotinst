@@ -51,6 +51,7 @@ const (
 	TagSelectorValue         commons.FieldName = "tag_value"
 	ResourceLimits           commons.FieldName = "resource_limits"
 	MaxInstanceCount         commons.FieldName = "max_instance_count"
+	MinInstanceCount         commons.FieldName = "min_instance_count"
 	Strategy                 commons.FieldName = "strategy"
 	AssociatePublicIPAddress commons.FieldName = "associate_public_ip_address"
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"

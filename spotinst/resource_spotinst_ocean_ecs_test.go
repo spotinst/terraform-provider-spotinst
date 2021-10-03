@@ -501,6 +501,8 @@ func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "10"),
 				),
 			},
 			{
@@ -525,7 +527,7 @@ func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "2"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "20"),
 				),
 			},
 		},
@@ -550,6 +552,7 @@ autoscaler {
    max_vcpu = 2
    max_memory_gib = 1
  }
+ auto_headroom_percentage = 10
 }
 // --------------------------------
 `
@@ -572,6 +575,7 @@ autoscaler {
    max_vcpu = 1
    max_memory_gib = 2
  }
+ auto_headroom_percentage = 20
 }
 // --------------------------------
 `

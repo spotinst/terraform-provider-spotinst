@@ -16,4 +16,5 @@ const (
 	MaxMemoryGib           commons.FieldName = "max_memory_gib"
 	Down                   commons.FieldName = "down"
 	MaxScaleDownPercentage commons.FieldName = "max_scale_down_percentage"
+	AutoHeadroomPercentage commons.FieldName = "auto_headroom_percentage"
 )

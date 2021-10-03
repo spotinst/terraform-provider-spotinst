@@ -80,6 +80,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
 
   resource_limits {
     max_instance_count = 4
+    min_instance_count = 0
   }
 
   tags {
@@ -157,6 +158,7 @@ The following arguments are supported:
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) Set a maximum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
+    * `min_instance_count` - (Optional) Set a minimum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
 * `strategy` - (Optional) 
     * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Virtual Node Group instances.
 * `create_options` - (Optional)

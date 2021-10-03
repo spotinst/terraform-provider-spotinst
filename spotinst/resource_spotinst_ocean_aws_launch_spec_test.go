@@ -716,7 +716,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_ResourceLimits(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "resource_limits.4247406351.max_instance_count", "5"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.3297250312.max_instance_count", "5"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.3297250312.min_instance_count", "0"),
 				),
 			},
 			{
@@ -727,7 +728,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_ResourceLimits(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "resource_limits.3828446798.max_instance_count", "4"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.1610344156.max_instance_count", "4"),
+					resource.TestCheckResourceAttr(resourceName, "resource_limits.1610344156.min_instance_count", "0"),
 				),
 			},
 			{
@@ -757,6 +759,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
   resource_limits {
     max_instance_count = 5
+    min_instance_count = 0
   }
 
 %v
@@ -777,6 +780,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
   resource_limits {
     max_instance_count = 4
+    min_instance_count = 0
   }
 
 %v
