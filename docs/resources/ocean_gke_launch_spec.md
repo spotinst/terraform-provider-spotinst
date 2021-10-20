@@ -114,6 +114,23 @@ The following arguments are supported:
   * `min_instance_count` - (Optional) Option to set a minimum number of instances per virtual node group. Can be null. If set, the value must be greater than or equal to 0.
 * `service_account` - (Optional) The account used by applications running on the VM to call GCP APIs.
 
+<a id="update-policy"></a>
+## Update Policy
+
+* `update_policy` - (Optional)
+  * `should_roll` - (Required) Enables the roll.
+  * `roll_config` - (Required) Holds the roll configuration.
+    * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
+
+```hcl
+update_policy {
+  should_roll = false
+
+  roll_config {
+    batch_size_percentage = 33
+  }
+}
+```
 
 ## Attributes Reference
 

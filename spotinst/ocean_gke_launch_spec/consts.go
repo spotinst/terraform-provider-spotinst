@@ -50,3 +50,11 @@ const (
 const (
 	NodePoolName commons.FieldName = "node_pool_name"
 )
+
+const (
+	UpdatePolicy commons.FieldName = "update_policy"
+	ShouldRoll   commons.FieldName = "should_roll"
+
+	RollConfig          commons.FieldName = "roll_config"
+	BatchSizePercentage commons.FieldName = "batch_size_percentage"
+)

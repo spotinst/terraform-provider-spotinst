@@ -487,6 +487,16 @@ func targetScalingPolicySchema() *schema.Schema {
 		Optional: true,
 	}
 
+	s[string(Period)] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
+	s[string(EvaluationPeriods)] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Optional: true,
+	}
+
 	return o
 }
 
@@ -645,6 +655,14 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 
 			if v, ok := m[string(MaxCapacityPerScale)].(string); ok && v != "" {
 				policy.SetMaxCapacityPerScale(spotinst.String(v))
+			}
+
+			if v, ok := m[string(EvaluationPeriods)].(int); ok && v >= 0 {
+				policy.SetEvaluationPeriods(spotinst.Int(v))
+			}
+
+			if v, ok := m[string(Period)].(int); ok && v >= 0 {
+				policy.SetPeriod(spotinst.Int(v))
 			}
 		}
 
@@ -868,6 +886,14 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 
 			if policy.MaxCapacityPerScale != nil {
 				m[string(MaxCapacityPerScale)] = spotinst.StringValue(policy.MaxCapacityPerScale)
+			}
+
+			if policy.EvaluationPeriods != nil {
+				m[string(EvaluationPeriods)] = spotinst.IntValue(policy.EvaluationPeriods)
+			}
+
+			if policy.Period != nil {
+				m[string(Period)] = spotinst.IntValue(policy.Period)
 			}
 		} else {
 			m[string(IsEnabled)] = spotinst.BoolValue(policy.IsEnabled)
