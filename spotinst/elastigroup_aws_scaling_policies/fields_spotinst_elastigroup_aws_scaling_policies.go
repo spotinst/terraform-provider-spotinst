@@ -656,14 +656,6 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			if v, ok := m[string(MaxCapacityPerScale)].(string); ok && v != "" {
 				policy.SetMaxCapacityPerScale(spotinst.String(v))
 			}
-
-			if v, ok := m[string(EvaluationPeriods)].(int); ok && v >= 0 {
-				policy.SetEvaluationPeriods(spotinst.Int(v))
-			}
-
-			if v, ok := m[string(Period)].(int); ok && v >= 0 {
-				policy.SetPeriod(spotinst.Int(v))
-			}
 		}
 
 		if policy.Namespace != nil {
