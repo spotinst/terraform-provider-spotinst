@@ -184,4 +184,50 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ProvisioningModel] = commons.NewGenericField(
+		commons.ElastigroupGCPStrategy,
+		ProvisioningModel,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.ProvisioningModel != nil {
+				value = elastigroup.Strategy.ProvisioningModel
+			}
+			if err := resourceData.Set(string(ProvisioningModel), spotinst.StringValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ProvisioningModel), err)
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOkExists(string(ProvisioningModel)); ok {
+				value := v.(string)
+				elastigroup.Strategy.SetProvisioningModel(spotinst.String(value))
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var pm *string = nil
+			if v, ok := resourceData.GetOkExists(string(ProvisioningModel)); ok && v != nil {
+				if value, ok := v.(string); ok && value != "" {
+					pm = spotinst.String(value)
+				}
+			}
+			elastigroup.Strategy.SetProvisioningModel(pm)
+			return nil
+		},
+		nil,
+	)
 }
