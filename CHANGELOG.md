@@ -1,4 +1,4 @@
-## 1.61.0 (October 21, 2021)
+## 1.61.1 (October 21, 2021)
 
 * resource/spotinst_ocean_gcp_launch_spec: added `update_policy` for managing rolling deployments
 * resource/spotinst_elastigroup_gcp: added support for `provisioning_model`
