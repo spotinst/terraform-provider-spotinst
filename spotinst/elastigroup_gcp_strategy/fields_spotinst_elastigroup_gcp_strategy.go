@@ -219,7 +219,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var pm *string
+			var pm *string = nil
 			if v, ok := resourceData.GetOkExists(string(ProvisioningModel)); ok && v != nil {
 				if value, ok := v.(string); ok && value != "" {
 					pm = spotinst.String(value)
