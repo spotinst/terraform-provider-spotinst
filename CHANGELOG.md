@@ -1,5 +1,9 @@
 ## Unreleased
 
+* resource/spotinst_ocean_gcp_launch_spec: added `update_policy` for managing rolling deployments
+* resource/spotinst_elastigroup_gcp: added support for `provisioning_model`
+* resource/spotinst_elastigroup_aws: added support for `evaluation_periods`, `period`
+
 ## 1.60.0 (September 30, 2021)
 
 * resource/spotinst_ocean_gke_launch_spec: added support for `min_instance_count`
