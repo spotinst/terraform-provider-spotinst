@@ -709,6 +709,7 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "preemptible_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "300"),
+					resource.TestCheckResourceAttr(resourceName, "provisioning_model", "SPOT"),
 				),
 			},
 			{
@@ -722,6 +723,7 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "ondemand_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
+					resource.TestCheckResourceAttr(resourceName, "provisioning_model", "PREEMPTIBLE"),
 				),
 			},
 			{
@@ -745,6 +747,7 @@ const testStrategyGCPGroupConfig_Create = `
  fallback_to_ondemand = true
  preemptible_percentage = 100
  draining_timeout = 300
+ provisioning_model = "SPOT"
  // ---------------------------------
 `
 
@@ -752,6 +755,7 @@ const testStrategyGCPGroupConfig_Update = `
  // --- STRATEGY --------------------
   ondemand_count = 1
   draining_timeout = 240
+  provisioning_model = "PREEMPTIBLE"
  // ---------------------------------
 `
 
