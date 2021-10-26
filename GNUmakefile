@@ -87,6 +87,6 @@ tools:
 
 .PHONY: release
 release:
-	@git commit -a -m "chore(release): $(RELEASE)" -m "last successful tests ran on jenkins build number : $(SUCCESSFUL_TESTS_RUN)"
+	@git commit -a -m "chore(release): $(RELEASE)" -m "last successful tests ran on jenkins build number: $(SUCCESSFUL_TESTS_RUN)"
 	@git tag -f -m    "chore(release): $(RELEASE)" $(RELEASE)
 	@git push --follow-tags
