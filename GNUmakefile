@@ -89,4 +89,4 @@ tools:
 release:
 	@git commit -a -m "chore(release): $(RELEASE)" -m "last successful tests ran on jenkins build number: $(SUCCESSFUL_TESTS_RUN)"
 	@git tag -f -m    "chore(release): $(RELEASE)" $(RELEASE)
-	#@git push --follow-tags
+	@git push --follow-tags
