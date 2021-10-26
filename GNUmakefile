@@ -2,7 +2,7 @@ TEST?=./...
 PKGNAME?=spotinst
 VERSION?=$(shell grep -oP '(?<=Version = ).+' version/version.go | xargs)
 RELEASE?=v$(VERSION)
-SUCCESSFUL_TESTS_RUN?=$(shell bash -c 'read -s -p "last successful tests ran on jenkins build number: " pwd; echo $$pwd')
+SUCCESSFUL_TESTS_RUN?=$(shell bash -c 'read -p "last successful tests ran on jenkins build number: " pwd; echo $$pwd')
 
 default: build
 
