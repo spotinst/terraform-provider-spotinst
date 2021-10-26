@@ -2,7 +2,6 @@ TEST?=./...
 PKGNAME?=spotinst
 VERSION?=$(shell grep -oP '(?<=Version = ).+' version/version.go | xargs)
 RELEASE?=v$(VERSION)
-SUCCESSFUL_TESTS_RUN?=$(shell bash -c 'read -p "last successful tests ran on jenkins build number: " pwd; echo $$pwd')
 
 default: build
 
@@ -86,7 +85,8 @@ tools:
 	@go generate -tags tools tools.go
 
 .PHONY: release
+release: CI_JOB_NUMBER=$(shell read -p "» Last successful CI job number: " n && [[ -z "$$n" ]] && n="unknown"; echo $$n)
 release:
-	@git commit -a -m "chore(release): $(RELEASE)" -m "last successful tests ran on jenkins build number: $(SUCCESSFUL_TESTS_RUN)"
+	@git commit -a -m "chore(release): $(RELEASE)" -m "CI_JOB_NUMBER: $(CI_JOB_NUMBER)"
 	@git tag -f -m    "chore(release): $(RELEASE)" $(RELEASE)
 	@git push --follow-tags
