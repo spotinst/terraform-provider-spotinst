@@ -253,8 +253,8 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  custom_data = "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
 
  managed_service_identity {
-    resource_group_name = "AutomationResourceIdentity"
-    name                = "AutomationResourceGroup"
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity"
   }
  // -------------------------
 
@@ -284,13 +284,13 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  // -------------------------
 
  managed_service_identity {
-    resource_group_name = "AutomationResourceIdentity"
-    name                = "AutomationResourceGroup"
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity"
   }
 
  managed_service_identity {
-    resource_group_name = "AutomationResourceIdentity2"
-    name                = "AutomationResourceGroup"
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity2"
   }
  
  %v
