@@ -89,4 +89,4 @@ release: CI_JOB_NUMBER=$(shell read -p "» Last successful CI job number: " n &&
 release:
 	@git commit -a -m "chore(release): $(RELEASE)" -m "CI_JOB_NUMBER: $(CI_JOB_NUMBER)"
 	@git tag -f -m    "chore(release): $(RELEASE)" $(RELEASE)
-	#@git push --follow-tags
+	@git push --follow-tags
