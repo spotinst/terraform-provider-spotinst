@@ -75,7 +75,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value []interface{}
+			var value []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.ManagedServiceIdentities != nil {
 				value = flattenManagedServiceIdentities(elastigroup.Compute.LaunchSpecification.ManagedServiceIdentities)
@@ -100,9 +100,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value []*azurev3.ManagedServiceIdentity
-			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
-				elastigroup.Compute.LaunchSpecification.ManagedServiceIdentities != nil {
+			var value []*azurev3.ManagedServiceIdentity = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil {
 				if v, ok := resourceData.GetOk(string(ManagedServiceIdentity)); ok {
 					if msis, err := expandManagedServiceIdentities(v); err != nil {
 						return err
