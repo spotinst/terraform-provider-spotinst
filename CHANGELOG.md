@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.62.0 (November 01, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: added support for `managed_service_identity`
 
