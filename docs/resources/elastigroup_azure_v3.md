@@ -32,6 +32,11 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
 
   // --- LAUNCH SPEC ---------------------------------------------------
   custom_data = "IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
+  
+  managed_service_identity {
+  resource_group_name = "MC_ocean-westus-dev_ocean-westus-dev-aks_westus"
+  name                = "ocean-westus-dev-aks-agentpool"
+  }
 
   // --- IMAGE ---------------------------------------------------------
   image {
@@ -97,6 +102,9 @@ The following arguments are supported:
 * `min_size` - (Required) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
 * `custom_data` - (Optional) Custom init script file or text in Base64 encoded format.
+* `managed_service_identity` - (Optional) List of Managed Service Identity objects.
+    * `resource_group_name` - (Required) Name of the Azure Resource Group where the Managed Service Identity is located.
+    * `name` - (Required) Name of the Managed Service Identity.
 
 * `od_sizes` - (Required) Available On-Demand sizes
 * `spot_sizes` - (Required) Available Low-Priority sizes.

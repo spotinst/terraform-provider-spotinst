@@ -1,13 +1,20 @@
+## Unreleased
+
+## 1.62.0 (November 01, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: added support for `managed_service_identity`
+
 ## 1.61.1 (October 21, 2021)
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_gcp_launch_spec: added `update_policy` for managing rolling deployments
 * resource/spotinst_elastigroup_gcp: added support for `provisioning_model`
 * resource/spotinst_elastigroup_aws: added support for `evaluation_periods`, `period`
 
 ## 1.60.0 (September 30, 2021)
 
-## 1.60.0 (September 30, 2021)
-
+ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added support for `min_instance_count`
 * resource/spotinst_ocean_gke_launch_spec: added support for `name`
 * resource/spotinst_ocean_aws_launch_spec: added support for `min_instance_count`
@@ -15,7 +22,10 @@
 
 ## 1.59.1 (September 19, 2021)
 
+ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: resolved errors with `preferred_availability_zones`
+
+BUG FIXES:
 * resource/spotinst_ocean_aws_launch_spec: resolved errors with `effect`
 
 ## 1.58.0 (September 13, 2021)
@@ -76,7 +86,7 @@ BUG FIXES:
 ## 1.53.0 (July 15, 2021)
 
 ENHANCEMENTS:
-* resource/spotinst_ocean_aks: added support for `managed_service_identity` 
+* resource/spotinst_ocean_aks: added support for `managed_service_identity`
 
 ## 1.52.0 (July 7, 2021)
 
@@ -115,19 +125,19 @@ BUG FIXES:
 ## 1.48.0 (June 10, 2021)
 
 ENHANCEMENTS:
-* resource/spotinst_ocean_aks: added support for `resource_group_name` 
+* resource/spotinst_ocean_aks: added support for `resource_group_name`
 * resource/spotinst_ocean_aks: added support for `custom_data`
-* resource/spotinst_ocean_aks: added support for `vm_sizes` 
-* resource/spotinst_ocean_aks: added support for `os_disk` 
-* resource/spotinst_ocean_aks: added support for `image` 
-* resource/spotinst_ocean_aks: added support for `strategy` 
-* resource/spotinst_ocean_aks: added support for `health` 
-* resource/spotinst_ocean_aks: added support for `network` 
-* resource/spotinst_ocean_aks: added support for `extension` 
-* resource/spotinst_ocean_aks: added support for `load_balancer` 
+* resource/spotinst_ocean_aks: added support for `vm_sizes`
+* resource/spotinst_ocean_aks: added support for `os_disk`
+* resource/spotinst_ocean_aks: added support for `image`
+* resource/spotinst_ocean_aks: added support for `strategy`
+* resource/spotinst_ocean_aks: added support for `health`
+* resource/spotinst_ocean_aks: added support for `network`
+* resource/spotinst_ocean_aks: added support for `extension`
+* resource/spotinst_ocean_aks: added support for `load_balancer`
 * resource/spotinst_ocean_aks: added support for `autoscaler`
 * resource/spotinst_ocean_aks: added support for `tag`
-		
+
 ## 1.47.0 (June 6, 2021)
 
 ENHANCEMENTS:
@@ -176,7 +186,7 @@ BUG FIXES:
 ## 1.40.0 (April 25, 2021)
 
 BUG FIXES:
-* resource/spotinst_ocean_ecs: resolved error with update `capacity` fields to 0 
+* resource/spotinst_ocean_ecs: resolved error with update `capacity` fields to 0
 
 ## 1.39.0 (April 20, 2021)
 
