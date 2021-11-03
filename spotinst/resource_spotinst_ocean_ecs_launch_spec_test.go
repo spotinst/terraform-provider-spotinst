@@ -424,7 +424,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   
   user_data = "hello world"
   image_id = "ami-082b5a644766e0e6f"
-  security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
+  security_group_ids = ["EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"]
   iam_instance_profile = "ecsInstanceRole"
  
   tags {
@@ -451,7 +451,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   
   user_data = "hello world"
   image_id = "ami-082b5a644766e0e6f"
-  security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
+  security_group_ids = ["EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"]
   iam_instance_profile = "ecsInstanceRole"
 %v
 
