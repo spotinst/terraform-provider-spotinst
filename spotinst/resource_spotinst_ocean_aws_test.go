@@ -202,7 +202,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
 		},
@@ -240,7 +240,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
   max_size         = 10
   min_size         = 0
-  desired_capacity = 2
+  desired_capacity = 1
 
   subnet_ids      = ["subnet-051ada52cd4f9a2d9"]
 
