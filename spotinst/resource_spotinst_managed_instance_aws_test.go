@@ -433,8 +433,7 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "placement_tenancy", "default"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "EC2Access"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a2bce9fa"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.1", "sg-0d641dcbed883357e"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "elastic_ip", "eipalloc-987654"),
 					//resource.TestCheckResourceAttr(resourceName, "private_ip", "172.31.100.159"),
 					resource.TestCheckResourceAttr(resourceName, "key_pair", "core-services-keypair"),
@@ -475,7 +474,7 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "placement_tenancy", "dedicated"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "BaseIAMRole"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a2bce9fa"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "elastic_ip", "eipalloc-123456"),
 					//resource.TestCheckResourceAttr(resourceName, "private_ip", "2.2.2.2"),
 					resource.TestCheckResourceAttr(resourceName, "key_pair", "core-services-keypair"),
@@ -512,7 +511,7 @@ ebs_optimized = "false"
 enable_monitoring = "false"
 placement_tenancy = "default"
 iam_instance_profile = "EC2Access"
-security_group_ids = ["sg-a2bce9fa","sg-0d641dcbed883357e"]
+security_group_ids = ["sg-065c82e9ff8b192a1"]
 key_pair = "core-services-keypair"
 
   tags {
@@ -560,7 +559,7 @@ ebs_optimized = "true"
 enable_monitoring = "true"
 placement_tenancy = "dedicated"
 iam_instance_profile = "BaseIAMRole"
-security_group_ids = ["sg-a2bce9fa"]
+security_group_ids = ["sg-065c82e9ff8b192a1"]
 key_pair = "core-services-keypair" 
 
   tags {

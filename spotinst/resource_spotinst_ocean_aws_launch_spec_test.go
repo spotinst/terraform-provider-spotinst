@@ -146,7 +146,7 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata, formatToU
 
 // region OceanAWSLaunchSpec: Baseline
 func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-2069e2d7"
+	oceanID := "o-5c617df5"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -297,7 +297,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: AutoScale
 func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-2069e2d7"
+	oceanID := "o-5c617df5"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -445,7 +445,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: ElasticIpPool
 func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
-	oceanID := "o-2069e2d7"
+	oceanID := "o-5c617df5"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -554,7 +554,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: Block Devices
 func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
-	oceanID := "o-2069e2d7"
+	oceanID := "o-5c617df5"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -698,7 +698,7 @@ iam_instance_profile = "updated"
 
 // region OceanAWSLaunchSpec: ResourceLimits
 func TestAccSpotinstOceanAWSLaunchSpec_ResourceLimits(t *testing.T) {
-	oceanID := "o-2069e2d7"
+	oceanID := "o-5c617df5"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
