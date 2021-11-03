@@ -221,7 +221,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   min_size         = 0
   desired_capacity = 1
 
-  subnet_ids      = ["subnet-bce60ec4"]
+  subnet_ids      = ["subnet-0faad0b6bb7e99d9f"]
 
  %v
  %v
@@ -242,7 +242,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   min_size         = 0
   desired_capacity = 2
 
-  subnet_ids      = ["subnet-bce60ec4"]
+  subnet_ids      = ["subnet-051ada52cd4f9a2d9"]
 
  %v
  %v
