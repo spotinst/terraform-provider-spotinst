@@ -1,11 +1,20 @@
+## Unreleased
+
+## 1.62.0 (November 01, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: added support for `managed_service_identity`
+
 ## 1.61.1 (October 21, 2021)
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_gcp_launch_spec: added `update_policy` for managing rolling deployments
 * resource/spotinst_elastigroup_gcp: added support for `provisioning_model`
 * resource/spotinst_elastigroup_aws: added support for `evaluation_periods`, `period`
 
 ## 1.60.0 (September 30, 2021)
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added support for `min_instance_count`
 * resource/spotinst_ocean_gke_launch_spec: added support for `name`
 * resource/spotinst_ocean_aws_launch_spec: added support for `min_instance_count`
@@ -13,7 +22,10 @@
 
 ## 1.59.1 (September 19, 2021)
 
+ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: resolved errors with `preferred_availability_zones`
+
+BUG FIXES:
 * resource/spotinst_ocean_aws_launch_spec: resolved errors with `effect`
 
 ## 1.58.0 (September 13, 2021)

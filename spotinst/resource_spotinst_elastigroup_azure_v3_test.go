@@ -206,6 +206,9 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "custom_data", "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.2527356756.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.2527356756.name", "AutomationResourceIdentity"),
 				),
 			},
 			{
@@ -219,6 +222,11 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.2527356756.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.2527356756.name", "AutomationResourceIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.2012612447.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.2012612447.name", "AutomationResourceIdentity2"),
 				),
 			},
 		},
@@ -243,6 +251,11 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
 
  // --- LAUNCHSPEC ----------
  custom_data = "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
+
+ managed_service_identity {
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity"
+  }
  // -------------------------
 
  %v
@@ -269,6 +282,16 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  min_size 		  = 0
  desired_capacity = 0
  // -------------------------
+
+ managed_service_identity {
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity"
+  }
+
+ managed_service_identity {
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity2"
+  }
  
  %v
  %v
