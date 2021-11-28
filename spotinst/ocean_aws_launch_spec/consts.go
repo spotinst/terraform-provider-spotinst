@@ -55,6 +55,7 @@ const (
 	Strategy                 commons.FieldName = "strategy"
 	AssociatePublicIPAddress commons.FieldName = "associate_public_ip_address"
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
+	SchedulingTask           commons.FieldName = "scheduling_task"
 )
 
 const (
@@ -97,4 +98,11 @@ const (
 const (
 	DeleteOptions commons.FieldName = "delete_options"
 	ForceDelete   commons.FieldName = "force_delete"
+)
+
+const (
+	IsEnabled      commons.FieldName = "is_enabled"
+	CronExpression commons.FieldName = "cron_expression"
+	TaskType       commons.FieldName = "task_type"
+	TaskHeadroom   commons.FieldName = "task_headroom"
 )
