@@ -56,6 +56,17 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
   tags {
      key   = "Env"
      value = "production"
+  }
+  
+    scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+        num_of_units    = 5
+        cpu_per_unit     = 1000
+        memory_per_unit = 2048
+    }
   } 
 }
 ```
@@ -88,6 +99,15 @@ The following arguments are supported:
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in CPU units, where 1024 units = 1 vCPU.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+
+* `scheduling_task` - (Optional) Used to define scheduled tasks such as a manual headroom update.
+    * `is_enabled` - (Required) Describes whether the task is enabled. When True, the task runs. When False, it does not run.
+    * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ". The cron job runs in UTC time and is in Unix cron format.
+    * `task_type` - (Required) The activity that you are scheduling. Valid values: "manualHeadroomUpdate".
+    * `task_headroom` - (Optional) The config of this scheduled task. Depends on the value of taskType.
+        * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
+        * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+        * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 
 <a id="block-devices"></a>
 ## Block Devices

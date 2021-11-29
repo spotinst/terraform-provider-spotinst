@@ -99,6 +99,18 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   delete_options {
     force_delete = true
   }
+  
+  scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+        num_of_units    = 5
+        cpu_per_unit     = 1000
+        gpu_per_unit    = 0
+        memory_per_unit = 2048
+    }
+  }
 }
 ```
 ```
@@ -162,9 +174,18 @@ The following arguments are supported:
 * `strategy` - (Optional) 
     * `spot_percentage` - (Optional; if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Virtual Node Group instances.
 * `create_options` - (Optional)
-    * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created Virtual Node Group.
+    * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created Virtual Node Group. The parameter is recommended in case the use_as_template_only (in spotinst_ocean_aws resource) is set to true during Ocean resource creation.
 * `delete_options` - (Optional)
     * `force_delete` - (Optional) When set to `true`, delete even if it is the last Virtual Node Group (also, the default Virtual Node Group must be configured with `useAsTemlateOnly = true`). Should be set at creation or update, but will be used only at deletion.
+* `scheduling_task` - (Optional) Used to define scheduled tasks such as a manual headroom update.
+    * `is_enabled` - (Required) Describes whether the task is enabled. When True, the task runs. When False, it does not run.
+    * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ". The cron job runs in UTC time and is in Unix cron format.
+    * `task_type` - (Required) The activity that you are scheduling. Valid values: "manualHeadroomUpdate".
+    * `task_headroom` - (Optional) The config of this scheduled task. Depends on the value of taskType.
+      * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
+      * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
+      * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
+      * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 
 <a id="update-policy"></a>
 ## Update Policy

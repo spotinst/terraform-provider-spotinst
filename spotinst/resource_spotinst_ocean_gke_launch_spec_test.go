@@ -784,3 +784,111 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 `
 
 //endregion
+
+// region OceanGKELaunchSpec: Scheduling
+func TestAccSpotinstOceanGKELaunchSpec_Scheduling(t *testing.T) {
+	oceanID := "o-2244b135"
+	resourceName := createOceanGKELaunchSpecResource(oceanID)
+
+	var launchSpec gcp.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKELaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID}, testSchedulingOceanGKELaunchSpecConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_headroom.1624874254.cpu_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_headroom.1624874254.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_type", "manualHeadroomUpdate"),
+				),
+			},
+			{
+				Config: createOceanGKELaunchSpecTerraform(&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true}, testSchedulingOceanGKELaunchSpecConfig_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_headroom.3022110554.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_headroom.3022110554.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_type", "manualHeadroomUpdate"),
+				),
+			},
+		},
+	})
+}
+
+const testSchedulingOceanGKELaunchSpecConfig_Create = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
+
+ metadata {
+   key = "gci-create-scheduling"
+   value = "update_disabled"
+ }
+
+ metadata {
+   key = "gci-ensure-gke-docker"
+   value = "true"
+ }
+
+  scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+      cpu_per_unit = 512
+      num_of_units = 1
+    }
+  }
+ 
+}
+
+`
+
+const testSchedulingOceanGKELaunchSpecConfig_Update = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"
+
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
+
+ metadata {
+   key = "gci-update-scheduling"
+   value = "update_disabled"
+ }
+
+ metadata {
+   key = "gci-ensure-gke-docker"
+   value = "true"
+ }
+
+  scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+      memory_per_unit = 256
+      num_of_units = 2
+    }
+  }
+
+}
+
+`
+
+//endregion
