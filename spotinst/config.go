@@ -76,7 +76,7 @@ func (c *Config) getSession() (*session.Session, error) {
 
 	// HTTP options.
 	{
-		config.WithHTTPClient(cleanhttp.DefaultPooledClient())
+		config.WithHTTPClient(cleanhttp.DefaultPooledClient()).WithLogger(log.DefaultStdLogger)
 		config.WithUserAgent(c.getUserAgent())
 	}
 
