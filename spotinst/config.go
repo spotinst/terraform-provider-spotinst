@@ -90,11 +90,12 @@ func (c *Config) getSession() (*session.Session, error) {
 	}
 
 	// Logging.
-	{
-		config.WithLogger(log.LoggerFunc(func(format string, args ...interface{}) {
-			stdlog.Printf(fmt.Sprintf("[DEBUG] [spotinst-sdk-go] %s", format), args...)
-		}))
-	}
+	config.WithLogger(log.DefaultStdLogger)
+	//{
+	//	config.WithLogger(log.LoggerFunc(func(format string, args ...interface{}) {
+	//		stdlog.Printf(fmt.Sprintf("[DEBUG] [spotinst-sdk-go] %s", format), args...)
+	//	}))
+	//}
 
 	return session.New(config), nil
 }
