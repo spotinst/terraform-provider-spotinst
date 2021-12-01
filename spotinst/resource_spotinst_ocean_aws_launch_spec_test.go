@@ -883,3 +883,103 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 `
 
 //endregion
+
+// region OceanAWSLaunchSpec: Scheduling
+func TestAccSpotinstOceanAWSLaunchSpec_Scheduling(t *testing.T) {
+	oceanID := "o-6b3f7a6d"
+	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
+
+	var launchSpec aws.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID: oceanID,
+				}, testSchedulingOceanAWSLaunchSpecConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_headroom.1624874254.cpu_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_headroom.1624874254.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_type", "manualHeadroomUpdate"),
+				),
+			},
+			{
+				Config: createOceanAWSLaunchSpecTerraform(&LaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					updateBaselineFields: true}, testSchedulingOceanAWSLaunchSpecConfig_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_headroom.3022110554.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_headroom.3022110554.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_type", "manualHeadroomUpdate"),
+				),
+			},
+		},
+	})
+}
+
+const testSchedulingOceanAWSLaunchSpecConfig_Create = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+  scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+      cpu_per_unit = 512
+      num_of_units = 1
+    }
+  }
+%v
+}
+
+`
+
+const testSchedulingOceanAWSLaunchSpecConfig_Update = `
+resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+ ocean_id = "%v"
+ 
+ image_id = "ami-79826301"
+ security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
+ user_data = "hello world updated"
+ iam_instance_profile = "updated"
+ name = "launch spec name test"
+
+  scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+      memory_per_unit = 256
+      num_of_units = 2
+    }
+  }
+%v
+}
+
+`
+
+//endregion

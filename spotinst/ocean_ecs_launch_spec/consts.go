@@ -27,6 +27,7 @@ const (
 	InstanceTypes      commons.FieldName = "instance_types"
 	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
 	SubnetIDs          commons.FieldName = "subnet_ids"
+	SchedulingTask     commons.FieldName = "scheduling_task"
 )
 
 const (
@@ -57,4 +58,11 @@ const (
 	NoDevice            commons.FieldName = "no_device"
 	VirtualName         commons.FieldName = "virtual_name"
 	Throughput          commons.FieldName = "throughput"
+)
+
+const (
+	IsEnabled      commons.FieldName = "is_enabled"
+	CronExpression commons.FieldName = "cron_expression"
+	TaskType       commons.FieldName = "task_type"
+	TaskHeadroom   commons.FieldName = "task_headroom"
 )

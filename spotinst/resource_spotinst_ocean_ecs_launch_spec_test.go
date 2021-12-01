@@ -460,3 +460,106 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
 `
 
 //endregion
+
+// region OceanAWSLaunchSpec: Scheduling
+func TestAccSpotinstOceanECSLaunchSpec_Scheduling(t *testing.T) {
+	oceanID := "o-d190d627"
+	launchSpecName := "test-acc-ocean-ecs-launch-spec"
+	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
+
+	var launchSpec aws.ECSLaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSLaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID: oceanID,
+					name:    launchSpecName,
+				}, testSchedulingOceanECSLaunchSpecConfig_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_headroom.2964054300.cpu_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_headroom.2964054300.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_type", "manualHeadroomUpdate"),
+				),
+			},
+			{
+				Config: createOceanECSLaunchSpecTerraform(&ECSLaunchSpecConfigMetadata{
+					oceanID:              oceanID,
+					name:                 launchSpecName,
+					updateBaselineFields: true}, testSchedulingOceanECSLaunchSpecConfig_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_headroom.4204234574.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_headroom.4204234574.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_type", "manualHeadroomUpdate"),
+				),
+			},
+		},
+	})
+}
+
+const testSchedulingOceanECSLaunchSpecConfig_Create = `
+resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
+  provider = "%v"  
+  name = "%v"
+  ocean_id = "%v"
+
+  user_data = "hello world"
+  image_id = "ami-082b5a644766e0e6f"
+  security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
+  iam_instance_profile = "ecsInstanceRole"
+
+  scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+      cpu_per_unit = 512
+      num_of_units = 1
+    }
+  }
+%v
+}
+
+`
+
+const testSchedulingOceanECSLaunchSpecConfig_Update = `
+resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
+  provider = "%v"  
+  name = "%v"
+  ocean_id = "%v"
+  
+  user_data = "hello world"
+  image_id = "ami-082b5a644766e0e6f"
+  security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
+  iam_instance_profile = "ecsInstanceRole"
+
+  scheduling_task {
+    is_enabled = true
+    cron_expression = "0 1 * * *"
+    task_type = "manualHeadroomUpdate"
+    task_headroom {
+      memory_per_unit = 256
+      num_of_units = 2
+    }
+  }
+%v
+}
+
+`
+
+//endregion
