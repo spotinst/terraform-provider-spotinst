@@ -1020,3 +1020,62 @@ const testUpdatePolicyAWSClusterConfig_EmptyFields = `
 `
 
 // endregion
+
+//region OceanAWS: Baseline
+func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
+	clusterName := "test-acc-cluster-logging"
+	controllerClusterID := "logging-controller-id"
+	resourceName := createOceanAWSResourceName(clusterName)
+
+	var cluster aws.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testLoggingAWSConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.128036280.export.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.128036280.export.3248317801.s3_id", "di-92ab9a0e"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testLoggingAWSConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testLoggingAWSConfig_Create = `
+ // --- LOGGING -----------------
+  logging {
+    export {
+      s3_id = "di-92ab9a0e"
+    }
+  }
+`
+
+const testLoggingAWSConfig_EmptyFields = `
+
+`
+
+// endregion

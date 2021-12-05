@@ -114,7 +114,6 @@ func NewClusterWrapper() *AWSClusterWrapper {
 			},
 			Strategy:   &aws.Strategy{},
 			Scheduling: &aws.Scheduling{},
-			Logging:    &aws.Logging{},
 		},
 	}
 }
