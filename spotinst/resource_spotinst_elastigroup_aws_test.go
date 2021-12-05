@@ -229,7 +229,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	
 	name 				= "%v"
 	description 		= "created by Terraform"
-	product 			= "Linux/UNIX"
+	product 			= "product"
 	availability_zones = ["us-west-2b", "us-west-2c"]
 	
 	// --- CAPACITY ------------
