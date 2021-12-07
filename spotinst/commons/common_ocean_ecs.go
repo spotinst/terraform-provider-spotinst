@@ -12,10 +12,6 @@ const (
 	OceanECSResourceName ResourceName = "spotinst_ocean_ecs"
 )
 
-var conditionedRollFieldsECS = []string{"subnet_ids", "whitelist", "blacklist", "user_data", "image_id", "security_groups",
-	"key_pair", "iam_instance_profile", "associate_public_ip_address", "block_device_mappings", "optimize_images",
-	"tags", "instance_metadata_options"}
-
 var OceanECSResource *OceanECSTerraformResource
 
 type OceanECSTerraformResource struct {

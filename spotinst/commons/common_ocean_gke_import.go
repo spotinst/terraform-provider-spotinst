@@ -12,8 +12,6 @@ const (
 	OceanGKEImportResourceName ResourceName = "spotinst_ocean_gke_import"
 )
 
-var conditionedRollFieldsGKE = []string{"backend_services", "root_volume_type", "whitelist"}
-
 var OceanGKEImportResource *OceanGKEImportTerraformResource
 
 type OceanGKEImportTerraformResource struct {
@@ -104,7 +102,7 @@ func (res *OceanGKEImportTerraformResource) OnUpdate(
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
-			if contains(conditionedRollFieldsAWS, field.fieldNameStr) {
+			if contains(conditionedRollFieldsGKE, field.fieldNameStr) {
 				condRollChange = true
 			}
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)

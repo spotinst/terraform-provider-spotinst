@@ -12,10 +12,6 @@ const (
 	OceanAWSResourceName ResourceName = "spotinst_ocean_aws"
 )
 
-var conditionedRollFieldsAWS = []string{"subnet_ids", "whitelist", "blacklist", "user_data", "image_id", "security_groups",
-	"key_name", "iam_instance_profile", "associate_public_ip_address", "load_balancers", "tags",
-	"instance_metadata_options", "ebs_optimized", "root_volume_size"}
-
 var OceanAWSResource *OceanAWSTerraformResource
 
 type OceanAWSTerraformResource struct {
@@ -132,14 +128,4 @@ func (clusterWrapper *AWSClusterWrapper) GetCluster() *aws.Cluster {
 
 func (clusterWrapper *AWSClusterWrapper) SetCluster(cluster *aws.Cluster) {
 	clusterWrapper.cluster = cluster
-}
-
-func contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
-			return true
-		}
-	}
-
-	return false
 }
