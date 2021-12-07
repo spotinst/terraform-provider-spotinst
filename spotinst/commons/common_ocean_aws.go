@@ -12,6 +12,10 @@ const (
 	OceanAWSResourceName ResourceName = "spotinst_ocean_aws"
 )
 
+var conditionedRollFieldsAWS = []string{"subnet_ids", "whitelist", "blacklist", "user_data", "image_id", "security_groups",
+	"key_name", "iam_instance_profile", "associate_public_ip_address", "load_balancers", "tags",
+	"instance_metadata_options", "ebs_optimized", "root_volume_size"}
+
 var OceanAWSResource *OceanAWSTerraformResource
 
 type OceanAWSTerraformResource struct {
@@ -80,28 +84,32 @@ func (res *OceanAWSTerraformResource) OnRead(
 
 func (res *OceanAWSTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *aws.Cluster, error) {
+	meta interface{}) (bool, bool, *aws.Cluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
+		return false, false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
 	clusterWrapper := NewClusterWrapper()
 	hasChanged := false
+	condRollChange := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
+			if contains(conditionedRollFieldsAWS, field.fieldNameStr) {
+				condRollChange = true
+			}
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(clusterWrapper, resourceData, meta); err != nil {
-				return false, nil, err
+				return false, false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, clusterWrapper.GetCluster(), nil
+	return hasChanged, condRollChange, clusterWrapper.GetCluster(), nil
 }
 
 func NewClusterWrapper() *AWSClusterWrapper {
@@ -124,4 +132,14 @@ func (clusterWrapper *AWSClusterWrapper) GetCluster() *aws.Cluster {
 
 func (clusterWrapper *AWSClusterWrapper) SetCluster(cluster *aws.Cluster) {
 	clusterWrapper.cluster = cluster
+}
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
 }

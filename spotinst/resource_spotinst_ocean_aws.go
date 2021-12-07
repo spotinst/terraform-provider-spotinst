@@ -156,14 +156,14 @@ func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta in
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
 
-	shouldUpdate, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
+	shouldUpdate, condRollChange, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
-		if err := updateAWSCluster(cluster, resourceData, meta); err != nil {
+		if err := updateAWSCluster(cluster, resourceData, meta, condRollChange); err != nil {
 			return err
 		}
 	}
@@ -171,12 +171,13 @@ func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta in
 	return resourceSpotinstClusterAWSRead(resourceData, meta)
 }
 
-func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
+func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}, condRollChange bool) error {
 	var input = &aws.UpdateClusterInput{
 		Cluster: cluster,
 	}
 
 	var shouldRoll = false
+	var conditionedRoll = false
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -185,6 +186,10 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 
 			if roll, ok := m[string(ocean_aws.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
+			}
+
+			if condRoll, ok := m[string(ocean_aws.ConditionedRoll)].(bool); ok && condRoll {
+				conditionedRoll = condRoll
 			}
 		}
 	}
@@ -198,9 +203,11 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterID, err)
 	} else if shouldRoll {
-		if err := rollOceanAWSCluster(resourceData, meta); err != nil {
-			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
-			return err
+		if (conditionedRoll && condRollChange) || !conditionedRoll {
+			if err := rollOceanAWSCluster(resourceData, meta); err != nil {
+				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
+				return err
+			}
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws.ShouldRoll))

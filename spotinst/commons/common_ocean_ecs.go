@@ -12,6 +12,10 @@ const (
 	OceanECSResourceName ResourceName = "spotinst_ocean_ecs"
 )
 
+var conditionedRollFieldsECS = []string{"subnet_ids", "whitelist", "blacklist", "user_data", "image_id", "security_groups",
+	"key_pair", "iam_instance_profile", "associate_public_ip_address", "block_device_mappings", "optimize_images",
+	"tags", "instance_metadata_options"}
+
 var OceanECSResource *OceanECSTerraformResource
 
 type OceanECSTerraformResource struct {
@@ -80,28 +84,32 @@ func (res *OceanECSTerraformResource) OnRead(
 
 func (res *OceanECSTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *aws.ECSCluster, error) {
+	meta interface{}) (bool, bool, *aws.ECSCluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
+		return false, false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
 	clusterWrapper := NewECSClusterWrapper()
 	hasChanged := false
+	condRollChange := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
+			if contains(conditionedRollFieldsECS, field.fieldNameStr) {
+				condRollChange = true
+			}
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(clusterWrapper, resourceData, meta); err != nil {
-				return false, nil, err
+				return false, false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, clusterWrapper.GetECSCluster(), nil
+	return hasChanged, condRollChange, clusterWrapper.GetECSCluster(), nil
 }
 
 func NewECSClusterWrapper() *ECSClusterWrapper {

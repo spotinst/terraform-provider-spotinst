@@ -12,6 +12,8 @@ const (
 	OceanGKEImportResourceName ResourceName = "spotinst_ocean_gke_import"
 )
 
+var conditionedRollFieldsGKE = []string{"backend_services", "root_volume_type", "whitelist"}
+
 var OceanGKEImportResource *OceanGKEImportTerraformResource
 
 type OceanGKEImportTerraformResource struct {
@@ -88,28 +90,32 @@ func (res *OceanGKEImportTerraformResource) OnRead(
 
 func (res *OceanGKEImportTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *gcp.Cluster, error) {
+	meta interface{}) (bool, bool, *gcp.Cluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
+		return false, false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
 	clusterWrapper := NewGKEImportClusterWrapper()
 	hasChanged := false
+	condRollChange := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
+			if contains(conditionedRollFieldsAWS, field.fieldNameStr) {
+				condRollChange = true
+			}
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(clusterWrapper, resourceData, meta); err != nil {
-				return false, nil, err
+				return false, false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, clusterWrapper.GetCluster(), nil
+	return hasChanged, condRollChange, clusterWrapper.GetCluster(), nil
 }
 
 func NewGKEImportClusterWrapper() *GKEImportClusterWrapper {
