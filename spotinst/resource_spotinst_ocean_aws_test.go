@@ -948,6 +948,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
 				),
@@ -964,6 +965,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
 				),
@@ -991,6 +993,7 @@ const testUpdatePolicyAWSClusterConfig_Create = `
  // --- UPDATE POLICY ----------------
   update_policy {
     should_roll = false
+	conditioned_roll = true
 
     roll_config {
       batch_size_percentage = 33
@@ -1005,6 +1008,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
  // --- UPDATE POLICY ----------------
   update_policy {
     should_roll = true
+	conditioned_roll = false
 
     roll_config {
       batch_size_percentage = 66
