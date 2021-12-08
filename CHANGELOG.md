@@ -1,5 +1,9 @@
 ## Unreleased
 
+* resource/spotinst_ocean_gke_import: added support for `conditioned_roll`
+* resource/spotinst_ocean_aws: added support for `conditioned_roll`
+* resource/spotinst_ocean_ecs: added support for `conditioned_roll`
+
 ## 1.63.0 (November 29, 2021)
 
 * resource/spotinst_ocean_gke_launch_spec: added support for `scheduling`
