@@ -1,9 +1,11 @@
 ## Unreleased
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added support for `logging`
 
 ## 1.63.0 (November 29, 2021)
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added support for `scheduling`
 * resource/spotinst_ocean_aws_launch_spec: added support for `scheduling`
 * resource/spotinst_ocean_ecs_launch_spec: added support for `scheduling`
