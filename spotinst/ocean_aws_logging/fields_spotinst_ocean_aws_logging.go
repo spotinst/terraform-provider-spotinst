@@ -15,13 +15,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAwsLogging,
 		Logging,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Export): {
-						Type:     schema.TypeSet,
+						Type:     schema.TypeList,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -119,7 +119,7 @@ func flattenExport(export *aws.Export) []interface{} {
 
 func expandOceanAWSLogging(data interface{}) (*aws.Logging, error) {
 	logging := &aws.Logging{}
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 
 	if list == nil || list[0] == nil {
 		return logging, nil
@@ -143,7 +143,7 @@ func expandOceanAWSLogging(data interface{}) (*aws.Logging, error) {
 
 func expandOceanAWSExport(data interface{}) (*aws.Export, error) {
 	export := &aws.Export{}
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 
 	if list == nil || list[0] == nil {
 		return export, nil
