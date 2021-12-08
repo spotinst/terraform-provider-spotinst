@@ -12,7 +12,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_autoscaler"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_import_launch_specification"
@@ -210,7 +209,7 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 				shouldRoll = roll
 			}
 
-			if condRoll, ok := m[string(ocean_aws.ConditionedRoll)].(bool); ok && condRoll {
+			if condRoll, ok := m[string(ocean_gke_import.ConditionedRoll)].(bool); ok && condRoll {
 				conditionedRoll = condRoll
 			}
 		}
