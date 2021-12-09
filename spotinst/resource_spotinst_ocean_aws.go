@@ -201,6 +201,8 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterID, err)
 	} else if shouldRoll {
+		//changesRequiredRoll
+		//change order and fix the 'if' statement
 		if (conditionedRoll && condRollChange) || !conditionedRoll {
 			if err := rollOceanAWSCluster(resourceData, meta); err != nil {
 				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
