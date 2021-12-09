@@ -27,6 +27,7 @@ const (
 	OceanAWSStrategy            ResourceAffinity = "Ocean_AWS_Strategy"
 	OceanAWSScheduling          ResourceAffinity = "Ocean_AWS_Scheduling"
 	OceanAWSLaunchConfiguration ResourceAffinity = "Ocean_AWS_Launch_Configuration"
+	OceanAwsLogging             ResourceAffinity = "Ocean_AWS_Logging"
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
 
