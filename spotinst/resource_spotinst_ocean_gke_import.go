@@ -177,14 +177,14 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanGKEImportResource.GetName(), id)
 
-	shouldUpdate, condRollChange, cluster, err := commons.OceanGKEImportResource.OnUpdate(resourceData, meta)
+	shouldUpdate, changesRequiredRoll, cluster, err := commons.OceanGKEImportResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
-		if err := updateGKEImportCluster(cluster, resourceData, meta, condRollChange); err != nil {
+		if err := updateGKEImportCluster(cluster, resourceData, meta, changesRequiredRoll); err != nil {
 			return err
 		}
 	}
@@ -192,7 +192,7 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 	return resourceSpotinstClusterGKEImportRead(resourceData, meta)
 }
 
-func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}, condRollChange bool) error {
+func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool) error {
 	var input = &gcp.UpdateClusterInput{
 		Cluster: cluster,
 	}
@@ -224,7 +224,7 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 	if _, err := meta.(*Client).ocean.CloudProviderGCP().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update GKE cluster [%v]: %v", clusterID, err)
 	} else if shouldRoll {
-		if (conditionedRoll && condRollChange) || !conditionedRoll {
+		if !conditionedRoll || changesRequiredRoll {
 			if err := rollOceanGKECluster(resourceData, meta); err != nil {
 				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
 				return err

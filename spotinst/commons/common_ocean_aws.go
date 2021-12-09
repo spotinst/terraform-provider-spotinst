@@ -88,14 +88,14 @@ func (res *OceanAWSTerraformResource) OnUpdate(
 
 	clusterWrapper := NewClusterWrapper()
 	hasChanged := false
-	condRollChange := false
+	changesRequiredRoll := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			if contains(conditionedRollFieldsAWS, field.fieldNameStr) {
-				condRollChange = true
+				changesRequiredRoll = true
 			}
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(clusterWrapper, resourceData, meta); err != nil {
@@ -105,7 +105,7 @@ func (res *OceanAWSTerraformResource) OnUpdate(
 		}
 	}
 
-	return hasChanged, condRollChange, clusterWrapper.GetCluster(), nil
+	return hasChanged, changesRequiredRoll, clusterWrapper.GetCluster(), nil
 }
 
 func NewClusterWrapper() *AWSClusterWrapper {

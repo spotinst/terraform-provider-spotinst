@@ -154,14 +154,14 @@ func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta in
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
 
-	shouldUpdate, condRollChange, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
+	shouldUpdate, changesRequiredRoll, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
-		if err := updateAWSCluster(cluster, resourceData, meta, condRollChange); err != nil {
+		if err := updateAWSCluster(cluster, resourceData, meta, changesRequiredRoll); err != nil {
 			return err
 		}
 	}
@@ -169,7 +169,7 @@ func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta in
 	return resourceSpotinstClusterAWSRead(resourceData, meta)
 }
 
-func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}, condRollChange bool) error {
+func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool) error {
 	var input = &aws.UpdateClusterInput{
 		Cluster: cluster,
 	}
@@ -201,9 +201,7 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterID, err)
 	} else if shouldRoll {
-		//changesRequiredRoll
-		//change order and fix the 'if' statement
-		if (conditionedRoll && condRollChange) || !conditionedRoll {
+		if !conditionedRoll || changesRequiredRoll {
 			if err := rollOceanAWSCluster(resourceData, meta); err != nil {
 				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
 				return err
