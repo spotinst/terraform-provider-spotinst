@@ -86,6 +86,14 @@ resource "spotinst_ocean_aws" "example" {
     http_tokens = "required"
     http_put_response_hop_limit = 10
   }
+  
+  logging {
+    export {
+      s3 {
+        id = "di-abcd123"
+      }
+    }
+  }
 }
 ```
 ```
@@ -133,6 +141,10 @@ The following arguments are supported:
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
+* `logging` - (Optional) Logging configuration.
+    * `export` - (Optional) Logging Export configuration.
+        * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
+            * `id` - (Required) The identifier of The S3 data integration to export the logs to.
 
 <a id="auto-scaler"></a>
 ## Auto Scaler
@@ -182,7 +194,6 @@ autoscaler {
 
 * `update_policy` - (Optional)
     * `should_roll` - (Required) Enables the roll.
-    * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `launch_spec_ids` - (Optional) List of virtual node group identifiers to be rolled.
@@ -190,7 +201,6 @@ autoscaler {
 ```hcl
 update_policy {
   should_roll = false
-  conditioned_roll = true
 
   roll_config {
     batch_size_percentage = 33
