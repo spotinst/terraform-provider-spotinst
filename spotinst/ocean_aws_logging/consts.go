@@ -7,5 +7,6 @@ import (
 const (
 	Logging commons.FieldName = "logging"
 	Export  commons.FieldName = "export"
-	S3Id    commons.FieldName = "s3_id"
+	S3      commons.FieldName = "s3"
+	Id      commons.FieldName = "id"
 )

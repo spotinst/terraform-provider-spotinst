@@ -1045,7 +1045,8 @@ func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3_id", "di-800889b7"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-800889b7"),
 				),
 			},
 			{
@@ -1069,7 +1070,9 @@ const testLoggingAWSConfig_Create = `
  // --- LOGGING -----------------
   logging {
     export {
-      s3_id = "di-800889b7"
+      s3 { 
+		id = "di-800889b7"
+      }
     }
   }
 `

@@ -89,7 +89,9 @@ resource "spotinst_ocean_aws" "example" {
   
   logging {
     export {
-      s3_id = "di-abcd123"
+      s3 {
+        id = "di-abcd123"
+      }
     }
   }
 }
@@ -141,7 +143,8 @@ The following arguments are supported:
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
 * `logging` - (Optional) Logging configuration.
     * `export` - (Optional) Logging Export configuration.
-        * `s3_id` - (Optional) The identifier of The S3 data integration to export the logs to.
+        * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
+            * `id` - (Required) The identifier of The S3 data integration to export the logs to.
 
 <a id="auto-scaler"></a>
 ## Auto Scaler

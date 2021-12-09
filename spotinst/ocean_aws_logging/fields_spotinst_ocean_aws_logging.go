@@ -26,9 +26,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(S3Id): {
-									Type:     schema.TypeString,
-									Required: true,
+								string(S3): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Id): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+										},
+									},
 								},
 							},
 						},
@@ -105,8 +113,26 @@ func flattenExport(export *aws.Export) []interface{} {
 	if export != nil {
 		result := make(map[string]interface{})
 
-		if export.S3 != nil && export.S3.ID != nil {
-			result[string(S3Id)] = export.S3.ID
+		if export.S3 != nil {
+			result[string(S3)] = flattenS3(export.S3)
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
+}
+
+func flattenS3(s3 *aws.S3) []interface{} {
+	var out []interface{}
+
+	if s3 != nil {
+		result := make(map[string]interface{})
+
+		if s3.ID != nil {
+			result[string(Id)] = s3.ID
 		}
 
 		if len(result) > 0 {
@@ -150,11 +176,33 @@ func expandOceanAWSExport(data interface{}) (*aws.Export, error) {
 	}
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(S3Id)].(string); ok && v != "" {
-		s3 := &aws.S3{}
-		s3.SetId(spotinst.String(v))
-		export.SetS3(s3)
+	if v, ok := m[string(S3)]; ok {
+		s3, err := expandOceanAWSS3(v)
+		if err != nil {
+			return nil, err
+		}
+		if s3 != nil {
+			export.SetS3(s3)
+		} else {
+			export.S3 = nil
+		}
 	}
 
 	return export, nil
+}
+
+func expandOceanAWSS3(data interface{}) (*aws.S3, error) {
+	s3 := &aws.S3{}
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return s3, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(Id)].(string); ok && v != "" {
+		s3.SetId(spotinst.String(v))
+	}
+
+	return s3, nil
 }
