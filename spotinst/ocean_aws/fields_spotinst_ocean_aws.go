@@ -363,6 +363,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
+					string(ConditionedRoll): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 
 					string(RollConfig): {
 						Type:     schema.TypeList,
