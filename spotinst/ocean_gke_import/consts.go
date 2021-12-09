@@ -21,8 +21,9 @@ const (
 	// Deprecated: Please use ControllerClusterID instead.
 	ClusterControllerID commons.FieldName = "cluster_controller_id"
 
-	UpdatePolicy commons.FieldName = "update_policy"
-	ShouldRoll   commons.FieldName = "should_roll"
+	UpdatePolicy    commons.FieldName = "update_policy"
+	ShouldRoll      commons.FieldName = "should_roll"
+	ConditionedRoll commons.FieldName = "conditioned_roll"
 
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"

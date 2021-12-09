@@ -165,6 +165,8 @@ The following arguments are supported:
 
 * `update_policy` - (Optional)
     * `should_roll` - (Required) Enables the roll.
+    * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
+
     * `roll_config` - (Required) Holds the roll configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `launch_spec_ids` - (Optional) List of Virtual Node Group identifiers to be rolled.
@@ -172,6 +174,7 @@ The following arguments are supported:
 ```hcl
 update_policy {
   should_roll = false
+  conditioned_roll = true
 
   roll_config {
     batch_size_percentage = 33
