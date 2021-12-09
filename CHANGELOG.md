@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.64.0 (December 09, 2021)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added support for `logging`
 * resource/spotinst_ocean_gke_import: added support for `conditioned_roll`
