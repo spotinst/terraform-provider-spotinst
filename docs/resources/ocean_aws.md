@@ -86,6 +86,14 @@ resource "spotinst_ocean_aws" "example" {
     http_tokens = "required"
     http_put_response_hop_limit = 10
   }
+  
+  logging {
+    export {
+      s3 {
+        id = "di-abcd123"
+      }
+    }
+  }
 }
 ```
 ```
@@ -116,7 +124,8 @@ The following arguments are supported:
 * `root_volume_size` - (Optional) The size (in Gb) to allocate for the root volume. Minimum `20`.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
-* `use_as_template_only` - (Optional, Default: `false`) launch specification defined on the Ocean object will function only as a template for virtual node groups.
+* `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
+  When set to true, on Ocean resource creation please make sure your custom VNG has an initial_nodes parameter to create nodes for your VNG.
 * `load_balancers` - (Optional) - Array of load balancer objects to add to ocean cluster
     * `arn` - (Optional) Required if type is set to `TARGET_GROUP`
     * `name` - (Optional) Required if type is set to `CLASSIC`
@@ -132,6 +141,10 @@ The following arguments are supported:
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
+* `logging` - (Optional) Logging configuration.
+    * `export` - (Optional) Logging Export configuration.
+        * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
+            * `id` - (Required) The identifier of The S3 data integration to export the logs to.
 
 ### Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes Auto Scaler.
@@ -179,6 +192,7 @@ autoscaler {
 
 * `update_policy` - (Optional)
     * `should_roll` - (Required) Enables the roll.
+    * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `launch_spec_ids` - (Optional) List of virtual node group identifiers to be rolled.
@@ -186,6 +200,7 @@ autoscaler {
 ```hcl
 update_policy {
   should_roll = false
+  conditioned_roll = true
 
   roll_config {
     batch_size_percentage = 33

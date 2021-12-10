@@ -121,6 +121,7 @@ func NewGKELaunchSpecWrapper() *LaunchSpecGKEWrapper {
 			},
 			ShieldedInstanceConfig: &gcp.ShieldedInstanceConfig{},
 			Storage:                &gcp.Storage{},
+			LaunchSpecScheduling:   &gcp.GKELaunchSpecScheduling{},
 		},
 	}
 }
@@ -144,5 +145,9 @@ func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
 
 	if launchSpec.AutoScale.Headrooms == nil {
 		launchSpec.AutoScale.SetHeadrooms([]*gcp.AutoScaleHeadroom{})
+	}
+
+	if launchSpec.LaunchSpecScheduling == nil {
+		launchSpec.SetScheduling(&gcp.GKELaunchSpecScheduling{})
 	}
 }

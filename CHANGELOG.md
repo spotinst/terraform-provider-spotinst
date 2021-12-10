@@ -1,5 +1,23 @@
 ## Unreleased
 
+## 1.64.0 (December 09, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added support for `logging`
+* resource/spotinst_ocean_gke_import: added support for `conditioned_roll`
+* resource/spotinst_ocean_aws: added support for `conditioned_roll`
+* resource/spotinst_ocean_ecs: added support for `conditioned_roll`
+
+BUG FIXES:
+* resource/spotinst_managed_instance_aws: resolved errors with `persist_block_devices`
+
+## 1.63.0 (November 29, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: added support for `scheduling`
+* resource/spotinst_ocean_aws_launch_spec: added support for `scheduling`
+* resource/spotinst_ocean_ecs_launch_spec: added support for `scheduling`
+
 ## 1.62.0 (November 01, 2021)
 
 ENHANCEMENTS:

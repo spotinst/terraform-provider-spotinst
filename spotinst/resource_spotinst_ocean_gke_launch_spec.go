@@ -11,6 +11,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec_scheduling"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_gke_launch_spec_strategy"
 )
 
@@ -36,6 +37,7 @@ func setupOceanGKELaunchSpecResource() {
 
 	ocean_gke_launch_spec.Setup(fieldsMap)
 	ocean_gke_launch_spec_strategy.Setup(fieldsMap)
+	ocean_gke_launch_spec_scheduling.Setup(fieldsMap)
 
 	commons.OceanGKELaunchSpecResource = commons.NewOceanGKELaunchSpecResource(fieldsMap)
 }

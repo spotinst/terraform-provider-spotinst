@@ -948,6 +948,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
 				),
@@ -964,6 +965,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
 				),
@@ -991,6 +993,7 @@ const testUpdatePolicyAWSClusterConfig_Create = `
  // --- UPDATE POLICY ----------------
   update_policy {
     should_roll = false
+	conditioned_roll = true
 
     roll_config {
       batch_size_percentage = 33
@@ -1005,6 +1008,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
  // --- UPDATE POLICY ----------------
   update_policy {
     should_roll = true
+	conditioned_roll = false
 
     roll_config {
       batch_size_percentage = 66
@@ -1017,6 +1021,68 @@ const testUpdatePolicyAWSClusterConfig_EmptyFields = `
  spot_percentage = 0
  // --- UPDATE POLICY ----------------
  // ----------------------------------
+`
+
+// endregion
+
+//region OceanAWS: Baseline
+func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
+	clusterName := "test-acc-cluster-logging"
+	controllerClusterID := "logging-controller-id"
+	resourceName := createOceanAWSResourceName(clusterName)
+
+	var cluster aws.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testLoggingAWSConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-800889b7"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testLoggingAWSConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testLoggingAWSConfig_Create = `
+ // --- LOGGING -----------------
+  logging {
+    export {
+      s3 { 
+		id = "di-800889b7"
+      }
+    }
+  }
+`
+
+const testLoggingAWSConfig_EmptyFields = `
+
 `
 
 // endregion
