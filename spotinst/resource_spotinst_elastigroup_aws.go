@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"log"
 	"strings"
 	"time"
@@ -148,6 +149,22 @@ func resourceSpotinstElastigroupAWSRead(resourceData *schema.ResourceData, meta 
 	if groupResponse == nil {
 		resourceData.SetId("")
 		return nil
+	}
+
+	if commons.IsEBSVolumeTypeCapital == false {
+		if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
+			blockDeviceMappings := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
+			if blockDeviceMappings[0] != nil {
+				log.Printf("************* BlockDeviceMappings Before: %s *************\n",
+					stringutil.Stringify(blockDeviceMappings[0]))
+				vol := blockDeviceMappings[0].EBS.VolumeType
+				*vol = strings.ToLower(*vol)
+				blockDeviceMappings[0].EBS.SetVolumeType(vol)
+				log.Printf("************* BlockDeviceMappings Before: %s *************\n",
+					stringutil.Stringify(blockDeviceMappings[0]))
+			}
+		}
+
 	}
 
 	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
