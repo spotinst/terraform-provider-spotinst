@@ -243,7 +243,7 @@ func flattenAWSGroupEphemeralBlockDevices(devices []*aws.BlockDeviceMapping) []i
 func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping, error) {
 	list := data.(*schema.Set).List()
 	devices := make([]*aws.BlockDeviceMapping, 0, len(list))
-	for _, item := range list {
+	for index, item := range list {
 		m := item.(map[string]interface{})
 		device := &aws.BlockDeviceMapping{EBS: &aws.EBS{}}
 
@@ -270,13 +270,17 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 		if v, ok := m[string(VolumeType)].(string); ok && v != "" {
 			device.EBS.SetVolumeType(spotinst.String(v))
 			if IsUpper(v) == false {
-				commons.IsEBSVolumeTypeCapital = false
+				log.Printf("in 10")
+				commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, false)
+				log.Printf("in 11")
 			} else {
-				commons.IsEBSVolumeTypeCapital = true
+				log.Printf("in 12")
+				commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, true)
+				log.Printf("in 13")
 			}
 
 			log.Printf("************* IsEBSVolumeTypeCapital: %s *************\n",
-				stringutil.Stringify(commons.IsEBSVolumeTypeCapital))
+				stringutil.Stringify(commons.IsEBSVolumeTypeCapitalSlice[index]))
 
 		}
 

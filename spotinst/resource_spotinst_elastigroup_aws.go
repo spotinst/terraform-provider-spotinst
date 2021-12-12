@@ -151,22 +151,32 @@ func resourceSpotinstElastigroupAWSRead(resourceData *schema.ResourceData, meta 
 		return nil
 	}
 
-	if commons.IsEBSVolumeTypeCapital == false {
-		if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
-			blockDeviceMappings := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
-			if blockDeviceMappings[0] != nil {
-				log.Printf("************* BlockDeviceMappings Before: %s *************\n",
-					stringutil.Stringify(blockDeviceMappings[0]))
-				vol := blockDeviceMappings[0].EBS.VolumeType
-				*vol = strings.ToLower(*vol)
-				blockDeviceMappings[0].EBS.SetVolumeType(vol)
-				log.Printf("************* BlockDeviceMappings Before: %s *************\n",
-					stringutil.Stringify(blockDeviceMappings[0]))
+	for index, isEBSVolumeTypeCapital := range commons.IsEBSVolumeTypeCapitalSlice {
+		log.Printf("in 1")
+		if isEBSVolumeTypeCapital == false {
+			log.Printf("in 2")
+			if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
+				log.Printf("in 3")
+				blockDeviceMappings := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
+				log.Printf("in 4")
+				if blockDeviceMappings[index] != nil {
+					log.Printf("in 5")
+					log.Printf("************* BlockDeviceMappings Before: %s *************\n",
+						stringutil.Stringify(blockDeviceMappings[index]))
+					log.Printf("in 6")
+					vol := blockDeviceMappings[index].EBS.VolumeType
+					log.Printf("in 7")
+					*vol = strings.ToLower(*vol)
+					blockDeviceMappings[index].EBS.SetVolumeType(vol)
+					log.Printf("in 8")
+					log.Printf("************* BlockDeviceMappings After: %s *************\n",
+						stringutil.Stringify(blockDeviceMappings[index]))
+				}
 			}
+
 		}
-
 	}
-
+	log.Printf("launchSpec is %s", stringutil.Stringify(groupResponse.Compute.LaunchSpecification))
 	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
 		return err
 	}

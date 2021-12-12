@@ -14,7 +14,7 @@ const (
 
 var ElastigroupResource *ElastigroupTerraformResource
 
-var IsEBSVolumeTypeCapital bool
+var IsEBSVolumeTypeCapitalSlice []bool
 
 type ElastigroupTerraformResource struct {
 	GenericResource
