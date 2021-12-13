@@ -3,8 +3,6 @@ package elastigroup_aws_block_devices
 import (
 	"bytes"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
-	"log"
 	"unicode"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
@@ -243,7 +241,7 @@ func flattenAWSGroupEphemeralBlockDevices(devices []*aws.BlockDeviceMapping) []i
 func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping, error) {
 	list := data.(*schema.Set).List()
 	devices := make([]*aws.BlockDeviceMapping, 0, len(list))
-	for index, item := range list {
+	for _, item := range list {
 		m := item.(map[string]interface{})
 		device := &aws.BlockDeviceMapping{EBS: &aws.EBS{}}
 
@@ -269,19 +267,12 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 
 		if v, ok := m[string(VolumeType)].(string); ok && v != "" {
 			device.EBS.SetVolumeType(spotinst.String(v))
+
 			if IsUpper(v) == false {
-				log.Printf("in 10")
 				commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, false)
-				log.Printf("in 11")
 			} else {
-				log.Printf("in 12")
 				commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, true)
-				log.Printf("in 13")
 			}
-
-			log.Printf("************* IsEBSVolumeTypeCapital: %s *************\n",
-				stringutil.Stringify(commons.IsEBSVolumeTypeCapitalSlice[index]))
-
 		}
 
 		if v, ok := m[string(VolumeSize)].(int); ok && v > 0 {

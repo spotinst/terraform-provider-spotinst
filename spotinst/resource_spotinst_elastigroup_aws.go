@@ -3,7 +3,6 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"log"
 	"strings"
 	"time"
@@ -151,32 +150,40 @@ func resourceSpotinstElastigroupAWSRead(resourceData *schema.ResourceData, meta 
 		return nil
 	}
 
+	if len(commons.IsEBSVolumeTypeCapitalSlice) == 0 {
+		v := resourceData.Get(string(elastigroup_aws_block_devices.EbsBlockDevice))
+		list := v.(*schema.Set).List()
+		for _, item := range list {
+			m := item.(map[string]interface{})
+
+			if v, ok := m[string(elastigroup_aws_block_devices.VolumeType)].(string); ok && v != "" {
+				if elastigroup_aws_block_devices.IsUpper(v) == false {
+					commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, false)
+				} else {
+					commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, true)
+				}
+
+			}
+		}
+	}
+
 	for index, isEBSVolumeTypeCapital := range commons.IsEBSVolumeTypeCapitalSlice {
-		log.Printf("in 1")
+
 		if isEBSVolumeTypeCapital == false {
-			log.Printf("in 2")
+
 			if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
-				log.Printf("in 3")
 				blockDeviceMappings := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
-				log.Printf("in 4")
+
 				if blockDeviceMappings[index] != nil {
-					log.Printf("in 5")
-					log.Printf("************* BlockDeviceMappings Before: %s *************\n",
-						stringutil.Stringify(blockDeviceMappings[index]))
-					log.Printf("in 6")
 					vol := blockDeviceMappings[index].EBS.VolumeType
-					log.Printf("in 7")
 					*vol = strings.ToLower(*vol)
 					blockDeviceMappings[index].EBS.SetVolumeType(vol)
-					log.Printf("in 8")
-					log.Printf("************* BlockDeviceMappings After: %s *************\n",
-						stringutil.Stringify(blockDeviceMappings[index]))
 				}
 			}
 
 		}
 	}
-	log.Printf("launchSpec is %s", stringutil.Stringify(groupResponse.Compute.LaunchSpecification))
+
 	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
 		return err
 	}
