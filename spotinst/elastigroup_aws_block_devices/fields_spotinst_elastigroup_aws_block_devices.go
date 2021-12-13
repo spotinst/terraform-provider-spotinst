@@ -3,8 +3,6 @@ package elastigroup_aws_block_devices
 import (
 	"bytes"
 	"fmt"
-	"unicode"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -268,11 +266,11 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 		if v, ok := m[string(VolumeType)].(string); ok && v != "" {
 			device.EBS.SetVolumeType(spotinst.String(v))
 
-			if IsUpper(v) == false {
-				commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, false)
-			} else {
-				commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, true)
-			}
+			//if IsUpper(v) == false {
+			//	commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, false)
+			//} else {
+			//	commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, true)
+			//}
 		}
 
 		if v, ok := m[string(VolumeSize)].(int); ok && v > 0 {
@@ -395,13 +393,4 @@ func onUpdateBlockDevice(egWrapper *commons.ElastigroupWrapper, resourceData *sc
 		elastigroup.Compute.LaunchSpecification.SetBlockDeviceMappings(nil)
 	}
 	return nil
-}
-
-func IsUpper(s string) bool {
-	for _, r := range s {
-		if !unicode.IsUpper(r) && unicode.IsLetter(r) {
-			return false
-		}
-	}
-	return true
 }
