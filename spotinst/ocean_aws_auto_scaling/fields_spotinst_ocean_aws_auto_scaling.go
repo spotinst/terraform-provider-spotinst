@@ -105,6 +105,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+
+					string(EnableAutomaticAndManualHeadroom): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -220,6 +225,10 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 		}
 	}
 
+	if v, ok := m[string(EnableAutomaticAndManualHeadroom)].(bool); ok {
+		autoscaler.SetEnableAutomaticAndManualHeadroom(spotinst.Bool(v))
+	}
+
 	return autoscaler, nil
 }
 
@@ -304,6 +313,7 @@ func flattenAutoscaler(autoScaler *aws.AutoScaler) []interface{} {
 		result[string(AutoscaleCooldown)] = spotinst.IntValue(autoScaler.Cooldown)
 		result[string(AutoscaleIsAutoConfig)] = spotinst.BoolValue(autoScaler.IsAutoConfig)
 		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(autoScaler.AutoHeadroomPercentage)
+		result[string(EnableAutomaticAndManualHeadroom)] = spotinst.BoolValue(autoScaler.EnableAutomaticAndManualHeadroom)
 
 		if autoScaler.Headroom != nil {
 			result[string(AutoscaleHeadroom)] = flattenAutoScaleHeadroom(autoScaler.Headroom)
