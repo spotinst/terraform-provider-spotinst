@@ -763,7 +763,6 @@ func isUpper(s string) bool {
 }
 
 func updateCapitalSlice(resourceData *schema.ResourceData, groupResponse *aws.Group) {
-	//if len(commons.IsEBSVolumeTypeCapitalSlice) == 0 {
 	v := resourceData.Get(string(elastigroup_aws_block_devices.EbsBlockDevice))
 	list := v.(*schema.Set).List()
 	for _, item := range list {
@@ -778,7 +777,6 @@ func updateCapitalSlice(resourceData *schema.ResourceData, groupResponse *aws.Gr
 
 		}
 	}
-	//}
 
 	for index, isEBSVolumeTypeCapital := range IsEBSVolumeTypeCapitalSlice {
 
