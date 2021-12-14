@@ -266,12 +266,6 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 
 		if v, ok := m[string(VolumeType)].(string); ok && v != "" {
 			device.EBS.SetVolumeType(spotinst.String(v))
-
-			//if IsUpper(v) == false {
-			//	commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, false)
-			//} else {
-			//	commons.IsEBSVolumeTypeCapitalSlice = append(commons.IsEBSVolumeTypeCapitalSlice, true)
-			//}
 		}
 
 		if v, ok := m[string(VolumeSize)].(int); ok && v > 0 {
