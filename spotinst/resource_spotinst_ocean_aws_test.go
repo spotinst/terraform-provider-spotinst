@@ -242,7 +242,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   min_size         = 0
   desired_capacity = 1
 
-  subnet_ids      = ["subnet-051ada52cd4f9a2d9"]
+  subnet_ids      = ["subnet-0bd585d2c2177c7ee"]
 
  %v
  %v
