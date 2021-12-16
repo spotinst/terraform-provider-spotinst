@@ -309,7 +309,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	
 	// --- SUBNET IDS -------------------
 	region      = "us-west-2"
-	subnet_ids  = ["subnet-09b7d9127de5d49d8"]
+	subnet_ids  = ["subnet-0b40f863ba34956ba"]
 	// ----------------------------------
 	
 	// --- CAPACITY ------------
@@ -802,7 +802,7 @@ func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-09b7d9127de5d49d8"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0b40f863ba34956ba"),
 				),
 			},
 		},
