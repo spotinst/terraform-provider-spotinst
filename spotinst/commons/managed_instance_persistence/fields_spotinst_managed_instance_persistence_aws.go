@@ -171,7 +171,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				initPersistenceIfNeeded(managedInstance)
 				value = spotinst.Bool(v)
 			}
-			managedInstance.Persistence.SetShouldPersistBlockDevices(value)
+			if managedInstance.Persistence != nil {
+				managedInstance.Persistence.SetShouldPersistBlockDevices(value)
+			}
 			return nil
 		},
 		nil,
