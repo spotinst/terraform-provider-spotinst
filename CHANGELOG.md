@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.64.1 (December 14, 2021)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `ebs_block_device`
+
 ## 1.64.0 (December 09, 2021)
 
 ENHANCEMENTS:
