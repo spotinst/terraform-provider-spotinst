@@ -26,8 +26,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_aws_strategy"
 )
 
-var IsEBSVolumeTypeCapitalSlice []bool
-
 func resourceSpotinstElastigroupAWS() *schema.Resource {
 	setupElastigroupResource()
 
