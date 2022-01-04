@@ -762,23 +762,19 @@ func isUpper(s string) bool {
 
 func updateCapitalSlice(resourceData *schema.ResourceData, groupResponse *aws.Group) {
 	if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
-		blockDeviceMappings := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
-		v := resourceData.Get(string(elastigroup_aws_block_devices.EbsBlockDevice))
-		list := v.(*schema.Set).List()
+		blockDeviceMappingsAPIResponse := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
+		ebsBlockDevicesResourceData := resourceData.Get(string(elastigroup_aws_block_devices.EbsBlockDevice))
+		ebsBlockDevicesInput := ebsBlockDevicesResourceData.(*schema.Set).List()
 
-		for index, item := range list {
-			m := item.(map[string]interface{})
+		for index, blockDeviceInput := range ebsBlockDevicesInput {
+			blockDevice := blockDeviceInput.(map[string]interface{})
 
-			if v, ok := m[string(elastigroup_aws_block_devices.VolumeType)].(string); ok && v != "" {
-				if isUpper(v) == false {
-					if blockDeviceMappings[index] != nil {
-						if blockDeviceMappings[index].EBS != nil {
-							vol := blockDeviceMappings[index].EBS.VolumeType
-							if vol != nil {
-								*vol = strings.ToLower(*vol)
-								blockDeviceMappings[index].EBS.SetVolumeType(vol)
-							}
-						}
+			if volumeTypeInput, ok := blockDevice[string(elastigroup_aws_block_devices.VolumeType)].(string); ok && volumeTypeInput != "" {
+				if isUpper(volumeTypeInput) == false {
+					volumeTypeAPIResponse := blockDeviceMappingsAPIResponse[index].EBS.VolumeType
+					if volumeTypeAPIResponse != nil {
+						*volumeTypeAPIResponse = strings.ToLower(*volumeTypeAPIResponse)
+						blockDeviceMappingsAPIResponse[index].EBS.SetVolumeType(volumeTypeAPIResponse)
 					}
 				}
 			}
