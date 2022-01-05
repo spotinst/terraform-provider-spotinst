@@ -1,5 +1,12 @@
 ## Unreleased
 
+NOTES:
+* documentation: resource/spotinst_ocean_aws: Add usage example for `utilize_commitments`
+* documentation: resource/spotinst_ocean_ecs: Add usage example for `utilize_commitments`
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `ebs_block_device`
+
 ## 1.64.1 (December 14, 2021)
 
 BUG FIXES:
