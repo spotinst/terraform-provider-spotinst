@@ -26,8 +26,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_aws_strategy"
 )
 
-var IsEBSVolumeTypeCapitalSlice []bool
-
 func resourceSpotinstElastigroupAWS() *schema.Resource {
 	setupElastigroupResource()
 
@@ -763,35 +761,23 @@ func isUpper(s string) bool {
 }
 
 func updateCapitalSlice(resourceData *schema.ResourceData, groupResponse *aws.Group) {
-	v := resourceData.Get(string(elastigroup_aws_block_devices.EbsBlockDevice))
-	list := v.(*schema.Set).List()
-	for _, item := range list {
-		m := item.(map[string]interface{})
+	if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
+		blockDeviceMappingsAPIResponse := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
+		ebsBlockDevicesResourceData := resourceData.Get(string(elastigroup_aws_block_devices.EbsBlockDevice))
+		ebsBlockDevicesInput := ebsBlockDevicesResourceData.(*schema.Set).List()
 
-		if v, ok := m[string(elastigroup_aws_block_devices.VolumeType)].(string); ok && v != "" {
-			if isUpper(v) == false {
-				IsEBSVolumeTypeCapitalSlice = append(IsEBSVolumeTypeCapitalSlice, false)
-			} else {
-				IsEBSVolumeTypeCapitalSlice = append(IsEBSVolumeTypeCapitalSlice, true)
-			}
+		for index, blockDeviceInput := range ebsBlockDevicesInput {
+			blockDevice := blockDeviceInput.(map[string]interface{})
 
-		}
-	}
-
-	for index, isEBSVolumeTypeCapital := range IsEBSVolumeTypeCapitalSlice {
-
-		if isEBSVolumeTypeCapital == false {
-
-			if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
-				blockDeviceMappings := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
-
-				if blockDeviceMappings[index] != nil {
-					vol := blockDeviceMappings[index].EBS.VolumeType
-					*vol = strings.ToLower(*vol)
-					blockDeviceMappings[index].EBS.SetVolumeType(vol)
+			if volumeTypeInput, ok := blockDevice[string(elastigroup_aws_block_devices.VolumeType)].(string); ok && volumeTypeInput != "" {
+				if isUpper(volumeTypeInput) == false {
+					volumeTypeAPIResponse := blockDeviceMappingsAPIResponse[index].EBS.VolumeType
+					if volumeTypeAPIResponse != nil {
+						*volumeTypeAPIResponse = strings.ToLower(*volumeTypeAPIResponse)
+						blockDeviceMappingsAPIResponse[index].EBS.SetVolumeType(volumeTypeAPIResponse)
+					}
 				}
 			}
-
 		}
 	}
 }
