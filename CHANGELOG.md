@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.64.2 (January 05, 2022)
+
 NOTES:
 * documentation: resource/spotinst_ocean_aws: Add usage example for `utilize_commitments`
 * documentation: resource/spotinst_ocean_ecs: Add usage example for `utilize_commitments`
