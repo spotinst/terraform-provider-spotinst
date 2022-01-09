@@ -432,6 +432,7 @@ func TestAccSpotinstOceanGKEImport_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_auto_config", "true"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "true"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "10"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "512"),
@@ -459,6 +460,7 @@ func TestAccSpotinstOceanGKEImport_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "5"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "256"),
@@ -488,6 +490,7 @@ const testOceanGKEAutoscaler_Create = `
     autoscaler {
     is_enabled     = true
     is_auto_config = true
+	enable_automatic_and_manual_headroom = true
     cooldown       = 360
     auto_headroom_percentage = 15
 
@@ -516,6 +519,7 @@ const testOceanGKEAutoscaler_Update = `
     autoscaler {
     is_enabled     = false
     is_auto_config = false
+	enable_automatic_and_manual_headroom = false
     cooldown       = 300
     auto_headroom_percentage = 20
 
