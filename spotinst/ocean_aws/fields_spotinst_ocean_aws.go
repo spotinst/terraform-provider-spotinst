@@ -367,6 +367,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+					string(AutoApplyTags): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 
 					string(RollConfig): {
 						Type:     schema.TypeList,
