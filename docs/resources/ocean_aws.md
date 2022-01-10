@@ -155,6 +155,7 @@ The following arguments are supported:
     * `autoscale_is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
     * `autoscale_cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
     * `auto_headroom_percentage` - (Optional) Set the auto headroom percentage (a number in the range [0, 200]) which controls the percentage of headroom from the cluster. Relevant only when `autoscale_is_auto_config` toggled on.
+    * `enable_automatic_and_manual_headroom` - (Optional, Default: `false`) enables automatic and manual headroom to work in parallel. When set to false, automatic headroom overrides all other headroom definitions manually configured, whether they are at cluster or VNG level.
     * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
         * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
         * `gpu_per_unit` - (Optional) Optionally configure the number of GPUs to allocate the headroom.
@@ -172,6 +173,7 @@ autoscaler {
   autoscale_is_auto_config = true
   auto_headroom_percentage = 100
   autoscale_cooldown       = 300
+  enable_automatic_and_manual_headroom = false
 
   autoscale_headroom {
     cpu_per_unit    = 1024

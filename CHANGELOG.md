@@ -1,5 +1,9 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added support for `enable_automatic_and_manual_headroom`
+* resource/spotinst_ocean_ecs: added support for `enable_automatic_and_manual_headroom`
+
 ## 1.64.2 (January 05, 2022)
 
 NOTES:
