@@ -184,6 +184,7 @@ The following arguments are supported:
 * `update_policy` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `should_roll` - (Required) Enables the roll.
     * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
+    * `auto_apply_tags` - (Optional, Default: false) will update instance tags on the fly without rolling the cluster.
     * `roll_config` - (Required) 
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
 
@@ -191,6 +192,7 @@ The following arguments are supported:
   update_policy {
     should_roll = false
     conditioned_roll = true
+    auto_apply_tags = true
     
     roll_config {
       batch_size_percentage = 33

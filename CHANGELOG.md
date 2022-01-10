@@ -1,5 +1,10 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added support for `auto_apply_tags`
+* resource/spotinst_ocean_ecs: added support for `auto_apply_tags`
+
+
 ## 1.64.2 (January 05, 2022)
 
 NOTES:
