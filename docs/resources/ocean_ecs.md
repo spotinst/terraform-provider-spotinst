@@ -38,7 +38,8 @@ resource "spotinst_ocean_ecs" "example" {
     monitoring                  = true
     ebs_optimized               = true
 
-    spot_percentage = 100
+    spot_percentage     = 100
+    utilize_commitments = false
 
   instance_metadata_options {
     http_tokens                 = "required"
@@ -106,6 +107,7 @@ The following arguments are supported:
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
 * `spot_percentage` - (Optional) The percentage of Spot instances that would spin up from the `desired_capacity` number.
+* `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
@@ -177,6 +179,7 @@ The following arguments are supported:
 * `update_policy` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
     * `should_roll` - (Required) Enables the roll.
     * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
+    * `auto_apply_tags` - (Optional, Default: false) will update instance tags on the fly without rolling the cluster.
     * `roll_config` - (Required)
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
 
@@ -184,6 +187,7 @@ The following arguments are supported:
   update_policy {
     should_roll = false
     conditioned_roll = true
+    auto_apply_tags = true
 
     roll_config {
       batch_size_percentage = 33
