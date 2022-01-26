@@ -147,7 +147,7 @@ func createOceanGKELaunchSpecTerraform(lscm *GKELaunchSpecConfigMetadata, format
 
 // region OceanGKELaunchSpec: Baseline
 func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-2244b135"
+	oceanID := "o-6461038a"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -162,7 +162,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "pool-1"),
 					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1537634279.key", "gci-update-strategy"),
@@ -190,7 +190,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
+					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "pool-1"),
 					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.1537634279.key", "gci-update-strategy"),
@@ -219,7 +219,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
+ node_pool_name = "pool-1"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
  restrict_scale_down = true
  root_volume_type = "pd-standard"
@@ -272,7 +272,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
+ node_pool_name = "pool-1"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
  restrict_scale_down = false
  root_volume_type = "pd-standard"
@@ -319,7 +319,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Labels
 func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
-	oceanID := "o-2244b135"
+	oceanID := "o-6461038a"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -409,7 +409,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Taints
 func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
-	oceanID := "o-2244b135"
+	oceanID := "o-6461038a"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -640,7 +640,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Strategy
 func TestAccSpotinstOceanGKELaunchSpec_Strategy(t *testing.T) {
-	oceanID := "o-2244b135"
+	oceanID := "o-6461038a"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
