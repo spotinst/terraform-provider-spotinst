@@ -76,7 +76,7 @@ func (c *Config) getSession() (*session.Session, error) {
 
 	// HTTP options.
 	{
-		config.WithHTTPClient(cleanhttp.DefaultPooledClient()).WithLogger(log.DefaultStdLogger)
+		config.WithHTTPClient(cleanhttp.DefaultPooledClient())
 		config.WithUserAgent(c.getUserAgent())
 	}
 
@@ -88,9 +88,6 @@ func (c *Config) getSession() (*session.Session, error) {
 		}
 		config.WithCredentials(v)
 	}
-
-	//use this line to see API requests and responses
-	//config.WithLogger(log.DefaultStdLogger)
 
 	// Logging.
 	{

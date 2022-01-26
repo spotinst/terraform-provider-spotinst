@@ -17,6 +17,7 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws_auto_scaling"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws_instance_types"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws_launch_configuration"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws_logging"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws_scheduling"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws_strategy"
 )
@@ -46,6 +47,7 @@ func setupClusterAWSResource() {
 	ocean_aws_launch_configuration.Setup(fieldsMap)
 	ocean_aws_strategy.Setup(fieldsMap)
 	ocean_aws_scheduling.Setup(fieldsMap)
+	ocean_aws_logging.Setup(fieldsMap)
 
 	commons.OceanAWSResource = commons.NewOceanAWSResource(fieldsMap)
 }
@@ -154,14 +156,14 @@ func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta in
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
 
-	shouldUpdate, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
+	shouldUpdate, changesRequiredRoll, tagsChanged, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
-		if err := updateAWSCluster(cluster, resourceData, meta); err != nil {
+		if err := updateAWSCluster(cluster, resourceData, meta, changesRequiredRoll, tagsChanged); err != nil {
 			return err
 		}
 	}
@@ -169,12 +171,14 @@ func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta in
 	return resourceSpotinstClusterAWSRead(resourceData, meta)
 }
 
-func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
+func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool, tagsChanged bool) error {
 	var input = &aws.UpdateClusterInput{
 		Cluster: cluster,
 	}
 
 	var shouldRoll = false
+	var conditionedRoll = false
+	var autoApplyTags = false
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -183,6 +187,14 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 
 			if roll, ok := m[string(ocean_aws.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
+			}
+
+			if condRoll, ok := m[string(ocean_aws.ConditionedRoll)].(bool); ok && condRoll {
+				conditionedRoll = condRoll
+			}
+
+			if aat, ok := m[string(ocean_aws.AutoApplyTags)].(bool); ok && aat {
+				autoApplyTags = aat
 			}
 		}
 	}
@@ -196,9 +208,11 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterID, err)
 	} else if shouldRoll {
-		if err := rollOceanAWSCluster(resourceData, meta); err != nil {
-			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
-			return err
+		if !conditionedRoll || changesRequiredRoll || (!autoApplyTags && tagsChanged) {
+			if err := rollOceanAWSCluster(resourceData, meta); err != nil {
+				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
+				return err
+			}
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws.ShouldRoll))

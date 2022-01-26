@@ -3,6 +3,7 @@ package commons
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
@@ -80,28 +81,38 @@ func (res *OceanAWSTerraformResource) OnRead(
 
 func (res *OceanAWSTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *aws.Cluster, error) {
+	meta interface{}) (bool, bool, bool, *aws.Cluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
+		return false, false, false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
 	clusterWrapper := NewClusterWrapper()
 	hasChanged := false
+	changesRequiredRoll := false
+	tagsChanged := false
+
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
 		}
 		if field.hasFieldChange(resourceData, meta) {
+			if contains(conditionedRollFieldsAWS, field.fieldNameStr) {
+				changesRequiredRoll = true
+			}
+
+			if strings.Compare(field.fieldNameStr, "tags") == 0 {
+				tagsChanged = true
+			}
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
 			if err := field.onUpdate(clusterWrapper, resourceData, meta); err != nil {
-				return false, nil, err
+				return false, false, false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, clusterWrapper.GetCluster(), nil
+	return hasChanged, changesRequiredRoll, tagsChanged, clusterWrapper.GetCluster(), nil
 }
 
 func NewClusterWrapper() *AWSClusterWrapper {

@@ -14,6 +14,8 @@ const (
 	SubnetIDs           commons.FieldName = "subnet_ids"
 	UpdatePolicy        commons.FieldName = "update_policy"
 	ShouldRoll          commons.FieldName = "should_roll"
+	ConditionedRoll     commons.FieldName = "conditioned_roll"
+	AutoApplyTags       commons.FieldName = "auto_apply_tags"
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
 	Tags                commons.FieldName = "tags"

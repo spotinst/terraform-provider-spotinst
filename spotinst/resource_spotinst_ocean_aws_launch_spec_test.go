@@ -182,7 +182,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.2071895472.value", "taint value"),
 					resource.TestCheckResourceAttr(resourceName, "taints.2071895472.effect", "NoSchedule"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-051ada52cd4f9a2d9"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0faad0b6bb7e99d9f"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
@@ -219,7 +219,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.2421364056.value", "taint value updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.2421364056.effect", "NoExecute"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-051ada52cd4f9a2d9"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-05926315187557f30"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0faad0b6bb7e99d9f"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
@@ -239,7 +239,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   security_groups = ["sg-0041bd3fd6aa2ee3c"]
   user_data = "hello world"
   iam_instance_profile = "test"
-  subnet_ids = ["subnet-051ada52cd4f9a2d9"]
+  subnet_ids = ["subnet-0faad0b6bb7e99d9f"]
   instance_types = ["m3.xlarge", "m4.2xlarge", "m5.2xlarge"]
   preferred_spot_types = ["m3.xlarge"]
   root_volume_size = 20 
@@ -269,7 +269,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-79826301"
   user_data = "hello world updated"
   iam_instance_profile = "updated"
-  subnet_ids = ["subnet-051ada52cd4f9a2d9", "subnet-0faad0b6bb7e99d9f"]
+  subnet_ids = ["subnet-05926315187557f30", "subnet-0faad0b6bb7e99d9f"]
   instance_types = ["m3.2xlarge", "m4.xlarge", "m4.2xlarge", "m5.xlarge", "m5.2xlarge"]
   preferred_spot_types = ["m3.2xlarge","m4.xlarge"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]

@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -149,6 +150,8 @@ func resourceSpotinstElastigroupAWSRead(resourceData *schema.ResourceData, meta 
 		resourceData.SetId("")
 		return nil
 	}
+
+	updateCapitalSlice(resourceData, groupResponse)
 
 	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
 		return err
@@ -746,4 +749,35 @@ func getRollStatus(rollOut *aws.RollGroupOutput) *string {
 		}
 	}
 	return nil
+}
+
+func isUpper(s string) bool {
+	for _, r := range s {
+		if !unicode.IsUpper(r) && unicode.IsLetter(r) {
+			return false
+		}
+	}
+	return true
+}
+
+func updateCapitalSlice(resourceData *schema.ResourceData, groupResponse *aws.Group) {
+	if groupResponse.Compute != nil && groupResponse.Compute.LaunchSpecification != nil && groupResponse.Compute.LaunchSpecification.BlockDeviceMappings != nil {
+		blockDeviceMappingsAPIResponse := groupResponse.Compute.LaunchSpecification.BlockDeviceMappings
+		ebsBlockDevicesResourceData := resourceData.Get(string(elastigroup_aws_block_devices.EbsBlockDevice))
+		ebsBlockDevicesInput := ebsBlockDevicesResourceData.(*schema.Set).List()
+
+		for index, blockDeviceInput := range ebsBlockDevicesInput {
+			blockDevice := blockDeviceInput.(map[string]interface{})
+
+			if volumeTypeInput, ok := blockDevice[string(elastigroup_aws_block_devices.VolumeType)].(string); ok && volumeTypeInput != "" {
+				if isUpper(volumeTypeInput) == false {
+					volumeTypeAPIResponse := blockDeviceMappingsAPIResponse[index].EBS.VolumeType
+					if volumeTypeAPIResponse != nil {
+						*volumeTypeAPIResponse = strings.ToLower(*volumeTypeAPIResponse)
+						blockDeviceMappingsAPIResponse[index].EBS.SetVolumeType(volumeTypeAPIResponse)
+					}
+				}
+			}
+		}
+	}
 }

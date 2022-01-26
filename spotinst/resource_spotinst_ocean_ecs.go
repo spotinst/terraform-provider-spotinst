@@ -156,14 +156,14 @@ func resourceSpotinstClusterECSUpdate(resourceData *schema.ResourceData, meta in
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
 
-	shouldUpdate, cluster, err := commons.OceanECSResource.OnUpdate(resourceData, meta)
+	shouldUpdate, changesRequiredRoll, tagsChanged, cluster, err := commons.OceanECSResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
-		if err := updateECSCluster(cluster, resourceData, meta); err != nil {
+		if err := updateECSCluster(cluster, resourceData, meta, changesRequiredRoll, tagsChanged); err != nil {
 			return err
 		}
 	}
@@ -171,12 +171,14 @@ func resourceSpotinstClusterECSUpdate(resourceData *schema.ResourceData, meta in
 	return resourceSpotinstClusterECSRead(resourceData, meta)
 }
 
-func updateECSCluster(cluster *aws.ECSCluster, resourceData *schema.ResourceData, meta interface{}) error {
+func updateECSCluster(cluster *aws.ECSCluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool, tagsChanged bool) error {
 	var input = &aws.UpdateECSClusterInput{
 		Cluster: cluster,
 	}
 
 	var shouldRoll = false
+	var conditionedRoll = false
+	var autoApplyTags = false
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_ecs.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -185,6 +187,14 @@ func updateECSCluster(cluster *aws.ECSCluster, resourceData *schema.ResourceData
 
 			if roll, ok := m[string(ocean_ecs.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
+			}
+
+			if condRoll, ok := m[string(ocean_ecs.ConditionedRoll)].(bool); ok && condRoll {
+				conditionedRoll = condRoll
+			}
+
+			if aat, ok := m[string(ocean_ecs.AutoApplyTags)].(bool); ok && aat {
+				autoApplyTags = aat
 			}
 		}
 	}
@@ -198,9 +208,11 @@ func updateECSCluster(cluster *aws.ECSCluster, resourceData *schema.ResourceData
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateECSCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterID, err)
 	} else if shouldRoll {
-		if err := rollECSCluster(resourceData, meta); err != nil {
-			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
-			return err
+		if !conditionedRoll || changesRequiredRoll || (!autoApplyTags && tagsChanged) {
+			if err := rollECSCluster(resourceData, meta); err != nil {
+				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
+				return err
+			}
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws.ShouldRoll))

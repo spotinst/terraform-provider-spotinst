@@ -122,6 +122,7 @@ The following arguments are supported:
     * `is_auto_config` - (Optional, Default: `true`) Automatically configure and optimize headroom resources.
     * `auto_headroom_percentage` - Optionally set the auto headroom percentage, set a number between 0-200 to control the headroom % from the cluster. Relevant when isAutoConfig=true.
     * `cooldown` - (Optional, Default: `null`) Cooldown period between scaling actions.
+    * `enable_automatic_and_manual_headroom` - (Optional, Default: `false`) enables automatic and manual headroom to work in parallel. When set to false, automatic headroom overrides all other headroom definitions manually configured, whether they are at cluster or VNG level.
     * `headroom` - (Optional) Spare resource capacity management enabling fast assignment of Pods without waiting for new resources to launch.
         * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
         * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate the headroom.
@@ -140,6 +141,7 @@ The following arguments are supported:
     is_auto_config           = false
     cooldown                 = 30
     auto_headroom_percentage = 10
+    enable_automatic_and_manual_headroom = false
 
     headroom {
       cpu_per_unit    = 0
@@ -165,6 +167,8 @@ The following arguments are supported:
 
 * `update_policy` - (Optional)
     * `should_roll` - (Required) Enables the roll.
+    * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
+
     * `roll_config` - (Required) Holds the roll configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `launch_spec_ids` - (Optional) List of Virtual Node Group identifiers to be rolled.
@@ -172,6 +176,7 @@ The following arguments are supported:
 ```hcl
 update_policy {
   should_roll = false
+  conditioned_roll = true
 
   roll_config {
     batch_size_percentage = 33

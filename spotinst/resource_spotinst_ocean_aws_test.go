@@ -242,7 +242,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   min_size         = 0
   desired_capacity = 1
 
-  subnet_ids      = ["subnet-051ada52cd4f9a2d9"]
+  subnet_ids      = ["subnet-05926315187557f30"]
 
  %v
  %v
@@ -772,6 +772,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "true"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "true"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
@@ -800,6 +801,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "4"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "150"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "30"),
@@ -826,6 +828,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
@@ -841,6 +844,7 @@ const testScalingConfig_Create = `
  autoscaler {
     autoscale_is_enabled     = true
     autoscale_is_auto_config = true
+	enable_automatic_and_manual_headroom = true
 	auto_headroom_percentage = 100
     autoscale_cooldown       = 300
 
@@ -870,6 +874,7 @@ const testScalingConfig_Update = `
  autoscaler {
     autoscale_is_enabled     = false
     autoscale_is_auto_config = false
+	enable_automatic_and_manual_headroom = false
 	auto_headroom_percentage = 150
     autoscale_cooldown       = 600
 
@@ -899,6 +904,7 @@ const testScalingConfig_EmptyFields = `
  autoscaler {
     autoscale_is_enabled = false
     autoscale_is_auto_config = false
+	enable_automatic_and_manual_headroom = false
 	auto_headroom_percentage = 100
     autoscale_cooldown = 300
 
@@ -948,6 +954,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
 				),
@@ -964,6 +971,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
 				),
@@ -991,6 +999,7 @@ const testUpdatePolicyAWSClusterConfig_Create = `
  // --- UPDATE POLICY ----------------
   update_policy {
     should_roll = false
+	conditioned_roll = true
 
     roll_config {
       batch_size_percentage = 33
@@ -1005,6 +1014,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
  // --- UPDATE POLICY ----------------
   update_policy {
     should_roll = true
+	conditioned_roll = false
 
     roll_config {
       batch_size_percentage = 66
@@ -1017,6 +1027,68 @@ const testUpdatePolicyAWSClusterConfig_EmptyFields = `
  spot_percentage = 0
  // --- UPDATE POLICY ----------------
  // ----------------------------------
+`
+
+// endregion
+
+//region OceanAWS: Baseline
+func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
+	clusterName := "test-acc-cluster-logging"
+	controllerClusterID := "logging-controller-id"
+	resourceName := createOceanAWSResourceName(clusterName)
+
+	var cluster aws.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testLoggingAWSConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-ef64b261"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					fieldsToAppend:      testLoggingAWSConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testLoggingAWSConfig_Create = `
+ // --- LOGGING -----------------
+  logging {
+    export {
+      s3 { 
+		id = "di-ef64b261"
+      }
+    }
+  }
+`
+
+const testLoggingAWSConfig_EmptyFields = `
+
 `
 
 // endregion

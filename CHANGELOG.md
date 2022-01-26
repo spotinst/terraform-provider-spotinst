@@ -1,7 +1,41 @@
 ## Unreleased
 
+## 1.65.0 (January 10, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added support for `auto_apply_tags`
+* resource/spotinst_ocean_ecs: added support for `auto_apply_tags`
+* resource/spotinst_ocean_aws: added support for `enable_automatic_and_manual_headroom`
+* resource/spotinst_ocean_gke_import: added support for `enable_automatic_and_manual_headroom`
+
+## 1.64.2 (January 05, 2022)
+
+NOTES:
+* documentation: resource/spotinst_ocean_aws: Add usage example for `utilize_commitments`
+* documentation: resource/spotinst_ocean_ecs: Add usage example for `utilize_commitments`
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `ebs_block_device`
+
+## 1.64.1 (December 14, 2021)
+
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `ebs_block_device`
+
+## 1.64.0 (December 09, 2021)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added support for `logging`
+* resource/spotinst_ocean_gke_import: added support for `conditioned_roll`
+* resource/spotinst_ocean_aws: added support for `conditioned_roll`
+* resource/spotinst_ocean_ecs: added support for `conditioned_roll`
+
+BUG FIXES:
+* resource/spotinst_managed_instance_aws: resolved errors with `persist_block_devices`
+
 ## 1.63.0 (November 29, 2021)
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added support for `scheduling`
 * resource/spotinst_ocean_aws_launch_spec: added support for `scheduling`
 * resource/spotinst_ocean_ecs_launch_spec: added support for `scheduling`

@@ -177,14 +177,14 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanGKEImportResource.GetName(), id)
 
-	shouldUpdate, cluster, err := commons.OceanGKEImportResource.OnUpdate(resourceData, meta)
+	shouldUpdate, changesRequiredRoll, cluster, err := commons.OceanGKEImportResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
-		if err := updateGKEImportCluster(cluster, resourceData, meta); err != nil {
+		if err := updateGKEImportCluster(cluster, resourceData, meta, changesRequiredRoll); err != nil {
 			return err
 		}
 	}
@@ -192,12 +192,13 @@ func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, m
 	return resourceSpotinstClusterGKEImportRead(resourceData, meta)
 }
 
-func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
+func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool) error {
 	var input = &gcp.UpdateClusterInput{
 		Cluster: cluster,
 	}
 
 	var shouldRoll = false
+	var conditionedRoll = false
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -206,6 +207,10 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 
 			if roll, ok := m[string(ocean_gke_import.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
+			}
+
+			if condRoll, ok := m[string(ocean_gke_import.ConditionedRoll)].(bool); ok && condRoll {
+				conditionedRoll = condRoll
 			}
 		}
 	}
@@ -219,9 +224,11 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 	if _, err := meta.(*Client).ocean.CloudProviderGCP().UpdateCluster(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update GKE cluster [%v]: %v", clusterID, err)
 	} else if shouldRoll {
-		if err := rollOceanGKECluster(resourceData, meta); err != nil {
-			log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
-			return err
+		if !conditionedRoll || changesRequiredRoll {
+			if err := rollOceanGKECluster(resourceData, meta); err != nil {
+				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
+				return err
+			}
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_gke_import.ShouldRoll))
