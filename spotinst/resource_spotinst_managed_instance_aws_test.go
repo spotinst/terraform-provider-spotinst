@@ -181,10 +181,10 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_type", "t3.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0faad0b6bb7e99d9f"),
-					//resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-051ada52cd4f9a2d9"),
-					//resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-09b7d9127de5d49d8"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-0b40f863ba34956ba"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-9dee6bfa"),
 				),
 			},
@@ -207,9 +207,9 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_type", "t3.medium"),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-051ada52cd4f9a2d9"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0faad0b6bb7e99d9f"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0faad0b6bb7e99d9f"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-0821b8599e5ea9d3c"),
 				),
 			},
@@ -228,7 +228,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "true"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-0faad0b6bb7e99d9f"]
+  subnet_ids = ["subnet-0faad0b6bb7e99d9f", "subnet-0bd585d2c2177c7ee", "subnet-0b40f863ba34956ba"]
   instance_types = ["t3.xlarge"]
   preferred_type = "t3.xlarge"
   image_id = "ami-082b5a644766e0e6f"
@@ -248,7 +248,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "false"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-0faad0b6bb7e99d9f"]  
+  subnet_ids = ["subnet-0bd585d2c2177c7ee","subnet-0faad0b6bb7e99d9f"]  
   instance_types = [
     "t3.xlarge",
     "t3.medium",]
