@@ -56,6 +56,7 @@ const (
 	AssociatePublicIPAddress commons.FieldName = "associate_public_ip_address"
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
 	SchedulingTask           commons.FieldName = "scheduling_task"
+
 )
 
 const (
