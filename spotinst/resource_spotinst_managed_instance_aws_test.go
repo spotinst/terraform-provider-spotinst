@@ -182,9 +182,9 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-f6758eab"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-d47f6a9f"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0faad0b6bb7e99d9f"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-0b40f863ba34956ba"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-9dee6bfa"),
 				),
 			},
@@ -208,8 +208,8 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-d47f6a9f"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-bce60ec4"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0faad0b6bb7e99d9f"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-0821b8599e5ea9d3c"),
 				),
 			},
@@ -228,7 +228,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "true"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-bce60ec4", "subnet-f6758eab", "subnet-d47f6a9f"]
+  subnet_ids = ["subnet-0faad0b6bb7e99d9f", "subnet-0bd585d2c2177c7ee", "subnet-0b40f863ba34956ba"]
   instance_types = ["t3.xlarge"]
   preferred_type = "t3.xlarge"
   image_id = "ami-082b5a644766e0e6f"
@@ -248,7 +248,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "false"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-d47f6a9f","subnet-bce60ec4"]  
+  subnet_ids = ["subnet-0bd585d2c2177c7ee","subnet-0faad0b6bb7e99d9f"]  
   instance_types = [
     "t3.xlarge",
     "t3.medium",]
@@ -433,8 +433,7 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "placement_tenancy", "default"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "EC2Access"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a2bce9fa"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.1", "sg-0d641dcbed883357e"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "elastic_ip", "eipalloc-987654"),
 					//resource.TestCheckResourceAttr(resourceName, "private_ip", "172.31.100.159"),
 					resource.TestCheckResourceAttr(resourceName, "key_pair", "core-services-keypair"),
@@ -475,7 +474,7 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "placement_tenancy", "dedicated"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "BaseIAMRole"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a2bce9fa"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "elastic_ip", "eipalloc-123456"),
 					//resource.TestCheckResourceAttr(resourceName, "private_ip", "2.2.2.2"),
 					resource.TestCheckResourceAttr(resourceName, "key_pair", "core-services-keypair"),
@@ -512,7 +511,7 @@ ebs_optimized = "false"
 enable_monitoring = "false"
 placement_tenancy = "default"
 iam_instance_profile = "EC2Access"
-security_group_ids = ["sg-a2bce9fa","sg-0d641dcbed883357e"]
+security_group_ids = ["sg-065c82e9ff8b192a1"]
 key_pair = "core-services-keypair"
 
   tags {
@@ -560,7 +559,7 @@ ebs_optimized = "true"
 enable_monitoring = "true"
 placement_tenancy = "dedicated"
 iam_instance_profile = "BaseIAMRole"
-security_group_ids = ["sg-a2bce9fa"]
+security_group_ids = ["sg-065c82e9ff8b192a1"]
 key_pair = "core-services-keypair" 
 
   tags {
