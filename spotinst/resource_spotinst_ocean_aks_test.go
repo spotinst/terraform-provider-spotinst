@@ -227,9 +227,9 @@ func createOceanAKSTerraform(clusterMeta *OceanAKSMetadata) string {
 
 // region Ocean AKS : Baseline
 func TestAccSpotinstOceanAKS_Baseline(t *testing.T) {
-	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	clusterName := "terraform-Kubernetes-cluster"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -249,10 +249,10 @@ func TestAccSpotinstOceanAKS_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSExists(&cluster, resourceName),
 					testCheckOceanAKSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "acd_identifier", "acd-063130d5"),
-					resource.TestCheckResourceAttr(resourceName, "name", "terraform-tests-do-not-delete"),
-					resource.TestCheckResourceAttr(resourceName, "controller_cluster_id", "terraform-cluster-do-not-delete"),
-					resource.TestCheckResourceAttr(resourceName, "aks_name", "terraform-cluster-DO-NOT-DELETE"),
+					resource.TestCheckResourceAttr(resourceName, "acd_identifier", "acd-aa5c6795"),
+					resource.TestCheckResourceAttr(resourceName, "name", "terraform-Kubernetes-cluster"),
+					resource.TestCheckResourceAttr(resourceName, "controller_cluster_id", "terraform-Kubernetes-cluster"),
+					resource.TestCheckResourceAttr(resourceName, "aks_name", "terraform-Kubernetes-cluster"),
 					resource.TestCheckResourceAttr(resourceName, "aks_resource_group_name", "terraform-resource-group-DO-NOT-DELETE"),
 				),
 			},
@@ -280,7 +280,7 @@ resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
   controller_cluster_id = "%v"
 
   // --- AKS -----------------------------------------------------------
-  aks_name                = "terraform-cluster-DO-NOT-DELETE"
+  aks_name                = "terraform-Kubernetes-cluster"
   aks_resource_group_name = "terraform-resource-group-DO-NOT-DELETE"
   // -------------------------------------------------------------------
 
@@ -306,7 +306,7 @@ resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
   acd_identifier        = "%v"
   controller_cluster_id = "%v"
   // --- AKS -----------------------------------------------------------
-  aks_name                = "terraform-cluster-DO-NOT-DELETE"
+  aks_name                = "terraform-Kubernetes-cluster"
   aks_resource_group_name = "terraform-resource-group-DO-NOT-DELETE"
   // -------------------------------------------------------------------
 
@@ -329,8 +329,8 @@ resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
 // region Ocean AKS : Login
 func TestAccSpotinstOceanAKS_Login(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -374,14 +374,14 @@ func TestAccSpotinstOceanAKS_Login(t *testing.T) {
 
 const testLoginOceanAKSConfig_Create = `
   // --- LOGIN ---------------------------------------------------------
-  ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC12oOXx5S2KBVAbyCk05vC7Z8Bj+7nHL+6t2uiwQ5n0adnZdGYZSDDLJa3OuYpUcl4MfRkmu+MLE48SNJlurBI2LWNOUJK5xXMCi4uuAVd6cEv4KhtI8Llw+lHVK67F+mxfIGD+J4k+jeBGCA0VEZSPLc98iWPWJ/lWi4Xq/STEEVmE0cSJ9KVShREVeLKrNIFifenDTkMH2CJ1O4wB8szsRsfI6cDOO8hJq3QQ7tW0388E7dQybsqSbTYLqIKsIwrawuyBZLK5W2r5NGGa7nqJ2eNy9qa9J4YWPOEu6e4sk1xY7YKrXIXHhFpkI0hbeVg1r9zAuyIetdyuiSYaShbU94K5cwStgvafGR5isFXmQlrZ/qbm51K03vt15hE2HsPbrIo8IKxxgspwmRhEQlbwgJGSASb3XKRmX4v140cpH4Hk5mZNbZ0j7uYG4CxvIAIM7CfXTDboPf9fvcY4cx1cqJjYrQCovwfXxhxdAvzHuA4PkoGbiKkRV/xIZ8S+2E= generated-by-azure"
+  ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDrN+SKCc648JwaroAemjmTxUqKgDtmYZ8UE7lhTdPaHG/Yybaghci1KYCnVuGHkyN4sAqWpjxBwCVFWWN+rUEIwitJgXBj9Q4D5LPWr6kopbpvU/HFG0pF8OkcJzvKG5Xo2kmJXG0f8dwe8e4P0S5rRgIiESLC66CJCDtvhDNIKCzvmsuvp88fCzjhia8AZnVWszJXgyn8bXt6c5f29BMDTq8VXX1RcdMS2ZWOqpjlvKxI/bsnqVy20G3W0veMNJiNjUKY9f2mqTAQoaQnCy8LOZMa/tCGOtwKZ2Yr28V8vDWXDF4EDpmjcVbStX/n40Ag6ZFxcaz+2byLp8HXV1PIfry+F3x6+sHSDV3CQvgju/W5+U0sBRIlYhSlbzQQV2qLvt2sXqyWgvfBu5GQ/xb6DH0oskp2QS8SCrry9kLb8IReT0f5INFKGEcTCgT/SEvGFeUHt2wZ4HsVSwsTHp1Z/T0AmDtCEGdZuxx0llEPFFSRKfnckdK1pRHrn6GRI4U= generated-by-azure"
   user_name      = "terraform-user"
   // -------------------------------------------------------------------
 `
 
 const testLoginOceanAKSConfig_Update = `
   // --- LOGIN ---------------------------------------------------------
-  ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC12oOXx5S2KBVAbyCk05vC7Z8Bj+7nHL+6t2uiwQ5n0adnZdGYZSDDLJa3OuYpUcl4MfRkmu+MLE48SNJlurBI2LWNOUJK5xXMCi4uuAVd6cEv4KhtI8Llw+lHVK67F+mxfIGD+J4k+jeBGCA0VEZSPLc98iWPWJ/lWi4Xq/STEEVmE0cSJ9KVShREVeLKrNIFifenDTkMH2CJ1O4wB8szsRsfI6cDOO8hJq3QQ7tW0388E7dQybsqSbTYLqIKsIwrawuyBZLK5W2r5NGGa7nqJ2eNy9qa9J4YWPOEu6e4sk1xY7YKrXIXHhFpkI0hbeVg1r9zAuyIetdyuiSYaShbU94K5cwStgvafGR5isFXmQlrZ/qbm51K03vt15hE2HsPbrIo8IKxxgspwmRhEQlbwgJGSASb3XKRmX4v140cpH4Hk5mZNbZ0j7uYG4CxvIAIM7CfXTDboPf9fvcY4cx1cqJjYrQCovwfXxhxdAvzHuA4PkoGbiKkRV/xIZ8S+2E= generated-by-azure"
+  ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDrN+SKCc648JwaroAemjmTxUqKgDtmYZ8UE7lhTdPaHG/Yybaghci1KYCnVuGHkyN4sAqWpjxBwCVFWWN+rUEIwitJgXBj9Q4D5LPWr6kopbpvU/HFG0pF8OkcJzvKG5Xo2kmJXG0f8dwe8e4P0S5rRgIiESLC66CJCDtvhDNIKCzvmsuvp88fCzjhia8AZnVWszJXgyn8bXt6c5f29BMDTq8VXX1RcdMS2ZWOqpjlvKxI/bsnqVy20G3W0veMNJiNjUKY9f2mqTAQoaQnCy8LOZMa/tCGOtwKZ2Yr28V8vDWXDF4EDpmjcVbStX/n40Ag6ZFxcaz+2byLp8HXV1PIfry+F3x6+sHSDV3CQvgju/W5+U0sBRIlYhSlbzQQV2qLvt2sXqyWgvfBu5GQ/xb6DH0oskp2QS8SCrry9kLb8IReT0f5INFKGEcTCgT/SEvGFeUHt2wZ4HsVSwsTHp1Z/T0AmDtCEGdZuxx0llEPFFSRKfnckdK1pRHrn6GRI4U= generated-by-azure"
 	user_name      = "new-terraform-user"
   // -------------------------------------------------------------------
 `
@@ -391,8 +391,8 @@ const testLoginOceanAKSConfig_Update = `
 // region Ocean AKS : Launch Specification
 func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -412,7 +412,7 @@ func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSExists(&cluster, resourceName),
 					testCheckOceanAKSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
 					resource.TestCheckResourceAttr(resourceName, "tag.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.key", "tag-key"),
 					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.value", "tag-value")),
@@ -428,7 +428,7 @@ func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSExists(&cluster, resourceName),
 					testCheckOceanAKSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
 					resource.TestCheckResourceAttr(resourceName, "tag.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "tag.3439192902.key", "first-tag-key"),
 					resource.TestCheckResourceAttr(resourceName, "tag.3439192902.value", "first-tag-value"),
@@ -442,7 +442,7 @@ func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 
 const testLaunchSpecificationOceanAKSConfig_Create = `
   // --- Launch Specification ------------------------------------------------
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
     
 	tag {
       key = "tag-key"
@@ -450,15 +450,15 @@ const testLaunchSpecificationOceanAKSConfig_Create = `
     }
 
 	managed_service_identity {
-			name =  "terraform-cluster-DO-NOT-DELETE-agentpool"
-            resource_group_name =  "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
-	}
+		resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
+    	name                = "terraform-Kubernetes-cluster-agentpool"
+  	}
   // -------------------------------------------------------------------
 `
 
 const testLaunchSpecificationOceanAKSConfig_Update = `
   // --- Launch Specification ------------------------------------------------
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
     
 	tag {
       key = "first-tag-key"
@@ -477,8 +477,8 @@ const testLaunchSpecificationOceanAKSConfig_Update = `
 // region Ocean AKS : AutoScaler
 func TestAccSpotinstOceanAKS_AutoScaler(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -587,8 +587,8 @@ const testAutoScalerOceanAKSConfig_Update = `
 // region Ocean AKS : Strategy
 func TestAccSpotinstOceanAKS_Strategy(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -655,8 +655,8 @@ const testStrategyOceanAKSConfig_Update = `
 // region Ocean AKS : Health
 func TestAccSpotinstOceanAKS_Health(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -719,8 +719,8 @@ const testHealthOceanAKSConfig_Update = `
 // region Ocean AKS : VMSizes
 func TestAccSpotinstOceanAKS_VMSizes(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -789,8 +789,8 @@ const testVMSizesOceanAKSConfig_Update = `
 // region Ocean AKS : OSDisk
 func TestAccSpotinstOceanAKS_OSDisk(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -833,8 +833,8 @@ const testOSDiskOceanAKSConfig_Create = `
 // region Ocean AKS : Image
 func TestAccSpotinstOceanAKS_Image(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -915,8 +915,8 @@ const testImageOceanAKSConfig_Update = `
 // region Ocean AKS : Load Balancers
 func TestAccSpotinstOceanAKS_LoadBalancers(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -937,12 +937,12 @@ func TestAccSpotinstOceanAKS_LoadBalancers(t *testing.T) {
 					testCheckOceanAKSExists(&cluster, resourceName),
 					testCheckOceanAKSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.3176029521.backend_pool_names.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.3176029521.backend_pool_names.0", "terraform-backendpool-DO-NOT-DELETE"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.3176029521.load_balancer_sku", "Standard"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.3176029521.name", "terraform-lb-DO-NOT-DELETE"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.3176029521.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.3176029521.type", "loadBalancer"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3873064675.backend_pool_names.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3873064675.backend_pool_names.0", "kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3873064675.load_balancer_sku", "Standard"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3873064675.name", "kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3873064675.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3873064675.type", "loadBalancer"),
 				),
 			},
 			{
@@ -956,11 +956,11 @@ func TestAccSpotinstOceanAKS_LoadBalancers(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.1813042955.backend_pool_names.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.1813042955.backend_pool_names.0", "aksOutboundBackendPool"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.1813042955.backend_pool_names.1", "kubernetes"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.1813042955.load_balancer_sku", "Standard"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.1813042955.name", "kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3983454777.backend_pool_names.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3983454777.backend_pool_names.0", "aksOutboundBackendPool"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3983454777.backend_pool_names.1", "kubernetes"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3983454777.load_balancer_sku", "Standard"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.3983454777.name", "kubernetes"),
 				),
 			},
 		},
@@ -971,11 +971,11 @@ const testLoadBalancersOceanAKSConfig_Create = `
   // --- Load Balancers --------------------------------------------------
   load_balancer {
     backend_pool_names = [
-      "terraform-backendpool-DO-NOT-DELETE"
+      "kubernetes"
     ]
     load_balancer_sku = "Standard"
-    name = "terraform-lb-DO-NOT-DELETE"
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+    name = "kubernetes"
+    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
     type = "loadBalancer"
   }
  // -------------------------------------------------------------------
@@ -990,7 +990,7 @@ const testLoadBalancersOceanAKSConfig_Update = `
     ]
     load_balancer_sku = "Standard"
     name = "kubernetes"
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
     type = "loadBalancer"
   }
  // -------------------------------------------------------------------
@@ -1001,8 +1001,8 @@ const testLoadBalancersOceanAKSConfig_Update = `
 // region Ocean AKS : Network
 func TestAccSpotinstOceanAKS_Network(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster
@@ -1024,17 +1024,17 @@ func TestAccSpotinstOceanAKS_Network(t *testing.T) {
 					testCheckOceanAKSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.additional_ip_config.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.additional_ip_config.2166071298.name", "ip-config-name"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.additional_ip_config.2166071298.private_ip_version", "IPv4"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.assign_public_ip", "false"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.is_primary", "false"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.security_group.0.name", "terraform-security-group-DO-NOT-DELETE"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.security_group.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3273668159.subnet_name", "terraform-subnet-DO-NOT-DELETE"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "aks-vnet-26010635"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_config.2166071298.name", "ip-config-name"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_config.2166071298.private_ip_version", "IPv4"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.assign_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.is_primary", "false"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.security_group.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.security_group.0.name", "aks-agentpool-48068046-nsg"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.security_group.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.subnet_name", "terraform-subnet-DO-NOT-DELETE"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "aks-vnet-48068046"),
 				),
 			},
 			{
@@ -1049,17 +1049,17 @@ func TestAccSpotinstOceanAKS_Network(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.additional_ip_config.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.additional_ip_config.2534749384.name", "new-ip-config-name"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.additional_ip_config.2534749384.private_ip_version", "IPv6"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.assign_public_ip", "false"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.is_primary", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.security_group.0.name", "aks-agentpool-26010635-nsg"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.security_group.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.2770274280.subnet_name", "aks-subnet"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "aks-vnet-26010635"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.additional_ip_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.additional_ip_config.2534749384.name", "new-ip-config-name"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.additional_ip_config.2534749384.private_ip_version", "IPv6"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.assign_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.is_primary", "true"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.security_group.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.security_group.0.name", "aks-agentpool-48068046-nsg"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.security_group.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.3175568825.subnet_name", "aks-subnet"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "aks-vnet-48068046"),
 				),
 			},
 		},
@@ -1069,8 +1069,8 @@ func TestAccSpotinstOceanAKS_Network(t *testing.T) {
 const testNetworkOceanAKSConfig_Create = `
   //  // --- NETWORK -------------------------------------------------------
   network {
-    virtual_network_name = "aks-vnet-26010635"
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+    virtual_network_name = "aks-vnet-48068046"
+    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
 
     network_interface {
       subnet_name = "terraform-subnet-DO-NOT-DELETE"
@@ -1083,8 +1083,8 @@ const testNetworkOceanAKSConfig_Create = `
       }
 
       security_group{
-        name = "terraform-security-group-DO-NOT-DELETE"
-        resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+        name = "aks-agentpool-48068046-nsg"
+        resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
       }
     }
   }
@@ -1094,8 +1094,8 @@ const testNetworkOceanAKSConfig_Create = `
 const testNetworkOceanAKSConfig_Update = `
   //  // --- NETWORK -------------------------------------------------------
   network {
-    virtual_network_name = "aks-vnet-26010635"
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+    virtual_network_name = "aks-vnet-48068046"
+    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
 
     network_interface {
       subnet_name = "aks-subnet"
@@ -1108,8 +1108,8 @@ const testNetworkOceanAKSConfig_Update = `
       }
 
       security_group{
-        name = "aks-agentpool-26010635-nsg"
-        resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-cluster-DO-NOT-DELETE_eastus"
+        name = "aks-agentpool-48068046-nsg"
+        resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
       }
     }
   }
@@ -1121,8 +1121,8 @@ const testNetworkOceanAKSConfig_Update = `
 // region Ocean AKS : Extensions
 func TestAccSpotinstOceanAKS_Extensions(t *testing.T) {
 	clusterName := "terraform-tests-do-not-delete"
-	acdIdentifier := "acd-063130d5"
-	controllerClusterID := "terraform-cluster-do-not-delete"
+	acdIdentifier := "acd-aa5c6795"
+	controllerClusterID := "terraform-Kubernetes-cluster"
 	resourceName := createOceanAKSResourceName(clusterName)
 
 	var cluster azure.Cluster

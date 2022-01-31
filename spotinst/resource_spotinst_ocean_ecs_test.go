@@ -183,7 +183,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-bce60ec4"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
@@ -198,8 +198,8 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-f6758eab"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-d47f6a9f"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0faad0b6bb7e99d9f"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-987654"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
@@ -221,7 +221,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-bce60ec4"]
+  subnet_ids         = ["subnet-0bd585d2c2177c7ee"]
   security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
   utilize_reserved_instances = false
 
@@ -245,7 +245,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids = ["subnet-f6758eab", "subnet-d47f6a9f"]
+  subnet_ids = ["subnet-0bd585d2c2177c7ee", "subnet-0faad0b6bb7e99d9f"]
   security_group_ids = ["sg-987654"]
   utilize_reserved_instances = true
 
