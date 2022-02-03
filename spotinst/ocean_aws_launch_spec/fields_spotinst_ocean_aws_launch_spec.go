@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"log"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
@@ -1386,7 +1385,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(TimeWindows): {
 						Type:     schema.TypeList,
 						Elem:     &schema.Schema{Type: schema.TypeString},
-						Optional: true,
+						Required: true,
 					},
 				},
 			},
@@ -1399,15 +1398,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if launchSpec != nil && launchSpec.LaunchSpecScheduling != nil &&
 				launchSpec.LaunchSpecScheduling.ShutdownHours != nil {
 				result = flattenShutdownHours(launchSpec.LaunchSpecScheduling.ShutdownHours)
-				log.Printf("in 22")
 			}
 
 			if len(result) > 0 {
-				log.Printf("in 23")
 				if err := resourceData.Set(string(SchedulingShutdownHours), result); err != nil {
 					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingShutdownHours), err)
 				}
-				log.Printf("in 24")
 			}
 			return nil
 		},
@@ -2086,64 +2082,37 @@ func flattenShutdownHours(shutdownHours *aws.LaunchSpecShutdownHours) []interfac
 	result := make(map[string]interface{})
 
 	if shutdownHours != nil {
-		log.Printf("in 13")
 
 		result[string(IsEnabled)] = spotinst.BoolValue(shutdownHours.IsEnabled)
-		log.Printf("in 14")
 
 		if shutdownHours.TimeWindows != nil {
-			log.Printf("in 15")
-			result[string(TimeWindows)] = flattenTimeWindows(shutdownHours.TimeWindows)
-			log.Printf("in 21")
+			result[string(TimeWindows)] = shutdownHours.TimeWindows
 		}
 	}
 
-	return []interface{}{result}
-}
-
-func flattenTimeWindows(timeWindows []string) []interface{} {
-	log.Printf("in 16")
-	result := make(map[string]interface{})
-	log.Printf("in 17")
-	if len(timeWindows) > 0 {
-		log.Printf("in 18")
-		result[string(TimeWindows)] = timeWindows
-		log.Printf("in 19")
-	}
-
-	log.Printf("in 20")
 	return []interface{}{result}
 }
 
 func expandShutdownHours(data interface{}) (*aws.LaunchSpecShutdownHours, error) {
-	log.Printf("in 1")
 	shutdownHours := &aws.LaunchSpecShutdownHours{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
-		log.Printf("in 2")
 		return shutdownHours, nil
 	}
-	log.Printf("in 3")
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(IsEnabled)].(bool); ok {
-		log.Printf("in 4")
 		shutdownHours.SetIsEnabled(spotinst.Bool(v))
-		log.Printf("in 5")
 	}
 
 	if v, ok := m[string(TimeWindows)]; ok {
-		log.Printf("in 6")
 		timeWindows, err := expandTimeWindows(v)
 		if err != nil {
-			log.Printf("in 7")
 			return nil, err
 		}
 		if timeWindows != nil {
-			log.Printf("in 8")
 			shutdownHours.SetTimeWindows(timeWindows)
 		} else {
-			log.Printf("in 9")
 			shutdownHours.SetTimeWindows(nil)
 		}
 	}
@@ -2152,14 +2121,11 @@ func expandShutdownHours(data interface{}) (*aws.LaunchSpecShutdownHours, error)
 }
 
 func expandTimeWindows(data interface{}) ([]string, error) {
-	log.Printf("in 10")
 	list := data.([]interface{})
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
-		log.Printf("in 11")
 		if timeWindow, ok := v.(string); ok && timeWindow != "" {
-			log.Printf("in 12")
 			result = append(result, timeWindow)
 		}
 	}
