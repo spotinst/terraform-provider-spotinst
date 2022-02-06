@@ -727,7 +727,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 															Required: true,
 														},
 														string(Percentage): {
-															Type:     schema.TypeInt,
+															Type:     schema.TypeFloat,
 															Required: true,
 														},
 													},
@@ -850,7 +850,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Required: true,
 								},
 								string(Percentage): {
-									Type:     schema.TypeInt,
+									Type:     schema.TypeFloat,
 									Required: true,
 								},
 							},
@@ -1056,7 +1056,7 @@ func flattenDefaultStaticTargetGroups(StaticTargetGroups []*aws.StaticTargetGrou
 	for _, staticTargetGroup := range StaticTargetGroups {
 		m := make(map[string]interface{})
 		m[string(ARN)] = spotinst.StringValue(staticTargetGroup.StaticTargetGroupARN)
-		m[string(Percentage)] = spotinst.IntValue(staticTargetGroup.Percentage)
+		m[string(Percentage)] = spotinst.Float64Value(staticTargetGroup.Percentage)
 		result = append(result, m)
 	}
 
@@ -1084,7 +1084,7 @@ func flattenStaticTargetGroups(StaticTargetGroups []*aws.StaticTargetGroup) []in
 	for _, staticTargetGroup := range StaticTargetGroups {
 		m := make(map[string]interface{})
 		m[string(ARN)] = spotinst.StringValue(staticTargetGroup.StaticTargetGroupARN)
-		m[string(Percentage)] = spotinst.IntValue(staticTargetGroup.Percentage)
+		m[string(Percentage)] = spotinst.Float64Value(staticTargetGroup.Percentage)
 		result = append(result, m)
 	}
 
@@ -1127,8 +1127,8 @@ func expandDefaultStaticTargetGroups(data interface{}) ([]*aws.StaticTargetGroup
 		if v, ok := attr[string(ARN)].(string); ok && v != "" {
 			staticTargetGroup.SetStaticTargetGroupARN(spotinst.String(v))
 		}
-		if v, ok := attr[string(Percentage)].(int); ok {
-			staticTargetGroup.SetPercentage(spotinst.Int(v))
+		if v, ok := attr[string(Percentage)].(float64); ok {
+			staticTargetGroup.SetPercentage(spotinst.Float64(v))
 		}
 
 		staticTargetGroups = append(staticTargetGroups, staticTargetGroup)
@@ -1343,8 +1343,8 @@ func expandStaticTargetGroups(data interface{}) ([]*aws.StaticTargetGroup, error
 		if v, ok := attr[string(ARN)].(string); ok && v != "" {
 			staticTargetGroup.SetStaticTargetGroupARN(spotinst.String(v))
 		}
-		if v, ok := attr[string(Percentage)].(int); ok {
-			staticTargetGroup.SetPercentage(spotinst.Int(v))
+		if v, ok := attr[string(Percentage)].(float64); ok {
+			staticTargetGroup.SetPercentage(spotinst.Float64(v))
 		}
 
 		staticTargetGroups = append(staticTargetGroups, staticTargetGroup)
