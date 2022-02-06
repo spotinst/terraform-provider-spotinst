@@ -1,5 +1,8 @@
 ## Unreleased
 
+* resource/spotinst_elastigroup_aws_launch_configuration: added support for `static_target_group`
+* resource/spotinst_elastigroup_aws_launch_configuration: added support for `default_static_target_group`
+
 ## 1.65.0 (January 10, 2022)
 
 ENHANCEMENTS:
