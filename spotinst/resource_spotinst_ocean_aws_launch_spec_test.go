@@ -910,6 +910,10 @@ func TestAccSpotinstOceanAWSLaunchSpec_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.cron_expression", "0 1 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.103960486.task_type", "manualHeadroomUpdate"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.0", "Sat:08:00-Sat:08:30"),
 				),
 			},
 			{
@@ -926,6 +930,11 @@ func TestAccSpotinstOceanAWSLaunchSpec_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.cron_expression", "0 1 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.2687886838.task_type", "manualHeadroomUpdate"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.0", "Sat:08:00-Sat:08:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.1", "Sun:08:00-Sun:08:30"),
 				),
 			},
 		},
@@ -952,6 +961,11 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
       num_of_units = 1
     }
   }
+
+  scheduling_shutdown_hours {
+    is_enabled = true
+    time_windows = ["Sat:08:00-Sat:08:30"]
+  }
 %v
 }
 
@@ -976,6 +990,11 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
       memory_per_unit = 256
       num_of_units = 2
     }
+  }
+
+  scheduling_shutdown_hours {
+    is_enabled = false
+    time_windows = ["Sat:08:00-Sat:08:30", "Sun:08:00-Sun:08:30"]
   }
 %v
 }
