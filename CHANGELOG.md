@@ -1,5 +1,7 @@
 ## Unreleased
 
+* resource/spotinst_ocean_aws_launch_spec: added support `shut_down_hours`
+
 ## 1.65.0 (January 10, 2022)
 
 ENHANCEMENTS:
