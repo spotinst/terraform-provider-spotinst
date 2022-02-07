@@ -34,6 +34,7 @@ module "ocean-controller" {
 ```hcl
 resource "spotinst_ocean_gke_import" "example" {
   cluster_name = "example-cluster-name"
+  controller_cluster_id = "example-controller-123124"
   location     = "us-central1-a"
   
   min_size = 0
@@ -66,7 +67,8 @@ output "ocean_id" {
 
 The following arguments are supported:
 
-* `cluster_name` - (Required) The GKE cluster name.
+* `cluster_name` - (Required) The GKE cluster name. 
+* `controller_cluster_id` - (Required) A unique identifier used for connecting the Ocean SaaS platform and the Kubernetes cluster. Typically, the cluster name is used as its identifier.
 * `location` - (Required) The zone the master cluster is located in. 
 * `max_size` - (Optional, Default: `1000`) The upper limit of instances the cluster can scale up to.
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.

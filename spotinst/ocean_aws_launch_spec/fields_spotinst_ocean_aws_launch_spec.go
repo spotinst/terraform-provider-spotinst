@@ -1367,6 +1367,75 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[SchedulingShutdownHours] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		SchedulingShutdownHours,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(IsEnabled): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(TimeWindows): {
+						Type:     schema.TypeList,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+
+			if launchSpec != nil && launchSpec.LaunchSpecScheduling != nil &&
+				launchSpec.LaunchSpecScheduling.ShutdownHours != nil {
+				result = flattenShutdownHours(launchSpec.LaunchSpecScheduling.ShutdownHours)
+			}
+
+			if len(result) > 0 {
+				if err := resourceData.Set(string(SchedulingShutdownHours), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingShutdownHours), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(SchedulingShutdownHours)); ok {
+				if shutdownHours, err := expandShutdownHours(value); err != nil {
+					return err
+				} else {
+					launchSpec.LaunchSpecScheduling.SetShutdownHours(shutdownHours)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.LaunchSpecShutdownHours = nil
+
+			if v, ok := resourceData.GetOk(string(SchedulingShutdownHours)); ok {
+				if shutdownHours, err := expandShutdownHours(v); err != nil {
+					return err
+				} else {
+					value = shutdownHours
+				}
+			}
+			launchSpec.LaunchSpecScheduling.SetShutdownHours(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 func hashKV(v interface{}) int {
@@ -2007,4 +2076,59 @@ func expandTaskHeadroom(data interface{}) (*aws.TaskConfig, error) {
 	}
 
 	return taskConfig, nil
+}
+
+func flattenShutdownHours(shutdownHours *aws.LaunchSpecShutdownHours) []interface{} {
+	result := make(map[string]interface{})
+
+	if shutdownHours != nil {
+
+		result[string(IsEnabled)] = spotinst.BoolValue(shutdownHours.IsEnabled)
+
+		if shutdownHours.TimeWindows != nil {
+			result[string(TimeWindows)] = shutdownHours.TimeWindows
+		}
+	}
+
+	return []interface{}{result}
+}
+
+func expandShutdownHours(data interface{}) (*aws.LaunchSpecShutdownHours, error) {
+	shutdownHours := &aws.LaunchSpecShutdownHours{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return shutdownHours, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(IsEnabled)].(bool); ok {
+		shutdownHours.SetIsEnabled(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(TimeWindows)]; ok {
+		timeWindows, err := expandTimeWindows(v)
+		if err != nil {
+			return nil, err
+		}
+		if timeWindows != nil {
+			shutdownHours.SetTimeWindows(timeWindows)
+		} else {
+			shutdownHours.SetTimeWindows(nil)
+		}
+	}
+
+	return shutdownHours, nil
+}
+
+func expandTimeWindows(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if timeWindow, ok := v.(string); ok && timeWindow != "" {
+			result = append(result, timeWindow)
+		}
+	}
+
+	return result, nil
 }

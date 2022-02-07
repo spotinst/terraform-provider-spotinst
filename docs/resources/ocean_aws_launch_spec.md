@@ -111,6 +111,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
         memory_per_unit = 2048
     }
   }
+  
+  scheduling_shutdown_hours {
+    is_enabled = true
+    time_windows = ["Sat:08:00-Sat:08:30", "Sun:08:00-Sun:08:30"]
+  }
 }
 ```
 ```
@@ -186,6 +191,9 @@ The following arguments are supported:
       * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
       * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
       * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+* `scheduling_shutdown_hours` - (Optional) Used to specify times that the nodes in the virtual node group will be taken down.
+    * `time_windows` - (Required ) The times that the shutdown hours will apply.
+    * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the virtual node group remains in its current state.
 
 <a id="update-policy"></a>
 ## Update Policy
