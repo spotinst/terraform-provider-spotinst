@@ -716,6 +716,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 												Type:     schema.TypeString,
 												Required: true,
 											},
+											string(StaticTargetGroup): {
+												Type:     schema.TypeList,
+												MaxItems: 1,
+												Optional: true,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(ARN): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+														string(Percentage): {
+															Type:     schema.TypeFloat,
+															Required: true,
+														},
+													},
+												},
+											},
 										},
 									},
 								},
@@ -818,6 +835,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											},
 										},
 									},
+								},
+							},
+						},
+					},
+					string(DefaultStaticTargetGroup): {
+						Type:     schema.TypeList,
+						MaxItems: 1,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(ARN): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Percentage): {
+									Type:     schema.TypeFloat,
+									Required: true,
 								},
 							},
 						},
@@ -942,6 +976,18 @@ func expandITF(data interface{}) (*aws.ITF, error) {
 	} else {
 		itf.TargetGroupConfig = nil
 	}
+	if v, ok := m[string(DefaultStaticTargetGroup)]; ok {
+
+		staticTargetGroups, err := expandDefaultStaticTargetGroups(v)
+		if err != nil {
+			return nil, err
+		}
+		if staticTargetGroups != nil {
+			itf.SetDefaultStaticTargetGroups(staticTargetGroups)
+		}
+	} else {
+		itf.DefaultStaticTargetGroups = nil
+	}
 
 	return itf, nil
 }
@@ -957,6 +1003,9 @@ func flattenITF(itf *aws.ITF) []interface{} {
 	}
 	if itf.TargetGroupConfig != nil {
 		result[string(TargetGroupConfig)] = flattenTargetGroupConfig(itf.TargetGroupConfig)
+	}
+	if itf.DefaultStaticTargetGroups != nil {
+		result[string(DefaultStaticTargetGroup)] = flattenDefaultStaticTargetGroups(itf.DefaultStaticTargetGroups)
 	}
 
 	return []interface{}{result}
@@ -1001,12 +1050,41 @@ func flattenLoadBalancers(loadBalancers []*aws.ITFLoadBalancer) []interface{} {
 	return result
 }
 
+func flattenDefaultStaticTargetGroups(StaticTargetGroups []*aws.StaticTargetGroup) []interface{} {
+	result := make([]interface{}, 0, len(StaticTargetGroups))
+
+	for _, staticTargetGroup := range StaticTargetGroups {
+		m := make(map[string]interface{})
+		m[string(ARN)] = spotinst.StringValue(staticTargetGroup.StaticTargetGroupARN)
+		m[string(Percentage)] = spotinst.Float64Value(staticTargetGroup.Percentage)
+		result = append(result, m)
+	}
+
+	return result
+}
+
 func flattenListenerRules(listenerRules []*aws.ListenerRule) []interface{} {
 	result := make([]interface{}, 0, len(listenerRules))
 
 	for _, listenerRule := range listenerRules {
 		m := make(map[string]interface{})
 		m[string(RuleARN)] = spotinst.StringValue(listenerRule.RuleARN)
+		if listenerRule.StaticTargetGroups != nil {
+			m[string(StaticTargetGroup)] = flattenStaticTargetGroups(listenerRule.StaticTargetGroups)
+		}
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenStaticTargetGroups(StaticTargetGroups []*aws.StaticTargetGroup) []interface{} {
+	result := make([]interface{}, 0, len(StaticTargetGroups))
+
+	for _, staticTargetGroup := range StaticTargetGroups {
+		m := make(map[string]interface{})
+		m[string(ARN)] = spotinst.StringValue(staticTargetGroup.StaticTargetGroupARN)
+		m[string(Percentage)] = spotinst.Float64Value(staticTargetGroup.Percentage)
 		result = append(result, m)
 	}
 
@@ -1031,6 +1109,31 @@ func flattenTags(tags []*aws.Tag) []interface{} {
 		result = append(result, m)
 	}
 	return result
+}
+
+func expandDefaultStaticTargetGroups(data interface{}) ([]*aws.StaticTargetGroup, error) {
+	list := data.([]interface{})
+	staticTargetGroups := make([]*aws.StaticTargetGroup, 0, len(list))
+
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+
+		if !ok {
+			continue
+		}
+
+		staticTargetGroup := &aws.StaticTargetGroup{}
+
+		if v, ok := attr[string(ARN)].(string); ok && v != "" {
+			staticTargetGroup.SetStaticTargetGroupARN(spotinst.String(v))
+		}
+		if v, ok := attr[string(Percentage)].(float64); ok {
+			staticTargetGroup.SetPercentage(spotinst.Float64(v))
+		}
+
+		staticTargetGroups = append(staticTargetGroups, staticTargetGroup)
+	}
+	return staticTargetGroups, nil
 }
 
 func expandTargetGroupConfig(data interface{}) (*aws.TargetGroupConfig, error) {
@@ -1206,10 +1309,47 @@ func expandListenerRules(data interface{}) ([]*aws.ListenerRule, error) {
 		if v, ok := attr[string(RuleARN)].(string); ok && v != "" {
 			listenerRule.SetRuleARN(spotinst.String(v))
 		}
+		if v, ok := attr[string(StaticTargetGroup)]; ok {
+
+			staticTargetGroups, err := expandStaticTargetGroups(v)
+			if err != nil {
+				return nil, err
+			}
+			if staticTargetGroups != nil {
+				listenerRule.SetStaticTargetGroups(staticTargetGroups)
+			}
+		} else {
+			listenerRule.StaticTargetGroups = nil
+		}
 		listenerRules = append(listenerRules, listenerRule)
 	}
 
 	return listenerRules, nil
+}
+
+func expandStaticTargetGroups(data interface{}) ([]*aws.StaticTargetGroup, error) {
+	list := data.([]interface{})
+	staticTargetGroups := make([]*aws.StaticTargetGroup, 0, len(list))
+
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+
+		if !ok {
+			continue
+		}
+
+		staticTargetGroup := &aws.StaticTargetGroup{}
+
+		if v, ok := attr[string(ARN)].(string); ok && v != "" {
+			staticTargetGroup.SetStaticTargetGroupARN(spotinst.String(v))
+		}
+		if v, ok := attr[string(Percentage)].(float64); ok {
+			staticTargetGroup.SetPercentage(spotinst.Float64(v))
+		}
+
+		staticTargetGroups = append(staticTargetGroups, staticTargetGroup)
+	}
+	return staticTargetGroups, nil
 }
 
 func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {

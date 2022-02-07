@@ -1,6 +1,10 @@
 ## Unreleased
 
+## 1.66.0 (February 07, 2022)
+
 * resource/spotinst_ocean_aws_launch_spec: added support `shut_down_hours`
+* resource/spotinst_elastigroup_aws: added support for `static_target_group`
+* resource/spotinst_elastigroup_aws: added support for `default_static_target_group`
 
 ## 1.65.0 (January 10, 2022)
 
