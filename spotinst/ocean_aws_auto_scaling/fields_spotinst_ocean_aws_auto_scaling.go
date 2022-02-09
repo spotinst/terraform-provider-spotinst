@@ -237,7 +237,6 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 	if v, ok := m[string(ExtendedResourceDefinitions)]; ok {
 		extendedResourceDefinitions, err := expandExtendedResourceDefinitions(v)
 		if err != nil {
-
 			return nil, err
 		}
 		if extendedResourceDefinitions != nil && len(extendedResourceDefinitions) > 0 {
