@@ -110,6 +110,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+					string(ExtendedResourceDefinitions): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
 				},
 			},
 		},
@@ -229,7 +234,32 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 		autoscaler.SetEnableAutomaticAndManualHeadroom(spotinst.Bool(v))
 	}
 
+	if v, ok := m[string(ExtendedResourceDefinitions)]; ok {
+		extendedResourceDefinitions, err := expandExtendedResourceDefinitions(v)
+		if err != nil {
+
+			return nil, err
+		}
+		if extendedResourceDefinitions != nil && len(extendedResourceDefinitions) > 0 {
+			autoscaler.SetExtendedResourceDefinitions(extendedResourceDefinitions)
+		} else {
+			autoscaler.SetExtendedResourceDefinitions(nil)
+		}
+	}
+
 	return autoscaler, nil
+}
+
+func expandExtendedResourceDefinitions(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+	for _, v := range list {
+		if resourceDefinition, ok := v.(string); ok && resourceDefinition != "" {
+			result = append(result, resourceDefinition)
+		}
+	}
+
+	return result, nil
 }
 
 func expandOceanAWSAutoScalerHeadroom(data interface{}) (*aws.AutoScalerHeadroom, error) {
@@ -325,6 +355,10 @@ func flattenAutoscaler(autoScaler *aws.AutoScaler) []interface{} {
 
 		if autoScaler.ResourceLimits != nil {
 			result[string(ResourceLimits)] = flattenAutoScaleResourceLimits(autoScaler.ResourceLimits)
+		}
+
+		if autoScaler.ExtendedResourceDefinitions != nil {
+			result[string(ExtendedResourceDefinitions)] = autoScaler.ExtendedResourceDefinitions
 		}
 
 		if len(result) > 0 {
