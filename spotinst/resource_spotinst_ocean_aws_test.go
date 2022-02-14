@@ -777,6 +777,8 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-cb74ca43"),
 				),
 			},
 			{
@@ -806,6 +808,9 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "30"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-cb74ca43"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.1", "erd-ced684ab"),
 				),
 			},
 			{
@@ -833,6 +838,8 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-cb74ca43"),
 				),
 			},
 		},
@@ -864,6 +871,8 @@ const testScalingConfig_Create = `
       max_vcpu       = 1024
       max_memory_gib = 20
     }
+
+	extended_resource_definitions = ["erd-cb74ca43"]
  }
  // --------------------------------
 
@@ -895,6 +904,8 @@ const testScalingConfig_Update = `
       max_vcpu       = 512
       max_memory_gib = 30
     }
+
+	extended_resource_definitions = ["erd-cb74ca43", "erd-ced684ab"]
  }
  // --------------------------------
 `
@@ -922,6 +933,9 @@ const testScalingConfig_EmptyFields = `
       max_vcpu   = 1024
       max_memory_gib = 20
     }
+
+	extended_resource_definitions = ["erd-cb74ca43"]
+
  }
  // --------------------------------
 `
