@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.67.0 (February 14, 2022)
+
 * resource/spotinst_ocean_aws: added support for `extended_resource_definitions`
 
 ## 1.66.0 (February 07, 2022)
