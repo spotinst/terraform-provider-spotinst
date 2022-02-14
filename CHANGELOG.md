@@ -1,11 +1,18 @@
 ## Unreleased
 
+## 1.67.1 (February 14, 2022)
+
+BUG FIXES:
+* resource/spotinst_ocean_aws: resolved errors with `extended_resource_definitions`
+
 ## 1.67.0 (February 14, 2022)
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added support for `extended_resource_definitions`
 
 ## 1.66.0 (February 07, 2022)
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added support `shut_down_hours`
 * resource/spotinst_elastigroup_aws: added support for `static_target_group`
 * resource/spotinst_elastigroup_aws: added support for `default_static_target_group`
