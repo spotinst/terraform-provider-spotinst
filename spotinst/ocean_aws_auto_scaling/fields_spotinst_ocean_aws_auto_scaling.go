@@ -242,7 +242,9 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 		if extendedResourceDefinitions != nil && len(extendedResourceDefinitions) > 0 {
 			autoscaler.SetExtendedResourceDefinitions(extendedResourceDefinitions)
 		} else {
-			autoscaler.SetExtendedResourceDefinitions(nil)
+			if nullify {
+				autoscaler.SetExtendedResourceDefinitions(nil)
+			}
 		}
 	}
 
