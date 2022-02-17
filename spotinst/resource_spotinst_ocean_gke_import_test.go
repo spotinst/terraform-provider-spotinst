@@ -549,3 +549,66 @@ autoscaler {}
 `
 
 // endregion
+
+// region Ocean GKE Import: Strategy
+func TestAccSpotinstOceanGKEImport_Strategy(t *testing.T) {
+	spotClusterName := "terraform-tests-do-not-delete-2"
+	resourceName := createOceanGKEImportResourceName(spotClusterName)
+
+	var cluster gcp.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKEImportDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName:    spotClusterName,
+					fieldsToAppend: testOceanGKEStrategy_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "50"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "PREEMPTIBLE"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName:    spotClusterName,
+					fieldsToAppend: testOceanGKEStrategy_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "60"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "SPOT"),
+				),
+			},
+		},
+	})
+}
+
+const testOceanGKEStrategy_Create = `
+  strategy {
+    draining_timeout = 50
+    provisioning_model = "PREEMPTIBLE"
+  }
+
+
+`
+
+const testOceanGKEStrategy_Update = `
+  strategy {
+    draining_timeout = 60
+    provisioning_model = "SPOT"
+  }
+
+`
+
+// endregion
