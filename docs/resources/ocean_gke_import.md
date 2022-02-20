@@ -164,6 +164,19 @@ The following arguments are supported:
   }
 ```
 
+<a id="strategy"></a>
+## Strategy
+* `strategy` - (Optional) Strategy object.
+    * `draining_timeout` - (Optional) The draining timeout (in seconds) before terminating the instance. If no draining timeout is defined, the default draining timeout will be used.
+    * `provisioning_model` - (Optional) Define the provisioning model of the launched instances. Valid values: `SPOT`, `PREEMPTIBLE`.
+
+```hcl
+  strategy {
+    draining_timeout = 50
+    provisioning_model = "PREEMPTIBLE"
+  }
+```
+
 <a id="update-policy"></a>
 ## Update Policy
 
