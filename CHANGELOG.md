@@ -1,5 +1,6 @@
 ## Unreleased
 
+ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: added support for `provisioning_model`.
 * resource/spotinst_ocean_gke_import: added support for `draining_timeout`.
 

@@ -590,6 +590,18 @@ func TestAccSpotinstOceanGKEImport_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "SPOT"),
 				),
 			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName:    spotClusterName,
+					fieldsToAppend: testStrategyGKEConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -609,6 +621,10 @@ const testOceanGKEStrategy_Update = `
     provisioning_model = "SPOT"
   }
 
+`
+
+const testStrategyGKEConfig_EmptyFields = `
+// --- STRATEGY -----------------
 `
 
 // endregion
