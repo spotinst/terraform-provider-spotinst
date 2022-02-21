@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.68.0 (February 20, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: added support for `provisioning_model`.
+* resource/spotinst_ocean_gke_import: added support for `draining_timeout`.
+
 ## 1.67.1 (February 14, 2022)
 
 BUG FIXES:
