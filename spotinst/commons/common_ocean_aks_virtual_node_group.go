@@ -110,7 +110,7 @@ func NewVirtualNodeGroupAKSWrapper() *VirtualNodeGroupAKSWrapper {
 				Tags:   []*azure.Tag{},
 			},
 			AutoScale: &azure.VirtualNodeGroupAutoScale{
-				Headrooms: []*azure.VirtualNodeGroupHeadroom{},
+				//Headrooms: []*azure.VirtualNodeGroupHeadroom{},
 			},
 			ResourceLimits: &azure.VirtualNodeGroupResourceLimits{},
 			Taints:         []*azure.Taint{},

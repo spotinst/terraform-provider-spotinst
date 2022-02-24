@@ -116,9 +116,9 @@ func NewGKELaunchSpecWrapper() *LaunchSpecGKEWrapper {
 			Metadata: []*gcp.Metadata{},
 			Labels:   []*gcp.Label{},
 			Taints:   []*gcp.Taint{},
-			AutoScale: &gcp.AutoScale{
-				Headrooms: []*gcp.AutoScaleHeadroom{},
-			},
+			//AutoScale: &gcp.AutoScale{
+			//	Headrooms: []*gcp.AutoScaleHeadroom{},
+			//},
 			ShieldedInstanceConfig: &gcp.ShieldedInstanceConfig{},
 			Storage:                &gcp.Storage{},
 			LaunchSpecScheduling:   &gcp.GKELaunchSpecScheduling{},

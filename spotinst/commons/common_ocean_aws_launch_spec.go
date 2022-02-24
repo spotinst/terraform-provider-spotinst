@@ -107,7 +107,7 @@ func (res *OceanAWSLaunchSpecTerraformResource) OnUpdate(
 func NewLaunchSpecWrapper() *LaunchSpecWrapper {
 	return &LaunchSpecWrapper{
 		launchSpec: &aws.LaunchSpec{
-			AutoScale:            &aws.AutoScale{},
+			//AutoScale:            &aws.AutoScale{},
 			LaunchSpecScheduling: &aws.LaunchSpecScheduling{},
 		},
 	}

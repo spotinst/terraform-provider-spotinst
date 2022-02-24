@@ -19,6 +19,11 @@ const (
 )
 
 const (
+	Headrooms              commons.FieldName = "autoscale_headroom"
+	AutoHeadroomPercentage commons.FieldName = "auto_headroom_percentage"
+)
+
+const (
 	CPUPerUnit    commons.FieldName = "cpu_per_unit"
 	GPUPerUnit    commons.FieldName = "gpu_per_unit"
 	MemoryPerUnit commons.FieldName = "memory_per_unit"
@@ -57,6 +62,7 @@ const (
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
 	SchedulingTask           commons.FieldName = "scheduling_task"
 	SchedulingShutdownHours  commons.FieldName = "scheduling_shutdown_hours"
+	Autoscale                commons.FieldName = "autoscale"
 )
 
 const (

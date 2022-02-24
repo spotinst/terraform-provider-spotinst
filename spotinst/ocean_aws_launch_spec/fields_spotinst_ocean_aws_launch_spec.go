@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
@@ -793,6 +794,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
+			//ConflictsWith: []string{string(Headrooms)},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(CPUPerUnit): {
@@ -839,6 +841,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if headrooms, err := expandHeadrooms(value); err != nil {
 					return err
 				} else {
+					launchSpec.AutoScale = &aws.AutoScale{}
 					launchSpec.AutoScale.SetHeadrooms(headrooms)
 				}
 			}
@@ -855,6 +858,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					headroomList = expandedList
 				}
 			}
+			launchSpec.AutoScale = &aws.AutoScale{}
 			launchSpec.AutoScale.SetHeadrooms(headroomList)
 			return nil
 		},
@@ -1436,6 +1440,112 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[Autoscale] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		Autoscale,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Headrooms): {
+						Type:          schema.TypeSet,
+						Optional:      true,
+						ConflictsWith: []string{string(AutoscaleHeadrooms)},
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(CPUPerUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(GPUPerUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(MemoryPerUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(NumOfUnits): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+							},
+						},
+					},
+					string(AutoHeadroomPercentage): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+							if old == "-1" && new == "null" {
+								return true
+							}
+							return false
+						},
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			log.Printf("in 30")
+			clusterWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			log.Printf("in 31")
+			cluster := clusterWrapper.GetLaunchSpec()
+			log.Printf("in 32")
+			var result []interface{} = nil
+			if cluster != nil && cluster.AutoScale != nil {
+				log.Printf("in 33")
+				result = flattenAutoScale(cluster.AutoScale)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(Autoscale), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Autoscale), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			log.Printf("in 1")
+			clusterWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			log.Printf("in 2")
+			cluster := clusterWrapper.GetLaunchSpec()
+			log.Printf("in 3")
+			if v, ok := resourceData.GetOk(string(Autoscale)); ok {
+				log.Printf("in 4")
+				if autoscaler, err := expandAutoScale(v, false); err != nil {
+					log.Printf("in 22")
+					return err
+				} else {
+					log.Printf("in 23")
+					cluster.SetAutoScale(autoscaler)
+					log.Printf("in 24")
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			cluster := clusterWrapper.GetLaunchSpec()
+			var value *aws.AutoScale = nil
+			if v, ok := resourceData.GetOk(string(Autoscale)); ok {
+				if autoscale, err := expandAutoScale(v, true); err != nil {
+					return err
+				} else {
+					value = autoscale
+				}
+			}
+			cluster.SetAutoScale(value)
+			return nil
+		},
+
+		nil,
+	)
 }
 
 func hashKV(v interface{}) int {
@@ -1552,9 +1662,56 @@ func flattenTaints(taints []*aws.Taint) []interface{} {
 	return result
 }
 
+func expandAutoScale(data interface{}, nullify bool) (*aws.AutoScale, error) {
+	log.Printf("in 5")
+	autoscale := &aws.AutoScale{}
+	log.Printf("in 6")
+	list := data.([]interface{})
+	log.Printf("in 7")
+
+	if list == nil || list[0] == nil {
+		log.Printf("in 8")
+		return autoscale, nil
+	}
+	log.Printf("in 9")
+
+	m := list[0].(map[string]interface{})
+
+	log.Printf("in 10")
+	if v, ok := m[string(Headrooms)]; ok {
+		log.Printf("in 11")
+		headroom, err := expandHeadrooms(v)
+		log.Printf("in 16")
+		if err != nil {
+			return nil, err
+		}
+		if headroom != nil {
+			autoscale.SetHeadrooms(headroom)
+		} else {
+			autoscale.Headrooms = nil
+		}
+	}
+
+	log.Printf("in 17")
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > -1 {
+		log.Printf("in 18")
+		autoscale.SetAutoHeadroomPercentage(spotinst.Int(v))
+		log.Printf("in 19")
+	} else if nullify {
+		log.Printf("in 20")
+		autoscale.SetAutoHeadroomPercentage(nil)
+		log.Printf("in 21")
+	}
+
+	return autoscale, nil
+}
+
 func expandHeadrooms(data interface{}) ([]*aws.AutoScaleHeadroom, error) {
+	log.Printf("in 12")
 	list := data.(*schema.Set).List()
+	log.Printf("in 13")
 	headrooms := make([]*aws.AutoScaleHeadroom, 0, len(list))
+	log.Printf("in 14")
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
@@ -1571,11 +1728,46 @@ func expandHeadrooms(data interface{}) ([]*aws.AutoScaleHeadroom, error) {
 
 		headrooms = append(headrooms, headroom)
 	}
+	log.Printf("in 15")
 	return headrooms, nil
 }
 
+func flattenAutoScale(autoScale *aws.AutoScale) []interface{} {
+	log.Printf("in 34")
+	var out []interface{}
+
+	if autoScale != nil {
+
+		log.Printf("in 35")
+		result := make(map[string]interface{})
+		if autoScale.Headrooms != nil {
+			log.Printf("in 36")
+			result[string(Headrooms)] = flattenHeadrooms(autoScale.Headrooms)
+		}
+
+		log.Printf("in 40")
+		value := spotinst.Int(-1)
+		if autoScale.AutoHeadroomPercentage != nil {
+			log.Printf("in 41")
+			value = autoScale.AutoHeadroomPercentage
+			log.Printf("in 42")
+		}
+		log.Printf("in 43")
+		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(value)
+
+		if len(result) > 0 {
+			log.Printf("in 44")
+			out = append(out, result)
+		}
+	}
+
+	return out
+}
+
 func flattenHeadrooms(headrooms []*aws.AutoScaleHeadroom) []interface{} {
+	log.Printf("in 37")
 	result := make([]interface{}, 0, len(headrooms))
+	log.Printf("in 38")
 
 	for _, headroom := range headrooms {
 		m := make(map[string]interface{})
@@ -1587,6 +1779,7 @@ func flattenHeadrooms(headrooms []*aws.AutoScaleHeadroom) []interface{} {
 		result = append(result, m)
 	}
 
+	log.Printf("in 39")
 	return result
 }
 

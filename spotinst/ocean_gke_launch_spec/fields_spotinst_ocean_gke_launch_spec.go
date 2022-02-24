@@ -1012,6 +1012,101 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil, nil, nil, nil,
 	)
 
+	fieldsMap[Autoscale] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		Autoscale,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Headrooms): {
+						Type:          schema.TypeList,
+						Optional:      true,
+						MaxItems:      1,
+						ConflictsWith: []string{string(AutoscaleHeadrooms)},
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(CPUPerUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(GPUPerUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(MemoryPerUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(NumOfUnits): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+							},
+						},
+					},
+					string(AutoHeadroomPercentage): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+							if old == "-1" && new == "null" {
+								return true
+							}
+							return false
+						},
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			cluster := clusterWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if cluster != nil && cluster.AutoScale != nil {
+				result = flattenAutoScale(cluster.AutoScale)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(Autoscale), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Autoscale), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			cluster := clusterWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(Autoscale)); ok {
+				if autoscaler, err := expandAutoScale(v, false); err != nil {
+					return err
+				} else {
+					cluster.SetAutoScale(autoscaler)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			cluster := clusterWrapper.GetLaunchSpec()
+			var value *gcp.AutoScale = nil
+			if v, ok := resourceData.GetOk(string(Autoscale)); ok {
+				if autoscale, err := expandAutoScale(v, true); err != nil {
+					return err
+				} else {
+					value = autoscale
+				}
+			}
+			cluster.SetAutoScale(value)
+			return nil
+		},
+
+		nil,
+	)
 }
 
 func hashKV(v interface{}) int {
@@ -1302,6 +1397,37 @@ func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
 	return out
 }
 
+func expandAutoScale(data interface{}, nullify bool) (*gcp.AutoScale, error) {
+	autoscale := &gcp.AutoScale{}
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return autoscale, nil
+	}
+
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(Headrooms)]; ok {
+		headroom, err := expandHeadrooms(v)
+		if err != nil {
+			return nil, err
+		}
+		if headroom != nil {
+			autoscale.SetHeadrooms(headroom)
+		} else {
+			autoscale.Headrooms = nil
+		}
+	}
+
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > -1 {
+		autoscale.SetAutoHeadroomPercentage(spotinst.Int(v))
+	} else if nullify {
+		autoscale.SetAutoHeadroomPercentage(nil)
+	}
+
+	return autoscale, nil
+}
+
 func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {
 	list := data.(*schema.Set).List()
 	headrooms := make([]*gcp.AutoScaleHeadroom, 0, len(list))
@@ -1322,6 +1448,30 @@ func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {
 		headrooms = append(headrooms, headroom)
 	}
 	return headrooms, nil
+}
+
+func flattenAutoScale(autoScale *gcp.AutoScale) []interface{} {
+	var out []interface{}
+
+	if autoScale != nil {
+
+		result := make(map[string]interface{})
+		if autoScale.Headrooms != nil {
+			result[string(Headrooms)] = flattenHeadrooms(autoScale.Headrooms)
+		}
+
+		value := spotinst.Int(-1)
+		if autoScale.AutoHeadroomPercentage != nil {
+			value = autoScale.AutoHeadroomPercentage
+		}
+		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(value)
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
 }
 
 func flattenHeadrooms(headrooms []*gcp.AutoScaleHeadroom) []interface{} {

@@ -2,7 +2,6 @@ package ocean_aks_virtual_node_group_auto_scaling
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -19,9 +18,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Headrooms): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
-						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(CPUPerUnit): {
@@ -44,6 +42,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Required: true,
 								},
 							},
+						},
+					},
+					string(AutoHeadroomPercentage): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+							if old == "-1" && new == "null" {
+								return true
+							}
+							return false
 						},
 					},
 				},
@@ -117,6 +126,12 @@ func expandAutoScale(data interface{}, nullify bool) (*azure.VirtualNodeGroupAut
 		}
 	}
 
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > -1 {
+		autoscale.SetAutoHeadroomPercentage(spotinst.Int(v))
+	} else if nullify {
+		autoscale.SetAutoHeadroomPercentage(nil)
+	}
+
 	return autoscale, nil
 }
 
@@ -128,6 +143,13 @@ func flattenAutoScale(autoScale *azure.VirtualNodeGroupAutoScale) []interface{} 
 		if autoScale.Headrooms != nil {
 			result[string(Headrooms)] = flattenHeadrooms(autoScale.Headrooms)
 		}
+
+		value := spotinst.Int(-1)
+		if autoScale.AutoHeadroomPercentage != nil {
+			value = autoScale.AutoHeadroomPercentage
+		}
+		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(value)
+
 		if len(result) > 0 {
 			out = append(out, result)
 		}
@@ -137,7 +159,7 @@ func flattenAutoScale(autoScale *azure.VirtualNodeGroupAutoScale) []interface{} 
 }
 
 func expandHeadrooms(data interface{}, nullify bool) ([]*azure.VirtualNodeGroupHeadroom, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	headrooms := make([]*azure.VirtualNodeGroupHeadroom, 0, len(list))
 
 	for _, v := range list {
