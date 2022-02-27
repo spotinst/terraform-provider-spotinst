@@ -13,72 +13,6 @@ import (
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-
-	fieldsMap[ExtendedResourceDefinition] = commons.NewGenericField(
-		commons.OceanAWS,
-		ExtendedResourceDefinition,
-		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(Mapping): {
-						Type:     schema.TypeMap,
-						Optional: true,
-					},
-					string(ExtendedResourceName): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-				},
-			},
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			var result []interface{} = nil
-
-			if cluster != nil && cluster.ExtendedResourceDefinition != nil {
-				result = flattenExtendedResourceDefinition(cluster.ExtendedResourceDefinition)
-			}
-			if len(result) > 0 {
-				if err := resourceData.Set(string(ExtendedResourceDefinition), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ExtendedResourceDefinition), err)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.GetOk(string(ExtendedResourceDefinition)); ok {
-				if exResource, err := expandExtendedResourceDefinition(v); err != nil {
-					return err
-				} else {
-					cluster.SetExtendedResourceDefinition(exResource)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			var value *aws.ExtendedResourceDefinition = nil
-
-			if v, ok := resourceData.GetOk(string(ExtendedResourceDefinition)); ok {
-				if exResource, err := expandExtendedResourceDefinition(v); err != nil {
-					return err
-				} else {
-					value = exResource
-				}
-			}
-			cluster.SetExtendedResourceDefinition(value)
-			return nil
-		},
-
-		nil,
-	)
-
 	fieldsMap[Name] = commons.NewGenericField(
 		commons.OceanAWS,
 		Name,
@@ -460,39 +394,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
-}
-
-func flattenExtendedResourceDefinition(exResource *aws.ExtendedResourceDefinition) []interface{} {
-
-	m := make(map[string]interface{})
-	m[string(ExtendedResourceName)] = spotinst.StringValue(exResource.Name)
-
-	if exResource.Mapping != nil {
-		m[string(Mapping)] = exResource.Mapping
-	}
-
-	return []interface{}{m}
-}
-
-func expandExtendedResourceDefinition(data interface{}) (*aws.ExtendedResourceDefinition, error) {
-
-	exResource := &aws.ExtendedResourceDefinition{}
-	list := data.([]interface{})
-
-	if list == nil || list[0] == nil {
-		return exResource, nil
-	}
-	m := list[0].(map[string]interface{})
-
-	if v, ok := m[string(ExtendedResourceName)].(string); ok {
-		exResource.SetExtendedResourceName(spotinst.String(v))
-	}
-
-	if v, ok := m[string(Mapping)].(map[string]interface{}); ok && v != nil {
-		exResource.SetMapping(v)
-	}
-
-	return exResource, nil
 }
 
 func expandSubnetIDs(data interface{}) ([]string, error) {

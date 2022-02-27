@@ -30,10 +30,4 @@ const (
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
 	LaunchSpecIDs       commons.FieldName = "launch_spec_ids"
-
-	ExtendedResourceDefinition commons.FieldName = "extended_resource_definition"
-	ExtendedResourceName       commons.FieldName = "extended_resource_name"
-	Mapping                    commons.FieldName = "resource_mapping"
-	Type                       commons.FieldName = "type"
-	Value                      commons.FieldName = "value"
 )
