@@ -45,12 +45,11 @@ const (
 	ResourceLimits            commons.FieldName = "resource_limits"
 	MaxInstanceCount          commons.FieldName = "max_instance_count"
 	MinInstanceCount          commons.FieldName = "min_instance_count"
-	Autoscale                 commons.FieldName = "autoscale"
 )
 
 const (
-	Headrooms              commons.FieldName = "autoscale_headroom"
-	AutoHeadroomPercentage commons.FieldName = "auto_headroom_percentage"
+	AutoscaleHeadroomsAutomatic commons.FieldName = "autoscale_headrooms_automatic"
+	AutoHeadroomPercentage      commons.FieldName = "auto_headroom_percentage"
 )
 
 const (

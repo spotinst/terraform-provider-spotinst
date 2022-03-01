@@ -19,8 +19,8 @@ const (
 )
 
 const (
-	Headrooms              commons.FieldName = "autoscale_headroom"
-	AutoHeadroomPercentage commons.FieldName = "auto_headroom_percentage"
+	AutoscaleHeadroomsAutomatic commons.FieldName = "autoscale_headrooms_automatic"
+	AutoHeadroomPercentage      commons.FieldName = "auto_headroom_percentage"
 )
 
 const (
@@ -62,7 +62,6 @@ const (
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
 	SchedulingTask           commons.FieldName = "scheduling_task"
 	SchedulingShutdownHours  commons.FieldName = "scheduling_shutdown_hours"
-	Autoscale                commons.FieldName = "autoscale"
 )
 
 const (
