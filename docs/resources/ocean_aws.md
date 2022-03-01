@@ -165,6 +165,7 @@ The following arguments are supported:
     * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
         * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
+    * `extended_resource_definitions` - (Optional) List of Ocean extended resource definitions to use in this cluster.
 
 ```hcl
 autoscaler {
@@ -189,6 +190,8 @@ autoscaler {
     max_vcpu       = 1024
     max_memory_gib = 1500
   }
+  
+  extended_resource_definitions = ["erd-abc123"]
 }
 ```
 

@@ -34,6 +34,7 @@ module "ocean-controller" {
 ```hcl
 resource "spotinst_ocean_gke_import" "example" {
   cluster_name = "example-cluster-name"
+  controller_cluster_id = "example-controller-123124"
   location     = "us-central1-a"
 
   min_size = 0
@@ -66,8 +67,9 @@ output "ocean_id" {
 
 The following arguments are supported:
 
-* `cluster_name` - (Required) The GKE cluster name.
-* `location` - (Required) The zone the master cluster is located in.
+* `cluster_name` - (Required) The GKE cluster name. 
+* `controller_cluster_id` - (Required) A unique identifier used for connecting the Ocean SaaS platform and the Kubernetes cluster. Typically, the cluster name is used as its identifier.
+* `location` - (Required) The zone the master cluster is located in. 
 * `max_size` - (Optional, Default: `1000`) The upper limit of instances the cluster can scale up to.
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster.
@@ -157,6 +159,19 @@ The following arguments are supported:
       max_vcpu       = 1500
       max_memory_gib = 750
     }
+  }
+```
+
+<a id="strategy"></a>
+## Strategy
+* `strategy` - (Optional) Strategy object.
+    * `draining_timeout` - (Optional) The draining timeout (in seconds) before terminating the instance. If no draining timeout is defined, the default draining timeout will be used.
+    * `provisioning_model` - (Optional) Define the provisioning model of the launched instances. Valid values: `SPOT`, `PREEMPTIBLE`.
+
+```hcl
+  strategy {
+    draining_timeout = 50
+    provisioning_model = "PREEMPTIBLE"
   }
 ```
 

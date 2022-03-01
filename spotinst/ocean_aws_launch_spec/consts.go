@@ -56,6 +56,7 @@ const (
 	AssociatePublicIPAddress commons.FieldName = "associate_public_ip_address"
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
 	SchedulingTask           commons.FieldName = "scheduling_task"
+	SchedulingShutdownHours  commons.FieldName = "scheduling_shutdown_hours"
 )
 
 const (
@@ -105,4 +106,8 @@ const (
 	CronExpression commons.FieldName = "cron_expression"
 	TaskType       commons.FieldName = "task_type"
 	TaskHeadroom   commons.FieldName = "task_headroom"
+)
+
+const (
+	TimeWindows commons.FieldName = "time_windows"
 )

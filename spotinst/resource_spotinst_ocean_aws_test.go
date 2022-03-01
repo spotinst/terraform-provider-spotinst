@@ -202,7 +202,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
 		},
@@ -221,7 +221,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   min_size         = 0
   desired_capacity = 1
 
-  subnet_ids      = ["subnet-bce60ec4"]
+  subnet_ids      = ["subnet-0faad0b6bb7e99d9f"]
 
  %v
  %v
@@ -240,9 +240,9 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
   max_size         = 10
   min_size         = 0
-  desired_capacity = 2
+  desired_capacity = 1
 
-  subnet_ids      = ["subnet-bce60ec4"]
+  subnet_ids      = ["subnet-0bd585d2c2177c7ee"]
 
  %v
  %v
@@ -386,7 +386,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a2bce9fa"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world")),
@@ -419,7 +419,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a2bce9fa"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world updated")),
@@ -453,7 +453,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a2bce9fa"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
 				),
 			},
@@ -464,7 +464,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 const testLaunchConfigAWSConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
   image_id                    = "ami-79826301"
-  security_groups             = ["sg-a2bce9fa"]
+  security_groups             = ["sg-065c82e9ff8b192a1"]
   //key_name                  = "my-key.ssh"
   user_data                   = "echo hello world"
   //iam_instance_profile      = "iam-profile"
@@ -498,7 +498,7 @@ const testLaunchConfigAWSConfig_Create = `
 const testLaunchConfigAWSConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
   image_id                    = "ami-79826301"
-  security_groups             = ["sg-a2bce9fa"]
+  security_groups             = ["sg-065c82e9ff8b192a1"]
   //key_name                  = "my-key-updated.ssh"
   user_data                   = "echo hello world updated"
   //iam_instance_profile      = "iam-profile updated"
@@ -531,7 +531,7 @@ const testLaunchConfigAWSConfig_Update = `
 const testLaunchConfigAWSConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
   image_id        = "ami-79826301"
-  security_groups = ["sg-a2bce9fa"]
+  security_groups = ["sg-065c82e9ff8b192a1"]
  // ---------------------------------------
 `
 
@@ -672,14 +672,14 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:13:30"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:13:30"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.cron_expression", "testcron"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.161750964.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.0.cron_expression", "testcron"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.0.task_type", "clusterRoll"),
 				),
 			},
 			{
@@ -718,7 +718,7 @@ const testSchedulingConfig_Update = `
  // --- Scheduling --------------------
   scheduled_task   {
     shutdown_hours  {
-      is_enabled = true
+      is_enabled = false
       time_windows = ["Fri:15:30-Sat:13:30","Sun:15:30-Mon:13:30"]
     }
     tasks  {
@@ -777,6 +777,8 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-cb74ca43"),
 				),
 			},
 			{
@@ -806,6 +808,9 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "30"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-cb74ca43"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.1", "erd-ced684ab"),
 				),
 			},
 			{
@@ -833,6 +838,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "0"),
 				),
 			},
 		},
@@ -864,6 +870,8 @@ const testScalingConfig_Create = `
       max_vcpu       = 1024
       max_memory_gib = 20
     }
+
+	extended_resource_definitions = ["erd-cb74ca43"]
  }
  // --------------------------------
 
@@ -895,6 +903,8 @@ const testScalingConfig_Update = `
       max_vcpu       = 512
       max_memory_gib = 30
     }
+
+	extended_resource_definitions = ["erd-cb74ca43", "erd-ced684ab"]
  }
  // --------------------------------
 `
@@ -922,6 +932,8 @@ const testScalingConfig_EmptyFields = `
       max_vcpu   = 1024
       max_memory_gib = 20
     }
+
+  	extended_resource_definitions = null
  }
  // --------------------------------
 `
@@ -1056,7 +1068,7 @@ func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-800889b7"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-ef64b261"),
 				),
 			},
 			{
@@ -1081,7 +1093,7 @@ const testLoggingAWSConfig_Create = `
   logging {
     export {
       s3 { 
-		id = "di-800889b7"
+		id = "di-ef64b261"
       }
     }
   }

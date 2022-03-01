@@ -1,12 +1,35 @@
 ## Unreleased
 
+## 1.68.0 (February 20, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: added support for `provisioning_model`.
+* resource/spotinst_ocean_gke_import: added support for `draining_timeout`.
+
+## 1.67.1 (February 14, 2022)
+
+BUG FIXES:
+* resource/spotinst_ocean_aws: resolved errors with `extended_resource_definitions`
+
+## 1.67.0 (February 14, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added support for `extended_resource_definitions`
+
+## 1.66.0 (February 07, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added support `shut_down_hours`
+* resource/spotinst_elastigroup_aws: added support for `static_target_group`
+* resource/spotinst_elastigroup_aws: added support for `default_static_target_group`
+
 ## 1.65.0 (January 10, 2022)
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added support for `auto_apply_tags`
 * resource/spotinst_ocean_ecs: added support for `auto_apply_tags`
 * resource/spotinst_ocean_aws: added support for `enable_automatic_and_manual_headroom`
-* resource/spotinst_ocean_ecs: added support for `enable_automatic_and_manual_headroom`
+* resource/spotinst_ocean_gke_import: added support for `enable_automatic_and_manual_headroom`
 
 ## 1.64.2 (January 05, 2022)
 

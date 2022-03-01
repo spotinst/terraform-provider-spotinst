@@ -20,4 +20,5 @@ const (
 	NumOfUnits                       commons.FieldName = "num_of_units"
 	ResourceLimits                   commons.FieldName = "resource_limits"
 	EnableAutomaticAndManualHeadroom commons.FieldName = "enable_automatic_and_manual_headroom"
+	ExtendedResourceDefinitions      commons.FieldName = "extended_resource_definitions"
 )
