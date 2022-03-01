@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/spotinst/spotinst-sdk-go/service/extendedresourcedefinition"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -23,8 +23,8 @@ func testExtendedResourceDefinitionDestroy(s *terraform.State) error {
 		if rs.Type != string(commons.ExtendedResourceDefinitionResourceName) {
 			continue
 		}
-		input := &extendedresourcedefinition.ReadExtendedResourceDefinitionInput{ExtendedResourceDefinitionID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.extendedResourceDefinition.Read(context.Background(), input)
+		input := &aws.ReadExtendedResourceDefinitionInput{ExtendedResourceDefinitionID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.ocean.CloudProviderAWS().ReadExtendedResourceDefinition(context.Background(), input)
 		if err == nil && resp != nil && resp.ExtendedResourceDefinition != nil {
 			return fmt.Errorf("extendedResourceDefinition still exists")
 		}
@@ -32,7 +32,7 @@ func testExtendedResourceDefinitionDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testCheckExtendedResourceDefinitionExists(erd *extendedresourcedefinition.ExtendedResourceDefinition, resourceName string) resource.TestCheckFunc {
+func testCheckExtendedResourceDefinitionExists(erd *aws.ExtendedResourceDefinition, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -42,8 +42,8 @@ func testCheckExtendedResourceDefinitionExists(erd *extendedresourcedefinition.E
 			return fmt.Errorf("no resource ID is set")
 		}
 		client := testAccProviderAWS.Meta().(*Client)
-		input := &extendedresourcedefinition.ReadExtendedResourceDefinitionInput{ExtendedResourceDefinitionID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.extendedResourceDefinition.Read(context.Background(), input)
+		input := &aws.ReadExtendedResourceDefinitionInput{ExtendedResourceDefinitionID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.ocean.CloudProviderAWS().ReadExtendedResourceDefinition(context.Background(), input)
 		if err != nil {
 			return err
 		}
@@ -109,7 +109,7 @@ func TestAccSpotinstExtendedResourceDefinition_Baseline(t *testing.T) {
 	name := "test-acc-extended_resource_definition_terraform_test"
 	resourceName := createExtendedResourceDefinitionResourceName(name)
 
-	var erd extendedresourcedefinition.ExtendedResourceDefinition
+	var erd aws.ExtendedResourceDefinition
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,

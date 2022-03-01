@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/extendedresourcedefinition"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 )
 
 const (
@@ -19,7 +19,7 @@ type ExtendedResourceDefinitionTerraformResource struct {
 }
 
 type ExtendedResourceDefinitionWrapper struct {
-	extendedResourceDefinition *extendedresourcedefinition.ExtendedResourceDefinition
+	extendedResourceDefinition *aws.ExtendedResourceDefinition
 }
 
 // NewExtendedResourceDefinitionResource creates a new ExtendedResourceDefinition resource
@@ -35,7 +35,7 @@ func NewExtendedResourceDefinitionResource(fieldMap map[FieldName]*GenericField)
 // OnCreate is called when creating a new resource block and returns a new ExtendedResourceDefinition or an error.
 func (res *ExtendedResourceDefinitionTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*extendedresourcedefinition.ExtendedResourceDefinition, error) {
+	meta interface{}) (*aws.ExtendedResourceDefinition, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -56,7 +56,7 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnCreate(
 
 // OnRead is called when reading an existing resource and throws an error if it is unable to do so.
 func (res *ExtendedResourceDefinitionTerraformResource) OnRead(
-	extendedResourceDefinition *extendedresourcedefinition.ExtendedResourceDefinition,
+	extendedResourceDefinition *aws.ExtendedResourceDefinition,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -83,7 +83,7 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnRead(
 // an extendedResourceDefinition with a bool indicating if had been updated, or an error.
 func (res *ExtendedResourceDefinitionTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *extendedresourcedefinition.ExtendedResourceDefinition, error) {
+	meta interface{}) (bool, *aws.ExtendedResourceDefinition, error) {
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
@@ -110,16 +110,16 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnUpdate(
 // the wrapper struct is intended to help reflect the field states into the ExtendedResourceDefinition object properly.
 func NewExtendedResourceDefinitionWrapper() *ExtendedResourceDefinitionWrapper {
 	return &ExtendedResourceDefinitionWrapper{
-		extendedResourceDefinition: &extendedresourcedefinition.ExtendedResourceDefinition{},
+		extendedResourceDefinition: &aws.ExtendedResourceDefinition{},
 	}
 }
 
 // GetExtendedResourceDefinition returns a wrapped ExtendedResourceDefinition
-func (erdWrapper *ExtendedResourceDefinitionWrapper) GetExtendedResourceDefinition() *extendedresourcedefinition.ExtendedResourceDefinition {
+func (erdWrapper *ExtendedResourceDefinitionWrapper) GetExtendedResourceDefinition() *aws.ExtendedResourceDefinition {
 	return erdWrapper.extendedResourceDefinition
 }
 
 // SetExtendedResourceDefinition applies extendedResourceDefinition fields to the extendedResourceDefinition wrapper.
-func (erdWrapper *ExtendedResourceDefinitionWrapper) SetExtendedResourceDefinition(erd *extendedresourcedefinition.ExtendedResourceDefinition) {
+func (erdWrapper *ExtendedResourceDefinitionWrapper) SetExtendedResourceDefinition(erd *aws.ExtendedResourceDefinition) {
 	erdWrapper.extendedResourceDefinition = erd
 }
