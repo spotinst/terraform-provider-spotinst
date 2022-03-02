@@ -175,6 +175,9 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-ssd"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "true"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "true"),
 				),
 			},
 			{
@@ -187,6 +190,9 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "false"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "false"),
 				),
 			},
 		},
@@ -205,6 +211,10 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  max_size = 2
  desired_capacity = 0
  root_volume_type = "pd-ssd"
+ shielded_instance_config {
+	enable_secure_boot =  true
+    enable_integrity_monitoring = true
+ }
  %v
 }
 
@@ -219,6 +229,10 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
 
  whitelist = ["n1-standard-1"]
  root_volume_type = "pd-standard"
+ shielded_instance_config {
+	enable_secure_boot =  false
+    enable_integrity_monitoring = false
+ }
  %v
 }
 
