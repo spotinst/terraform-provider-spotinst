@@ -431,28 +431,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(AutoscaleHeadroomsAutomatic)); ok {
-				//if autoscaler, err := expandAutoScale(v, false); err != nil {
 				if err := expandAutoScale(v, launchSpec, false); err != nil {
 					return err
-				} // else {
-				//	launchSpec.SetAutoScale(autoscaler)
-				//}
+				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			//var value *gcp.AutoScale = nil
 			if v, ok := resourceData.GetOk(string(AutoscaleHeadroomsAutomatic)); ok {
-				//if autoscale, err := expandAutoScale(v, true); err != nil {
 				if err := expandAutoScale(v, launchSpec, true); err != nil {
 					return err
-				} //else {
-				//value = autoscale
-				//}
+				}
 			}
-			//launchSpec.SetAutoScale(value)
 			return nil
 		},
 
@@ -1370,12 +1362,10 @@ func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
 	return out
 }
 
-func expandAutoScale(data interface{}, ls *gcp.LaunchSpec, nullify bool) error { //(*gcp.AutoScale, error) {
-	//autoscale := &gcp.AutoScale{}
+func expandAutoScale(data interface{}, ls *gcp.LaunchSpec, nullify bool) error {
 	list := data.([]interface{})
 
 	if list == nil || list[0] == nil {
-		//return autoscale, nil
 		return nil
 	}
 
@@ -1387,7 +1377,6 @@ func expandAutoScale(data interface{}, ls *gcp.LaunchSpec, nullify bool) error {
 		ls.AutoScale.SetAutoHeadroomPercentage(nil)
 	}
 
-	//return autoscale, nil
 	return nil
 }
 
