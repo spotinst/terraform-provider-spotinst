@@ -2,6 +2,7 @@ package ocean_aks_virtual_node_group_auto_scaling
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
