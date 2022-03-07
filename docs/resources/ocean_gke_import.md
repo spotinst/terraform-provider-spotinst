@@ -54,6 +54,10 @@ resource "spotinst_ocean_gke_import" "example" {
     }
   }
  root_volume_type = "pd-ssd"
+ shielded_instance_config {
+    enable_secure_boot =  true
+    enable_integrity_monitoring = true
+ }
 }
 ```
 
@@ -83,6 +87,9 @@ The following arguments are supported:
         * `port_name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
 * `root_volume_type` - (Optional) The root volume disk type.
+* `shielded_instance_config` - (Optional) The Ocean shielded instance configuration object.
+    * `enable_integrity_monitoring` - (Optional) Boolean. Enable the integrity monitoring parameter on the GCP instances.
+    * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
 
 <a id="scheduled-task"></a>
 ## Scheduled task
