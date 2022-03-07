@@ -17,8 +17,7 @@ resource "spotinst_extended_resource_definition" "example" {
   name  = "terraform_extended_resource_definition"
   resource_mapping = {
     "c3.large"  = "2Ki"
-    //"c3.xlarge" = "4Ki"
-    //"c3.2xlarge" = "4Ki"
+    "c3.xlarge" = "4Ki"
   }
 }
 ```
