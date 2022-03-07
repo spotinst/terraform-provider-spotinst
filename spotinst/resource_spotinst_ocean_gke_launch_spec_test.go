@@ -529,6 +529,8 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.0.auto_headroom_percentage", "10"),
 				),
 			},
 			{
@@ -541,6 +543,8 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.0.auto_headroom_percentage", "5"),
 				),
 			},
 			{
@@ -570,6 +574,10 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  metadata {
    key = "gci-ensure-gke-docker"
    value = "true"
+ }
+
+ autoscale_headrooms_automatic {
+ 	auto_headroom_percentage = 10
  }
 
  autoscale_headrooms {
@@ -606,6 +614,10 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
    value = "true"
  }
 
+ autoscale_headrooms_automatic {
+ 	auto_headroom_percentage = 5
+ }
+
  autoscale_headrooms {
    cpu_per_unit = 1024
    gpu_per_unit = 1
@@ -632,6 +644,8 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
    key = "gci-ensure-gke-docker"
    value = "true"
  }
+
+ autoscale_headrooms_automatic {}
 }
 
 `

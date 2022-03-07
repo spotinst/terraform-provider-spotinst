@@ -2,6 +2,7 @@ package ocean_aks_virtual_node_group_auto_scaling
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -115,14 +116,15 @@ func expandAutoScale(data interface{}, nullify bool) (*azure.VirtualNodeGroupAut
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(Headrooms)]; ok {
+
 		headroom, err := expandHeadrooms(v, nullify)
 		if err != nil {
 			return nil, err
 		}
-		if headroom != nil {
+		if len(headroom) > 0 {
 			autoscale.SetHeadrooms(headroom)
 		} else {
-			autoscale.Headrooms = nil
+			autoscale.SetHeadrooms(nil)
 		}
 	}
 
@@ -168,30 +170,11 @@ func expandHeadrooms(data interface{}, nullify bool) ([]*azure.VirtualNodeGroupH
 			continue
 		}
 
-		headroom := &azure.VirtualNodeGroupHeadroom{}
-
-		if v, ok := m[string(CPUPerUnit)].(int); ok && v > 0 {
-			headroom.SetCPUPerUnit(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetCPUPerUnit(nil)
-		}
-
-		if v, ok := m[string(MemoryPerUnit)].(int); ok && v > 0 {
-			headroom.SetMemoryPerUnit(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetMemoryPerUnit(nil)
-		}
-
-		if v, ok := m[string(GPUPerUnit)].(int); ok && v > 0 {
-			headroom.SetGPUPerUnit(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetGPUPerUnit(nil)
-		}
-
-		if v, ok := m[string(NumOfUnits)].(int); ok && v > 0 {
-			headroom.SetNumOfUnits(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetNumOfUnits(nil)
+		headroom := &azure.VirtualNodeGroupHeadroom{
+			CPUPerUnit:    spotinst.Int(m[string(CPUPerUnit)].(int)),
+			GPUPerUnit:    spotinst.Int(m[string(GPUPerUnit)].(int)),
+			NumOfUnits:    spotinst.Int(m[string(NumOfUnits)].(int)),
+			MemoryPerUnit: spotinst.Int(m[string(MemoryPerUnit)].(int)),
 		}
 
 		headrooms = append(headrooms, headroom)

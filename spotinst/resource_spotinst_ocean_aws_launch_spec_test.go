@@ -323,6 +323,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.4058284811.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.0.auto_headroom_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Create+".key", "fakeKey"),
 					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Create+".value", "fakeVal"),
@@ -340,6 +342,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3279616137.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.0.auto_headroom_percentage", "5"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".key", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".value", "updated"),
@@ -390,6 +394,10 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
    num_of_units = 1
  }
 
+ autoscale_headrooms_automatic {
+ 	auto_headroom_percentage = 10
+ }
+
  tags {
      key   = "fakeKey"
      value = "fakeVal"
@@ -417,6 +425,10 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
    num_of_units = 1
  }
 
+ autoscale_headrooms_automatic {
+ 	auto_headroom_percentage = 5
+ }
+
  tags {
      key   = "updated"
      value = "updated"
@@ -436,6 +448,8 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
+
+ autoscale_headrooms_automatic {}
 %v
 }
 
