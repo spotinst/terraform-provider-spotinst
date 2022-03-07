@@ -418,7 +418,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
 			if launchSpec != nil && launchSpec.AutoScale != nil && launchSpec.AutoScale.AutoHeadroomPercentage != nil {
-				result = flattenAutoScale(launchSpec.AutoScale)
+				result = flattenAutoscaleHeadroomsAutomatic(launchSpec.AutoScale)
 			}
 			if len(result) > 0 {
 				if err := resourceData.Set(string(AutoscaleHeadroomsAutomatic), result); err != nil {
@@ -431,7 +431,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(AutoscaleHeadroomsAutomatic)); ok {
-				if err := expandAutoScale(v, launchSpec, false); err != nil {
+				if err := expandAutoscaleHeadroomsAutomatic(v, launchSpec, false); err != nil {
 					return err
 				}
 			}
@@ -441,9 +441,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(AutoscaleHeadroomsAutomatic)); ok {
-				if err := expandAutoScale(v, launchSpec, true); err != nil {
+				if err := expandAutoscaleHeadroomsAutomatic(v, launchSpec, true); err != nil {
 					return err
 				}
+			} else {
+				launchSpec.AutoScale.SetAutoHeadroomPercentage(nil)
 			}
 			return nil
 		},
@@ -1362,7 +1364,7 @@ func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
 	return out
 }
 
-func expandAutoScale(data interface{}, ls *gcp.LaunchSpec, nullify bool) error {
+func expandAutoscaleHeadroomsAutomatic(data interface{}, ls *gcp.LaunchSpec, nullify bool) error {
 	list := data.([]interface{})
 
 	if list == nil || list[0] == nil {
@@ -1402,7 +1404,7 @@ func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {
 	return headrooms, nil
 }
 
-func flattenAutoScale(autoScale *gcp.AutoScale) []interface{} {
+func flattenAutoscaleHeadroomsAutomatic(autoScale *gcp.AutoScale) []interface{} {
 	var out []interface{}
 
 	if autoScale != nil {

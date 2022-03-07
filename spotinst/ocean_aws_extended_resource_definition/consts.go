@@ -1,4 +1,4 @@
-package extended_resource_definition
+package ocean_aws_extended_resource_definition
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 

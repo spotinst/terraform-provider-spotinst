@@ -13,6 +13,7 @@ import (
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
+
 	fieldsMap[Name] = commons.NewGenericField(
 		commons.OceanAWS,
 		Name,

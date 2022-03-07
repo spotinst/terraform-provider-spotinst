@@ -13,14 +13,14 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-func createExtendedResourceDefinitionResourceName(name string) string {
-	return fmt.Sprintf("%v.%v", string(commons.ExtendedResourceDefinitionResourceName), name)
+func createOceanAWSExtendedResourceDefinitionResourceName(name string) string {
+	return fmt.Sprintf("%v.%v", string(commons.OceanAWSExtendedResourceDefinitionResourceName), name)
 }
 
-func testExtendedResourceDefinitionDestroy(s *terraform.State) error {
+func testOceanAWSExtendedResourceDefinitionDestroy(s *terraform.State) error {
 	client := testAccProviderAWS.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != string(commons.ExtendedResourceDefinitionResourceName) {
+		if rs.Type != string(commons.OceanAWSExtendedResourceDefinitionResourceName) {
 			continue
 		}
 		input := &aws.ReadExtendedResourceDefinitionInput{ExtendedResourceDefinitionID: spotinst.String(rs.Primary.ID)}
@@ -32,7 +32,7 @@ func testExtendedResourceDefinitionDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testCheckExtendedResourceDefinitionExists(erd *aws.ExtendedResourceDefinition, resourceName string) resource.TestCheckFunc {
+func testCheckOceanAWSExtendedResourceDefinitionExists(erd *aws.ExtendedResourceDefinition, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -63,7 +63,7 @@ type ExtendedResourceDefinitionMetadata struct {
 	updateBaselineFields bool
 }
 
-func createExtendedResourceDefinitionTerraform(ccm *ExtendedResourceDefinitionMetadata, formatToUse string) string {
+func createOceanAWSExtendedResourceDefinitionTerraform(ccm *ExtendedResourceDefinitionMetadata, formatToUse string) string {
 	if ccm == nil {
 		return ""
 	}
@@ -105,24 +105,24 @@ func createExtendedResourceDefinitionTerraform(ccm *ExtendedResourceDefinitionMe
 }
 
 // region ExtendedResourceDefinition: Baseline
-func TestAccSpotinstExtendedResourceDefinition_Baseline(t *testing.T) {
+func TestAccSpotinstOceanAWSExtendedResourceDefinition_Baseline(t *testing.T) {
 	name := "test-acc-extended_resource_definition_terraform_test"
-	resourceName := createExtendedResourceDefinitionResourceName(name)
+	resourceName := createOceanAWSExtendedResourceDefinitionResourceName(name)
 
 	var erd aws.ExtendedResourceDefinition
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
-		CheckDestroy: testExtendedResourceDefinitionDestroy,
+		CheckDestroy: testOceanAWSExtendedResourceDefinitionDestroy,
 
 		Steps: []resource.TestStep{
 			{
-				Config: createExtendedResourceDefinitionTerraform(&ExtendedResourceDefinitionMetadata{
+				Config: createOceanAWSExtendedResourceDefinitionTerraform(&ExtendedResourceDefinitionMetadata{
 					name: name,
 				}, testBaselineExtendedResourceDefinitionConfig_Create),
 
 				Check: resource.ComposeTestCheckFunc(
-					testCheckExtendedResourceDefinitionExists(&erd, resourceName),
+					testCheckOceanAWSExtendedResourceDefinitionExists(&erd, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", "example.com/terraform-test-baseline"),
 					resource.TestCheckResourceAttr(resourceName, "resource_mapping.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "resource_mapping.c3.large", "2Ki"),
@@ -130,11 +130,11 @@ func TestAccSpotinstExtendedResourceDefinition_Baseline(t *testing.T) {
 			},
 			{
 				ResourceName: resourceName,
-				Config: createExtendedResourceDefinitionTerraform(&ExtendedResourceDefinitionMetadata{
+				Config: createOceanAWSExtendedResourceDefinitionTerraform(&ExtendedResourceDefinitionMetadata{
 					name:                 name,
 					updateBaselineFields: true}, testBaselineExtendedResourceDefinitionConfig_Update),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckExtendedResourceDefinitionExists(&erd, resourceName),
+					testCheckOceanAWSExtendedResourceDefinitionExists(&erd, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", "example.com/terraform-test-baseline"),
 					resource.TestCheckResourceAttr(resourceName, "resource_mapping.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "resource_mapping.c3.large", "2Ki"),
@@ -146,7 +146,7 @@ func TestAccSpotinstExtendedResourceDefinition_Baseline(t *testing.T) {
 }
 
 const testBaselineExtendedResourceDefinitionConfig_Create = `
-resource "` + string(commons.ExtendedResourceDefinitionResourceName) + `" "%v" {
+resource "` + string(commons.OceanAWSExtendedResourceDefinitionResourceName) + `" "%v" {
   provider = "%v"
   name  = "example.com/terraform-test-baseline"
   resource_mapping = {
@@ -156,7 +156,7 @@ resource "` + string(commons.ExtendedResourceDefinitionResourceName) + `" "%v" {
 `
 
 const testBaselineExtendedResourceDefinitionConfig_Update = `
-resource "` + string(commons.ExtendedResourceDefinitionResourceName) + `" "%v" {
+resource "` + string(commons.OceanAWSExtendedResourceDefinitionResourceName) + `" "%v" {
   provider = "%v"
   name  = "example.com/terraform-test-baseline"
   resource_mapping = {

@@ -9,12 +9,12 @@ import (
 )
 
 const (
-	ExtendedResourceDefinitionResourceName ResourceName = "spotinst_extended_resource_definition"
+	OceanAWSExtendedResourceDefinitionResourceName ResourceName = "spotinst_ocean_aws_extended_resource_definition"
 )
 
-var ExtendedResourceDefinitionResource *ExtendedResourceDefinitionTerraformResource
+var OceanAWSExtendedResourceDefinitionResource *OceanAWSExtendedResourceDefinitionTerraformResource
 
-type ExtendedResourceDefinitionTerraformResource struct {
+type OceanAWSExtendedResourceDefinitionTerraformResource struct {
 	GenericResource
 }
 
@@ -22,18 +22,18 @@ type ExtendedResourceDefinitionWrapper struct {
 	extendedResourceDefinition *aws.ExtendedResourceDefinition
 }
 
-// NewExtendedResourceDefinitionResource creates a new ExtendedResourceDefinition resource
-func NewExtendedResourceDefinitionResource(fieldMap map[FieldName]*GenericField) *ExtendedResourceDefinitionTerraformResource {
-	return &ExtendedResourceDefinitionTerraformResource{
+// NewOceanAWSExtendedResourceDefinitionResource creates a new OceanAWSExtendedResourceDefinition resource
+func NewOceanAWSExtendedResourceDefinitionResource(fieldMap map[FieldName]*GenericField) *OceanAWSExtendedResourceDefinitionTerraformResource {
+	return &OceanAWSExtendedResourceDefinitionTerraformResource{
 		GenericResource: GenericResource{
-			resourceName: ExtendedResourceDefinitionResourceName,
+			resourceName: OceanAWSExtendedResourceDefinitionResourceName,
 			fields:       NewGenericFields(fieldMap),
 		},
 	}
 }
 
-// OnCreate is called when creating a new resource block and returns a new ExtendedResourceDefinition or an error.
-func (res *ExtendedResourceDefinitionTerraformResource) OnCreate(
+// OnCreate is called when creating a new resource block and returns a new OceanAWSExtendedResourceDefinition or an error.
+func (res *OceanAWSExtendedResourceDefinitionTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
 	meta interface{}) (*aws.ExtendedResourceDefinition, error) {
 
@@ -41,7 +41,7 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnCreate(
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	erdWrapper := NewExtendedResourceDefinitionWrapper()
+	erdWrapper := NewOceanAWSExtendedResourceDefinitionWrapper()
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
@@ -51,11 +51,11 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnCreate(
 			return nil, err
 		}
 	}
-	return erdWrapper.GetExtendedResourceDefinition(), nil
+	return erdWrapper.GetOceanAWSExtendedResourceDefinition(), nil
 }
 
 // OnRead is called when reading an existing resource and throws an error if it is unable to do so.
-func (res *ExtendedResourceDefinitionTerraformResource) OnRead(
+func (res *OceanAWSExtendedResourceDefinitionTerraformResource) OnRead(
 	extendedResourceDefinition *aws.ExtendedResourceDefinition,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
@@ -64,8 +64,8 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	erdWrapper := NewExtendedResourceDefinitionWrapper()
-	erdWrapper.SetExtendedResourceDefinition(extendedResourceDefinition)
+	erdWrapper := NewOceanAWSExtendedResourceDefinitionWrapper()
+	erdWrapper.SetOceanAWSExtendedResourceDefinition(extendedResourceDefinition)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
@@ -81,14 +81,14 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnRead(
 
 // OnUpdate is called when updating an existing resource and returns
 // an extendedResourceDefinition with a bool indicating if had been updated, or an error.
-func (res *ExtendedResourceDefinitionTerraformResource) OnUpdate(
+func (res *OceanAWSExtendedResourceDefinitionTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
 	meta interface{}) (bool, *aws.ExtendedResourceDefinition, error) {
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	erdWrapper := NewExtendedResourceDefinitionWrapper()
+	erdWrapper := NewOceanAWSExtendedResourceDefinitionWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -103,23 +103,23 @@ func (res *ExtendedResourceDefinitionTerraformResource) OnUpdate(
 		}
 	}
 
-	return hasChanged, erdWrapper.GetExtendedResourceDefinition(), nil
+	return hasChanged, erdWrapper.GetOceanAWSExtendedResourceDefinition(), nil
 }
 
 // Spotinst ExtendedResourceDefinition must have a wrapper struct.
 // the wrapper struct is intended to help reflect the field states into the ExtendedResourceDefinition object properly.
-func NewExtendedResourceDefinitionWrapper() *ExtendedResourceDefinitionWrapper {
+func NewOceanAWSExtendedResourceDefinitionWrapper() *ExtendedResourceDefinitionWrapper {
 	return &ExtendedResourceDefinitionWrapper{
 		extendedResourceDefinition: &aws.ExtendedResourceDefinition{},
 	}
 }
 
-// GetExtendedResourceDefinition returns a wrapped ExtendedResourceDefinition
-func (erdWrapper *ExtendedResourceDefinitionWrapper) GetExtendedResourceDefinition() *aws.ExtendedResourceDefinition {
+// GetOceanAWSExtendedResourceDefinition returns a wrapped OceanAWSExtendedResourceDefinition
+func (erdWrapper *ExtendedResourceDefinitionWrapper) GetOceanAWSExtendedResourceDefinition() *aws.ExtendedResourceDefinition {
 	return erdWrapper.extendedResourceDefinition
 }
 
-// SetExtendedResourceDefinition applies extendedResourceDefinition fields to the extendedResourceDefinition wrapper.
-func (erdWrapper *ExtendedResourceDefinitionWrapper) SetExtendedResourceDefinition(erd *aws.ExtendedResourceDefinition) {
+// SetOceanAWSExtendedResourceDefinition applies extendedResourceDefinition fields to the extendedResourceDefinition wrapper.
+func (erdWrapper *ExtendedResourceDefinitionWrapper) SetOceanAWSExtendedResourceDefinition(erd *aws.ExtendedResourceDefinition) {
 	erdWrapper.extendedResourceDefinition = erd
 }

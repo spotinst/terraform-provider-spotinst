@@ -57,6 +57,10 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
     effect = "taintEffect"
   }
   
+  autoscale_headrooms_automatic {
+    auto_headroom_percentage = 5
+  }
+  
   autoscale_headrooms {
     num_of_units = 5
     cpu_per_unit = 1000
@@ -109,6 +113,8 @@ The following arguments are supported:
 * `root_volume_type` - (Optional) Root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`.
 * `root_volume_size` - (Optional) Root volume size (in GB).
 * `instance_types` - (Optional) List of supported machine types for the Launch Spec.
+* `autoscale_headrooms_automatic` - (Optional) Set automatic headroom per launch spec.
+  * `auto_headroom_percentage` - (Optional) Number between 0-200 to control the headroom % of the specific Virtual Node Group. Effective when cluster.autoScaler.headroom.automatic.`is_enabled` = true is set on the Ocean cluster.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.

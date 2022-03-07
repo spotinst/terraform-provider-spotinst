@@ -1,4 +1,4 @@
-package extended_resource_definition
+package ocean_aws_extended_resource_definition
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[ExtendedResourceName] = commons.NewGenericField(
-		commons.ExtendedResourceDefinition,
+		commons.OceanAWSExtendedResourceDefinition,
 		ExtendedResourceName,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -18,7 +18,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			erdWrapper := resourceObject.(*commons.ExtendedResourceDefinitionWrapper)
-			erd := erdWrapper.GetExtendedResourceDefinition()
+			erd := erdWrapper.GetOceanAWSExtendedResourceDefinition()
 			var value *string = nil
 			if erd.Name != nil {
 				value = erd.Name
@@ -30,13 +30,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			erdWrapper := resourceObject.(*commons.ExtendedResourceDefinitionWrapper)
-			erd := erdWrapper.GetExtendedResourceDefinition()
+			erd := erdWrapper.GetOceanAWSExtendedResourceDefinition()
 			erd.SetName(spotinst.String(resourceData.Get(string(ExtendedResourceName)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			erdWrapper := resourceObject.(*commons.ExtendedResourceDefinitionWrapper)
-			erd := erdWrapper.GetExtendedResourceDefinition()
+			erd := erdWrapper.GetOceanAWSExtendedResourceDefinition()
 			erd.SetName(spotinst.String(resourceData.Get(string(ExtendedResourceName)).(string)))
 			return nil
 		},
@@ -44,7 +44,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Mapping] = commons.NewGenericField(
-		commons.ExtendedResourceDefinition,
+		commons.OceanAWSExtendedResourceDefinition,
 		Mapping,
 		&schema.Schema{
 			Type:     schema.TypeMap,
@@ -52,7 +52,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			erdWrapper := resourceObject.(*commons.ExtendedResourceDefinitionWrapper)
-			erd := erdWrapper.GetExtendedResourceDefinition()
+			erd := erdWrapper.GetOceanAWSExtendedResourceDefinition()
 			var value map[string]interface{} = nil
 			if erd.Mapping != nil {
 				value = erd.Mapping
@@ -64,7 +64,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			erdWrapper := resourceObject.(*commons.ExtendedResourceDefinitionWrapper)
-			erd := erdWrapper.GetExtendedResourceDefinition()
+			erd := erdWrapper.GetOceanAWSExtendedResourceDefinition()
 			if v, ok := resourceData.Get(string(Mapping)).(map[string]interface{}); ok {
 				erd.SetMapping(v)
 			}
@@ -72,7 +72,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			erdWrapper := resourceObject.(*commons.ExtendedResourceDefinitionWrapper)
-			erd := erdWrapper.GetExtendedResourceDefinition()
+			erd := erdWrapper.GetOceanAWSExtendedResourceDefinition()
 			if v, ok := resourceData.Get(string(Mapping)).(map[string]interface{}); ok {
 				erd.SetMapping(v)
 			}

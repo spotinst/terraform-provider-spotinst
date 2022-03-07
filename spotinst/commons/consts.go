@@ -31,7 +31,7 @@ const (
 
 	OceanAWSLaunchSpec ResourceAffinity = "Ocean_AWS_Launch_Spec"
 
-	ExtendedResourceDefinition ResourceAffinity = "Extended_Resource_Definition"
+	OceanAWSExtendedResourceDefinition ResourceAffinity = "Ocean_AWS_Extended_Resource_Definition"
 
 	OceanGKE                          ResourceAffinity = "Ocean_GKE"
 	OceanGKEImport                    ResourceAffinity = "Ocean_GKE_Import"
