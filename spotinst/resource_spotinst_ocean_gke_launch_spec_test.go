@@ -553,6 +553,7 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "0"),
 				),
 			},
 		},
@@ -644,8 +645,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
    key = "gci-ensure-gke-docker"
    value = "true"
  }
-
- autoscale_headrooms_automatic {}
 }
 
 `

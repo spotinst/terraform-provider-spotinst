@@ -357,6 +357,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
 				),
 			},
@@ -448,8 +449,6 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
-
- autoscale_headrooms_automatic {}
 %v
 }
 

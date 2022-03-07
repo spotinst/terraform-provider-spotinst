@@ -444,6 +444,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if err := expandAutoscaleHeadroomsAutomatic(v, launchSpec, true); err != nil {
 					return err
 				}
+			} else {
+				launchSpec.AutoScale.SetAutoHeadroomPercentage(nil)
 			}
 			return nil
 		},

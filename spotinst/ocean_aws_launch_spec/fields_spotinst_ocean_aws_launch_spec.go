@@ -841,6 +841,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if err := expandAutoscaleHeadroomsAutomatic(v, launchSpec, true); err != nil {
 					return err
 				}
+			} else {
+				launchSpec.AutoScale.SetAutoHeadroomPercentage(nil)
 			}
 			return nil
 		},
@@ -1613,7 +1615,7 @@ func flattenTaints(taints []*aws.Taint) []interface{} {
 	return result
 }
 
-func expandAutoscaleHeadroomsAutomatic(data interface{}, ls *aws.LaunchSpec, nullify bool) error { //(*aws.AutoScale, error) {
+func expandAutoscaleHeadroomsAutomatic(data interface{}, ls *aws.LaunchSpec, nullify bool) error {
 	list := data.([]interface{})
 
 	if list == nil || list[0] == nil {
