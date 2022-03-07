@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -108,15 +107,7 @@ func createOceanAWSExtendedResourceDefinition(resourceData *schema.ResourceData,
 		input := &aws.CreateExtendedResourceDefinitionInput{ExtendedResourceDefinition: erd}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateExtendedResourceDefinition(context.Background(), input)
 		if err != nil {
-			// Checks whether we should retry the ExtendedResourceDefinition creation.
-			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
-				for _, err := range errs {
-					if err.Code == "InvalidParameterValue" &&
-						strings.Contains(err.Message, "Invalid IAM Instance Profile") {
-						return resource.RetryableError(err)
-					}
-				}
-			}
+
 			// Some other error, report it.
 			return resource.NonRetryableError(err)
 		}

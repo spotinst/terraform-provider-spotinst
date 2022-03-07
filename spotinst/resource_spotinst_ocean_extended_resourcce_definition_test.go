@@ -100,13 +100,13 @@ func createOceanAWSExtendedResourceDefinitionTerraform(ccm *ExtendedResourceDefi
 		template = ccm.variables + "\n" + template
 	}
 
-	log.Printf("Terraform [%v] template:\n%v", "extended_resource_definition_test", template)
+	log.Printf("Terraform [%v] template:\n%v", "ocean_aws_extended_resource_definition_test", template)
 	return template
 }
 
 // region ExtendedResourceDefinition: Baseline
 func TestAccSpotinstOceanAWSExtendedResourceDefinition_Baseline(t *testing.T) {
-	name := "test-acc-extended_resource_definition_terraform_test"
+	name := "test-acc-ocean_aws_extended_resource_definition_terraform_test"
 	resourceName := createOceanAWSExtendedResourceDefinitionResourceName(name)
 
 	var erd aws.ExtendedResourceDefinition

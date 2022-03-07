@@ -3,17 +3,17 @@ layout: "spotinst"
 page_title: "Spotinst: ocean_aws_extended_resource_definition"
 subcategory: "Ocean"
 description: |-
-  Provides a Spotinst Extended Resource Definition resource.
+  Manages an Ocean extended resource definition resource.
 ---
 
 # spotinst\_ocean\_aws\_extended\_resource\_definition
 
-Provides a Spotinst Extended Resource Definition resource.
+Provides a Spotinst Ocean AWS Extended Resource Definition resource.
 
 ## Example Usage
 
 ```hcl
-resource "spotinst_extended_resource_definition" "example" {
+resource "spotinst_ocean_aws_extended_resource_definition" "example" {
   name  = "terraform_extended_resource_definition"
   resource_mapping = {
     "c3.large"  = "2Ki"
