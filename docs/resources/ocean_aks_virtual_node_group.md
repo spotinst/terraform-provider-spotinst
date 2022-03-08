@@ -33,6 +33,7 @@ resource "spotinst_ocean_aks_virtual_node_group" "example" {
    }
  
    autoscale {
+     auto_headroom_percentage = 5
      autoscale_headroom {
        cpu_per_unit = 4
        gpu_per_unit = 8
@@ -77,6 +78,7 @@ The following arguments are supported:
 * `resource_limits` - (Optional).
     * `max_instance_count` - (Optional) Option to set a maximum number of instances per virtual node group. If set, value must be greater than or equal to 0.
 * `autoscale` - (Optional).
+    * `auto_headroom_percentage` - (Optional) Number between 0-200 to control the headroom % of the specific Virtual Node Group. Effective when `cluster.autoScaler.headroom.automatic.is_enabled` = true is set on the Ocean cluster.
     * `autoscale_headroom` - (Optional)
         * `cpu_per_unit` - (Optional) Configure the number of CPUs to allocate for the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
         * `gpu_per_unit` - (Optional) How many GPU cores should be allocated for headroom unit.

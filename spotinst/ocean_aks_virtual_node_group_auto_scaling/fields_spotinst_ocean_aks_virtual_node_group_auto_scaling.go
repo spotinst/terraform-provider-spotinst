@@ -19,9 +19,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Headrooms): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
-						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(CPUPerUnit): {
@@ -44,6 +43,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Required: true,
 								},
 							},
+						},
+					},
+					string(AutoHeadroomPercentage): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+							if old == "-1" && new == "null" {
+								return true
+							}
+							return false
 						},
 					},
 				},
@@ -106,15 +116,22 @@ func expandAutoScale(data interface{}, nullify bool) (*azure.VirtualNodeGroupAut
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(Headrooms)]; ok {
+
 		headroom, err := expandHeadrooms(v, nullify)
 		if err != nil {
 			return nil, err
 		}
-		if headroom != nil {
+		if len(headroom) > 0 {
 			autoscale.SetHeadrooms(headroom)
 		} else {
-			autoscale.Headrooms = nil
+			autoscale.SetHeadrooms(nil)
 		}
+	}
+
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > -1 {
+		autoscale.SetAutoHeadroomPercentage(spotinst.Int(v))
+	} else if nullify {
+		autoscale.SetAutoHeadroomPercentage(nil)
 	}
 
 	return autoscale, nil
@@ -128,6 +145,13 @@ func flattenAutoScale(autoScale *azure.VirtualNodeGroupAutoScale) []interface{} 
 		if autoScale.Headrooms != nil {
 			result[string(Headrooms)] = flattenHeadrooms(autoScale.Headrooms)
 		}
+
+		value := spotinst.Int(-1)
+		if autoScale.AutoHeadroomPercentage != nil {
+			value = autoScale.AutoHeadroomPercentage
+		}
+		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(value)
+
 		if len(result) > 0 {
 			out = append(out, result)
 		}
@@ -137,7 +161,7 @@ func flattenAutoScale(autoScale *azure.VirtualNodeGroupAutoScale) []interface{} 
 }
 
 func expandHeadrooms(data interface{}, nullify bool) ([]*azure.VirtualNodeGroupHeadroom, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	headrooms := make([]*azure.VirtualNodeGroupHeadroom, 0, len(list))
 
 	for _, v := range list {
@@ -146,30 +170,11 @@ func expandHeadrooms(data interface{}, nullify bool) ([]*azure.VirtualNodeGroupH
 			continue
 		}
 
-		headroom := &azure.VirtualNodeGroupHeadroom{}
-
-		if v, ok := m[string(CPUPerUnit)].(int); ok && v > 0 {
-			headroom.SetCPUPerUnit(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetCPUPerUnit(nil)
-		}
-
-		if v, ok := m[string(MemoryPerUnit)].(int); ok && v > 0 {
-			headroom.SetMemoryPerUnit(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetMemoryPerUnit(nil)
-		}
-
-		if v, ok := m[string(GPUPerUnit)].(int); ok && v > 0 {
-			headroom.SetGPUPerUnit(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetGPUPerUnit(nil)
-		}
-
-		if v, ok := m[string(NumOfUnits)].(int); ok && v > 0 {
-			headroom.SetNumOfUnits(spotinst.Int(v))
-		} else if nullify {
-			headroom.SetNumOfUnits(nil)
+		headroom := &azure.VirtualNodeGroupHeadroom{
+			CPUPerUnit:    spotinst.Int(m[string(CPUPerUnit)].(int)),
+			GPUPerUnit:    spotinst.Int(m[string(GPUPerUnit)].(int)),
+			NumOfUnits:    spotinst.Int(m[string(NumOfUnits)].(int)),
+			MemoryPerUnit: spotinst.Int(m[string(MemoryPerUnit)].(int)),
 		}
 
 		headrooms = append(headrooms, headroom)
