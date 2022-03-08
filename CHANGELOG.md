@@ -2,9 +2,9 @@
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: added support for `shielded_instance_config`
-* resource/spotinst_ocean_aws_launch_spec: added support for `automatic_headroom_percentage`
-* resource/spotinst_ocean_gke_launch_spec: added support for `automatic_headroom_percentage`
-* resource/spotinst_ocean_aks_virtual_node_group: added support for `automatic_headroom_percentage`
+* resource/spotinst_ocean_aws_launch_spec: added support for `auto_headroom_percentage`
+* resource/spotinst_ocean_gke_launch_spec: added support for `auto_headroom_percentage`
+* resource/spotinst_ocean_aks_virtual_node_group: added support for `auto_headroom_percentage`
 
 FEATURES:
 * **New Resource:** `spotinst_ocean_aws_extended_resource_definition`
