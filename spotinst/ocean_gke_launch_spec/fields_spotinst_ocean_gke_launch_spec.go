@@ -390,6 +390,69 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[AutoscaleHeadroomsAutomatic] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		AutoscaleHeadroomsAutomatic,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(AutoHeadroomPercentage): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+							if old == "-1" && new == "null" {
+								return true
+							}
+							return false
+						},
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec != nil && launchSpec.AutoScale != nil && launchSpec.AutoScale.AutoHeadroomPercentage != nil {
+				result = flattenAutoscaleHeadroomsAutomatic(launchSpec.AutoScale)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(AutoscaleHeadroomsAutomatic), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoscaleHeadroomsAutomatic), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(AutoscaleHeadroomsAutomatic)); ok {
+				if err := expandAutoscaleHeadroomsAutomatic(v, launchSpec, false); err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(AutoscaleHeadroomsAutomatic)); ok {
+				if err := expandAutoscaleHeadroomsAutomatic(v, launchSpec, true); err != nil {
+					return err
+				}
+			} else {
+				launchSpec.AutoScale.SetAutoHeadroomPercentage(nil)
+			}
+			return nil
+		},
+
+		nil,
+	)
+
 	fieldsMap[AutoscaleHeadrooms] = commons.NewGenericField(
 		commons.OceanGKELaunchSpec,
 		AutoscaleHeadrooms,
@@ -1011,7 +1074,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
-
 }
 
 func hashKV(v interface{}) int {
@@ -1302,6 +1364,24 @@ func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
 	return out
 }
 
+func expandAutoscaleHeadroomsAutomatic(data interface{}, ls *gcp.LaunchSpec, nullify bool) error {
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return nil
+	}
+
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > -1 {
+		ls.AutoScale.SetAutoHeadroomPercentage(spotinst.Int(v))
+	} else if nullify {
+		ls.AutoScale.SetAutoHeadroomPercentage(nil)
+	}
+
+	return nil
+}
+
 func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {
 	list := data.(*schema.Set).List()
 	headrooms := make([]*gcp.AutoScaleHeadroom, 0, len(list))
@@ -1322,6 +1402,27 @@ func expandHeadrooms(data interface{}) ([]*gcp.AutoScaleHeadroom, error) {
 		headrooms = append(headrooms, headroom)
 	}
 	return headrooms, nil
+}
+
+func flattenAutoscaleHeadroomsAutomatic(autoScale *gcp.AutoScale) []interface{} {
+	var out []interface{}
+
+	if autoScale != nil {
+
+		result := make(map[string]interface{})
+
+		value := spotinst.Int(-1)
+		if autoScale.AutoHeadroomPercentage != nil {
+			value = autoScale.AutoHeadroomPercentage
+		}
+		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(value)
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
 }
 
 func flattenHeadrooms(headrooms []*gcp.AutoScaleHeadroom) []interface{} {

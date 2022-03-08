@@ -19,6 +19,11 @@ const (
 )
 
 const (
+	AutoscaleHeadroomsAutomatic commons.FieldName = "autoscale_headrooms_automatic"
+	AutoHeadroomPercentage      commons.FieldName = "auto_headroom_percentage"
+)
+
+const (
 	CPUPerUnit    commons.FieldName = "cpu_per_unit"
 	GPUPerUnit    commons.FieldName = "gpu_per_unit"
 	MemoryPerUnit commons.FieldName = "memory_per_unit"

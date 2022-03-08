@@ -48,6 +48,10 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     effect = "NoExecute"
   }
 
+  autoscale_headrooms_automatic {
+    auto_headroom_percentage = 5
+  }
+  
   autoscale_headrooms {
     num_of_units    = 5
     cpu_per_unit     = 1000
@@ -168,6 +172,8 @@ The following arguments are supported:
             * `resource`- (Required) String. Resource type to increase volume size dynamically by. (Valid values: `CPU`)
             * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: `baseSize=50`, `sizePerResourceUnit=20`, and instance with 2 CPU is launched; its total disk size will be: 90GB)
         * `no_device` - (Optional) String. Suppresses the specified device included in the block device mapping of the AMI.
+* `autoscale_headrooms_automatic` - (Optional) Set automatic headroom per launch spec.
+    * `auto_headroom_percentage` - (Optional) Number between 0-200 to control the headroom % of the specific Virtual Node Group. Effective when cluster.autoScaler.headroom.automatic.`is_enabled` = true is set on the Ocean cluster.
 * `autoscale_headrooms` - (Optional) Set custom headroom per Virtual Node Group. Provide a list of headrooms object.
     * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
