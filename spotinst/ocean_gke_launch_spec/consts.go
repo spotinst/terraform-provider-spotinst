@@ -48,6 +48,11 @@ const (
 )
 
 const (
+	AutoscaleHeadroomsAutomatic commons.FieldName = "autoscale_headrooms_automatic"
+	AutoHeadroomPercentage      commons.FieldName = "auto_headroom_percentage"
+)
+
+const (
 	NodePoolName commons.FieldName = "node_pool_name"
 )
 
