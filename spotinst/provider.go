@@ -70,6 +70,9 @@ func Provider() terraform.ResourceProvider {
 
 			// SuspendProcesses
 			string(commons.SuspendProcessesResourceName): resourceSpotinstElastigroupSuspendProcesses(),
+
+			// ExtendedResourceDefinition
+			string(commons.OceanAWSExtendedResourceDefinitionResourceName): resourceSpotinstOceanAWSExtendedResourceDefinition(),
 		},
 	}
 
