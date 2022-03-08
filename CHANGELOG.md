@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 1.69.0 (March 08, 2022)
+
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: added support for `shielded_instance_config`
 * resource/spotinst_ocean_aws_launch_spec: added support for `auto_headroom_percentage`
