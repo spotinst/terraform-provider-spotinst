@@ -2,6 +2,7 @@ package ocean_gke_import_strategy
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
@@ -26,6 +27,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ProvisioningModel): {
 						Type:     schema.TypeString,
 						Optional: true,
+					},
+					string(PreemptiblePercentage): {
+						Type:         schema.TypeInt,
+						Optional:     true,
+						Default:      -1,
+						ValidateFunc: validation.IntAtLeast(-1),
 					},
 				},
 			},
@@ -91,6 +98,10 @@ func flattenStrategy(strategy *gcp.Strategy) []interface{} {
 			result[string(ProvisioningModel)] = spotinst.StringValue(strategy.ProvisioningModel)
 		}
 
+		if strategy.ProvisioningModel != nil {
+			result[string(PreemptiblePercentage)] = spotinst.IntValue(strategy.PreemptiblePercentage)
+		}
+
 		if len(result) > 0 {
 			out = append(out, result)
 		}
@@ -115,6 +126,12 @@ func expandStrategy(data interface{}) (*gcp.Strategy, error) {
 				strategy.SetProvisioningModel(spotinst.String(v))
 			} else {
 				strategy.SetProvisioningModel(nil)
+			}
+
+			if v, ok := m[string(PreemptiblePercentage)].(int); ok && v > 0 {
+				strategy.SetPreemptiblePercentage(spotinst.Int(v))
+			} else {
+				strategy.SetPreemptiblePercentage(nil)
 			}
 		}
 
