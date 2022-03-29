@@ -194,6 +194,7 @@ The following arguments are supported:
     * `roll_config` - (Required) Holds the roll configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `launch_spec_ids` - (Optional) List of Virtual Node Group identifiers to be rolled.
+        * `batch_min_healthy_percentage` - (Optional) Default: 50. Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the cluster roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch.
 
 ```hcl
 update_policy {
@@ -203,6 +204,7 @@ update_policy {
   roll_config {
     batch_size_percentage = 33
     launch_spec_ids = ["ols-1a2b3c4d"]
+    batch_min_healthy_percentage = 20
   }
 }
 ```

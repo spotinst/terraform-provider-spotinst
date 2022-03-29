@@ -386,6 +386,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Optional: true,
 									Elem:     &schema.Schema{Type: schema.TypeString},
 								},
+								string(BatchMinHealthyPercentage): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
 							},
 						},
 					},

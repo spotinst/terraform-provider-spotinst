@@ -302,6 +302,9 @@ func expandECSOceanRollConfig(data interface{}, clusterID *string) (*aws.ECSRoll
 			i.Roll.BatchSizePercentage = spotinst.Int(v)
 		}
 
+		if v, ok := m[string(ocean_aws.BatchMinHealthyPercentage)].(int); ok && v > 0 {
+			i.Roll.BatchMinHealthyPercentage = spotinst.Int(v)
+		}
 	}
 	return i, nil
 }
