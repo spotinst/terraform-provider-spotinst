@@ -1018,7 +1018,6 @@ const testUpdatePolicyAWSClusterConfig_Create = `
     roll_config {
       	batch_size_percentage = 33
 		batch_min_healthy_percentage = 20
-
     }
   }
  // ----------------------------------
