@@ -98,9 +98,11 @@ func flattenStrategy(strategy *gcp.Strategy) []interface{} {
 			result[string(ProvisioningModel)] = spotinst.StringValue(strategy.ProvisioningModel)
 		}
 
-		if strategy.ProvisioningModel != nil {
-			result[string(PreemptiblePercentage)] = spotinst.IntValue(strategy.PreemptiblePercentage)
+		preemptiblePercentage := spotinst.Int(-1)
+		if strategy.PreemptiblePercentage != nil {
+			preemptiblePercentage = strategy.PreemptiblePercentage
 		}
+		result[string(PreemptiblePercentage)] = spotinst.IntValue(preemptiblePercentage)
 
 		if len(result) > 0 {
 			out = append(out, result)
@@ -128,7 +130,7 @@ func expandStrategy(data interface{}) (*gcp.Strategy, error) {
 				strategy.SetProvisioningModel(nil)
 			}
 
-			if v, ok := m[string(PreemptiblePercentage)].(int); ok && v > 0 {
+			if v, ok := m[string(PreemptiblePercentage)].(int); ok && v >= 0 {
 				strategy.SetPreemptiblePercentage(spotinst.Int(v))
 			} else {
 				strategy.SetPreemptiblePercentage(nil)
