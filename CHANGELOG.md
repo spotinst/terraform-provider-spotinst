@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.70.0 (March 29, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added support for `batch_min_healthy_percentage`
+* resource/spotinst_ocean_ecs: added support for `batch_min_healthy_percentage`
+* resource/spotinst_ocean_gke_import: added support for `batch_min_healthy_percentage`
+
 ## 1.69.0 (March 08, 2022)
 
 ENHANCEMENTS:

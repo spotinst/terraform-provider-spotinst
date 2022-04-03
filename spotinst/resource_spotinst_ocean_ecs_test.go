@@ -801,6 +801,7 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_min_healthy_percentage", "20"),
 				),
 			},
 			{
@@ -818,6 +819,7 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_min_healthy_percentage", "30"),
 				),
 			},
 			{
@@ -843,7 +845,8 @@ update_policy {
  should_roll = false
  conditioned_roll = true
  roll_config {
-   batch_size_percentage = 33
+   		batch_size_percentage = 33
+		batch_min_healthy_percentage = 20
  }
 }
 // ----------------------------------
@@ -855,7 +858,8 @@ update_policy {
  should_roll = true
  conditioned_roll = false
  roll_config {
-   batch_size_percentage = 66
+		batch_size_percentage = 66
+		batch_min_healthy_percentage = 30
  }
 }
 // ----------------------------------

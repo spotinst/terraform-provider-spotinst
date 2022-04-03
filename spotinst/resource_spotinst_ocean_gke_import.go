@@ -328,6 +328,10 @@ func expandOceanGKEClusterRollConfig(data interface{}, clusterID string) (*gcp.R
 		if v, ok := m[string(ocean_gke_import.LaunchSpecIDs)].([]string); ok {
 			spec.LaunchSpecIDs = expandOceanGKELaunchSpecIDs(v)
 		}
+
+		if v, ok := m[string(ocean_gke_import.BatchMinHealthyPercentage)].(int); ok && v > 0 {
+			spec.BatchMinHealthyPercentage = spotinst.Int(v)
+		}
 	}
 
 	return spec, nil

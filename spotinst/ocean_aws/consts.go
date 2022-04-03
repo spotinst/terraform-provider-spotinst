@@ -27,7 +27,8 @@ const (
 	ConditionedRoll commons.FieldName = "conditioned_roll"
 	AutoApplyTags   commons.FieldName = "auto_apply_tags"
 
-	RollConfig          commons.FieldName = "roll_config"
-	BatchSizePercentage commons.FieldName = "batch_size_percentage"
-	LaunchSpecIDs       commons.FieldName = "launch_spec_ids"
+	RollConfig                commons.FieldName = "roll_config"
+	BatchSizePercentage       commons.FieldName = "batch_size_percentage"
+	LaunchSpecIDs             commons.FieldName = "launch_spec_ids"
+	BatchMinHealthyPercentage commons.FieldName = "batch_min_healthy_percentage"
 )
