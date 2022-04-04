@@ -178,8 +178,6 @@ The following arguments are supported:
     * `provisioning_model` - (Optional) Define the provisioning model of the launched instances. Valid values: `SPOT`, `PREEMPTIBLE`.
     * `preemptible_percentage`- (Optional) Defines the desired preemptible percentage for the cluster.
 
-
-
 ```hcl
   strategy {
     draining_timeout = 50
