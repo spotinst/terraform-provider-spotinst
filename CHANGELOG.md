@@ -1,5 +1,7 @@
 ## Unreleased
 
+* resource/spotinst_ocean_gke_import: added support for `preemptible_percentage`
+
 ## 1.70.0 (March 29, 2022)
 
 ENHANCEMENTS:

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -26,6 +27,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ProvisioningModel): {
 						Type:     schema.TypeString,
 						Optional: true,
+					},
+					string(PreemptiblePercentage): {
+						Type:         schema.TypeInt,
+						Optional:     true,
+						Default:      -1,
+						ValidateFunc: validation.IntAtLeast(-1),
 					},
 				},
 			},
@@ -91,6 +98,12 @@ func flattenStrategy(strategy *gcp.Strategy) []interface{} {
 			result[string(ProvisioningModel)] = spotinst.StringValue(strategy.ProvisioningModel)
 		}
 
+		preemptiblePercentage := spotinst.Int(-1)
+		if strategy.PreemptiblePercentage != nil {
+			preemptiblePercentage = strategy.PreemptiblePercentage
+		}
+		result[string(PreemptiblePercentage)] = spotinst.IntValue(preemptiblePercentage)
+
 		if len(result) > 0 {
 			out = append(out, result)
 		}
@@ -115,6 +128,12 @@ func expandStrategy(data interface{}) (*gcp.Strategy, error) {
 				strategy.SetProvisioningModel(spotinst.String(v))
 			} else {
 				strategy.SetProvisioningModel(nil)
+			}
+
+			if v, ok := m[string(PreemptiblePercentage)].(int); ok && v >= 0 {
+				strategy.SetPreemptiblePercentage(spotinst.Int(v))
+			} else {
+				strategy.SetPreemptiblePercentage(nil)
 			}
 		}
 

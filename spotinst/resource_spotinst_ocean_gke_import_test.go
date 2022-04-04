@@ -588,6 +588,7 @@ func TestAccSpotinstOceanGKEImport_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "50"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "PREEMPTIBLE"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.preemptible_percentage", "30"),
 				),
 			},
 			{
@@ -602,6 +603,7 @@ func TestAccSpotinstOceanGKEImport_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "60"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "SPOT"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.preemptible_percentage", "60"),
 				),
 			},
 			{
@@ -624,6 +626,7 @@ const testOceanGKEStrategy_Create = `
   strategy {
     draining_timeout = 50
     provisioning_model = "PREEMPTIBLE"
+	preemptible_percentage = 30
   }
 
 
@@ -633,6 +636,7 @@ const testOceanGKEStrategy_Update = `
   strategy {
     draining_timeout = 60
     provisioning_model = "SPOT"
+	preemptible_percentage = 60
   }
 
 `
