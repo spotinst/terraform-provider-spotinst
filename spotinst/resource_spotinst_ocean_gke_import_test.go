@@ -14,7 +14,7 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-var GcpClusterName = "terraform-tests-do-not-delete-2"
+var GcpClusterName = "terraform-tests-do-not-delete"
 
 func init() {
 	resource.AddTestSweepers("resource_spotinst_ocean_gke_import", &resource.Sweeper{
@@ -151,7 +151,7 @@ func createOceanGKEImportTerraform(clusterMeta *OceanGKEImportMetadata) string {
 
 // region Ocean GKE Import: Baseline
 func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete-2"
+	spotClusterName := "terraform-tests-do-not-delete"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
@@ -203,7 +203,7 @@ const testBaselineOceanGKEImportConfig_Create = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
- cluster_name = "terraform-tests-do-not-delete-2"
+ cluster_name = "terraform-tests-do-not-delete"
  location     = "us-central1-a"
 
  whitelist = ["n1-standard-1", "n1-standard-2"]
@@ -224,7 +224,7 @@ const testBaselineOceanGKEImportConfig_Update = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
- cluster_name = "terraform-tests-do-not-delete-2"
+ cluster_name = "terraform-tests-do-not-delete"
  location     = "us-central1-a"
 
  whitelist = ["n1-standard-1"]
@@ -242,7 +242,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
 
 //region Ocean GKE Import: BackendServices
 func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete-2"
+	spotClusterName := "terraform-tests-do-not-delete"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
@@ -261,13 +261,13 @@ func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
 					testCheckOceanGKEImportExists(&cluster, resourceName),
 					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
 					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.233520595.location_type", "global"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.233520595.service_name", "terraform-bs-dont-delete"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.233520595.named_ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.233520595.named_ports.571950593.name", "http"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.233520595.named_ports.571950593.ports.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.233520595.named_ports.571950593.ports.0", "80"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.233520595.named_ports.571950593.ports.1", "8080"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.3318701629.location_type", "global"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.3318701629.service_name", "terraform-bs-do-not-delete"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.3318701629.named_ports.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.3318701629.named_ports.571950593.name", "http"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.3318701629.named_ports.571950593.ports.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.3318701629.named_ports.571950593.ports.0", "80"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.3318701629.named_ports.571950593.ports.1", "8080"),
 				),
 			},
 			{
@@ -279,12 +279,12 @@ func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
 					testCheckOceanGKEImportExists(&cluster, resourceName),
 					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
 					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.3017970807.location_type", "global"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.3017970807.service_name", "terraform-bs-dont-delete"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.3017970807.named_ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.3017970807.named_ports.2171153412.name", "https"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.3017970807.named_ports.2171153412.ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.3017970807.named_ports.2171153412.ports.0", "443"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.2695791253.location_type", "global"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.2695791253.service_name", "terraform-bs-do-not-delete"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.2695791253.named_ports.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.2695791253.named_ports.2171153412.name", "https"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.2695791253.named_ports.2171153412.ports.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "backend_services.2695791253.named_ports.2171153412.ports.0", "443"),
 				),
 			},
 		},
@@ -293,7 +293,7 @@ func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
 
 const testBackendServicesOceanGKEImportConfig_Create = `
  backend_services {
-     service_name = "terraform-bs-dont-delete"
+     service_name = "terraform-bs-do-not-delete"
      location_type = "global"
 
      named_ports  {
@@ -309,7 +309,7 @@ const testBackendServicesOceanGKEImportConfig_Create = `
 
 const testBackendServicesOceanGKEImportConfig_Update = `
  backend_services  {
-     service_name = "terraform-bs-dont-delete"
+     service_name = "terraform-bs-do-not-delete"
      location_type = "global"
 
      named_ports {
@@ -323,7 +323,7 @@ const testBackendServicesOceanGKEImportConfig_Update = `
 
 // region Ocean GKE Import: Scheduling
 func TestAccSpotinstOceanGKEImport_Scheduling(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete-2"
+	spotClusterName := "terraform-tests-do-not-delete"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
@@ -414,7 +414,7 @@ const testOceanGKEScheduling_Update = `
 
 // region Ocean GKE Import: autoscaler
 func TestAccSpotinstOceanGKEImport_Autoscaler(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete-2"
+	spotClusterName := "terraform-tests-do-not-delete"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
@@ -566,7 +566,7 @@ autoscaler {}
 
 // region Ocean GKE Import: Strategy
 func TestAccSpotinstOceanGKEImport_Strategy(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete-2"
+	spotClusterName := "terraform-tests-do-not-delete"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)
 
 	var cluster gcp.Cluster
