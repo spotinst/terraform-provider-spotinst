@@ -142,6 +142,8 @@ const (
 	MultaiTarget      ResourceAffinity = "Multai_Target"
 	MultaiTargetSet   ResourceAffinity = "Multai_Target_Set"
 
+	DataIntegration ResourceAffinity = "Data_Integration"
+
 	HealthCheck ResourceAffinity = "Health_Check"
 
 	SuspendProcesses ResourceAffinity = "Suspend_Processes"

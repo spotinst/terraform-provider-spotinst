@@ -3,11 +3,9 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	stdlog "log"
-	"strings"
-
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/meta"
+	"github.com/spotinst/spotinst-sdk-go/service/dataintegration"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
 	"github.com/spotinst/spotinst-sdk-go/service/managedinstance"
@@ -21,6 +19,8 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
 	"github.com/spotinst/terraform-provider-spotinst/version"
+	stdlog "log"
+	"strings"
 )
 
 var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
@@ -44,6 +44,7 @@ type Client struct {
 	mrscaler        mrscaler.Service
 	ocean           ocean.Service
 	managedInstance managedinstance.Service
+	dataIntegration dataintegration.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
