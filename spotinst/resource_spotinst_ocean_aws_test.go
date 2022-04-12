@@ -834,7 +834,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "0"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
@@ -915,7 +915,7 @@ const testScalingConfig_EmptyFields = `
     autoscale_is_enabled = false
     autoscale_is_auto_config = false
 	enable_automatic_and_manual_headroom = false
-	auto_headroom_percentage = 100
+	auto_headroom_percentage = 0
     autoscale_cooldown = 300
 
     autoscale_headroom {
