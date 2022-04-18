@@ -1,5 +1,8 @@
 ## Unreleased
 
+FEATURES:
+**New Resource:** `spotinst_data_integration`
+
 ## 1.72.0 (April 12, 2022)
 
 BUG FIXES:
