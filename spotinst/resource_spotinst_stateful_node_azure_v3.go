@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	v3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	v3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -24,11 +24,13 @@ func resourceSpotinstStatefulNodeAzureV3() *schema.Resource {
 		Update: resourceSpotinstStatefulNodeAzureV3Update,
 		Delete: resourceSpotinstStatefulNodeAzureV3Delete,
 
+		//TODO - need to add all additional methods as part of create/update (see example in Ocean AWS - roll)
+
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 
-		Schema: commons.ElastigroupAzureV3Resource.GetSchemaMap(),
+		Schema: commons.StatefulNodeAzureV3Resource.GetSchemaMap(),
 	}
 }
 
@@ -49,38 +51,38 @@ func setupStatefulNodeAzureV3Resource() {
 	commons.StatefulNodeAzureV3Resource = commons.NewStatefulNodeAzureV3Resource(fieldsMap)
 }
 
-func resourceSpotinstElastigroupAzureV3Create(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
-		commons.ElastigroupAzureV3Resource.GetName())
+		commons.StatefulNodeAzureV3Resource.GetName())
 
-	elastigroup, err := commons.ElastigroupAzureV3Resource.OnCreate(resourceData, meta)
+	statefulNode, err := commons.StatefulNodeAzureV3Resource.OnCreate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
-	groupId, err := createAzureV3Group(elastigroup, meta.(*Client))
+	statefulNodeId, err := createAzureV3StatefulNode(statefulNode, meta.(*Client))
 	if err != nil {
 		return err
 	}
 
-	resourceData.SetId(spotinst.StringValue(groupId))
+	resourceData.SetId(spotinst.StringValue(statefulNodeId))
 
-	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
+	log.Printf("===> Stateful node created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstElastigroupAzureV3Read(resourceData, meta)
+	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
 }
 
-func createAzureV3Group(group *v3.Group, spotinstClient *Client) (*string, error) {
-	if json, err := commons.ToJson(group); err != nil {
+func createAzureV3StatefulNode(statefulNode *v3.StatefulNode, spotinstClient *Client) (*string, error) {
+	if json, err := commons.ToJson(statefulNode); err != nil {
 		return nil, err
 	} else {
-		log.Printf("===> Group create configuration: %s", json)
+		log.Printf("===> Stateful node create configuration: %s", json)
 	}
 
-	var resp *v3.CreateGroupOutput = nil
+	var resp *v3.CreateStatefulNodeOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
-		input := &v3.CreateGroupInput{Group: group}
-		r, err := spotinstClient.elastigroup.CloudProviderAzureV3().Create(context.Background(), input)
+		input := &v3.CreateStatefulNodeInput{StatefulNode: statefulNode}
+		r, err := spotinstClient.statefulNode.CloudProviderAzure().Create(context.Background(), input)
 		if err != nil {
 			log.Printf("error: %v", err)
 			// Some other error, report it.
@@ -91,21 +93,21 @@ func createAzureV3Group(group *v3.Group, spotinstClient *Client) (*string, error
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("[ERROR] failed to create group: %s", err)
+		return nil, fmt.Errorf("[ERROR] failed to create stateful node: %s", err)
 	}
-	return resp.Group.ID, nil
+	return resp.StatefulNode.ID, nil
 }
 
-func resourceSpotinstElastigroupAzureV3Read(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Read(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceFieldOnRead),
-		commons.ElastigroupAzureV3Resource.GetName(), id)
+		commons.StatefulNodeAzureV3Resource.GetName(), id)
 
-	input := &v3.ReadGroupInput{GroupID: spotinst.String(id)}
-	resp, err := meta.(*Client).elastigroup.CloudProviderAzureV3().Read(context.Background(), input)
+	input := &v3.ReadStatefulNodeInput{ID: spotinst.String(id)}
+	resp, err := meta.(*Client).statefulNode.CloudProviderAzure().Read(context.Background(), input)
 	if err != nil {
-		// If the group was not found, return nil so that we can show
-		// that the group does not exist
+		// If the stateful node was not found, return nil so that we can show
+		// that the stateful node does not exist
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
 				if err.Code == ErrCodeGroupNotFound {
@@ -116,91 +118,91 @@ func resourceSpotinstElastigroupAzureV3Read(resourceData *schema.ResourceData, m
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read group: %s", err)
+		return fmt.Errorf("failed to read stateful node: %s", err)
 	}
 
 	// If nothing was found, then return no state.
-	groupResponse := resp.Group
-	if groupResponse == nil {
+	statefulNodeResponse := resp.StatefulNode
+	if statefulNodeResponse == nil {
 		resourceData.SetId("")
 		return nil
 	}
 
-	if err := commons.ElastigroupAzureV3Resource.OnRead(groupResponse, resourceData, meta); err != nil {
+	if err := commons.StatefulNodeAzureV3Resource.OnRead(statefulNodeResponse, resourceData, meta); err != nil {
 		return err
 	}
-	log.Printf("===> Elastigroup read successfully: %s <===", id)
+	log.Printf("===> Stateful node read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstElastigroupAzureV3Update(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Update(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
-		commons.ElastigroupAzureV3Resource.GetName(), id)
+		commons.StatefulNodeAzureV3Resource.GetName(), id)
 
-	shouldUpdate, elastigroup, err := commons.ElastigroupAzureV3Resource.OnUpdate(resourceData, meta)
+	shouldUpdate, statefulNode, err := commons.StatefulNodeAzureV3Resource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return err
 	}
 
 	if shouldUpdate {
-		elastigroup.SetId(spotinst.String(id))
-		if err := updateAzureV3Group(elastigroup, resourceData, meta); err != nil {
+		statefulNode.SetID(spotinst.String(id))
+		if err := updateAzureV3StatefulNode(statefulNode, resourceData, meta); err != nil {
 			return err
 		}
 	}
 
-	log.Printf("===> Elastigroup updated successfully: %s <===", id)
-	return resourceSpotinstElastigroupAzureV3Read(resourceData, meta)
+	log.Printf("===> Stateful node updated successfully: %s <===", id)
+	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
 }
 
-func updateAzureV3Group(elastigroup *v3.Group, resourceData *schema.ResourceData, meta interface{}) error {
-	var input = &v3.UpdateGroupInput{
-		Group: elastigroup,
+func updateAzureV3StatefulNode(statefulNode *v3.StatefulNode, resourceData *schema.ResourceData, meta interface{}) error {
+	var input = &v3.UpdateStatefulNodeInput{
+		StatefulNode: statefulNode,
 	}
 
-	groupId := resourceData.Id()
+	statefulNodeId := resourceData.Id()
 
-	if json, err := commons.ToJson(elastigroup); err != nil {
+	if json, err := commons.ToJson(statefulNode); err != nil {
 		return err
 	} else {
-		log.Printf("===> Group update configuration: %s", json)
+		log.Printf("===> Stateful node update configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).elastigroup.CloudProviderAzureV3().Update(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to update group [%v]: %v", groupId, err)
+	if _, err := meta.(*Client).statefulNode.CloudProviderAzure().Update(context.Background(), input); err != nil {
+		return fmt.Errorf("[ERROR] Failed to update stateful node [%v]: %v", statefulNodeId, err)
 	}
 	return nil
 }
 
-func resourceSpotinstElastigroupAzureV3Delete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Delete(resourceData *schema.ResourceData, meta interface{}) error {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
-		commons.ElastigroupAzureV3Resource.GetName(), id)
+		commons.StatefulNodeAzureV3Resource.GetName(), id)
 
-	if err := deleteAzureV3Group(resourceData, meta); err != nil {
+	if err := deleteAzureV3StatefulNode(resourceData, meta); err != nil {
 		return err
 	}
 
-	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())
+	log.Printf("===> Stateful node deleted successfully: %s <===", resourceData.Id())
 	resourceData.SetId("")
 	return nil
 }
 
-func deleteAzureV3Group(resourceData *schema.ResourceData, meta interface{}) error {
-	groupId := resourceData.Id()
-	input := &v3.DeleteGroupInput{
-		GroupID: spotinst.String(groupId),
+func deleteAzureV3StatefulNode(resourceData *schema.ResourceData, meta interface{}) error {
+	statefulNodeId := resourceData.Id()
+	input := &v3.DeleteStatefulNodeInput{
+		ID: spotinst.String(statefulNodeId),
 	}
 
 	if json, err := commons.ToJson(input); err != nil {
 		return err
 	} else {
-		log.Printf("===> Group delete configuration: %s", json)
+		log.Printf("===> Stateful node delete configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).elastigroup.CloudProviderAzureV3().Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete group: %s", err)
+	if _, err := meta.(*Client).statefulNode.CloudProviderAzure().Delete(context.Background(), input); err != nil {
+		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete stateful node: %s", err)
 	}
 	return nil
 }

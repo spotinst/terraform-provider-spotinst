@@ -14,6 +14,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
@@ -44,6 +45,9 @@ type Client struct {
 	mrscaler        mrscaler.Service
 	ocean           ocean.Service
 	managedInstance managedinstance.Service
+	statefulNode    stateful.Service
+
+	//statefulNode    stateful.Service // TODO - need to change this to stateful in stateful.go (Go SDK) and then in here
 }
 
 // Client configures and returns a fully initialized Spotinst client.
