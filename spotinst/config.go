@@ -66,6 +66,7 @@ func (c *Config) Client() (*Client, error) {
 		mrscaler:        mrscaler.New(sess),
 		ocean:           ocean.New(sess),
 		managedInstance: managedinstance.New(sess),
+		dataIntegration: dataintegration.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")

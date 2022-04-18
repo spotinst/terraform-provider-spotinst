@@ -3,11 +3,13 @@ package commons
 import (
 	"fmt"
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	//"github.com/spotinst/spotinst-sdk-go/service/dataintegration/providers/aws"
 )
+
+var vendorTypes = []string{"s3"}
 
 const (
 	DataIntegrationResourceName ResourceName = "spotinst_data_integration"
@@ -91,7 +93,11 @@ func (res *DataIntegrationResourceTerraformResource) OnUpdate(
 
 	diWrapper := NewDataIntegrationWrapper()
 	hasChanged := false
+	var vendor = ""
 	for _, field := range res.fields.fieldsMap {
+		if contains(vendorTypes, field.fieldNameStr) {
+			vendor = field.fieldNameStr
+		}
 		if field.onUpdate == nil {
 			continue
 		}
@@ -103,7 +109,7 @@ func (res *DataIntegrationResourceTerraformResource) OnUpdate(
 			hasChanged = true
 		}
 	}
-
+	diWrapper.DataIntegration.SetVendor(spotinst.String(vendor))
 	return hasChanged, diWrapper.GetDataIntegration(), nil
 }
 

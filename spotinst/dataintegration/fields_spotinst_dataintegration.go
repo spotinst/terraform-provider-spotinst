@@ -2,8 +2,8 @@ package dataintegration
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/dataintegration/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -43,83 +43,75 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[Vendor] = commons.NewGenericField(
+	fieldsMap[S3] = commons.NewGenericField(
 		commons.DataIntegration,
-		Vendor,
+		S3,
 		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(BucketName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(SubDir): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
 			di := diWrapper.GetDataIntegration()
-			var value *string = nil
-			if di.Vendor != nil {
-				value = di.Vendor
+			var value []interface{} = nil
+			if di.Config != nil && di.Vendor != nil {
+				value = flattenS3(di.Config)
 			}
-			if err := resourceData.Set(string(Vendor), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Vendor), err)
+			if err := resourceData.Set(string(S3), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(S3), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
 			di := diWrapper.GetDataIntegration()
-			di.SetVendor(spotinst.String(resourceData.Get(string(Vendor)).(string)))
+			if value, ok := resourceData.GetOk(string(S3)); ok {
+				if config, err := expandS3(value); err != nil {
+					return err
+				} else {
+					di.SetConfig(config)
+					di.SetVendor(spotinst.String("s3"))
+				}
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
 			di := diWrapper.GetDataIntegration()
-			di.SetVendor(spotinst.String(resourceData.Get(string(Vendor)).(string)))
+			var value *aws.Config = nil
+			if v, ok := resourceData.GetOk(string(S3)); ok {
+				if config, err := expandS3(v); err != nil {
+					return err
+				} else {
+					value = config
+				}
+			}
+			di.SetConfig(value)
+			di.SetVendor(spotinst.String("s3"))
 			return nil
 		},
 
 		nil,
 	)
 
-	fieldsMap[BucketName] = commons.NewGenericField(
+	fieldsMap[Status] = commons.NewGenericField(
 		commons.DataIntegration,
-		BucketName,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
-			di := diWrapper.GetDataIntegration()
-			var value *string = nil
-			if di.Config != nil && di.Config.BucketName != nil {
-				value = di.Config.BucketName
-			}
-			if err := resourceData.Set(string(BucketName), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(BucketName), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
-			di := diWrapper.GetDataIntegration()
-			if v, ok := resourceData.GetOk(string(BucketName)); ok {
-				di.Config.SetBucketName(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
-			di := diWrapper.GetDataIntegration()
-			if v, ok := resourceData.GetOk(string(BucketName)); ok {
-				di.Config.SetBucketName(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-
-		nil,
-	)
-
-	fieldsMap[Subdir] = commons.NewGenericField(
-		commons.DataIntegration,
-		Subdir,
+		Status,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
@@ -128,32 +120,50 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
 			di := diWrapper.GetDataIntegration()
 			var value *string = nil
-			if di.Config != nil && di.Config.BucketName != nil {
-				value = di.Config.BucketName
+			if di.Status != nil {
+				value = di.Status
 			}
-			if err := resourceData.Set(string(Subdir), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Subdir), err)
+			if err := resourceData.Set(string(Status), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Status), err)
 			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
 			di := diWrapper.GetDataIntegration()
-			if v, ok := resourceData.GetOk(string(Subdir)); ok {
-				di.Config.SetBucketName(spotinst.String(v.(string)))
-			}
+			di.SetStatus(spotinst.String(resourceData.Get(string(Status)).(string)))
 			return nil
 		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			diWrapper := resourceObject.(*commons.DataIntegrationWrapper)
-			di := diWrapper.GetDataIntegration()
-			if v, ok := resourceData.GetOk(string(Subdir)); ok {
-				di.Config.SetBucketName(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-
 		nil,
 	)
+}
 
+func flattenS3(config *aws.Config) []interface{} {
+	m := make(map[string]interface{})
+	m[string(BucketName)] = spotinst.StringValue(config.BucketName)
+	m[string(SubDir)] = spotinst.StringValue(config.SubDir)
+
+	return []interface{}{m}
+}
+
+func expandS3(data interface{}) (*aws.Config, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		s3 := &aws.Config{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(BucketName)].(string); ok && v != "" {
+				s3.SetBucketName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(SubDir)].(string); ok && v != "" {
+				s3.SetSubDir(spotinst.String(v))
+			}
+		}
+		return s3, nil
+	}
+	return nil, nil
 }

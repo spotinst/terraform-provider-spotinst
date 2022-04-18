@@ -4,8 +4,9 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	DataIntegrationName commons.FieldName = "name"
-	Vendor              commons.FieldName = "vendor"
+	S3                  commons.FieldName = "s3"
+	Status              commons.FieldName = "status"
 
 	BucketName commons.FieldName = "bucket_name"
-	Subdir     commons.FieldName = "subdir"
+	SubDir     commons.FieldName = "subdir"
 )

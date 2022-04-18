@@ -106,7 +106,6 @@ func createDataIntegration(resourceData *schema.ResourceData, di *aws.DataIntegr
 		input := &aws.CreateDataIntegrationInput{DataIntegration: di}
 		r, err := spotinstClient.dataIntegration.CloudProviderAWS().CreateDataIntegration(context.Background(), input)
 		if err != nil {
-
 			// Some other error, report it.
 			return resource.NonRetryableError(err)
 		}
@@ -116,7 +115,7 @@ func createDataIntegration(resourceData *schema.ResourceData, di *aws.DataIntegr
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create DataIntegration: %s", err)
 	}
-	return resp.DataIntegration.Id, nil
+	return resp.DataIntegration.ID, nil
 
 }
 
@@ -130,7 +129,7 @@ func resourceSpotinstDataIntegrationUpdate(resourceData *schema.ResourceData, me
 	}
 
 	if shouldUpdate {
-		di.SetId(spotinst.String(resourceId))
+		di.SetID(spotinst.String(resourceId))
 		if err := updateDataIntegrationResource(di, resourceData, meta); err != nil {
 			return err
 		}
