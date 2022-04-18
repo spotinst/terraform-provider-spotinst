@@ -110,4 +110,54 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[PreferredSpotSizes] = commons.NewGenericField(
+		commons.StatefulNodeAzureVMSizes,
+		PreferredSpotSizes,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			var result []string
+			if statefulNode.Compute != nil && statefulNode.Compute.VMSizes != nil &&
+				statefulNode.Compute.VMSizes.PreferredSpotSizes != nil {
+				result = append(result, statefulNode.Compute.VMSizes.PreferredSpotSizes...)
+				if err := resourceData.Set(string(PreferredSpotSizes), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredSpotSizes), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.GetOk(string(PreferredSpotSizes)); ok {
+				virtualMachines := v.([]interface{})
+				PreferredSpotSizes := make([]string, len(virtualMachines))
+				for i, j := range virtualMachines {
+					PreferredSpotSizes[i] = j.(string)
+				}
+				statefulNode.Compute.VMSizes.SetPreferredSpotSizes(PreferredSpotSizes)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.GetOk(string(PreferredSpotSizes)); ok {
+				virtualMachines := v.([]interface{})
+				PreferredSpotSizes := make([]string, len(virtualMachines))
+				for i, j := range virtualMachines {
+					PreferredSpotSizes[i] = j.(string)
+				}
+				statefulNode.Compute.VMSizes.SetPreferredSpotSizes(PreferredSpotSizes)
+			}
+			return nil
+		},
+		nil,
+	)
+
 }
