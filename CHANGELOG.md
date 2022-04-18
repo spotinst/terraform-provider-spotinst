@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.72.0 (April 12, 2022)
+
+BUG FIXES:
+* resource/spotinst_ocean_aws: resolved errors with `auto_headroom_percentage`
+
 ## 1.71.0 (April 04, 2022)
 
 ENHANCEMENTS:

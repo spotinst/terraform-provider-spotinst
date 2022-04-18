@@ -834,7 +834,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_auto_config", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "0"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
@@ -915,7 +915,7 @@ const testScalingConfig_EmptyFields = `
     autoscale_is_enabled = false
     autoscale_is_auto_config = false
 	enable_automatic_and_manual_headroom = false
-	auto_headroom_percentage = 100
+	auto_headroom_percentage = 0
     autoscale_cooldown = 300
 
     autoscale_headroom {
@@ -1072,7 +1072,7 @@ func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-ef64b261"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-5fae075b"),
 				),
 			},
 			{
@@ -1097,7 +1097,7 @@ const testLoggingAWSConfig_Create = `
   logging {
     export {
       s3 { 
-		id = "di-ef64b261"
+		id = "di-5fae075b"
       }
     }
   }
