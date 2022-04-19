@@ -4,6 +4,10 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
+const (
+	Image commons.FieldName = "image"
+)
+
 //MarketPlaceImage
 const (
 	MarketPlaceImage commons.FieldName = "market_space_image"
