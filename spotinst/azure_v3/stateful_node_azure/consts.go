@@ -14,3 +14,8 @@ const (
 	Zones         commons.FieldName = "zones"
 	PreferredZone commons.FieldName = "preferred_zone"
 )
+
+const (
+	UpdateState commons.FieldName = "update_state"
+	State       commons.FieldName = "state"
+)
