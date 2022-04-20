@@ -153,4 +153,128 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[OS] = commons.NewGenericField(
+		commons.StatefulNodeAzure,
+		OS,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			var value *string = nil
+			if statefulNode.Compute != nil && statefulNode.Compute.OS != nil {
+				value = statefulNode.Compute.OS
+			}
+			if err := resourceData.Set(string(OS), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OS), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.GetOk(string(OS)); ok && v != "" {
+				statefulNode.Compute.SetOS(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.GetOk(string(OS)); ok && v != "" {
+				statefulNode.Compute.SetOS(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Zones] = commons.NewGenericField(
+		commons.StatefulNodeAzure,
+		Zones,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Required: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+
+			var result []string
+			if statefulNode.Compute != nil && statefulNode.Compute.Zones != nil {
+				result = append(result, statefulNode.Compute.Zones...)
+				if err := resourceData.Set(string(Zones), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Zones), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.Get(string(Zones)).([]interface{}); ok {
+				zones := make([]string, len(v))
+				for i, j := range v {
+					zones[i] = j.(string)
+				}
+				statefulNode.Compute.SetZones(zones)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.Get(string(Zones)).([]interface{}); ok {
+				zones := make([]string, len(v))
+				for i, j := range v {
+					zones[i] = j.(string)
+				}
+				statefulNode.Compute.SetZones(zones)
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[PreferredZone] = commons.NewGenericField(
+		commons.StatefulNodeAzure,
+		PreferredZone,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			var value *string = nil
+			if statefulNode.Compute != nil && statefulNode.Compute.OS != nil {
+				value = statefulNode.Compute.PreferredZone
+			}
+			if err := resourceData.Set(string(PreferredZone), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredZone), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.GetOk(string(PreferredZone)); ok && v != "" {
+				statefulNode.Compute.SetPreferredZone(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			if v, ok := resourceData.GetOk(string(PreferredZone)); ok && v != "" {
+				statefulNode.Compute.SetPreferredZone(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 }

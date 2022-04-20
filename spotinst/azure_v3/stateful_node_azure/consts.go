@@ -8,3 +8,9 @@ const (
 	Region            commons.FieldName = "region"
 	Description       commons.FieldName = "description"
 )
+
+const (
+	OS            commons.FieldName = "os"
+	Zones         commons.FieldName = "zones"
+	PreferredZone commons.FieldName = "preferred_zone"
+)
