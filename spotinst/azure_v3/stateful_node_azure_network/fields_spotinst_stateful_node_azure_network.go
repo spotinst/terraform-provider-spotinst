@@ -462,7 +462,7 @@ func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azurev3.A
 		}
 
 		if v, ok := adic[string(PrivateIPAddressVersion)].(string); ok && v != "" {
-			//additionalIPConfig.SetPrivateIPAddressVersion(spotinst.String(v))
+			additionalIPConfig.SetPrivateIPAddressVersion(spotinst.String(v))
 		}
 
 		newAdditionalIPConfigList = append(newAdditionalIPConfigList, additionalIPConfig)

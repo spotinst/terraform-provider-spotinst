@@ -6,6 +6,7 @@ const (
 	LoadBalancer commons.FieldName = "load_balancers"
 
 	Type              commons.FieldName = "type"
+	Name              commons.FieldName = "name"
 	ResourceGroupName commons.FieldName = "resource_group_name"
 	SKU               commons.FieldName = "sku"
 	BackendPoolNames  commons.FieldName = "backend_pool_names"
