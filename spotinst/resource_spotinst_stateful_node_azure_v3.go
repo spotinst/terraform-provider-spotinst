@@ -4,6 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_health"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_persistence"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_scheduling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_strategy"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_vm_sizes"
 	"log"
 	"time"
 
@@ -36,15 +41,13 @@ func setupStatefulNodeAzureV3Resource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	stateful_node_azure.Setup(fieldsMap)
+	stateful_node_azure_strategy.Setup(fieldsMap)
+	stateful_node_azure_vm_sizes.Setup(fieldsMap)
+	stateful_node_azure_persistence.Setup(fieldsMap)
+	stateful_node_azure_scheduling.Setup(fieldsMap)
+	stateful_node_azure_health.Setup(fieldsMap)
 
-	//TODO - add all of the rest here
-
-	//elastigroup_azure_image.Setup(fieldsMap)
-	//elastigroup_azure_login.Setup(fieldsMap)
-	//elastigroup_azure_network.Setup(fieldsMap)
-	//elastigroup_azure_strategy.Setup(fieldsMap)
-	//elastigroup_azure_vm_sizes.Setup(fieldsMap)
-	//elastigroup_azure_launchspecification.Setup(fieldsMap)
+	//TODO - add all of Tal's fields here
 
 	commons.StatefulNodeAzureV3Resource = commons.NewStatefulNodeAzureV3Resource(fieldsMap)
 }
@@ -114,7 +117,7 @@ func createAzureV3StatefulNodeImportVM(statefulNodeImport *v3.StatefulNodeImport
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("[ERROR] failed to create stateful node: %s", err)
+		return nil, fmt.Errorf("[ERROR] failed to create stateful node using import vm: %s", err)
 	}
 	return resp.StatefulNodeImport.StatefulNode.ID, nil
 }

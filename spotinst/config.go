@@ -46,8 +46,6 @@ type Client struct {
 	ocean           ocean.Service
 	managedInstance managedinstance.Service
 	statefulNode    stateful.Service
-
-	//statefulNode    stateful.Service // TODO - need to change this to stateful in stateful.go (Go SDK) and then in here
 }
 
 // Client configures and returns a fully initialized Spotinst client.
