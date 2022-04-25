@@ -24,8 +24,6 @@ func resourceSpotinstStatefulNodeAzureV3() *schema.Resource {
 		Update: resourceSpotinstStatefulNodeAzureV3Update,
 		Delete: resourceSpotinstStatefulNodeAzureV3Delete,
 
-		//TODO - need to add all additional methods as part of create/update (see example in Ocean AWS - roll)
-
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -60,16 +58,65 @@ func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData
 		return err
 	}
 
-	statefulNodeId, err := createAzureV3StatefulNode(statefulNode, meta.(*Client))
-	if err != nil {
-		return err
+	if shouldImportVM, ok := resourceData.Get(string(stateful_node_azure.ShouldImportVM)).(bool); ok && shouldImportVM {
+		statefulNodeImport := &v3.StatefulNodeImport{
+			OriginalVMName:    spotinst.String(resourceData.Get(string(stateful_node_azure.ImportVMOriginalVMName)).(string)),
+			ResourceGroupName: spotinst.String(resourceData.Get(string(stateful_node_azure.ImportVMResourceGroupName)).(string)),
+			StatefulNode:      statefulNode}
+
+		if v, ok := resourceData.Get(string(stateful_node_azure.ImportVMDrainingTimeout)).(int); ok && v >= 0 {
+			statefulNodeImport.DrainingTimeout = spotinst.Int(v)
+		}
+
+		if v, ok := resourceData.Get(string(stateful_node_azure.ImportVMResourceRetentionTime)).(int); ok && v >= 0 {
+			statefulNodeImport.DrainingTimeout = spotinst.Int(v)
+		}
+
+		statefulNodeId, err := createAzureV3StatefulNodeImportVM(statefulNodeImport, meta.(*Client))
+		if err != nil {
+			return err
+		}
+
+		resourceData.SetId(spotinst.StringValue(statefulNodeId))
+		log.Printf("===> Stateful node using import vm created successfully: %s <===", resourceData.Id())
+
+	} else {
+		statefulNodeId, err := createAzureV3StatefulNode(statefulNode, meta.(*Client))
+		if err != nil {
+			return err
+		}
+
+		resourceData.SetId(spotinst.StringValue(statefulNodeId))
+		log.Printf("===> Stateful node created successfully: %s <===", resourceData.Id())
 	}
 
-	resourceData.SetId(spotinst.StringValue(statefulNodeId))
-
-	log.Printf("===> Stateful node created successfully: %s <===", resourceData.Id())
-
 	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
+}
+
+func createAzureV3StatefulNodeImportVM(statefulNodeImport *v3.StatefulNodeImport, spotinstClient *Client) (*string, error) {
+	if json, err := commons.ToJson(statefulNodeImport); err != nil {
+		return nil, err
+	} else {
+		log.Printf("===> Stateful node import vm create configuration: %s", json)
+	}
+
+	var resp *v3.ImportVMStatefulNodeOutput = nil
+	err := resource.Retry(time.Minute, func() *resource.RetryError {
+		input := &v3.ImportVMStatefulNodeInput{StatefulNodeImport: statefulNodeImport}
+		r, err := spotinstClient.statefulNode.CloudProviderAzure().ImportVM(context.Background(), input)
+		if err != nil {
+			log.Printf("error: %v", err)
+			// Some other error, report it.
+			return resource.NonRetryableError(err)
+		}
+		resp = r
+		return nil
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("[ERROR] failed to create stateful node: %s", err)
+	}
+	return resp.StatefulNodeImport.StatefulNode.ID, nil
 }
 
 func createAzureV3StatefulNode(statefulNode *v3.StatefulNode, spotinstClient *Client) (*string, error) {
@@ -370,7 +417,8 @@ func detachDataDiskAzureV3StatefulNode(resourceData *schema.ResourceData, meta i
 	return nil
 }
 
-func expandStatefulNodeAzureUpdateStateConfig(data interface{}, statefulNodeID string) (*v3.UpdateStatefulNodeStateInput, error) {
+func expandStatefulNodeAzureUpdateStateConfig(data interface{},
+	statefulNodeID string) (*v3.UpdateStatefulNodeStateInput, error) {
 	list := data.([]interface{})
 	spec := &v3.UpdateStatefulNodeStateInput{
 		ID: spotinst.String(statefulNodeID),
@@ -387,7 +435,8 @@ func expandStatefulNodeAzureUpdateStateConfig(data interface{}, statefulNodeID s
 	return spec, nil
 }
 
-func expandStatefulNodeAzureAttachDataDiskConfig(data interface{}, statefulNodeID string) (*v3.AttachStatefulNodeDataDiskInput,
+func expandStatefulNodeAzureAttachDataDiskConfig(data interface{},
+	statefulNodeID string) (*v3.AttachStatefulNodeDataDiskInput,
 	error) {
 	list := data.([]interface{})
 	spec := &v3.AttachStatefulNodeDataDiskInput{

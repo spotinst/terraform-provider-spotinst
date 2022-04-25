@@ -23,8 +23,9 @@ const (
 )
 
 const (
-	AttachPrefix = "attach_"
-	DetachPrefix = "detach_"
+	AttachPrefix   = "attach_"
+	DetachPrefix   = "detach_"
+	ImportVMPrefix = "import_vm_"
 )
 
 const (
@@ -48,4 +49,13 @@ const (
 	DetachShouldDeallocate          commons.FieldName = DetachPrefix + "should_deallocate"
 
 	ShouldDetachDataDisk commons.FieldName = "should_detach_data_disk"
+)
+
+const (
+	ImportVMResourceGroupName     commons.FieldName = ImportVMPrefix + "resource_group_name"
+	ImportVMOriginalVMName        commons.FieldName = ImportVMPrefix + "original_vm_name"
+	ImportVMDrainingTimeout       commons.FieldName = ImportVMPrefix + "draining_timeout"
+	ImportVMResourceRetentionTime commons.FieldName = ImportVMPrefix + "resource_retention_time"
+
+	ShouldImportVM commons.FieldName = "should_import_vm"
 )
