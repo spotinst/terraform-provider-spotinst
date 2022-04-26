@@ -3,11 +3,9 @@ package stateful_node_azure_extension
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-	"strings"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
@@ -19,41 +17,35 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeSet,
 			Optional: true,
 			Computed: true,
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				if strings.ToLower(old) == strings.ToLower(new) {
-					return true
-				}
-				return false
-			},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Publisher): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 						Computed: true,
 					},
 
 					string(APIVersion): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 						Computed: true,
 					},
 
 					string(MinorVersionAutoUpgrade): {
 						Type:     schema.TypeBool,
-						Optional: true,
+						Required: true,
 						Computed: true,
 					},
 
 					string(Name): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 						Computed: true,
 					},
 
 					string(Type): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 						Computed: true,
 					},
 
@@ -92,10 +84,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*.Extension = nil
+			var value []*azurev3.Extension = nil
 
 			if v, ok := resourceData.GetOk(string(Extension)); ok {
-				var extensions []*azure.Extension
+				var extensions []*azurev3.Extension
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil {
 					if st.Compute.LaunchSpecification.Extensions != nil {
@@ -114,18 +106,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			stWrapper := resourceObject.(*commons.AKSstWrapper)
-			st := stWrapper.Getst()
-			var value []*azure.Extension = nil
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value []*azurev3.Extension = nil
 
 			if v, ok := resourceData.GetOk(string(Extension)); ok {
 				//create new image object in case st did not get it from previous import step.
-				var extensions []*azure.Extension
+				var extensions []*azurev3.Extension
 
-				if st != nil && st.VirtualNodeGroupTemplate != nil && st.VirtualNodeGroupTemplate.LaunchSpecification != nil {
+				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil {
 
-					if st.VirtualNodeGroupTemplate.LaunchSpecification.Extensions != nil {
-						extensions = st.VirtualNodeGroupTemplate.LaunchSpecification.Extensions
+					if st.Compute.LaunchSpecification.Extensions != nil {
+						extensions = st.Compute.LaunchSpecification.Extensions
 					}
 
 					if extensions, err := expandExtensions(v, extensions); err != nil {
@@ -134,7 +126,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						value = extensions
 					}
 
-					st.VirtualNodeGroupTemplate.LaunchSpecification.SetExtensions(value)
+					st.Compute.LaunchSpecification.SetExtensions(value)
 				}
 			}
 			return nil
@@ -143,7 +135,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenExtensions(extensions []*azure.Extension) []interface{} {
+func flattenExtensions(extensions []*azurev3.Extension) []interface{} {
 	result := make([]interface{}, 0, len(extensions))
 
 	for _, extension := range extensions {
@@ -153,37 +145,45 @@ func flattenExtensions(extensions []*azure.Extension) []interface{} {
 		m[string(Publisher)] = spotinst.StringValue(extension.Publisher)
 		m[string(Type)] = spotinst.StringValue(extension.Type)
 		m[string(MinorVersionAutoUpgrade)] = spotinst.BoolValue(extension.MinorVersionAutoUpgrade)
+		m[string(ProtectedSettings)] = extension.ProtectedSettings
+		m[string(PublicSettings)] = extension.PublicSettings
 
 		result = append(result, m)
 	}
 	return result
 }
 
-func expandExtensions(data interface{}, extensions []*azure.Extension) ([]*azure.Extension, error) {
+func expandExtensions(data interface{}, extensions []*azurev3.Extension) ([]*azurev3.Extension, error) {
 	list := data.(*schema.Set).List()
 
 	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
+		ext, ok := v.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		extension := &azure.Extension{}
+		extension := &azurev3.Extension{}
 
-		if v, ok := attr[string(APIVersion)].(string); ok && v != "" {
+		if v, ok := ext[string(APIVersion)].(string); ok && v != "" {
 			extension.SetAPIVersion(spotinst.String(v))
 		}
-		if v, ok := attr[string(Name)].(string); ok && v != "" {
+		if v, ok := ext[string(Name)].(string); ok && v != "" {
 			extension.SetName(spotinst.String(v))
 		}
-		if v, ok := attr[string(Publisher)].(string); ok && v != "" {
+		if v, ok := ext[string(Publisher)].(string); ok && v != "" {
 			extension.SetPublisher(spotinst.String(v))
 		}
-		if v, ok := attr[string(Type)].(string); ok && v != "" {
+		if v, ok := ext[string(Type)].(string); ok && v != "" {
 			extension.SetType(spotinst.String(v))
 		}
-		if v, ok := attr[string(MinorVersionAutoUpgrade)].(bool); ok {
+		if v, ok := ext[string(MinorVersionAutoUpgrade)].(bool); ok {
 			extension.SetMinorVersionAutoUpgrade(spotinst.Bool(v))
+		}
+		if v, ok := ext[string(ProtectedSettings)].(map[string]interface{}); ok {
+			extension.SetProtectedSettings(v)
+		}
+		if v, ok := ext[string(PublicSettings)].(map[string]interface{}); ok {
+			extension.SetPublicSettings(v)
 		}
 
 		extensions = append(extensions, extension)

@@ -15,7 +15,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Network,
 		&schema.Schema{
 			Type:     schema.TypeList,
-			Optional: true,
+			Required: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(VirtualNetworkName): {
@@ -30,7 +30,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 					string(NetworkInterfaces): {
 						Type:     schema.TypeList,
-						Optional: true,
+						Required: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(SubnetName): {
@@ -40,7 +40,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 								string(AssignPublicIP): {
 									Type:     schema.TypeBool,
-									Required: true,
+									Optional: true,
 								},
 
 								string(IsPrimary): {
@@ -50,21 +50,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 								string(PublicIPSku): {
 									Type:     schema.TypeString,
-									Required: true,
+									Optional: true,
 								},
 
 								string(NetworkSecurityGroup): {
 									Type:     schema.TypeList,
-									Required: true,
+									Optional: true,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(Name): {
 												Type:     schema.TypeString,
-												Required: true,
+												Optional: true,
 											},
 											string(ResourceGroupName): {
 												Type:     schema.TypeString,
-												Required: true,
+												Optional: true,
 											},
 										},
 									},
@@ -72,17 +72,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 								string(EnableIPForwarding): {
 									Type:     schema.TypeBool,
-									Required: true,
+									Optional: true,
 								},
 
 								string(PrivateIPAddresses): {
 									Type:     schema.TypeString,
-									Required: true,
+									Optional: true,
 								},
 
 								string(AdditionalIPConfigurations): {
 									Type:     schema.TypeList,
-									Required: true,
+									Optional: true,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(Name): {
@@ -98,7 +98,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 								string(PublicIPs): {
 									Type:     schema.TypeList,
-									Required: true,
+									Optional: true,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(Name): {
@@ -114,7 +114,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 								string(ApplicationSecurityGroups): {
 									Type:     schema.TypeList,
-									Required: true,
+									Optional: true,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(Name): {

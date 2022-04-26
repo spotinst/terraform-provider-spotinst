@@ -2,13 +2,20 @@ package stateful_node_azure_launch_spec
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
-//Tags
+// LaunchSpec
+const (
+	CustomData     commons.FieldName = "custom_data"
+	ShutdownScript commons.FieldName = "shutdown_script"
+)
+
+// Tags
 const (
 	Tags     commons.FieldName = "tags"
 	TagKey   commons.FieldName = "tag_key"
 	TagValue commons.FieldName = "tag_value"
 )
 
+// Managed service identities
 const (
 	ManagedServiceIdentities commons.FieldName = "managed_service_identities"
 	Name                     commons.FieldName = "name"

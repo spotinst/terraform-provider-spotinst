@@ -14,7 +14,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		SSHPublicKey,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
@@ -50,8 +50,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		UserName,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
@@ -87,7 +86,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Password,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
