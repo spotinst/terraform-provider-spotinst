@@ -22,31 +22,26 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Publisher): {
 						Type:     schema.TypeString,
 						Required: true,
-						Computed: true,
 					},
 
 					string(APIVersion): {
 						Type:     schema.TypeString,
 						Required: true,
-						Computed: true,
 					},
 
 					string(MinorVersionAutoUpgrade): {
 						Type:     schema.TypeBool,
 						Required: true,
-						Computed: true,
 					},
 
 					string(Name): {
 						Type:     schema.TypeString,
 						Required: true,
-						Computed: true,
 					},
 
 					string(Type): {
 						Type:     schema.TypeString,
 						Required: true,
-						Computed: true,
 					},
 
 					string(ProtectedSettings): {

@@ -22,14 +22,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(BackendPoolNames): {
 						Type:     schema.TypeList,
 						Required: true,
-						Computed: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 
 					string(Name): {
 						Type:     schema.TypeString,
 						Required: true,
-						Computed: true,
 					},
 
 					string(SKU): {
@@ -41,13 +39,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ResourceGroupName): {
 						Type:     schema.TypeString,
 						Required: true,
-						Computed: true,
 					},
 
 					string(Type): {
 						Type:     schema.TypeString,
 						Required: true,
-						Computed: true,
 					},
 				},
 			},

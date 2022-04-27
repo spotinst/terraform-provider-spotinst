@@ -196,7 +196,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Zones,
 		&schema.Schema{
 			Type:     schema.TypeList,
-			Required: true,
+			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
