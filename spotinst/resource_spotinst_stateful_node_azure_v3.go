@@ -4,9 +4,16 @@ import (
 	"context"
 	"fmt"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_extension"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_health"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_image"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_launch_spec"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_load_balancer"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_login"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_network"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_persistence"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_scheduling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_secret"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_strategy"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_vm_sizes"
 	"log"
@@ -42,12 +49,17 @@ func setupStatefulNodeAzureV3Resource() {
 
 	stateful_node_azure.Setup(fieldsMap)
 	stateful_node_azure_strategy.Setup(fieldsMap)
+	stateful_node_azure_launch_spec.Setup(fieldsMap)
+	stateful_node_azure_image.Setup(fieldsMap)
+	stateful_node_azure_network.Setup(fieldsMap)
+	stateful_node_azure_login.Setup(fieldsMap)
+	stateful_node_azure_load_balancer.Setup(fieldsMap)
+	stateful_node_azure_extension.Setup(fieldsMap)
+	stateful_node_azure_secret.Setup(fieldsMap)
 	stateful_node_azure_vm_sizes.Setup(fieldsMap)
 	stateful_node_azure_persistence.Setup(fieldsMap)
 	stateful_node_azure_scheduling.Setup(fieldsMap)
 	stateful_node_azure_health.Setup(fieldsMap)
-
-	//TODO - add all of Tal's fields here
 
 	commons.StatefulNodeAzureV3Resource = commons.NewStatefulNodeAzureV3Resource(fieldsMap)
 }

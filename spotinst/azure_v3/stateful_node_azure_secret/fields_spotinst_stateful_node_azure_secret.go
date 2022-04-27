@@ -10,9 +10,9 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[Secret] = commons.NewGenericField(
+	fieldsMap[Secrets] = commons.NewGenericField(
 		commons.StatefulNodeAzureSecret,
-		Secret,
+		Secrets,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -60,13 +60,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			statefulNode := stWrapper.GetStatefulNode()
 			var result []interface{} = nil
 			if statefulNode != nil && statefulNode.Compute != nil && statefulNode.Compute.LaunchSpecification != nil && statefulNode.Compute.LaunchSpecification.Secrets != nil {
-				secret := statefulNode.Compute.LaunchSpecification.Secrets
-				result = flattenSecret(secret)
+				secrets := statefulNode.Compute.LaunchSpecification.Secrets
+				result = flattenSecrets(secrets)
 			}
 
 			if result != nil {
-				if err := resourceData.Set(string(Secret), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Secret), err)
+				if err := resourceData.Set(string(Secrets), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Secrets), err)
 				}
 			}
 
@@ -75,8 +75,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := stWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(Secret)); ok {
-				if value, err := expandSecret(v); err != nil {
+			if v, ok := resourceData.GetOk(string(Secrets)); ok {
+				if value, err := expandSecrets(v); err != nil {
 					return err
 				} else {
 					statefulNode.Compute.LaunchSpecification.SetSecrets(value)
@@ -89,8 +89,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value []*azurev3.Secret = nil
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Secrets != nil {
-				if v, ok := resourceData.GetOk(string(Secret)); ok {
-					if secrets, err := expandSecret(v); err != nil {
+				if v, ok := resourceData.GetOk(string(Secrets)); ok {
+					if secrets, err := expandSecrets(v); err != nil {
 						return err
 					} else {
 						value = secrets
@@ -104,7 +104,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenSecret(secret []*azurev3.Secret) []interface{} {
+func flattenSecrets(secret []*azurev3.Secret) []interface{} {
 	result := make([]interface{}, 0, len(secret))
 
 	for _, sec := range secret {
@@ -143,7 +143,7 @@ func flattenVaultCertificate(vaultCert []*azurev3.VaultCertificate) []interface{
 	return result
 }
 
-func expandSecret(data interface{}) ([]*azurev3.Secret, error) {
+func expandSecrets(data interface{}) ([]*azurev3.Secret, error) {
 	list := data.(*schema.Set).List()
 	sec := make([]*azurev3.Secret, 0, len(list))
 

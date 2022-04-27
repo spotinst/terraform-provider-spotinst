@@ -11,9 +11,9 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[Task] = commons.NewGenericField(
+	fieldsMap[SchedulingTasks] = commons.NewGenericField(
 		commons.StatefulNodeAzureScheduling,
-		Task,
+		SchedulingTasks,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -42,15 +42,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value []interface{} = nil
 			if statefulNode.Scheduling != nil && statefulNode.Scheduling.Tasks != nil {
 				tasks := statefulNode.Scheduling.Tasks
-				value = flattenStatefulNodeAzureTasks(tasks)
+				value = flattenStatefulNodeAzureSchedulingTasks(tasks)
 			}
 			if value != nil {
-				if err := resourceData.Set(string(Task), value); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Task), err)
+				if err := resourceData.Set(string(SchedulingTasks), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingTasks), err)
 				}
 			} else {
-				if err := resourceData.Set(string(Task), []*azure.Task{}); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Task), err)
+				if err := resourceData.Set(string(SchedulingTasks), []*azure.Task{}); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingTasks), err)
 				}
 			}
 			return nil
@@ -58,8 +58,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(Task)); ok {
-				if tasks, err := expandStatefulNodeAzureTasks(v); err != nil {
+			if v, ok := resourceData.GetOk(string(SchedulingTasks)); ok {
+				if tasks, err := expandStatefulNodeAzureSchedulingTasks(v); err != nil {
 					return err
 				} else {
 					statefulNode.Scheduling.SetTasks(tasks)
@@ -71,8 +71,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
 			var value []*azure.Task = nil
-			if v, ok := resourceData.GetOk(string(Task)); ok {
-				if interfaces, err := expandStatefulNodeAzureTasks(v); err != nil {
+			if v, ok := resourceData.GetOk(string(SchedulingTasks)); ok {
+				if interfaces, err := expandStatefulNodeAzureSchedulingTasks(v); err != nil {
 					return err
 				} else {
 					value = interfaces
@@ -85,7 +85,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenStatefulNodeAzureTasks(tasks []*azure.Task) []interface{} {
+func flattenStatefulNodeAzureSchedulingTasks(tasks []*azure.Task) []interface{} {
 	result := make([]interface{}, 0, len(tasks))
 	for _, t := range tasks {
 		m := make(map[string]interface{})
@@ -98,7 +98,7 @@ func flattenStatefulNodeAzureTasks(tasks []*azure.Task) []interface{} {
 	return result
 }
 
-func expandStatefulNodeAzureTasks(data interface{}) ([]*azure.Task, error) {
+func expandStatefulNodeAzureSchedulingTasks(data interface{}) ([]*azure.Task, error) {
 	list := data.(*schema.Set).List()
 	tasks := make([]*azure.Task, 0, len(list))
 	for _, item := range list {

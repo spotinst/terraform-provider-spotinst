@@ -3,7 +3,7 @@ package stateful_node_azure_login
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	Login        commons.FieldName = "login"
+	Login        commons.FieldName = "login" // TODO - remove if not used
 	UserName     commons.FieldName = "user_name"
 	SSHPublicKey commons.FieldName = "ssh_public_key"
 	Password     commons.FieldName = "password"

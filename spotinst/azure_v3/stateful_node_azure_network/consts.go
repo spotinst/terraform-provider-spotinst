@@ -8,7 +8,7 @@ import (
 const (
 	Network            commons.FieldName = "network"
 	VirtualNetworkName commons.FieldName = "virtual_network_name"
-	ResourceGroupName  commons.FieldName = "network_resource_group_name"
+	ResourceGroupName  commons.FieldName = "network_resource_group_name" //TODO - this is used in two different locations - might need to split to 2 different fields
 	NetworkInterfaces  commons.FieldName = "network_interfaces"
 )
 
@@ -27,6 +27,6 @@ const (
 )
 
 const (
-	Name                    commons.FieldName = "name"
+	Name                    commons.FieldName = "name" // TODO - will there be a conflict with other field called "name"?
 	PrivateIPAddressVersion commons.FieldName = "private_ip_address_version"
 )

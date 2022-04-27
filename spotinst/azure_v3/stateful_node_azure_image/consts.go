@@ -10,7 +10,7 @@ const (
 
 //MarketPlaceImage
 const (
-	MarketPlaceImage commons.FieldName = "market_space_image"
+	MarketPlaceImage commons.FieldName = "marketplace_image"
 	Publisher        commons.FieldName = "publisher"
 	Offer            commons.FieldName = "offer"
 	SKU              commons.FieldName = "sku"

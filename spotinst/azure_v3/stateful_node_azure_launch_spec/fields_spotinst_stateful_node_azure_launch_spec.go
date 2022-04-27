@@ -293,9 +293,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[DataDisk] = commons.NewGenericField(
+	fieldsMap[DataDisks] = commons.NewGenericField(
 		commons.StatefulNodeAzureLaunchSpecification,
-		DataDisk,
+		DataDisks,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -323,17 +323,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil &&
 				st.Compute.LaunchSpecification.DataDisks != nil {
-				value = flattenDataDisk(st.Compute.LaunchSpecification.DataDisks)
+				value = flattenDataDisks(st.Compute.LaunchSpecification.DataDisks)
 			}
-			if err := resourceData.Set(string(DataDisk), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DataDisk), err)
+			if err := resourceData.Set(string(DataDisks), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DataDisks), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(DataDisk)); ok {
+			if v, ok := resourceData.GetOk(string(DataDisks)); ok {
 				if value, err := expandDataDisks(v); err != nil {
 					return err
 				} else {
@@ -347,7 +347,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value []*azurev3.DataDisk = nil
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Tags != nil {
-				if v, ok := resourceData.GetOk(string(DataDisk)); ok {
+				if v, ok := resourceData.GetOk(string(DataDisks)); ok {
 					if dd, err := expandDataDisks(v); err != nil {
 						return err
 					} else {
@@ -535,7 +535,7 @@ func expandOSDisk(data interface{}) (*azurev3.OSDisk, error) {
 	return nil, nil
 }
 
-func flattenDataDisk(dataDisks []*azurev3.DataDisk) []interface{} {
+func flattenDataDisks(dataDisks []*azurev3.DataDisk) []interface{} {
 	result := make([]interface{}, 0, len(dataDisks))
 	for _, disk := range dataDisks {
 		m := make(map[string]interface{})
