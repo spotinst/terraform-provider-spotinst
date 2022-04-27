@@ -159,6 +159,8 @@ const (
 	StatefulNodeAzureHealth                   ResourceAffinity = "Stateful_Node_Azure_Health"
 	StatefulNodeAzureScheduling               ResourceAffinity = "Stateful_Node_Azure_Scheduling"
 	StatefulNodeAzureLaunchSpecification      ResourceAffinity = "Stateful_Node_Azure_Launch_Specification"
+	StatefulNodeAzureExtensions               ResourceAffinity = "Stateful_Node_Azure_Extensions"
+	StatefulNodeAzureSecret                   ResourceAffinity = "Stateful_Node_Azure_Secret"
 
 	//TODO - Will probably need to add more ^
 
