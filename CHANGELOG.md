@@ -1,6 +1,10 @@
 ## Unreleased
 
-* Update version for GO-SDK (1.118.0)
+## 1.73.2 (April 28, 2022)
+
+BUG FIXES:
+
+* resource/spotinst_ocean_gke_launch_spec: resolved errors with spotist-go-sdk dependencies
 
 ## 1.73.1 (April 19, 2022)
 
