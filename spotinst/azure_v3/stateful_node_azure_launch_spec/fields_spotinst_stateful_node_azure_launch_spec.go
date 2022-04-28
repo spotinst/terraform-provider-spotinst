@@ -98,9 +98,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[Tags] = commons.NewGenericField(
+	fieldsMap[Tag] = commons.NewGenericField(
 		commons.StatefulNodeAzureLaunchSpecification,
-		Tags,
+		Tag,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -126,15 +126,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				st.Compute.LaunchSpecification.Tags != nil {
 				value = flattenTags(st.Compute.LaunchSpecification.Tags)
 			}
-			if err := resourceData.Set(string(Tags), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+			if err := resourceData.Set(string(Tag), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tag), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(Tags)); ok {
+			if v, ok := resourceData.GetOk(string(Tag)); ok {
 				if tags, err := expandTags(v); err != nil {
 					return err
 				} else {
@@ -148,7 +148,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value []*azurev3.Tag = nil
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Tags != nil {
-				if v, ok := resourceData.GetOk(string(Tags)); ok {
+				if v, ok := resourceData.GetOk(string(Tag)); ok {
 					if tags, err := expandTags(v); err != nil {
 						return err
 					} else {
@@ -293,9 +293,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[DataDisks] = commons.NewGenericField(
+	fieldsMap[DataDisk] = commons.NewGenericField(
 		commons.StatefulNodeAzureLaunchSpecification,
-		DataDisks,
+		DataDisk,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -325,15 +325,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				st.Compute.LaunchSpecification.DataDisks != nil {
 				value = flattenDataDisks(st.Compute.LaunchSpecification.DataDisks)
 			}
-			if err := resourceData.Set(string(DataDisks), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DataDisks), err)
+			if err := resourceData.Set(string(DataDisk), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DataDisk), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(DataDisks)); ok {
+			if v, ok := resourceData.GetOk(string(DataDisk)); ok {
 				if value, err := expandDataDisks(v); err != nil {
 					return err
 				} else {
@@ -347,7 +347,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value []*azurev3.DataDisk = nil
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Tags != nil {
-				if v, ok := resourceData.GetOk(string(DataDisks)); ok {
+				if v, ok := resourceData.GetOk(string(DataDisk)); ok {
 					if dd, err := expandDataDisks(v); err != nil {
 						return err
 					} else {

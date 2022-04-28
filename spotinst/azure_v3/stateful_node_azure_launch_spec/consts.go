@@ -10,7 +10,7 @@ const (
 
 // Tags
 const (
-	Tags     commons.FieldName = "tags" // TODO - TypeList?
+	Tag      commons.FieldName = "tag"
 	TagKey   commons.FieldName = "tag_key"
 	TagValue commons.FieldName = "tag_value"
 )
@@ -31,8 +31,8 @@ const (
 
 // Data disk
 const (
-	DataDisks commons.FieldName = "data_disks" // TODO - should this be of type list?
-	LUN       commons.FieldName = "lun"
+	DataDisk commons.FieldName = "data_disk"
+	LUN      commons.FieldName = "lun"
 )
 
 // Boot diagnostics

@@ -11,9 +11,9 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[SchedulingTasks] = commons.NewGenericField(
+	fieldsMap[SchedulingTask] = commons.NewGenericField(
 		commons.StatefulNodeAzureScheduling,
-		SchedulingTasks,
+		SchedulingTask,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -45,12 +45,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				value = flattenStatefulNodeAzureSchedulingTasks(tasks)
 			}
 			if value != nil {
-				if err := resourceData.Set(string(SchedulingTasks), value); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingTasks), err)
+				if err := resourceData.Set(string(SchedulingTask), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingTask), err)
 				}
 			} else {
-				if err := resourceData.Set(string(SchedulingTasks), []*azure.Task{}); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingTasks), err)
+				if err := resourceData.Set(string(SchedulingTask), []*azure.Task{}); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SchedulingTask), err)
 				}
 			}
 			return nil
@@ -58,7 +58,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(SchedulingTasks)); ok {
+			if v, ok := resourceData.GetOk(string(SchedulingTask)); ok {
 				if tasks, err := expandStatefulNodeAzureSchedulingTasks(v); err != nil {
 					return err
 				} else {
@@ -71,7 +71,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
 			var value []*azure.Task = nil
-			if v, ok := resourceData.GetOk(string(SchedulingTasks)); ok {
+			if v, ok := resourceData.GetOk(string(SchedulingTask)); ok {
 				if interfaces, err := expandStatefulNodeAzureSchedulingTasks(v); err != nil {
 					return err
 				} else {
