@@ -1,5 +1,7 @@
 ## Unreleased
 
+* Update version for GO-SDK (1.118.0)
+
 ## 1.73.1 (April 19, 2022)
 
 NOTES:
