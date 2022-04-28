@@ -28,7 +28,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Required: true,
 					},
 
-					string(NetworkInterfaces): {
+					string(NetworkInterface): {
 						Type:     schema.TypeList,
 						Required: true,
 						Elem: &schema.Resource{
@@ -189,7 +189,7 @@ func flattenStatefulNodeAzureNetwork(network *azurev3.Network) []interface{} {
 	result[string(VirtualNetworkName)] = spotinst.StringValue(network.VirtualNetworkName)
 	result[string(ResourceGroupName)] = spotinst.StringValue(network.ResourceGroupName)
 	if network.NetworkInterfaces != nil {
-		result[string(NetworkInterfaces)] = flattenStatefulNodeAzureCustomNetworkInterfaces(network.NetworkInterfaces)
+		result[string(NetworkInterface)] = flattenStatefulNodeAzureCustomNetworkInterfaces(network.NetworkInterfaces)
 	}
 
 	return []interface{}{result}
@@ -292,7 +292,7 @@ func expandStatefulNodeAzureNetwork(data interface{}, network *azurev3.Network) 
 			network.SetResourceGroupName(spotinst.String(v))
 		}
 
-		if v, ok := m[string(NetworkInterfaces)]; ok {
+		if v, ok := m[string(NetworkInterface)]; ok {
 			var networkInterfaces []*azurev3.NetworkInterface
 
 			if network.NetworkInterfaces != nil {
