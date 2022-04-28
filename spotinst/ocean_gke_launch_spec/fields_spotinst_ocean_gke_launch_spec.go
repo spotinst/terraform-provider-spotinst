@@ -739,6 +739,79 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Tags] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		Tags,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Computed: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value []string = nil
+			if launchSpec != nil && launchSpec.Tags != nil {
+				value = launchSpec.Tags
+			}
+			if err := resourceData.Set(string(Tags), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			if v, ok := resourceData.GetOk(string(Tags)); ok {
+
+				values := v.([]interface{})
+				if len(values) > 0 {
+					tags := make([]string, len(values))
+					for i, j := range values {
+						tags[i] = j.(string)
+					}
+					launchSpec.SetTags(tags)
+					return nil
+				}
+
+				if launchSpec != nil {
+					if launchSpec.Tags != nil {
+						launchSpec.SetTags(launchSpec.Tags)
+					}
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			if v, ok := resourceData.GetOk(string(Tags)); ok {
+
+				values := v.([]interface{})
+				if len(values) > 0 {
+					tags := make([]string, len(values))
+					for i, j := range values {
+						tags[i] = j.(string)
+					}
+					launchSpec.SetTags(tags)
+					return nil
+				}
+
+				if launchSpec != nil {
+					if launchSpec.Tags != nil {
+						launchSpec.SetTags(launchSpec.Tags)
+					}
+				}
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[ShieldedInstanceConfig] = commons.NewGenericField(
 		commons.OceanGKELaunchSpec,
 		ShieldedInstanceConfig,

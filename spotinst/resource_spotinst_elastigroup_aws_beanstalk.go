@@ -127,7 +127,7 @@ func toggleMaintenanceMode(resourceData *schema.ResourceData, meta interface{}, 
 }
 
 func resourceSpotinstAWSBeanstalkGroupCreate(resourceData *schema.ResourceData, meta interface{}) error {
-	log.Print(string(commons.ResourceOnCreate),
+	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupAWSBeanstalkResource.GetName())
 
 	beanstalkGroup, err := importBeanstalkGroup(resourceData, meta.(*Client))

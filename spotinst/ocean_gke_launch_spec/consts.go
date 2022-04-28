@@ -36,6 +36,7 @@ const (
 	RootVolumeType            commons.FieldName = "root_volume_type"
 	RootVolumeSizeInGB        commons.FieldName = "root_volume_size"
 	InstanceTypes             commons.FieldName = "instance_types"
+	Tags                      commons.FieldName = "tags"
 	ShieldedInstanceConfig    commons.FieldName = "shielded_instance_config"
 	EnableSecureBoot          commons.FieldName = "enable_secure_boot"
 	EnableIntegrityMonitoring commons.FieldName = "enable_integrity_monitoring"

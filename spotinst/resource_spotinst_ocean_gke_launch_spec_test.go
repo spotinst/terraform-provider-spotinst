@@ -183,6 +183,8 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.3297250312.min_instance_count", "0"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "default"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
 				),
 			},
 			{
@@ -208,6 +210,8 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.811159347.max_instance_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.811159347.min_instance_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec_updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0", "tag1"),
 				),
 			},
 		},
@@ -242,13 +246,14 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
      key = "testKey2"
      value = "testVal2"
    }
- 
 
  taints {
      key = "testTaintKey"
      value = "testTaintVal"
      effect = "NoSchedule"
    }
+
+ tags = ["tag1"]
 
  shielded_instance_config {
 	enable_secure_boot = true
@@ -297,6 +302,8 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
      value = "testTaintVal2"
      effect = "NoSchedule"
    }
+
+ tags = ["tag1"]
 
  shielded_instance_config {
 	enable_secure_boot = false
