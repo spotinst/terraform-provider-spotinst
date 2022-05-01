@@ -74,6 +74,9 @@ func Provider() terraform.ResourceProvider {
 			// ExtendedResourceDefinition
 			string(commons.OceanAWSExtendedResourceDefinitionResourceName): resourceSpotinstOceanAWSExtendedResourceDefinition(),
 
+			// Data Integration
+			string(commons.DataIntegrationResourceName): resourceSpotinstDataIntegration(),
+
 			// Stateful
 			string(commons.StatefulNodeAzureV3ResourceName): resourceSpotinstStatefulNodeAzureV3(),
 		},

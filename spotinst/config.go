@@ -3,18 +3,15 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	stdlog "log"
-	"strings"
-
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/meta"
+	"github.com/spotinst/spotinst-sdk-go/service/dataintegration"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
 	"github.com/spotinst/spotinst-sdk-go/service/managedinstance"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean"
-	"github.com/spotinst/spotinst-sdk-go/service/stateful"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
@@ -22,6 +19,8 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
 	"github.com/spotinst/terraform-provider-spotinst/version"
+	stdlog "log"
+	"strings"
 )
 
 var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
@@ -45,7 +44,7 @@ type Client struct {
 	mrscaler        mrscaler.Service
 	ocean           ocean.Service
 	managedInstance managedinstance.Service
-	statefulNode    stateful.Service
+	dataIntegration dataintegration.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
@@ -67,6 +66,7 @@ func (c *Config) Client() (*Client, error) {
 		mrscaler:        mrscaler.New(sess),
 		ocean:           ocean.New(sess),
 		managedInstance: managedinstance.New(sess),
+		dataIntegration: dataintegration.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")

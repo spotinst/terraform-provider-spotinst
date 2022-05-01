@@ -1,5 +1,21 @@
 ## Unreleased
 
+## 1.73.2 (April 28, 2022)
+
+BUG FIXES:
+
+* resource/spotinst_ocean_gke_launch_spec: resolved errors with spotist-go-sdk dependencies
+
+## 1.73.1 (April 19, 2022)
+
+NOTES:
+* documentation: resource/spotinst_data_integration
+
+## 1.73.0 (April 19, 2022)
+
+FEATURES:
+**New Resource:** `spotinst_data_integration`
+
 ## 1.72.0 (April 12, 2022)
 
 BUG FIXES:
