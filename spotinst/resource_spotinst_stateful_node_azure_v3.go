@@ -534,6 +534,25 @@ func deleteAzureV3StatefulNode(resourceData *schema.ResourceData, meta interface
 	statefulNodeId := resourceData.Id()
 	input := &v3.DeleteStatefulNodeInput{
 		ID: spotinst.String(statefulNodeId),
+		DeallocationConfig: &v3.DeallocationConfig{
+			ShouldTerminateVM: spotinst.Bool(resourceData.Get(string(stateful_node_azure.ShouldTerminateVm)).(bool)),
+			NetworkDeallocationConfig: &v3.ResourceDeallocationConfig{
+				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.NetworkShouldDeallocate)).(bool)),
+				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.NetworkTTLInHours)).(int)),
+			},
+			DiskDeallocationConfig: &v3.ResourceDeallocationConfig{
+				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.DiskShouldDeallocate)).(bool)),
+				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.DiskTTLInHours)).(int)),
+			},
+			SnapshotDeallocationConfig: &v3.ResourceDeallocationConfig{
+				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.SnapshotShouldDeallocate)).(bool)),
+				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.SnapshotTTLInHours)).(int)),
+			},
+			PublicIPDeallocationConfig: &v3.ResourceDeallocationConfig{
+				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.PublicIPShouldDeallocate)).(bool)),
+				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.PublicIPTTLInHours)).(int)),
+			},
+		},
 	}
 
 	if json, err := commons.ToJson(input); err != nil {
