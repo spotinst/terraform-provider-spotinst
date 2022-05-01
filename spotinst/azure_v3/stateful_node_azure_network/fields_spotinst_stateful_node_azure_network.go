@@ -76,7 +76,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 
 								string(PrivateIPAddresses): {
-									Type:     schema.TypeString,
+									Type:     schema.TypeList,
+									Elem:     &schema.Schema{Type: schema.TypeString},
 									Optional: true,
 								},
 
@@ -315,7 +316,7 @@ func expandStatefulNodeAzureNetwork(data interface{}, network *azurev3.Network) 
 }
 
 func expandNetworkInterfaces(data interface{}, networkInterfaces []*azurev3.NetworkInterface) ([]*azurev3.NetworkInterface, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 
 	if len(list) > 0 {
 		networkInterfaces = make([]*azurev3.NetworkInterface, 0, len(list))
@@ -436,7 +437,7 @@ func expandPrivateIPAddresses(data interface{}) ([]string, error) {
 }
 
 func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azurev3.AdditionalIPConfiguration) ([]*azurev3.AdditionalIPConfiguration, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 
 	if len(list) == 0 && additionalIPConfigs == nil {
 		return nil, nil
@@ -472,7 +473,7 @@ func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azurev3.A
 }
 
 func expandPublicIPS(data interface{}, publicIPS []*azurev3.PublicIP) ([]*azurev3.PublicIP, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 
 	if len(list) == 0 && publicIPS == nil {
 		return nil, nil
@@ -508,7 +509,7 @@ func expandPublicIPS(data interface{}, publicIPS []*azurev3.PublicIP) ([]*azurev
 }
 
 func expandApplicationSecurityGroups(data interface{}, applicationSecGroup []*azurev3.ApplicationSecurityGroup) ([]*azurev3.ApplicationSecurityGroup, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 
 	if len(list) == 0 && applicationSecGroup == nil {
 		return nil, nil

@@ -105,12 +105,35 @@ func (res *StatefulNodeAzureV3TerraformResource) OnUpdate(
 func NewStatefulNodeAzureV3Wrapper() *StatefulNodeAzureV3Wrapper {
 	return &StatefulNodeAzureV3Wrapper{
 		statefulNode: &azurev3.StatefulNode{
-			Strategy: &azurev3.Strategy{},
-			Compute: &azurev3.Compute{
-				LaunchSpecification: &azurev3.LaunchSpecification{},
-				VMSizes:             &azurev3.VMSizes{},
+			Strategy: &azurev3.Strategy{
+				Signals:      []*azurev3.Signal{},
+				RevertToSpot: &azurev3.RevertToSpot{},
 			},
-			Scheduling:  &azurev3.Scheduling{},
+			Compute: &azurev3.Compute{
+				LaunchSpecification: &azurev3.LaunchSpecification{
+					Image: &azurev3.Image{
+						MarketPlace: &azurev3.MarketPlaceImage{},
+						Custom:      &azurev3.CustomImage{},
+						Gallery:     &azurev3.Gallery{},
+					},
+					Network: &azurev3.Network{
+						NetworkInterfaces: []*azurev3.NetworkInterface{},
+					},
+					Login:                    &azurev3.Login{},
+					LoadBalancersConfig:      &azurev3.LoadBalancersConfig{},
+					Tags:                     []*azurev3.Tag{},
+					ManagedServiceIdentities: []*azurev3.ManagedServiceIdentity{},
+					Extensions:               []*azurev3.Extension{},
+					OSDisk:                   &azurev3.OSDisk{},
+					DataDisks:                []*azurev3.DataDisk{},
+					Secrets:                  []*azurev3.Secret{},
+					BootDiagnostics:          &azurev3.BootDiagnostics{},
+				},
+				VMSizes: &azurev3.VMSizes{},
+			},
+			Scheduling: &azurev3.Scheduling{
+				Tasks: []*azurev3.Task{},
+			},
 			Persistence: &azurev3.Persistence{},
 			Health:      &azurev3.Health{},
 		},
