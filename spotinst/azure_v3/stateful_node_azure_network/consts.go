@@ -9,7 +9,7 @@ const (
 	Network            commons.FieldName = "network"
 	VirtualNetworkName commons.FieldName = "virtual_network_name"
 	ResourceGroupName  commons.FieldName = "network_resource_group_name" //TODO - this is used in two different locations - might need to split to 2 different fields
-	NetworkInterfaces  commons.FieldName = "network_interfaces"
+	NetworkInterface   commons.FieldName = "network_interface"
 )
 
 //NetworkInterfaces

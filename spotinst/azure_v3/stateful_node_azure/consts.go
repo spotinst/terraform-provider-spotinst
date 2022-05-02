@@ -59,3 +59,22 @@ const (
 
 	ShouldImportVM commons.FieldName = "should_import_vm"
 )
+
+const (
+	NetworkPrefix        = "network_"
+	DiskPrefix           = "disk_"
+	SnapshotPrefix       = "snapshot_"
+	PublicIPDeallocation = "public_ip_"
+)
+
+const (
+	ShouldTerminateVm        commons.FieldName = "should_terminate_vm"
+	NetworkShouldDeallocate  commons.FieldName = NetworkPrefix + "should_deallocate"
+	NetworkTTLInHours        commons.FieldName = NetworkPrefix + "ttl_in_hours"
+	DiskShouldDeallocate     commons.FieldName = DiskPrefix + "should_deallocate"
+	DiskTTLInHours           commons.FieldName = DiskPrefix + "ttl_in_hours"
+	SnapshotShouldDeallocate commons.FieldName = SnapshotPrefix + "should_deallocate"
+	SnapshotTTLInHours       commons.FieldName = SnapshotPrefix + "ttl_in_hours"
+	PublicIPShouldDeallocate commons.FieldName = PublicIPDeallocation + "should_deallocate"
+	PublicIPTTLInHours       commons.FieldName = PublicIPDeallocation + "ttl_in_hours"
+)

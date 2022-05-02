@@ -14,7 +14,7 @@ const (
 )
 
 const (
-	Signals commons.FieldName = "signals"
+	Signal  commons.FieldName = "signal"
 	Type    commons.FieldName = "type"
 	Timeout commons.FieldName = "timeout"
 )

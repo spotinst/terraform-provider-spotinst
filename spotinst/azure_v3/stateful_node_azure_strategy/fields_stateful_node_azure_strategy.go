@@ -75,9 +75,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[Signals] = commons.NewGenericField(
+	fieldsMap[Signal] = commons.NewGenericField(
 		commons.StatefulNodeAzureStrategy,
-		Signals,
+		Signal,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -109,7 +109,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					signalsToAdd = append(signalsToAdd, m)
 				}
 			}
-			if err := resourceData.Set(string(Signals), signalsToAdd); err != nil {
+			if err := resourceData.Set(string(Signal), signalsToAdd); err != nil {
 				return fmt.Errorf("failed to set signals configuration: %#v", err)
 			}
 			return nil
@@ -117,7 +117,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(Signals)); ok {
+			if v, ok := resourceData.GetOk(string(Signal)); ok {
 				if signals, err := expandStatefulNodeAzureStrategySignals(v); err != nil {
 					return err
 				} else {
@@ -130,7 +130,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
 			var signalsToAdd []*azure.Signal = nil
-			if v, ok := resourceData.GetOk(string(Signals)); ok {
+			if v, ok := resourceData.GetOk(string(Signal)); ok {
 				if signals, err := expandStatefulNodeAzureStrategySignals(v); err != nil {
 					return err
 				} else {

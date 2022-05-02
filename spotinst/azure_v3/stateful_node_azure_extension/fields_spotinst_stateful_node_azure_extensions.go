@@ -10,9 +10,9 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[Extensions] = commons.NewGenericField(
+	fieldsMap[Extension] = commons.NewGenericField(
 		commons.StatefulNodeAzureExtensions,
-		Extensions,
+		Extension,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -69,8 +69,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 
 			if result != nil {
-				if err := resourceData.Set(string(Extensions), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Extensions), err)
+				if err := resourceData.Set(string(Extension), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Extension), err)
 				}
 			}
 
@@ -81,7 +81,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value []*azurev3.Extension = nil
 
-			if v, ok := resourceData.GetOk(string(Extensions)); ok {
+			if v, ok := resourceData.GetOk(string(Extension)); ok {
 				var extensions []*azurev3.Extension
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil {
@@ -105,7 +105,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value []*azurev3.Extension = nil
 
-			if v, ok := resourceData.GetOk(string(Extensions)); ok {
+			if v, ok := resourceData.GetOk(string(Extension)); ok {
 				//create new image object in case st did not get it from previous import step.
 				var extensions []*azurev3.Extension
 

@@ -21,10 +21,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value *string = nil
 
-			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Login != nil && st.Compute.LaunchSpecification.Login.SSHPublicKey != nil {
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil &&
+				st.Compute.LaunchSpecification.Login != nil && st.Compute.LaunchSpecification.Login.SSHPublicKey != nil {
 				value = st.Compute.LaunchSpecification.Login.SSHPublicKey
 			}
-			if err := resourceData.Set(string(SSHPublicKey), value); err != nil {
+			if err := resourceData.Set(string(SSHPublicKey), spotinst.StringValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SSHPublicKey), err)
 			}
 
@@ -34,12 +35,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 
-			if v, ok := resourceData.GetOk(string(SSHPublicKey)); ok {
-				st.Compute.LaunchSpecification.Login.SetSSHPublicKey(spotinst.String(v.(string)))
+			if v, ok := resourceData.Get(string(SSHPublicKey)).(string); ok && v != "" {
+				st.Compute.LaunchSpecification.Login.SetSSHPublicKey(spotinst.String(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+
+			if v, ok := resourceData.Get(string(SSHPublicKey)).(string); ok && v != "" {
+				st.Compute.LaunchSpecification.Login.SetSSHPublicKey(spotinst.String(v))
+			}
 			return nil
 		},
 		nil,
@@ -57,10 +64,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value *string = nil
 
-			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Login != nil && st.Compute.LaunchSpecification.Login.UserName != nil {
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil &&
+				st.Compute.LaunchSpecification.Login != nil && st.Compute.LaunchSpecification.Login.UserName != nil {
 				value = st.Compute.LaunchSpecification.Login.UserName
 			}
-			if err := resourceData.Set(string(UserName), value); err != nil {
+			if err := resourceData.Set(string(UserName), spotinst.StringValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserName), err)
 			}
 
@@ -70,12 +78,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 
-			if v, ok := resourceData.GetOk(string(UserName)); ok {
-				st.Compute.LaunchSpecification.Login.SetUserName(spotinst.String(v.(string)))
+			if v, ok := resourceData.Get(string(UserName)).(string); ok && v != "" {
+				st.Compute.LaunchSpecification.Login.SetUserName(spotinst.String(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+
+			if v, ok := resourceData.Get(string(UserName)).(string); ok && v != "" {
+				st.Compute.LaunchSpecification.Login.SetUserName(spotinst.String(v))
+			}
 			return nil
 		},
 		nil,
@@ -93,10 +107,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value *string = nil
 
-			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Login != nil && st.Compute.LaunchSpecification.Login.Password != nil {
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil &&
+				st.Compute.LaunchSpecification.Login != nil && st.Compute.LaunchSpecification.Login.Password != nil {
 				value = st.Compute.LaunchSpecification.Login.Password
 			}
-			if err := resourceData.Set(string(Password), value); err != nil {
+			if err := resourceData.Set(string(Password), spotinst.StringValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Password), err)
 			}
 
@@ -106,12 +121,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 
-			if v, ok := resourceData.GetOk(string(Password)); ok {
-				st.Compute.LaunchSpecification.Login.SetPassword(spotinst.String(v.(string)))
+			if v, ok := resourceData.Get(string(Password)).(string); ok && v != "" {
+				st.Compute.LaunchSpecification.Login.SetPassword(spotinst.String(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+
+			if v, ok := resourceData.Get(string(Password)).(string); ok && v != "" {
+				st.Compute.LaunchSpecification.Login.SetPassword(spotinst.String(v))
+			}
 			return nil
 		},
 		nil,
