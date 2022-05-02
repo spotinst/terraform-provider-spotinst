@@ -106,19 +106,19 @@ func NewStatefulNodeAzureV3Wrapper() *StatefulNodeAzureV3Wrapper {
 	return &StatefulNodeAzureV3Wrapper{
 		statefulNode: &azurev3.StatefulNode{
 			Strategy: &azurev3.Strategy{
-				//Signals:      []*azurev3.Signal{},
+				//Signals:      []*azurev3.Signal{}, TODO - delete comments from here when done
 				//RevertToSpot: &azurev3.RevertToSpot{},
 			},
 			Compute: &azurev3.Compute{
 				LaunchSpecification: &azurev3.LaunchSpecification{
-					Image: &azurev3.Image{
-						//MarketPlace: &azurev3.MarketPlaceImage{},
-						//Custom:      &azurev3.CustomImage{},
-						//Gallery:     &azurev3.Gallery{},
-					},
-					Network: &azurev3.Network{
-						NetworkInterfaces: []*azurev3.NetworkInterface{},
-					},
+					//Image: &azurev3.Image{
+					//MarketPlace: &azurev3.MarketPlaceImage{},
+					//Custom:      &azurev3.CustomImage{},
+					//Gallery:     &azurev3.Gallery{},
+					//},
+					//Network: &azurev3.Network{
+					//	NetworkInterfaces: []*azurev3.NetworkInterface{},
+					//},
 					//LoadBalancersConfig:      &azurev3.LoadBalancersConfig{},
 					//Tags:                     []*azurev3.Tag{},
 					//ManagedServiceIdentities: []*azurev3.ManagedServiceIdentity{},

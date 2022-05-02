@@ -79,7 +79,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.StatefulNodeAzureStrategy,
 		Signal,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -99,18 +99,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
 			var signalsToAdd []interface{} = nil
+
 			if statefulNode.Strategy != nil && statefulNode.Strategy.Signals != nil {
 				signals := statefulNode.Strategy.Signals
-				signalsToAdd = make([]interface{}, 0, len(signals))
-				for _, s := range signals {
-					m := make(map[string]interface{})
-					m[string(Type)] = spotinst.StringValue(s.Type)
-					m[string(Timeout)] = spotinst.IntValue(s.Timeout)
-					signalsToAdd = append(signalsToAdd, m)
-				}
+				signalsToAdd = flattenSignals(signals)
 			}
-			if err := resourceData.Set(string(Signal), signalsToAdd); err != nil {
-				return fmt.Errorf("failed to set signals configuration: %#v", err)
+			if signalsToAdd != nil {
+				if err := resourceData.Set(string(Signal), signalsToAdd); err != nil {
+					return fmt.Errorf("failed to set signals configuration: %#v", err)
+				}
 			}
 			return nil
 		},
@@ -130,6 +127,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
 			var signalsToAdd []*azure.Signal = nil
+
 			if v, ok := resourceData.GetOk(string(Signal)); ok {
 				if signals, err := expandStatefulNodeAzureStrategySignals(v); err != nil {
 					return err
@@ -137,9 +135,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					signalsToAdd = signals
 				}
 			}
-			if statefulNode.Strategy == nil {
-				statefulNode.SetStrategy(&azure.Strategy{})
-			}
+
 			statefulNode.Strategy.SetSignals(signalsToAdd)
 			return nil
 		},
@@ -170,10 +166,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
 			if value, ok := resourceData.GetOk(string(OptimizationWindows)); ok && value != nil {
-				if subnetIds, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
+				if optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
 					return err
 				} else {
-					statefulNode.Strategy.SetOptimizationWindows(subnetIds)
+					statefulNode.Strategy.SetOptimizationWindows(optimizationWindows)
 				}
 			}
 			return nil
@@ -182,10 +178,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
 			if value, ok := resourceData.GetOk(string(OptimizationWindows)); ok && value != nil {
-				if subnetIds, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
+				if optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
 					return err
 				} else {
-					statefulNode.Strategy.SetOptimizationWindows(subnetIds)
+					statefulNode.Strategy.SetOptimizationWindows(optimizationWindows)
 				}
 			}
 			return nil
@@ -271,6 +267,18 @@ func flattenRevertToSpot(revertToSpot *azure.RevertToSpot) []interface{} {
 	return out
 }
 
+func flattenSignals(signals []*azure.Signal) []interface{} {
+	var result []interface{}
+
+	for _, disk := range signals {
+		m := make(map[string]interface{})
+		m[string(Type)] = spotinst.StringValue(disk.Type)
+		m[string(Timeout)] = spotinst.IntValue(disk.Timeout)
+		result = append(result, m)
+	}
+	return result
+}
+
 func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 	result := make(map[string]interface{})
 
@@ -302,7 +310,7 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 }
 
 func expandStatefulNodeAzureStrategySignals(data interface{}) ([]*azure.Signal, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	signals := make([]*azure.Signal, 0, len(list))
 
 	for _, item := range list {
@@ -311,10 +319,14 @@ func expandStatefulNodeAzureStrategySignals(data interface{}) ([]*azure.Signal, 
 
 		if v, ok := m[string(Type)].(string); ok && v != "" {
 			signal.SetType(spotinst.String(v))
+		} else {
+			signal.SetType(nil)
 		}
 
 		if v, ok := m[string(Timeout)].(int); ok && v > 0 {
 			signal.SetTimeout(spotinst.Int(v))
+		} else {
+			signal.SetTimeout(nil)
 		}
 		signals = append(signals, signal)
 	}
@@ -336,19 +348,16 @@ func expandStatefulNodeAzureStrategyOptimizationWindows(data interface{}) ([]str
 }
 
 func expandStatefulNodeAzureStrategyRevertToSpot(data interface{}) (*azure.RevertToSpot, error) {
-	if list := data.([]interface{}); len(list) > 0 {
-		revertToSpot := &azure.RevertToSpot{}
+	revertToSpot := &azure.RevertToSpot{}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-		if list[0] != nil {
-			m := list[0].(map[string]interface{})
-
-			if v, ok := m[string(PerformAt)].(string); ok && v != "" {
-				revertToSpot.SetPerformAt(spotinst.String(v))
-			} else {
-				revertToSpot.SetPerformAt(nil)
-			}
+		var performAt *string = nil
+		if v, ok := m[string(PerformAt)].(string); ok {
+			performAt = spotinst.String(v)
 		}
-		return revertToSpot, nil
+		revertToSpot.SetPerformAt(performAt)
 	}
-	return nil, nil
+	return revertToSpot, nil
 }

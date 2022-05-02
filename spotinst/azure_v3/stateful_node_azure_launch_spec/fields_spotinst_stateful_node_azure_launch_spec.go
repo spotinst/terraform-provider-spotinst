@@ -298,7 +298,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.StatefulNodeAzureLaunchSpecification,
 		DataDisk,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -322,23 +322,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			st := stWrapper.GetStatefulNode()
 			var value []interface{} = nil
 
-			if st.Compute != nil && st.Compute.LaunchSpecification != nil &&
-				st.Compute.LaunchSpecification.DataDisks != nil {
-				value = flattenDataDisks(st.Compute.LaunchSpecification.DataDisks)
+			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.DataDisks != nil {
+				dataDisks := st.Compute.LaunchSpecification.DataDisks
+				value = flattenDataDisks(dataDisks)
 			}
-			if err := resourceData.Set(string(DataDisk), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DataDisk), err)
+			if value != nil {
+				if err := resourceData.Set(string(DataDisk), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DataDisk), err)
+				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			st := stWrapper.GetStatefulNode()
+			statefulNode := stWrapper.GetStatefulNode()
 			if v, ok := resourceData.GetOk(string(DataDisk)); ok {
 				if value, err := expandDataDisks(v); err != nil {
 					return err
 				} else {
-					st.Compute.LaunchSpecification.SetDataDisks(value)
+					statefulNode.Compute.LaunchSpecification.SetDataDisks(value)
 				}
 			}
 			return nil
@@ -347,16 +349,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 			var value []*azurev3.DataDisk = nil
-			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Tags != nil {
-				if v, ok := resourceData.GetOk(string(DataDisk)); ok {
-					if dd, err := expandDataDisks(v); err != nil {
-						return err
-					} else {
-						value = dd
-					}
+
+			if v, ok := resourceData.GetOk(string(DataDisk)); ok {
+				if dataDisks, err := expandDataDisks(v); err != nil {
+					return err
+				} else {
+					value = dataDisks
 				}
-				st.Compute.LaunchSpecification.SetDataDisks(value)
 			}
+			st.Compute.LaunchSpecification.SetDataDisks(value)
 			return nil
 		},
 		nil,
@@ -537,32 +538,49 @@ func expandOSDisk(data interface{}) (*azurev3.OSDisk, error) {
 }
 
 func flattenDataDisks(dataDisks []*azurev3.DataDisk) []interface{} {
-	result := make([]interface{}, 0, len(dataDisks))
+	var result []interface{}
+
 	for _, disk := range dataDisks {
 		m := make(map[string]interface{})
 		m[string(SizeGB)] = spotinst.IntValue(disk.SizeGB)
 		m[string(LUN)] = spotinst.IntValue(disk.LUN)
 		m[string(Type)] = spotinst.StringValue(disk.Type)
-
 		result = append(result, m)
 	}
 	return result
 }
 
 func expandDataDisks(data interface{}) ([]*azurev3.DataDisk, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	dd := make([]*azurev3.DataDisk, 0, len(list))
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
+	for _, m := range list {
+		attr, ok := m.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		dd = append(dd, &azurev3.DataDisk{
-			SizeGB: spotinst.Int(attr[string(SizeGB)].(int)),
-			LUN:    spotinst.Int(attr[string(LUN)].(int)),
-			Type:   spotinst.String(attr[string(Type)].(string)),
-		})
+
+		dataDisk := &azurev3.DataDisk{}
+		if v, ok := attr[string(SizeGB)].(int); ok && v > 0 {
+			dataDisk.SetSizeGB(spotinst.Int(v))
+		} else {
+			dataDisk.SetSizeGB(nil)
+		}
+
+		if v, ok := attr[string(LUN)].(int); ok && v >= 0 {
+			dataDisk.SetLUN(spotinst.Int(v))
+		} else {
+			dataDisk.SetLUN(nil)
+		}
+
+		if v, ok := attr[string(Type)].(string); ok && v != "" {
+			dataDisk.SetType(spotinst.String(v))
+		} else {
+			dataDisk.SetType(nil)
+		}
+
+		dd = append(dd, dataDisk)
 	}
+
 	return dd, nil
 }
 

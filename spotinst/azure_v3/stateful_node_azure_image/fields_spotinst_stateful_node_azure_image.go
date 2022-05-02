@@ -200,7 +200,6 @@ func expandStatefulNodeAzureImage(data interface{}) (*azurev3.Image, error) {
 		}
 
 		if v, ok := m[string(CustomImage)]; ok {
-
 			custom, err := expandStatefulNodeAzureCustomImage(v)
 			if err != nil {
 				return nil, err
