@@ -495,7 +495,7 @@ func TestAccSpotinstStatefulNodeAzureV3_LaunchSpecification(t *testing.T) {
 const testLaunchSpecificationStatefulNodeAzureV3Config_Create = `
 	custom_data = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
 	shutdown_script = "1"
-	tags {
+	tag {
 		tag_key = "tag_key"
 		tag_value = "tag_value"
 	}
@@ -522,7 +522,7 @@ const testLaunchSpecificationStatefulNodeAzureV3Config_Create = `
 const testLaunchSpecificationStatefulNodeAzureV3Config_Update = `
 	custom_data = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
 	shutdown_script = "1"
-	tags {
+	tag {
 		tag_key = "tag_key"
 		tag_value = "tag_value"
 	}
@@ -676,7 +676,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 
 const testStrategyStatefulNodeAzureV3Config_Create = `
       strategy {
-            signals = [
+            signal = [
                 {
                     type = "vmReady"
                     timeout = "25"
@@ -695,23 +695,23 @@ const testStrategyStatefulNodeAzureV3Config_Create = `
 `
 
 const testStrategyStatefulNodeAzureV3Config_Update = `
-      "strategy": {
-            "signals": [
+      strategy: {
+            signal: [
                 {
-                    "type": "vmReady",
-                    "timeout": 20
+                    type: "vmReady"
+                    timeout: 20
                 }
-            ],
-            "fallback_to_on_demand": true,
-            "draining_timeout": 40,
-			"preferred_life_cycle": 3,
-            "revert_to_spot": {
-                "performAt": "timeWindow"
-            },
-            "optimizationWindows": [
+            ]
+            fallback_to_on_demand = true
+            draining_timeout = 40
+			preferred_life_cycle = 3
+            revert_to_spot = {
+                performAt = "timeWindow"
+            }
+            optimizationWindows = [
                 "Tue:19:46-Tue:20:46"
             ]
-        },
+        }
 `
 
 //endregion
@@ -991,37 +991,17 @@ func TestAccSpotinstStatefulNodeAzureV3_Image(t *testing.T) {
 
 const testImageStatefulNodeAzureV3Config_Create = `
                 image {
-                    marketplace_image {
+                    market_space_image {
                         publisher = "Canonical",
                         offer" = "UbuntuServer",
                         sku = "18.04-LTS",
                         version = "latest"
                     }
-					custom_image {
-						custom_image_resource_group_name = "foo"
-						name = "Canonical"
-					}
-					gallery{
-						gallery_resource_group_name = "grc"
-						gallery_name = "NotCanonically"
-						image_name = "18.06-LTS"
-						version_name = "first"
-					}
 				}
 `
 
 const testImageStatefulNodeAzureV3Config_Update = `
                 image {
-                    marketplace_image {
-                        publisher = "Pub",
-                        offer" = "UbuntuServer",
-                        sku = "18.04-LTS",
-                        version = "latestVersion"
-                    }
-					custom_image {
-						custom_image_resource_group_name = "foo"
-						name = "Canonical"
-					}
 					gallery{
 						gallery_resource_group_name = "grc"
 						gallery_name = "Canonically"
