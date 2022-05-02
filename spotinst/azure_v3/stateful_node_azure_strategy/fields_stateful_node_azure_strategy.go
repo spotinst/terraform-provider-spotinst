@@ -32,6 +32,24 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
+					string(RevertToSpot): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(PerformAt): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+					},
+					string(OptimizationWindows): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
 				},
 			},
 		},
@@ -142,112 +160,112 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[OptimizationWindows] = commons.NewGenericField(
-		commons.StatefulNodeAzureStrategy,
-		OptimizationWindows,
-		&schema.Schema{
-			Type:     schema.TypeList,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var value []string = nil
-			if statefulNode.Strategy != nil && statefulNode.Strategy.OptimizationWindows != nil {
-				value = statefulNode.Strategy.OptimizationWindows
-			}
-			if err := resourceData.Set(string(OptimizationWindows), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OptimizationWindows), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if value, ok := resourceData.GetOk(string(OptimizationWindows)); ok && value != nil {
-				if optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
-					return err
-				} else {
-					statefulNode.Strategy.SetOptimizationWindows(optimizationWindows)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if value, ok := resourceData.GetOk(string(OptimizationWindows)); ok && value != nil {
-				if optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
-					return err
-				} else {
-					statefulNode.Strategy.SetOptimizationWindows(optimizationWindows)
-				}
-			}
-			return nil
-		},
-		nil,
-	)
+	//fieldsMap[OptimizationWindows] = commons.NewGenericField(
+	//	commons.StatefulNodeAzureStrategy,
+	//	OptimizationWindows,
+	//	&schema.Schema{
+	//		Type:     schema.TypeList,
+	//		Elem:     &schema.Schema{Type: schema.TypeString},
+	//		Optional: true,
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+	//		statefulNode := snWrapper.GetStatefulNode()
+	//		var value []string = nil
+	//		if statefulNode.Strategy != nil && statefulNode.Strategy.OptimizationWindows != nil {
+	//			value = statefulNode.Strategy.OptimizationWindows
+	//		}
+	//		if err := resourceData.Set(string(OptimizationWindows), value); err != nil {
+	//			return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OptimizationWindows), err)
+	//		}
+	//		return nil
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+	//		statefulNode := snWrapper.GetStatefulNode()
+	//		if value, ok := resourceData.GetOk(string(OptimizationWindows)); ok && value != nil {
+	//			if optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
+	//				return err
+	//			} else {
+	//				statefulNode.Strategy.SetOptimizationWindows(optimizationWindows)
+	//			}
+	//		}
+	//		return nil
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+	//		statefulNode := snWrapper.GetStatefulNode()
+	//		if value, ok := resourceData.GetOk(string(OptimizationWindows)); ok && value != nil {
+	//			if optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(value); err != nil {
+	//				return err
+	//			} else {
+	//				statefulNode.Strategy.SetOptimizationWindows(optimizationWindows)
+	//			}
+	//		}
+	//		return nil
+	//	},
+	//	nil,
+	//)
 
-	fieldsMap[RevertToSpot] = commons.NewGenericField(
-		commons.StatefulNodeAzureStrategy,
-		RevertToSpot,
-		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(PerformAt): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-				},
-			},
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var result []interface{} = nil
-			if statefulNode.Strategy != nil && statefulNode.Strategy.RevertToSpot != nil {
-				rts := statefulNode.Strategy.RevertToSpot
-				result = flattenRevertToSpot(rts)
-			}
-			if result != nil {
-				if err := resourceData.Set(string(RevertToSpot), result); err != nil {
-					return fmt.Errorf("failed to set revertToSpot configuration: %#v", err)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(RevertToSpot)); ok {
-				if revertToSpot, err := expandStatefulNodeAzureStrategyRevertToSpot(v); err != nil {
-					return err
-				} else {
-					statefulNode.Strategy.SetRevertToSpot(revertToSpot)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var revertToSpot *azure.RevertToSpot = nil
-			if v, ok := resourceData.GetOk(string(RevertToSpot)); ok {
-				if rts, err := expandStatefulNodeAzureStrategyRevertToSpot(v); err != nil {
-					return err
-				} else {
-					revertToSpot = rts
-				}
-			}
-			statefulNode.Strategy.SetRevertToSpot(revertToSpot)
-			return nil
-		},
-		nil,
-	)
+	//fieldsMap[RevertToSpot] = commons.NewGenericField(
+	//	commons.StatefulNodeAzureStrategy,
+	//	RevertToSpot,
+	//	&schema.Schema{
+	//		Type:     schema.TypeList,
+	//		Optional: true,
+	//		MaxItems: 1,
+	//		Elem: &schema.Resource{
+	//			Schema: map[string]*schema.Schema{
+	//				string(PerformAt): {
+	//					Type:     schema.TypeString,
+	//					Required: true,
+	//				},
+	//			},
+	//		},
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+	//		statefulNode := snWrapper.GetStatefulNode()
+	//		var result []interface{} = nil
+	//		if statefulNode.Strategy != nil && statefulNode.Strategy.RevertToSpot != nil {
+	//			rts := statefulNode.Strategy.RevertToSpot
+	//			result = flattenRevertToSpot(rts)
+	//		}
+	//		if result != nil {
+	//			if err := resourceData.Set(string(RevertToSpot), result); err != nil {
+	//				return fmt.Errorf("failed to set revertToSpot configuration: %#v", err)
+	//			}
+	//		}
+	//		return nil
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+	//		statefulNode := snWrapper.GetStatefulNode()
+	//		if v, ok := resourceData.GetOk(string(RevertToSpot)); ok {
+	//			if revertToSpot, err := expandStatefulNodeAzureStrategyRevertToSpot(v); err != nil {
+	//				return err
+	//			} else {
+	//				statefulNode.Strategy.SetRevertToSpot(revertToSpot)
+	//			}
+	//		}
+	//		return nil
+	//	},
+	//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+	//		snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+	//		statefulNode := snWrapper.GetStatefulNode()
+	//		var revertToSpot *azure.RevertToSpot = nil
+	//		if v, ok := resourceData.GetOk(string(RevertToSpot)); ok {
+	//			if rts, err := expandStatefulNodeAzureStrategyRevertToSpot(v); err != nil {
+	//				return err
+	//			} else {
+	//				revertToSpot = rts
+	//			}
+	//		}
+	//		statefulNode.Strategy.SetRevertToSpot(revertToSpot)
+	//		return nil
+	//	},
+	//	nil,
+	//)
 }
 
 func flattenRevertToSpot(revertToSpot *azure.RevertToSpot) []interface{} {
@@ -281,10 +299,22 @@ func flattenSignals(signals []*azure.Signal) []interface{} {
 
 func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 	result := make(map[string]interface{})
-
-	result[string(PreferredLifecycle)] = spotinst.StringValue(strategy.PreferredLifecycle)
-	result[string(DrainingTimeout)] = spotinst.IntValue(strategy.DrainingTimeout)
 	result[string(FallbackToOnDemand)] = spotinst.BoolValue(strategy.FallbackToOnDemand)
+	if strategy.PreferredLifecycle != nil {
+		result[string(PreferredLifecycle)] = spotinst.StringValue(strategy.PreferredLifecycle)
+	}
+
+	if strategy.DrainingTimeout != nil {
+		result[string(DrainingTimeout)] = spotinst.IntValue(strategy.DrainingTimeout)
+	}
+
+	if strategy.RevertToSpot != nil {
+		result[string(RevertToSpot)] = flattenRevertToSpot(strategy.RevertToSpot)
+	}
+
+	if strategy.OptimizationWindows != nil {
+		result[string(OptimizationWindows)] = spotinst.StringSlice(strategy.OptimizationWindows)
+	}
 
 	return []interface{}{result}
 }
@@ -298,12 +328,37 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 		if v, ok := m[string(PreferredLifecycle)].(string); ok && v != "" {
 			strategy.SetPreferredLifecycle(spotinst.String(v))
 		}
+
 		if v, ok := m[string(DrainingTimeout)].(int); ok && v >= 0 {
 			strategy.SetDrainingTimeout(spotinst.Int(v))
 		}
+
 		if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
 			strategy.SetFallbackToOnDemand(spotinst.Bool(v))
 		}
+
+		if v, ok := m[string(RevertToSpot)]; ok {
+			revertToSpot, err := expandStatefulNodeAzureStrategyRevertToSpot(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if revertToSpot != nil {
+				strategy.SetRevertToSpot(revertToSpot)
+			}
+		}
+
+		if v, ok := m[string(OptimizationWindows)]; ok {
+			optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if optimizationWindows != nil {
+				strategy.SetOptimizationWindows(optimizationWindows)
+			}
+		}
+
 	}
 
 	return strategy, nil
