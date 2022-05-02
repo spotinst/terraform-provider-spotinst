@@ -245,6 +245,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
+			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)

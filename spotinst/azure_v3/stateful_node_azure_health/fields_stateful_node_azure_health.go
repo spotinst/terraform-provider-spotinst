@@ -2,30 +2,55 @@ package stateful_node_azure_health
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[HealthCheckTypes] = commons.NewGenericField(
-		commons.StatefulNodeAzureHealth,
-		HealthCheckTypes,
+	fieldsMap[Health] = commons.NewGenericField(
+		commons.StatefulNodeAzureLogin,
+		Health,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
-			Elem:     &schema.Schema{Type: schema.TypeString},
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(HealthCheckTypes): {
+						Type:     schema.TypeList,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+						Required: true,
+					},
+					string(GracePeriod): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Computed: true, //TODO - check
+					},
+					string(UnhealthyDuration): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Computed: true, //TODO - check
+					},
+					string(AutoHealing): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+				},
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			var result []string
-			if statefulNode.Health != nil && statefulNode.Health.HealthCheckTypes != nil {
-				result = append(result, statefulNode.Health.HealthCheckTypes...)
-				if err := resourceData.Set(string(HealthCheckTypes), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(HealthCheckTypes), err)
+			var result []interface{} = nil
+			if statefulNode.Health != nil {
+				health := statefulNode.Health
+				result = flattenHealth(health)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Health), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Health), err)
 				}
 			}
 			return nil
@@ -33,147 +58,118 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(HealthCheckTypes)); ok {
-				checkTypes := v.([]interface{})
-				HealthCheckTypes := make([]string, len(checkTypes))
-				for i, j := range checkTypes {
-					HealthCheckTypes[i] = j.(string)
+
+			if v, ok := resourceData.GetOk(string(Health)); ok {
+				if health, err := expandHealth(v); err != nil {
+					return err
+				} else {
+					statefulNode.SetHealth(health)
 				}
-				statefulNode.Health.SetHealthCheckTypes(HealthCheckTypes)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(HealthCheckTypes)); ok {
-				checkTypes := v.([]interface{})
-				HealthCheckTypes := make([]string, len(checkTypes))
-				for i, j := range checkTypes {
-					HealthCheckTypes[i] = j.(string)
+			var value *azurev3.Health = nil
+
+			if v, ok := resourceData.GetOk(string(Health)); ok {
+				if health, err := expandHealth(v); err != nil {
+					return err
+				} else {
+					value = health
 				}
-				statefulNode.Health.SetHealthCheckTypes(HealthCheckTypes)
 			}
+			statefulNode.SetHealth(value)
 			return nil
 		},
 		nil,
 	)
+}
 
-	fieldsMap[GracePeriod] = commons.NewGenericField(
-		commons.StatefulNodeAzureHealth,
-		GracePeriod,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var value *int = nil
-			if statefulNode.Health != nil && statefulNode.Health.GracePeriod != nil {
-				value = statefulNode.Health.GracePeriod
-			}
-			if err := resourceData.Set(string(GracePeriod), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(GracePeriod), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(GracePeriod)).(int); ok && v >= 0 {
-				statefulNode.Health.SetGracePeriod(spotinst.Int(v))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var value *int = nil
-			if v, ok := resourceData.Get(string(GracePeriod)).(int); ok && v >= 0 {
-				value = spotinst.Int(v)
-			}
-			statefulNode.Health.SetGracePeriod(value)
-			return nil
-		},
-		nil,
-	)
+func flattenHealth(health *azurev3.Health) []interface{} {
+	var out []interface{}
 
-	fieldsMap[UnhealthyDuration] = commons.NewGenericField(
-		commons.StatefulNodeAzureHealth,
-		UnhealthyDuration,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var value *int = nil
-			if statefulNode.Health != nil && statefulNode.Health.UnhealthyDuration != nil {
-				value = statefulNode.Health.UnhealthyDuration
-			}
-			if err := resourceData.Set(string(UnhealthyDuration), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UnhealthyDuration), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(UnhealthyDuration)).(int); ok && v >= 0 {
-				statefulNode.Health.SetUnhealthyDuration(spotinst.Int(v))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var value *int = nil
-			if v, ok := resourceData.Get(string(UnhealthyDuration)).(int); ok && v >= 0 {
-				value = spotinst.Int(v)
-			}
-			statefulNode.Health.SetUnhealthyDuration(value)
-			return nil
-		},
-		nil,
-	)
+	if health != nil {
+		result := make(map[string]interface{})
 
-	fieldsMap[AutoHealing] = commons.NewGenericField(
-		commons.StatefulNodeAzureHealth,
-		AutoHealing,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var value *bool = nil
-			if statefulNode.Health != nil && statefulNode.Health.AutoHealing != nil {
-				value = statefulNode.Health.AutoHealing
+		if health.HealthCheckTypes != nil {
+			result[string(HealthCheckTypes)] = spotinst.StringSlice(health.HealthCheckTypes)
+		}
+
+		if health.GracePeriod != nil {
+			result[string(GracePeriod)] = spotinst.IntValue(health.GracePeriod)
+		}
+
+		if health.UnhealthyDuration != nil {
+			result[string(UnhealthyDuration)] = spotinst.IntValue(health.UnhealthyDuration)
+		}
+
+		if health.AutoHealing != nil {
+			result[string(AutoHealing)] = spotinst.BoolValue(health.AutoHealing)
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+
+func expandHealth(data interface{}) (*azurev3.Health, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		health := &azurev3.Health{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(HealthCheckTypes)]; ok {
+				htc, err := expandHealthCheckTypes(v)
+				if err != nil {
+					return nil, err
+				}
+
+				if htc != nil {
+					health.SetHealthCheckTypes(htc)
+				}
+			} else {
+				health.SetHealthCheckTypes(nil)
 			}
-			if err := resourceData.Set(string(AutoHealing), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoHealing), err)
+
+			if v, ok := m[string(GracePeriod)].(int); ok && v >= 0 {
+				health.SetGracePeriod(spotinst.Int(v))
+			} else {
+				health.SetGracePeriod(nil)
 			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(AutoHealing)).(bool); ok {
-				statefulNode.Health.SetAutoHealing(spotinst.Bool(v))
+
+			if v, ok := m[string(UnhealthyDuration)].(int); ok && v >= 0 {
+				health.SetUnhealthyDuration(spotinst.Int(v))
+			} else {
+				health.SetUnhealthyDuration(nil)
 			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(AutoHealing)).(bool); ok {
-				statefulNode.Health.SetAutoHealing(spotinst.Bool(v))
+
+			if v, ok := m[string(AutoHealing)].(bool); ok {
+				health.SetAutoHealing(spotinst.Bool(v))
+			} else {
+				health.SetAutoHealing(nil)
 			}
-			return nil
-		},
-		nil,
-	)
+		}
+
+		return health, nil
+	}
+
+	return nil, nil
+}
+
+func expandHealthCheckTypes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if healthCheckType, ok := v.(string); ok && healthCheckType != "" {
+			result = append(result, healthCheckType)
+		}
+	}
+
+	return result, nil
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-	"strings"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
@@ -23,6 +22,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(PreferredLifecycle): {
 						Type:     schema.TypeString,
 						Optional: true,
+						Computed: true,
 					},
 					string(DrainingTimeout): {
 						Type:     schema.TypeInt,
@@ -152,7 +152,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Elem:     &schema.Schema{Type: schema.TypeString},
-			Required: true,
+			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
@@ -212,12 +212,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
+			var result []interface{} = nil
 			if statefulNode.Strategy != nil && statefulNode.Strategy.RevertToSpot != nil {
 				rts := statefulNode.Strategy.RevertToSpot
-				result := make(map[string]interface{})
-				result[string(PerformAt)] = spotinst.StringValue(rts.PerformAt)
-				revertToSpot := []interface{}{result}
-				if err := resourceData.Set(string(RevertToSpot), revertToSpot); err != nil {
+				result = flattenRevertToSpot(rts)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(RevertToSpot), result); err != nil {
 					return fmt.Errorf("failed to set revertToSpot configuration: %#v", err)
 				}
 			}
@@ -251,7 +252,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+}
 
+func flattenRevertToSpot(revertToSpot *azure.RevertToSpot) []interface{} {
+	var out []interface{}
+
+	if revertToSpot != nil {
+		result := make(map[string]interface{})
+
+		if revertToSpot.PerformAt != nil {
+			result[string(PerformAt)] = spotinst.StringValue(revertToSpot.PerformAt)
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }
 
 func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
@@ -293,7 +310,7 @@ func expandStatefulNodeAzureStrategySignals(data interface{}) ([]*azure.Signal, 
 		signal := &azure.Signal{}
 
 		if v, ok := m[string(Type)].(string); ok && v != "" {
-			signal.SetType(spotinst.String(strings.ToUpper(v)))
+			signal.SetType(spotinst.String(v))
 		}
 
 		if v, ok := m[string(Timeout)].(int); ok && v > 0 {
@@ -319,16 +336,19 @@ func expandStatefulNodeAzureStrategyOptimizationWindows(data interface{}) ([]str
 }
 
 func expandStatefulNodeAzureStrategyRevertToSpot(data interface{}) (*azure.RevertToSpot, error) {
-	revertToSpot := &azure.RevertToSpot{}
-	list := data.([]interface{})
+	if list := data.([]interface{}); len(list) > 0 {
+		revertToSpot := &azure.RevertToSpot{}
 
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
-		var performAt *string = nil
-		if v, ok := m[string(PerformAt)].(string); ok {
-			performAt = spotinst.String(v)
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(PerformAt)].(string); ok && v != "" {
+				revertToSpot.SetPerformAt(spotinst.String(v))
+			} else {
+				revertToSpot.SetPerformAt(nil)
+			}
 		}
-		revertToSpot.SetPerformAt(performAt)
+		return revertToSpot, nil
 	}
-	return revertToSpot, nil
+	return nil, nil
 }

@@ -73,12 +73,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(EnableIPForwarding): {
 									Type:     schema.TypeBool,
 									Optional: true,
+									Computed: true,
 								},
 
 								string(PrivateIPAddresses): {
 									Type:     schema.TypeList,
 									Elem:     &schema.Schema{Type: schema.TypeString},
 									Optional: true,
+									Computed: true,
 								},
 
 								string(AdditionalIPConfigurations): {
