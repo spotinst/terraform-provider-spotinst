@@ -286,6 +286,26 @@ resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
  zones = "1"
 preferred_zone = "1"
 
+should_terminate_vm = true
+
+network_should_deallocate = true
+network_ttl_in_hours      = "0"
+
+disk_should_deallocate = true
+disk_ttl_in_hours      = "0"
+
+snapshot_should_deallocate = true
+snapshot_ttl_in_hours      = "0"
+
+public_ip_should_deallocate = true
+public_ip_ttl_in_hours      = "0"
+ 
+ %v
+ %v
+ %v
+ %v
+ %v
+ %v
  %v
  %v
  %v
@@ -306,6 +326,26 @@ resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
  zones = "ea-2"
 preferred_zone = "1"
 
+should_terminate_vm = true
+
+network_should_deallocate = true
+network_ttl_in_hours      = "0"
+
+disk_should_deallocate = true
+disk_ttl_in_hours      = "0"
+
+snapshot_should_deallocate = true
+snapshot_ttl_in_hours      = "0"
+
+public_ip_should_deallocate = true
+public_ip_ttl_in_hours      = "0"
+
+ %v
+ %v
+ %v
+ %v
+ %v
+ %v
  %v
  %v
  %v
@@ -337,8 +377,22 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "azure_v3_terraform"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.password", ""),
-					resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", ""),
+					resource.TestCheckResourceAttr(resourceName, "login.0.password", "2"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", "4"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:     statefulNodeName,
+					login:                testAzureV3LoginStatefulNodeConfig_Update,
+					updateBaselineFields: true,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "azure_v3_terraform"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.password", "12344"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", "4"),
 				),
 			},
 		},
@@ -346,13 +400,19 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 }
 
 const testAzureV3LoginStatefulNodeConfig_Create = `
-// --- LOGIN --------------------------------
   login {
     user_name = "azure_v3_terraform"
-	password  = "terraform-password"
-	ssh_public_key = "terraform - ssh_key"
+	password  = "2"
+	ssh_public_key = "4"
   }
-// ---------------------------------------------
+`
+
+const testAzureV3LoginStatefulNodeConfig_Update = `
+  login {
+    user_name = "azure_v3_terraform"
+	password  = "12344"
+	ssh_public_key = "4"
+  }
 `
 
 //endregion
@@ -402,7 +462,7 @@ func TestAccSpotinstStatefulNodeAzureV3_LaunchSpecification(t *testing.T) {
 			{
 				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
 					statefulNodeName:     statefulNodeName,
-					launchSpecification:  testLaunchSpecificationOceanAKSConfig_Update,
+					launchSpecification:  testLaunchSpecificationStatefulNodeAzureV3Config_Update,
 					updateBaselineFields: true,
 				}),
 				ExpectNonEmptyPlan: true,
@@ -1160,7 +1220,6 @@ const testNetworkStatefulNodeAzureV3Config_Create = `
 `
 
 const testNetworkStatefulNodeAzureV3Config_Update = `
-  //  // --- NETWORK -------------------------------------------------------
   network {
     virtual_network_name = "aks-vnet-48068046"
     resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
