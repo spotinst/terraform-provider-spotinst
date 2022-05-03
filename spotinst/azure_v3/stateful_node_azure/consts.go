@@ -47,6 +47,7 @@ const (
 	DetachDataDiskName              commons.FieldName = DetachPrefix + "data_disk_name"
 	DetachDataDiskResourceGroupName commons.FieldName = DetachPrefix + "data_disk_resource_group_name"
 	DetachShouldDeallocate          commons.FieldName = DetachPrefix + "should_deallocate"
+	DetachTTLInHours                commons.FieldName = DetachPrefix + "ttl_in_hours"
 
 	ShouldDetachDataDisk commons.FieldName = "should_detach_data_disk"
 )

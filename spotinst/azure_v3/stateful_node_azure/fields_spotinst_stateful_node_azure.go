@@ -449,4 +449,106 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[AttachDataDisk] = commons.NewGenericField(
+		commons.StatefulNodeAzure,
+		AttachDataDisk,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(AttachDataDiskConfig): {
+						Type:     schema.TypeList,
+						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(AttachDataDiskName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(AttachDataDiskResourceGroupName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(AttachStorageAccountType): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(AttachSizeGB): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+								string(AttachLUN): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(AttachZone): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[DetachDataDisk] = commons.NewGenericField(
+		commons.StatefulNodeAzure,
+		DetachDataDisk,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(DetachDataDiskConfig): {
+						Type:     schema.TypeList,
+						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(DetachDataDiskName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(DetachDataDiskResourceGroupName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(DetachShouldDeallocate): {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								string(DetachTTLInHours): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
 }

@@ -511,6 +511,10 @@ func expandStatefulNodeAzureDetachDataDiskConfig(data interface{}, statefulNodeI
 			spec.ShouldDeallocate = spotinst.Bool(v)
 		}
 
+		if v, ok := m[string(stateful_node_azure.DetachTTLInHours)].(int); ok && v > 0 {
+			spec.TTLInHours = spotinst.Int(v)
+		}
+
 	}
 
 	return spec, nil
