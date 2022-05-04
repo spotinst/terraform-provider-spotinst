@@ -178,8 +178,8 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 
 	template :=
 		`provider "azure" {
-	token   = "5ca74c5c6fe2cd5a3827eb63f8c342c873feaac8c1b3b9d43ea046651cd6f177"
-	account = "act-97b049d6"
+	token   = "fake"
+	account = "fake"
 	}
 	`
 	if StatefulNodeMeta.updateBaselineFields {
