@@ -178,8 +178,8 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 
 	template :=
 		`provider "azure" {
-	token   = "fake"
-	account = "fake"
+	token   = "5ca74c5c6fe2cd5a3827eb63f8c342c873feaac8c1b3b9d43ea046651cd6f177"
+	account = "act-97b049d6"
 	}
 	`
 	if StatefulNodeMeta.updateBaselineFields {
@@ -250,10 +250,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
-					resource.TestCheckResourceAttr(resourceName, "description", "foo"),
+					resource.TestCheckResourceAttr(resourceName, "description", "tamir-test-file-1"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "zones", "1"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_zone", "1"),
 				),
 			},
 			{
@@ -264,11 +262,9 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "region", "westus"),
-					resource.TestCheckResourceAttr(resourceName, "description", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
+					resource.TestCheckResourceAttr(resourceName, "description", "tamir-test-file-1-updated"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "zones", "ea-2"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_zone", "1"),
 				),
 			},
 		},
@@ -282,23 +278,7 @@ resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
  name 				 = "%v"
  os 			     = "Linux"
  region              = "eastus"
- description = "foo"
- zones = "1"
-preferred_zone = "1"
-
-should_terminate_vm = true
-
-network_should_deallocate = true
-network_ttl_in_hours      = "0"
-
-disk_should_deallocate = true
-disk_ttl_in_hours      = "0"
-
-snapshot_should_deallocate = true
-snapshot_ttl_in_hours      = "0"
-
-public_ip_should_deallocate = true
-public_ip_ttl_in_hours      = "0"
+ description = "tamir-test-file-1"
  
  %v
  %v
@@ -321,24 +301,8 @@ resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
   provider = "%v"
  name 				 = "%v"
  os 			     = "Linux"
- region              = "westus"
- description = "CoreReliabilityResourceGroup"
- zones = "ea-2"
-preferred_zone = "1"
-
-should_terminate_vm = true
-
-network_should_deallocate = true
-network_ttl_in_hours      = "0"
-
-disk_should_deallocate = true
-disk_ttl_in_hours      = "0"
-
-snapshot_should_deallocate = true
-snapshot_ttl_in_hours      = "0"
-
-public_ip_should_deallocate = true
-public_ip_ttl_in_hours      = "0"
+ region              = "eastus"
+ description = "tamir-test-file-1-updated"
 
  %v
  %v
@@ -377,8 +341,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "azure_v3_terraform"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.password", "2"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", "4"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.password", "123456789"),
 				),
 			},
 			{
@@ -391,8 +354,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "azure_v3_terraform"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.password", "12344"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", "4"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.password", "111111111"),
 				),
 			},
 		},
@@ -402,16 +364,14 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 const testAzureV3LoginStatefulNodeConfig_Create = `
   login {
     user_name = "azure_v3_terraform"
-	password  = "2"
-	ssh_public_key = "4"
+	password  = "123456789"
   }
 `
 
 const testAzureV3LoginStatefulNodeConfig_Update = `
   login {
     user_name = "azure_v3_terraform"
-	password  = "12344"
-	ssh_public_key = "4"
+	password  = "111111111"
   }
 `
 
