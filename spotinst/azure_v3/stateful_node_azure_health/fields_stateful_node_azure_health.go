@@ -26,12 +26,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(GracePeriod): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true, //TODO - check
+						Computed: true,
 					},
 					string(UnhealthyDuration): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true, //TODO - check
+						Computed: true,
 					},
 					string(AutoHealing): {
 						Type:     schema.TypeBool,

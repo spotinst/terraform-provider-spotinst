@@ -73,21 +73,14 @@ func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData
 		return err
 	}
 
-	if shouldImportVM, ok := resourceData.Get(string(stateful_node_azure.ShouldImportVM)).(bool); ok && shouldImportVM {
-		statefulNodeImport := &v3.StatefulNodeImport{
-			OriginalVMName:    spotinst.String(resourceData.Get(string(stateful_node_azure.ImportVMOriginalVMName)).(string)),
-			ResourceGroupName: spotinst.String(resourceData.Get(string(stateful_node_azure.ImportVMResourceGroupName)).(string)),
-			StatefulNode:      statefulNode}
+	if importVMConfig, ok := resourceData.GetOk(string(stateful_node_azure.ImportVM)); ok {
 
-		if v, ok := resourceData.Get(string(stateful_node_azure.ImportVMDrainingTimeout)).(int); ok && v >= 0 {
-			statefulNodeImport.DrainingTimeout = spotinst.Int(v)
+		importVMStatefulNodeInput, err := expandStatefulNodeAzureImportVMConfig(importVMConfig, statefulNode)
+		if err != nil {
+			return fmt.Errorf("stateful node/azure: failed expanding import vm configuration: %v", err)
 		}
 
-		if v, ok := resourceData.Get(string(stateful_node_azure.ImportVMResourceRetentionTime)).(int); ok && v >= 0 {
-			statefulNodeImport.DrainingTimeout = spotinst.Int(v)
-		}
-
-		statefulNodeId, err := createAzureV3StatefulNodeImportVM(statefulNodeImport, meta.(*Client))
+		statefulNodeId, err := createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput, meta.(*Client))
 		if err != nil {
 			return err
 		}
@@ -108,8 +101,39 @@ func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData
 	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
 }
 
-func createAzureV3StatefulNodeImportVM(statefulNodeImport *v3.StatefulNodeImport, spotinstClient *Client) (*string, error) {
-	if json, err := commons.ToJson(statefulNodeImport); err != nil {
+func expandStatefulNodeAzureImportVMConfig(data interface{}, statefulNode *v3.StatefulNode) (*v3.ImportVMStatefulNodeInput, error) {
+	spec := &v3.ImportVMStatefulNodeInput{
+		StatefulNodeImport: &v3.StatefulNodeImport{
+			StatefulNode: statefulNode,
+		},
+	}
+
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(stateful_node_azure.ImportVMOriginalVMName)].(string); ok && v != "" {
+			spec.StatefulNodeImport.OriginalVMName = spotinst.String(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.ImportVMResourceGroupName)].(string); ok && v != "" {
+			spec.StatefulNodeImport.ResourceGroupName = spotinst.String(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.ImportVMDrainingTimeout)].(int); ok && v >= 0 {
+			spec.StatefulNodeImport.DrainingTimeout = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.ImportVMResourcesRetentionTime)].(int); ok && v >= 0 {
+			spec.StatefulNodeImport.ResourcesRetentionTime = spotinst.Int(v)
+		}
+	}
+
+	return spec, nil
+}
+
+func createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput *v3.ImportVMStatefulNodeInput, spotinstClient *Client) (*string, error) {
+	if json, err := commons.ToJson(importVMStatefulNodeInput); err != nil {
 		return nil, err
 	} else {
 		log.Printf("===> Stateful node import vm create configuration: %s", json)
@@ -117,8 +141,7 @@ func createAzureV3StatefulNodeImportVM(statefulNodeImport *v3.StatefulNodeImport
 
 	var resp *v3.ImportVMStatefulNodeOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
-		input := &v3.ImportVMStatefulNodeInput{StatefulNodeImport: statefulNodeImport}
-		r, err := spotinstClient.statefulNode.CloudProviderAzure().ImportVM(context.Background(), input)
+		r, err := spotinstClient.statefulNode.CloudProviderAzure().ImportVM(context.Background(), importVMStatefulNodeInput)
 		if err != nil {
 			log.Printf("error: %v", err)
 			// Some other error, report it.
@@ -230,30 +253,21 @@ func updateAzureV3StatefulNode(statefulNode *v3.StatefulNode, resourceData *sche
 	if updateState, ok := resourceData.GetOk(string(stateful_node_azure.UpdateState)); ok {
 		list := updateState.([]interface{})
 		if len(list) > 0 && list[0] != nil {
-			m := list[0].(map[string]interface{})
-			if sus, ok := m[string(stateful_node_azure.ShouldUpdateState)].(bool); ok && sus {
-				shouldUpdateState = true
-			}
+			shouldUpdateState = true
 		}
 	}
 
 	if attachDataDisk, ok := resourceData.GetOk(string(stateful_node_azure.AttachDataDisk)); ok {
 		list := attachDataDisk.([]interface{})
 		if len(list) > 0 && list[0] != nil {
-			m := list[0].(map[string]interface{})
-			if attach, ok := m[string(stateful_node_azure.ShouldAttachDataDisk)].(bool); ok && attach {
-				shouldAttachDataDisk = true
-			}
+			shouldAttachDataDisk = true
 		}
 	}
 
 	if detachDataDisk, ok := resourceData.GetOk(string(stateful_node_azure.DetachDataDisk)); ok {
 		list := detachDataDisk.([]interface{})
 		if len(list) > 0 && list[0] != nil {
-			m := list[0].(map[string]interface{})
-			if detach, ok := m[string(stateful_node_azure.ShouldDetachDataDisk)].(bool); ok && detach {
-				shouldDetachDataDisk = true
-			}
+			shouldDetachDataDisk = true
 		}
 	}
 
@@ -274,6 +288,7 @@ func updateAzureV3StatefulNode(statefulNode *v3.StatefulNode, resourceData *sche
 		log.Printf("onUpdate() -> Field [%v] is missing, skipping state update for stateful node",
 			string(stateful_node_azure.UpdateState))
 	}
+
 	if shouldAttachDataDisk {
 		if err := attachDataDiskAzureV3StatefulNode(resourceData, meta); err != nil {
 			log.Printf("[ERROR] Stateful node [%v] attach data disk failed, error: %v", statefulNodeId, err)
@@ -283,6 +298,7 @@ func updateAzureV3StatefulNode(statefulNode *v3.StatefulNode, resourceData *sche
 		log.Printf("onUpdate() -> Field [%v] is missing, skipping attach data disk for stateful node",
 			string(stateful_node_azure.AttachDataDisk))
 	}
+
 	if shouldDetachDataDisk {
 		if err := detachDataDiskAzureV3StatefulNode(resourceData, meta); err != nil {
 			log.Printf("[ERROR] Stateful node [%v] detach data disk failed, error: %v", statefulNodeId, err)
@@ -292,6 +308,7 @@ func updateAzureV3StatefulNode(statefulNode *v3.StatefulNode, resourceData *sche
 		log.Printf("onUpdate() -> Field [%v] is missing, skipping detach data disk for stateful node",
 			string(stateful_node_azure.DetachDataDisk))
 	}
+
 	return nil
 }
 
@@ -306,20 +323,18 @@ func updateStateAzureV3StatefulNode(resourceData *schema.ResourceData, meta inte
 	list := updateState.([]interface{})
 	if len(list) > 0 && list[0] != nil {
 		updateStatefulNodeStateSchema := list[0].(map[string]interface{})
-
-		updateStateConfig, ok := updateStatefulNodeStateSchema[string(stateful_node_azure.UpdateStateConfig)]
-		if !ok || updateStateConfig == nil {
-			return fmt.Errorf("stateful node/azure: missing new state configuration, "+
-				"skipping state update for stateful node %q", statefulNodeID)
+		if updateStatefulNodeStateSchema == nil {
+			return fmt.Errorf("stateful node/azure: missing update state configuration, "+
+				"skipping update state for stateful node %q", statefulNodeID)
 		}
 
-		updateStateSpec, err := expandStatefulNodeAzureUpdateStateConfig(updateStateConfig, statefulNodeID)
+		updateStateSpec, err := expandStatefulNodeAzureUpdateStateConfig(updateStatefulNodeStateSchema, statefulNodeID)
 		if err != nil {
 			return fmt.Errorf("stateful node/azure: failed expanding state update "+
 				"configuration for stateful node %q, error: %v", statefulNodeID, err)
 		}
 
-		updateStateJSON, err := commons.ToJson(updateStateConfig)
+		updateStateJSON, err := commons.ToJson(updateStatefulNodeStateSchema)
 		if err != nil {
 			return fmt.Errorf("stateful node/azure: failed marshaling state update "+
 				"configuration for stateful node %q, error: %v", statefulNodeID, err)
@@ -350,20 +365,18 @@ func attachDataDiskAzureV3StatefulNode(resourceData *schema.ResourceData, meta i
 	list := attachDataDisk.([]interface{})
 	if len(list) > 0 && list[0] != nil {
 		attachDataDiskStatefulNodeSchema := list[0].(map[string]interface{})
-
-		attachDataDiskConfig, ok := attachDataDiskStatefulNodeSchema[string(stateful_node_azure.AttachDataDiskConfig)]
-		if !ok || attachDataDiskConfig == nil {
+		if attachDataDiskStatefulNodeSchema == nil {
 			return fmt.Errorf("stateful node/azure: missing attach data disk configuration, "+
-				"skipping state update for stateful node %q", statefulNodeID)
+				"skipping attach data disk for stateful node %q", statefulNodeID)
 		}
 
-		attachDataDiskSpec, err := expandStatefulNodeAzureAttachDataDiskConfig(attachDataDiskConfig, statefulNodeID)
+		attachDataDiskSpec, err := expandStatefulNodeAzureAttachDataDiskConfig(attachDataDiskStatefulNodeSchema, statefulNodeID)
 		if err != nil {
 			return fmt.Errorf("stateful node/azure: failed expanding attach data disk "+
 				"configuration for stateful node %q, error: %v", statefulNodeID, err)
 		}
 
-		updateStateJSON, err := commons.ToJson(attachDataDiskConfig)
+		updateStateJSON, err := commons.ToJson(attachDataDiskStatefulNodeSchema)
 		if err != nil {
 			return fmt.Errorf("stateful node/azure: failed marshaling attach data disk "+
 				"configuration for stateful node %q, error: %v", statefulNodeID, err)
@@ -397,20 +410,18 @@ func detachDataDiskAzureV3StatefulNode(resourceData *schema.ResourceData, meta i
 	list := detachDataDisk.([]interface{})
 	if len(list) > 0 && list[0] != nil {
 		detachDataDiskStatefulNodeSchema := list[0].(map[string]interface{})
-
-		detachDataDiskConfig, ok := detachDataDiskStatefulNodeSchema[string(stateful_node_azure.DetachDataDiskConfig)]
-		if !ok || detachDataDiskConfig == nil {
+		if detachDataDiskStatefulNodeSchema == nil {
 			return fmt.Errorf("stateful node/azure: missing detach data disk configuration, "+
-				"skipping state update for stateful node %q", statefulNodeID)
+				"skipping detach data disk for stateful node %q", statefulNodeID)
 		}
 
-		detachDataDiskSpec, err := expandStatefulNodeAzureDetachDataDiskConfig(detachDataDiskConfig, statefulNodeID)
+		detachDataDiskSpec, err := expandStatefulNodeAzureDetachDataDiskConfig(detachDataDiskStatefulNodeSchema, statefulNodeID)
 		if err != nil {
 			return fmt.Errorf("stateful node/azure: failed expanding detach data disk "+
 				"configuration for stateful node %q, error: %v", statefulNodeID, err)
 		}
 
-		updateStateJSON, err := commons.ToJson(detachDataDiskConfig)
+		updateStateJSON, err := commons.ToJson(detachDataDiskStatefulNodeSchema)
 		if err != nil {
 			return fmt.Errorf("stateful node/azure: failed marshaling detach data disk "+
 				"configuration for stateful node %q, error: %v", statefulNodeID, err)
@@ -432,15 +443,13 @@ func detachDataDiskAzureV3StatefulNode(resourceData *schema.ResourceData, meta i
 	return nil
 }
 
-func expandStatefulNodeAzureUpdateStateConfig(data interface{},
-	statefulNodeID string) (*v3.UpdateStatefulNodeStateInput, error) {
-	list := data.([]interface{})
+func expandStatefulNodeAzureUpdateStateConfig(data interface{}, statefulNodeID string) (*v3.UpdateStatefulNodeStateInput, error) {
 	spec := &v3.UpdateStatefulNodeStateInput{
 		ID: spotinst.String(statefulNodeID),
 	}
 
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
+	if data != nil {
+		m := data.(map[string]interface{})
 
 		if v, ok := m[string(stateful_node_azure.State)].(string); ok && v != "" {
 			spec.StatefulNodeState = spotinst.String(v)
@@ -451,15 +460,13 @@ func expandStatefulNodeAzureUpdateStateConfig(data interface{},
 }
 
 func expandStatefulNodeAzureAttachDataDiskConfig(data interface{},
-	statefulNodeID string) (*v3.AttachStatefulNodeDataDiskInput,
-	error) {
-	list := data.([]interface{})
+	statefulNodeID string) (*v3.AttachStatefulNodeDataDiskInput, error) {
 	spec := &v3.AttachStatefulNodeDataDiskInput{
 		ID: spotinst.String(statefulNodeID),
 	}
 
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
+	if data != nil {
+		m := data.(map[string]interface{})
 
 		if v, ok := m[string(stateful_node_azure.AttachDataDiskName)].(string); ok && v != "" {
 			spec.DataDiskName = spotinst.String(v)
@@ -489,15 +496,13 @@ func expandStatefulNodeAzureAttachDataDiskConfig(data interface{},
 	return spec, nil
 }
 
-func expandStatefulNodeAzureDetachDataDiskConfig(data interface{}, statefulNodeID string) (*v3.DetachStatefulNodeDataDiskInput,
-	error) {
-	list := data.([]interface{})
+func expandStatefulNodeAzureDetachDataDiskConfig(data interface{}, statefulNodeID string) (*v3.DetachStatefulNodeDataDiskInput, error) {
 	spec := &v3.DetachStatefulNodeDataDiskInput{
 		ID: spotinst.String(statefulNodeID),
 	}
 
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
+	if data != nil {
+		m := data.(map[string]interface{})
 
 		if v, ok := m[string(stateful_node_azure.DetachDataDiskName)].(string); ok && v != "" {
 			spec.DataDiskName = spotinst.String(v)

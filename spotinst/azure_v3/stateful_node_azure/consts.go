@@ -16,49 +16,34 @@ const (
 )
 
 const (
-	UpdateState       commons.FieldName = "update_state"
-	UpdateStateConfig commons.FieldName = "update_state_config"
-	ShouldUpdateState commons.FieldName = "should_update_state"
-	State             commons.FieldName = "state"
+	UpdateState commons.FieldName = "update_state"
+	State       commons.FieldName = "state"
 )
 
 const (
-	AttachPrefix   = "attach_"
-	DetachPrefix   = "detach_"
-	ImportVMPrefix = "import_vm_"
+	AttachDataDisk                  commons.FieldName = "attach_data_disk"
+	AttachDataDiskName              commons.FieldName = "data_disk_name"
+	AttachDataDiskResourceGroupName commons.FieldName = "data_disk_resource_group_name"
+	AttachStorageAccountType        commons.FieldName = "storage_account_type"
+	AttachSizeGB                    commons.FieldName = "size_gb"
+	AttachLUN                       commons.FieldName = "lun"
+	AttachZone                      commons.FieldName = "zone"
 )
 
 const (
-	AttachDataDisk                  commons.FieldName = AttachPrefix + "data_disk"
-	AttachDataDiskConfig            commons.FieldName = AttachPrefix + "data_disk_config"
-	AttachDataDiskName              commons.FieldName = AttachPrefix + "data_disk_name"
-	AttachDataDiskResourceGroupName commons.FieldName = AttachPrefix + "data_disk_resource_group_name"
-	AttachStorageAccountType        commons.FieldName = AttachPrefix + "storage_account_type"
-	AttachSizeGB                    commons.FieldName = AttachPrefix + "size_gb"
-	AttachLUN                       commons.FieldName = AttachPrefix + "lun"
-	AttachZone                      commons.FieldName = AttachPrefix + "zone"
-
-	ShouldAttachDataDisk commons.FieldName = "should_attach_data_disk"
+	DetachDataDisk                  commons.FieldName = "detach_data_disk"
+	DetachDataDiskName              commons.FieldName = "data_disk_name"
+	DetachDataDiskResourceGroupName commons.FieldName = "data_disk_resource_group_name"
+	DetachShouldDeallocate          commons.FieldName = "should_deallocate"
+	DetachTTLInHours                commons.FieldName = "ttl_in_hours"
 )
 
 const (
-	DetachDataDisk                  commons.FieldName = DetachPrefix + "data_disk"
-	DetachDataDiskConfig            commons.FieldName = DetachPrefix + "data_disk_config"
-	DetachDataDiskName              commons.FieldName = DetachPrefix + "data_disk_name"
-	DetachDataDiskResourceGroupName commons.FieldName = DetachPrefix + "data_disk_resource_group_name"
-	DetachShouldDeallocate          commons.FieldName = DetachPrefix + "should_deallocate"
-	DetachTTLInHours                commons.FieldName = DetachPrefix + "ttl_in_hours"
-
-	ShouldDetachDataDisk commons.FieldName = "should_detach_data_disk"
-)
-
-const (
-	ImportVMResourceGroupName     commons.FieldName = ImportVMPrefix + "resource_group_name"
-	ImportVMOriginalVMName        commons.FieldName = ImportVMPrefix + "original_vm_name"
-	ImportVMDrainingTimeout       commons.FieldName = ImportVMPrefix + "draining_timeout"
-	ImportVMResourceRetentionTime commons.FieldName = ImportVMPrefix + "resource_retention_time"
-
-	ShouldImportVM commons.FieldName = "should_import_vm"
+	ImportVM                       commons.FieldName = "import_vm"
+	ImportVMResourceGroupName      commons.FieldName = "resource_group_name"
+	ImportVMOriginalVMName         commons.FieldName = "original_vm_name"
+	ImportVMDrainingTimeout        commons.FieldName = "draining_timeout"
+	ImportVMResourcesRetentionTime commons.FieldName = "resources_retention_time"
 )
 
 const (

@@ -457,37 +457,29 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(AttachDataDiskConfig): {
-						Type:     schema.TypeList,
+					string(AttachDataDiskName): {
+						Type:     schema.TypeString,
 						Required: true,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(AttachDataDiskName): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(AttachDataDiskResourceGroupName): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(AttachStorageAccountType): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(AttachSizeGB): {
-									Type:     schema.TypeInt,
-									Required: true,
-								},
-								string(AttachLUN): {
-									Type:     schema.TypeInt,
-									Optional: true,
-								},
-								string(AttachZone): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-							},
-						},
+					},
+					string(AttachDataDiskResourceGroupName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(AttachStorageAccountType): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(AttachSizeGB): {
+						Type:     schema.TypeInt,
+						Required: true,
+					},
+					string(AttachLUN): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+					string(AttachZone): {
+						Type:     schema.TypeString,
+						Optional: true,
 					},
 				},
 			},
@@ -512,29 +504,87 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(DetachDataDiskConfig): {
-						Type:     schema.TypeList,
+					string(DetachDataDiskName): {
+						Type:     schema.TypeString,
 						Required: true,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(DetachDataDiskName): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(DetachDataDiskResourceGroupName): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(DetachShouldDeallocate): {
-									Type:     schema.TypeBool,
-									Required: true,
-								},
-								string(DetachTTLInHours): {
-									Type:     schema.TypeInt,
-									Optional: true,
-								},
-							},
-						},
+					},
+					string(DetachDataDiskResourceGroupName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(DetachShouldDeallocate): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(DetachTTLInHours): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[UpdateState] = commons.NewGenericField(
+		commons.StatefulNodeAzure,
+		UpdateState,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(State): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ImportVM] = commons.NewGenericField(
+		commons.StatefulNodeAzure,
+		ImportVM,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ImportVMResourceGroupName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(ImportVMOriginalVMName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(ImportVMDrainingTimeout): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+					string(ImportVMResourcesRetentionTime): {
+						Type:     schema.TypeInt,
+						Optional: true,
 					},
 				},
 			},

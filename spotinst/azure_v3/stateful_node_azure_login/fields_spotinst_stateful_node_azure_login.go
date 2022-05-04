@@ -26,12 +26,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Password): {
 						Type:     schema.TypeString,
 						Optional: true,
-						Computed: true, //TODO - check
 					},
 					string(SSHPublicKey): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true, //TODO - check
 					},
 				},
 			},
