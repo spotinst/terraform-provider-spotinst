@@ -278,164 +278,52 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[ShouldTerminateVm] = commons.NewGenericField(
+	fieldsMap[Delete] = commons.NewGenericField(
 		commons.StatefulNodeAzure,
-		ShouldTerminateVm,
+		Delete,
 		&schema.Schema{
-			Type:     schema.TypeBool,
+			Type:     schema.TypeList,
 			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[NetworkShouldDeallocate] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		NetworkShouldDeallocate,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[NetworkTTLInHours] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		NetworkTTLInHours,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[DiskShouldDeallocate] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		DiskShouldDeallocate,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[DiskTTLInHours] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		DiskTTLInHours,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[SnapshotShouldDeallocate] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		SnapshotShouldDeallocate,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[SnapshotTTLInHours] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		SnapshotTTLInHours,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[PublicIPShouldDeallocate] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		PublicIPShouldDeallocate,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[PublicIPTTLInHours] = commons.NewGenericField(
-		commons.StatefulNodeAzure,
-		PublicIPTTLInHours,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldTerminateVm): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(NetworkShouldDeallocate): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(NetworkTTLInHours): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+					string(DiskShouldDeallocate): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(DiskTTLInHours): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+					string(SnapshotShouldDeallocate): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(SnapshotTTLInHours): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+					string(PublicIPShouldDeallocate): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(PublicIPTTLInHours): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil

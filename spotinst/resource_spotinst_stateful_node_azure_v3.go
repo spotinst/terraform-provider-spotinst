@@ -74,7 +74,6 @@ func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData
 	}
 
 	if importVMConfig, ok := resourceData.GetOk(string(stateful_node_azure.ImportVM)); ok {
-
 		importVMStatefulNodeInput, err := expandStatefulNodeAzureImportVMConfig(importVMConfig, statefulNode)
 		if err != nil {
 			return fmt.Errorf("stateful node/azure: failed expanding import vm configuration: %v", err)
@@ -541,37 +540,74 @@ func resourceSpotinstStatefulNodeAzureV3Delete(resourceData *schema.ResourceData
 
 func deleteAzureV3StatefulNode(resourceData *schema.ResourceData, meta interface{}) error {
 	statefulNodeId := resourceData.Id()
-	input := &v3.DeleteStatefulNodeInput{
-		ID: spotinst.String(statefulNodeId),
+	if deleteConfig, ok := resourceData.GetOk(string(stateful_node_azure.Delete)); ok {
+		deleteStatefulNodeAzureInput, err := expandStatefulNodeAzureDeleteConfig(deleteConfig, statefulNodeId)
+		if err != nil {
+			return fmt.Errorf("stateful node/azure: failed expanding delete configuration: %v", err)
+		}
+
+		if _, err := meta.(*Client).statefulNode.CloudProviderAzure().Delete(context.Background(), deleteStatefulNodeAzureInput); err != nil {
+			return fmt.Errorf("[ERROR] onDelete() -> Failed to delete stateful node: %s", err)
+		}
+
+		return nil
+	}
+
+	return fmt.Errorf("stateful node/azure: missing delete configuration")
+
+}
+
+func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string) (*v3.DeleteStatefulNodeInput, error) {
+	spec := &v3.DeleteStatefulNodeInput{
+		ID: spotinst.String(statefulNodeID),
 		DeallocationConfig: &v3.DeallocationConfig{
-			ShouldTerminateVM: spotinst.Bool(resourceData.Get(string(stateful_node_azure.ShouldTerminateVm)).(bool)),
-			NetworkDeallocationConfig: &v3.ResourceDeallocationConfig{
-				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.NetworkShouldDeallocate)).(bool)),
-				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.NetworkTTLInHours)).(int)),
-			},
-			DiskDeallocationConfig: &v3.ResourceDeallocationConfig{
-				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.DiskShouldDeallocate)).(bool)),
-				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.DiskTTLInHours)).(int)),
-			},
-			SnapshotDeallocationConfig: &v3.ResourceDeallocationConfig{
-				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.SnapshotShouldDeallocate)).(bool)),
-				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.SnapshotTTLInHours)).(int)),
-			},
-			PublicIPDeallocationConfig: &v3.ResourceDeallocationConfig{
-				ShouldDeallocate: spotinst.Bool(resourceData.Get(string(stateful_node_azure.PublicIPShouldDeallocate)).(bool)),
-				TTLInHours:       spotinst.Int(resourceData.Get(string(stateful_node_azure.PublicIPTTLInHours)).(int)),
-			},
+			NetworkDeallocationConfig:  &v3.ResourceDeallocationConfig{},
+			DiskDeallocationConfig:     &v3.ResourceDeallocationConfig{},
+			SnapshotDeallocationConfig: &v3.ResourceDeallocationConfig{},
+			PublicIPDeallocationConfig: &v3.ResourceDeallocationConfig{},
 		},
 	}
 
-	if json, err := commons.ToJson(input); err != nil {
-		return err
-	} else {
-		log.Printf("===> Stateful node delete configuration: %s", json)
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(stateful_node_azure.ShouldTerminateVm)].(bool); ok {
+			spec.DeallocationConfig.ShouldTerminateVM = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.NetworkShouldDeallocate)].(bool); ok {
+			spec.DeallocationConfig.NetworkDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.NetworkTTLInHours)].(int); ok && v >= 0 {
+			spec.DeallocationConfig.NetworkDeallocationConfig.TTLInHours = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.DiskShouldDeallocate)].(bool); ok {
+			spec.DeallocationConfig.DiskDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.DiskTTLInHours)].(int); ok && v >= 0 {
+			spec.DeallocationConfig.DiskDeallocationConfig.TTLInHours = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.SnapshotShouldDeallocate)].(bool); ok {
+			spec.DeallocationConfig.SnapshotDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.SnapshotShouldDeallocate)].(int); ok && v >= 0 {
+			spec.DeallocationConfig.SnapshotDeallocationConfig.TTLInHours = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.PublicIPShouldDeallocate)].(bool); ok {
+			spec.DeallocationConfig.PublicIPDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(stateful_node_azure.PublicIPTTLInHours)].(int); ok && v >= 0 {
+			spec.DeallocationConfig.PublicIPDeallocationConfig.TTLInHours = spotinst.Int(v)
+		}
 	}
 
-	if _, err := meta.(*Client).statefulNode.CloudProviderAzure().Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete stateful node: %s", err)
-	}
-	return nil
+	return spec, nil
 }
