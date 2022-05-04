@@ -25,7 +25,7 @@ const (
 // OS disk
 const (
 	OSDisk commons.FieldName = "os_disk"
-	SizeGB commons.FieldName = "size_gb" // TODO - duplicate with data disk - might be an issue?
+	SizeGB commons.FieldName = "size_gb"
 	Type   commons.FieldName = "type"
 )
 
