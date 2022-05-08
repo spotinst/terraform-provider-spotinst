@@ -33,11 +33,32 @@ func testSweepStatefulNodeAzureV3(region string) error {
 		return fmt.Errorf("error getting list of nodes to sweep")
 	} else {
 		if len(resp.StatefulNodes) == 0 {
-			log.Printf("[INFO] No clusters to sweep")
+			log.Printf("[INFO] No nodes to sweep")
 		}
 		for _, statefulNode := range resp.StatefulNodes {
-			if strings.Contains(spotinst.StringValue(statefulNode.Name), "terraform-acc-tests-") {
-				if _, err := conn.Delete(context.Background(), &azurev3.DeleteStatefulNodeInput{ID: statefulNode.ID}); err != nil {
+			if strings.Contains(spotinst.StringValue(statefulNode.Name), "terraform-acc-tests") {
+				if _, err := conn.Delete(context.Background(), &azurev3.DeleteStatefulNodeInput{
+					ID: statefulNode.ID,
+					//DeallocationConfig: &azurev3.DeallocationConfig{
+					//	ShouldTerminateVM: spotinst.Bool(true),
+					//	NetworkDeallocationConfig: &azurev3.ResourceDeallocationConfig{
+					//		ShouldDeallocate: spotinst.Bool(true),
+					//		TTLInHours:       spotinst.Int(0),
+					//	},
+					//	DiskDeallocationConfig: &azurev3.ResourceDeallocationConfig{
+					//		ShouldDeallocate: spotinst.Bool(true),
+					//		TTLInHours:       spotinst.Int(0),
+					//	},
+					//	SnapshotDeallocationConfig: &azurev3.ResourceDeallocationConfig{
+					//		ShouldDeallocate: spotinst.Bool(true),
+					//		TTLInHours:       spotinst.Int(0),
+					//	},
+					//	PublicIPDeallocationConfig: &azurev3.ResourceDeallocationConfig{
+					//		ShouldDeallocate: spotinst.Bool(true),
+					//		TTLInHours:       spotinst.Int(0),
+					//	},
+					//},
+				}); err != nil {
 					return fmt.Errorf("unable to delete nodes %v in sweep", spotinst.StringValue(statefulNode.ID))
 				} else {
 					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(statefulNode.ID))
@@ -53,15 +74,18 @@ func createStatefulNodeAzureV3ResourceName(name string) string {
 }
 
 func testStatefulNodeAzureV3Destroy(s *terraform.State) error {
-	client := testAccProviderAzureV3.Meta().(*Client)
+	client := testAccProviderAzure.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
 		if rs.Type != string(commons.StatefulNodeAzureV3ResourceName) {
 			continue
 		}
-		input := &azurev3.ReadStatefulNodeInput{ID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.statefulNode.CloudProviderAzure().Read(context.Background(), input)
-		if err == nil && resp != nil && resp.StatefulNode != nil {
-			return fmt.Errorf("stateful Node still exists")
+		input := &azurev3.GetStatefulNodeStateInput{ID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.statefulNode.CloudProviderAzure().GetState(context.Background(), input)
+		if err == nil && resp != nil && resp.StatefulNodeState != nil {
+			statefulNodeState := spotinst.StringValue(resp.StatefulNodeState.Status)
+			if statefulNodeState != "DEALLOCATE" && statefulNodeState != "DEALLOCATING" {
+				return fmt.Errorf("stateful node still exists! stateful node state = %s", statefulNodeState)
+			}
 		}
 	}
 	return nil
@@ -128,57 +152,57 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 		StatefulNodeMeta.provider = "azure"
 	}
 
-	if StatefulNodeMeta.launchSpecification == "" {
-		StatefulNodeMeta.launchSpecification = testLaunchSpecificationStatefulNodeAzureV3Config_Create
-	}
-
+	//if StatefulNodeMeta.launchSpecification == "" {
+	//	StatefulNodeMeta.launchSpecification = testLaunchSpecificationStatefulNodeAzureV3Config_Create
+	//}
+	//
 	if StatefulNodeMeta.strategy == "" {
 		StatefulNodeMeta.strategy = testStrategyStatefulNodeAzureV3Config_Create
 	}
-
-	if StatefulNodeMeta.health == "" {
-		StatefulNodeMeta.health = testHealthStatefulNodeAzureV3Config_Create
-	}
-
+	//
+	//if StatefulNodeMeta.health == "" {
+	//	StatefulNodeMeta.health = testHealthStatefulNodeAzureV3Config_Create
+	//}
+	//
 	if StatefulNodeMeta.vmSizes == "" {
 		StatefulNodeMeta.vmSizes = testVMSizesStatefulNodeAzureV3Config_Create
 	}
-
+	//
 	if StatefulNodeMeta.image == "" {
 		StatefulNodeMeta.image = testImageStatefulNodeAzureV3Config_Create
 	}
-
-	if StatefulNodeMeta.loadBalancers == "" {
-		StatefulNodeMeta.loadBalancers = testLoadBalancersStatefulNodeAzureV3Config_Create
-	}
-
+	//
+	//if StatefulNodeMeta.loadBalancers == "" {
+	//	StatefulNodeMeta.loadBalancers = testLoadBalancersStatefulNodeAzureV3Config_Create
+	//}
+	//
 	if StatefulNodeMeta.network == "" {
 		StatefulNodeMeta.network = testNetworkStatefulNodeAzureV3Config_Create
 	}
-
-	if StatefulNodeMeta.extensions == "" {
-		StatefulNodeMeta.extensions = testExtensionsStatefulNodeAzureV3Config_Create
-	}
-
+	//
+	//if StatefulNodeMeta.extensions == "" {
+	//	StatefulNodeMeta.extensions = testExtensionsStatefulNodeAzureV3Config_Create
+	//}
+	//
 	if StatefulNodeMeta.login == "" {
 		StatefulNodeMeta.login = testAzureV3LoginStatefulNodeConfig_Create
 	}
-
+	//
 	if StatefulNodeMeta.persistence == "" {
 		StatefulNodeMeta.persistence = testPersistenceStatefulNodeAzureV3Config_Create
 	}
+	//
+	//if StatefulNodeMeta.scheduling == "" {
+	//	StatefulNodeMeta.scheduling = testSchedulingStatefulNodeAzureV3Config_Create
+	//}
+	//
+	//if StatefulNodeMeta.secret == "" {
+	//	StatefulNodeMeta.secret = testSecretsStatefulNodeAzureV3Config_Create
+	//}
 
-	if StatefulNodeMeta.scheduling == "" {
-		StatefulNodeMeta.scheduling = testSchedulingStatefulNodeAzureV3Config_Create
-	}
-
-	if StatefulNodeMeta.secret == "" {
-		StatefulNodeMeta.secret = testSecretsStatefulNodeAzureV3Config_Create
-	}
-
-	template :=
-		`provider "azure" {
-	token   = "fake"
+	template := `
+	provider "azure" {
+	token = "fake"
 	account = "fake"
 	}
 	`
@@ -187,38 +211,40 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 		template += fmt.Sprintf(format,
 			StatefulNodeMeta.statefulNodeName,
 			StatefulNodeMeta.provider,
+			StatefulNodeMeta.statefulNodeName,
 			StatefulNodeMeta.login,
-			StatefulNodeMeta.launchSpecification,
-			StatefulNodeMeta.osDisk,
+			//StatefulNodeMeta.launchSpecification,
+			//StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.strategy,
 			StatefulNodeMeta.image,
-			StatefulNodeMeta.extensions,
+			//StatefulNodeMeta.extensions,
 			StatefulNodeMeta.network,
-			StatefulNodeMeta.health,
-			StatefulNodeMeta.loadBalancers,
+			//StatefulNodeMeta.health,
+			//StatefulNodeMeta.loadBalancers,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
-			StatefulNodeMeta.scheduling,
-			StatefulNodeMeta.secret,
+			//StatefulNodeMeta.scheduling,
+			//StatefulNodeMeta.secret,
 		)
 	} else {
 		format := testBaselineStatefulNodeAzureV3Config_Create
 		template += fmt.Sprintf(format,
 			StatefulNodeMeta.statefulNodeName,
 			StatefulNodeMeta.provider,
+			StatefulNodeMeta.statefulNodeName,
 			StatefulNodeMeta.login,
-			StatefulNodeMeta.launchSpecification,
-			StatefulNodeMeta.osDisk,
+			//StatefulNodeMeta.launchSpecification,
+			//StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.strategy,
 			StatefulNodeMeta.image,
-			StatefulNodeMeta.extensions,
+			//StatefulNodeMeta.extensions,
 			StatefulNodeMeta.network,
-			StatefulNodeMeta.health,
-			StatefulNodeMeta.loadBalancers,
+			//StatefulNodeMeta.health,
+			//StatefulNodeMeta.loadBalancers,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
-			StatefulNodeMeta.scheduling,
-			StatefulNodeMeta.secret,
+			//StatefulNodeMeta.scheduling,
+			//StatefulNodeMeta.secret,
 		)
 
 	}
@@ -233,7 +259,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 
 // region Stateful Node Azure: Baseline
 func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
-	statefulNodeName := "test-acc-sn-azure-v3-baseline" // what values to insert?
+	statefulNodeName := "terraform-acc-tests-sn-azure-v3-baseline"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
 	var node azurev3.StatefulNode
@@ -271,51 +297,63 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 	})
 }
 
+//TODO - resource group name confidential?
 const testBaselineStatefulNodeAzureV3Config_Create = `
 resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
-  provider = "%v"
+provider = "%v"
+name = "%v"
+os = "Linux"
+region = "eastus"
+description = "tamir-test-file-1"
+resource_group_name = "CoreReliabilityResourceGroup" 
+%v
+%v
+%v
+%v
+%v
+%v
 
- name 				 = "%v"
- os 			     = "Linux"
- region              = "eastus"
- description = "tamir-test-file-1"
- 
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
+delete {
+	should_terminate_vm = true
+	network_should_deallocate = true
+	network_ttl_in_hours      = 0
+	disk_should_deallocate = true
+	disk_ttl_in_hours      = 0
+	snapshot_should_deallocate = true
+	snapshot_ttl_in_hours      = 0
+	public_ip_should_deallocate = true
+	public_ip_ttl_in_hours      = 0
+	}
 }
 `
 
+//TODO - resource group name confidential?
 const testBaselineStatefulNodeAzureV3Config_Update = `
 resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
-  
-  provider = "%v"
- name 				 = "%v"
- os 			     = "Linux"
- region              = "eastus"
- description = "tamir-test-file-1-updated"
+provider = "%v"
+name = "%v"
+os = "Linux"
+region = "eastus"
+description = "tamir-test-file-1-updated"
+resource_group_name = "CoreReliabilityResourceGroup" 
+%v
+%v
+%v
+%v
+%v
+%v
 
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
- %v
+delete {
+	should_terminate_vm = true
+	network_should_deallocate = true
+	network_ttl_in_hours      = 0
+	disk_should_deallocate = true
+	disk_ttl_in_hours      = 0
+	snapshot_should_deallocate = true
+	snapshot_ttl_in_hours      = 0
+	public_ip_should_deallocate = true
+	public_ip_ttl_in_hours      = 0
+	}
 }
 `
 
@@ -340,8 +378,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "azure_v3_terraform"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.password", "123456789"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "tamir"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.password", "tamir123456789!@#$%"),
 				),
 			},
 			{
@@ -353,8 +391,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "azure_v3_terraform"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.password", "111111111"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "tamir"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.password", "tamir123456789!@#$%^&*"),
 				),
 			},
 		},
@@ -362,17 +400,17 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 }
 
 const testAzureV3LoginStatefulNodeConfig_Create = `
-  login {
-    user_name = "azure_v3_terraform"
-	password  = "123456789"
-  }
+login {
+	user_name = "tamir"
+	password  = "tamir123456789!@#$%"
+}
 `
 
 const testAzureV3LoginStatefulNodeConfig_Update = `
-  login {
-    user_name = "azure_v3_terraform"
-	password  = "111111111"
-  }
+login {
+	user_name = "tamir"
+	password  = "tamir123456789!@#$%^&*"
+}
 `
 
 //endregion
@@ -531,7 +569,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "true"),
 					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "true"),
+					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
 				),
 			},
 			{
@@ -547,7 +585,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "true"),
+					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
 				),
 			},
 		},
@@ -555,25 +593,21 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 }
 
 const testPersistenceStatefulNodeAzureV3Config_Create = `
-    persistence {
-        should_persist_os_disk = true
-		os_disk_persistence_mode = "reattach"
-		should_persist_data_disks = true
-		data_disks_persistence_mode = "reattach"
-		should_persist_network = true
-		should_persist_vm = true
-	}
+should_persist_os_disk = true
+os_disk_persistence_mode = "reattach"
+should_persist_data_disks = true
+data_disks_persistence_mode = "reattach"
+should_persist_network = true
+should_persist_vm = false
 `
 
 const testPersistenceStatefulNodeAzureV3Config_Update = `
-persistence {
-        should_persist_os_disk = true
-		os_disk_persistence_mode = "attach"
-		should_persist_data_disks = false
-		data_disks_persistence_mode = "reattach"
-		should_persist_network = true
-		should_persist_vm = true
-	}
+should_persist_os_disk = true
+os_disk_persistence_mode = "attach"
+should_persist_data_disks = false
+data_disks_persistence_mode = "reattach"
+should_persist_network = true
+should_persist_vm = false
 `
 
 //endregion
@@ -602,10 +636,6 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "40"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.optimization_windows", "Tue:19:46-Tue:20:46"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "3"), //is that needed?
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.signals.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.signals.0.type", "vmReady"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.signals.0.timeout", "20"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "timeWindow"),
 				),
@@ -620,12 +650,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "true"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "40"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "20"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.optimization_windows", "Thu:19:47-Thu:20:46"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "3"), //is that needed?
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.signals.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.signals.0.type", "vmReady"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.signals.0.timeout", "25"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "timeWindow"),
 				),
@@ -634,44 +660,28 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 	})
 }
 
+// TODO - another test that check signal?
+
 const testStrategyStatefulNodeAzureV3Config_Create = `
-      strategy {
-            signal = [
-                {
-                    type = "vmReady"
-                    timeout = "25"
-                }
-            ]
-            fallback_to_on_demand = true
-            draining_timeout =  "40"
-			preferred_life_cycle = "3"
-            revert_to_spot {
-                performAt =  "timeWindow"
+strategy {
+	draining_timeout =  40
+	fallback_to_on_demand = true
+	revert_to_spot {
+		perform_at =  "timeWindow"
             }
-            optimizationWindows = [
-                "Thu:19:47-Thu:20:46"
-            ]
-        }
+	optimization_windows = ["Thu:19:46-Thu:20:46"]
+}
 `
 
 const testStrategyStatefulNodeAzureV3Config_Update = `
-      strategy: {
-            signal: [
-                {
-                    type: "vmReady"
-                    timeout: 20
-                }
-            ]
-            fallback_to_on_demand = true
-            draining_timeout = 40
-			preferred_life_cycle = 3
-            revert_to_spot = {
-                performAt = "timeWindow"
+strategy {
+	draining_timeout =  20
+	fallback_to_on_demand = true
+	revert_to_spot {
+		perform_at =  "timeWindow"
             }
-            optimizationWindows = [
-                "Tue:19:46-Tue:20:46"
-            ]
-        }
+	optimization_windows = ["Thu:19:47-Thu:20:46"]
+}
 `
 
 //endregion
@@ -772,7 +782,7 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_ds1_v2"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "standard_ds1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "standard_ds2_v2"),
 				),
 			},
 			{
@@ -789,7 +799,7 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_ds4_v2"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "standard_ds1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "standard_ds3_v2"),
 				),
 			},
 		},
@@ -797,31 +807,15 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 }
 
 const testVMSizesStatefulNodeAzureV3Config_Create = `
-            vmSizes {
-                spotSizes = [
-                    "standard_ds2_v2''
-                ]
-                odSizes = [
-                    "standard_ds1_v2"
-                ]
-                preferredSpotSizes =  [
-                    "standard_ds1_v2"
-                ]
-            }
+spot_sizes = ["standard_ds2_v2"]
+od_sizes = ["standard_ds1_v2"]
+preferred_spot_sizes =  ["standard_ds2_v2"]
 `
 
 const testVMSizesStatefulNodeAzureV3Config_Update = `
-            vmSizes {
-                spotSizes = [
-                    "standard_ds3_v2"
-                ]
-                odSizes = [
-                    "standard_ds4_v2"
-                ]
-                preferredSpotSizes =  [
-                    "standard_ds1_v2"
-                ]
-            }
+spot_sizes = ["standard_ds3_v2"]
+od_sizes = ["standard_ds4_v2"]
+preferred_spot_sizes =  ["standard_ds3_v2"]
 `
 
 //endregion
@@ -950,25 +944,25 @@ func TestAccSpotinstStatefulNodeAzureV3_Image(t *testing.T) {
 }
 
 const testImageStatefulNodeAzureV3Config_Create = `
-                image {
-                    market_space_image {
-                        publisher = "Canonical",
-                        offer" = "UbuntuServer",
-                        sku = "18.04-LTS",
-                        version = "latest"
-                    }
-				}
+image {
+	marketplace_image {
+		publisher = "Canonical"
+		offer = "UbuntuServer"
+		sku = "18.04-LTS"
+		version = "latest"
+	}
+}
 `
 
 const testImageStatefulNodeAzureV3Config_Update = `
-                image {
-					gallery{
-						gallery_resource_group_name = "grc"
-						gallery_name = "Canonically"
-						image_name = "18.06-LTS"
-						version_name = "latest"
-					}
-				}
+image {
+	gallery {
+		gallery_resource_group_name = "grc"
+		gallery_name = "Canonically"
+		image_name = "18.06-LTS"
+		version_name = "latest"
+	}
+}
 `
 
 //endregion
@@ -1077,18 +1071,18 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.private_ip_addresses", "1234"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.name", "core-reliability-additional-ip-configurations"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.private_ip_address_version", "12345"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.name", "core-reliability-public-ips-name"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.name", "core-reliability-application-security-groups"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.private_ip_addresses", "1234"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.name", "core-reliability-additional-ip-configurations"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.private_ip_address_version", "12345"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.name", "core-reliability-public-ips-name"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.network_resource_group_name", "CoreReliabilityResourceGroup"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.name", "core-reliability-application-security-groups"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "aks-vnet-48068046"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "CoreReliabilityResourceGroup"), //TODO - confidential?
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
 				),
 			},
 			{
@@ -1107,20 +1101,20 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.public_ip_sku", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup2"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.private_ip_addresses", "1234"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.name", "core-reliability-additional-ip-configurations"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.private_ip_address_version", "12345"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.name", "core-reliability-public-ips-name"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.name", "core-reliability-application-security-groups"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "aks-vnet-48068046"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.private_ip_addresses", "1234"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.name", "core-reliability-additional-ip-configurations"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.additional_ip_configurations.0.private_ip_address_version", "12345"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.name", "core-reliability-public-ips-name"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.public_ips.network_resource_group_name", "CoreReliabilityResourceGroup"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.name", "core-reliability-application-security-groups"),
+					//resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.4170446135.application_security_groups.network_resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
 				),
 			},
 		},
@@ -1128,67 +1122,39 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 }
 
 const testNetworkStatefulNodeAzureV3Config_Create = `
-  network {
-    virtual_network_name = "aks-vnet-48068046"
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
-
-    network_interface {
-      subnet_name = "default"
-      assign_public_ip = true
-      is_primary = true
-	  public_ip_sku = "Standard"
-	  network_security_group{
-		name = "core-reliability-network-security-group"
-		network_resource_group_name = "CoreReliabilityResourceGroup"
-	  }
+network {
+	network_resource_group_name = "CoreReliabilityResourceGroup"
+	virtual_network_name = "CoreReliabilityVN"
+	network_interface {
+		subnet_name = "default"
+		assign_public_ip = true
+		is_primary = true
+		public_ip_sku = "Standard"
+		network_security_group {
+			name = "core-reliability-network-security-group"
+			network_resource_group_name = "CoreReliabilityResourceGroup"
+		}
 		enable_ip_forwarding = true
-		private_ip_addresses = "1234"
-		additional_ip_configurations{
-			name = "core-reliability-additional-ip-configurations"
-			private_ip_address_version = "12345"
-	  	}
-		public_ips{
-			name = "core-reliability-public-ips-name"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
-		}
-		application_security_groups{
-			name = "core-reliability-application-security-groups"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
-		}
-    }
-  }
+	}
+}
 `
 
 const testNetworkStatefulNodeAzureV3Config_Update = `
-  network {
-    virtual_network_name = "aks-vnet-48068046"
-    resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
-
-    network_interface {
-      subnet_name = "default"
-      assign_public_ip = false
-      is_primary = true
-	  public_ip_sku = "Standard"
-	  network_security_group{
-		name = "core-reliability-network-security-group"
-		network_resource_group_name = "CoreReliabilityResourceGroup2"
-	  }
+network {
+	network_resource_group_name = "CoreReliabilityResourceGroup"
+	virtual_network_name = "CoreReliabilityVN"
+	network_interface {
+		subnet_name = "default"
+		assign_public_ip = false
+		is_primary = true
+		public_ip_sku = "Standard"
+		network_security_group {
+			name = "core-reliability-network-security-group"
+			network_resource_group_name = "CoreReliabilityResourceGroup"
+		}
 		enable_ip_forwarding = true
-		private_ip_addresses = "1234"
-		additional_ip_configurations{
-			name = "core-reliability-additional-ip-configurations"
-			private_ip_address_version = "12345"
-	  	}
-		public_ips{
-			name = "core-reliability-public-ips-name"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
-		}
-		application_security_groups{
-			name = "core-reliability-application-security-groups"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
-		}
-    }
-  }
+	}
+}
 `
 
 //endregion
