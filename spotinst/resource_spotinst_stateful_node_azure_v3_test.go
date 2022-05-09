@@ -132,7 +132,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 	if StatefulNodeMeta.login == "" {
 		StatefulNodeMeta.login = testAzureV3LoginStatefulNodeConfig_Create
 	}
-	//
+
 	if StatefulNodeMeta.persistence == "" {
 		StatefulNodeMeta.persistence = testPersistenceStatefulNodeAzureV3Config_Create
 	}
@@ -233,7 +233,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					statefulNodeName:     statefulNodeName,
 					updateBaselineFields: true,
 				}),
-
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
 					resource.TestCheckResourceAttr(resourceName, "description", "tamir-test-file-1-updated"),
@@ -555,7 +555,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Health(t *testing.T) {
 
 const testHealthStatefulNodeAzureV3Config_Create = `
 health {
-	healthCheckTypes = ["vmState"]
+	health_check_types = ["vmState"]
 	unhealthy_duration = "300"
 	grace_period = "120"
 	auto_healing = true
@@ -564,7 +564,7 @@ health {
 
 const testHealthStatefulNodeAzureV3Config_Update = `
 health {
-	healthCheckTypes = ["vmState"]
+	health_check_types = ["vmState"]
 	unhealthy_duration = "360"
 	grace_period = "180"
 	auto_healing = true
@@ -1073,14 +1073,13 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "1.0"), //TODO - get hashcode somehow
+					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "2.0"), //TODO - get hashcode somehow
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "true"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="), //ToDo check about field script under protected settings
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.public_settings.#", "1"),
 				),
 			},
 			{
@@ -1091,14 +1090,13 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "1.0"), //TODO - get hashcode somehow
+					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "2.0"), //TODO - get hashcode somehow
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "false"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="), //ToDo check about field script under protected settings
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.public_settings.#", "1"),
 				),
 			},
 		},
@@ -1107,28 +1105,26 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 
 const testExtensionsStatefulNodeAzureV3Config_Create = `
 extension {
-	api_version = "1.0"
+	api_version = "2.0"
 	minor_version_auto_upgrade = true
 	name = "terraform-extension"
 	publisher = "Microsoft.Azure.Extensions"
 	type = "Linux"
-	protected_settings {
+	protected_settings = {
 		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
 	}
-	public_settings {}
 }
 `
 const testExtensionsStatefulNodeAzureV3Config_Update = `
 extension {
-	api_version = "1.0"
+	api_version = "2.0"
 	minor_version_auto_upgrade = false
 	name = "terraform-extension"
 	publisher = "Microsoft.Azure.Extensions"
 	type = "Linux"
-	protected_settings {
+	protected_settings = {
 		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
 	}
-	public_settings {}
 }
 `
 
