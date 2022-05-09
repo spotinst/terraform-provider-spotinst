@@ -73,6 +73,7 @@ type AzureV3StatefulNodeConfigMetadata struct {
 	health               string
 	vmSizes              string
 	osDisk               string
+	dataDisk             string
 	image                string
 	network              string
 	extensions           string
@@ -111,19 +112,23 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 	if StatefulNodeMeta.image == "" {
 		StatefulNodeMeta.image = testImageStatefulNodeAzureV3Config_Create
 	}
-	//
-	//if StatefulNodeMeta.loadBalancers == "" {
-	//	StatefulNodeMeta.loadBalancers = testLoadBalancersStatefulNodeAzureV3Config_Create
-	//}
-	//
+
 	if StatefulNodeMeta.network == "" {
 		StatefulNodeMeta.network = testNetworkStatefulNodeAzureV3Config_Create
 	}
-	//
-	//if StatefulNodeMeta.extensions == "" {
-	//	StatefulNodeMeta.extensions = testExtensionsStatefulNodeAzureV3Config_Create
-	//}
-	//
+
+	if StatefulNodeMeta.osDisk == "" {
+		StatefulNodeMeta.osDisk = testOSDiskStatefulNodeAzureV3Config_Create
+	}
+
+	if StatefulNodeMeta.dataDisk == "" {
+		StatefulNodeMeta.dataDisk = testDataDiskStatefulNodeAzureV3Config_Create
+	}
+
+	if StatefulNodeMeta.extensions == "" {
+		StatefulNodeMeta.extensions = testExtensionsStatefulNodeAzureV3Config_Create
+	}
+
 	if StatefulNodeMeta.login == "" {
 		StatefulNodeMeta.login = testAzureV3LoginStatefulNodeConfig_Create
 	}
@@ -157,11 +162,12 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.provider,
 			StatefulNodeMeta.statefulNodeName,
 			StatefulNodeMeta.login,
-			//StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.strategy,
 			StatefulNodeMeta.image,
-			//StatefulNodeMeta.extensions,
+			StatefulNodeMeta.extensions,
 			StatefulNodeMeta.network,
+			StatefulNodeMeta.osDisk,
+			StatefulNodeMeta.dataDisk,
 			StatefulNodeMeta.health,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
@@ -176,14 +182,13 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.provider,
 			StatefulNodeMeta.statefulNodeName,
 			StatefulNodeMeta.login,
-			//StatefulNodeMeta.launchSpecification,
-			//StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.strategy,
 			StatefulNodeMeta.image,
-			//StatefulNodeMeta.extensions,
+			StatefulNodeMeta.extensions,
 			StatefulNodeMeta.network,
+			StatefulNodeMeta.osDisk,
+			StatefulNodeMeta.dataDisk,
 			StatefulNodeMeta.health,
-			//StatefulNodeMeta.loadBalancers,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
 			StatefulNodeMeta.scheduling,
@@ -256,6 +261,10 @@ resource_group_name = "CoreReliabilityResourceGroup"
 %v
 %v
 %v
+%v
+%v
+%v
+%v
 
 delete {
 	should_terminate_vm = true
@@ -280,6 +289,10 @@ os = "Linux"
 region = "eastus"
 description = "tamir-test-file-1-updated"
 resource_group_name = "CoreReliabilityResourceGroup" 
+%v
+%v
+%v
+%v
 %v
 %v
 %v
@@ -704,7 +717,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Tag(t *testing.T) {
 			{
 				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
 					statefulNodeName:     statefulNodeName,
-					scheduling:           testTagStatefulNodeAzureV3Config_Update,
+					tag:                  testTagStatefulNodeAzureV3Config_Update,
 					updateBaselineFields: true,
 				}),
 				Check: resource.ComposeTestCheckFunc(
@@ -933,6 +946,114 @@ network {
 
 //endregion
 
+// region Stateful Node Azure : OSDisk
+func TestAccSpotinstStatefulNodeAzureV3_OSDisk(t *testing.T) {
+	statefulNodeName := "terraform-tests-do-not-delete"
+	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+
+	var node azurev3.StatefulNode
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testStatefulNodeAzureV3Destroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+					resource.TestCheckResourceAttr(resourceName, "os_disk.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk.0.size_gb", "30"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk.0.type", "Standard_LRS"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:     statefulNodeName,
+					osDisk:               testOSDiskStatefulNodeAzureV3Config_Update,
+					updateBaselineFields: true,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "os_disk.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk.0.size_gb", "40"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk.0.type", "Standard_LRS"),
+				),
+			},
+		},
+	})
+}
+
+const testOSDiskStatefulNodeAzureV3Config_Create = `
+os_disk {
+	size_gb = 30
+	type = "Standard_LRS"
+}
+`
+
+const testOSDiskStatefulNodeAzureV3Config_Update = `
+data_disk {
+	size_gb = 40
+	type = "Standard_LRS"
+}
+`
+
+// region Stateful Node Azure : DataDisk
+func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
+	statefulNodeName := "terraform-tests-do-not-delete"
+	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+
+	var node azurev3.StatefulNode
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testStatefulNodeAzureV3Destroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.type", "Standard_LRS"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:     statefulNodeName,
+					dataDisk:             testDataDiskStatefulNodeAzureV3Config_Update,
+					updateBaselineFields: true,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "2"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.type", "Standard_LRS"),
+				),
+			},
+		},
+	})
+}
+
+const testDataDiskStatefulNodeAzureV3Config_Create = `
+data_disk {
+	size_gb = 1
+	lun = 1
+	type = "Standard_LRS"
+}
+`
+
+const testDataDiskStatefulNodeAzureV3Config_Update = `
+data_disk {
+	size_gb = 2
+	lun = 1
+	type = "Standard_LRS"
+}
+`
+
 // region Stateful Node Azure : Extensions
 func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
@@ -952,7 +1073,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "1.0"),
+					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "1.0"), //TODO - get hashcode somehow
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "true"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
@@ -970,11 +1091,11 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "1.0"),
+					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "1.0"), //TODO - get hashcode somehow
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "false"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Windows"),
+					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="), //ToDo check about field script under protected settings
 					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.public_settings.#", "1"),
@@ -985,30 +1106,30 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 }
 
 const testExtensionsStatefulNodeAzureV3Config_Create = `
-    extension {
-      api_version = "1.0"
-      minor_version_auto_upgrade = true
-      name = "terraform-extension"
-      publisher = "Microsoft.Azure.Extensions"
-      type = "Linux"
-      protected_settings{
+extension {
+	api_version = "1.0"
+	minor_version_auto_upgrade = true
+	name = "terraform-extension"
+	publisher = "Microsoft.Azure.Extensions"
+	type = "Linux"
+	protected_settings {
 		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
-      }
-		public_settings{}	
 	}
+	public_settings {}
+}
 `
 const testExtensionsStatefulNodeAzureV3Config_Update = `
-    extension {
-      api_version = "1.0"
-      minor_version_auto_upgrade = false
-      name = "terraform-extension"
-      publisher = "Microsoft.Azure.Extensions"
-      type = "Windows"
-      protected_settings{
+extension {
+	api_version = "1.0"
+	minor_version_auto_upgrade = false
+	name = "terraform-extension"
+	publisher = "Microsoft.Azure.Extensions"
+	type = "Linux"
+	protected_settings {
 		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
-      }
-		public_settings{}	
 	}
+	public_settings {}
+}
 `
 
 //endregion
