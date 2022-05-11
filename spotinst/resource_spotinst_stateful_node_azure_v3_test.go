@@ -390,7 +390,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_os_disk", "false"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_persistence_mode", "reattach"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "true"),
+					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
@@ -406,7 +406,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "should_persist_os_disk", "false"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "false"),
-					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "reattach"),
+					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "onLaunch"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
 				),
@@ -418,7 +418,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 const testPersistenceStatefulNodeAzureV3Config_Create = `
 should_persist_os_disk = false
 os_disk_persistence_mode = "reattach"
-should_persist_data_disks = true
+should_persist_data_disks = false
 data_disks_persistence_mode = "reattach"
 should_persist_network = true
 should_persist_vm = false
@@ -428,7 +428,7 @@ const testPersistenceStatefulNodeAzureV3Config_Update = `
 should_persist_os_disk = false
 os_disk_persistence_mode = "reattach"
 should_persist_data_disks = false
-data_disks_persistence_mode = "reattach"
+data_disks_persistence_mode = "onLaunch"
 should_persist_network = true
 should_persist_vm = false
 `
@@ -976,11 +976,11 @@ func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "0"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.0.type", "Standard_LRS"),
+					//resource.TestCheckResourceAttr(resourceName, "data_disk.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.type", "Standard_LRS"),
 				),
 			},
 			{
@@ -990,11 +990,11 @@ func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
 					updateBaselineFields: true,
 				}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "0"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "2"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.0.type", "Standard_LRS"),
+					//resource.TestCheckResourceAttr(resourceName, "data_disk.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "2"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
+					resource.TestCheckResourceAttr(resourceName, "data_disk.0.type", "Standard_LRS"),
 				),
 			},
 		},
@@ -1002,11 +1002,19 @@ func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
 }
 
 const testDataDiskStatefulNodeAzureV3Config_Create = `
-
+data_disk {
+	size_gb = 1
+	lun = 1
+	type = "Standard_LRS"
+}
 `
 
 const testDataDiskStatefulNodeAzureV3Config_Update = `
-
+data_disk {
+	size_gb = 2
+	lun = 1
+	type = "Standard_LRS"
+}
 `
 
 // region Stateful Node Azure : Extensions
