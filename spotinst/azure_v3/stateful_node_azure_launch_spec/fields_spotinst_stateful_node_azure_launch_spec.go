@@ -235,11 +235,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(SizeGB): {
+					string(OSDiskSizeGB): {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
-					string(Type): {
+					string(OSDiskType): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -302,15 +302,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(SizeGB): {
+					string(DataDiskSizeGB): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},
-					string(LUN): {
+					string(DataDiskLUN): {
 						Type:     schema.TypeInt,
 						Required: true,
 					},
-					string(Type): {
+					string(DataDiskType): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -371,15 +371,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(IsEnabled): {
+					string(BootDiagnosticsIsEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
-					string(Type): {
+					string(BootDiagnosticsType): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
-					string(StorageURL): {
+					string(BootDiagnosticsStorageURL): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
@@ -505,8 +505,8 @@ func flattenManagedServiceIdentities(msis []*azurev3.ManagedServiceIdentity) []i
 
 func flattenOSDisk(osd *azurev3.OSDisk) interface{} {
 	osDisk := make(map[string]interface{})
-	osDisk[string(SizeGB)] = spotinst.IntValue(osd.SizeGB)
-	osDisk[string(Type)] = spotinst.StringValue(osd.Type)
+	osDisk[string(OSDiskSizeGB)] = spotinst.IntValue(osd.SizeGB)
+	osDisk[string(OSDiskType)] = spotinst.StringValue(osd.Type)
 	return []interface{}{osDisk}
 }
 
@@ -519,12 +519,12 @@ func expandOSDisk(data interface{}) (*azurev3.OSDisk, error) {
 			var sizeGB *int = nil
 			var osType *string = nil
 
-			if v, ok := m[string(SizeGB)].(int); ok && v > 0 {
+			if v, ok := m[string(OSDiskSizeGB)].(int); ok && v > 0 {
 				sizeGB = spotinst.Int(v)
 			}
 			osDisk.SetSizeGB(sizeGB)
 
-			if v, ok := m[string(Type)].(string); ok && v != "" {
+			if v, ok := m[string(OSDiskType)].(string); ok && v != "" {
 				osType = spotinst.String(v)
 			}
 			osDisk.SetType(osType)
@@ -542,9 +542,9 @@ func flattenDataDisks(dataDisks []*azurev3.DataDisk) []interface{} {
 
 	for _, disk := range dataDisks {
 		m := make(map[string]interface{})
-		m[string(SizeGB)] = spotinst.IntValue(disk.SizeGB)
-		m[string(LUN)] = spotinst.IntValue(disk.LUN)
-		m[string(Type)] = spotinst.StringValue(disk.Type)
+		m[string(DataDiskSizeGB)] = spotinst.IntValue(disk.SizeGB)
+		m[string(DataDiskLUN)] = spotinst.IntValue(disk.LUN)
+		m[string(DataDiskType)] = spotinst.StringValue(disk.Type)
 		result = append(result, m)
 	}
 	return result
@@ -560,19 +560,19 @@ func expandDataDisks(data interface{}) ([]*azurev3.DataDisk, error) {
 		}
 
 		dataDisk := &azurev3.DataDisk{}
-		if v, ok := attr[string(SizeGB)].(int); ok && v > 0 {
+		if v, ok := attr[string(DataDiskSizeGB)].(int); ok && v > 0 {
 			dataDisk.SetSizeGB(spotinst.Int(v))
 		} else {
 			dataDisk.SetSizeGB(nil)
 		}
 
-		if v, ok := attr[string(LUN)].(int); ok && v >= 0 {
+		if v, ok := attr[string(DataDiskLUN)].(int); ok && v >= 0 {
 			dataDisk.SetLUN(spotinst.Int(v))
 		} else {
 			dataDisk.SetLUN(nil)
 		}
 
-		if v, ok := attr[string(Type)].(string); ok && v != "" {
+		if v, ok := attr[string(DataDiskType)].(string); ok && v != "" {
 			dataDisk.SetType(spotinst.String(v))
 		} else {
 			dataDisk.SetType(nil)
@@ -586,9 +586,9 @@ func expandDataDisks(data interface{}) ([]*azurev3.DataDisk, error) {
 
 func flattenBootDiagnostics(bd *azurev3.BootDiagnostics) interface{} {
 	bootDiagnostic := make(map[string]interface{})
-	bootDiagnostic[string(IsEnabled)] = spotinst.BoolValue(bd.IsEnabled)
-	bootDiagnostic[string(Type)] = spotinst.StringValue(bd.Type)
-	bootDiagnostic[string(StorageURL)] = spotinst.StringValue(bd.StorageURL)
+	bootDiagnostic[string(BootDiagnosticsIsEnabled)] = spotinst.BoolValue(bd.IsEnabled)
+	bootDiagnostic[string(BootDiagnosticsType)] = spotinst.StringValue(bd.Type)
+	bootDiagnostic[string(BootDiagnosticsStorageURL)] = spotinst.StringValue(bd.StorageURL)
 	return []interface{}{bootDiagnostic}
 }
 
@@ -602,17 +602,17 @@ func expandBootDiagnostics(data interface{}) (*azurev3.BootDiagnostics, error) {
 			var bsType *string = nil
 			var storageURL *string = nil
 
-			if v, ok := m[string(IsEnabled)].(bool); ok {
+			if v, ok := m[string(BootDiagnosticsIsEnabled)].(bool); ok {
 				enabled = spotinst.Bool(v)
 			}
 			bootDiagnostic.SetIsEnabled(enabled)
 
-			if v, ok := m[string(Type)].(string); ok && v != "" {
+			if v, ok := m[string(BootDiagnosticsType)].(string); ok && v != "" {
 				bsType = spotinst.String(v)
 			}
 			bootDiagnostic.SetType(bsType)
 
-			if v, ok := m[string(StorageURL)].(string); ok && v != "" {
+			if v, ok := m[string(BootDiagnosticsStorageURL)].(string); ok && v != "" {
 				storageURL = spotinst.String(v)
 			}
 			bootDiagnostic.SetStorageURL(storageURL)

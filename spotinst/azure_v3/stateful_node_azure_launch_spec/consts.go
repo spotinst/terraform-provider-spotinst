@@ -24,20 +24,23 @@ const (
 
 // OS disk
 const (
-	OSDisk commons.FieldName = "os_disk"
-	SizeGB commons.FieldName = "size_gb"
-	Type   commons.FieldName = "type"
+	OSDisk       commons.FieldName = "os_disk"
+	OSDiskSizeGB commons.FieldName = "size_gb"
+	OSDiskType   commons.FieldName = "type"
 )
 
 // Data disk
 const (
-	DataDisk commons.FieldName = "data_disk"
-	LUN      commons.FieldName = "lun"
+	DataDisk       commons.FieldName = "data_disk"
+	DataDiskSizeGB commons.FieldName = "size_gb"
+	DataDiskType   commons.FieldName = "type"
+	DataDiskLUN    commons.FieldName = "lun"
 )
 
 // Boot diagnostics
 const (
-	BootDiagnostics commons.FieldName = "boot_diagnostics"
-	IsEnabled       commons.FieldName = "is_enabled"
-	StorageURL      commons.FieldName = "storage_url"
+	BootDiagnostics           commons.FieldName = "boot_diagnostics"
+	BootDiagnosticsIsEnabled  commons.FieldName = "is_enabled"
+	BootDiagnosticsStorageURL commons.FieldName = "storage_url"
+	BootDiagnosticsType       commons.FieldName = "type"
 )

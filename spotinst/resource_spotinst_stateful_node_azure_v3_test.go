@@ -82,6 +82,7 @@ type AzureV3StatefulNodeConfigMetadata struct {
 	secret               string
 	scheduling           string
 	tag                  string
+	bootDiagnostics      string
 	variables            string
 	updateBaselineFields bool
 }
@@ -149,6 +150,10 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 		StatefulNodeMeta.tag = testTagStatefulNodeAzureV3Config_Create
 	}
 
+	if StatefulNodeMeta.bootDiagnostics == "" {
+		StatefulNodeMeta.bootDiagnostics = testBootDiagnosticsStatefulNodeAzureV3Config_Create
+	}
+
 	template := `
 	provider "azure" {
 	token = "fake"
@@ -174,6 +179,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.scheduling,
 			//StatefulNodeMeta.secret,
 			StatefulNodeMeta.tag,
+			StatefulNodeMeta.bootDiagnostics,
 		)
 	} else {
 		format := testBaselineStatefulNodeAzureV3Config_Create
@@ -194,6 +200,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.scheduling,
 			//StatefulNodeMeta.secret,
 			StatefulNodeMeta.tag,
+			StatefulNodeMeta.bootDiagnostics,
 		)
 
 	}
@@ -264,6 +271,7 @@ resource_group_name = "CoreReliabilityResourceGroup"
 %v
 %v
 %v
+%v
 
 delete {
 	should_terminate_vm = true
@@ -288,6 +296,7 @@ os = "Linux"
 region = "eastus"
 description = "tamir-test-file-1-updated"
 resource_group_name = "CoreReliabilityResourceGroup" 
+%v
 %v
 %v
 %v
@@ -976,7 +985,6 @@ func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "1"),
 					resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
@@ -990,7 +998,6 @@ func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
 					updateBaselineFields: true,
 				}),
 				Check: resource.ComposeTestCheckFunc(
-					//resource.TestCheckResourceAttr(resourceName, "data_disk.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "data_disk.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "data_disk.0.size_gb", "2"),
 					resource.TestCheckResourceAttr(resourceName, "data_disk.0.lun", "1"),
@@ -1014,6 +1021,62 @@ data_disk {
 	size_gb = 2
 	lun = 1
 	type = "Standard_LRS"
+}
+`
+
+// region Stateful Node Azure : BootDiagnostics
+func TestAccSpotinstStatefulNodeAzureV3_BootDiagnostics(t *testing.T) {
+	statefulNodeName := "terraform-tests-do-not-delete"
+	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+
+	var node azurev3.StatefulNode
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testStatefulNodeAzureV3Destroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.type", "managed"),
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.storage_url", "blob.core.windows.net/test123"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:     statefulNodeName,
+					bootDiagnostics:      testBootDiagnosticsStatefulNodeAzureV3Config_Update,
+					updateBaselineFields: true,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.type", "unmanaged"),
+					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.storage_url", "blob.core.windows.net/test123"),
+				),
+			},
+		},
+	})
+}
+
+const testBootDiagnosticsStatefulNodeAzureV3Config_Create = `
+boot_diagnostics {
+	is_enabled = true
+	type = "managed"
+	storage_url = "blob.core.windows.net/test123"
+}
+`
+
+const testBootDiagnosticsStatefulNodeAzureV3Config_Update = `
+boot_diagnostics {
+	is_enabled = true
+	type = "unmanaged"
+	storage_url = "blob.core.windows.net/test123"
 }
 `
 
