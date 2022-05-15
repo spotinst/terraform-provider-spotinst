@@ -2017,7 +2017,7 @@ func expandResourceLimits(data interface{}) (*aws.ResourceLimits, error) {
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(MaxInstanceCount)].(int); ok && v > 0 {
+			if v, ok := m[string(MaxInstanceCount)].(int); ok && v >= 0 {
 				resLimits.SetMaxInstanceCount(spotinst.Int(v))
 			} else {
 				resLimits.SetMaxInstanceCount(nil)

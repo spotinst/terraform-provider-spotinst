@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.73.3 (May 09, 2022)
+
+BUG FIXES:
+
+* resource/spotinst_ocean_aws_launch_spec: resolved errors with `max_instance_count`
+
+
 ## 1.73.2 (April 28, 2022)
 
 BUG FIXES:
