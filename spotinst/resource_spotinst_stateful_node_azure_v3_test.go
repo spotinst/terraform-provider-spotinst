@@ -412,7 +412,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os_disk_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "onLaunch"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "false"),
+					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
 				),
 			},
@@ -434,7 +434,7 @@ should_persist_os_disk = false
 os_disk_persistence_mode = "reattach"
 should_persist_data_disks = false
 data_disks_persistence_mode = "onLaunch"
-should_persist_network = false
+should_persist_network = true
 should_persist_vm = false
 `
 
@@ -866,7 +866,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "false"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
 				),
@@ -906,7 +906,7 @@ network {
 			name = "core-reliability-network-security-group"
 			network_resource_group_name = "CoreReliabilityResourceGroup"
 		}
-		enable_ip_forwarding = false
+		enable_ip_forwarding = true
 	}
 }
 `
