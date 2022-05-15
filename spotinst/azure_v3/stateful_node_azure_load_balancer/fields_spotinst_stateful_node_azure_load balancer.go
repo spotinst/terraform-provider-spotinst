@@ -72,7 +72,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value []*azurev3.LoadBalancer = nil
 
 			if v, ok := resourceData.GetOk(string(LoadBalancer)); ok {
-				//create new image object in case cluster did not get it from previous import step.
 				var loadBalancers []*azurev3.LoadBalancer
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.LoadBalancersConfig != nil && st.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
@@ -96,7 +95,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value []*azurev3.LoadBalancer = nil
 
 			if v, ok := resourceData.GetOk(string(LoadBalancer)); ok {
-				//create new image object in case cluster did not get it from previous import step.
 				var loadBalancers []*azurev3.LoadBalancer
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.LoadBalancersConfig != nil && st.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {

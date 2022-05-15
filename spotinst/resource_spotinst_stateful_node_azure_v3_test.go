@@ -64,26 +64,26 @@ func testCheckStatefulNodeAzureV3Exists(statefulNode *azurev3.StatefulNode, reso
 }
 
 type AzureV3StatefulNodeConfigMetadata struct {
-	statefulNodeName     string
-	acdIdentifier        string
-	controllerClusterID  string
-	provider             string
-	strategy             string
-	autoScaler           string
-	health               string
-	vmSizes              string
-	osDisk               string
-	dataDisk             string
-	image                string
-	network              string
-	extensions           string
-	login                string
-	persistence          string
-	secret               string
-	scheduling           string
-	tag                  string
-	bootDiagnostics      string
-	variables            string
+	statefulNodeName    string
+	acdIdentifier       string
+	controllerClusterID string
+	provider            string
+	strategy            string
+	autoScaler          string
+	health              string
+	vmSizes             string
+	osDisk              string
+	dataDisk            string
+	image               string
+	network             string
+	login               string
+	persistence         string
+	signal              string
+	variables           string
+	//extensions           string
+	//secret               string
+	//scheduling           string
+	//tag                  string
 	updateBaselineFields bool
 }
 
@@ -95,8 +95,6 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 	if StatefulNodeMeta.provider == "" {
 		StatefulNodeMeta.provider = "azure"
 	}
-
-	//TODO - need a launchSpecification test?
 
 	if StatefulNodeMeta.strategy == "" {
 		StatefulNodeMeta.strategy = testStrategyStatefulNodeAzureV3Config_Create
@@ -126,9 +124,9 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 		StatefulNodeMeta.dataDisk = testDataDiskStatefulNodeAzureV3Config_Create
 	}
 
-	if StatefulNodeMeta.extensions == "" {
-		StatefulNodeMeta.extensions = testExtensionsStatefulNodeAzureV3Config_Create
-	}
+	//if StatefulNodeMeta.extensions == "" {
+	//	StatefulNodeMeta.extensions = testExtensionsStatefulNodeAzureV3Config_Create
+	//}
 
 	if StatefulNodeMeta.login == "" {
 		StatefulNodeMeta.login = testAzureV3LoginStatefulNodeConfig_Create
@@ -137,21 +135,25 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 	if StatefulNodeMeta.persistence == "" {
 		StatefulNodeMeta.persistence = testPersistenceStatefulNodeAzureV3Config_Create
 	}
-	//
-	if StatefulNodeMeta.scheduling == "" {
-		StatefulNodeMeta.scheduling = testSchedulingStatefulNodeAzureV3Config_Create
-	}
+
+	//if StatefulNodeMeta.scheduling == "" {
+	//	StatefulNodeMeta.scheduling = testSchedulingStatefulNodeAzureV3Config_Create
+	//}
 
 	//if StatefulNodeMeta.secret == "" {
 	//	StatefulNodeMeta.secret = testSecretsStatefulNodeAzureV3Config_Create
 	//}
 
-	if StatefulNodeMeta.tag == "" {
-		StatefulNodeMeta.tag = testTagStatefulNodeAzureV3Config_Create
-	}
+	//if StatefulNodeMeta.tag == "" {
+	//	StatefulNodeMeta.tag = testTagStatefulNodeAzureV3Config_Create
+	//}
 
-	if StatefulNodeMeta.bootDiagnostics == "" {
-		StatefulNodeMeta.bootDiagnostics = testBootDiagnosticsStatefulNodeAzureV3Config_Create
+	//if StatefulNodeMeta.bootDiagnostics == "" {
+	//	StatefulNodeMeta.bootDiagnostics = testBootDiagnosticsStatefulNodeAzureV3Config_Create
+	//}
+
+	if StatefulNodeMeta.signal == "" {
+		StatefulNodeMeta.signal = testSignalStatefulNodeAzureV3Config_Create
 	}
 
 	template := `
@@ -169,17 +171,18 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.login,
 			StatefulNodeMeta.strategy,
 			StatefulNodeMeta.image,
-			StatefulNodeMeta.extensions,
+			//StatefulNodeMeta.extensions,
 			StatefulNodeMeta.network,
 			StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.dataDisk,
 			StatefulNodeMeta.health,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
-			StatefulNodeMeta.scheduling,
+			//StatefulNodeMeta.scheduling,
 			//StatefulNodeMeta.secret,
-			StatefulNodeMeta.tag,
-			StatefulNodeMeta.bootDiagnostics,
+			//StatefulNodeMeta.tag,
+			//StatefulNodeMeta.bootDiagnostics,
+			StatefulNodeMeta.signal,
 		)
 	} else {
 		format := testBaselineStatefulNodeAzureV3Config_Create
@@ -190,17 +193,18 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.login,
 			StatefulNodeMeta.strategy,
 			StatefulNodeMeta.image,
-			StatefulNodeMeta.extensions,
+			//StatefulNodeMeta.extensions,
 			StatefulNodeMeta.network,
 			StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.dataDisk,
 			StatefulNodeMeta.health,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
-			StatefulNodeMeta.scheduling,
+			//StatefulNodeMeta.scheduling,
 			//StatefulNodeMeta.secret,
-			StatefulNodeMeta.tag,
-			StatefulNodeMeta.bootDiagnostics,
+			//StatefulNodeMeta.tag,
+			//StatefulNodeMeta.bootDiagnostics,
+			StatefulNodeMeta.signal,
 		)
 
 	}
@@ -231,7 +235,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
-					resource.TestCheckResourceAttr(resourceName, "description", "tamir-test-file-1"),
+					resource.TestCheckResourceAttr(resourceName, "description", "terraform-stateful-node-azure"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 				),
 			},
@@ -242,7 +246,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
-					resource.TestCheckResourceAttr(resourceName, "description", "tamir-test-file-1-updated"),
+					resource.TestCheckResourceAttr(resourceName, "description", "terraform-stateful-node-azure-updated"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 				),
 			},
@@ -250,18 +254,14 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 	})
 }
 
-//TODO - resource group name confidential?
 const testBaselineStatefulNodeAzureV3Config_Create = `
 resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
 provider = "%v"
 name = "%v"
 os = "Linux"
 region = "eastus"
-description = "tamir-test-file-1"
+description = "terraform-stateful-node-azure"
 resource_group_name = "CoreReliabilityResourceGroup" 
-%v
-%v
-%v
 %v
 %v
 %v
@@ -287,18 +287,14 @@ delete {
 }
 `
 
-//TODO - resource group name confidential?
 const testBaselineStatefulNodeAzureV3Config_Update = `
 resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
 provider = "%v"
 name = "%v"
 os = "Linux"
 region = "eastus"
-description = "tamir-test-file-1-updated"
+description = "terraform-stateful-node-azure-updated"
 resource_group_name = "CoreReliabilityResourceGroup" 
-%v
-%v
-%v
 %v
 %v
 %v
@@ -344,7 +340,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "tamir"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "user123"),
 					resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfWrinLRVHx+KB57pb1mEYBueGfPzyVa2qPpCPZYbpcuL45nDKU2B14twX91+/cJ2m7DmUa8LLk2EVwBW8FBTfg5Fuwj8+kTnk4PMo4G+T0UgFt7NuD47I5fxg3sD9WQFUbXlO44Flp+k5MHlv+hF8iHz/QRz2QDDKxPGLWM1mh10LtLz4T+im/73RviTgbJhCZQr0+Yx7Uz1ZlWkrPThLUa9/4Br5mKLk3zEYa8mbg4LblJXIgknFsZ3cXlqtN5WofxJEDLy9QiKMxDJ2PZfR73IscpWtPnAMZjcTf6aI02FKAg+iEs0mdh3bGVGLxNi5w32lWOiiqKKJGKa1ctWb"),
 				),
 			},
@@ -356,7 +352,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "login.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "tamir"),
+					resource.TestCheckResourceAttr(resourceName, "login.0.user_name", "user123"),
 					resource.TestCheckResourceAttr(resourceName, "login.0.ssh_public_key", "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfWrinLRVHx+KB57pb1mEYBueGfPzyVa2qPpCPZYbpcuL45nDKU2B14twX91+/cJ2m7DmUa8LLk2EVwBW8FBTfg5Fuwj8+kTnk4PMo4G+T0UgFt7NuD47I5fxg3sD9WQFUbXlO44Flp+k5MHlv+hF8iHz/QRz2QDDKxPGLWM1mh10LtLz4T+im/73RviTgbJhCZQr0+Yx7Uz1ZlWkrPThLUa9/4Br5mKLk3zEYa8mbg4LblJXIgknFsZ3cXlqtN5WofxJEDLy9QiKMxDJ2PZfR73IscpWtPnAMZjcTf6aI02FKAg+iEs0mdh3bGVGLxNi5w32lWOiiqKKJGKa1ctWb automation"),
 				),
 			},
@@ -366,14 +362,14 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 
 const testAzureV3LoginStatefulNodeConfig_Create = `
 login {
-	user_name = "tamir"
+	user_name = "user123"
 	ssh_public_key  = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfWrinLRVHx+KB57pb1mEYBueGfPzyVa2qPpCPZYbpcuL45nDKU2B14twX91+/cJ2m7DmUa8LLk2EVwBW8FBTfg5Fuwj8+kTnk4PMo4G+T0UgFt7NuD47I5fxg3sD9WQFUbXlO44Flp+k5MHlv+hF8iHz/QRz2QDDKxPGLWM1mh10LtLz4T+im/73RviTgbJhCZQr0+Yx7Uz1ZlWkrPThLUa9/4Br5mKLk3zEYa8mbg4LblJXIgknFsZ3cXlqtN5WofxJEDLy9QiKMxDJ2PZfR73IscpWtPnAMZjcTf6aI02FKAg+iEs0mdh3bGVGLxNi5w32lWOiiqKKJGKa1ctWb"
 }
 `
 
 const testAzureV3LoginStatefulNodeConfig_Update = `
 login {
-	user_name = "tamir"
+	user_name = "user123"
 	ssh_public_key  = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfWrinLRVHx+KB57pb1mEYBueGfPzyVa2qPpCPZYbpcuL45nDKU2B14twX91+/cJ2m7DmUa8LLk2EVwBW8FBTfg5Fuwj8+kTnk4PMo4G+T0UgFt7NuD47I5fxg3sD9WQFUbXlO44Flp+k5MHlv+hF8iHz/QRz2QDDKxPGLWM1mh10LtLz4T+im/73RviTgbJhCZQr0+Yx7Uz1ZlWkrPThLUa9/4Br5mKLk3zEYa8mbg4LblJXIgknFsZ3cXlqtN5WofxJEDLy9QiKMxDJ2PZfR73IscpWtPnAMZjcTf6aI02FKAg+iEs0mdh3bGVGLxNi5w32lWOiiqKKJGKa1ctWb automation"
 }
 `
@@ -487,8 +483,6 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 		},
 	})
 }
-
-// TODO - another test that check signal?
 
 const testStrategyStatefulNodeAzureV3Config_Create = `
 strategy {
@@ -637,114 +631,117 @@ preferred_spot_sizes =  ["standard_ds3_v2"]
 //endregion
 
 // region Stateful Node Azure : Scheduling
-func TestAccSpotinstStatefulNodeAzureV3_Scheduling(t *testing.T) {
-	statefulNodeName := "terraform-tests-do-not-delete"
-	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
-
-	var node azurev3.StatefulNode
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testStatefulNodeAzureV3Destroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
-					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.is_enabled", "true"), //TODO - get hashcode somehow
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.cron_expression", "44 10 * * *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.type", "pause"),
-				),
-			},
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
-					statefulNodeName:     statefulNodeName,
-					scheduling:           testSchedulingStatefulNodeAzureV3Config_Update,
-					updateBaselineFields: true,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.is_enabled", "true"), //TODO - get hashcode somehow
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.cron_expression", "48 10 * * *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.type", "resume"),
-				),
-			},
-		},
-	})
-}
-
-const testSchedulingStatefulNodeAzureV3Config_Create = `
-  scheduling_task {
-    is_enabled = true
-	cron_expression = "44 10 * * *"
-    type = "pause"
-  }
-`
-
-const testSchedulingStatefulNodeAzureV3Config_Update = `
-  scheduling_task {
-    is_enabled = true
-	cron_expression = "48 10 * * *"
-    type = "resume"
-  }
-`
+//TODO - fix once terraform-plugin-sdk is updated
+//func TestAccSpotinstStatefulNodeAzureV3_Scheduling(t *testing.T) {
+//	statefulNodeName := "terraform-tests-do-not-delete"
+//	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+//
+//	var node azurev3.StatefulNode
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "azure") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testStatefulNodeAzureV3Destroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+//					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.is_enabled", "true"),
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.cron_expression", "44 10 * * *"),
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.type", "pause"),
+//				),
+//			},
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+//					statefulNodeName:     statefulNodeName,
+//					scheduling:           testSchedulingStatefulNodeAzureV3Config_Update,
+//					updateBaselineFields: true,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.is_enabled", "true"),
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.cron_expression", "48 10 * * *"),
+//					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1113301976.type", "resume"),
+//				),
+//			},
+//		},
+//	})
+//}
+//
+//const testSchedulingStatefulNodeAzureV3Config_Create = `
+//  scheduling_task {
+//    is_enabled = true
+//	cron_expression = "44 10 * * *"
+//    type = "pause"
+//  }
+//`
+//
+//const testSchedulingStatefulNodeAzureV3Config_Update = `
+//  scheduling_task {
+//    is_enabled = true
+//	cron_expression = "48 10 * * *"
+//    type = "resume"
+//  }
+//`
 
 //endregion
 
 // region Stateful Node Azure : Tag
-func TestAccSpotinstStatefulNodeAzureV3_Tag(t *testing.T) {
-	statefulNodeName := "terraform-tests-do-not-delete"
-	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testStatefulNodeAzureV3Destroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
-					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "tag.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_key", "Creator"), //TODO - get hashcode somehow
-					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_value", "tamiry@netapp.com"),
-				),
-			},
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
-					statefulNodeName:     statefulNodeName,
-					tag:                  testTagStatefulNodeAzureV3Config_Update,
-					updateBaselineFields: true,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "tag.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_key", "Creator"), //TODO - get hashcode somehow
-					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_value", "talg@netapp.com"),
-				),
-			},
-		},
-	})
-}
-
-const testTagStatefulNodeAzureV3Config_Create = `
-tag {
-	tag_key = "Creator"
-	tag_value = "tamiry@netapp.com"
-}
-`
-
-const testTagStatefulNodeAzureV3Config_Update = `
-tag {
-	tag_key = "Creator"
-	tag_value = "talg@netapp.com"
-}
-`
+//TODO - fix once terraform-plugin-sdk is updated
+//func TestAccSpotinstStatefulNodeAzureV3_Tag(t *testing.T) {
+//	statefulNodeName := "terraform-tests-do-not-delete"
+//	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+//
+//	var node azurev3.StatefulNode
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "azure") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testStatefulNodeAzureV3Destroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+//					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+//					resource.TestCheckResourceAttr(resourceName, "tag.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_key", "Creator"),
+//					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_value", "user@netapp.com"),
+//				),
+//			},
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+//					statefulNodeName:     statefulNodeName,
+//					tag:                  testTagStatefulNodeAzureV3Config_Update,
+//					updateBaselineFields: true,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					resource.TestCheckResourceAttr(resourceName, "tag.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_key", "Creator"),
+//					resource.TestCheckResourceAttr(resourceName, "tag.1113301976.tag_value", "updated_user@netapp.com"),
+//				),
+//			},
+//		},
+//	})
+//}
+//
+//const testTagStatefulNodeAzureV3Config_Create = `
+//tag {
+//	tag_key = "Creator"
+//	tag_value = "user@netapp.com"
+//}
+//`
+//
+//const testTagStatefulNodeAzureV3Config_Update = `
+//tag {
+//	tag_key = "Creator"
+//	tag_value = "updated_user@netapp.com"
+//}
+//`
 
 //endregion
 
@@ -849,7 +846,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "CoreReliabilityResourceGroup"), //TODO - confidential?
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
 				),
 			},
@@ -1024,8 +1021,8 @@ data_disk {
 }
 `
 
-// region Stateful Node Azure : BootDiagnostics
-func TestAccSpotinstStatefulNodeAzureV3_BootDiagnostics(t *testing.T) {
+// region Stateful Node Azure : Signal
+func TestAccSpotinstStatefulNodeAzureV3_Signal(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
@@ -1041,191 +1038,189 @@ func TestAccSpotinstStatefulNodeAzureV3_BootDiagnostics(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.type", "managed"),
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.storage_url", "blob.core.windows.net/test123"),
+					resource.TestCheckResourceAttr(resourceName, "signal.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.type", "vmReady"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.timeout", "40"),
 				),
 			},
 			{
 				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
 					statefulNodeName:     statefulNodeName,
-					bootDiagnostics:      testBootDiagnosticsStatefulNodeAzureV3Config_Update,
+					signal:               testSignalStatefulNodeAzureV3Config_Update,
 					updateBaselineFields: true,
 				}),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.type", "unmanaged"),
-					resource.TestCheckResourceAttr(resourceName, "boot_diagnostics.0.storage_url", "blob.core.windows.net/test123"),
+					resource.TestCheckResourceAttr(resourceName, "signal.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.type", "vmReady"),
+					resource.TestCheckResourceAttr(resourceName, "signal.0.timeout", "20"),
 				),
 			},
 		},
 	})
 }
 
-const testBootDiagnosticsStatefulNodeAzureV3Config_Create = `
-boot_diagnostics {
-	is_enabled = true
-	type = "managed"
-	storage_url = "blob.core.windows.net/test123"
+const testSignalStatefulNodeAzureV3Config_Create = `
+signal {
+	type = "vmReady"
+	timeout = 40
 }
 `
 
-const testBootDiagnosticsStatefulNodeAzureV3Config_Update = `
-boot_diagnostics {
-	is_enabled = true
-	type = "unmanaged"
-	storage_url = "blob.core.windows.net/test123"
+const testSignalStatefulNodeAzureV3Config_Update = `
+signal {
+	type = "vmReady"
+	timeout = 20
 }
 `
 
 // region Stateful Node Azure : Extensions
-func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
-	statefulNodeName := "terraform-tests-do-not-delete"
-	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
-
-	var node azurev3.StatefulNode
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testStatefulNodeAzureV3Destroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName,
-					extensions: testExtensionsStatefulNodeAzureV3Config_Create}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
-					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "2.0"), //TODO - get hashcode somehow
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "true"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="), //ToDo check about field script under protected settings
-				),
-			},
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
-					statefulNodeName:     statefulNodeName,
-					extensions:           testExtensionsStatefulNodeAzureV3Config_Update,
-					updateBaselineFields: true,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "2.0"), //TODO - get hashcode somehow
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "false"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="), //ToDo check about field script under protected settings
-				),
-			},
-		},
-	})
-}
-
-const testExtensionsStatefulNodeAzureV3Config_Create = `
-extension {
-	api_version = "2.0"
-	minor_version_auto_upgrade = true
-	name = "terraform-extension"
-	publisher = "Microsoft.Azure.Extensions"
-	type = "Linux"
-	protected_settings = {
-		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
-	}
-}
-`
-const testExtensionsStatefulNodeAzureV3Config_Update = `
-extension {
-	api_version = "2.0"
-	minor_version_auto_upgrade = false
-	name = "terraform-extension"
-	publisher = "Microsoft.Azure.Extensions"
-	type = "Linux"
-	protected_settings = {
-		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
-	}
-}
-`
+//TODO - fix once terraform-plugin-sdk is updated
+//func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
+//	statefulNodeName := "terraform-tests-do-not-delete"
+//	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+//
+//	var node azurev3.StatefulNode
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "azure") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testStatefulNodeAzureV3Destroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName,
+//					extensions: testExtensionsStatefulNodeAzureV3Config_Create}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+//					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+//					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "2.0"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "true"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
+//				),
+//			},
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+//					statefulNodeName:     statefulNodeName,
+//					extensions:           testExtensionsStatefulNodeAzureV3Config_Update,
+//					updateBaselineFields: true,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					resource.TestCheckResourceAttr(resourceName, "extension.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.api_version", "2.0"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.minor_version_auto_upgrade", "false"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.name", "terraform-extension"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.publisher", "Microsoft.Azure.Extensions"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.type", "Linux"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "extension.1031128857.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
+//				),
+//			},
+//		},
+//	})
+//}
+//
+//const testExtensionsStatefulNodeAzureV3Config_Create = `
+//extension {
+//	api_version = "2.0"
+//	minor_version_auto_upgrade = true
+//	name = "terraform-extension"
+//	publisher = "Microsoft.Azure.Extensions"
+//	type = "Linux"
+//	protected_settings = {
+//		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
+//	}
+//}
+//`
+//const testExtensionsStatefulNodeAzureV3Config_Update = `
+//extension {
+//	api_version = "2.0"
+//	minor_version_auto_upgrade = false
+//	name = "terraform-extension"
+//	publisher = "Microsoft.Azure.Extensions"
+//	type = "Linux"
+//	protected_settings = {
+//		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
+//	}
+//}
+//`
 
 //endregion
 
 // region Stateful Node Azure : Secret
-func TestAccSpotinstStatefulNodeAzureV3_Secret(t *testing.T) {
-	statefulNodeName := "terraform-tests-do-not-delete"
-	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
-
-	var node azurev3.StatefulNode
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testStatefulNodeAzureV3Destroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName,
-					extensions: testExtensionsStatefulNodeAzureV3Config_Create}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
-					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "secrets.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.name", "core-reliability-source-vault-name"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_url", "core-reliability-certificate-url"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_store", "core-reliability-certificate-store"),
-				),
-			},
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
-					statefulNodeName:     statefulNodeName,
-					secret:               testSecretsStatefulNodeAzureV3Config_Update,
-					updateBaselineFields: true,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "secrets.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.name", "core-reliability-source-vault-name"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.resource_group_name", "CoreReliabilityResourceGroup3"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_url", "core-reliability-certificate-url"),
-					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_store", "core-reliability-certificate-store-is"),
-				),
-			},
-		},
-	})
-}
-
-const testSecretsStatefulNodeAzureV3Config_Create = `
-    secrets {
-      source_vault {
-      resource_group_name = "CoreReliabilityResourceGroup"
-      name = "core-reliability-source-vault-name"
-	}
-      vault_certificates {
-      certificate_url = "core-reliability-certificate-url"
-      certificate_store = "core-reliability-certificate-store"
-	}
-}
-`
-const testSecretsStatefulNodeAzureV3Config_Update = `
-    secrets {
-      source_vault {
-      resource_group_name = "CoreReliabilityResourceGroup3"
-      name = "core-reliability-source-vault-name"
-	}
-      vault_certificates {
-      certificate_url = "core-reliability-certificate-url"
-      certificate_store = "core-reliability-certificate-store-is"
-	}
-}
-`
+//TODO - fix once terraform-plugin-sdk is updated
+//func TestAccSpotinstStatefulNodeAzureV3_Secret(t *testing.T) {
+//	statefulNodeName := "terraform-tests-do-not-delete"
+//	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+//
+//	var node azurev3.StatefulNode
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "azure") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testStatefulNodeAzureV3Destroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName,
+//					extensions: testExtensionsStatefulNodeAzureV3Config_Create}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+//					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.name", "core-reliability-source-vault-name"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.resource_group_name", "CoreReliabilityResourceGroup"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_url", "core-reliability-certificate-url"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_store", "core-reliability-certificate-store"),
+//				),
+//			},
+//			{
+//				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+//					statefulNodeName:     statefulNodeName,
+//					secret:               testSecretsStatefulNodeAzureV3Config_Update,
+//					updateBaselineFields: true,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					resource.TestCheckResourceAttr(resourceName, "secrets.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.name", "core-reliability-source-vault-name"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.source_vault.resource_group_name", "CoreReliabilityResourceGroup3"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_url", "core-reliability-certificate-url"),
+//					resource.TestCheckResourceAttr(resourceName, "secrets.1031128857.vault_certificates.certificate_store", "core-reliability-certificate-store-is"),
+//				),
+//			},
+//		},
+//	})
+//}
+//
+//const testSecretsStatefulNodeAzureV3Config_Create = `
+//    secrets {
+//      source_vault {
+//      resource_group_name = "CoreReliabilityResourceGroup"
+//      name = "core-reliability-source-vault-name"
+//	}
+//      vault_certificates {
+//      certificate_url = "core-reliability-certificate-url"
+//      certificate_store = "core-reliability-certificate-store"
+//	}
+//}
+//`
+//const testSecretsStatefulNodeAzureV3Config_Update = `
+//    secrets {
+//      source_vault {
+//      resource_group_name = "CoreReliabilityResourceGroup3"
+//      name = "core-reliability-source-vault-name"
+//	}
+//      vault_certificates {
+//      certificate_url = "core-reliability-certificate-url"
+//      certificate_store = "core-reliability-certificate-store-is"
+//	}
+//}
+//`
 
 //endregion

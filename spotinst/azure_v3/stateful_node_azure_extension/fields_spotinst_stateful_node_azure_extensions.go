@@ -106,7 +106,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value []*azurev3.Extension = nil
 
 			if v, ok := resourceData.GetOk(string(Extension)); ok {
-				//create new image object in case st did not get it from previous import step.
 				var extensions []*azurev3.Extension
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil {
