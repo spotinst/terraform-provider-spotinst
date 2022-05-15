@@ -397,8 +397,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os_disk_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "reattach"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
+					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "false"),
+					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "true"),
 				),
 			},
 			{
@@ -412,7 +412,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os_disk_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "onLaunch"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
+					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "false"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
 				),
 			},
@@ -425,8 +425,8 @@ should_persist_os_disk = false
 os_disk_persistence_mode = "reattach"
 should_persist_data_disks = false
 data_disks_persistence_mode = "reattach"
-should_persist_network = true
-should_persist_vm = false
+should_persist_network = false
+should_persist_vm = true
 `
 
 const testPersistenceStatefulNodeAzureV3Config_Update = `
@@ -434,7 +434,7 @@ should_persist_os_disk = false
 os_disk_persistence_mode = "reattach"
 should_persist_data_disks = false
 data_disks_persistence_mode = "onLaunch"
-should_persist_network = true
+should_persist_network = false
 should_persist_vm = false
 `
 
@@ -460,7 +460,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "true"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "false"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "40"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
@@ -474,7 +474,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "true"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "false"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "20"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
@@ -487,7 +487,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 const testStrategyStatefulNodeAzureV3Config_Create = `
 strategy {
 	draining_timeout =  40
-	fallback_to_on_demand = true
+	fallback_to_on_demand = false
 	revert_to_spot {
 		perform_at =  "always"
 	}
@@ -497,7 +497,7 @@ strategy {
 const testStrategyStatefulNodeAzureV3Config_Update = `
 strategy {
 	draining_timeout =  20
-	fallback_to_on_demand = true
+	fallback_to_on_demand = false
 	revert_to_spot {
 		perform_at =  "always"
 	}
