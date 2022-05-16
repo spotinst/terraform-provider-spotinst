@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -146,7 +146,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.Tag = nil
+			var value []*azure.Tag = nil
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Tags != nil {
 				if v, ok := resourceData.GetOk(string(Tag)); ok {
 					if tags, err := expandTags(v); err != nil {
@@ -208,7 +208,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.ManagedServiceIdentity
+			var value []*azure.ManagedServiceIdentity
 			if st != nil && st.Compute != nil &&
 				st.Compute.LaunchSpecification != nil &&
 				st.Compute.LaunchSpecification.ManagedServiceIdentities != nil {
@@ -263,7 +263,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value *azurev3.OSDisk = nil
+			var value *azure.OSDisk = nil
 
 			if v, ok := resourceData.GetOk(string(OSDisk)); ok {
 				if osDisk, err := expandOSDisk(v); err != nil {
@@ -279,7 +279,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value *azurev3.OSDisk = nil
+			var value *azure.OSDisk = nil
 
 			if v, ok := resourceData.GetOk(string(OSDisk)); ok {
 				if osDisk, err := expandOSDisk(v); err != nil {
@@ -348,7 +348,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.DataDisk = nil
+			var value []*azure.DataDisk = nil
 
 			if v, ok := resourceData.GetOk(string(DataDisk)); ok {
 				if dataDisks, err := expandDataDisks(v); err != nil {
@@ -403,7 +403,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value *azurev3.BootDiagnostics = nil
+			var value *azure.BootDiagnostics = nil
 
 			if v, ok := resourceData.GetOk(string(BootDiagnostics)); ok {
 				if bd, err := expandBootDiagnostics(v); err != nil {
@@ -419,7 +419,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value *azurev3.BootDiagnostics = nil
+			var value *azure.BootDiagnostics = nil
 
 			if v, ok := resourceData.GetOk(string(BootDiagnostics)); ok {
 				if bd, err := expandBootDiagnostics(v); err != nil {
@@ -435,9 +435,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func expandTags(data interface{}) ([]*azurev3.Tag, error) {
+func expandTags(data interface{}) ([]*azure.Tag, error) {
 	list := data.(*schema.Set).List()
-	tags := make([]*azurev3.Tag, 0, len(list))
+	tags := make([]*azure.Tag, 0, len(list))
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
@@ -454,7 +454,7 @@ func expandTags(data interface{}) ([]*azurev3.Tag, error) {
 			return nil, errors.New("invalid tag attributes: value missing")
 		}
 
-		tag := &azurev3.Tag{
+		tag := &azure.Tag{
 			TagKey:   spotinst.String(attr[string(TagKey)].(string)),
 			TagValue: spotinst.String(attr[string(TagValue)].(string)),
 		}
@@ -464,7 +464,7 @@ func expandTags(data interface{}) ([]*azurev3.Tag, error) {
 	return tags, nil
 }
 
-func flattenTags(tags []*azurev3.Tag) []interface{} {
+func flattenTags(tags []*azure.Tag) []interface{} {
 	result := make([]interface{}, 0, len(tags))
 	for _, tag := range tags {
 		m := make(map[string]interface{})
@@ -476,15 +476,15 @@ func flattenTags(tags []*azurev3.Tag) []interface{} {
 	return result
 }
 
-func expandManagedServiceIdentities(data interface{}) ([]*azurev3.ManagedServiceIdentity, error) {
+func expandManagedServiceIdentities(data interface{}) ([]*azure.ManagedServiceIdentity, error) {
 	list := data.(*schema.Set).List()
-	msis := make([]*azurev3.ManagedServiceIdentity, 0, len(list))
+	msis := make([]*azure.ManagedServiceIdentity, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		msis = append(msis, &azurev3.ManagedServiceIdentity{
+		msis = append(msis, &azure.ManagedServiceIdentity{
 			ResourceGroupName: spotinst.String(attr[string(ResourceGroupName)].(string)),
 			Name:              spotinst.String(attr[string(Name)].(string)),
 		})
@@ -492,7 +492,7 @@ func expandManagedServiceIdentities(data interface{}) ([]*azurev3.ManagedService
 	return msis, nil
 }
 
-func flattenManagedServiceIdentities(msis []*azurev3.ManagedServiceIdentity) []interface{} {
+func flattenManagedServiceIdentities(msis []*azure.ManagedServiceIdentity) []interface{} {
 	result := make([]interface{}, 0, len(msis))
 	for _, msi := range msis {
 		m := make(map[string]interface{})
@@ -503,16 +503,16 @@ func flattenManagedServiceIdentities(msis []*azurev3.ManagedServiceIdentity) []i
 	return result
 }
 
-func flattenOSDisk(osd *azurev3.OSDisk) interface{} {
+func flattenOSDisk(osd *azure.OSDisk) interface{} {
 	osDisk := make(map[string]interface{})
 	osDisk[string(OSDiskSizeGB)] = spotinst.IntValue(osd.SizeGB)
 	osDisk[string(OSDiskType)] = spotinst.StringValue(osd.Type)
 	return []interface{}{osDisk}
 }
 
-func expandOSDisk(data interface{}) (*azurev3.OSDisk, error) {
+func expandOSDisk(data interface{}) (*azure.OSDisk, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		osDisk := &azurev3.OSDisk{}
+		osDisk := &azure.OSDisk{}
 
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -537,7 +537,7 @@ func expandOSDisk(data interface{}) (*azurev3.OSDisk, error) {
 	return nil, nil
 }
 
-func flattenDataDisks(dataDisks []*azurev3.DataDisk) []interface{} {
+func flattenDataDisks(dataDisks []*azure.DataDisk) []interface{} {
 	var result []interface{}
 
 	for _, disk := range dataDisks {
@@ -550,16 +550,16 @@ func flattenDataDisks(dataDisks []*azurev3.DataDisk) []interface{} {
 	return result
 }
 
-func expandDataDisks(data interface{}) ([]*azurev3.DataDisk, error) {
+func expandDataDisks(data interface{}) ([]*azure.DataDisk, error) {
 	list := data.([]interface{})
-	dd := make([]*azurev3.DataDisk, 0, len(list))
+	dd := make([]*azure.DataDisk, 0, len(list))
 	for _, m := range list {
 		attr, ok := m.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		dataDisk := &azurev3.DataDisk{}
+		dataDisk := &azure.DataDisk{}
 		if v, ok := attr[string(DataDiskSizeGB)].(int); ok && v > 0 {
 			dataDisk.SetSizeGB(spotinst.Int(v))
 		} else {
@@ -584,7 +584,7 @@ func expandDataDisks(data interface{}) ([]*azurev3.DataDisk, error) {
 	return dd, nil
 }
 
-func flattenBootDiagnostics(bd *azurev3.BootDiagnostics) interface{} {
+func flattenBootDiagnostics(bd *azure.BootDiagnostics) interface{} {
 	bootDiagnostic := make(map[string]interface{})
 	bootDiagnostic[string(BootDiagnosticsIsEnabled)] = spotinst.BoolValue(bd.IsEnabled)
 	bootDiagnostic[string(BootDiagnosticsType)] = spotinst.StringValue(bd.Type)
@@ -592,9 +592,9 @@ func flattenBootDiagnostics(bd *azurev3.BootDiagnostics) interface{} {
 	return []interface{}{bootDiagnostic}
 }
 
-func expandBootDiagnostics(data interface{}) (*azurev3.BootDiagnostics, error) {
+func expandBootDiagnostics(data interface{}) (*azure.BootDiagnostics, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		bootDiagnostic := &azurev3.BootDiagnostics{}
+		bootDiagnostic := &azure.BootDiagnostics{}
 
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -630,7 +630,7 @@ func base64Encode(data string) string {
 	if isBase64Encoded(data) {
 		return data
 	}
-	// data has not been encoded encode and return
+	// data has not been encoded -> encode and return
 	return base64.StdEncoding.EncodeToString([]byte(data))
 }
 

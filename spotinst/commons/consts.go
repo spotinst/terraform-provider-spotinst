@@ -151,7 +151,7 @@ const (
 	StatefulNodeAzure                    ResourceAffinity = "Stateful_Node_Azure"
 	StatefulNodeAzureStrategy            ResourceAffinity = "Stateful_Node_Azure_Strategy"
 	StatefulNodeAzureNetwork             ResourceAffinity = "Stateful_Node_Azure_Network"
-	StatefulNodeAzureLoadBalancers       ResourceAffinity = "Stateful_Node_Azure_Load_Balancers"
+	StatefulNodeAzureLoadBalancer        ResourceAffinity = "Stateful_Node_Azure_Load_Balancer"
 	StatefulNodeAzureLogin               ResourceAffinity = "Stateful_Node_Azure_Login"
 	StatefulNodeAzureVMSizes             ResourceAffinity = "Stateful_Node_Azure_VM_Sizes"
 	StatefulNodeAzureImage               ResourceAffinity = "Stateful_Node_Azure_Image"

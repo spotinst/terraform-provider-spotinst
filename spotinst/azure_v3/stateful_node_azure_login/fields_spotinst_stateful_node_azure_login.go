@@ -2,9 +2,8 @@ package stateful_node_azure_login
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -77,7 +76,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenLogin(login *azurev3.Login) []interface{} {
+func flattenLogin(login *azure.Login) []interface{} {
 	result := make(map[string]interface{})
 	result[string(UserName)] = spotinst.StringValue(login.UserName)
 	result[string(SSHPublicKey)] = spotinst.StringValue(login.SSHPublicKey)
@@ -85,8 +84,8 @@ func flattenLogin(login *azurev3.Login) []interface{} {
 	return []interface{}{result}
 }
 
-func expandLogin(data interface{}) (*azurev3.Login, error) {
-	login := &azurev3.Login{}
+func expandLogin(data interface{}) (*azure.Login, error) {
+	login := &azure.Login{}
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})

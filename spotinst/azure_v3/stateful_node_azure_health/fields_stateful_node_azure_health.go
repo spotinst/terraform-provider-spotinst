@@ -11,7 +11,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Health] = commons.NewGenericField(
-		commons.StatefulNodeAzureLogin,
+		commons.StatefulNodeAzureHealth,
 		Health,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -20,8 +20,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(HealthCheckTypes): {
-						Type:     schema.TypeList,
-						Elem:     &schema.Schema{Type: schema.TypeString},
+						Type: schema.TypeList,
+						Elem: &schema.Schema{
+							Type: schema.TypeString},
 						Required: true,
 					},
 					string(GracePeriod): {

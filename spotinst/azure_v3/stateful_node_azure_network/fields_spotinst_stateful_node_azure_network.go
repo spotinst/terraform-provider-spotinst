@@ -3,7 +3,7 @@ package stateful_node_azure_network
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -160,7 +160,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := stWrapper.GetStatefulNode()
 			if v, ok := resourceData.GetOk(string(Network)); ok {
-				network := &azurev3.Network{}
+				network := &azure.Network{}
 				if value, err := expandStatefulNodeAzureNetwork(v, network); err != nil {
 					return err
 				} else {
@@ -172,9 +172,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := stWrapper.GetStatefulNode()
-			var value *azurev3.Network = nil
+			var value *azure.Network = nil
 			if v, ok := resourceData.GetOk(string(Network)); ok {
-				network := &azurev3.Network{}
+				network := &azure.Network{}
 				if Network, err := expandStatefulNodeAzureNetwork(v, network); err != nil {
 					return err
 				} else {
@@ -188,7 +188,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-func flattenStatefulNodeAzureNetwork(network *azurev3.Network) []interface{} {
+func flattenStatefulNodeAzureNetwork(network *azure.Network) []interface{} {
 	result := make(map[string]interface{})
 	result[string(VirtualNetworkName)] = spotinst.StringValue(network.VirtualNetworkName)
 	result[string(ResourceGroupName)] = spotinst.StringValue(network.ResourceGroupName)
@@ -199,7 +199,7 @@ func flattenStatefulNodeAzureNetwork(network *azurev3.Network) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenStatefulNodeAzureCustomNetworkInterfaces(networkInterfaces []*azurev3.NetworkInterface) []interface{} {
+func flattenStatefulNodeAzureCustomNetworkInterfaces(networkInterfaces []*azure.NetworkInterface) []interface{} {
 	result := make([]interface{}, 0, len(networkInterfaces))
 
 	for _, networkInterfaces := range networkInterfaces {
@@ -230,7 +230,7 @@ func flattenStatefulNodeAzureCustomNetworkInterfaces(networkInterfaces []*azurev
 	return result
 }
 
-func flattenNetworkSecurityGroup(networkSecurityGroup *azurev3.NetworkSecurityGroup) []interface{} {
+func flattenNetworkSecurityGroup(networkSecurityGroup *azure.NetworkSecurityGroup) []interface{} {
 	result := make(map[string]interface{})
 
 	result[string(Name)] = spotinst.StringValue(networkSecurityGroup.Name)
@@ -239,7 +239,7 @@ func flattenNetworkSecurityGroup(networkSecurityGroup *azurev3.NetworkSecurityGr
 	return []interface{}{result}
 }
 
-func flattenAdditionalIPConfigurations(additionalIPConfigs []*azurev3.AdditionalIPConfiguration) []interface{} {
+func flattenAdditionalIPConfigurations(additionalIPConfigs []*azure.AdditionalIPConfiguration) []interface{} {
 	result := make([]interface{}, 0, len(additionalIPConfigs))
 
 	for _, additionalIPConfig := range additionalIPConfigs {
@@ -252,7 +252,7 @@ func flattenAdditionalIPConfigurations(additionalIPConfigs []*azurev3.Additional
 	return result
 }
 
-func flattenPublicIPs(publicIPS []*azurev3.PublicIP) []interface{} {
+func flattenPublicIPs(publicIPS []*azure.PublicIP) []interface{} {
 	result := make([]interface{}, 0, len(publicIPS))
 
 	for _, publicIPS := range publicIPS {
@@ -265,7 +265,7 @@ func flattenPublicIPs(publicIPS []*azurev3.PublicIP) []interface{} {
 	return result
 }
 
-func flattenApplicationSecurityGroups(appSecGroups []*azurev3.ApplicationSecurityGroup) []interface{} {
+func flattenApplicationSecurityGroups(appSecGroups []*azure.ApplicationSecurityGroup) []interface{} {
 	result := make([]interface{}, 0, len(appSecGroups))
 
 	for _, appSecGroups := range appSecGroups {
@@ -278,7 +278,7 @@ func flattenApplicationSecurityGroups(appSecGroups []*azurev3.ApplicationSecurit
 	return result
 }
 
-func expandStatefulNodeAzureNetwork(data interface{}, network *azurev3.Network) (*azurev3.Network, error) {
+func expandStatefulNodeAzureNetwork(data interface{}, network *azure.Network) (*azure.Network, error) {
 	list := data.([]interface{})
 
 	if len(list) == 0 && network == nil {
@@ -297,7 +297,7 @@ func expandStatefulNodeAzureNetwork(data interface{}, network *azurev3.Network) 
 		}
 
 		if v, ok := m[string(NetworkInterface)]; ok {
-			var networkInterfaces []*azurev3.NetworkInterface
+			var networkInterfaces []*azure.NetworkInterface
 
 			if network.NetworkInterfaces != nil {
 				networkInterfaces = network.NetworkInterfaces
@@ -318,11 +318,11 @@ func expandStatefulNodeAzureNetwork(data interface{}, network *azurev3.Network) 
 	return network, nil
 }
 
-func expandNetworkInterfaces(data interface{}, networkInterfaces []*azurev3.NetworkInterface) ([]*azurev3.NetworkInterface, error) {
+func expandNetworkInterfaces(data interface{}, networkInterfaces []*azure.NetworkInterface) ([]*azure.NetworkInterface, error) {
 	list := data.([]interface{})
 
 	if len(list) > 0 {
-		networkInterfaces = make([]*azurev3.NetworkInterface, 0, len(list))
+		networkInterfaces = make([]*azure.NetworkInterface, 0, len(list))
 
 		for _, v := range list {
 			ni, ok := v.(map[string]interface{})
@@ -330,7 +330,7 @@ func expandNetworkInterfaces(data interface{}, networkInterfaces []*azurev3.Netw
 				continue
 			}
 
-			networkInterface := &azurev3.NetworkInterface{}
+			networkInterface := &azure.NetworkInterface{}
 
 			if v, ok := ni[string(SubnetName)].(string); ok && v != "" {
 				networkInterface.SetSubnetName(spotinst.String(v))
@@ -350,7 +350,7 @@ func expandNetworkInterfaces(data interface{}, networkInterfaces []*azurev3.Netw
 
 			if v, ok := ni[string(NetworkSecurityGroup)]; ok {
 				// Create new securityGroup object in case cluster did not get it from previous import step.
-				networkSecurityGroup := &azurev3.NetworkSecurityGroup{}
+				networkSecurityGroup := &azure.NetworkSecurityGroup{}
 
 				if networkInterface.NetworkSecurityGroup != nil {
 					networkSecurityGroup = networkInterface.NetworkSecurityGroup
@@ -378,7 +378,7 @@ func expandNetworkInterfaces(data interface{}, networkInterfaces []*azurev3.Netw
 			}
 
 			if v, ok := ni[string(AdditionalIPConfigurations)]; ok {
-				var additionalIPConfig []*azurev3.AdditionalIPConfiguration
+				var additionalIPConfig []*azure.AdditionalIPConfiguration
 
 				if networkInterface.AdditionalIPConfigurations != nil {
 					additionalIPConfig = networkInterface.AdditionalIPConfigurations
@@ -392,13 +392,13 @@ func expandNetworkInterfaces(data interface{}, networkInterfaces []*azurev3.Netw
 			}
 
 			if v, ok := ni[string(PublicIPs)]; ok {
-				var publicIPS []*azurev3.PublicIP
+				var publicIPS []*azure.PublicIP
 
 				if networkInterface.PublicIPs != nil {
 					publicIPS = networkInterface.PublicIPs
 				}
 
-				if pips, err := expandPublicIPS(v, publicIPS); err != nil {
+				if pips, err := expandPublicIPs(v, publicIPS); err != nil {
 					return nil, err
 				} else {
 					networkInterface.SetPublicIPs(pips)
@@ -406,7 +406,7 @@ func expandNetworkInterfaces(data interface{}, networkInterfaces []*azurev3.Netw
 			}
 
 			if v, ok := ni[string(ApplicationSecurityGroups)]; ok {
-				var ApplicationSecurityGroups []*azurev3.ApplicationSecurityGroup
+				var ApplicationSecurityGroups []*azure.ApplicationSecurityGroup
 
 				if networkInterface.AdditionalIPConfigurations != nil {
 					ApplicationSecurityGroups = networkInterface.ApplicationSecurityGroups
@@ -439,7 +439,7 @@ func expandPrivateIPAddresses(data interface{}) ([]string, error) {
 	return result, nil
 }
 
-func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azurev3.AdditionalIPConfiguration) ([]*azurev3.AdditionalIPConfiguration, error) {
+func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azure.AdditionalIPConfiguration) ([]*azure.AdditionalIPConfiguration, error) {
 	list := data.([]interface{})
 
 	if len(list) == 0 && additionalIPConfigs == nil {
@@ -447,7 +447,7 @@ func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azurev3.A
 	}
 
 	length := len(list) + len(additionalIPConfigs)
-	newAdditionalIPConfigList := make([]*azurev3.AdditionalIPConfiguration, 0, length)
+	newAdditionalIPConfigList := make([]*azure.AdditionalIPConfiguration, 0, length)
 
 	if len(additionalIPConfigs) > 0 {
 		newAdditionalIPConfigList = append(newAdditionalIPConfigList, additionalIPConfigs[0])
@@ -459,7 +459,7 @@ func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azurev3.A
 			continue
 		}
 
-		additionalIPConfig := &azurev3.AdditionalIPConfiguration{}
+		additionalIPConfig := &azure.AdditionalIPConfiguration{}
 
 		if v, ok := adic[string(Name)].(string); ok && v != "" {
 			additionalIPConfig.SetName(spotinst.String(v))
@@ -475,7 +475,7 @@ func expandAdditionalIPConfig(data interface{}, additionalIPConfigs []*azurev3.A
 	return newAdditionalIPConfigList, nil
 }
 
-func expandPublicIPS(data interface{}, publicIPS []*azurev3.PublicIP) ([]*azurev3.PublicIP, error) {
+func expandPublicIPs(data interface{}, publicIPS []*azure.PublicIP) ([]*azure.PublicIP, error) {
 	list := data.([]interface{})
 
 	if len(list) == 0 && publicIPS == nil {
@@ -483,7 +483,7 @@ func expandPublicIPS(data interface{}, publicIPS []*azurev3.PublicIP) ([]*azurev
 	}
 
 	length := len(list) + len(publicIPS)
-	newPublicIPSList := make([]*azurev3.PublicIP, 0, length)
+	newPublicIPSList := make([]*azure.PublicIP, 0, length)
 
 	if len(publicIPS) > 0 {
 		newPublicIPSList = append(newPublicIPSList, publicIPS[0])
@@ -495,7 +495,7 @@ func expandPublicIPS(data interface{}, publicIPS []*azurev3.PublicIP) ([]*azurev
 			continue
 		}
 
-		publicIP := &azurev3.PublicIP{}
+		publicIP := &azure.PublicIP{}
 
 		if v, ok := pips[string(Name)].(string); ok && v != "" {
 			publicIP.SetName(spotinst.String(v))
@@ -511,7 +511,7 @@ func expandPublicIPS(data interface{}, publicIPS []*azurev3.PublicIP) ([]*azurev
 	return newPublicIPSList, nil
 }
 
-func expandApplicationSecurityGroups(data interface{}, applicationSecGroup []*azurev3.ApplicationSecurityGroup) ([]*azurev3.ApplicationSecurityGroup, error) {
+func expandApplicationSecurityGroups(data interface{}, applicationSecGroup []*azure.ApplicationSecurityGroup) ([]*azure.ApplicationSecurityGroup, error) {
 	list := data.([]interface{})
 
 	if len(list) == 0 && applicationSecGroup == nil {
@@ -519,7 +519,7 @@ func expandApplicationSecurityGroups(data interface{}, applicationSecGroup []*az
 	}
 
 	length := len(list) + len(applicationSecGroup)
-	newapplicationSecGroupList := make([]*azurev3.ApplicationSecurityGroup, 0, length)
+	newapplicationSecGroupList := make([]*azure.ApplicationSecurityGroup, 0, length)
 
 	if len(applicationSecGroup) > 0 {
 		newapplicationSecGroupList = append(newapplicationSecGroupList, applicationSecGroup[0])
@@ -531,7 +531,7 @@ func expandApplicationSecurityGroups(data interface{}, applicationSecGroup []*az
 			continue
 		}
 
-		appSecGroup := &azurev3.ApplicationSecurityGroup{}
+		appSecGroup := &azure.ApplicationSecurityGroup{}
 
 		if v, ok := asg[string(Name)].(string); ok && v != "" {
 			appSecGroup.SetName(spotinst.String(v))
@@ -547,7 +547,7 @@ func expandApplicationSecurityGroups(data interface{}, applicationSecGroup []*az
 	return newapplicationSecGroupList, nil
 }
 
-func expandNetworkSecurityGroup(data interface{}, networkSecurityGroup *azurev3.NetworkSecurityGroup) (*azurev3.NetworkSecurityGroup, error) {
+func expandNetworkSecurityGroup(data interface{}, networkSecurityGroup *azure.NetworkSecurityGroup) (*azure.NetworkSecurityGroup, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})

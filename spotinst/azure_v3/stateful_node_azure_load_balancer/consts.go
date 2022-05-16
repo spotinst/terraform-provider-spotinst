@@ -3,7 +3,7 @@ package stateful_node_azure_load_balancer
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	LoadBalancer commons.FieldName = "load_balancers"
+	LoadBalancer commons.FieldName = "load_balancer"
 
 	Type              commons.FieldName = "type"
 	Name              commons.FieldName = "name"

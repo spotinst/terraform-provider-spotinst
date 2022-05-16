@@ -23,13 +23,13 @@ const (
 const (
 	Delete                   commons.FieldName = "delete"
 	ShouldTerminateVm        commons.FieldName = "should_terminate_vm"
-	NetworkShouldDeallocate  commons.FieldName = NetworkPrefix + "should_deallocate"
+	ShouldDeallocateNetwork  commons.FieldName = NetworkPrefix + "should_deallocate"
 	NetworkTTLInHours        commons.FieldName = NetworkPrefix + "ttl_in_hours"
-	DiskShouldDeallocate     commons.FieldName = DiskPrefix + "should_deallocate"
+	ShouldDeallocateDisk     commons.FieldName = DiskPrefix + "should_deallocate"
 	DiskTTLInHours           commons.FieldName = DiskPrefix + "ttl_in_hours"
-	SnapshotShouldDeallocate commons.FieldName = SnapshotPrefix + "should_deallocate"
+	ShouldDeallocateSnapshot commons.FieldName = SnapshotPrefix + "should_deallocate"
 	SnapshotTTLInHours       commons.FieldName = SnapshotPrefix + "ttl_in_hours"
-	PublicIPShouldDeallocate commons.FieldName = PublicIPDeallocation + "should_deallocate"
+	ShouldDeallocatePublicIP commons.FieldName = PublicIPDeallocation + "should_deallocate"
 	PublicIPTTLInHours       commons.FieldName = PublicIPDeallocation + "ttl_in_hours"
 )
 

@@ -3,12 +3,12 @@ package commons
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"log"
 )
 
 const (
-	StatefulNodeAzureV3ResourceName ResourceName = "spotinst_stateful_node_azure_v3"
+	StatefulNodeAzureResourceName ResourceName = "spotinst_stateful_node_azure"
 )
 
 var StatefulNodeAzureV3Resource *StatefulNodeAzureV3TerraformResource
@@ -18,20 +18,20 @@ type StatefulNodeAzureV3TerraformResource struct {
 }
 
 type StatefulNodeAzureV3Wrapper struct {
-	statefulNode *azurev3.StatefulNode
+	statefulNode *azure.StatefulNode
 }
 
 func NewStatefulNodeAzureV3Resource(fieldsMap map[FieldName]*GenericField) *StatefulNodeAzureV3TerraformResource {
 	return &StatefulNodeAzureV3TerraformResource{
 		GenericResource: GenericResource{
-			resourceName: StatefulNodeAzureV3ResourceName,
+			resourceName: StatefulNodeAzureResourceName,
 			fields:       NewGenericFields(fieldsMap),
 		},
 	}
 }
 
 func (res *StatefulNodeAzureV3TerraformResource) OnRead(
-	statefulNode *azurev3.StatefulNode,
+	statefulNode *azure.StatefulNode,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -56,7 +56,7 @@ func (res *StatefulNodeAzureV3TerraformResource) OnRead(
 
 func (res *StatefulNodeAzureV3TerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*azurev3.StatefulNode, error) {
+	meta interface{}) (*azure.StatefulNode, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -78,7 +78,7 @@ func (res *StatefulNodeAzureV3TerraformResource) OnCreate(
 
 func (res *StatefulNodeAzureV3TerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *azurev3.StatefulNode, error) {
+	meta interface{}) (bool, *azure.StatefulNode, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -104,24 +104,24 @@ func (res *StatefulNodeAzureV3TerraformResource) OnUpdate(
 
 func NewStatefulNodeAzureV3Wrapper() *StatefulNodeAzureV3Wrapper {
 	return &StatefulNodeAzureV3Wrapper{
-		statefulNode: &azurev3.StatefulNode{
-			Strategy: &azurev3.Strategy{},
-			Compute: &azurev3.Compute{
-				LaunchSpecification: &azurev3.LaunchSpecification{},
-				VMSizes:             &azurev3.VMSizes{},
+		statefulNode: &azure.StatefulNode{
+			Strategy: &azure.Strategy{},
+			Compute: &azure.Compute{
+				LaunchSpecification: &azure.LaunchSpecification{},
+				VMSizes:             &azure.VMSizes{},
 			},
-			Scheduling: &azurev3.Scheduling{
-				Tasks: []*azurev3.Task{},
+			Scheduling: &azure.Scheduling{
+				Tasks: []*azure.Task{},
 			},
-			Persistence: &azurev3.Persistence{},
+			Persistence: &azure.Persistence{},
 		},
 	}
 }
 
-func (snWrapper *StatefulNodeAzureV3Wrapper) GetStatefulNode() *azurev3.StatefulNode {
+func (snWrapper *StatefulNodeAzureV3Wrapper) GetStatefulNode() *azure.StatefulNode {
 	return snWrapper.statefulNode
 }
 
-func (snWrapper *StatefulNodeAzureV3Wrapper) SetStatefulNode(statefulNode *azurev3.StatefulNode) {
+func (snWrapper *StatefulNodeAzureV3Wrapper) SetStatefulNode(statefulNode *azure.StatefulNode) {
 	snWrapper.statefulNode = statefulNode
 }

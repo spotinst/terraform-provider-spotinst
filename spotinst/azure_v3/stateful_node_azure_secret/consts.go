@@ -3,7 +3,7 @@ package stateful_node_azure_secret
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	Secrets commons.FieldName = "secrets"
+	Secret commons.FieldName = "secret"
 
 	SourceVault       commons.FieldName = "source_vault"
 	Name              commons.FieldName = "name"

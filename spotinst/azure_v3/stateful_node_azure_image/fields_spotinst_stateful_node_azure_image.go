@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -128,7 +128,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := stWrapper.GetStatefulNode()
-			var value *azurev3.Image = nil
+			var value *azure.Image = nil
 			if v, ok := resourceData.GetOk(string(Image)); ok {
 				if image, err := expandStatefulNodeAzureImage(v); err != nil {
 					return err
@@ -143,7 +143,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-func flattenStatefulNodeAzureImage(image *azurev3.Image) []interface{} {
+func flattenStatefulNodeAzureImage(image *azure.Image) []interface{} {
 	result := make(map[string]interface{})
 	if image.Custom != nil {
 		result[string(CustomImage)] = flattenStatefulNodeAzureCustomImage(image.Custom)
@@ -157,7 +157,7 @@ func flattenStatefulNodeAzureImage(image *azurev3.Image) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenStatefulNodeAzureMarketplaceImage(image *azurev3.MarketPlaceImage) []interface{} {
+func flattenStatefulNodeAzureMarketplaceImage(image *azure.MarketPlaceImage) []interface{} {
 	result := make(map[string]interface{})
 	result[string(Offer)] = spotinst.StringValue(image.Offer)
 	result[string(Publisher)] = spotinst.StringValue(image.Publisher)
@@ -166,14 +166,14 @@ func flattenStatefulNodeAzureMarketplaceImage(image *azurev3.MarketPlaceImage) [
 	return []interface{}{result}
 }
 
-func flattenStatefulNodeAzureCustomImage(image *azurev3.CustomImage) []interface{} {
+func flattenStatefulNodeAzureCustomImage(image *azure.CustomImage) []interface{} {
 	result := make(map[string]interface{})
 	result[string(CustomImageResourceGroupName)] = spotinst.StringValue(image.ResourceGroupName)
 	result[string(Name)] = spotinst.StringValue(image.Name)
 	return []interface{}{result}
 }
 
-func flattenStatefulNodeAzureGallery(image *azurev3.Gallery) []interface{} {
+func flattenStatefulNodeAzureGallery(image *azure.Gallery) []interface{} {
 	result := make(map[string]interface{})
 	result[string(GalleryResourceGroupName)] = spotinst.StringValue(image.ResourceGroupName)
 	result[string(GalleryName)] = spotinst.StringValue(image.GalleryName)
@@ -182,8 +182,8 @@ func flattenStatefulNodeAzureGallery(image *azurev3.Gallery) []interface{} {
 	return []interface{}{result}
 }
 
-func expandStatefulNodeAzureImage(data interface{}) (*azurev3.Image, error) {
-	image := &azurev3.Image{}
+func expandStatefulNodeAzureImage(data interface{}) (*azure.Image, error) {
+	image := &azure.Image{}
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
@@ -231,8 +231,8 @@ func expandStatefulNodeAzureImage(data interface{}) (*azurev3.Image, error) {
 	return image, nil
 }
 
-func expandStatefulNodeAzureMarketplaceImage(data interface{}) (*azurev3.MarketPlaceImage, error) {
-	market := &azurev3.MarketPlaceImage{}
+func expandStatefulNodeAzureMarketplaceImage(data interface{}) (*azure.MarketPlaceImage, error) {
+	market := &azure.MarketPlaceImage{}
 	if list := data.([]interface{}); len(list) > 0 {
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -258,9 +258,9 @@ func expandStatefulNodeAzureMarketplaceImage(data interface{}) (*azurev3.MarketP
 	return nil, nil
 }
 
-func expandStatefulNodeAzureCustomImage(data interface{}) (*azurev3.CustomImage, error) {
+func expandStatefulNodeAzureCustomImage(data interface{}) (*azure.CustomImage, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		custom := &azurev3.CustomImage{}
+		custom := &azure.CustomImage{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 			if v, ok := m[string(CustomImageResourceGroupName)].(string); ok && v != "" {
@@ -275,9 +275,9 @@ func expandStatefulNodeAzureCustomImage(data interface{}) (*azurev3.CustomImage,
 	return nil, nil
 }
 
-func expandStatefulNodeAzureGallery(data interface{}) (*azurev3.Gallery, error) {
+func expandStatefulNodeAzureGallery(data interface{}) (*azure.Gallery, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		gallery := &azurev3.Gallery{}
+		gallery := &azure.Gallery{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 			if v, ok := m[string(GalleryResourceGroupName)].(string); ok && v != "" {

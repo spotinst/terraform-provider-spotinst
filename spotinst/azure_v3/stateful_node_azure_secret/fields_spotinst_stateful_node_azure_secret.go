@@ -3,16 +3,16 @@ package stateful_node_azure_secret
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[Secrets] = commons.NewGenericField(
+	fieldsMap[Secret] = commons.NewGenericField(
 		commons.StatefulNodeAzureSecret,
-		Secrets,
+		Secret,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -65,8 +65,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 
 			if result != nil {
-				if err := resourceData.Set(string(Secrets), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Secrets), err)
+				if err := resourceData.Set(string(Secret), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Secret), err)
 				}
 			}
 
@@ -75,7 +75,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := stWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(Secrets)); ok {
+			if v, ok := resourceData.GetOk(string(Secret)); ok {
 				if value, err := expandSecrets(v); err != nil {
 					return err
 				} else {
@@ -87,9 +87,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.Secret = nil
+			var value []*azure.Secret = nil
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Secrets != nil {
-				if v, ok := resourceData.GetOk(string(Secrets)); ok {
+				if v, ok := resourceData.GetOk(string(Secret)); ok {
 					if secrets, err := expandSecrets(v); err != nil {
 						return err
 					} else {
@@ -104,7 +104,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenSecrets(secret []*azurev3.Secret) []interface{} {
+func flattenSecrets(secret []*azure.Secret) []interface{} {
 	result := make([]interface{}, 0, len(secret))
 
 	for _, sec := range secret {
@@ -121,7 +121,7 @@ func flattenSecrets(secret []*azurev3.Secret) []interface{} {
 	return result
 }
 
-func flattenSourceVault(sourceVault *azurev3.SourceVault) []interface{} {
+func flattenSourceVault(sourceVault *azure.SourceVault) []interface{} {
 	result := make(map[string]interface{})
 
 	result[string(Name)] = spotinst.StringValue(sourceVault.Name)
@@ -130,7 +130,7 @@ func flattenSourceVault(sourceVault *azurev3.SourceVault) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenVaultCertificate(vaultCert []*azurev3.VaultCertificate) []interface{} {
+func flattenVaultCertificate(vaultCert []*azure.VaultCertificate) []interface{} {
 	result := make([]interface{}, 0, len(vaultCert))
 
 	for _, VaultCertification := range vaultCert {
@@ -143,9 +143,9 @@ func flattenVaultCertificate(vaultCert []*azurev3.VaultCertificate) []interface{
 	return result
 }
 
-func expandSecrets(data interface{}) ([]*azurev3.Secret, error) {
+func expandSecrets(data interface{}) ([]*azure.Secret, error) {
 	list := data.(*schema.Set).List()
-	sec := make([]*azurev3.Secret, 0, len(list))
+	sec := make([]*azure.Secret, 0, len(list))
 
 	if len(list) > 0 {
 		for _, v := range list {
@@ -154,11 +154,11 @@ func expandSecrets(data interface{}) ([]*azurev3.Secret, error) {
 				continue
 			}
 
-			secret := &azurev3.Secret{}
+			secret := &azure.Secret{}
 
 			if v, ok := se[string(SourceVault)]; ok {
 				// Create new securityGroup object in case cluster did not get it from previous import step.
-				sourceVault := &azurev3.SourceVault{}
+				sourceVault := &azure.SourceVault{}
 
 				if secret.SourceVault != nil {
 					sourceVault = secret.SourceVault
@@ -174,7 +174,7 @@ func expandSecrets(data interface{}) ([]*azurev3.Secret, error) {
 			}
 
 			if v, ok := se[string(VaultCertificates)]; ok {
-				var vaultCer []*azurev3.VaultCertificate
+				var vaultCer []*azure.VaultCertificate
 
 				if secret.VaultCertificates != nil {
 					vaultCer = secret.VaultCertificates
@@ -193,7 +193,7 @@ func expandSecrets(data interface{}) ([]*azurev3.Secret, error) {
 	return sec, nil
 }
 
-func expandSourceVault(data interface{}, sourceVault *azurev3.SourceVault) (*azurev3.SourceVault, error) {
+func expandSourceVault(data interface{}, sourceVault *azure.SourceVault) (*azure.SourceVault, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -211,7 +211,7 @@ func expandSourceVault(data interface{}, sourceVault *azurev3.SourceVault) (*azu
 	return nil, nil
 }
 
-func expandVaultCertificate(data interface{}, vaultCertificates []*azurev3.VaultCertificate) ([]*azurev3.VaultCertificate, error) {
+func expandVaultCertificate(data interface{}, vaultCertificates []*azure.VaultCertificate) ([]*azure.VaultCertificate, error) {
 	list := data.(*schema.Set).List()
 
 	if len(list) == 0 && vaultCertificates == nil {
@@ -219,7 +219,7 @@ func expandVaultCertificate(data interface{}, vaultCertificates []*azurev3.Vault
 	}
 
 	length := len(list) + len(vaultCertificates)
-	newVaultCertificatesList := make([]*azurev3.VaultCertificate, 0, length)
+	newVaultCertificatesList := make([]*azure.VaultCertificate, 0, length)
 
 	if len(vaultCertificates) > 0 {
 		newVaultCertificatesList = append(newVaultCertificatesList, vaultCertificates[0])
@@ -231,7 +231,7 @@ func expandVaultCertificate(data interface{}, vaultCertificates []*azurev3.Vault
 			continue
 		}
 
-		vaultCertificate := &azurev3.VaultCertificate{}
+		vaultCertificate := &azure.VaultCertificate{}
 
 		if v, ok := adic[string(CertificateURL)].(string); ok && v != "" {
 			vaultCertificate.SetCertificateURL(spotinst.String(v))

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"log"
@@ -13,16 +13,16 @@ import (
 )
 
 func createStatefulNodeAzureV3ResourceName(name string) string {
-	return fmt.Sprintf("%v.%v", string(commons.StatefulNodeAzureV3ResourceName), name)
+	return fmt.Sprintf("%v.%v", string(commons.StatefulNodeAzureResourceName), name)
 }
 
 func testStatefulNodeAzureV3Destroy(s *terraform.State) error {
 	client := testAccProviderAzure.Meta().(*Client)
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != string(commons.StatefulNodeAzureV3ResourceName) {
+		if rs.Type != string(commons.StatefulNodeAzureResourceName) {
 			continue
 		}
-		input := &azurev3.GetStatefulNodeStateInput{ID: spotinst.String(rs.Primary.ID)}
+		input := &azure.GetStatefulNodeStateInput{ID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.statefulNode.CloudProviderAzure().GetState(context.Background(), input)
 		if err == nil && resp != nil && resp.StatefulNodeState != nil {
 			statefulNodeState := spotinst.StringValue(resp.StatefulNodeState.Status)
@@ -34,7 +34,7 @@ func testStatefulNodeAzureV3Destroy(s *terraform.State) error {
 	return nil
 }
 
-func testCheckStatefulNodeAzureV3Attributes(statefulNode *azurev3.StatefulNode, expectedName string) resource.TestCheckFunc {
+func testCheckStatefulNodeAzureV3Attributes(statefulNode *azure.StatefulNode, expectedName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if spotinst.StringValue(statefulNode.Name) != expectedName {
 			return fmt.Errorf("bad content: %v", statefulNode.Name)
@@ -43,7 +43,7 @@ func testCheckStatefulNodeAzureV3Attributes(statefulNode *azurev3.StatefulNode, 
 	}
 }
 
-func testCheckStatefulNodeAzureV3Exists(statefulNode *azurev3.StatefulNode, resourceName string) resource.TestCheckFunc {
+func testCheckStatefulNodeAzureV3Exists(statefulNode *azure.StatefulNode, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -53,7 +53,7 @@ func testCheckStatefulNodeAzureV3Exists(statefulNode *azurev3.StatefulNode, reso
 			return fmt.Errorf("no resource ID is set")
 		}
 		client := testAccProviderAzure.Meta().(*Client)
-		input := &azurev3.ReadStatefulNodeInput{ID: spotinst.String(rs.Primary.ID)}
+		input := &azure.ReadStatefulNodeInput{ID: spotinst.String(rs.Primary.ID)}
 		resp, err := client.statefulNode.CloudProviderAzure().Read(context.Background(), input)
 		if err != nil {
 			return err
@@ -222,7 +222,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -255,7 +255,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 }
 
 const testBaselineStatefulNodeAzureV3Config_Create = `
-resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
+resource "` + string(commons.StatefulNodeAzureResourceName) + `" "%v" {
 provider = "%v"
 name = "%v"
 os = "Linux"
@@ -288,7 +288,7 @@ delete {
 `
 
 const testBaselineStatefulNodeAzureV3Config_Update = `
-resource "` + string(commons.StatefulNodeAzureV3ResourceName) + `" "%v" {
+resource "` + string(commons.StatefulNodeAzureResourceName) + `" "%v" {
 provider = "%v"
 name = "%v"
 os = "Linux"
@@ -327,7 +327,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -381,7 +381,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -445,7 +445,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 	statefulNodeName := "test-acc-sn-azure-v3-strategy"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -511,7 +511,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Health(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -576,7 +576,7 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -636,7 +636,7 @@ preferred_spot_sizes =  ["standard_ds3_v2"]
 //	statefulNodeName := "terraform-tests-do-not-delete"
 //	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 //
-//	var node azurev3.StatefulNode
+//	var node azure.StatefulNode
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
 //		Providers:    TestAccProviders,
@@ -696,7 +696,7 @@ preferred_spot_sizes =  ["standard_ds3_v2"]
 //	statefulNodeName := "terraform-tests-do-not-delete"
 //	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 //
-//	var node azurev3.StatefulNode
+//	var node azure.StatefulNode
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
 //		Providers:    TestAccProviders,
@@ -750,7 +750,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Image(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -823,7 +823,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -918,7 +918,7 @@ func TestAccSpotinstStatefulNodeAzureV3_OSDisk(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -970,7 +970,7 @@ func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -1026,7 +1026,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Signal(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 
-	var node azurev3.StatefulNode
+	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
@@ -1079,7 +1079,7 @@ signal {
 //	statefulNodeName := "terraform-tests-do-not-delete"
 //	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 //
-//	var node azurev3.StatefulNode
+//	var node azure.StatefulNode
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
 //		Providers:    TestAccProviders,
@@ -1156,7 +1156,7 @@ signal {
 //	statefulNodeName := "terraform-tests-do-not-delete"
 //	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
 //
-//	var node azurev3.StatefulNode
+//	var node azure.StatefulNode
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
 //		Providers:    TestAccProviders,

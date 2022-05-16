@@ -3,7 +3,7 @@ package stateful_node_azure_extension
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -79,10 +79,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.Extension = nil
+			var value []*azure.Extension = nil
 
 			if v, ok := resourceData.GetOk(string(Extension)); ok {
-				var extensions []*azurev3.Extension
+				var extensions []*azure.Extension
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil {
 					if st.Compute.LaunchSpecification.Extensions != nil {
@@ -103,10 +103,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.Extension = nil
+			var value []*azure.Extension = nil
 
 			if v, ok := resourceData.GetOk(string(Extension)); ok {
-				var extensions []*azurev3.Extension
+				var extensions []*azure.Extension
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil {
 
@@ -129,7 +129,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenExtensions(extensions []*azurev3.Extension) []interface{} {
+func flattenExtensions(extensions []*azure.Extension) []interface{} {
 	result := make([]interface{}, 0, len(extensions))
 
 	for _, extension := range extensions {
@@ -147,7 +147,7 @@ func flattenExtensions(extensions []*azurev3.Extension) []interface{} {
 	return result
 }
 
-func expandExtensions(data interface{}, extensions []*azurev3.Extension) ([]*azurev3.Extension, error) {
+func expandExtensions(data interface{}, extensions []*azure.Extension) ([]*azure.Extension, error) {
 	list := data.(*schema.Set).List()
 
 	for _, v := range list {
@@ -156,7 +156,7 @@ func expandExtensions(data interface{}, extensions []*azurev3.Extension) ([]*azu
 			continue
 		}
 
-		extension := &azurev3.Extension{}
+		extension := &azure.Extension{}
 
 		if v, ok := ext[string(APIVersion)].(string); ok && v != "" {
 			extension.SetAPIVersion(spotinst.String(v))

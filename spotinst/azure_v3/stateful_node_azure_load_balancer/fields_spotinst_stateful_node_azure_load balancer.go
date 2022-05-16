@@ -3,7 +3,7 @@ package stateful_node_azure_load_balancer
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -11,7 +11,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[LoadBalancer] = commons.NewGenericField(
-		commons.StatefulNodeAzureLoadBalancers,
+		commons.StatefulNodeAzureLoadBalancer,
 		LoadBalancer,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -22,7 +22,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(BackendPoolNames): {
 						Type:     schema.TypeList,
 						Required: true,
-						Elem:     &schema.Schema{Type: schema.TypeString},
+						Elem: &schema.Schema{
+							Type: schema.TypeString},
 					},
 
 					string(Name): {
@@ -69,10 +70,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.LoadBalancer = nil
+			var value []*azure.LoadBalancer = nil
 
 			if v, ok := resourceData.GetOk(string(LoadBalancer)); ok {
-				var loadBalancers []*azurev3.LoadBalancer
+				var loadBalancers []*azure.LoadBalancer
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.LoadBalancersConfig != nil && st.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
 					loadBalancers = st.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
@@ -92,10 +93,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value []*azurev3.LoadBalancer = nil
+			var value []*azure.LoadBalancer = nil
 
 			if v, ok := resourceData.GetOk(string(LoadBalancer)); ok {
-				var loadBalancers []*azurev3.LoadBalancer
+				var loadBalancers []*azure.LoadBalancer
 
 				if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.LoadBalancersConfig != nil && st.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
 					loadBalancers = st.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
@@ -116,7 +117,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenLoadBalancers(loadBalancers []*azurev3.LoadBalancer) []interface{} {
+func flattenLoadBalancers(loadBalancers []*azure.LoadBalancer) []interface{} {
 	result := make([]interface{}, 0, len(loadBalancers))
 
 	for _, loadBalancer := range loadBalancers {
@@ -134,11 +135,11 @@ func flattenLoadBalancers(loadBalancers []*azurev3.LoadBalancer) []interface{} {
 	return result
 }
 
-func expandLoadBalancers(data interface{}, loadBalancers []*azurev3.LoadBalancer) ([]*azurev3.LoadBalancer, error) {
+func expandLoadBalancers(data interface{}, loadBalancers []*azure.LoadBalancer) ([]*azure.LoadBalancer, error) {
 	list := data.(*schema.Set).List()
 
 	if len(list) > 0 {
-		loadBalancers = make([]*azurev3.LoadBalancer, 0, len(list))
+		loadBalancers = make([]*azure.LoadBalancer, 0, len(list))
 
 		for _, v := range list {
 			attr, ok := v.(map[string]interface{})
@@ -147,7 +148,7 @@ func expandLoadBalancers(data interface{}, loadBalancers []*azurev3.LoadBalancer
 				continue
 			}
 
-			loadBalancer := &azurev3.LoadBalancer{}
+			loadBalancer := &azure.LoadBalancer{}
 
 			if v, ok := attr[string(SKU)].(string); ok && v != "" {
 				loadBalancer.SetSKU(spotinst.String(v))

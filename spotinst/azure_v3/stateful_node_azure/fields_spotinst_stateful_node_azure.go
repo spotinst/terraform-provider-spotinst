@@ -290,7 +290,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
-					string(NetworkShouldDeallocate): {
+					string(ShouldDeallocateNetwork): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
@@ -298,7 +298,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
-					string(DiskShouldDeallocate): {
+					string(ShouldDeallocateDisk): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
@@ -306,7 +306,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
-					string(SnapshotShouldDeallocate): {
+					string(ShouldDeallocateSnapshot): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
@@ -314,7 +314,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
-					string(PublicIPShouldDeallocate): {
+					string(ShouldDeallocatePublicIP): {
 						Type:     schema.TypeBool,
 						Required: true,
 					},

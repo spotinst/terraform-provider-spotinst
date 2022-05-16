@@ -21,7 +21,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	v3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -100,9 +100,9 @@ func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData
 	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
 }
 
-func expandStatefulNodeAzureImportVMConfig(data interface{}, statefulNode *v3.StatefulNode) (*v3.ImportVMStatefulNodeInput, error) {
-	spec := &v3.ImportVMStatefulNodeInput{
-		StatefulNodeImport: &v3.StatefulNodeImport{
+func expandStatefulNodeAzureImportVMConfig(data interface{}, statefulNode *azure.StatefulNode) (*azure.ImportVMStatefulNodeInput, error) {
+	spec := &azure.ImportVMStatefulNodeInput{
+		StatefulNodeImport: &azure.StatefulNodeImport{
 			StatefulNode: statefulNode,
 		},
 	}
@@ -131,14 +131,14 @@ func expandStatefulNodeAzureImportVMConfig(data interface{}, statefulNode *v3.St
 	return spec, nil
 }
 
-func createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput *v3.ImportVMStatefulNodeInput, spotinstClient *Client) (*string, error) {
+func createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput *azure.ImportVMStatefulNodeInput, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(importVMStatefulNodeInput); err != nil {
 		return nil, err
 	} else {
 		log.Printf("===> Stateful node import vm create configuration: %s", json)
 	}
 
-	var resp *v3.ImportVMStatefulNodeOutput = nil
+	var resp *azure.ImportVMStatefulNodeOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
 		r, err := spotinstClient.statefulNode.CloudProviderAzure().ImportVM(context.Background(), importVMStatefulNodeInput)
 		if err != nil {
@@ -156,16 +156,16 @@ func createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput *v3.ImportVMSta
 	return resp.StatefulNodeImport.StatefulNode.ID, nil
 }
 
-func createAzureV3StatefulNode(statefulNode *v3.StatefulNode, spotinstClient *Client) (*string, error) {
+func createAzureV3StatefulNode(statefulNode *azure.StatefulNode, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(statefulNode); err != nil {
 		return nil, err
 	} else {
 		log.Printf("===> Stateful node create configuration: %s", json)
 	}
 
-	var resp *v3.CreateStatefulNodeOutput = nil
+	var resp *azure.CreateStatefulNodeOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
-		input := &v3.CreateStatefulNodeInput{StatefulNode: statefulNode}
+		input := &azure.CreateStatefulNodeInput{StatefulNode: statefulNode}
 		r, err := spotinstClient.statefulNode.CloudProviderAzure().Create(context.Background(), input)
 		if err != nil {
 			log.Printf("error: %v", err)
@@ -187,7 +187,7 @@ func resourceSpotinstStatefulNodeAzureV3Read(resourceData *schema.ResourceData, 
 	log.Printf(string(commons.ResourceFieldOnRead),
 		commons.StatefulNodeAzureV3Resource.GetName(), id)
 
-	input := &v3.ReadStatefulNodeInput{ID: spotinst.String(id)}
+	input := &azure.ReadStatefulNodeInput{ID: spotinst.String(id)}
 	resp, err := meta.(*Client).statefulNode.CloudProviderAzure().Read(context.Background(), input)
 	if err != nil {
 		// If the stateful node was not found, return nil so that we can show
@@ -240,8 +240,8 @@ func resourceSpotinstStatefulNodeAzureV3Update(resourceData *schema.ResourceData
 	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
 }
 
-func updateAzureV3StatefulNode(statefulNode *v3.StatefulNode, resourceData *schema.ResourceData, meta interface{}) error {
-	var input = &v3.UpdateStatefulNodeInput{
+func updateAzureV3StatefulNode(statefulNode *azure.StatefulNode, resourceData *schema.ResourceData, meta interface{}) error {
+	var input = &azure.UpdateStatefulNodeInput{
 		StatefulNode: statefulNode,
 	}
 
@@ -340,7 +340,7 @@ func updateStateAzureV3StatefulNode(resourceData *schema.ResourceData, meta inte
 		}
 
 		log.Printf("onUpdate() -> Updating stateful node [%v] with configuration %s", statefulNodeID, updateStateJSON)
-		updateStateInput := &v3.UpdateStatefulNodeStateInput{ID: updateStateSpec.ID,
+		updateStateInput := &azure.UpdateStatefulNodeStateInput{ID: updateStateSpec.ID,
 			StatefulNodeState: updateStateSpec.StatefulNodeState}
 		if _, err = meta.(*Client).statefulNode.CloudProviderAzure().UpdateState(context.TODO(),
 			updateStateInput); err != nil {
@@ -382,11 +382,14 @@ func attachDataDiskAzureV3StatefulNode(resourceData *schema.ResourceData, meta i
 		}
 
 		log.Printf("onUpdate() -> Updating stateful node [%v] with configuration %s", statefulNodeID, updateStateJSON)
-		attachDataDiskInput := &v3.AttachStatefulNodeDataDiskInput{ID: attachDataDiskSpec.ID,
+		attachDataDiskInput := &azure.AttachStatefulNodeDataDiskInput{
+			ID:                        attachDataDiskSpec.ID,
 			DataDiskName:              attachDataDiskSpec.DataDiskName,
 			DataDiskResourceGroupName: attachDataDiskSpec.DataDiskResourceGroupName,
-			StorageAccountType:        attachDataDiskSpec.StorageAccountType, SizeGB: attachDataDiskSpec.SizeGB,
-			LUN: attachDataDiskSpec.LUN, Zone: attachDataDiskSpec.Zone}
+			StorageAccountType:        attachDataDiskSpec.StorageAccountType,
+			SizeGB:                    attachDataDiskSpec.SizeGB,
+			LUN:                       attachDataDiskSpec.LUN,
+			Zone:                      attachDataDiskSpec.Zone}
 		if _, err = meta.(*Client).statefulNode.CloudProviderAzure().AttachDataDisk(context.TODO(),
 			attachDataDiskInput); err != nil {
 			return fmt.Errorf("onUpdate() -> Attach data disk failed for stateful node [%v], error: %v",
@@ -427,7 +430,8 @@ func detachDataDiskAzureV3StatefulNode(resourceData *schema.ResourceData, meta i
 		}
 
 		log.Printf("onUpdate() -> Updating stateful node [%v] with configuration %s", statefulNodeID, updateStateJSON)
-		detachDataDiskInput := &v3.DetachStatefulNodeDataDiskInput{ID: detachDataDiskSpec.ID,
+		detachDataDiskInput := &azure.DetachStatefulNodeDataDiskInput{
+			ID:                        detachDataDiskSpec.ID,
 			DataDiskName:              detachDataDiskSpec.DataDiskName,
 			DataDiskResourceGroupName: detachDataDiskSpec.DataDiskResourceGroupName,
 			ShouldDeallocate:          detachDataDiskSpec.ShouldDeallocate}
@@ -442,8 +446,8 @@ func detachDataDiskAzureV3StatefulNode(resourceData *schema.ResourceData, meta i
 	return nil
 }
 
-func expandStatefulNodeAzureUpdateStateConfig(data interface{}, statefulNodeID string) (*v3.UpdateStatefulNodeStateInput, error) {
-	spec := &v3.UpdateStatefulNodeStateInput{
+func expandStatefulNodeAzureUpdateStateConfig(data interface{}, statefulNodeID string) (*azure.UpdateStatefulNodeStateInput, error) {
+	spec := &azure.UpdateStatefulNodeStateInput{
 		ID: spotinst.String(statefulNodeID),
 	}
 
@@ -459,8 +463,8 @@ func expandStatefulNodeAzureUpdateStateConfig(data interface{}, statefulNodeID s
 }
 
 func expandStatefulNodeAzureAttachDataDiskConfig(data interface{},
-	statefulNodeID string) (*v3.AttachStatefulNodeDataDiskInput, error) {
-	spec := &v3.AttachStatefulNodeDataDiskInput{
+	statefulNodeID string) (*azure.AttachStatefulNodeDataDiskInput, error) {
+	spec := &azure.AttachStatefulNodeDataDiskInput{
 		ID: spotinst.String(statefulNodeID),
 	}
 
@@ -495,8 +499,8 @@ func expandStatefulNodeAzureAttachDataDiskConfig(data interface{},
 	return spec, nil
 }
 
-func expandStatefulNodeAzureDetachDataDiskConfig(data interface{}, statefulNodeID string) (*v3.DetachStatefulNodeDataDiskInput, error) {
-	spec := &v3.DetachStatefulNodeDataDiskInput{
+func expandStatefulNodeAzureDetachDataDiskConfig(data interface{}, statefulNodeID string) (*azure.DetachStatefulNodeDataDiskInput, error) {
+	spec := &azure.DetachStatefulNodeDataDiskInput{
 		ID: spotinst.String(statefulNodeID),
 	}
 
@@ -557,14 +561,14 @@ func deleteAzureV3StatefulNode(resourceData *schema.ResourceData, meta interface
 
 }
 
-func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string) (*v3.DeleteStatefulNodeInput, error) {
-	spec := &v3.DeleteStatefulNodeInput{
+func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string) (*azure.DeleteStatefulNodeInput, error) {
+	spec := &azure.DeleteStatefulNodeInput{
 		ID: spotinst.String(statefulNodeID),
-		DeallocationConfig: &v3.DeallocationConfig{
-			NetworkDeallocationConfig:  &v3.ResourceDeallocationConfig{},
-			DiskDeallocationConfig:     &v3.ResourceDeallocationConfig{},
-			SnapshotDeallocationConfig: &v3.ResourceDeallocationConfig{},
-			PublicIPDeallocationConfig: &v3.ResourceDeallocationConfig{},
+		DeallocationConfig: &azure.DeallocationConfig{
+			NetworkDeallocationConfig:  &azure.ResourceDeallocationConfig{},
+			DiskDeallocationConfig:     &azure.ResourceDeallocationConfig{},
+			SnapshotDeallocationConfig: &azure.ResourceDeallocationConfig{},
+			PublicIPDeallocationConfig: &azure.ResourceDeallocationConfig{},
 		},
 	}
 
@@ -576,7 +580,7 @@ func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string
 			spec.DeallocationConfig.ShouldTerminateVM = spotinst.Bool(v)
 		}
 
-		if v, ok := m[string(stateful_node_azure.NetworkShouldDeallocate)].(bool); ok {
+		if v, ok := m[string(stateful_node_azure.ShouldDeallocateNetwork)].(bool); ok {
 			spec.DeallocationConfig.NetworkDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
 		}
 
@@ -584,7 +588,7 @@ func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string
 			spec.DeallocationConfig.NetworkDeallocationConfig.TTLInHours = spotinst.Int(v)
 		}
 
-		if v, ok := m[string(stateful_node_azure.DiskShouldDeallocate)].(bool); ok {
+		if v, ok := m[string(stateful_node_azure.ShouldDeallocateDisk)].(bool); ok {
 			spec.DeallocationConfig.DiskDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
 		}
 
@@ -592,15 +596,15 @@ func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string
 			spec.DeallocationConfig.DiskDeallocationConfig.TTLInHours = spotinst.Int(v)
 		}
 
-		if v, ok := m[string(stateful_node_azure.SnapshotShouldDeallocate)].(bool); ok {
+		if v, ok := m[string(stateful_node_azure.ShouldDeallocateSnapshot)].(bool); ok {
 			spec.DeallocationConfig.SnapshotDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
 		}
 
-		if v, ok := m[string(stateful_node_azure.SnapshotShouldDeallocate)].(int); ok && v >= 0 {
+		if v, ok := m[string(stateful_node_azure.ShouldDeallocateSnapshot)].(int); ok && v >= 0 {
 			spec.DeallocationConfig.SnapshotDeallocationConfig.TTLInHours = spotinst.Int(v)
 		}
 
-		if v, ok := m[string(stateful_node_azure.PublicIPShouldDeallocate)].(bool); ok {
+		if v, ok := m[string(stateful_node_azure.ShouldDeallocatePublicIP)].(bool); ok {
 			spec.DeallocationConfig.PublicIPDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
 		}
 
