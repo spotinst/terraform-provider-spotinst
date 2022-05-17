@@ -14,7 +14,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.StatefulNodeAzureSecret,
 		Secret,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -147,47 +147,45 @@ func expandSecrets(data interface{}) ([]*azure.Secret, error) {
 	list := data.(*schema.Set).List()
 	sec := make([]*azure.Secret, 0, len(list))
 
-	if len(list) > 0 {
-		for _, v := range list {
-			se, ok := v.(map[string]interface{})
-			if !ok {
-				continue
-			}
-
-			secret := &azure.Secret{}
-
-			if v, ok := se[string(SourceVault)]; ok {
-				// Create new securityGroup object in case cluster did not get it from previous import step.
-				sourceVault := &azure.SourceVault{}
-
-				if secret.SourceVault != nil {
-					sourceVault = secret.SourceVault
-				}
-
-				if sourceVault, err := expandSourceVault(v, sourceVault); err != nil {
-					return nil, err
-				} else {
-					if sourceVault != nil {
-						secret.SetSourceVault(sourceVault)
-					}
-				}
-			}
-
-			if v, ok := se[string(VaultCertificates)]; ok {
-				var vaultCer []*azure.VaultCertificate
-
-				if secret.VaultCertificates != nil {
-					vaultCer = secret.VaultCertificates
-				}
-
-				if vc, err := expandVaultCertificate(v, vaultCer); err != nil {
-					return nil, err
-				} else {
-					secret.SetVaultCertificates(vc)
-				}
-			}
-			sec = append(sec, secret)
+	for _, v := range list {
+		se, ok := v.(map[string]interface{})
+		if !ok {
+			continue
 		}
+
+		secret := &azure.Secret{}
+
+		if v, ok := se[string(SourceVault)]; ok {
+			// Create new securityGroup object in case cluster did not get it from previous import step.
+			sourceVault := &azure.SourceVault{}
+
+			if secret.SourceVault != nil {
+				sourceVault = secret.SourceVault
+			}
+
+			if sv, err := expandSourceVault(v, sourceVault); err != nil {
+				return nil, err
+			} else {
+				if sv != nil {
+					secret.SetSourceVault(sv)
+				}
+			}
+		}
+
+		if v, ok := se[string(VaultCertificates)]; ok {
+			var vaultCer []*azure.VaultCertificate
+
+			if secret.VaultCertificates != nil {
+				vaultCer = secret.VaultCertificates
+			}
+
+			if vc, err := expandVaultCertificate(v, vaultCer); err != nil {
+				return nil, err
+			} else {
+				secret.SetVaultCertificates(vc)
+			}
+		}
+		sec = append(sec, secret)
 	}
 
 	return sec, nil

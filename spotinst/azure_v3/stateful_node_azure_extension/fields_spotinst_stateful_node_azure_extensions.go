@@ -114,10 +114,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						extensions = st.Compute.LaunchSpecification.Extensions
 					}
 
-					if extensions, err := expandExtensions(v, extensions); err != nil {
+					if ext, err := expandExtensions(v, extensions); err != nil {
 						return err
 					} else {
-						value = extensions
+						value = ext
 					}
 
 					st.Compute.LaunchSpecification.SetExtensions(value)
