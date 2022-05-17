@@ -27,6 +27,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(DrainingTimeout): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Computed: true,
 					},
 					string(FallbackToOnDemand): {
 						Type:     schema.TypeBool,
@@ -35,6 +36,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(RevertToSpot): {
 						Type:     schema.TypeList,
 						Optional: true,
+						Computed: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
@@ -213,99 +215,114 @@ func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 }
 
 func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) {
-	strategy := &azure.Strategy{}
 	list := data.([]interface{})
-
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
-		if v, ok := m[string(PreferredLifecycle)].(string); ok && v != "" {
-			strategy.SetPreferredLifecycle(spotinst.String(v))
-		}
-
-		if v, ok := m[string(DrainingTimeout)].(int); ok && v >= 0 {
-			strategy.SetDrainingTimeout(spotinst.Int(v))
-		}
-
-		if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
-			strategy.SetFallbackToOnDemand(spotinst.Bool(v))
-		}
-
-		if v, ok := m[string(RevertToSpot)]; ok {
-			revertToSpot, err := expandStatefulNodeAzureStrategyRevertToSpot(v)
-			if err != nil {
-				return nil, err
+	if list != nil && len(list) > 0 {
+		strategy := &azure.Strategy{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(PreferredLifecycle)].(string); ok && v != "" {
+				strategy.SetPreferredLifecycle(spotinst.String(v))
 			}
 
-			if revertToSpot != nil {
-				strategy.SetRevertToSpot(revertToSpot)
+			if v, ok := m[string(DrainingTimeout)].(int); ok && v > 0 {
+				strategy.SetDrainingTimeout(spotinst.Int(v))
 			}
+
+			if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
+				strategy.SetFallbackToOnDemand(spotinst.Bool(v))
+			}
+
+			if v, ok := m[string(RevertToSpot)]; ok {
+				revertToSpot, err := expandStatefulNodeAzureStrategyRevertToSpot(v)
+				if err != nil {
+					return nil, err
+				}
+
+				if revertToSpot != nil {
+					strategy.SetRevertToSpot(revertToSpot)
+				}
+			}
+
+			if v, ok := m[string(OptimizationWindows)]; ok {
+				optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(v)
+				if err != nil {
+					return nil, err
+				}
+
+				if optimizationWindows != nil {
+					strategy.SetOptimizationWindows(optimizationWindows)
+				}
+			}
+
 		}
 
-		if v, ok := m[string(OptimizationWindows)]; ok {
-			optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(v)
-			if err != nil {
-				return nil, err
-			}
-
-			if optimizationWindows != nil {
-				strategy.SetOptimizationWindows(optimizationWindows)
-			}
-		}
-
+		return strategy, nil
 	}
 
-	return strategy, nil
+	return nil, nil
 }
 
 func expandStatefulNodeAzureStrategySignals(data interface{}) ([]*azure.Signal, error) {
 	list := data.([]interface{})
-	signals := make([]*azure.Signal, 0, len(list))
+	if list != nil && len(list) > 0 {
+		signals := make([]*azure.Signal, 0, len(list))
 
-	for _, item := range list {
-		m := item.(map[string]interface{})
-		signal := &azure.Signal{}
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			signal := &azure.Signal{}
 
-		if v, ok := m[string(Type)].(string); ok && v != "" {
-			signal.SetType(spotinst.String(v))
-		} else {
-			signal.SetType(nil)
+			if v, ok := m[string(Type)].(string); ok && v != "" {
+				signal.SetType(spotinst.String(v))
+			} else {
+				signal.SetType(nil)
+			}
+
+			if v, ok := m[string(Timeout)].(int); ok && v > 0 {
+				signal.SetTimeout(spotinst.Int(v))
+			} else {
+				signal.SetTimeout(nil)
+			}
+			signals = append(signals, signal)
 		}
 
-		if v, ok := m[string(Timeout)].(int); ok && v > 0 {
-			signal.SetTimeout(spotinst.Int(v))
-		} else {
-			signal.SetTimeout(nil)
-		}
-		signals = append(signals, signal)
+		return signals, nil
 	}
 
-	return signals, nil
+	return nil, nil
 }
 
 func expandStatefulNodeAzureStrategyOptimizationWindows(data interface{}) ([]string, error) {
 	list := data.([]interface{})
-	result := make([]string, 0, len(list))
+	if list != nil && len(list) > 0 {
+		result := make([]string, 0, len(list))
 
-	for _, v := range list {
-		if optimizationWindow, ok := v.(string); ok && optimizationWindow != "" {
-			result = append(result, optimizationWindow)
+		for _, v := range list {
+			if optimizationWindow, ok := v.(string); ok && optimizationWindow != "" {
+				result = append(result, optimizationWindow)
+			}
 		}
+
+		return result, nil
 	}
 
-	return result, nil
+	return nil, nil
 }
 
 func expandStatefulNodeAzureStrategyRevertToSpot(data interface{}) (*azure.RevertToSpot, error) {
-	revertToSpot := &azure.RevertToSpot{}
 	list := data.([]interface{})
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
+	if list != nil && len(list) > 0 {
+		if list[0] != nil {
+			revertToSpot := &azure.RevertToSpot{}
+			m := list[0].(map[string]interface{})
+			var performAt *string = nil
+			if v, ok := m[string(PerformAt)].(string); ok {
+				performAt = spotinst.String(v)
+			}
 
-		var performAt *string = nil
-		if v, ok := m[string(PerformAt)].(string); ok {
-			performAt = spotinst.String(v)
+			revertToSpot.SetPerformAt(performAt)
+			return revertToSpot, nil
 		}
-		revertToSpot.SetPerformAt(performAt)
 	}
-	return revertToSpot, nil
+
+	return nil, nil
 }

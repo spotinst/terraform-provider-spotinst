@@ -104,15 +104,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(TagKey): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 					},
 					string(TagValue): {
 						Type:     schema.TypeString,
 						Optional: true,
+						Computed: true,
 					},
 				},
 			},
@@ -168,6 +170,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Name): {
@@ -232,12 +235,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(OSDiskSizeGB): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Computed: true,
 					},
 					string(OSDiskType): {
 						Type:     schema.TypeString,
@@ -300,6 +305,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(DataDiskSizeGB): {
@@ -369,19 +375,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(BootDiagnosticsIsEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
+						Computed: true,
 					},
 					string(BootDiagnosticsType): {
 						Type:     schema.TypeString,
 						Optional: true,
+						Computed: true,
 					},
 					string(BootDiagnosticsStorageURL): {
 						Type:     schema.TypeString,
 						Optional: true,
+						Computed: true,
 					},
 				},
 			},

@@ -23,6 +23,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(MarketPlaceImage): {
 						Type:     schema.TypeList,
 						Optional: true,
+						Computed: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Publisher): {
@@ -51,6 +52,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(CustomImage): {
 						Type:     schema.TypeList,
 						Optional: true,
+						Computed: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(CustomImageResourceGroupName): {
@@ -68,6 +70,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Gallery): {
 						Type:     schema.TypeList,
 						Optional: true,
+						Computed: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(GalleryResourceGroupName): {

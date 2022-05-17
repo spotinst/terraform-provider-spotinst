@@ -121,6 +121,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
+			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
@@ -215,24 +216,24 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(Zones)).([]interface{}); ok {
-				zones := make([]string, len(v))
-				for i, j := range v {
-					zones[i] = j.(string)
+			if v, ok := resourceData.Get(string(Zones)).([]interface{}); ok && v != nil {
+				if zones, err := expandZones(v); err != nil {
+					return err
+				} else {
+					statefulNode.Compute.SetZones(zones)
 				}
-				statefulNode.Compute.SetZones(zones)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(Zones)).([]interface{}); ok {
-				zones := make([]string, len(v))
-				for i, j := range v {
-					zones[i] = j.(string)
+			if v, ok := resourceData.Get(string(Zones)).([]interface{}); ok && v != nil {
+				if zones, err := expandZones(v); err != nil {
+					return err
+				} else {
+					statefulNode.Compute.SetZones(zones)
 				}
-				statefulNode.Compute.SetZones(zones)
 			}
 			return nil
 		},
@@ -489,4 +490,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+}
+
+func expandZones(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if zone, ok := v.(string); ok && zone != "" {
+			result = append(result, zone)
+		}
+	}
+
+	return result, nil
 }

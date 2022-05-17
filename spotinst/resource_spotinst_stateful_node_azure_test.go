@@ -248,6 +248,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
+					//resource.TestCheckResourceAttr(resourceName, "description", "terraform-stateful-node-azure-updated"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 				),
 			},
@@ -294,7 +295,7 @@ provider = "%v"
 name = "%v"
 os = "Linux"
 region = "eastus"
-resource_group_name = "CoreReliabilityResourceGroup" 
+resource_group_name = "CoreReliabilityResourceGroup"
 %v
 %v
 %v

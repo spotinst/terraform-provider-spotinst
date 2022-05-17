@@ -16,6 +16,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(SourceVault): {
@@ -43,10 +44,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(CertificateStore): {
 									Type:     schema.TypeString,
 									Optional: true,
+									Computed: true,
 								},
 								string(CertificateURL): {
 									Type:     schema.TypeString,
 									Optional: true,
+									Computed: true,
 								},
 							},
 						},
