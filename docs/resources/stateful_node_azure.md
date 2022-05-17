@@ -27,6 +27,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     revert_to_spot {
       perform_at            = "timeWindow"
     }
+    preferred_life_cycle    = "od" 
   }
   // -------------------------------------------------------------------
 
@@ -222,3 +223,23 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   // -------------------------------------------------------------------
 
 ```
+
+## Argument Reference
+
+The following arguments are supported:
+
+* `name` - (Required) Azure stateful node name.
+* `region` - (Required) The Azure region your stateful node will be created in.
+* `resource_group_name` - (Required) Name of the Resource Group for stateful node.
+* `description` - (Optional) Describe your Azure stateful node.
+
+<a id="strategy"></a>
+## Strategy
+
+* `strategy` - (Required) Strategy for stateful node.
+* `draining_timeout` - (Optional, Default `120`) Time (in seconds) to allow the VM be drained from incoming TCP connections and detached from MLB before terminating it during a scale down operation.
+* `fallback_to_on_demand` - (Required) In case of no spots available, Stateful Node will launch an On-demand instance instead.
+* `optimization_windows` - (Optional) Valid format: "ddd:hh:mm-ddd:hh:mm (day:hour(0-23):minute(0-59))", not empty if revertToSpot.performAt = timeWindow.
+* `preferred_life_cycle` - (Optional, Enum `"od","spot"`, Default `"spot"`) The desired type of VM.
+* `revert_to_spot` - (Optional) Hold settings for strategy correction - replacing On-Demand for Spot VMs.
+
