@@ -101,6 +101,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Type): {
@@ -215,51 +216,48 @@ func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 }
 
 func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) {
+	strategy := &azure.Strategy{}
 	list := data.([]interface{})
-	if list != nil && len(list) > 0 {
-		strategy := &azure.Strategy{}
-		if list[0] != nil {
-			m := list[0].(map[string]interface{})
-			if v, ok := m[string(PreferredLifecycle)].(string); ok && v != "" {
-				strategy.SetPreferredLifecycle(spotinst.String(v))
-			}
 
-			if v, ok := m[string(DrainingTimeout)].(int); ok && v > 0 {
-				strategy.SetDrainingTimeout(spotinst.Int(v))
-			}
-
-			if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
-				strategy.SetFallbackToOnDemand(spotinst.Bool(v))
-			}
-
-			if v, ok := m[string(RevertToSpot)]; ok {
-				revertToSpot, err := expandStatefulNodeAzureStrategyRevertToSpot(v)
-				if err != nil {
-					return nil, err
-				}
-
-				if revertToSpot != nil {
-					strategy.SetRevertToSpot(revertToSpot)
-				}
-			}
-
-			if v, ok := m[string(OptimizationWindows)]; ok {
-				optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(v)
-				if err != nil {
-					return nil, err
-				}
-
-				if optimizationWindows != nil {
-					strategy.SetOptimizationWindows(optimizationWindows)
-				}
-			}
-
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+		if v, ok := m[string(PreferredLifecycle)].(string); ok && v != "" {
+			strategy.SetPreferredLifecycle(spotinst.String(v))
 		}
 
-		return strategy, nil
+		if v, ok := m[string(DrainingTimeout)].(int); ok && v > 0 {
+			strategy.SetDrainingTimeout(spotinst.Int(v))
+		}
+
+		if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
+			strategy.SetFallbackToOnDemand(spotinst.Bool(v))
+		}
+
+		if v, ok := m[string(RevertToSpot)]; ok {
+			revertToSpot, err := expandStatefulNodeAzureStrategyRevertToSpot(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if revertToSpot != nil {
+				strategy.SetRevertToSpot(revertToSpot)
+			}
+		}
+
+		if v, ok := m[string(OptimizationWindows)]; ok {
+			optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if optimizationWindows != nil {
+				strategy.SetOptimizationWindows(optimizationWindows)
+			}
+		}
+
 	}
 
-	return nil, nil
+	return strategy, nil
 }
 
 func expandStatefulNodeAzureStrategySignals(data interface{}) ([]*azure.Signal, error) {
