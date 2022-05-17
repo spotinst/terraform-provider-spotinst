@@ -10,9 +10,9 @@ const (
 )
 
 const (
-	OS            commons.FieldName = "os"
-	Zones         commons.FieldName = "zones"
-	PreferredZone commons.FieldName = "preferred_zone"
+	OS             commons.FieldName = "os"
+	Zones          commons.FieldName = "zones"
+	PreferredZones commons.FieldName = "preferred_zones"
 )
 
 const (

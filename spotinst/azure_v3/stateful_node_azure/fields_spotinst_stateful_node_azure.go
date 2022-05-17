@@ -240,9 +240,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[PreferredZone] = commons.NewGenericField(
+	fieldsMap[PreferredZones] = commons.NewGenericField(
 		commons.StatefulNodeAzure,
-		PreferredZone,
+		PreferredZones,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
@@ -255,15 +255,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if statefulNode.Compute != nil && statefulNode.Compute.OS != nil {
 				value = statefulNode.Compute.PreferredZone
 			}
-			if err := resourceData.Set(string(PreferredZone), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredZone), err)
+			if err := resourceData.Set(string(PreferredZones), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredZones), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(PreferredZone)); ok && v != "" {
+			if v, ok := resourceData.GetOk(string(PreferredZones)); ok && v != "" {
 				statefulNode.Compute.SetPreferredZone(spotinst.String(v.(string)))
 			}
 			return nil
@@ -271,7 +271,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(PreferredZone)); ok && v != "" {
+			if v, ok := resourceData.GetOk(string(PreferredZones)); ok && v != "" {
 				statefulNode.Compute.SetPreferredZone(spotinst.String(v.(string)))
 			}
 			return nil
