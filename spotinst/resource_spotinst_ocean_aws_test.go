@@ -219,7 +219,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
  max_size         = 1000
   min_size         = 0
-  desired_capacity = 1
+  desired_capacity = 0
 
   subnet_ids      = ["subnet-0faad0b6bb7e99d9f"]
 
@@ -240,7 +240,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
   max_size         = 10
   min_size         = 0
-  desired_capacity = 1
+  desired_capacity = 0
 
   subnet_ids      = ["subnet-0bd585d2c2177c7ee"]
 
