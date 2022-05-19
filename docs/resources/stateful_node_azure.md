@@ -224,7 +224,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
 
 ```
 
-## Argument Reference
+# Argument Reference
 
 The following arguments are supported:
 
@@ -416,3 +416,43 @@ The following arguments are supported:
 * `signal` - (Optional) A signal object defined for the stateful node.
   * `type` - (Required, Enum `"vmReady", "vmReadyToShutdown"`) The type of the signal defined for the stateful node.
   * `timeout` - (Required, Default `"1800"`) The timeout in seconds to hold the vm until a signal is sent. If no signal is sent the vm will be replaced (vmReady) or we will terminate the vm (vmReadyToShutdown) after the timeout.
+
+---
+
+<a id="attach_data_disk"></a>
+## Attach Data Disk
+
+* `attach_data_disk` - (Optional) Create a new data disk and attach it to the stateful node.
+  * `data_disk_name` - (Required) The name of the created data disk.
+  * `data_disk_resource_group_name` - (Required) The resource group name in which the data disk will be created.
+  * `storage_account_type` - (Required, Enum `"Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS"`) The type of the data disk.
+  * `size_gb` - (Required) The size of the data disk in GB, Required if dataDisks is specified.
+  * `zone` - (Optional, Enum `"1", "2", "3"`) The Availability Zone in which the data disk will be created. If not defined, the data disk will be created regionally.
+  * `lun` - (Optional, Default `"orginal"`) The LUN of the data disk. If not defined, the LUN will be set in order.
+
+<a id="detach_data_disk"></a>
+## Detach Data Disk
+
+* `detach_data_disk` - (Optional) Detach a data disk from a stateful node.
+  * `data_disk_name` - (Required) The name of the detached data disk.
+  * `data_disk_resource_group_name` - (Required) The resource group name in which the data disk exists.
+  * `should_deallocate` - (Required) Indicates whether to delete the data disk in addition to detach.
+  * `ttl_in_hours` - (Required, Default `"0"`) Hours to keep the disk alive before deletion.
+
+<a id="update_state"></a>
+## Update State
+
+* `update_state` - (Optional) Update the stateful node state.
+  * `state` - (Required, Enum `"pause", "resume", "recycle"`) New state for the stateful node.
+
+<a id="import_vm"></a>
+## Import VM
+
+* `import_vm` - (Optional) Import an Azure VM and create a stateful node by providing a node configuration.
+  * `resource_group_name` - (Required) Name of the Resource Group for Stateful Node.
+  * `original_vm_name` - (Required) Azure Import Stateful Node Name.
+  * `draining_timeout` - (Optional) Hours to keep resources alive.
+  * `resources_retention_time` - (Optional) Hours to keep resources alive.
+
+
+
