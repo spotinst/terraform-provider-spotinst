@@ -453,9 +453,10 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
 					statefulNodeName: statefulNodeName,
 					strategy:         testStrategyStatefulNodeAzureV3Config_EmptyFields,
-					//updateBaselineFields: true,
 				}),
 				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "false"),
 				),
