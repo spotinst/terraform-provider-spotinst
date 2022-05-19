@@ -189,7 +189,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "1000"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 				),
 			},
 			{
@@ -202,7 +202,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 				),
 			},
 		},
@@ -983,7 +983,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
@@ -1028,7 +1028,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
 
  // --- UPDATE POLICY ----------------
   update_policy {
-    should_roll = true
+    should_roll = false
 	conditioned_roll = false
 
     roll_config {
