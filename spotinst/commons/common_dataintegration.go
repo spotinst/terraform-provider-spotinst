@@ -6,7 +6,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 var vendorTypes = []string{"s3"}
