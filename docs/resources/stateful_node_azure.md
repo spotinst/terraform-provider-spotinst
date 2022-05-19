@@ -260,128 +260,159 @@ The following arguments are supported:
 ## Boot Diagnostics
 
 * `boot_diagnostics`
-  * `is_enabled`
-  * `storage_url`
-  * `type`
+  * `is_enabled` - (Optional) Allows you to enable and disable the configuration of boot diagnostics at launch.
+  * `storage_url` - (Optional) The storage URI that is used if a type is unmanaged. The storage URI must follow the blob storage URI format ("https://.blob.core.windows.net/"). StorageUri is required if the type is unmanaged. StorageUri must be ‘null’ in case the boot diagnostics type is managed.
+  * `type` - (Optional, Enum `"managed", "unmanaged"`) Defines the storage type on VM launch in Azure.
 
 <a id="data_disks"></a>
 ## Data Disks
 
-* `data_disk`
-  * `size_gb`
-  * `lun`
-  * `type`
+* `data_disk` - (Optional) The definitions of data disks that will be created and attached to the stateful node's VM.
+  * `size_gb` - (Required) The size of the data disk in GB, required if dataDisks is specified.
+  * `lun` - (Required) The LUN of the data disk.
+  * `type` - (Required, Enum `"Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS"`) The type of the data disk.
 
 <a id="extensions"></a>
 ## Extensions
 
-* `extension`
-  * `name`
-  * `type`
-  * `publisher`
-  * `api_version`
-  * `minor_version_auto_upgrade`
-  * `protected_settings`
-  * `script`
-
-
-
+* `extension` - (Optional) An object for an azure extension.
+  * `name` - (Required) Required on compute.launchSpecification.extensions object.
+  * `type` - (Required) Required on compute.launchSpecification.extensions object.
+  * `publisher` - (Required) Required on compute.launchSpecification.extensions object.
+  * `api_version` - (Required) The API version of the extension. Required if extension specified.
+  * `minor_version_auto_upgrade` - (Required) Required on compute.launchSpecification.extensions object.
+  * `protected_settings` - (Optional) Object for protected settings.
+  * `public_settings` - (Optional) Object for public settings.
+  
+<a id="image"></a>
+## Image
 
 * `image`
-  * `marketplace_image`
-    * `publisher`
-    * `offer`
-    * `sku`
-    * `version`
-  * `gallery_image`
-    * `gallery_resource_group_name`
-    * `gallery_name`
-    * `image_name`
-    * `version_name`
-  * `custom_image`
-    * `custom_image_resource_group_name`
-    * `name`
+  * `marketplace_image` - (Optional) Select an image from Azure's Marketplace image catalogue. Required if the custom image or gallery image are not specified.
+    * `publisher` - (Required) Image publisher.
+    * `offer` - (Required) Image offer.
+    * `sku` - (Required) Image Stock Keeping Unit, which is the specific version of the image.
+    * `version` - (Required, Default `"latest"`) Image's version. if version not provided we use "latest".
+  * `gallery_image` - (Optional) Gallery image definitions. Required if custom image or marketplace image are not specified.
+    * `gallery_resource_group_name` - (Required) The resource group name for gallery image.
+    * `gallery_name` - (Required) Name of the gallery.
+    * `image_name` - (Required) Name of the gallery image.
+    * `version_name` - (Required) Image's version. Can be in the format x.x.x or 'latest'.
+  * `custom_image` - (Optional) Custom image definitions. Required if marketplace image or gallery image are not specified.
+    * `custom_image_resource_group_name` - (Required) The resource group name for custom image.
+    * `name` - (Required) The name of the custom image.
+
+<a id="load balancer"></a>
+## Load Balancer
+
+* `load_balancer` - (Optional) Add a load balancer. For Azure Gateway, each Backend Pool is a separate load balancer.
+  * `type` - (Required, Enum `"loadBalancer", "applicationGateway"`) The type of load balancer.
+  * `resource_group_name` - (Required) The Resource Group name of the Load Balancer.
+  * `name` - (Required) Name of the Application Gateway/Load Balancer.
+  * `sku` - (Optional)
+    * if type is `"LoadBalancer"` then possible values are `“Standard", "Basic”`.
+    * If ApplicationGateway then possible values are
+      `“Standard_Large”, “Standard_Medium”, “Standard_Small”, “Standard_v2", “WAF_Large”, “WAF_Medium", “WAF_v2"`.
+  * `backend_pool_names` - (Optional) Name of the Backend Pool to register the Stateful Node VMs to. Each Backend Pool is a separate load balancer. Required if Type is APPLICATION_GATEWAY.
+
+<a id="login"></a>
+## Login
+
+* `login` - (Required) Set admin access for accessing your VMs. Password/SSH is required for Linux.
+  * `user_name` - (Required) username for admin access to VMs.
+  * `ssh_public_key` - (Optional) SSH for admin access to Linux VMs. Optional for Linux.
+  * `password` - (Optional) Password for admin access to Windows VMs. Required for Windows.
+
+<a id="managed_service_identities"></a>
+## Managed Service Identities
+
+* `managed_service_identities` - (Optional) Add a user-assigned managed identity to the Stateful Node's VM.
+  * `name` - (Required) name of the managed identity.
+  * `resource_group_name` - (Required) The Resource Group that the user-assigned managed identity resides in.
+
+<a id="network"></a>
+## Network
+
+* `network` - (Required) Define the Virtual Network and Subnet for your Stateful Node.
+  * `network_resource_group_name` - (Required) Vnet Resource Group Name.
+  * `virtual_network_name` - (Required) Virtual Network.
+  * `network_interface` - (Required) Define a network interface
+    * `is_primary` - (Required) Defines whether the network interface is primary or not.
+    * `subnet_name` - (Required) Subnet name.
+    * `assign_public_ip` - (Optional) Assign public IP.
+    * `public_ip_sku` - (Optional) Required if assignPublicIp=true values=[STANDARD/BASIC].
+    * `network_security_group` - (Optional) Network Security Group.
+      * `network_resource_group_name` - (Required) Requires valid security group name.
+      * `name` - (Required) Requires valid resource group name.
+    * `enable_ip_forwarding` - (Optional) Enable IP Forwarding.
+    * `private_ip_addresses` - (Optional) A list with unique items that every item is a valid IP.
+    * `additional_ip_configurations` - (Optional) Additional configuration of network interface.
+      * `name` - (Required) Configuration name.
+      * `private_ip_address_version` - (Required, Enum `"IPv4", "IPv6"` Default `"IPv4"`) Version of the private IP address.
+    * `public_ips` - (Optional) Defined a pool of Public Ips (from Azure), that will be associated to the network interface. We will associate one public ip per instance until the pool is exhausted, in which case, we will create a new one.
+      * `resource_group_name` - (Required) The resource group of the public ip.
+      * `name` - (Required) - The name of the public ip.
+    * `application_security_groups` - (Optional) Network Security Group.
+      * `resource_group_name` - (Required) Requires valid security group name.
+      * `name` - (Required) Requires valid resource group name.
+
+<a id="os_disk"></a>
+## OS Disk
+
+* `os_disk` - (Optional) Specify OS disk specification other than default.
+  * `size_gb` - (Optional, Default `"30"`) The size of the data disk in GB.
+  * `type` - (Required, Enum `"Standard_LRS", "Premium_LRS", "StandardSSD_LRS"`) The type of the OS disk.
+
+<a id="secret"></a>
+## Secret
+
+* `secret` - (Optional) Set of certificates that should be installed on the VM.
+  * `source_vault` - (Required) The key vault reference, contains the required certificates.
+    * `name` - (Required) The name of the key vault.
+    * `resource_group_name` - (Required) The resource group name of the key vault.
+  * `vault_certificates` - (Required) The required certificate references.
+    * `certificate_url` - (Optional) The URL of the certificate under the key vault.
+    * `certificate_store` - (Required) The certificate store directory the VM. The directory is created in the LocalMachine account.
+      * This field is required only when using Windows OS type
+      * This field must be ‘null’ when the OS type is Linux
 
 
-* load_balancer
-  * type
-  * resource_group_name
-  * name
-  * sku
-  * backend_pool_names
+<a id="tag"></a>
+## Tag
 
-* login
-  * user_name
-  * ssh_public_key
+* `tag` - (Optional) Unique Key-Value pair for all Stateful Node Resources.
+  * `tag_key` - (Optional) Tag Key for Stateful Node Resources.
+  * `tag_value` - (Optional) Tag Value for Stateful Node Resources.
 
+<a id="health"></a>
+## Health
 
-* managed_service_identities
-  * name
-  * resource_group_name
+* `health` - (Optional) Set the auto healing preferences for unhealthy VMs.
+  * `health_check_types` - (Optional, Enum `"vmState", "applicationGateway"`) Healthcheck to use to validate VM health.
+  * `unhealthy_duration` - (Optional) Amount of time to be unhealthy before a replacement is triggered.
+  * `auto_healing` - (Required) Enable Autohealing of unhealthy VMs.
+  * `grace_period` - (Optional) Period of time to wait for VM to reach healthiness before monitoring for unhealthiness.
 
+<a id="persistence"></a>
+## Persistence
 
-* network
-  * network_resource_group_name
-  * virtual_network_name
-  * network_interface
-    * is_primary
-    * subnet_name
-    * assign_public_ip
-    * public_ip_sku
-    * network_security_group
-      * network_resource_group_name
-      * name 
-    * enable_ip_forwarding
-    * private_ip_addresses
-    * additional_ip_configurations
-      * name
-      * private_ip_address_version
-    * public_ips
-      * resource_group_name
-      * name
-    * application_security_groups
-      * resource_group_name
-      * name
+* `should_persist_os_disk` - (Required) Should persist os disk.
+* `os_disk_persistence_mode` - (Optional, Enum `"reattach", "onLaunch"`)
+* `should_persist_data_disks` - (Required) Should persist data disks.
+* `data_disks_persistence_mode` - (Optional, Enum `"reattach", "onLaunch"`)
+* `should_persist_network` - (Required) Should persist network.
 
+<a id="scheduling_tasks"></a>
+## Scheduling Tasks
 
-* os_disk
-  * size_gb
-  * type
+* `scheduling_task` - (Optional) Scheduling settings object for stateful node.
+  * `is_enabled` - (Required) Is scheduled task enabled for stateful node.
+  * `type` - (Required, Enum `"pause", "resume", "recycle") The type of the scheduled task
+  * `cron_expression` (Required) A expression which describes when to execute the scheduled task (UTC).
 
+<a id="signals"></a>
+## Signals
 
-* secret
-  * source_vault
-    * name
-    * resource_group_name
-  * vault_certificates
-    * certificate_url
-    * certificate_store
-
-* tag
-  * tag_key
-  * tag_value
-
-
-* health
-  * health_check_types
-  * unhealthy_duration
-  * grace_period
-  * auto_healing
-
-
-* should_persist_os_disk
-* os_disk_persistence_mode
-* should_persist_data_disks
-* data_disks_persistence_mode
-* should_persist_network
-
-
-* scheduling_task
-  * is_enabled
-  * type
-  * cron_expression
-
-
-* signal
-  * type
-  * timeout
+* `signal` - (Optional) A signal object defined for the stateful node.
+  * `type` - (Required, Enum `"vmReady", "vmReadyToShutdown"`) The type of the signal defined for the stateful node.
+  * `timeout` - (Required, Default `"1800"`) The timeout in seconds to hold the vm until a signal is sent. If no signal is sent the vm will be replaced (vmReady) or we will terminate the vm (vmReadyToShutdown) after the timeout.
