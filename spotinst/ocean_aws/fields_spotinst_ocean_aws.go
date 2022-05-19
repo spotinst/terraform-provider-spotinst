@@ -1,11 +1,8 @@
 package ocean_aws
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -302,7 +299,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
@@ -410,14 +406,6 @@ func expandSubnetIDs(data interface{}) ([]string, error) {
 		}
 	}
 	return result, nil
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
-	return hashcode.String(buf.String())
 }
 
 func flattenTags(tags []*aws.Tag) []interface{} {

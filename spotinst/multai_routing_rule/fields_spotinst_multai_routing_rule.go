@@ -1,11 +1,8 @@
 package multai_routing_rule
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -299,7 +296,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -380,12 +376,4 @@ func expandTags(data interface{}) ([]*multai.Tag, error) {
 		tags = append(tags, tag)
 	}
 	return tags, nil
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
-	return hashcode.String(buf.String())
 }

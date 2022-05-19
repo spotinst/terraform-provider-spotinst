@@ -27,7 +27,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			//Set: hashKV,
+			//
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil

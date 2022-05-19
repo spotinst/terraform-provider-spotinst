@@ -1,12 +1,10 @@
 package multai_balancer
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -204,7 +202,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -306,12 +303,4 @@ func flattenBalancerTimeouts(timeouts *multai.Timeouts) []interface{} {
 	out["idle"] = spotinst.IntValue(timeouts.Idle)
 	out["draining"] = spotinst.IntValue(timeouts.Draining)
 	return []interface{}{out}
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
-	return hashcode.String(buf.String())
 }

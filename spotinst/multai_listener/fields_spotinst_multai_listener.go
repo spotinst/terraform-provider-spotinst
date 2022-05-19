@@ -1,13 +1,11 @@
 package multai_listener
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"log"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -163,7 +161,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashBalancerListenerTLSConfig,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			listenerWrapper := resourceObject.(*commons.MultaiListenerWrapper)
@@ -222,7 +219,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -341,32 +337,4 @@ func flattenListenerTLSConfig(tls *multai.TLSConfig) []interface{} {
 	out[string(CertificateIDs)] = tls.CertificateIDs
 	out[string(CipherSuites)] = tls.CipherSuites
 	return []interface{}{out}
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
-	return hashcode.String(buf.String())
-}
-
-func hashBalancerListenerTLSConfig(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", strings.ToLower(m[string(MinVersion)].(string))))
-	buf.WriteString(fmt.Sprintf("%s-", strings.ToLower(m[string(MinVersion)].(string))))
-	buf.WriteString(fmt.Sprintf("%t-", m[string(SessionTicketsDisabled)].(bool)))
-	buf.WriteString(fmt.Sprintf("%t-", m[string(PreferServerCipherSuites)].(bool)))
-	if ids, ok := m[string(CertificateIDs)].([]string); ok {
-		for _, id := range ids {
-			buf.WriteString(fmt.Sprintf("%s-", id))
-		}
-	}
-	if css, ok := m[string(CipherSuites)].([]string); ok {
-		for _, cs := range css {
-			buf.WriteString(fmt.Sprintf("%s-", cs))
-		}
-	}
-	return hashcode.String(buf.String())
 }

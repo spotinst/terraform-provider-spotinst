@@ -1,13 +1,11 @@
 package ocean_aws_launch_spec
 
 import (
-	"bytes"
 	"encoding/base64"
 	"errors"
 	"fmt"
 	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
@@ -207,7 +205,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
@@ -272,7 +269,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
@@ -1499,14 +1495,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelValue)].(string)))
-	return hashcode.String(buf.String())
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)

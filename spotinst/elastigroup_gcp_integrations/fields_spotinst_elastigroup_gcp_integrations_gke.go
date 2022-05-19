@@ -1,11 +1,7 @@
 package elastigroup_gcp_integrations
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -108,7 +104,6 @@ func SetupGKE(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 							},
 						},
-						Set: labelHashKV,
 					},
 				},
 			},
@@ -250,12 +245,4 @@ func expandGKEAutoScaleLabels(data interface{}) ([]*gcp.AutoScaleLabel, error) {
 		out = append(out, c)
 	}
 	return out, nil
-}
-
-func labelHashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(Key)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(Value)].(string)))
-	return hashcode.String(buf.String())
 }
