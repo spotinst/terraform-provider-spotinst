@@ -113,7 +113,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(TagValue): {
 						Type:     schema.TypeString,
 						Optional: true,
-						//Computed: true,
 					},
 				},
 			},
