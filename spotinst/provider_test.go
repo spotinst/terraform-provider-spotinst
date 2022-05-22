@@ -29,7 +29,7 @@ func init() {
 		"gcp":     testAccProviderGCP,
 		"aws":     testAccProviderAWS,
 		"azure":   testAccProviderAzure,
-		"azureV3": testAccProviderAzureV3,
+		"azurev3": testAccProviderAzureV3,
 	}
 }
 
