@@ -189,7 +189,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "1000"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
 			{
@@ -202,7 +202,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
 		},
@@ -219,7 +219,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
  max_size         = 1000
   min_size         = 0
-  desired_capacity = 0
+  desired_capacity = 1
 
   subnet_ids      = ["subnet-0faad0b6bb7e99d9f"]
 
@@ -240,7 +240,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
   max_size         = 10
   min_size         = 0
-  desired_capacity = 0
+  desired_capacity = 1
 
   subnet_ids      = ["subnet-0bd585d2c2177c7ee"]
 
@@ -417,7 +417,6 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					//new image: ami-05f840082fe2dcac2
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
@@ -984,7 +983,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
@@ -1029,7 +1028,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
 
  // --- UPDATE POLICY ----------------
   update_policy {
-    should_roll = false
+    should_roll = true
 	conditioned_roll = false
 
     roll_config {
