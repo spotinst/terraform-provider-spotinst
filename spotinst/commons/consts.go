@@ -148,6 +148,20 @@ const (
 
 	SuspendProcesses ResourceAffinity = "Suspend_Processes"
 
+	StatefulNodeAzure                    ResourceAffinity = "Stateful_Node_Azure"
+	StatefulNodeAzureStrategy            ResourceAffinity = "Stateful_Node_Azure_Strategy"
+	StatefulNodeAzureNetwork             ResourceAffinity = "Stateful_Node_Azure_Network"
+	StatefulNodeAzureLoadBalancer        ResourceAffinity = "Stateful_Node_Azure_Load_Balancer"
+	StatefulNodeAzureLogin               ResourceAffinity = "Stateful_Node_Azure_Login"
+	StatefulNodeAzureVMSizes             ResourceAffinity = "Stateful_Node_Azure_VM_Sizes"
+	StatefulNodeAzureImage               ResourceAffinity = "Stateful_Node_Azure_Image"
+	StatefulNodeAzurePersistence         ResourceAffinity = "Stateful_Node_Azure_Persistence"
+	StatefulNodeAzureHealth              ResourceAffinity = "Stateful_Node_Azure_Health"
+	StatefulNodeAzureScheduling          ResourceAffinity = "Stateful_Node_Azure_Scheduling"
+	StatefulNodeAzureLaunchSpecification ResourceAffinity = "Stateful_Node_Azure_Launch_Specification"
+	StatefulNodeAzureExtensions          ResourceAffinity = "Stateful_Node_Azure_Extensions"
+	StatefulNodeAzureSecret              ResourceAffinity = "Stateful_Node_Azure_Secret"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

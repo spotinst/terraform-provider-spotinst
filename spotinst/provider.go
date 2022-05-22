@@ -76,6 +76,9 @@ func Provider() terraform.ResourceProvider {
 
 			// Data Integration
 			string(commons.DataIntegrationResourceName): resourceSpotinstDataIntegration(),
+
+			// Stateful
+			string(commons.StatefulNodeAzureResourceName): resourceSpotinstStatefulNodeAzureV3(),
 		},
 	}
 
