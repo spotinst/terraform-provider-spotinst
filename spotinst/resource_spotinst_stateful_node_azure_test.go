@@ -1148,7 +1148,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Tag(t *testing.T) {
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "tag.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tag.0.tag_key", "Creator"),
+					resource.TestCheckResourceAttr(resourceName, "tag.0.tag_key", "CreatorUpdated"),
 					resource.TestCheckResourceAttr(resourceName, "tag.0.tag_value", "updated_user@netapp.com"),
 				),
 			},
@@ -1175,7 +1175,7 @@ tag {
 
 const testTagStatefulNodeAzureV3Config_Update = `
 tag {
-	tag_key = "Creator"
+	tag_key = "CreatorUpdated"
 	tag_value = "updated_user@netapp.com"
 }
 `
@@ -1208,8 +1208,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "extension.0.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.publisher", "Microsoft.Azure.Extensions"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.type", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
+					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.%", "1"),
+					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
 				),
 			},
 			{
@@ -1226,8 +1226,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "extension.0.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.publisher", "Microsoft.Azure.Extensions"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.type", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.0.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
+					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.%", "1"),
+					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
 				),
 			},
 			{
