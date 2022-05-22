@@ -213,7 +213,7 @@ func expandSourceVault(data interface{}, sourceVault *azure.SourceVault) (*azure
 }
 
 func expandVaultCertificate(data interface{}, vaultCertificates []*azure.VaultCertificate) ([]*azure.VaultCertificate, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 
 	if len(list) == 0 && vaultCertificates == nil {
 		return nil, nil

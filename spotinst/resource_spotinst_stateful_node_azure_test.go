@@ -80,7 +80,6 @@ type AzureV3StatefulNodeConfigMetadata struct {
 	persistence          string
 	signal               string
 	extensions           string
-	secret               string
 	scheduling           string
 	tag                  string
 	variables            string
@@ -144,10 +143,6 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 		StatefulNodeMeta.scheduling = testSchedulingStatefulNodeAzureV3Config_Create
 	}
 
-	if StatefulNodeMeta.secret == "" {
-		StatefulNodeMeta.secret = testSecretsStatefulNodeAzureV3Config_Create
-	}
-
 	if StatefulNodeMeta.tag == "" {
 		StatefulNodeMeta.tag = testTagStatefulNodeAzureV3Config_Create
 	}
@@ -175,7 +170,6 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.persistence,
 			StatefulNodeMeta.signal,
 			StatefulNodeMeta.extensions,
-			StatefulNodeMeta.secret,
 			StatefulNodeMeta.scheduling,
 			StatefulNodeMeta.tag,
 		)
@@ -196,7 +190,6 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.persistence,
 			StatefulNodeMeta.signal,
 			StatefulNodeMeta.extensions,
-			StatefulNodeMeta.secret,
 			StatefulNodeMeta.scheduling,
 			StatefulNodeMeta.tag,
 		)
@@ -270,7 +263,6 @@ resource_group_name = "CoreReliabilityResourceGroup"
 %v
 %v
 %v
-%v
 
 delete {
 	should_terminate_vm = true
@@ -293,7 +285,6 @@ name = "%v"
 os = "Linux"
 region = "eastus"
 resource_group_name = "CoreReliabilityResourceGroup"
-%v
 %v
 %v
 %v
@@ -1279,92 +1270,5 @@ extension {
 `
 
 const testExtensionsStatefulNodeAzureV3Config_EmptyFields = ``
-
-//endregion
-
-//region Stateful Node Azure : Secret
-func TestAccSpotinstStatefulNodeAzureV3_Secret(t *testing.T) {
-	statefulNodeName := "terraform-tests-do-not-delete"
-	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
-
-	var node azure.StatefulNode
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testStatefulNodeAzureV3Destroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName,
-					extensions: testExtensionsStatefulNodeAzureV3Config_Create}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
-					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "secret.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.source_vault.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.source_vault.name", "core-reliability-source-vault-name"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.source_vault.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.vault_certificates.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.vault_certificates.certificate_url", "core-reliability-certificate-url"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.vault_certificates.certificate_store", "core-reliability-certificate-store"),
-				),
-			},
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
-					statefulNodeName: statefulNodeName,
-					secret:           testSecretsStatefulNodeAzureV3Config_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
-					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "secret.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.source_vault.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.source_vault.name", "core-reliability-source-vault-name"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.source_vault.resource_group_name", "CoreReliabilityResourceGroup3"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.vault_certificates.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.vault_certificates.certificate_url", "core-reliability-certificate-url"),
-					resource.TestCheckResourceAttr(resourceName, "secret.0.vault_certificates.certificate_store", "core-reliability-certificate-store-is"),
-				),
-			},
-			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
-					statefulNodeName: statefulNodeName,
-					secret:           testSecretsStatefulNodeAzureV3Config_EmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
-					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-				),
-			},
-		},
-	})
-}
-
-const testSecretsStatefulNodeAzureV3Config_Create = `
-   secret {
-     source_vault {
-     resource_group_name = "CoreReliabilityResourceGroup"
-     name = "core-reliability-source-vault-name"
-	}
-     vault_certificates {
-     certificate_url = "core-reliability-certificate-url"
-     certificate_store = "core-reliability-certificate-store"
-	}
-}
-`
-const testSecretsStatefulNodeAzureV3Config_Update = `
-   secret {
-     source_vault {
-     resource_group_name = "CoreReliabilityResourceGroup3"
-     name = "core-reliability-source-vault-name"
-	}
-     vault_certificates {
-     certificate_url = "core-reliability-certificate-url"
-     certificate_store = "core-reliability-certificate-store-is"
-	}
-}
-`
-
-const testSecretsStatefulNodeAzureV3Config_EmptyFields = ``
 
 //endregion
