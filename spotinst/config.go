@@ -12,6 +12,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/credentials"
@@ -45,6 +46,7 @@ type Client struct {
 	ocean           ocean.Service
 	managedInstance managedinstance.Service
 	dataIntegration dataintegration.Service
+	statefulNode    stateful.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
@@ -67,6 +69,7 @@ func (c *Config) Client() (*Client, error) {
 		ocean:           ocean.New(sess),
 		managedInstance: managedinstance.New(sess),
 		dataIntegration: dataintegration.New(sess),
+		statefulNode:    stateful.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")
