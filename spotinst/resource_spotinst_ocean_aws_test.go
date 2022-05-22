@@ -369,9 +369,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t, "aws") },
-		Providers: TestAccProviders,
-		//CheckDestroy: testOceanAWSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
 			{
