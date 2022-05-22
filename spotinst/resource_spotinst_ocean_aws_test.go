@@ -189,7 +189,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "1000"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
 			{
@@ -202,7 +202,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
 		},
@@ -219,7 +219,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
  max_size         = 1000
   min_size         = 0
-  desired_capacity = 0
+  desired_capacity = 1
 
   subnet_ids      = ["subnet-0faad0b6bb7e99d9f"]
 
@@ -240,7 +240,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
 
   max_size         = 10
   min_size         = 0
-  desired_capacity = 0
+  desired_capacity = 1
 
   subnet_ids      = ["subnet-0bd585d2c2177c7ee"]
 
@@ -434,7 +434,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "24"),
 					resource.TestCheckResourceAttr(resourceName, "monitoring", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
 					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
@@ -505,7 +505,7 @@ const testLaunchConfigAWSConfig_Update = `
   associate_public_ip_address = true
   root_volume_size            = 24
   monitoring                  = false
-  ebs_optimized               = false
+  ebs_optimized               = true
   use_as_template_only        = false
   instance_metadata_options {
 	  http_tokens = "optional"
@@ -983,7 +983,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
@@ -1028,7 +1028,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
 
  // --- UPDATE POLICY ----------------
   update_policy {
-    should_roll = false
+    should_roll = true
 	conditioned_roll = false
 
     roll_config {
