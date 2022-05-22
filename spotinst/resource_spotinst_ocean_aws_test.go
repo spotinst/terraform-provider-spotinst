@@ -434,7 +434,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "24"),
 					resource.TestCheckResourceAttr(resourceName, "monitoring", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
 					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
@@ -505,7 +505,7 @@ const testLaunchConfigAWSConfig_Update = `
   associate_public_ip_address = true
   root_volume_size            = 24
   monitoring                  = false
-  ebs_optimized               = true
+  ebs_optimized               = false
   use_as_template_only        = false
   instance_metadata_options {
 	  http_tokens = "optional"
