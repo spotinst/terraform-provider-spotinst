@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.74.0 (May 22, 2022)
+
+FEATURES:
+* **New Resource:** `spotinst_stateful_node_azure`
+
 ## 1.73.3 (May 09, 2022)
 
 BUG FIXES:
