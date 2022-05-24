@@ -1,5 +1,8 @@
 ## Unreleased
 
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added support for `logging`
+
 ## 1.74.0 (May 22, 2022)
 
 FEATURES:
