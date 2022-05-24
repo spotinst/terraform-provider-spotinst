@@ -973,22 +973,6 @@ func TestAccSpotinstOceanECS_Logging(t *testing.T) {
 				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
 					clusterName:    clusterName,
 					name:           name,
-					fieldsToAppend: testLogging_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanECSExists(&cluster, resourceName),
-					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-5fae075c"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createOceanECSTerraform(&ECSClusterConfigMetadata{
-					clusterName:    clusterName,
-					name:           name,
 					fieldsToAppend: testLogging_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
@@ -1007,17 +991,6 @@ const testLogging_Create = `
     export {
       s3 { 
 		id = "di-5fae075b"
-      }
-    }
-  }
-`
-
-const testLogging_Update = `
- // --- LOGGING -----------------
-  logging {
-    export {
-      s3 { 
-		id = "di-5fae075c"
       }
     }
   }
