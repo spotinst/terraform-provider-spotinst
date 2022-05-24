@@ -318,16 +318,16 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.memory_per_unit", "256"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.gpu_per_unit", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.0.auto_headroom_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Create+".key", "fakeKey"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Create+".value", "fakeVal"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKey"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeVal"),
 				),
 			},
 			{
@@ -345,8 +345,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms_automatic.0.auto_headroom_percentage", "5"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".key", "updated"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanAWSLaunchSpecTagsHash_Update+".value", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "updated"),
 				),
 			},
 			{
@@ -364,11 +364,6 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 		},
 	})
 }
-
-const (
-	OceanAWSLaunchSpecTagsHash_Create = "2538041064"
-	OceanAWSLaunchSpecTagsHash_Update = "1968254376"
-)
 
 const testAutoScaleOceanAWSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {

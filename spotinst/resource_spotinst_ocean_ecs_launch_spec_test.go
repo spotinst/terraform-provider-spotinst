@@ -337,13 +337,13 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.memory_per_unit", "256"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Create+".key", "fakeKey"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Create+".value", "fakeVal"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKey"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeVal"),
 				),
 			},
 			{
@@ -359,8 +359,8 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Update+".key", "updated"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Update+".value", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "updated"),
 				),
 			},
 			{
@@ -378,11 +378,6 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 		},
 	})
 }
-
-const (
-	OceanECSLaunchSpecTagsHash_Create = "2538041064"
-	OceanECSLaunchSpecTagsHash_Update = "1968254376"
-)
 
 const testAutoScaleOceanECSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
