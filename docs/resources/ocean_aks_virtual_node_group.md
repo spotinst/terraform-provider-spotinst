@@ -48,6 +48,7 @@ resource "spotinst_ocean_aks_virtual_node_group" "example" {
      os_disk {
        size_gb = 100
        type = "Standard_LRS"
+       utilize_ephemeral_storage = false
      }
  
      tag {
@@ -91,6 +92,7 @@ The following arguments are supported:
     * `os_disk` - (Optional) Specify OS disk specification other than default.
         * `size_gb` - (Required) The size of the OS disk in GB, Required if dataDisks is specified.
         * `type` - (Optional) The type of the OS disk. Valid values: `"Standard_LRS"`, `"Premium_LRS"`, `"StandardSSD_LRS"`.
+        * `utilize_ephemeral_storage` - (Optional) Flag to enable/disable the Ephemeral OS Disk utilization.
     * `tag` - (Optional) Additional key-value pairs to be used to tag the VMs in the virtual node group.
         * `key` - (Optional) Tag Key for Vms in the cluster.
         * `value` - (Optional) Tag Value for VMs in the cluster.
