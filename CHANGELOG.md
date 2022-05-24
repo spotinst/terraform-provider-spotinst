@@ -2,6 +2,7 @@
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added support for `logging`
+* resource/spotinst_ocean_aks: added support for `zones`
 * resource/spotinst_ocean_aks_virtual_node_group: added support for `zones`
 * resource/spotinst_ocean_aks_virtual_node_group: added support for `utilize_ephemeral_storage`
 

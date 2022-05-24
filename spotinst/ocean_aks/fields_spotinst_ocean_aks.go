@@ -161,6 +161,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem: &schema.Schema{
 				Type: schema.TypeString},
 			Optional: true,
+			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
