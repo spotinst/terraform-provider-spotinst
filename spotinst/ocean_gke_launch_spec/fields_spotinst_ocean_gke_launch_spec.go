@@ -548,7 +548,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RestrictScaleDown)); ok && v != nil {
 				restrictScaleDown := spotinst.Bool(v.(bool))
 				launchSpec.SetRestrictScaleDown(restrictScaleDown)
 			}
@@ -558,7 +558,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var restrictScaleDown *bool = nil
-			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RestrictScaleDown)); ok && v != nil {
 				restrictScaleDown = spotinst.Bool(v.(bool))
 			}
 			launchSpec.SetRestrictScaleDown(restrictScaleDown)
@@ -594,7 +594,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 
-			if v, ok := resourceData.GetOkExists(string(RootVolumeSizeInGB)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RootVolumeSizeInGB)); ok && v != nil {
 				rootVolumeSize := spotinst.Int(v.(int))
 				launchSpec.SetRootVolumeSizeInGB(rootVolumeSize)
 			}
@@ -605,7 +605,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var rootVolumeSize *int = nil
 
-			if v, ok := resourceData.GetOkExists(string(RootVolumeSizeInGB)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RootVolumeSizeInGB)); ok && v != nil {
 				rootVolumeSize = spotinst.Int(v.(int))
 			}
 			launchSpec.SetRootVolumeSizeInGB(rootVolumeSize)
@@ -641,7 +641,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 
-			if v, ok := resourceData.GetOkExists(string(RootVolumeType)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RootVolumeType)); ok && v != nil {
 				rootVolumeType := spotinst.String(v.(string))
 				launchSpec.SetRootVolumeType(rootVolumeType)
 			}
@@ -652,7 +652,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var rootVolumeType *string = nil
 
-			if v, ok := resourceData.GetOkExists(string(RootVolumeType)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RootVolumeType)); ok && v != nil {
 				rootVolumeType = spotinst.String(v.(string))
 			}
 			launchSpec.SetRootVolumeType(rootVolumeType)
@@ -911,7 +911,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 
-			if v, ok := resourceData.GetOkExists(string(ServiceAccount)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(ServiceAccount)); ok && v != nil {
 				serviceAccount := spotinst.String(v.(string))
 				launchSpec.SetServiceAccount(serviceAccount)
 			}
@@ -1016,7 +1016,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 
-			if v, ok := resourceData.GetOkExists(string(Name)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(Name)); ok && v != nil {
 				name := spotinst.String(v.(string))
 				launchSpec.SetName(name)
 			}
@@ -1027,7 +1027,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var name *string = nil
 
-			if v, ok := resourceData.GetOkExists(string(Name)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(Name)); ok && v != nil {
 				name = spotinst.String(v.(string))
 			}
 			launchSpec.SetName(name)

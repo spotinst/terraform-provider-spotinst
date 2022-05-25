@@ -243,7 +243,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOkExists(string(TerminationProtected)); ok {
+			if v, ok := resourceData.GetOk(string(TerminationProtected)); ok {
 				if scaler.Cluster == nil {
 					scaler.SetCluster(&mrscaler.Cluster{})
 				}
@@ -254,7 +254,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOkExists(string(TerminationProtected)); ok {
+			if v, ok := resourceData.GetOk(string(TerminationProtected)); ok {
 				if scaler.Cluster == nil {
 					scaler.SetCluster(&mrscaler.Cluster{})
 				}
@@ -287,7 +287,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOkExists(string(KeepJobFlowAlive)); ok {
+			if v, ok := resourceData.GetOk(string(KeepJobFlowAlive)); ok {
 				if scaler.Cluster == nil {
 					scaler.SetCluster(&mrscaler.Cluster{})
 				}

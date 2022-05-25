@@ -79,7 +79,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(OnDemandCount)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(OnDemandCount)); ok && v != nil {
 				value := v.(int)
 				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(value))
 			}
@@ -89,7 +89,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var count *int
-			if v, ok := resourceData.GetOkExists(string(OnDemandCount)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(OnDemandCount)); ok && v != nil {
 				if value, ok := v.(int); ok && value > 0 {
 					count = spotinst.Int(value)
 				}
@@ -281,7 +281,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(FallbackToOnDemand)); ok && v != nil {
 				ftod := v.(bool)
 				fallback := spotinst.Bool(ftod)
 				elastigroup.Strategy.SetFallbackToOnDemand(fallback)
@@ -292,7 +292,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var fallback *bool = nil
-			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(FallbackToOnDemand)); ok && v != nil {
 				ftod := v.(bool)
 				fallback = spotinst.Bool(ftod)
 			}
@@ -392,7 +392,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(UtilizeCommitments)); ok && v != nil {
 				uc := v.(bool)
 				utilizeCommitments := spotinst.Bool(uc)
 				elastigroup.Strategy.SetUtilizeCommitments(utilizeCommitments)
@@ -403,7 +403,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var utilizeCommitments *bool = nil
-			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(UtilizeCommitments)); ok && v != nil {
 				uc := v.(bool)
 				utilizeCommitments = spotinst.Bool(uc)
 			}
@@ -437,7 +437,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(MinimumInstanceLifetime)); ok && v != nil {
 				value := v.(int)
 				elastigroup.Strategy.SetMinimumInstanceLifetime(spotinst.Int(value))
 			}
@@ -447,7 +447,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var minimumInstanceLifetime *int
-			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(MinimumInstanceLifetime)); ok && v != nil {
 				if value, ok := v.(int); ok && value > 0 {
 					minimumInstanceLifetime = spotinst.Int(value)
 				}

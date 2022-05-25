@@ -710,7 +710,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RestrictScaleDown)); ok && v != nil {
 				restrictScaleDown := spotinst.Bool(v.(bool))
 				launchSpec.SetRestrictScaleDown(restrictScaleDown)
 			}
@@ -720,7 +720,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var restrictScaleDown *bool = nil
-			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(RestrictScaleDown)); ok && v != nil {
 				restrictScaleDown = spotinst.Bool(v.(bool))
 			}
 			launchSpec.SetRestrictScaleDown(restrictScaleDown)

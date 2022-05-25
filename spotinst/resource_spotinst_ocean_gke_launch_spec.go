@@ -157,7 +157,7 @@ func updateGKELaunchSpec(launchSpec *gcp.LaunchSpec, resourceData *schema.Resour
 
 	oceanId := resourceData.Get(string(ocean_gke_launch_spec.OceanId))
 	var shouldRoll = false
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_launch_spec.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(ocean_gke_launch_spec.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -192,7 +192,7 @@ func rollOceanGKELaunchSpec(resourceData *schema.ResourceData, meta interface{})
 	specID := resourceData.Id()
 	clusterID := resourceData.Get(string(ocean_gke_launch_spec.OceanId)).(string)
 
-	updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_launch_spec.UpdatePolicy))
+	updatePolicy, exists := resourceData.GetOk(string(ocean_gke_launch_spec.UpdatePolicy))
 	if !exists {
 		return fmt.Errorf("ocean/gke: missing update policy for cluster %q", clusterID)
 	}

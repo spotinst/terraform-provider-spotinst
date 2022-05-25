@@ -80,7 +80,7 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		GroupID: spotinst.String(groupId),
 	}
 
-	if statefulDeallocation, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulDeallocation)); exists {
+	if statefulDeallocation, exists := resourceData.GetOk(string(elastigroup_aws_stateful.StatefulDeallocation)); exists {
 		list := statefulDeallocation.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -176,12 +176,12 @@ func resourceSpotinstElastigroupAWSCreate(resourceData *schema.ResourceData, met
 
 	resourceData.SetId(spotinst.StringValue(groupId))
 
-	if capacity, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacity)); ok {
+	if capacity, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacity)); ok {
 		if *elastigroup.Capacity.Target < capacity.(int) {
 
 			return fmt.Errorf("[ERROR] Your target healthy capacity must be less than or equal to your desired capcity")
 		}
-		if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
+		if timeout, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
 			err := awaitReady(groupId, timeout.(int), capacity.(int), meta.(*Client))
 			if err != nil {
 				return fmt.Errorf("[ERROR] Timed out when creating group: %s", err)
@@ -270,7 +270,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 
 	var shouldRoll = false
 	groupId := resourceData.Id()
-	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_aws.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(elastigroup_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -291,7 +291,7 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	}
 
-	if instanceActions, exists := resourceData.GetOkExists(string(elastigroup_aws_stateful.StatefulInstanceAction)); exists {
+	if instanceActions, exists := resourceData.GetOk(string(elastigroup_aws_stateful.StatefulInstanceAction)); exists {
 		actionList := instanceActions.([]interface{})
 		if err := checkStatefulActionUniqueness(actionList); err != nil {
 			log.Printf("[ERROR] Uniqueness check failed with error: %v", err)
@@ -342,13 +342,13 @@ func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping group roll", string(elastigroup_aws.ShouldRoll))
-		if capacity, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacity)); ok {
-			if target, ok := resourceData.GetOkExists(string(elastigroup_aws.DesiredCapacity)); ok {
+		if capacity, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacity)); ok {
+			if target, ok := resourceData.GetOk(string(elastigroup_aws.DesiredCapacity)); ok {
 				if target.(int) < capacity.(int) {
 					return fmt.Errorf("[ERROR] You've asked to wait for a healthy capacity that is above your desired capacity")
 				}
 
-				if timeout, ok := resourceData.GetOkExists(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
+				if timeout, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
 					err := awaitReady(spotinst.String(groupId), timeout.(int), capacity.(int), meta.(*Client))
 					if err != nil {
 						return fmt.Errorf("[ERROR] Timed out when updating group: %s", err)
@@ -441,7 +441,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	ctx := context.Background()
 	groupID := resourceData.Id()
 
-	updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_aws.UpdatePolicy))
+	updatePolicy, exists := resourceData.GetOk(string(elastigroup_aws.UpdatePolicy))
 	if !exists {
 		return fmt.Errorf("[ERROR] onRoll() -> Missing update policy for group [%v]", groupID)
 	}

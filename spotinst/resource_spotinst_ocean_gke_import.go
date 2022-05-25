@@ -202,7 +202,7 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 	var shouldRoll = false
 	var conditionedRoll = false
 	clusterID := resourceData.Id()
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(ocean_gke_import.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -274,7 +274,7 @@ func deleteGKEImportCluster(resourceData *schema.ResourceData, meta interface{})
 func rollOceanGKECluster(resourceData *schema.ResourceData, meta interface{}) error {
 	clusterID := resourceData.Id()
 
-	updatePolicy, exists := resourceData.GetOkExists(string(ocean_gke_import.UpdatePolicy))
+	updatePolicy, exists := resourceData.GetOk(string(ocean_gke_import.UpdatePolicy))
 	if !exists {
 		return fmt.Errorf("ocean/gke: missing update policy for cluster %q", clusterID)
 	}

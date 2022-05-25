@@ -136,7 +136,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			hcWrapper := resourceObject.(*commons.HealthCheckWrapper)
 			healthCheck := hcWrapper.GetHealthCheck()
-			if v, ok := resourceData.GetOkExists(string(ProxyPort)); ok {
+			if v, ok := resourceData.GetOk(string(ProxyPort)); ok {
 				value := v.(int)
 				healthCheck.SetProxyPort(spotinst.Int(value))
 			}
@@ -146,7 +146,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			hcWrapper := resourceObject.(*commons.HealthCheckWrapper)
 			healthCheck := hcWrapper.GetHealthCheck()
-			if v, ok := resourceData.GetOkExists(string(ProxyPort)); ok {
+			if v, ok := resourceData.GetOk(string(ProxyPort)); ok {
 				value := v.(int)
 				healthCheck.SetProxyPort(spotinst.Int(value))
 			}

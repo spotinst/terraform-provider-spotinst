@@ -35,7 +35,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(AutoHealing)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(AutoHealing)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}
@@ -47,7 +47,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
-			if v, ok := resourceData.GetOkExists(string(AutoHealing)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(AutoHealing)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}
@@ -167,7 +167,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(HealthCheckGracePeriod)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(HealthCheckGracePeriod)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}
@@ -179,7 +179,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *int = nil
-			if v, ok := resourceData.GetOkExists(string(HealthCheckGracePeriod)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(HealthCheckGracePeriod)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}
@@ -215,7 +215,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(HealthCheckType)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(HealthCheckType)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}
@@ -227,7 +227,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *string = nil
-			if v, ok := resourceData.GetOkExists(string(HealthCheckType)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(HealthCheckType)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}
@@ -471,7 +471,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(UnhealthyDuration)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(UnhealthyDuration)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}
@@ -483,7 +483,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *int = nil
-			if v, ok := resourceData.GetOkExists(string(UnhealthyDuration)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(UnhealthyDuration)); ok && v != nil {
 				if elastigroup.Compute.Health == nil {
 					elastigroup.Compute.SetHealth(&gcp.Health{})
 				}

@@ -218,7 +218,7 @@ func SetupTaskGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOkExists(string(TaskEBSOptimized)); ok {
+			if v, ok := resourceData.GetOk(string(TaskEBSOptimized)); ok {
 				if scaler.Compute.InstanceGroups.TaskGroup == nil {
 					scaler.Compute.InstanceGroups.SetTaskGroup(&mrscaler.InstanceGroup{})
 				}
@@ -233,7 +233,7 @@ func SetupTaskGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			optimized := false
-			if v, ok := resourceData.GetOkExists(string(TaskEBSOptimized)); ok {
+			if v, ok := resourceData.GetOk(string(TaskEBSOptimized)); ok {
 				if scaler.Compute.InstanceGroups.TaskGroup == nil {
 					scaler.Compute.InstanceGroups.SetTaskGroup(&mrscaler.InstanceGroup{})
 				}

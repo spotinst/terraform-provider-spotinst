@@ -67,7 +67,7 @@ func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchS
 	var resp *aws.CreateLaunchSpecOutput = nil
 	err := resource.Retry(time.Minute, func() *resource.RetryError {
 		input := &aws.CreateLaunchSpecInput{LaunchSpec: launchSpec}
-		if createOptions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.CreateOptions)); exists {
+		if createOptions, exists := resourceData.GetOk(string(ocean_aws_launch_spec.CreateOptions)); exists {
 			list := createOptions.([]interface{})
 			if len(list) > 0 && list[0] != nil {
 				m := list[0].(map[string]interface{})
@@ -166,7 +166,7 @@ func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceD
 	launchSpecId := resourceData.Id()
 	oceanId := resourceData.Get(string(ocean_aws_launch_spec.OceanID))
 	var shouldRoll = false
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(ocean_aws_launch_spec.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -201,7 +201,7 @@ func rollOceanAWSLaunchSpec(resourceData *schema.ResourceData, meta interface{})
 	specID := resourceData.Id()
 	clusterID := resourceData.Get(string(ocean_aws_launch_spec.OceanID)).(string)
 
-	updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.UpdatePolicy))
+	updatePolicy, exists := resourceData.GetOk(string(ocean_aws_launch_spec.UpdatePolicy))
 	if !exists {
 		return fmt.Errorf("ocean/aws: missing update policy for cluster %q", clusterID)
 	}
@@ -265,7 +265,7 @@ func deleteLaunchSpec(resourceData *schema.ResourceData, meta interface{}) error
 		log.Printf("===> launchSpec delete configuration: %s", json)
 	}
 
-	if deleteOptions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.DeleteOptions)); exists {
+	if deleteOptions, exists := resourceData.GetOk(string(ocean_aws_launch_spec.DeleteOptions)); exists {
 		list := deleteOptions.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})

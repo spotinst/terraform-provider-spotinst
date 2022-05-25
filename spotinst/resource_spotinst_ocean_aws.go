@@ -180,7 +180,7 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	var conditionedRoll = false
 	var autoApplyTags = false
 	clusterID := resourceData.Id()
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(ocean_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -224,7 +224,7 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 func rollOceanAWSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 	clusterID := resourceData.Id()
 
-	updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy))
+	updatePolicy, exists := resourceData.GetOk(string(ocean_aws.UpdatePolicy))
 	if !exists {
 		return fmt.Errorf("ocean/aws: missing update policy for cluster %q", clusterID)
 	}

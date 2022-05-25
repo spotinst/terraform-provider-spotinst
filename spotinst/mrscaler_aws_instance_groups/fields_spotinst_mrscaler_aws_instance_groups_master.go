@@ -105,7 +105,7 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
-			if v, ok := resourceData.GetOkExists(string(MasterEBSOptimized)); ok {
+			if v, ok := resourceData.GetOk(string(MasterEBSOptimized)); ok {
 				if scaler.Compute.InstanceGroups.MasterGroup == nil {
 					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
 				}
@@ -120,7 +120,7 @@ func SetupMasterGroup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			mrsWrapper := resourceObject.(*commons.MRScalerAWSWrapper)
 			scaler := mrsWrapper.GetMRScalerAWS()
 			optimized := false
-			if v, ok := resourceData.GetOkExists(string(MasterEBSOptimized)); ok {
+			if v, ok := resourceData.GetOk(string(MasterEBSOptimized)); ok {
 				if scaler.Compute.InstanceGroups.MasterGroup == nil {
 					scaler.Compute.InstanceGroups.SetMasterGroup(&mrscaler.InstanceGroup{})
 				}

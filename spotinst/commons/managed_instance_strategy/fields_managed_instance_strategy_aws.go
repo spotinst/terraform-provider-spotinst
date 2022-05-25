@@ -109,7 +109,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+			if v, ok := resourceData.GetOk(string(DrainingTimeout)); ok {
 				managedInstance.Strategy.SetDrainingTimeout(spotinst.Int(v.(int)))
 			}
 			return nil
@@ -118,7 +118,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
 
-			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+			if v, ok := resourceData.GetOk(string(DrainingTimeout)); ok {
 				managedInstance.Strategy.SetDrainingTimeout(spotinst.Int(v.(int)))
 			}
 			return nil
@@ -332,7 +332,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(MinimumInstanceLifetime)); ok && v != nil {
 				value := v.(int)
 				managedInstance.Strategy.SetMinimumInstanceLifetime(spotinst.Int(value))
 			}
@@ -342,7 +342,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
 			var minimumInstanceLifetime *int
-			if v, ok := resourceData.GetOkExists(string(MinimumInstanceLifetime)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(MinimumInstanceLifetime)); ok && v != nil {
 				if value, ok := v.(int); ok && value > 0 {
 					minimumInstanceLifetime = spotinst.Int(value)
 				}

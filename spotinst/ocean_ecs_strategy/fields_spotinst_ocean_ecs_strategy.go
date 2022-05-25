@@ -38,7 +38,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+			if v, ok := resourceData.GetOk(string(DrainingTimeout)); ok {
 				cluster.Strategy.SetDrainingTimeout(spotinst.Int(v.(int)))
 			}
 
@@ -86,7 +86,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
+			if v, ok := resourceData.GetOk(string(UtilizeReservedInstances)); ok {
 				cluster.Strategy.SetUtilizeReservedInstances(spotinst.Bool(v.(bool)))
 			}
 			return nil
@@ -95,7 +95,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 			var uri *bool = nil
-			if v, ok := resourceData.GetOkExists(string(UtilizeReservedInstances)); ok {
+			if v, ok := resourceData.GetOk(string(UtilizeReservedInstances)); ok {
 				uri = spotinst.Bool(v.(bool))
 			}
 			cluster.Strategy.SetUtilizeReservedInstances(uri)
@@ -126,7 +126,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
-			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(UtilizeCommitments)); ok && v != nil {
 				uc := v.(bool)
 				utilizeCommitments := spotinst.Bool(uc)
 				cluster.Strategy.SetUtilizeCommitments(utilizeCommitments)
@@ -137,7 +137,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 			var utilizeCommitments *bool = nil
-			if v, ok := resourceData.GetOkExists(string(UtilizeCommitments)); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(UtilizeCommitments)); ok && v != nil {
 				uc := v.(bool)
 				utilizeCommitments = spotinst.Bool(uc)
 			}

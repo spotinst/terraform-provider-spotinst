@@ -291,7 +291,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(AssociatePublicIpAddress)); ok {
+			if v, ok := resourceData.GetOk(string(AssociatePublicIpAddress)); ok {
 				cluster.Compute.LaunchSpecification.SetAssociatePublicIPAddress(spotinst.Bool(v.(bool)))
 			}
 			return nil
@@ -300,7 +300,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(AssociatePublicIpAddress)); ok {
+			if v, ok := resourceData.GetOk(string(AssociatePublicIpAddress)); ok {
 				cluster.Compute.LaunchSpecification.SetAssociatePublicIPAddress(spotinst.Bool(v.(bool)))
 			}
 			return nil
@@ -336,7 +336,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(Monitoring)); ok {
+			if v, ok := resourceData.GetOk(string(Monitoring)); ok {
 				cluster.Compute.LaunchSpecification.SetMonitoring(spotinst.Bool(v.(bool)))
 			}
 			return nil
@@ -345,7 +345,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(Monitoring)); ok {
+			if v, ok := resourceData.GetOk(string(Monitoring)); ok {
 				cluster.Compute.LaunchSpecification.SetMonitoring(spotinst.Bool(v.(bool)))
 			}
 			return nil
@@ -381,7 +381,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(EBSOptimized)); ok {
+			if v, ok := resourceData.GetOk(string(EBSOptimized)); ok {
 				cluster.Compute.LaunchSpecification.SetEBSOptimized(spotinst.Bool(v.(bool)))
 			}
 			return nil
@@ -390,7 +390,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOkExists(string(EBSOptimized)); ok {
+			if v, ok := resourceData.GetOk(string(EBSOptimized)); ok {
 				cluster.Compute.LaunchSpecification.SetEBSOptimized(spotinst.Bool(v.(bool)))
 			}
 			return nil

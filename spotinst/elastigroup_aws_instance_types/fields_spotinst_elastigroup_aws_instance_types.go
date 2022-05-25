@@ -178,7 +178,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(InstanceTypeWeights)); ok && v != "" {
+			if v, ok := resourceData.GetOk(string(InstanceTypeWeights)); ok && v != "" {
 				if weights, err := expandAWSGroupInstanceTypeWeights(v); err != nil {
 					return err
 				} else {

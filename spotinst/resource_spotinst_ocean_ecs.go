@@ -180,7 +180,7 @@ func updateECSCluster(cluster *aws.ECSCluster, resourceData *schema.ResourceData
 	var conditionedRoll = false
 	var autoApplyTags = false
 	clusterID := resourceData.Id()
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_ecs.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(ocean_ecs.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -225,7 +225,7 @@ func rollECSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 	var errResult error = nil
 	clusterID := resourceData.Id()
 
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_ecs.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(ocean_ecs.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			updateClusterSchema := list[0].(map[string]interface{})

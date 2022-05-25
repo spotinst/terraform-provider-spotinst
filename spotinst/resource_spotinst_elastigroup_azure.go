@@ -176,7 +176,7 @@ func updateAzureGroup(elastigroup *azure.Group, resourceData *schema.ResourceDat
 	var shouldRoll = false
 	groupId := resourceData.Id()
 
-	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(elastigroup_azure.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
@@ -209,7 +209,7 @@ func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	var errResult error = nil
 	groupId := resourceData.Id()
 
-	if updatePolicy, exists := resourceData.GetOkExists(string(elastigroup_azure.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOk(string(elastigroup_azure.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			updateGroupSchema := list[0].(map[string]interface{})

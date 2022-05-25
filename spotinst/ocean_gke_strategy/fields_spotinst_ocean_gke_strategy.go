@@ -37,7 +37,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 
-			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+			if v, ok := resourceData.GetOk(string(DrainingTimeout)); ok {
 				cluster.Strategy.SetDrainingTimeout(spotinst.Int(v.(int)))
 			}
 

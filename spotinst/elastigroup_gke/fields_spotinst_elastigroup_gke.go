@@ -245,7 +245,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(PreemptiblePercentage)); ok {
+			if v, ok := resourceData.GetOk(string(PreemptiblePercentage)); ok {
 				value := v.(int)
 				elastigroup.Strategy.SetPreemptiblePercentage(spotinst.Int(value))
 			}
@@ -255,7 +255,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(PreemptiblePercentage)); ok {
+			if v, ok := resourceData.GetOk(string(PreemptiblePercentage)); ok {
 				value := v.(int)
 				elastigroup.Strategy.SetPreemptiblePercentage(spotinst.Int(value))
 			}
