@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
@@ -160,6 +161,45 @@ func resourceSpotinstElastigroupAWSRead(resourceData *schema.ResourceData, meta 
 	return nil
 }
 
+func resourceSpotinstElastigroupAWSReadV2(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	id := resourceData.Id()
+	log.Printf(string(commons.ResourceOnRead),
+		commons.ElastigroupResource.GetName(), id)
+
+	input := &aws.ReadGroupInput{GroupID: spotinst.String(id)}
+	resp, err := meta.(*Client).elastigroup.CloudProviderAWS().Read(context.Background(), input)
+	if err != nil {
+		// If the group was not found, return nil so that we can show
+		// that the group does not exist
+		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+			for _, err := range errs {
+				if err.Code == ErrCodeGroupNotFound {
+					resourceData.SetId("")
+					return nil
+				}
+			}
+		}
+
+		// Some other error, report it.
+		return fmt.Errorf("failed to read group: %s", err)
+	}
+
+	// If nothing was found, then return no state.
+	groupResponse := resp.Group
+	if groupResponse == nil {
+		resourceData.SetId("")
+		return nil
+	}
+
+	updateCapitalSlice(resourceData, groupResponse)
+
+	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
+		return err
+	}
+	log.Printf("===> Elastigroup read successfully: %s <===", id)
+	return nil
+}
+
 func resourceSpotinstElastigroupAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupResource.GetName())
@@ -185,6 +225,55 @@ func resourceSpotinstElastigroupAWSCreate(resourceData *schema.ResourceData, met
 			err := awaitReady(groupId, timeout.(int), capacity.(int), meta.(*Client))
 			if err != nil {
 				return fmt.Errorf("[ERROR] Timed out when creating group: %s", err)
+			}
+		}
+	}
+
+	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
+
+	return resourceSpotinstElastigroupAWSRead(resourceData, meta)
+}
+
+func resourceSpotinstElastigroupAWSCreateV2(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	log.Printf(string(commons.ResourceOnCreate),
+		commons.ElastigroupResource.GetName())
+
+	elastigroup, err := commons.ElastigroupResource.OnCreate(resourceData, meta)
+	if err != nil {
+		return diag.Diagnostics{
+			diag.Diagnostic{
+				Summary: ctx.Err().Error(),
+			},
+		}
+	}
+
+	groupId, err := createGroup(resourceData, elastigroup, meta.(*Client))
+	if err != nil {
+		return diag.Diagnostics{
+			diag.Diagnostic{
+				Summary: ctx.Err().Error(),
+			},
+		}
+	}
+
+	resourceData.SetId(spotinst.StringValue(groupId))
+
+	if capacity, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacity)); ok {
+		if *elastigroup.Capacity.Target < capacity.(int) {
+			return diag.Diagnostics{
+				diag.Diagnostic{
+					Summary: "[ERROR] Your target healthy capacity must be less than or equal to your desired capcity",
+				},
+			}
+		}
+		if timeout, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
+			err := awaitReady(groupId, timeout.(int), capacity.(int), meta.(*Client))
+			if err != nil {
+				return diag.Diagnostics{
+					diag.Diagnostic{
+						Summary: "[ERROR] Timed out when creating group: " + err.Error(),
+					},
+				}
 			}
 		}
 	}
