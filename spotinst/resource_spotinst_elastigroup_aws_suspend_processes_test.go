@@ -123,7 +123,7 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_Baseline(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testSuspendProcessesDestroy,
 
 		Steps: []resource.TestStep{
@@ -212,7 +212,7 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_RemoveSuspension(t *testing.T
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testSuspendProcessesDestroy,
 
 		Steps: []resource.TestStep{

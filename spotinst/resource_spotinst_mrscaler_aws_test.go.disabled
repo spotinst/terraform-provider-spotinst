@@ -201,7 +201,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_Baseline(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -283,7 +283,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_Strategy(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -357,7 +357,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_Cluster(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -438,7 +438,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_MasterGroup(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -489,7 +489,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_TaskGroup(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -619,7 +619,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_CoreGroup(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -755,7 +755,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_Tags(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -799,7 +799,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_TaskScalingUpPolicies(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:      func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:  testMRScalerAWSDestroy,
 		IDRefreshName: resourceName,
 
@@ -982,7 +982,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_TaskScalingDownPolicies(t *testing.T) 
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:      func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:  testMRScalerAWSDestroy,
 		IDRefreshName: resourceName,
 
@@ -1165,7 +1165,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_CoreScalingUpPolicies(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:      func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:  testMRScalerAWSDestroy,
 		IDRefreshName: resourceName,
 
@@ -1348,7 +1348,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_CoreScalingDownPolicies(t *testing.T) 
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:      func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:  testMRScalerAWSDestroy,
 		IDRefreshName: resourceName,
 
@@ -1531,7 +1531,7 @@ func TestAccSpotinstMRScalerAWSNewCluster_OptionalFields(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -1646,7 +1646,7 @@ func TestAccSpotinstMRScalerAWS_ScheduledTask(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:      func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:  testMRScalerAWSDestroy,
 		IDRefreshName: resourceName,
 
@@ -1755,7 +1755,7 @@ func TestAccSpotinstMRScalerAWSCloned_Baseline(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -1837,7 +1837,7 @@ func TestAccSpotinstMRScalerAWSCloned_Strategy(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -1888,7 +1888,7 @@ func TestAccSpotinstMRScalerAWSCloned_MasterGroup(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -1925,7 +1925,7 @@ func TestAccSpotinstMRScalerAWSCloned_TaskGroup(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -2011,7 +2011,7 @@ func TestAccSpotinstMRScalerAWSCloned_CoreGroup(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -2097,7 +2097,7 @@ func TestAccSpotinstMRScalerAWSCloned_Tags(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -2130,7 +2130,7 @@ func TestAccSpotinstMRScalerAWSCloned_OptionalFields(t *testing.T) {
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{

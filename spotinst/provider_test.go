@@ -9,14 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-var TestAccProviders map[string]*schema.Provider
-
 var testAccProviderGCP *schema.Provider
 var testAccProviderAWS *schema.Provider
 var testAccProviderAzure *schema.Provider
 var testAccProviderAzureV3 *schema.Provider
 
-var TestAccProvidersV2 map[string]func() (*schema.Provider, error)
+var TestAccProviders map[string]func() (*schema.Provider, error)
 
 func testAccProviderGCPFunc() (*schema.Provider, error) {
 	return testAccProviderGCP, nil
@@ -40,24 +38,12 @@ func init() {
 	testAccProviderAzure = Provider()
 	testAccProviderAzureV3 = Provider()
 
-	//testAccProviderGCP.ConfigureFunc = providerConfigureGCP
-	//testAccProviderAWS.ConfigureFunc = providerConfigureAWS
-	//testAccProviderAzure.ConfigureFunc = providerConfigureAzure
-	//testAccProviderAzureV3.ConfigureFunc = providerConfigureAzure
+	testAccProviderGCP.ConfigureContextFunc = providerConfigureGCP
+	testAccProviderAWS.ConfigureContextFunc = providerConfigureAWS
+	testAccProviderAzure.ConfigureContextFunc = providerConfigureAzure
+	testAccProviderAzureV3.ConfigureContextFunc = providerConfigureAzure
 
-	testAccProviderGCP.ConfigureContextFunc = providerConfigureGCPV2
-	testAccProviderAWS.ConfigureContextFunc = providerConfigureAWSV2
-	testAccProviderAzure.ConfigureContextFunc = providerConfigureAzureV2
-	testAccProviderAzureV3.ConfigureContextFunc = providerConfigureAzureV2
-
-	TestAccProviders = map[string]*schema.Provider{
-		"gcp":     testAccProviderGCP,
-		"aws":     testAccProviderAWS,
-		"azure":   testAccProviderAzure,
-		"azurev3": testAccProviderAzureV3,
-	}
-
-	TestAccProvidersV2 = map[string]func() (*schema.Provider, error){
+	TestAccProviders = map[string]func() (*schema.Provider, error){
 		"gcp":     testAccProviderGCPFunc,
 		"aws":     testAccProviderAWSFunc,
 		"azure":   testAccProviderAzureFunc,
@@ -88,56 +74,32 @@ func testAccPreCheck(t *testing.T, provider string) {
 	}
 }
 
-func providerConfigureGCP(d *schema.ResourceData) (interface{}, error) {
+func providerConfigureGCP(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_GCP"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_GCP"),
 	}
 
-	return config.Client()
+	res, diagnostics := config.ClientV2()
+	return res, diagnostics
 }
 
-func providerConfigureGCPV2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := Config{
-		Token:   os.Getenv("SPOTINST_TOKEN_GCP"),
-		Account: os.Getenv("SPOTINST_ACCOUNT_GCP"),
-	}
-
-	return config.ClientV2()
-}
-
-func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
+func providerConfigureAWS(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_AWS"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_AWS"),
 	}
 
-	return config.Client()
+	res, diagnostics := config.ClientV2()
+	return res, diagnostics
 }
 
-func providerConfigureAWSV2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := Config{
-		Token:   os.Getenv("SPOTINST_TOKEN_AWS"),
-		Account: os.Getenv("SPOTINST_ACCOUNT_AWS"),
-	}
-
-	return config.Client(), diag.Diagnostics{}
-}
-
-func providerConfigureAzure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigureAzure(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),
 	}
 
-	return config.Client()
-}
-
-func providerConfigureAzureV2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := Config{
-		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
-		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),
-	}
-
-	return config.Client(), diag.Diagnostics{}
+	res, diagnostics := config.ClientV2()
+	return res, diagnostics
 }

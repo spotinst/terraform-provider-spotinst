@@ -152,7 +152,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Baseline(t *testing.T) {
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupAWSBeanstalkDestroy,
 
 		Steps: []resource.TestStep{
@@ -234,7 +234,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_Full(t *testing.T) {
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupAWSBeanstalkDestroy,
 
 		Steps: []resource.TestStep{
@@ -351,7 +351,7 @@ func TestAccSpotinstElastigroupAWSBeanstalk_ScheduledTask(t *testing.T) {
 	var group aws.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupAWSBeanstalkDestroy,
 
 		Steps: []resource.TestStep{

@@ -157,7 +157,7 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 	var cluster gcp.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKEImportDestroy,
 
 		Steps: []resource.TestStep{
@@ -248,7 +248,7 @@ func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
 	var cluster gcp.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKEImportDestroy,
 
 		Steps: []resource.TestStep{
@@ -329,7 +329,7 @@ func TestAccSpotinstOceanGKEImport_Scheduling(t *testing.T) {
 	var cluster gcp.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKEImportDestroy,
 
 		Steps: []resource.TestStep{
@@ -420,7 +420,7 @@ func TestAccSpotinstOceanGKEImport_Autoscaler(t *testing.T) {
 	var cluster gcp.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKEImportDestroy,
 
 		Steps: []resource.TestStep{
@@ -572,7 +572,7 @@ func TestAccSpotinstOceanGKEImport_Strategy(t *testing.T) {
 	var cluster gcp.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKEImportDestroy,
 
 		Steps: []resource.TestStep{

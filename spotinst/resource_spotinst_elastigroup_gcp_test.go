@@ -196,7 +196,7 @@ func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 
 		Steps: []resource.TestStep{
@@ -289,7 +289,7 @@ func TestAccSpotinstElastigroupGCP_InstanceTypes(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 
 		Steps: []resource.TestStep{
@@ -350,7 +350,7 @@ const testInstanceTypesGCPGroupConfig_Update = `
 //	var group gcp.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "gcp") },
-//		ProviderFactories: TestAccProvidersV2,
+//		ProviderFactories: TestAccProviders,
 //		CheckDestroy:  testElastigroupGCPDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -554,7 +554,7 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -680,7 +680,7 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -763,7 +763,7 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -845,7 +845,7 @@ func TestAccSpotinstElastigroupGCP_HealthChecks(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -926,7 +926,7 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -1040,7 +1040,7 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -1190,7 +1190,7 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -1340,7 +1340,7 @@ func TestAccSpotinstElastigroupGCP_Subnets(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -1426,7 +1426,7 @@ func TestAccSpotinstElastigroupGCP_IntegrationDockerSwarm(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 
@@ -1508,7 +1508,7 @@ func TestAccSpotinstElastigroupGCP_ScheduledTask(t *testing.T) {
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testElastigroupGCPDestroy,
 		IDRefreshName:     resourceName,
 

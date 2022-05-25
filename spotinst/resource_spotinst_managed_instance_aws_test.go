@@ -159,7 +159,7 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 	var cluster aws.ManagedInstance
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testManagedInstanceAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -269,7 +269,7 @@ func TestAccSpotinstManagedInstanceStrategy(t *testing.T) {
 	var cluster aws.ManagedInstance
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testManagedInstanceAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -353,7 +353,7 @@ func TestAccSpotinstManagedInstanceHealthCheck(t *testing.T) {
 	var cluster aws.ManagedInstance
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testManagedInstanceAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -415,7 +415,7 @@ func TestAccSpotinstManagedInstanceCompute(t *testing.T) {
 	var cluster aws.ManagedInstance
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testManagedInstanceAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -605,7 +605,7 @@ func TestAccSpotinstManagedInstanceScheduling(t *testing.T) {
 	var cluster aws.ManagedInstance
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testManagedInstanceAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -712,7 +712,7 @@ func TestAccSpotinstManagedInstanceIntegrationsRoute53(t *testing.T) {
 	var cluster aws.ManagedInstance
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testManagedInstanceAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -841,7 +841,7 @@ func TestAccSpotinstManagedInstanceIntegrationsLoadBalancers(t *testing.T) {
 	var cluster aws.ManagedInstance
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testManagedInstanceAWSDestroy,
 
 		Steps: []resource.TestStep{

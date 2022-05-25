@@ -153,7 +153,7 @@ func TestAccSpotinstMultaiDeployment_Baseline(t *testing.T) {
 	var deployment multai.Deployment
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testAccCheckSpotinstMultaiDeploymentDestroy,
 
 		Steps: []resource.TestStep{

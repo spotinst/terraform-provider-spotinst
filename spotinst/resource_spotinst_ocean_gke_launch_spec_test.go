@@ -153,7 +153,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 	var launchSpec gcp.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKELaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -325,7 +325,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
 	var launchSpec gcp.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKELaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -415,7 +415,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
 	var launchSpec gcp.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKELaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -511,7 +511,7 @@ func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
 	var launchSpec gcp.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKELaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -659,7 +659,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Strategy(t *testing.T) {
 	var launchSpec gcp.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKELaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -806,7 +806,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Scheduling(t *testing.T) {
 	var launchSpec gcp.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanGKELaunchSpecDestroy,
 
 		Steps: []resource.TestStep{

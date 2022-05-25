@@ -80,7 +80,7 @@ func TestAccSpotinstSubscription_Http(t *testing.T) {
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testSubscriptionDestroy,
 
 		Steps: []resource.TestStep{
@@ -171,7 +171,7 @@ func TestAccSpotinstSubscription_Https(t *testing.T) {
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testSubscriptionDestroy,
 
 		Steps: []resource.TestStep{
@@ -262,7 +262,7 @@ func TestAccSpotinstSubscription_Email(t *testing.T) {
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testSubscriptionDestroy,
 
 		Steps: []resource.TestStep{
@@ -353,7 +353,7 @@ func TestAccSpotinstSubscription_EmailJson(t *testing.T) {
 	var sub subscription.Subscription
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testSubscriptionDestroy,
 
 		Steps: []resource.TestStep{

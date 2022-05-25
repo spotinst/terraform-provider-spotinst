@@ -175,7 +175,7 @@ func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -262,7 +262,7 @@ func TestAccSpotinstOceanAWS_InstanceTypesLists(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -370,7 +370,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -546,7 +546,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -639,7 +639,7 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -746,7 +746,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -950,7 +950,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{
@@ -1056,7 +1056,7 @@ func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 	var cluster aws.Cluster
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSDestroy,
 
 		Steps: []resource.TestStep{

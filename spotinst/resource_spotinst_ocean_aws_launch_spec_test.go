@@ -152,7 +152,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 	var launchSpec aws.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -303,7 +303,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 	var launchSpec aws.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -459,7 +459,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
 	var launchSpec aws.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -568,7 +568,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
 	var launchSpec aws.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -712,7 +712,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_ResourceLimits(t *testing.T) {
 	var launchSpec aws.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -821,7 +821,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Strategy(t *testing.T) {
 	var launchSpec aws.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
@@ -900,7 +900,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Scheduling(t *testing.T) {
 	var launchSpec aws.LaunchSpec
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testOceanAWSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{

@@ -107,7 +107,7 @@ func TestAccSpotinstMultaiRoutingRule_Baseline(t *testing.T) {
 	var routingRule multai.RoutingRule
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testAccCheckSpotinstMultaiRoutingRuleDestroy,
 
 		Steps: []resource.TestStep{

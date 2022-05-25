@@ -112,7 +112,7 @@ func TestAccSpotinstDataIntegration_Baseline(t *testing.T) {
 	var di aws.DataIntegration
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testDataIntegrationDestroy,
 
 		Steps: []resource.TestStep{

@@ -212,7 +212,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -323,7 +323,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -378,7 +378,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -441,7 +441,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -530,7 +530,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Health(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 		Steps: []resource.TestStep{
 			{
@@ -608,7 +608,7 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -687,7 +687,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Image(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -759,7 +759,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -855,7 +855,7 @@ func TestAccSpotinstStatefulNodeAzureV3_OSDisk(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -920,7 +920,7 @@ func TestAccSpotinstStatefulNodeAzureV3_DataDisk(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -989,7 +989,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Signal(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -1054,7 +1054,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Scheduling(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -1125,7 +1125,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Tag(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
@@ -1192,7 +1192,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 	var node azure.StatefulNode
 	resource.Test(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProvidersV2,
+		ProviderFactories: TestAccProviders,
 		CheckDestroy:      testStatefulNodeAzureV3Destroy,
 
 		Steps: []resource.TestStep{
