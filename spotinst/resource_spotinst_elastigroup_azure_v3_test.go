@@ -189,9 +189,9 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 
 	var group azurev3.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureV3Destroy,
+		PreCheck:          func() { testAccPreCheck(t, "azure") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testElastigroupAzureV3Destroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -312,9 +312,9 @@ func TestAccSpotinstElastigroupAzureV3_Image(t *testing.T) {
 
 	var group azurev3.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "azure") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testElastigroupAzureDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -360,10 +360,10 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 
 	var group azurev3.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t, "azure") },
-		Providers:     TestAccProviders,
-		CheckDestroy:  testElastigroupAzureV3Destroy,
-		IDRefreshName: resourceName,
+		PreCheck:          func() { testAccPreCheck(t, "azure") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testElastigroupAzureV3Destroy,
+		IDRefreshName:     resourceName,
 
 		Steps: []resource.TestStep{
 			{
@@ -427,9 +427,9 @@ func TestAccSpotinstElastigroupAzureV3_Strategy(t *testing.T) {
 
 	var group azurev3.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureV3Destroy,
+		PreCheck:          func() { testAccPreCheck(t, "azure") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testElastigroupAzureV3Destroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -495,9 +495,9 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 
 	var group azurev3.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureV3Destroy,
+		PreCheck:          func() { testAccPreCheck(t, "azure") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testElastigroupAzureV3Destroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -555,9 +555,9 @@ func TestAccSpotinstElastigroupAzureV3_Login(t *testing.T) {
 
 	var group azurev3.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "azure") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testElastigroupAzureDestroy,
 
 		Steps: []resource.TestStep{
 			{

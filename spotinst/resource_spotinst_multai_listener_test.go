@@ -108,9 +108,9 @@ func TestAccSpotinstMultaiListener_Baseline(t *testing.T) {
 
 	var listener multai.Listener
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckSpotinstMultaiListenerDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testAccCheckSpotinstMultaiListenerDestroy,
 
 		Steps: []resource.TestStep{
 			{

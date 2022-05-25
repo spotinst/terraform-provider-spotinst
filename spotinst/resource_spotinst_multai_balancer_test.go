@@ -152,9 +152,9 @@ func TestAccSpotinstMultaiBalancer_Baseline(t *testing.T) {
 
 	var balancer multai.LoadBalancer
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testAccCheckSpotinstMultaiBalancerDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testAccCheckSpotinstMultaiBalancerDestroy,
 
 		Steps: []resource.TestStep{
 			{

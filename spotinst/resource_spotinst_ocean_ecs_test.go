@@ -169,9 +169,9 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -266,9 +266,9 @@ func TestAccSpotinstOceanECS_InstanceTypesWhitelist(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -335,9 +335,9 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -473,9 +473,9 @@ func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -590,9 +590,9 @@ func TestAccSpotinstoceanECS_Strategy(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -671,9 +671,9 @@ func TestAccSpotinstoceanECS_Scheduling(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -781,9 +781,9 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -880,9 +880,9 @@ func TestAccSpotinstOceanECS_OptimizeImages(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{

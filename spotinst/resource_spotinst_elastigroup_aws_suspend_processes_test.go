@@ -122,9 +122,9 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_Baseline(t *testing.T) {
 	spWrapper.GroupID = &groupId
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testSuspendProcessesDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testSuspendProcessesDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -211,9 +211,9 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_RemoveSuspension(t *testing.T
 	spWrapper.GroupID = &groupId
 
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testSuspendProcessesDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testSuspendProcessesDestroy,
 
 		Steps: []resource.TestStep{
 			{

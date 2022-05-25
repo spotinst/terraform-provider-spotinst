@@ -203,7 +203,7 @@ func createElastigroupAzureTerraform(gcm *AzureGroupConfigMetadata) string {
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy: testElastigroupAzureDestroy,
 //
 //		Steps: []resource.TestStep{
@@ -297,7 +297,7 @@ resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -383,7 +383,7 @@ resource "` + string(commons.ElastigroupAzureResourceName) + `" "%v" {
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy: testElastigroupAzureDestroy,
 //
 //		Steps: []resource.TestStep{
@@ -428,7 +428,7 @@ const testAzureImageGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy: testElastigroupAzureDestroy,
 //
 //		Steps: []resource.TestStep{
@@ -516,7 +516,7 @@ const testAzureLaunchConfigurationGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy: testElastigroupAzureDestroy,
 //
 //		Steps: []resource.TestStep{
@@ -602,7 +602,7 @@ const testAzureLoadBalancersGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy: testElastigroupAzureDestroy,
 //
 //		Steps: []resource.TestStep{
@@ -662,7 +662,7 @@ const testAzureLoginGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -716,7 +716,7 @@ const testAzureNetworkGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy: testElastigroupAzureDestroy,
 //
 //		Steps: []resource.TestStep{
@@ -778,7 +778,7 @@ const testAzureStrategyGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:     func() { testAccPreCheck(t, "azure") },
-//		Providers:    TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy: testElastigroupAzureDestroy,
 //
 //		Steps: []resource.TestStep{
@@ -840,7 +840,7 @@ const testAzureVMSizesGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -1029,7 +1029,7 @@ const testAzureVMSizesGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -1202,7 +1202,7 @@ const testAzureVMSizesGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -1311,7 +1311,7 @@ const testAzureVMSizesGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -1409,7 +1409,7 @@ const testAzureVMSizesGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "azure") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //
@@ -1487,7 +1487,7 @@ const testAzureVMSizesGroupConfig_Create = `
 //	var group azure.Group
 //	resource.Test(t, resource.TestCase{
 //		PreCheck:      func() { testAccPreCheck(t, "aws") },
-//		Providers:     TestAccProviders,
+//		ProviderFactories: TestAccProvidersV2,
 //		CheckDestroy:  testElastigroupAzureDestroy,
 //		IDRefreshName: resourceName,
 //

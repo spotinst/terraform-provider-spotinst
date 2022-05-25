@@ -151,9 +151,9 @@ func TestAccSpotinstOceanGKELaunchSpecImport_Baseline(t *testing.T) {
 
 	var launchSpec gcp.LaunchSpec
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "gcp") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanGKELaunchSpecImportDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "gcp") },
+		ProviderFactories: TestAccProvidersV2,
+		CheckDestroy:      testOceanGKELaunchSpecImportDestroy,
 
 		Steps: []resource.TestStep{
 			{
