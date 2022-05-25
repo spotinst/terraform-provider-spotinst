@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-cleanhttp"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
@@ -74,6 +75,34 @@ func (c *Config) Client() (*Client, error) {
 
 	stdlog.Println("[INFO] Spotinst client configured")
 	return client, nil
+}
+
+func (c *Config) ClientV2() (*Client, diag.Diagnostic) {
+	stdlog.Println("[INFO] Configuring a new Spotinst client")
+
+	// Create a new session.
+	sess, err := c.getSession()
+	if err != nil {
+		return nil, diag.Diagnostic{
+			Summary: err.Error(),
+		}
+	}
+
+	// Create a new client.
+	client := &Client{
+		elastigroup:     elastigroup.New(sess),
+		healthCheck:     healthcheck.New(sess),
+		subscription:    subscription.New(sess),
+		multai:          multai.New(sess),
+		mrscaler:        mrscaler.New(sess),
+		ocean:           ocean.New(sess),
+		managedInstance: managedinstance.New(sess),
+		dataIntegration: dataintegration.New(sess),
+		statefulNode:    stateful.New(sess),
+	}
+
+	stdlog.Println("[INFO] Spotinst client configured")
+	return client, diag.Diagnostic{}
 }
 
 func (c *Config) getSession() (*session.Session, error) {

@@ -1,6 +1,8 @@
 package spotinst
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"os"
 	"testing"
 
@@ -38,10 +40,15 @@ func init() {
 	testAccProviderAzure = Provider()
 	testAccProviderAzureV3 = Provider()
 
-	testAccProviderGCP.ConfigureFunc = providerConfigureGCP
-	testAccProviderAWS.ConfigureFunc = providerConfigureAWS
-	testAccProviderAzure.ConfigureFunc = providerConfigureAzure
-	testAccProviderAzureV3.ConfigureFunc = providerConfigureAzure
+	//testAccProviderGCP.ConfigureFunc = providerConfigureGCP
+	//testAccProviderAWS.ConfigureFunc = providerConfigureAWS
+	//testAccProviderAzure.ConfigureFunc = providerConfigureAzure
+	//testAccProviderAzureV3.ConfigureFunc = providerConfigureAzure
+
+	testAccProviderGCP.ConfigureContextFunc = providerConfigureGCPV2
+	testAccProviderAWS.ConfigureContextFunc = providerConfigureAWSV2
+	testAccProviderAzure.ConfigureContextFunc = providerConfigureAzureV2
+	testAccProviderAzureV3.ConfigureContextFunc = providerConfigureAzureV2
 
 	TestAccProviders = map[string]*schema.Provider{
 		"gcp":     testAccProviderGCP,
@@ -90,6 +97,15 @@ func providerConfigureGCP(d *schema.ResourceData) (interface{}, error) {
 	return config.Client()
 }
 
+func providerConfigureGCPV2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	config := Config{
+		Token:   os.Getenv("SPOTINST_TOKEN_GCP"),
+		Account: os.Getenv("SPOTINST_ACCOUNT_GCP"),
+	}
+
+	return config.ClientV2()
+}
+
 func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_AWS"),
@@ -99,6 +115,15 @@ func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
 	return config.Client()
 }
 
+func providerConfigureAWSV2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	config := Config{
+		Token:   os.Getenv("SPOTINST_TOKEN_AWS"),
+		Account: os.Getenv("SPOTINST_ACCOUNT_AWS"),
+	}
+
+	return config.Client(), diag.Diagnostics{}
+}
+
 func providerConfigureAzure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
@@ -106,4 +131,13 @@ func providerConfigureAzure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	return config.Client()
+}
+
+func providerConfigureAzureV2(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	config := Config{
+		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
+		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),
+	}
+
+	return config.Client(), diag.Diagnostics{}
 }
