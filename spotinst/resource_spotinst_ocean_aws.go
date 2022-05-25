@@ -32,7 +32,7 @@ func resourceSpotinstOceanAWS() *schema.Resource {
 		Delete: resourceSpotinstClusterAWSDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: commons.OceanAWSResource.GetSchemaMap(),
 	}
@@ -85,7 +85,7 @@ func createAWSCluster(resourceData *schema.ResourceData, cluster *aws.Cluster, s
 	}
 
 	var resp *aws.CreateClusterOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateCluster(context.Background(), input)
 		if err != nil {

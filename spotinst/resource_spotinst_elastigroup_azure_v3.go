@@ -31,7 +31,7 @@ func resourceSpotinstElastigroupAzureV3() *schema.Resource {
 		Delete: resourceSpotinstElastigroupAzureV3Delete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupAzureV3Resource.GetSchemaMap(),
@@ -81,7 +81,7 @@ func createAzureV3Group(group *v3.Group, spotinstClient *Client) (*string, error
 	}
 
 	var resp *v3.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &v3.CreateGroupInput{Group: group}
 		r, err := spotinstClient.elastigroup.CloudProviderAzureV3().Create(context.Background(), input)
 		if err != nil {

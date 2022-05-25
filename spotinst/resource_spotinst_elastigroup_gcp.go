@@ -34,7 +34,7 @@ func resourceSpotinstElastigroupGCP() *schema.Resource {
 		Delete: resourceSpotinstElastigroupGCPDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupGCPResource.GetSchemaMap(),
@@ -90,7 +90,7 @@ func createGCPGroup(elastigroup *gcp.Group, spotinstClient *Client) (*string, er
 		log.Printf("===> Group create configuration: %s", json)
 	}
 	var resp *gcp.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &gcp.CreateGroupInput{Group: elastigroup}
 		r, err := spotinstClient.elastigroup.CloudProviderGCP().Create(context.Background(), input)
 		if err != nil {

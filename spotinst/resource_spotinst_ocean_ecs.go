@@ -33,7 +33,7 @@ func resourceSpotinstOceanECS() *schema.Resource {
 		Update: resourceSpotinstClusterECSUpdate,
 		Delete: resourceSpotinstClusterECSDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: commons.OceanECSResource.GetSchemaMap(),
 	}
@@ -85,7 +85,7 @@ func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster
 	}
 
 	var resp *aws.CreateECSClusterOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateECSClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateECSCluster(context.Background(), input)
 		if err != nil {

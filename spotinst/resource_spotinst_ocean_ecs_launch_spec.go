@@ -26,7 +26,7 @@ func resourceSpotinstOceanECSLaunchSpec() *schema.Resource {
 		Delete: resourceSpotinstOceanECSLaunchSpecDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanECSLaunchSpecResource.GetSchemaMap(),
@@ -65,7 +65,7 @@ func createECSLaunchSpec(launchSpec *aws.ECSLaunchSpec, spotinstClient *Client) 
 	}
 
 	var resp *aws.CreateECSLaunchSpecOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateECSLaunchSpecInput{LaunchSpec: launchSpec}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateECSLaunchSpec(context.Background(), input)
 		if err != nil {

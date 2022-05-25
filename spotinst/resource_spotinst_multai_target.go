@@ -24,7 +24,7 @@ func resourceSpotinstMultaiTarget() *schema.Resource {
 		Delete: resourceSpotinstMultaiTargetDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiTargetResource.GetSchemaMap(),
@@ -67,7 +67,7 @@ func createTarget(target *multai.Target, spotinstClient *Client) (*string, error
 	}
 
 	var resp *multai.CreateTargetOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateTargetInput{Target: target}
 		r, err := spotinstClient.multai.CreateTarget(context.Background(), input)
 		if err != nil {
@@ -183,7 +183,7 @@ func deleteTarget(resourceData *schema.ResourceData, meta interface{}) error {
 }
 
 func awaitTargetDeleted(targetId *string, client *Client) error {
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.ReadTargetInput{TargetID: spotinst.String(*targetId)}
 		resp, err := client.multai.ReadTarget(context.Background(), input)
 		if err == nil && resp != nil && resp.Target != nil {

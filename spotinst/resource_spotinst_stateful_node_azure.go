@@ -37,7 +37,7 @@ func resourceSpotinstStatefulNodeAzureV3() *schema.Resource {
 		Delete: resourceSpotinstStatefulNodeAzureV3Delete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.StatefulNodeAzureV3Resource.GetSchemaMap(),
@@ -139,7 +139,7 @@ func createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput *azure.ImportVM
 	}
 
 	var resp *azure.ImportVMStatefulNodeOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		r, err := spotinstClient.statefulNode.CloudProviderAzure().ImportVM(context.Background(), importVMStatefulNodeInput)
 		if err != nil {
 			log.Printf("error: %v", err)
@@ -164,7 +164,7 @@ func createAzureV3StatefulNode(statefulNode *azure.StatefulNode, spotinstClient 
 	}
 
 	var resp *azure.CreateStatefulNodeOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &azure.CreateStatefulNodeInput{StatefulNode: statefulNode}
 		r, err := spotinstClient.statefulNode.CloudProviderAzure().Create(context.Background(), input)
 		if err != nil {

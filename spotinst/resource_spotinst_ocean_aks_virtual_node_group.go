@@ -25,7 +25,7 @@ func resourceSpotinstOceanAKSVirtualNodeGroup() *schema.Resource {
 		Delete: resourceSpotinstOceanAKSVirtualNodeGroupDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanAKSVirtualNodeGroupResource.GetSchemaMap(),

@@ -24,7 +24,7 @@ func resourceSpotinstDataIntegration() *schema.Resource {
 		Delete: resourceSpotinstDataIntegrationDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.DataIntegrationResource.GetSchemaMap(),
@@ -102,7 +102,7 @@ func createDataIntegration(resourceData *schema.ResourceData, di *aws.DataIntegr
 		log.Printf("===> DataIntegration create configuration: %s", json)
 	}
 	var resp *aws.CreateDataIntegrationOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateDataIntegrationInput{DataIntegration: di}
 		r, err := spotinstClient.dataIntegration.CloudProviderAWS().CreateDataIntegration(context.Background(), input)
 		if err != nil {

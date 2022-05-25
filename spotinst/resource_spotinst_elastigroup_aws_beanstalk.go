@@ -26,7 +26,7 @@ func resourceSpotinstElastigroupAWSBeanstalk() *schema.Resource {
 		Delete: resourceSpotinstAWSBeanstalkGroupDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupAWSBeanstalkResource.GetSchemaMap(),
@@ -79,7 +79,7 @@ func importBeanstalkGroup(resourceData *schema.ResourceData, meta interface{}) (
 func toggleMaintenanceMode(resourceData *schema.ResourceData, meta interface{}, op string) error {
 	id := resourceData.Id()
 
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.BeanstalkMaintenanceInput{GroupID: spotinst.String(id)}
 		if status, err := meta.(*Client).elastigroup.CloudProviderAWS().GetBeanstalkMaintenanceStatus(context.Background(), input); err == nil {
 			if op == "START" {
@@ -162,7 +162,7 @@ func createBeanstalkGroup(beanstalkGroup *aws.Group, spotinstClient *Client) (*s
 	}
 
 	var resp *aws.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateGroupInput{Group: beanstalkGroup}
 		r, err := spotinstClient.elastigroup.CloudProviderAWS().Create(context.Background(), input)
 		if err != nil {

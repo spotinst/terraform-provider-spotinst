@@ -37,7 +37,7 @@ func resourceSpotinstOceanAKS() *schema.Resource {
 		Delete: resourceSpotinstClusterAKSDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanAKSResource.GetSchemaMap(),
@@ -249,7 +249,7 @@ func deleteAKSCluster(clusterID string, spotinstClient *Client) error {
 
 func importAKSCluster(resourceData *schema.ResourceData, spotinstClient *Client) (*azure.Cluster, error) {
 	var cluster *azure.Cluster
-	err := resource.Retry(time.Hour, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Hour, func() *resource.RetryError {
 		input := &azure.ImportClusterInput{
 			ACDIdentifier: spotinst.String(resourceData.Get("acd_identifier").(string)),
 			Cluster: &azure.ImportCluster{

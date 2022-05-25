@@ -24,7 +24,7 @@ func resourceSpotinstMultaiBalancer() *schema.Resource {
 		Delete: resourceSpotinstMultaiBalancerDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiBalancerResource.GetSchemaMap(),
@@ -67,7 +67,7 @@ func createBalancer(balancer *multai.LoadBalancer, spotinstClient *Client) (*str
 	}
 
 	var resp *multai.CreateLoadBalancerOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateLoadBalancerInput{Balancer: balancer}
 		r, err := spotinstClient.multai.CreateLoadBalancer(context.Background(), input)
 		if err != nil {

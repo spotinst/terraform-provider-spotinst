@@ -25,7 +25,7 @@ func resourceSpotinstElastigroupSuspendProcesses() *schema.Resource {
 		Delete: resourceSpotinstAWSSuspendProcessesDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.SuspendProcessesResource.GetSchemaMap(),
@@ -113,7 +113,7 @@ func createSuspendProcesses(resourceData *schema.ResourceData, suspendProcesses 
 		log.Printf("===> SuspendProcesses create configuration: %s", json)
 	}
 	groupID := spotinst.String(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)).(string))
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateSuspensionsInput{
 			GroupID:     groupID,
 			Suspensions: suspendProcesses.Suspensions,

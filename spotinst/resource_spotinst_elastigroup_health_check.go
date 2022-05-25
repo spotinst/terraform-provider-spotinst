@@ -26,7 +26,7 @@ func resourceSpotinstHealthCheck() *schema.Resource {
 		Delete: resourceSpotinstHealthCheckDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.HealthCheckResource.GetSchemaMap(),
@@ -105,7 +105,7 @@ func createHealthCheck(resourceData *schema.ResourceData, healthCheck *healthche
 		log.Printf("===> HealthCheck create configuration: %s", json)
 	}
 	var resp *healthcheck.CreateHealthCheckOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &healthcheck.CreateHealthCheckInput{HealthCheck: healthCheck}
 		r, err := spotinstClient.healthCheck.Create(context.Background(), input)
 		if err != nil {

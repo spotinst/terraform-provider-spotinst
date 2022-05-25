@@ -24,7 +24,7 @@ func resourceSpotinstMultaiTargetSet() *schema.Resource {
 		Delete: resourceSpotinstMultaiTargetSetDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiTargetSetResource.GetSchemaMap(),
@@ -67,7 +67,7 @@ func createTargetSet(targetSet *multai.TargetSet, spotinstClient *Client) (*stri
 	}
 
 	var resp *multai.CreateTargetSetOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateTargetSetInput{TargetSet: targetSet}
 		r, err := spotinstClient.multai.CreateTargetSet(context.Background(), input)
 		if err != nil {
@@ -183,7 +183,7 @@ func deleteTargetSet(resourceData *schema.ResourceData, meta interface{}) error 
 }
 
 func awaitTargetSetDeleted(targetSetId *string, client *Client) error {
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.ReadTargetSetInput{TargetSetID: spotinst.String(*targetSetId)}
 		resp, err := client.multai.ReadTargetSet(context.Background(), input)
 		if err == nil && resp != nil && resp.TargetSet != nil {

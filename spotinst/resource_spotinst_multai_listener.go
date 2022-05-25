@@ -24,7 +24,7 @@ func resourceSpotinstMultaiListener() *schema.Resource {
 		Delete: resourceSpotinstMultaiListenerDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiListenerResource.GetSchemaMap(),
@@ -67,7 +67,7 @@ func createListener(listener *multai.Listener, spotinstClient *Client) (*string,
 	}
 
 	var resp *multai.CreateListenerOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateListenerInput{Listener: listener}
 		r, err := spotinstClient.multai.CreateListener(context.Background(), input)
 		if err != nil {

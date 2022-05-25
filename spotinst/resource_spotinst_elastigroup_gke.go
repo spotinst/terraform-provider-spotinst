@@ -33,7 +33,7 @@ func resourceSpotinstElastigroupGKE() *schema.Resource {
 		Delete: resourceSpotinstElastigroupGKEDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupGKEResource.GetSchemaMap(),
@@ -164,7 +164,7 @@ func createGKEGroup(gkeGroup *gcp.Group, spotinstClient *Client) (*string, error
 	}
 
 	var resp *gcp.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &gcp.CreateGroupInput{Group: gkeGroup}
 		r, err := spotinstClient.elastigroup.CloudProviderGCP().Create(context.Background(), input)
 		if err != nil {

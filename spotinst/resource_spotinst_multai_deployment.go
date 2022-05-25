@@ -24,7 +24,7 @@ func resourceSpotinstMultaiDeployment() *schema.Resource {
 		Delete: resourceSpotinstMultaiDeploymentDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiDeploymentResource.GetSchemaMap(),
@@ -67,7 +67,7 @@ func createDeployment(deployment *multai.Deployment, spotinstClient *Client) (*s
 	}
 
 	var resp *multai.CreateDeploymentOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateDeploymentInput{Deployment: deployment}
 		r, err := spotinstClient.multai.CreateDeployment(context.Background(), input)
 		if err != nil {

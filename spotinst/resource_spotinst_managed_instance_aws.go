@@ -35,7 +35,7 @@ func resourceSpotinstMangedInstanceAWS() *schema.Resource {
 		Delete: resourceSpotinstManagedInstanceAWSDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ManagedInstanceResource.GetSchemaMap(),
@@ -130,7 +130,7 @@ func createManagedInstance(resourceData *schema.ResourceData, mangedInstance *aw
 	}
 
 	var resp *aws.CreateManagedInstanceOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateManagedInstanceInput{ManagedInstance: mangedInstance}
 		r, err := spotinstClient.managedInstance.CloudProviderAWS().Create(context.Background(), input)
 		if err != nil {

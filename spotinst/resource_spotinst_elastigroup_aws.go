@@ -31,13 +31,17 @@ func resourceSpotinstElastigroupAWS() *schema.Resource {
 	setupElastigroupResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstElastigroupAWSCreate,
-		Read:   resourceSpotinstElastigroupAWSRead,
-		Update: resourceSpotinstElastigroupAWSUpdate,
-		Delete: resourceSpotinstElastigroupAWSDelete,
+		//Create:        resourceSpotinstElastigroupAWSCreate,
+		CreateContext: resourceSpotinstElastigroupAWSCreateV2,
+		//Read:          resourceSpotinstElastigroupAWSRead,
+		ReadContext: resourceSpotinstElastigroupAWSReadV2,
+		//Update:      resourceSpotinstElastigroupAWSUpdate,
+		UpdateContext: resourceSpotinstElastigroupAWSUpdateV2,
+		//Delete:        resourceSpotinstElastigroupAWSDelete,
+		DeleteContext: resourceSpotinstElastigroupAWSDeleteV2,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupResource.GetSchemaMap(),
@@ -118,6 +122,23 @@ func deleteGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	}
 	return nil
 }
+func resourceSpotinstElastigroupAWSDeleteV2(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	id := resourceData.Id()
+	log.Printf(string(commons.ResourceOnDelete),
+		commons.ElastigroupResource.GetName(), id)
+
+	if err := deleteGroup(resourceData, meta); err != nil {
+		return diag.Diagnostics{
+			diag.Diagnostic{
+				Summary: ctx.Err().Error(),
+			},
+		}
+	}
+
+	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())
+	resourceData.SetId("")
+	return nil
+}
 
 // ErrCodeGroupNotFound for service response error code "GROUP_DOESNT_EXIST".
 const ErrCodeGroupNotFound = "GROUP_DOESNT_EXIST"
@@ -181,7 +202,11 @@ func resourceSpotinstElastigroupAWSReadV2(ctx context.Context, resourceData *sch
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read group: %s", err)
+		return diag.Diagnostics{
+			diag.Diagnostic{
+				Summary: "failed to read group: " + err.Error(),
+			},
+		}
 	}
 
 	// If nothing was found, then return no state.
@@ -194,7 +219,11 @@ func resourceSpotinstElastigroupAWSReadV2(ctx context.Context, resourceData *sch
 	updateCapitalSlice(resourceData, groupResponse)
 
 	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
-		return err
+		return diag.Diagnostics{
+			diag.Diagnostic{
+				Summary: ctx.Err().Error(),
+			},
+		}
 	}
 	log.Printf("===> Elastigroup read successfully: %s <===", id)
 	return nil
@@ -280,7 +309,7 @@ func resourceSpotinstElastigroupAWSCreateV2(ctx context.Context, resourceData *s
 
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstElastigroupAWSRead(resourceData, meta)
+	return resourceSpotinstElastigroupAWSReadV2(ctx, resourceData, meta)
 }
 
 func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstClient *Client) (*string, error) {
@@ -296,7 +325,7 @@ func createGroup(resourceData *schema.ResourceData, group *aws.Group, spotinstCl
 	}
 
 	var resp *aws.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateGroupInput{Group: group}
 		r, err := spotinstClient.elastigroup.CloudProviderAWS().Create(context.Background(), input)
 		if err != nil {
@@ -350,6 +379,35 @@ func resourceSpotinstElastigroupAWSUpdate(resourceData *schema.ResourceData, met
 
 	log.Printf("===> Elastigroup updated successfully: %s <===", id)
 	return resourceSpotinstElastigroupAWSRead(resourceData, meta)
+}
+
+func resourceSpotinstElastigroupAWSUpdateV2(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	id := resourceData.Id()
+	log.Printf(string(commons.ResourceOnUpdate),
+		commons.ElastigroupResource.GetName(), id)
+
+	shouldUpdate, elastigroup, err := commons.ElastigroupResource.OnUpdate(resourceData, meta)
+	if err != nil {
+		return diag.Diagnostics{
+			diag.Diagnostic{
+				Summary: ctx.Err().Error(),
+			},
+		}
+	}
+
+	if shouldUpdate {
+		elastigroup.SetId(spotinst.String(id))
+		if err := updateGroup(elastigroup, resourceData, meta); err != nil {
+			return diag.Diagnostics{
+				diag.Diagnostic{
+					Summary: ctx.Err().Error(),
+				},
+			}
+		}
+	}
+
+	log.Printf("===> Elastigroup updated successfully: %s <===", id)
+	return resourceSpotinstElastigroupAWSReadV2(ctx, resourceData, meta)
 }
 
 func updateGroup(elastigroup *aws.Group, resourceData *schema.ResourceData, meta interface{}) error {
@@ -605,7 +663,7 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	return resource.Retry(time.Duration(retryTimeout)*time.Second, retryFn)
+	return resource.RetryContext(context.Background(), time.Duration(retryTimeout)*time.Second, retryFn)
 }
 
 func convertToECSRollInput(rollGroupInput *aws.RollGroupInput) *aws.RollECSGroupInput {
@@ -621,7 +679,7 @@ func awaitReady(groupId *string, timeout int, capacity int, client *Client) erro
 		return nil
 	}
 
-	err := resource.Retry(time.Second*time.Duration(timeout), func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Second*time.Duration(timeout), func() *resource.RetryError {
 		input := &aws.GetInstanceHealthinessInput{GroupID: spotinst.String(*groupId)}
 		numHealthy := 0
 		status, err := client.elastigroup.CloudProviderAWS().GetInstanceHealthiness(context.Background(), input)
@@ -667,7 +725,7 @@ func awaitReadyRoll(ctx context.Context, groupID string, rollConfig interface{},
 	}
 
 	svc := client.elastigroup.CloudProviderAWS()
-	err := resource.Retry(time.Second*time.Duration(pctTimeout), func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Second*time.Duration(pctTimeout), func() *resource.RetryError {
 		var rollStatus *aws.RollGroupOutput
 		var rollErr error
 

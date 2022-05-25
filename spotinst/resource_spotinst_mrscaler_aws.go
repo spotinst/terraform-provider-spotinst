@@ -32,7 +32,7 @@ func resourceSpotinstMRScalerAWS() *schema.Resource {
 		Delete: resourceSpotinstMRScalerAWSDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MRScalerAWSResource.GetSchemaMap(),
@@ -82,7 +82,7 @@ func createScaler(scaler *mrscaler.Scaler, spotinstClient *Client) (*string, err
 	}
 
 	var resp *mrscaler.CreateScalerOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &mrscaler.CreateScalerInput{Scaler: scaler}
 		r, err := spotinstClient.mrscaler.Create(context.Background(), input)
 		if err != nil {

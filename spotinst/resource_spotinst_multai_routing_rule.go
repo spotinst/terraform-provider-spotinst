@@ -24,7 +24,7 @@ func resourceSpotinstMultaiRoutingRule() *schema.Resource {
 		Delete: resourceSpotinstMultaiRoutingRuleDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiRoutingRuleResource.GetSchemaMap(),
@@ -67,7 +67,7 @@ func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) 
 	}
 
 	var resp *multai.CreateRoutingRuleOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateRoutingRuleInput{RoutingRule: routingRule}
 		r, err := spotinstClient.multai.CreateRoutingRule(context.Background(), input)
 		if err != nil {

@@ -29,7 +29,7 @@ func resourceSpotinstOceanGKE() *schema.Resource {
 		Delete: resourceSpotinstClusterGKEDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: commons.OceanGKEResource.GetSchemaMap(),
 	}
@@ -75,7 +75,7 @@ func createGKECluster(cluster *gcp.Cluster, spotinstClient *Client) (*string, er
 	}
 
 	var resp *gcp.CreateClusterOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &gcp.CreateClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderGCP().CreateCluster(context.Background(), input)
 		if err != nil {

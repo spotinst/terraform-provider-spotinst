@@ -25,7 +25,7 @@ func resourceSpotinstOceanAWSExtendedResourceDefinition() *schema.Resource {
 		Delete: resourceSpotinstOceanAWSExtendedResourceDefinitionDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanAWSExtendedResourceDefinitionResource.GetSchemaMap(),
@@ -103,7 +103,7 @@ func createOceanAWSExtendedResourceDefinition(resourceData *schema.ResourceData,
 		log.Printf("===> ExtendedResourceDefinition create configuration: %s", json)
 	}
 	var resp *aws.CreateExtendedResourceDefinitionOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateExtendedResourceDefinitionInput{ExtendedResourceDefinition: erd}
 		r, err := spotinstClient.ocean.CloudProviderAWS().CreateExtendedResourceDefinition(context.Background(), input)
 		if err != nil {

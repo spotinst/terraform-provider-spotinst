@@ -26,7 +26,7 @@ func resourceSpotinstOceanAWSLaunchSpec() *schema.Resource {
 		Delete: resourceSpotinstOceanAWSLaunchSpecDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanAWSLaunchSpecResource.GetSchemaMap(),
@@ -65,7 +65,7 @@ func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchS
 	}
 
 	var resp *aws.CreateLaunchSpecOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateLaunchSpecInput{LaunchSpec: launchSpec}
 		if createOptions, exists := resourceData.GetOk(string(ocean_aws_launch_spec.CreateOptions)); exists {
 			list := createOptions.([]interface{})

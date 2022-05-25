@@ -37,7 +37,7 @@ func resourceSpotinstElastigroupAzure() *schema.Resource {
 		Delete: resourceSpotinstElastigroupAzureDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupAzureResource.GetSchemaMap(),
@@ -92,7 +92,7 @@ func createAzureGroup(group *azure.Group, spotinstClient *Client) (*string, erro
 	}
 
 	var resp *azure.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &azure.CreateGroupInput{Group: group}
 		r, err := spotinstClient.elastigroup.CloudProviderAzure().Create(context.Background(), input)
 		if err != nil {
@@ -223,7 +223,7 @@ func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
 						return err
 					} else {
 						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
-						errResult = resource.Retry(time.Minute*5, func() *resource.RetryError {
+						errResult = resource.RetryContext(context.Background(), time.Minute*5, func() *resource.RetryError {
 							rollGroupInput.GroupID = spotinst.String(groupId)
 							_, err := meta.(*Client).elastigroup.CloudProviderAzure().Roll(context.Background(), rollGroupInput)
 							if err != nil {

@@ -23,7 +23,7 @@ func resourceSpotinstOceanGKELaunchSpecImport() *schema.Resource {
 		Delete: resourceSpotinstOceanGKELaunchSpecImportDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanGKELaunchSpecImportResource.GetSchemaMap(),
