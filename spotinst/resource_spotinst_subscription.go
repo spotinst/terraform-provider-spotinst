@@ -41,7 +41,7 @@ func resourceSpotinstSubscriptionDelete(ctx context.Context, resourceData *schem
 
 	input := &subscription.DeleteSubscriptionInput{SubscriptionID: spotinst.String(id)}
 	if _, err := meta.(*Client).subscription.Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to delete subscription: %s", err)
+		return diag.Errorf("[ERROR] Failed to delete subscription: %s", err)
 	}
 
 	resourceData.SetId("")
@@ -57,7 +57,7 @@ func resourceSpotinstSubscriptionRead(ctx context.Context, resourceData *schema.
 	input := &subscription.ReadSubscriptionInput{SubscriptionID: spotinst.String(resourceData.Id())}
 	subResponse, err := client.subscription.Read(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Failed to read subscription: %s", err)
+		return diag.Errorf("[ERROR] Failed to read subscription: %s", err)
 	}
 
 	// If nothing was found, then return no state.

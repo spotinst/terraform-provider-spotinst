@@ -21,7 +21,7 @@ func resourceSpotinstOceanGKELaunchSpecImport() *schema.Resource {
 		CreateContext: resourceSpotinstOceanGKELaunchSpecImportCreate,
 		ReadContext:   resourceSpotinstOceanGKELaunchSpecImportRead,
 		//Update: resourceSpotinstOceanGKELaunchSpecImportUpdate,
-		Delete: resourceSpotinstOceanGKELaunchSpecImportDelete,
+		DeleteContext: resourceSpotinstOceanGKELaunchSpecImportDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -101,7 +101,7 @@ func resourceSpotinstOceanGKELaunchSpecImportRead(ctx context.Context, resourceD
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read GKE launchSpec: %s", err)
+		return diag.Errorf("failed to read GKE launchSpec: %s", err)
 	}
 
 	// if nothing was found, return no state

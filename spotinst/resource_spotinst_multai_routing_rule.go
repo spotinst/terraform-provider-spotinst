@@ -92,7 +92,7 @@ func resourceSpotinstMultaiRoutingRuleRead(ctx context.Context, resourceData *sc
 	input := &multai.ReadRoutingRuleInput{RoutingRuleID: spotinst.String(routingRuleId)}
 	resp, err := meta.(*Client).multai.ReadRoutingRule(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read routing rule: %s", err)
+		return diag.Errorf("failed to read routing rule: %s", err)
 	}
 
 	// If nothing was found, return no state

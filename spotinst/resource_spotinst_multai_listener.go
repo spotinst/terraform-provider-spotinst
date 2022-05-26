@@ -92,7 +92,7 @@ func resourceSpotinstMultaiListenerRead(ctx context.Context, resourceData *schem
 	input := &multai.ReadListenerInput{ListenerID: spotinst.String(listenerId)}
 	resp, err := meta.(*Client).multai.ReadListener(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read listener: %s", err)
+		return diag.Errorf("failed to read listener: %s", err)
 	}
 
 	// If nothing was found, return no state

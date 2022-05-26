@@ -123,7 +123,7 @@ func resourceSpotinstOceanAWSLaunchSpecRead(ctx context.Context, resourceData *s
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read launchSpec: %s", err)
+		return diag.Errorf("failed to read launchSpec: %s", err)
 	}
 
 	// if nothing was found, return no state

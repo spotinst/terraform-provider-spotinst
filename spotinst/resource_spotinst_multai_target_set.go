@@ -92,7 +92,7 @@ func resourceSpotinstMultaiTargetSetRead(ctx context.Context, resourceData *sche
 	input := &multai.ReadTargetSetInput{TargetSetID: spotinst.String(targetSetId)}
 	resp, err := meta.(*Client).multai.ReadTargetSet(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read target set: %s", err)
+		return diag.Errorf("failed to read target set: %s", err)
 	}
 
 	// If nothing was found, return no state
@@ -159,7 +159,7 @@ func resourceSpotinstMultaiTargetSetDelete(ctx context.Context, resourceData *sc
 
 	err := awaitTargetSetDeleted(spotinst.String(targetSetId), meta.(*Client))
 	if err != nil {
-		return fmt.Errorf("[ERROR] Timed out when waiting for the target set to delete. error: %v", err)
+		return diag.Errorf("[ERROR] Timed out when waiting for the target set to delete. error: %v", err)
 	}
 
 	log.Printf("===> Target Set deleted successfully: %s <===", resourceData.Id())

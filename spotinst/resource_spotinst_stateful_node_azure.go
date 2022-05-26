@@ -77,7 +77,7 @@ func resourceSpotinstStatefulNodeAzureV3Create(ctx context.Context, resourceData
 	if importVMConfig, ok := resourceData.GetOk(string(stateful_node_azure.ImportVM)); ok {
 		importVMStatefulNodeInput, err := expandStatefulNodeAzureImportVMConfig(importVMConfig, statefulNode)
 		if err != nil {
-			return fmt.Errorf("stateful node/azure: failed expanding import vm configuration: %v", err)
+			return diag.Errorf("stateful node/azure: failed expanding import vm configuration: %v", err)
 		}
 
 		statefulNodeId, err := createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput, meta.(*Client))
@@ -203,7 +203,7 @@ func resourceSpotinstStatefulNodeAzureV3Read(ctx context.Context, resourceData *
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read stateful node: %s", err)
+		return diag.Errorf("failed to read stateful node: %s", err)
 	}
 
 	// If nothing was found, then return no state.

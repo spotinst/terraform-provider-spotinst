@@ -137,7 +137,7 @@ func resourceSpotinstAWSBeanstalkGroupCreate(ctx context.Context, resourceData *
 	}
 
 	if beanstalkGroup == nil {
-		return fmt.Errorf("[ERROR] Failed to import group. Does the Beanstalk environment exist?")
+		return diag.Errorf("[ERROR] Failed to import group. Does the Beanstalk environment exist?")
 	}
 
 	tempGroup, err := commons.ElastigroupAWSBeanstalkResource.OnCreate(beanstalkGroup, resourceData, meta)
@@ -209,7 +209,7 @@ func resourceSpotinstAWSBeanstalkGroupRead(ctx context.Context, resourceData *sc
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("BEANSTALK:READ failed to read group: %s", err)
+		return diag.Errorf("BEANSTALK:READ failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.
@@ -257,12 +257,12 @@ func resourceSpotinstAWSBeanstalkGroupUpdate(ctx context.Context, resourceData *
 	return resourceSpotinstAWSBeanstalkGroupRead(ctx, resourceData, meta)
 }
 
-func resourceSpotinstAWSBeanstalkGroupDeleteDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstAWSBeanstalkGroupDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf("[INFO] Deleting group: %s", d.Id())
 	input := &aws.DeleteGroupInput{GroupID: spotinst.String(d.Id())}
 
 	if _, err := meta.(*Client).elastigroup.CloudProviderAWS().Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("failed to delete group: %s", err)
+		return diag.Errorf("failed to delete group: %s", err)
 	}
 	d.SetId("")
 	return nil

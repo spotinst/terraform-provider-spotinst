@@ -58,7 +58,7 @@ func resourceSpotinstDataIntegrationRead(ctx context.Context, resourceData *sche
 				}
 			}
 		}
-		return fmt.Errorf("failed to read data integration: %s", err)
+		return diag.Errorf("failed to read data integration: %s", err)
 	}
 
 	// If nothing was found, then return no state.

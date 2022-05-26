@@ -92,7 +92,7 @@ func resourceSpotinstMultaiDeploymentRead(ctx context.Context, resourceData *sch
 	input := &multai.ReadDeploymentInput{DeploymentID: spotinst.String(deploymentId)}
 	resp, err := meta.(*Client).multai.ReadDeployment(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read deployment: %s", err)
+		return diag.Errorf("failed to read deployment: %s", err)
 	}
 
 	// If nothing was found, return no state

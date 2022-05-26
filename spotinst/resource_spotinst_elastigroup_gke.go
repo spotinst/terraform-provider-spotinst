@@ -131,7 +131,7 @@ func resourceSpotinstElastigroupGKECreate(ctx context.Context, resourceData *sch
 	}
 
 	if gkeGroup == nil {
-		return fmt.Errorf("[ERROR] Failed to import group. Does the GKE cluster exist?")
+		return diag.Errorf("[ERROR] Failed to import group. Does the GKE cluster exist?")
 	}
 
 	// merge the imported group with the user's template group, giving preference to the user's template
@@ -204,7 +204,7 @@ func resourceSpotinstElastigroupGKERead(ctx context.Context, resourceData *schem
 		}
 
 		// report any other error
-		return fmt.Errorf("failed to read group: %s", err)
+		return diag.Errorf("failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.
