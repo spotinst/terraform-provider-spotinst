@@ -7,9 +7,10 @@ const (
 )
 
 const (
-	OSDisk commons.FieldName = "os_disk"
-	SizeGB commons.FieldName = "size_gb"
-	Type   commons.FieldName = "type"
+	OSDisk                  commons.FieldName = "os_disk"
+	SizeGB                  commons.FieldName = "size_gb"
+	Type                    commons.FieldName = "type"
+	UtilizeEphemeralStorage commons.FieldName = "utilize_ephemeral_storage"
 )
 
 const (

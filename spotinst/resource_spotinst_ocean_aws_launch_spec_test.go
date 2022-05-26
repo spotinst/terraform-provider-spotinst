@@ -195,7 +195,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
 					resource.TestCheckResourceAttr(resourceName, "name", "launch spec name test update"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "5"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "m3.2xlarge"),
@@ -266,7 +266,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   provider = "%v"
 
   ocean_id = "%v"
-  image_id = "ami-79826301"
+  image_id = "ami-05f840082fe2dcac2"
   user_data = "hello world updated"
   iam_instance_profile = "updated"
   subnet_ids = ["subnet-0bd585d2c2177c7ee", "subnet-0faad0b6bb7e99d9f"]
@@ -370,7 +370,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -408,7 +408,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -440,7 +440,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  name = "launch spec name test"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -502,7 +502,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -525,7 +525,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -549,7 +549,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  name = "launch spec name test"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -633,7 +633,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
-image_id = "ami-79826301"
+image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -663,7 +663,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
-image_id = "ami-79826301"
+image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -694,7 +694,7 @@ provider = "%v"
 ocean_id = "%v"
 name = "launch spec name test"
 
-image_id = "ami-79826301"
+image_id = "ami-05f840082fe2dcac2"
 security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
 user_data = "hello world updated"
 iam_instance_profile = "updated"
@@ -759,7 +759,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -780,7 +780,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -802,7 +802,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  name = "launch spec name test"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -856,7 +856,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -876,7 +876,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -954,7 +954,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -984,7 +984,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-79826301"
+ image_id = "ami-05f840082fe2dcac2"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"

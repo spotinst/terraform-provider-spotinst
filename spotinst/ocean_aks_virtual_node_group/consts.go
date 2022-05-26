@@ -5,6 +5,7 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 const (
 	OceanID commons.FieldName = "ocean_id"
 	Name    commons.FieldName = "name"
+	Zones   commons.FieldName = "zones"
 )
 
 const (

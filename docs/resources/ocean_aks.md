@@ -38,6 +38,8 @@ module "ocean-controller" {
 resource "spotinst_ocean_aks" "example" {
   name                  = "ocean-westus-dev-aks"
   controller_cluster_id = "ocean-westus-dev-aks"
+  zones                 = ["1","2","3"]
+
 
   // --- AKS -----------------------------------------------------------
   acd_identifier          = "acd-12345678"
@@ -182,6 +184,7 @@ The following arguments are supported:
 
 * `name` - (Required) The Ocean cluster name.
 * `controller_cluster_id` - (Required) A unique identifier used for connecting the Ocean SaaS platform and the Kubernetes cluster. Typically, the cluster name is used as its identifier. 
+* `zones` - (Optional) An Array holding default Availability Zones, this configures the availability zones the Ocean may launch instances in.
 * `aks_name` - (Required) The AKS cluster name.
 * `acd_identifier` - (Required) The AKS identifier. A valid identifier should be formatted as `acd-nnnnnnnn` and previously used identifiers cannot be reused.
 * `aks_resource_group_name` - (Required) Name of the Azure Resource Group where the AKS cluster is located. 

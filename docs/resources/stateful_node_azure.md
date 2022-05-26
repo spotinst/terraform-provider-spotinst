@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: stateful_node_azure"
-subcategory: "Stateful"
+subcategory: "Elastigroup"
 description: |-
 Provides a Spotinst Stateful Node resource using Azure.
 ---

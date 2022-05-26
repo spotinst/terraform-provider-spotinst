@@ -82,6 +82,54 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Zones] = commons.NewGenericField(
+		commons.OceanAKSVirtualNodeGroup,
+		Zones,
+		&schema.Schema{
+			Type: schema.TypeList,
+			Elem: &schema.Schema{
+				Type: schema.TypeString},
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSWrapper)
+			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			var value []string = nil
+			if virtualNodeGroup.Zones != nil {
+				value = virtualNodeGroup.Zones
+			}
+			if err := resourceData.Set(string(Zones), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Zones), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSWrapper)
+			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			if value, ok := resourceData.GetOk(string(Zones)); ok && value != nil {
+				if zones, err := expandZones(value); err != nil {
+					return err
+				} else {
+					virtualNodeGroup.SetZones(zones)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSWrapper)
+			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			if value, ok := resourceData.GetOk(string(Zones)); ok && value != nil {
+				if zones, err := expandZones(value); err != nil {
+					return err
+				} else {
+					virtualNodeGroup.SetZones(zones)
+				}
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[Label] = commons.NewGenericField(
 		commons.OceanAKSVirtualNodeGroup,
 		Label,
@@ -269,6 +317,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+}
+
+func expandZones(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if zones, ok := v.(string); ok && zones != "" {
+			result = append(result, zones)
+		}
+	}
+	return result, nil
 }
 
 func expandLabels(data interface{}) ([]*azure.Label, error) {
