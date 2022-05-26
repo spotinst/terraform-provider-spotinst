@@ -8,4 +8,5 @@ const (
 	Name                 commons.FieldName = "name"
 	AKSName              commons.FieldName = "aks_name"
 	AKSResourceGroupName commons.FieldName = "aks_resource_group_name"
+	Zones                commons.FieldName = "zones"
 )

@@ -33,6 +33,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
+								string(UtilizeEphemeralStorage): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
 							},
 						},
 					},
@@ -197,6 +201,7 @@ func flattenOSDisk(osd *azure.OSDisk) interface{} {
 	osDisk := make(map[string]interface{})
 	osDisk[string(SizeGB)] = spotinst.IntValue(osd.SizeGB)
 	osDisk[string(Type)] = spotinst.StringValue(osd.Type)
+	osDisk[string(UtilizeEphemeralStorage)] = spotinst.BoolValue(osd.UtilizeEphemeralStorage)
 	return []interface{}{osDisk}
 }
 
@@ -207,6 +212,7 @@ func expandOSDisk(data interface{}) (*azure.OSDisk, error) {
 			m := list[0].(map[string]interface{})
 			var sizeGB *int = nil
 			var osType *string = nil
+			var osUtilizeEphemeralStorage *bool = nil
 
 			if v, ok := m[string(SizeGB)].(int); ok && v > 0 {
 				sizeGB = spotinst.Int(v)
@@ -217,6 +223,11 @@ func expandOSDisk(data interface{}) (*azure.OSDisk, error) {
 				osType = spotinst.String(v)
 			}
 			osDisk.SetType(osType)
+
+			if v, ok := m[string(UtilizeEphemeralStorage)].(bool); ok {
+				osUtilizeEphemeralStorage = spotinst.Bool(v)
+			}
+			osDisk.SetUtilizeEphemeralStorage(osUtilizeEphemeralStorage)
 
 		}
 		return osDisk, nil

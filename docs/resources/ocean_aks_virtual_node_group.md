@@ -16,6 +16,8 @@ Manages a Spotinst Ocean AKS Virtual Node Group resource.
 resource "spotinst_ocean_aks_virtual_node_group" "example" {
    name = "vng_name"
    ocean_id = "o-12345"
+   
+   zones = ["1","2","3"]
  
    label {
      key = "label_key"
@@ -46,6 +48,7 @@ resource "spotinst_ocean_aks_virtual_node_group" "example" {
      os_disk {
        size_gb = 100
        type = "Standard_LRS"
+       utilize_ephemeral_storage = false
      }
  
      tag {
@@ -68,6 +71,7 @@ The following arguments are supported:
 
 * `ocean_id` - (Required) The Ocean cluster ID.
 * `name` - (Required) Set name for the virtual node group.
+* `zones` - (Optional) An Array holding Availability Zones, this configures the availability zones the Ocean may launch instances in per VNG.
 * `label` - (Optional) Additional labels for the virtual node group. Only custom user labels are allowed. Kubernetes built-in labels and Spot internal labels are not allowed.
     * `key` - (Required) The label key.
     * `value` - (Optional) The label value.
@@ -88,6 +92,7 @@ The following arguments are supported:
     * `os_disk` - (Optional) Specify OS disk specification other than default.
         * `size_gb` - (Required) The size of the OS disk in GB, Required if dataDisks is specified.
         * `type` - (Optional) The type of the OS disk. Valid values: `"Standard_LRS"`, `"Premium_LRS"`, `"StandardSSD_LRS"`.
+        * `utilize_ephemeral_storage` - (Optional) Flag to enable/disable the Ephemeral OS Disk utilization.
     * `tag` - (Optional) Additional key-value pairs to be used to tag the VMs in the virtual node group.
         * `key` - (Optional) Tag Key for Vms in the cluster.
         * `value` - (Optional) Tag Value for VMs in the cluster.
