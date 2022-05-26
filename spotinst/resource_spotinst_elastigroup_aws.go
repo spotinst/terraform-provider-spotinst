@@ -128,11 +128,7 @@ func resourceSpotinstElastigroupAWSDeleteV2(ctx context.Context, resourceData *s
 		commons.ElastigroupResource.GetName(), id)
 
 	if err := deleteGroup(resourceData, meta); err != nil {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Summary: ctx.Err().Error(),
-			},
-		}
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())
@@ -202,11 +198,7 @@ func resourceSpotinstElastigroupAWSReadV2(ctx context.Context, resourceData *sch
 		}
 
 		// Some other error, report it.
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Summary: "failed to read group: " + err.Error(),
-			},
-		}
+		return diag.Errorf("failed to read group: %s", err.Error())
 	}
 
 	// If nothing was found, then return no state.
@@ -219,11 +211,7 @@ func resourceSpotinstElastigroupAWSReadV2(ctx context.Context, resourceData *sch
 	updateCapitalSlice(resourceData, groupResponse)
 
 	if err := commons.ElastigroupResource.OnRead(groupResponse, resourceData, meta); err != nil {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Summary: ctx.Err().Error(),
-			},
-		}
+		return diag.FromErr(err)
 	}
 	log.Printf("===> Elastigroup read successfully: %s <===", id)
 	return nil
@@ -269,40 +257,24 @@ func resourceSpotinstElastigroupAWSCreateV2(ctx context.Context, resourceData *s
 
 	elastigroup, err := commons.ElastigroupResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Summary: ctx.Err().Error(),
-			},
-		}
+		return diag.FromErr(err)
 	}
 
 	groupId, err := createGroup(resourceData, elastigroup, meta.(*Client))
 	if err != nil {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Summary: ctx.Err().Error(),
-			},
-		}
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
 
 	if capacity, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacity)); ok {
 		if *elastigroup.Capacity.Target < capacity.(int) {
-			return diag.Diagnostics{
-				diag.Diagnostic{
-					Summary: "[ERROR] Your target healthy capacity must be less than or equal to your desired capcity",
-				},
-			}
+			return diag.Errorf("[ERROR] Your target healthy capacity must be less than or equal to your desired capcity")
 		}
 		if timeout, ok := resourceData.GetOk(string(elastigroup_aws.WaitForCapacityTimeout)); ok {
 			err := awaitReady(groupId, timeout.(int), capacity.(int), meta.(*Client))
 			if err != nil {
-				return diag.Diagnostics{
-					diag.Diagnostic{
-						Summary: "[ERROR] Timed out when creating group: " + err.Error(),
-					},
-				}
+				return diag.Errorf("[ERROR] Timed out when creating group: %s", err.Error())
 			}
 		}
 	}
@@ -388,21 +360,13 @@ func resourceSpotinstElastigroupAWSUpdateV2(ctx context.Context, resourceData *s
 
 	shouldUpdate, elastigroup, err := commons.ElastigroupResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return diag.Diagnostics{
-			diag.Diagnostic{
-				Summary: ctx.Err().Error(),
-			},
-		}
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		elastigroup.SetId(spotinst.String(id))
 		if err := updateGroup(elastigroup, resourceData, meta); err != nil {
-			return diag.Diagnostics{
-				diag.Diagnostic{
-					Summary: ctx.Err().Error(),
-				},
-			}
+			return diag.FromErr(err)
 		}
 	}
 

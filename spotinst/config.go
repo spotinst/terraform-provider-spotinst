@@ -83,11 +83,7 @@ func (c *Config) ClientV2() (*Client, diag.Diagnostics) {
 	// Create a new session.
 	sess, err := c.getSession()
 	if err != nil {
-		return nil, diag.Diagnostics{
-			diag.Diagnostic{
-				Summary: err.Error(),
-			},
-		}
+		return nil, diag.FromErr(err)
 	}
 
 	// Create a new client.
@@ -104,7 +100,7 @@ func (c *Config) ClientV2() (*Client, diag.Diagnostics) {
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")
-	return client, diag.Diagnostics{}
+	return client, nil
 }
 
 func (c *Config) getSession() (*session.Session, error) {
