@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
@@ -26,10 +27,10 @@ func resourceSpotinstMRScalerAWS() *schema.Resource {
 	setupMRScalerAWSResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstMRScalerAWSCreate,
-		Read:   resourceSpotinstMRScalerAWSRead,
-		Update: resourceSpotinstMRScalerAWSUpdate,
-		Delete: resourceSpotinstMRScalerAWSDelete,
+		CreateContext: resourceSpotinstMRScalerAWSCreate,
+		ReadContext:   resourceSpotinstMRScalerAWSRead,
+		UpdateContext: resourceSpotinstMRScalerAWSUpdate,
+		DeleteContext: resourceSpotinstMRScalerAWSDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -53,25 +54,25 @@ func setupMRScalerAWSResource() {
 	commons.MRScalerAWSResource = commons.NewMRScalerAWSResource(fieldsMap)
 }
 
-func resourceSpotinstMRScalerAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMRScalerAWSCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MRScalerAWSResource.GetName())
 
 	scaler, err := commons.MRScalerAWSResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	scalerId, err := createScaler(scaler, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(scalerId))
 
 	log.Printf("===> MRScaler created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstMRScalerAWSRead(resourceData, meta)
+	return resourceSpotinstMRScalerAWSRead(ctx, resourceData, meta)
 }
 
 func createScaler(scaler *mrscaler.Scaler, spotinstClient *Client) (*string, error) {
@@ -109,7 +110,7 @@ func createScaler(scaler *mrscaler.Scaler, spotinstClient *Client) (*string, err
 	return resp.Scaler.ID, nil
 }
 
-func resourceSpotinstMRScalerAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMRScalerAWSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	time.Sleep(10 * time.Second)
 	log.Printf(string(commons.ResourceOnRead),
@@ -130,37 +131,37 @@ func resourceSpotinstMRScalerAWSRead(resourceData *schema.ResourceData, meta int
 
 	if exist := resourceData.Get(string(mrscaler_aws.ExposeClusterID)).(bool); exist {
 		if err := exposeMrScalerClusterId(resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	if err := commons.MRScalerAWSResource.OnRead(scalerResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> MRScaler read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstMRScalerAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMRScalerAWSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.MRScalerAWSResource.GetName(), id)
 
 	shouldUpdate, scaler, err := commons.MRScalerAWSResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		scaler.SetId(spotinst.String(id))
 		if err := updateScaler(scaler, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> MRScaler updated successfully: %s <===", id)
-	return resourceSpotinstMRScalerAWSRead(resourceData, meta)
+	return resourceSpotinstMRScalerAWSRead(ctx, resourceData, meta)
 }
 
 func updateScaler(scaler *mrscaler.Scaler, resourceData *schema.ResourceData, meta interface{}) error {
@@ -182,13 +183,13 @@ func updateScaler(scaler *mrscaler.Scaler, resourceData *schema.ResourceData, me
 	return nil
 }
 
-func resourceSpotinstMRScalerAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMRScalerAWSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.MRScalerAWSResource.GetName(), id)
 
 	if err := deleteScaler(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> MRScaler deleted successfully: %s <===", resourceData.Id())

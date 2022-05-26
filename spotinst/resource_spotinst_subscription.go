@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,10 +17,10 @@ import (
 func resourceSpotinstSubscription() *schema.Resource {
 	setupSubscription()
 	return &schema.Resource{
-		Create: resourceSpotinstSubscriptionCreate,
-		Update: resourceSpotinstSubscriptionUpdate,
-		Read:   resourceSpotinstSubscriptionRead,
-		Delete: resourceSpotinstSubscriptionDelete,
+		CreateContext: resourceSpotinstSubscriptionCreate,
+		UpdateContext: resourceSpotinstSubscriptionUpdate,
+		ReadContext:   resourceSpotinstSubscriptionRead,
+		DeleteContext: resourceSpotinstSubscriptionDelete,
 
 		Schema: commons.SubscriptionResource.GetSchemaMap(),
 	}
@@ -33,7 +34,7 @@ func setupSubscription() {
 	commons.SubscriptionResource = commons.NewSubscriptionResource(fieldsMap)
 }
 
-func resourceSpotinstSubscriptionDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstSubscriptionDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.SubscriptionResource.GetName(), id)
@@ -47,7 +48,7 @@ func resourceSpotinstSubscriptionDelete(resourceData *schema.ResourceData, meta 
 	return nil
 }
 
-func resourceSpotinstSubscriptionRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstSubscriptionRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.SubscriptionResource.GetName(), id)
@@ -67,30 +68,30 @@ func resourceSpotinstSubscriptionRead(resourceData *schema.ResourceData, meta in
 	}
 
 	if err := commons.SubscriptionResource.OnRead(sub, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> Subscription read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstSubscriptionCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstSubscriptionCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.SubscriptionResource.GetName())
 
 	sub, err := commons.SubscriptionResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	subscriptionId, err := createSubscription(sub, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(subscriptionId))
 	log.Printf("===> Subscription created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstSubscriptionRead(resourceData, meta)
+	return resourceSpotinstSubscriptionRead(ctx, resourceData, meta)
 }
 
 func createSubscription(subObj *subscription.Subscription, spotinstClient *Client) (*string, error) {
@@ -102,25 +103,25 @@ func createSubscription(subObj *subscription.Subscription, spotinstClient *Clien
 	return resp.Subscription.ID, nil
 }
 
-func resourceSpotinstSubscriptionUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstSubscriptionUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.SubscriptionResource.GetName(), id)
 
 	shouldUpdate, sub, err := commons.SubscriptionResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		sub.SetId(spotinst.String(id))
 		if err := updateSubscription(sub, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Subscription updated successfully: %s <===", id)
-	return resourceSpotinstSubscriptionRead(resourceData, meta)
+	return resourceSpotinstSubscriptionRead(ctx, resourceData, meta)
 }
 
 func updateSubscription(sub *subscription.Subscription, resourceData *schema.ResourceData, meta interface{}) error {

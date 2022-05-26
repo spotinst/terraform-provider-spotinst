@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
@@ -19,10 +20,10 @@ func resourceSpotinstOceanAWSExtendedResourceDefinition() *schema.Resource {
 	setupOceanAWSExtendedResourceDefinitionResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstOceanAWSExtendedResourceDefinitionCreate,
-		Update: resourceSpotinstOceanAWSExtendedResourceDefinitionUpdate,
-		Read:   resourceSpotinstOceanAWSExtendedResourceDefinitionRead,
-		Delete: resourceSpotinstOceanAWSExtendedResourceDefinitionDelete,
+		CreateContext: resourceSpotinstOceanAWSExtendedResourceDefinitionCreate,
+		UpdateContext: resourceSpotinstOceanAWSExtendedResourceDefinitionUpdate,
+		ReadContext:   resourceSpotinstOceanAWSExtendedResourceDefinitionRead,
+		DeleteContext: resourceSpotinstOceanAWSExtendedResourceDefinitionDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -41,7 +42,7 @@ func setupOceanAWSExtendedResourceDefinitionResource() {
 
 const ErrCodeExtendedResourceDefinitionNotFound = "EXTENDED_RESOURCE_DEFINITION_DOESNT_EXIST"
 
-func resourceSpotinstOceanAWSExtendedResourceDefinitionRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSExtendedResourceDefinitionRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanAWSExtendedResourceDefinitionResource.GetName(), resourceId)
 
@@ -69,30 +70,30 @@ func resourceSpotinstOceanAWSExtendedResourceDefinitionRead(resourceData *schema
 	}
 
 	if err := commons.OceanAWSExtendedResourceDefinitionResource.OnRead(ExtendedResourceDefinitionResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> ExtendedResourceDefinition read successfully: %s <===", resourceId)
 	return nil
 }
 
-func resourceSpotinstOceanAWSExtendedResourceDefinitionCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSExtendedResourceDefinitionCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanAWSExtendedResourceDefinitionResource.GetName())
 
 	extendedResourceDefinition, err := commons.OceanAWSExtendedResourceDefinitionResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	extendedResourceDefinitionId, err := createOceanAWSExtendedResourceDefinition(resourceData, extendedResourceDefinition, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(extendedResourceDefinitionId))
 
 	log.Printf("===> ExtendedResourceDefinition created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstOceanAWSExtendedResourceDefinitionRead(resourceData, meta)
+	return resourceSpotinstOceanAWSExtendedResourceDefinitionRead(ctx, resourceData, meta)
 
 }
 
@@ -121,23 +122,23 @@ func createOceanAWSExtendedResourceDefinition(resourceData *schema.ResourceData,
 
 }
 
-func resourceSpotinstOceanAWSExtendedResourceDefinitionUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSExtendedResourceDefinitionUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAWSExtendedResourceDefinitionResource.GetName(), resourceId)
 
 	shouldUpdate, erd, err := commons.OceanAWSExtendedResourceDefinitionResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		erd.SetId(spotinst.String(resourceId))
 		if err := updateOceanAWSExtendedResourceDefinition(erd, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> ExtendedResourceDefinition updated successfully: %s <===", resourceId)
-	return resourceSpotinstOceanAWSExtendedResourceDefinitionRead(resourceData, meta)
+	return resourceSpotinstOceanAWSExtendedResourceDefinitionRead(ctx, resourceData, meta)
 }
 
 func updateOceanAWSExtendedResourceDefinition(erd *aws.ExtendedResourceDefinition, resourceData *schema.ResourceData, meta interface{}) error {
@@ -158,12 +159,12 @@ func updateOceanAWSExtendedResourceDefinition(erd *aws.ExtendedResourceDefinitio
 	return nil
 }
 
-func resourceSpotinstOceanAWSExtendedResourceDefinitionDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSExtendedResourceDefinitionDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.OceanAWSExtendedResourceDefinitionResource.GetName(), resourceId)
 
 	if err := deleteOceanAWSExtendedResourceDefinition(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> ExtendedResourceDefinition deleted successfully: %s <===", resourceData.Id())

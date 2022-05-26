@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"log"
 	"strings"
@@ -30,10 +31,10 @@ func resourceSpotinstOceanECS() *schema.Resource {
 	setupClusterECSResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstClusterECSCreate,
-		Read:   resourceSpotinstClusterECSRead,
-		Update: resourceSpotinstClusterECSUpdate,
-		Delete: resourceSpotinstClusterECSDelete,
+		CreateContext: resourceSpotinstClusterECSCreate,
+		ReadContext:   resourceSpotinstClusterECSRead,
+		UpdateContext: resourceSpotinstClusterECSUpdate,
+		DeleteContext: resourceSpotinstClusterECSDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -55,24 +56,24 @@ func setupClusterECSResource() {
 	commons.OceanECSResource = commons.NewOceanECSResource(fieldsMap)
 }
 
-func resourceSpotinstClusterECSCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterECSCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanECSResource.GetName())
 
 	cluster, err := commons.OceanECSResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	clusterID, err := createECSCluster(resourceData, cluster, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> Cluster created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstClusterECSRead(resourceData, meta)
+	return resourceSpotinstClusterECSRead(ctx, resourceData, meta)
 }
 
 func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster, spotinstClient *Client) (*string, error) {
@@ -116,7 +117,7 @@ func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster
 
 const ErrCodeECSClusterNotFound = "CANT_GET_OCEAN_CLUSTER"
 
-func resourceSpotinstClusterECSRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterECSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.OceanECSResource.GetName(), id)
@@ -148,30 +149,30 @@ func resourceSpotinstClusterECSRead(resourceData *schema.ResourceData, meta inte
 	}
 
 	if err := commons.OceanECSResource.OnRead(clusterResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> Cluster read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstClusterECSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterECSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
 
 	shouldUpdate, changesRequiredRoll, tagsChanged, cluster, err := commons.OceanECSResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
 		if err := updateECSCluster(cluster, resourceData, meta, changesRequiredRoll, tagsChanged); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> Cluster updated successfully: %s <===", id)
-	return resourceSpotinstClusterECSRead(resourceData, meta)
+	return resourceSpotinstClusterECSRead(ctx, resourceData, meta)
 }
 
 func updateECSCluster(cluster *aws.ECSCluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool, tagsChanged bool) error {
@@ -263,13 +264,13 @@ func rollECSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceSpotinstClusterECSDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterECSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanECSResource.GetName(), id)
 
 	if err := deleteECSCluster(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Cluster deleted successfully: %s <===", resourceData.Id())

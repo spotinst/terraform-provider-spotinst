@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
@@ -23,10 +24,10 @@ func resourceSpotinstOceanGKEImport() *schema.Resource {
 	setupClusterGKEImportResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstClusterGKEImportCreate,
-		Read:   resourceSpotinstClusterGKEImportRead,
-		Update: resourceSpotinstClusterGKEImportUpdate,
-		Delete: resourceSpotinstClusterGKEImportDelete,
+		CreateContext: resourceSpotinstClusterGKEImportCreate,
+		ReadContext:   resourceSpotinstClusterGKEImportRead,
+		UpdateContext: resourceSpotinstClusterGKEImportUpdate,
+		DeleteContext: resourceSpotinstClusterGKEImportDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -73,29 +74,29 @@ func importOceanGKECluster(resourceData *schema.ResourceData, meta interface{}) 
 	return resp.Cluster, err
 }
 
-func resourceSpotinstClusterGKEImportCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKEImportCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanGKEImportResource.GetName())
 
 	importedCluster, err := importOceanGKECluster(resourceData, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	cluster, err := commons.OceanGKEImportResource.OnCreate(importedCluster, resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	clusterID, err := createGKEImportedCluster(cluster, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> GKE imported cluster created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstClusterGKEImportRead(resourceData, meta)
+	return resourceSpotinstClusterGKEImportRead(ctx, resourceData, meta)
 }
 
 func createGKEImportedCluster(cluster *gcp.Cluster, spotinstClient *Client) (*string, error) {
@@ -124,7 +125,7 @@ func createGKEImportedCluster(cluster *gcp.Cluster, spotinstClient *Client) (*st
 	return resp.Cluster.ID, nil
 }
 
-func resourceSpotinstClusterGKEImportRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKEImportRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.OceanGKEImportResource.GetName(), id)
@@ -168,30 +169,30 @@ func resourceSpotinstClusterGKEImportRead(resourceData *schema.ResourceData, met
 	}
 
 	if err := commons.OceanGKEImportResource.OnRead(clusterResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> GKE cluster read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstClusterGKEImportUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKEImportUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanGKEImportResource.GetName(), id)
 
 	shouldUpdate, changesRequiredRoll, cluster, err := commons.OceanGKEImportResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
 		if err := updateGKEImportCluster(cluster, resourceData, meta, changesRequiredRoll); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> GLE Cluster updated successfully: %s <===", id)
-	return resourceSpotinstClusterGKEImportRead(resourceData, meta)
+	return resourceSpotinstClusterGKEImportRead(ctx, resourceData, meta)
 }
 
 func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool) error {
@@ -239,13 +240,13 @@ func updateGKEImportCluster(cluster *gcp.Cluster, resourceData *schema.ResourceD
 	return nil
 }
 
-func resourceSpotinstClusterGKEImportDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKEImportDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanGKEImportResource.GetName(), id)
 
 	if err := deleteGKEImportCluster(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> GKE Cluster deleted successfully: %s <===", resourceData.Id())

@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
@@ -20,10 +21,10 @@ func resourceSpotinstHealthCheck() *schema.Resource {
 	setupHealthCheckResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstHealthCheckCreate,
-		Update: resourceSpotinstHealthCheckUpdate,
-		Read:   resourceSpotinstHealthCheckRead,
-		Delete: resourceSpotinstHealthCheckDelete,
+		CreateContext: resourceSpotinstHealthCheckCreate,
+		UpdateContext: resourceSpotinstHealthCheckUpdate,
+		ReadContext:   resourceSpotinstHealthCheckRead,
+		DeleteContext: resourceSpotinstHealthCheckDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -42,7 +43,7 @@ func setupHealthCheckResource() {
 
 const ErrCodeHealthCheckNotFound = "HEALTH_CHECK_DOESNT_EXIST"
 
-func resourceSpotinstHealthCheckRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstHealthCheckRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.HealthCheckResource.GetName(), resourceId)
 
@@ -70,31 +71,31 @@ func resourceSpotinstHealthCheckRead(resourceData *schema.ResourceData, meta int
 	}
 
 	if err := commons.HealthCheckResource.OnRead(HealthCheckResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> HealthCheck read successfully: %s <===", resourceId)
 	return nil
 }
 
-func resourceSpotinstHealthCheckCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstHealthCheckCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
 	log.Printf(string(commons.ResourceOnCreate), commons.HealthCheckResource.GetName())
 
 	healthCheck, err := commons.HealthCheckResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	healthCheckId, err := createHealthCheck(resourceData, healthCheck, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(healthCheckId))
 
 	log.Printf("===> HealthCheck created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstHealthCheckRead(resourceData, meta)
+	return resourceSpotinstHealthCheckRead(ctx, resourceData, meta)
 
 }
 
@@ -131,23 +132,23 @@ func createHealthCheck(resourceData *schema.ResourceData, healthCheck *healthche
 
 }
 
-func resourceSpotinstHealthCheckUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstHealthCheckUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.HealthCheckResource.GetName(), resourceId)
 
 	shouldUpdate, healthCheck, err := commons.HealthCheckResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		healthCheck.SetId(spotinst.String(resourceId))
 		if err := updateHealthCheck(healthCheck, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> HealthCheck updated successfully: %s <===", resourceId)
-	return resourceSpotinstHealthCheckRead(resourceData, meta)
+	return resourceSpotinstHealthCheckRead(ctx, resourceData, meta)
 }
 
 func updateHealthCheck(healthCheck *healthcheck.HealthCheck, resourceData *schema.ResourceData, meta interface{}) error {
@@ -169,12 +170,12 @@ func updateHealthCheck(healthCheck *healthcheck.HealthCheck, resourceData *schem
 	return nil
 }
 
-func resourceSpotinstHealthCheckDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstHealthCheckDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.HealthCheckResource.GetName(), resourceId)
 
 	if err := deleteHealthCheck(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> HealthCheck deleted successfully: %s <===", resourceData.Id())

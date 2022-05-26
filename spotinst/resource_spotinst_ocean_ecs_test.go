@@ -947,9 +947,9 @@ func TestAccSpotinstOceanECS_Logging(t *testing.T) {
 
 	var cluster aws.ECSCluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanECSDestroy,
+		PreCheck:          func() { testAccPreCheck(t, "aws") },
+		ProviderFactories: TestAccProviders,
+		CheckDestroy:      testOceanECSDestroy,
 
 		Steps: []resource.TestStep{
 			{

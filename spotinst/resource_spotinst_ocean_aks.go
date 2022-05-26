@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
@@ -31,10 +32,10 @@ func resourceSpotinstOceanAKS() *schema.Resource {
 	setupClusterAKSResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstClusterAKSCreate,
-		Read:   resourceSpotinstClusterAKSRead,
-		Update: resourceSpotinstClusterAKSUpdate,
-		Delete: resourceSpotinstClusterAKSDelete,
+		CreateContext: resourceSpotinstClusterAKSCreate,
+		ReadContext:   resourceSpotinstClusterAKSRead,
+		UpdateContext: resourceSpotinstClusterAKSUpdate,
+		DeleteContext: resourceSpotinstClusterAKSDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -65,28 +66,28 @@ func setupClusterAKSResource() {
 
 // region Create
 
-func resourceSpotinstClusterAKSCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAKSCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanAKSResource.GetName())
 
 	importedCluster, err := importAKSCluster(resourceData, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	cluster, err := commons.OceanAKSResource.OnCreate(importedCluster, resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	clusterID, err := createAKSCluster(cluster, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(clusterID))
 	log.Printf("ocean/aks: AKS cluster created successfully: %s", resourceData.Id())
 
-	return resourceSpotinstClusterAKSRead(resourceData, meta)
+	return resourceSpotinstClusterAKSRead(ctx, resourceData, meta)
 }
 
 func createAKSCluster(cluster *azure.Cluster, spotinstClient *Client) (*string, error) {
@@ -112,13 +113,13 @@ func createAKSCluster(cluster *azure.Cluster, spotinstClient *Client) (*string, 
 
 // region Read
 
-func resourceSpotinstClusterAKSRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAKSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clusterID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanAKSResource.GetName(), clusterID)
 
 	cluster, err := readAKSCluster(context.TODO(), clusterID, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// If nothing was found, return no state.
@@ -134,7 +135,7 @@ func resourceSpotinstClusterAKSRead(resourceData *schema.ResourceData, meta inte
 	}
 
 	if err := commons.OceanAKSResource.OnRead(cluster, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("ocean/aks: cluster read successfully: %s", clusterID)
@@ -169,24 +170,24 @@ func readAKSCluster(ctx context.Context, clusterID string, spotinstClient *Clien
 
 // region Update
 
-func resourceSpotinstClusterAKSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAKSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clusterID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSResource.GetName(), clusterID)
 
 	shouldUpdate, cluster, err := commons.OceanAKSResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(clusterID))
 		if err := updateAKSCluster(cluster, meta.(*Client)); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("ocean/aks: cluster updated successfully: %s", clusterID)
-	return resourceSpotinstClusterAKSRead(resourceData, meta)
+	return resourceSpotinstClusterAKSRead(ctx, resourceData, meta)
 }
 
 func updateAKSCluster(cluster *azure.Cluster, spotinstClient *Client) error {
@@ -211,12 +212,12 @@ func updateAKSCluster(cluster *azure.Cluster, spotinstClient *Client) error {
 
 // region Delete
 
-func resourceSpotinstClusterAKSDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAKSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clusterID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.OceanAKSResource.GetName(), clusterID)
 
 	if err := deleteAKSCluster(clusterID, meta.(*Client)); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("ocean/aks: cluster deleted successfully: %s", clusterID)

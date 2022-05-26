@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
@@ -29,10 +30,10 @@ func resourceSpotinstMangedInstanceAWS() *schema.Resource {
 	setupMangedInstanceResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstManagedInstanceAWSCreate,
-		Read:   resourceSpotinstManagedInstanceAWSRead,
-		Update: resourceSpotinstManagedInstanceAWSUpdate,
-		Delete: resourceSpotinstManagedInstanceAWSDelete,
+		CreateContext: resourceSpotinstManagedInstanceAWSCreate,
+		ReadContext:   resourceSpotinstManagedInstanceAWSRead,
+		UpdateContext: resourceSpotinstManagedInstanceAWSUpdate,
+		DeleteContext: resourceSpotinstManagedInstanceAWSDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -61,7 +62,7 @@ func setupMangedInstanceResource() {
 
 const ErrCodeManagedInstanceDoesntExist = "MANAGED_INSTANCE_DOESNT_EXIST"
 
-func resourceSpotinstManagedInstanceAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstManagedInstanceAWSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.ManagedInstanceResource.GetName(), id)
@@ -92,31 +93,31 @@ func resourceSpotinstManagedInstanceAWSRead(resourceData *schema.ResourceData, m
 	}
 
 	if err := commons.ManagedInstanceResource.OnRead(managedInstanceResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> ManagedInstance read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstManagedInstanceAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstManagedInstanceAWSCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ManagedInstanceResource.GetName())
 
 	mangedInstance, err := commons.ManagedInstanceResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	ManagedInstanceId, err := createManagedInstance(resourceData, mangedInstance, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(ManagedInstanceId))
 
 	log.Printf("===> ManagedInstance created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstManagedInstanceAWSRead(resourceData, meta)
+	return resourceSpotinstManagedInstanceAWSRead(ctx, resourceData, meta)
 }
 
 func createManagedInstance(resourceData *schema.ResourceData, mangedInstance *aws.ManagedInstance, spotinstClient *Client) (*string, error) {
@@ -157,25 +158,25 @@ func createManagedInstance(resourceData *schema.ResourceData, mangedInstance *aw
 	return resp.ManagedInstance.ID, nil
 }
 
-func resourceSpotinstManagedInstanceAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstManagedInstanceAWSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.ManagedInstanceResource.GetName(), id)
 
 	shouldUpdate, managedInstance, err := commons.ManagedInstanceResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		managedInstance.SetId(spotinst.String(id))
 		if err := updateAWSManagedInstance(managedInstance, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> ManagedInstance updated successfully: %s <===", id)
-	return resourceSpotinstManagedInstanceAWSRead(resourceData, meta)
+	return resourceSpotinstManagedInstanceAWSRead(ctx, resourceData, meta)
 }
 
 func updateAWSManagedInstance(managedInstance *aws.ManagedInstance, resourceData *schema.ResourceData, meta interface{}) error {
@@ -270,13 +271,13 @@ func recycleManagedInstance(ctx context.Context, svc aws.Service, instanceID str
 	return nil
 }
 
-func resourceSpotinstManagedInstanceAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstManagedInstanceAWSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.ManagedInstanceResource.GetName(), id)
 
 	if err := deleteManagedInstance(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> ManagedInstance deleted successfully: %s <===", resourceData.Id())

@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
@@ -18,10 +19,10 @@ func resourceSpotinstMultaiRoutingRule() *schema.Resource {
 	setupMultaiRoutingRuleResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstMultaiRoutingRuleCreate,
-		Read:   resourceSpotinstMultaiRoutingRuleRead,
-		Update: resourceSpotinstMultaiRoutingRuleUpdate,
-		Delete: resourceSpotinstMultaiRoutingRuleDelete,
+		CreateContext: resourceSpotinstMultaiRoutingRuleCreate,
+		ReadContext:   resourceSpotinstMultaiRoutingRuleRead,
+		UpdateContext: resourceSpotinstMultaiRoutingRuleUpdate,
+		DeleteContext: resourceSpotinstMultaiRoutingRuleDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -39,24 +40,24 @@ func setupMultaiRoutingRuleResource() {
 	commons.MultaiRoutingRuleResource = commons.NewMultaiRoutingRuleResource(fieldsMap)
 }
 
-func resourceSpotinstMultaiRoutingRuleCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiRoutingRuleResource.GetName())
 
 	routingRule, err := commons.MultaiRoutingRuleResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	routingRuleId, err := createRoutingRule(routingRule, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(routingRuleId))
 	log.Printf("===> Routing Rule created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstMultaiRoutingRuleRead(resourceData, meta)
+	return resourceSpotinstMultaiRoutingRuleRead(ctx, resourceData, meta)
 }
 
 func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) (*string, error) {
@@ -83,7 +84,7 @@ func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) 
 	return resp.RoutingRule.ID, nil
 }
 
-func resourceSpotinstMultaiRoutingRuleRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	routingRuleId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.MultaiRoutingRuleResource.GetName(), routingRuleId)
@@ -102,32 +103,32 @@ func resourceSpotinstMultaiRoutingRuleRead(resourceData *schema.ResourceData, me
 	}
 
 	if err := commons.MultaiRoutingRuleResource.OnRead(routingResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Routing Rule read successfully: %s <===", routingRuleId)
 	return nil
 }
 
-func resourceSpotinstMultaiRoutingRuleUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	routingRuleId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.MultaiRoutingRuleResource.GetName(), routingRuleId)
 
 	shouldUpdate, routingRule, err := commons.MultaiRoutingRuleResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		routingRule.SetId(spotinst.String(routingRuleId))
 		if err := updateRoutingRule(routingRule, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Routing Rule updated successfully: %s <===", routingRuleId)
-	return resourceSpotinstMultaiRoutingRuleRead(resourceData, meta)
+	return resourceSpotinstMultaiRoutingRuleRead(ctx, resourceData, meta)
 }
 
 func updateRoutingRule(routingRule *multai.RoutingRule, resourceData *schema.ResourceData, meta interface{}) error {
@@ -147,13 +148,13 @@ func updateRoutingRule(routingRule *multai.RoutingRule, resourceData *schema.Res
 	return nil
 }
 
-func resourceSpotinstMultaiRoutingRuleDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	routingRuleId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.MultaiRoutingRuleResource.GetName(), routingRuleId)
 
 	if err := deleteRoutingRule(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Routing Rule deleted successfully: %s <===", resourceData.Id())

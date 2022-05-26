@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
@@ -26,10 +27,10 @@ func resourceSpotinstOceanAWS() *schema.Resource {
 	setupClusterAWSResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstClusterAWSCreate,
-		Read:   resourceSpotinstClusterAWSRead,
-		Update: resourceSpotinstClusterAWSUpdate,
-		Delete: resourceSpotinstClusterAWSDelete,
+		CreateContext: resourceSpotinstClusterAWSCreate,
+		ReadContext:   resourceSpotinstClusterAWSRead,
+		UpdateContext: resourceSpotinstClusterAWSUpdate,
+		DeleteContext: resourceSpotinstClusterAWSDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -52,24 +53,24 @@ func setupClusterAWSResource() {
 	commons.OceanAWSResource = commons.NewOceanAWSResource(fieldsMap)
 }
 
-func resourceSpotinstClusterAWSCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAWSCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanAWSResource.GetName())
 
 	cluster, err := commons.OceanAWSResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	clusterID, err := createAWSCluster(resourceData, cluster, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> Cluster created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstClusterAWSRead(resourceData, meta)
+	return resourceSpotinstClusterAWSRead(ctx, resourceData, meta)
 }
 
 func createAWSCluster(resourceData *schema.ResourceData, cluster *aws.Cluster, spotinstClient *Client) (*string, error) {
@@ -113,7 +114,7 @@ func createAWSCluster(resourceData *schema.ResourceData, cluster *aws.Cluster, s
 
 const ErrCodeClusterNotFound = "CLUSTER_DOESNT_EXIST"
 
-func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAWSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.OceanAWSResource.GetName(), id)
@@ -145,30 +146,30 @@ func resourceSpotinstClusterAWSRead(resourceData *schema.ResourceData, meta inte
 	}
 
 	if err := commons.OceanAWSResource.OnRead(clusterResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> Cluster read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstClusterAWSUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAWSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
 
 	shouldUpdate, changesRequiredRoll, tagsChanged, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
 		if err := updateAWSCluster(cluster, resourceData, meta, changesRequiredRoll, tagsChanged); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> Cluster updated successfully: %s <===", id)
-	return resourceSpotinstClusterAWSRead(resourceData, meta)
+	return resourceSpotinstClusterAWSRead(ctx, resourceData, meta)
 }
 
 func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool, tagsChanged bool) error {
@@ -262,13 +263,13 @@ func rollOceanAWSCluster(resourceData *schema.ResourceData, meta interface{}) er
 	return nil
 }
 
-func resourceSpotinstClusterAWSDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterAWSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanAWSResource.GetName(), id)
 
 	if err := deleteAWSCluster(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Cluster deleted successfully: %s <===", resourceData.Id())

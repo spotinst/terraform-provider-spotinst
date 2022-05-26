@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
@@ -18,10 +19,10 @@ func resourceSpotinstMultaiTarget() *schema.Resource {
 	setupMultaiTargetResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstMultaiTargetCreate,
-		Read:   resourceSpotinstMultaiTargetRead,
-		Update: resourceSpotinstMultaiTargetUpdate,
-		Delete: resourceSpotinstMultaiTargetDelete,
+		CreateContext: resourceSpotinstMultaiTargetCreate,
+		ReadContext:   resourceSpotinstMultaiTargetRead,
+		UpdateContext: resourceSpotinstMultaiTargetUpdate,
+		DeleteContext: resourceSpotinstMultaiTargetDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -39,24 +40,24 @@ func setupMultaiTargetResource() {
 	commons.MultaiTargetResource = commons.NewMultaiTargetResource(fieldsMap)
 }
 
-func resourceSpotinstMultaiTargetCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiTargetCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiTargetResource.GetName())
 
 	target, err := commons.MultaiTargetResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	targetId, err := createTarget(target, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(targetId))
 	log.Printf("===> Target created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstMultaiTargetRead(resourceData, meta)
+	return resourceSpotinstMultaiTargetRead(ctx, resourceData, meta)
 }
 
 func createTarget(target *multai.Target, spotinstClient *Client) (*string, error) {
@@ -83,7 +84,7 @@ func createTarget(target *multai.Target, spotinstClient *Client) (*string, error
 	return resp.Target.ID, nil
 }
 
-func resourceSpotinstMultaiTargetRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiTargetRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	targetId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.MultaiTargetResource.GetName(), targetId)
@@ -102,32 +103,32 @@ func resourceSpotinstMultaiTargetRead(resourceData *schema.ResourceData, meta in
 	}
 
 	if err := commons.MultaiTargetResource.OnRead(targetResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Target read successfully: %s <===", targetId)
 	return nil
 }
 
-func resourceSpotinstMultaiTargetUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiTargetUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	targetId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.MultaiTargetResource.GetName(), targetId)
 
 	shouldUpdate, target, err := commons.MultaiTargetResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		target.SetId(spotinst.String(targetId))
 		if err := updateTarget(target, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Target updated successfully: %s <===", targetId)
-	return resourceSpotinstMultaiTargetRead(resourceData, meta)
+	return resourceSpotinstMultaiTargetRead(ctx, resourceData, meta)
 }
 
 func updateTarget(target *multai.Target, resourceData *schema.ResourceData, meta interface{}) error {
@@ -147,13 +148,13 @@ func updateTarget(target *multai.Target, resourceData *schema.ResourceData, meta
 	return nil
 }
 
-func resourceSpotinstMultaiTargetDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiTargetDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	targetId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.MultaiTargetResource.GetName(), targetId)
 
 	if err := deleteTarget(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err := awaitTargetDeleted(spotinst.String(targetId), meta.(*Client))
