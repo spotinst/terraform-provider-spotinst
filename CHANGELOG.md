@@ -1,6 +1,12 @@
 ## Unreleased
 
-## 1.73.3 (May 22, 2022)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added support for `logging`
+* resource/spotinst_ocean_aks: added support for `zones`
+* resource/spotinst_ocean_aks_virtual_node_group: added support for `zones`
+* resource/spotinst_ocean_aks_virtual_node_group: added support for `utilize_ephemeral_storage`
+
+## 1.74.0 (May 22, 2022)
 
 FEATURES:
 * **New Resource:** `spotinst_stateful_node_azure`

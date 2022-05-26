@@ -384,7 +384,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
@@ -417,7 +417,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
@@ -451,7 +451,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-79826301"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
@@ -463,7 +463,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 
 const testLaunchConfigAWSConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id                    = "ami-79826301"
+  image_id                    = "ami-05f840082fe2dcac2"
   security_groups             = ["sg-065c82e9ff8b192a1"]
   //key_name                  = "my-key.ssh"
   user_data                   = "echo hello world"
@@ -497,7 +497,7 @@ const testLaunchConfigAWSConfig_Create = `
 
 const testLaunchConfigAWSConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id                    = "ami-79826301"
+  image_id                    = "ami-05f840082fe2dcac2"
   security_groups             = ["sg-065c82e9ff8b192a1"]
   //key_name                  = "my-key-updated.ssh"
   user_data                   = "echo hello world updated"
@@ -530,7 +530,7 @@ const testLaunchConfigAWSConfig_Update = `
 
 const testLaunchConfigAWSConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id        = "ami-79826301"
+  image_id        = "ami-05f840082fe2dcac2"
   security_groups = ["sg-065c82e9ff8b192a1"]
  // ---------------------------------------
 `

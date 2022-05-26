@@ -124,6 +124,7 @@ func NewECSClusterWrapper() *ECSClusterWrapper {
 			},
 			Strategy:   &aws.ECSStrategy{},
 			Scheduling: &aws.ECSScheduling{},
+			Logging:    &aws.ECSLogging{},
 		},
 	}
 }
