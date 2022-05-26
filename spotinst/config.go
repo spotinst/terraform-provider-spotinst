@@ -51,33 +51,7 @@ type Client struct {
 }
 
 // Client configures and returns a fully initialized Spotinst client.
-func (c *Config) Client() (*Client, error) {
-	stdlog.Println("[INFO] Configuring a new Spotinst client")
-
-	// Create a new session.
-	sess, err := c.getSession()
-	if err != nil {
-		return nil, err
-	}
-
-	// Create a new client.
-	client := &Client{
-		elastigroup:     elastigroup.New(sess),
-		healthCheck:     healthcheck.New(sess),
-		subscription:    subscription.New(sess),
-		multai:          multai.New(sess),
-		mrscaler:        mrscaler.New(sess),
-		ocean:           ocean.New(sess),
-		managedInstance: managedinstance.New(sess),
-		dataIntegration: dataintegration.New(sess),
-		statefulNode:    stateful.New(sess),
-	}
-
-	stdlog.Println("[INFO] Spotinst client configured")
-	return client, nil
-}
-
-func (c *Config) ClientV2() (*Client, diag.Diagnostics) {
+func (c *Config) Client() (*Client, diag.Diagnostics) {
 	stdlog.Println("[INFO] Configuring a new Spotinst client")
 
 	// Create a new session.

@@ -90,13 +90,13 @@ func Provider() *schema.Provider {
 			// We can therefore assume that if it's missing it's 0.10 or 0.11
 			terraformVersion = "0.11+compatible"
 		}
-		return providerConfigureV2(d, terraformVersion)
+		return providerConfigure(d, terraformVersion)
 	}
 
 	return p
 }
 
-func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, error) {
+func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, diag.Diagnostics) {
 	config := Config{
 		Token:            d.Get(string(commons.ProviderToken)).(string),
 		Account:          d.Get(string(commons.ProviderAccount)).(string),
@@ -105,16 +105,4 @@ func providerConfigure(d *schema.ResourceData, terraformVersion string) (interfa
 	}
 
 	return config.Client()
-}
-
-func providerConfigureV2(d *schema.ResourceData, terraformVersion string) (interface{}, diag.Diagnostics) {
-	config := Config{
-		Token:            d.Get(string(commons.ProviderToken)).(string),
-		Account:          d.Get(string(commons.ProviderAccount)).(string),
-		FeatureFlags:     d.Get(string(commons.ProviderFeatureFlags)).(string),
-		terraformVersion: terraformVersion,
-	}
-
-	res, diagnostics := config.ClientV2()
-	return res, diagnostics
 }

@@ -80,8 +80,7 @@ func providerConfigureGCP(context.Context, *schema.ResourceData) (interface{}, d
 		Account: os.Getenv("SPOTINST_ACCOUNT_GCP"),
 	}
 
-	res, diagnostics := config.ClientV2()
-	return res, diagnostics
+	return config.Client()
 }
 
 func providerConfigureAWS(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -90,8 +89,7 @@ func providerConfigureAWS(context.Context, *schema.ResourceData) (interface{}, d
 		Account: os.Getenv("SPOTINST_ACCOUNT_AWS"),
 	}
 
-	res, diagnostics := config.ClientV2()
-	return res, diagnostics
+	return config.Client()
 }
 
 func providerConfigureAzure(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
@@ -100,6 +98,5 @@ func providerConfigureAzure(context.Context, *schema.ResourceData) (interface{},
 		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),
 	}
 
-	res, diagnostics := config.ClientV2()
-	return res, diagnostics
+	return config.Client()
 }
