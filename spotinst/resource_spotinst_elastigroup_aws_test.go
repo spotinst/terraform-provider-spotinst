@@ -102,8 +102,8 @@ func testCheckElastigroupExists(group *aws.Group, resourceName string) resource.
 }
 
 type GroupConfigMetadata struct {
-	variables            string
-	provider             string
+	variables string
+	//provider             string
 	groupName            string
 	instanceTypes        string
 	launchConfig         string
@@ -118,9 +118,9 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 		return ""
 	}
 
-	if gcm.provider == "" {
-		gcm.provider = "aws"
-	}
+	//if gcm.provider == "" {
+	//	gcm.provider = "aws"
+	//}
 
 	if gcm.instanceTypes == "" {
 		gcm.instanceTypes = testInstanceTypesGroupConfig_Create
@@ -156,7 +156,7 @@ provider "aws" {
 		}
 		template += fmt.Sprintf(format,
 			gcm.groupName,
-			gcm.provider,
+			//gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
@@ -170,7 +170,7 @@ provider "aws" {
 		}
 		template += fmt.Sprintf(format,
 			gcm.groupName,
-			gcm.provider,
+			//gcm.provider,
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
