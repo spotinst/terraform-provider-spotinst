@@ -134,12 +134,21 @@ func createElastigroupTerraform(gcm *GroupConfigMetadata) string {
 		gcm.strategy = testStrategyGroupConfig_Create
 	}
 
-	template :=
-		`provider "aws" {
-	 token   = "fake"
-	 account = "fake"
+	template := `
+terraform {
+	required_providers {
+		aws = {
+			source  = "hashicorp/aws"
+			version = "~> 3.0"
+			}
+		}
 	}
-	`
+
+provider "aws" {
+	token   = "fake"
+	account = "fake"
+	}
+`
 	if gcm.updateBaselineFields {
 		format := testBaselineGroupConfig_Update
 		if gcm.useSubnetIDs {
