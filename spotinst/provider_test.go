@@ -16,6 +16,8 @@ var testAccProviderAzureV3 *schema.Provider
 
 var TestAccProviders map[string]func() (*schema.Provider, error)
 
+var TestAccProvidersOld map[string]*schema.Provider
+
 func testAccProviderGCPFunc() (*schema.Provider, error) {
 	return testAccProviderGCP, nil
 }
@@ -48,6 +50,10 @@ func init() {
 		"aws":     testAccProviderAWSFunc,
 		"azure":   testAccProviderAzureFunc,
 		"azurev3": testAccProviderAzureV3Func,
+	}
+
+	TestAccProvidersOld = map[string]*schema.Provider{
+		"aws": testAccProviderAWS,
 	}
 
 }
