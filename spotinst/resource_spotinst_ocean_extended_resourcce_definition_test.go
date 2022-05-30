@@ -111,9 +111,9 @@ func TestAccSpotinstOceanAWSExtendedResourceDefinition_Baseline(t *testing.T) {
 
 	var erd aws.ExtendedResourceDefinition
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAWSExtendedResourceDefinitionDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSExtendedResourceDefinitionDestroy,
 
 		Steps: []resource.TestStep{
 			{

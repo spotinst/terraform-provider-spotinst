@@ -14,25 +14,7 @@ var testAccProviderAWS *schema.Provider
 var testAccProviderAzure *schema.Provider
 var testAccProviderAzureV3 *schema.Provider
 
-var TestAccProviders map[string]func() (*schema.Provider, error)
-
-var TestAccProvidersOld map[string]*schema.Provider
-
-func testAccProviderGCPFunc() (*schema.Provider, error) {
-	return testAccProviderGCP, nil
-}
-
-func testAccProviderAWSFunc() (*schema.Provider, error) {
-	return testAccProviderAWS, nil
-}
-
-func testAccProviderAzureFunc() (*schema.Provider, error) {
-	return testAccProviderAzure, nil
-}
-
-func testAccProviderAzureV3Func() (*schema.Provider, error) {
-	return testAccProviderAzureV3, nil
-}
+var TestAccProviders map[string]*schema.Provider
 
 func init() {
 	testAccProviderGCP = Provider()
@@ -45,15 +27,11 @@ func init() {
 	testAccProviderAzure.ConfigureContextFunc = providerConfigureAzure
 	testAccProviderAzureV3.ConfigureContextFunc = providerConfigureAzure
 
-	TestAccProviders = map[string]func() (*schema.Provider, error){
-		"gcp":     testAccProviderGCPFunc,
-		"aws":     testAccProviderAWSFunc,
-		"azure":   testAccProviderAzureFunc,
-		"azurev3": testAccProviderAzureV3Func,
-	}
-
-	TestAccProvidersOld = map[string]*schema.Provider{
-		"aws": testAccProviderAWS,
+	TestAccProviders = map[string]*schema.Provider{
+		"aws":     testAccProviderAWS,
+		"gcp":     testAccProviderGCP,
+		"azure":   testAccProviderAzure,
+		"azurev3": testAccProviderAzureV3,
 	}
 
 }

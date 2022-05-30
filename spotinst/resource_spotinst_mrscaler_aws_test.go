@@ -152,9 +152,9 @@ func TestAccSpotinstNewMRScalerAWS_Baseline(t *testing.T) {
 
 	var scaler mrscaler.Scaler
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testMRScalerAWSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testMRScalerAWSDestroy,
 
 		Steps: []resource.TestStep{
 			{

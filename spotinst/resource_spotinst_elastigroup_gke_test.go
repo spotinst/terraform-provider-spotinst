@@ -181,9 +181,9 @@ func TestAccSpotinstElastigroupGKE_Baseline(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testElastigroupGKEDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupGKEDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -295,9 +295,9 @@ func TestAccSpotinstElastigroupGKE_InstanceTypes(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testElastigroupGKEDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupGKEDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -356,10 +356,10 @@ func TestAccSpotinstElastigroupGKE_Strategy(t *testing.T) {
 
 	var group gcp.Group
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "gcp") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testElastigroupGKEDestroy,
-		IDRefreshName:     resourceName,
+		PreCheck:      func() { testAccPreCheck(t, "gcp") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupGKEDestroy,
+		IDRefreshName: resourceName,
 
 		Steps: []resource.TestStep{
 			{

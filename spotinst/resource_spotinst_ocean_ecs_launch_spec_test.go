@@ -155,9 +155,9 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 
 	var launchSpec aws.ECSLaunchSpec
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanECSLaunchSpecDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -321,9 +321,9 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 
 	var launchSpec aws.ECSLaunchSpec
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanECSLaunchSpecDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -464,9 +464,9 @@ func TestAccSpotinstOceanECSLaunchSpec_Scheduling(t *testing.T) {
 
 	var launchSpec aws.ECSLaunchSpec
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanECSLaunchSpecDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanECSLaunchSpecDestroy,
 
 		Steps: []resource.TestStep{
 			{

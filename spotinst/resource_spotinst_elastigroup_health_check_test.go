@@ -120,9 +120,9 @@ func TestAccSpotinstHealthCheckBaseline(t *testing.T) {
 
 	var healthCheck healthcheck.HealthCheck
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testHealthCheckDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testHealthCheckDestroy,
 
 		Steps: []resource.TestStep{
 			{

@@ -234,9 +234,9 @@ func TestAccSpotinstOceanAKS_Baseline(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -335,9 +335,9 @@ func TestAccSpotinstOceanAKS_Login(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -397,9 +397,9 @@ func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -483,9 +483,9 @@ func TestAccSpotinstOceanAKS_AutoScaler(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -593,9 +593,9 @@ func TestAccSpotinstOceanAKS_Strategy(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -661,9 +661,9 @@ func TestAccSpotinstOceanAKS_Health(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -725,9 +725,9 @@ func TestAccSpotinstOceanAKS_VMSizes(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -795,9 +795,9 @@ func TestAccSpotinstOceanAKS_OSDisk(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -839,9 +839,9 @@ func TestAccSpotinstOceanAKS_Image(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -921,9 +921,9 @@ func TestAccSpotinstOceanAKS_LoadBalancers(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -1007,9 +1007,9 @@ func TestAccSpotinstOceanAKS_Network(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -1127,9 +1127,9 @@ func TestAccSpotinstOceanAKS_Extensions(t *testing.T) {
 
 	var cluster azure.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "azure") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testOceanAKSDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSDestroy,
 
 		Steps: []resource.TestStep{
 			{

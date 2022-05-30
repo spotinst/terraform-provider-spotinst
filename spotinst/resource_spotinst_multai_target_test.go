@@ -151,9 +151,9 @@ func TestAccSpotinstMultaiTarget_Baseline(t *testing.T) {
 
 	var target multai.Target
 	resource.Test(t, resource.TestCase{
-		PreCheck:          func() { testAccPreCheck(t, "aws") },
-		ProviderFactories: TestAccProviders,
-		CheckDestroy:      testAccCheckSpotinstMultaiTargetDestroy,
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testAccCheckSpotinstMultaiTargetDestroy,
 
 		Steps: []resource.TestStep{
 			{
