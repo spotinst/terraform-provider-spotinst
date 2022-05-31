@@ -1,6 +1,8 @@
 package spotinst
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"os"
 	"testing"
 
@@ -20,10 +22,10 @@ func init() {
 	testAccProviderAzure = Provider()
 	testAccProviderAzureV3 = Provider()
 
-	testAccProviderGCP.ConfigureFunc = providerConfigureGCP
-	testAccProviderAWS.ConfigureFunc = providerConfigureAWS
-	testAccProviderAzure.ConfigureFunc = providerConfigureAzure
-	testAccProviderAzureV3.ConfigureFunc = providerConfigureAzure
+	testAccProviderGCP.ConfigureContextFunc = providerConfigureGCP
+	testAccProviderAWS.ConfigureContextFunc = providerConfigureAWS
+	testAccProviderAzure.ConfigureContextFunc = providerConfigureAzure
+	testAccProviderAzureV3.ConfigureContextFunc = providerConfigureAzure
 
 	TestAccProviders = map[string]*schema.Provider{
 		"gcp":     testAccProviderGCP,
@@ -55,7 +57,7 @@ func testAccPreCheck(t *testing.T, provider string) {
 	}
 }
 
-func providerConfigureGCP(d *schema.ResourceData) (interface{}, error) {
+func providerConfigureGCP(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_GCP"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_GCP"),
@@ -64,7 +66,7 @@ func providerConfigureGCP(d *schema.ResourceData) (interface{}, error) {
 	return config.Client()
 }
 
-func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
+func providerConfigureAWS(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_AWS"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_AWS"),
@@ -73,7 +75,7 @@ func providerConfigureAWS(d *schema.ResourceData) (interface{}, error) {
 	return config.Client()
 }
 
-func providerConfigureAzure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigureAzure(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
 		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),

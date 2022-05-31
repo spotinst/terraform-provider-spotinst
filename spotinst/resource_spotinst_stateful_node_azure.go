@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_extension"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_health"
@@ -31,13 +32,13 @@ func resourceSpotinstStatefulNodeAzureV3() *schema.Resource {
 	setupStatefulNodeAzureV3Resource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstStatefulNodeAzureV3Create,
-		Read:   resourceSpotinstStatefulNodeAzureV3Read,
-		Update: resourceSpotinstStatefulNodeAzureV3Update,
-		Delete: resourceSpotinstStatefulNodeAzureV3Delete,
+		CreateContext: resourceSpotinstStatefulNodeAzureV3Create,
+		ReadContext:   resourceSpotinstStatefulNodeAzureV3Read,
+		UpdateContext: resourceSpotinstStatefulNodeAzureV3Update,
+		DeleteContext: resourceSpotinstStatefulNodeAzureV3Delete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.StatefulNodeAzureV3Resource.GetSchemaMap(),
@@ -64,13 +65,13 @@ func setupStatefulNodeAzureV3Resource() {
 	commons.StatefulNodeAzureV3Resource = commons.NewStatefulNodeAzureV3Resource(fieldsMap)
 }
 
-func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Create(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.StatefulNodeAzureV3Resource.GetName())
 
 	statefulNode, err := commons.StatefulNodeAzureV3Resource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if importVMConfig, ok := resourceData.GetOk(string(stateful_node_azure.ImportVM)); ok {
@@ -81,7 +82,7 @@ func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData
 
 		statefulNodeId, err := createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput, meta.(*Client))
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		resourceData.SetId(spotinst.StringValue(statefulNodeId))
@@ -90,14 +91,14 @@ func resourceSpotinstStatefulNodeAzureV3Create(resourceData *schema.ResourceData
 	} else {
 		statefulNodeId, err := createAzureV3StatefulNode(statefulNode, meta.(*Client))
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		resourceData.SetId(spotinst.StringValue(statefulNodeId))
 		log.Printf("===> Stateful node created successfully: %s <===", resourceData.Id())
 	}
 
-	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
+	return resourceSpotinstStatefulNodeAzureV3Read(ctx, resourceData, meta)
 }
 
 func expandStatefulNodeAzureImportVMConfig(data interface{}, statefulNode *azure.StatefulNode) (*azure.ImportVMStatefulNodeInput, error) {
@@ -139,7 +140,7 @@ func createAzureV3StatefulNodeImportVM(importVMStatefulNodeInput *azure.ImportVM
 	}
 
 	var resp *azure.ImportVMStatefulNodeOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		r, err := spotinstClient.statefulNode.CloudProviderAzure().ImportVM(context.Background(), importVMStatefulNodeInput)
 		if err != nil {
 			log.Printf("error: %v", err)
@@ -164,7 +165,7 @@ func createAzureV3StatefulNode(statefulNode *azure.StatefulNode, spotinstClient 
 	}
 
 	var resp *azure.CreateStatefulNodeOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &azure.CreateStatefulNodeInput{StatefulNode: statefulNode}
 		r, err := spotinstClient.statefulNode.CloudProviderAzure().Create(context.Background(), input)
 		if err != nil {
@@ -182,7 +183,7 @@ func createAzureV3StatefulNode(statefulNode *azure.StatefulNode, spotinstClient 
 	return resp.StatefulNode.ID, nil
 }
 
-func resourceSpotinstStatefulNodeAzureV3Read(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Read(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceFieldOnRead),
 		commons.StatefulNodeAzureV3Resource.GetName(), id)
@@ -219,14 +220,14 @@ func resourceSpotinstStatefulNodeAzureV3Read(resourceData *schema.ResourceData, 
 	return nil
 }
 
-func resourceSpotinstStatefulNodeAzureV3Update(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Update(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.StatefulNodeAzureV3Resource.GetName(), id)
 
 	shouldUpdate, statefulNode, err := commons.StatefulNodeAzureV3Resource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
@@ -237,7 +238,7 @@ func resourceSpotinstStatefulNodeAzureV3Update(resourceData *schema.ResourceData
 	}
 
 	log.Printf("===> Stateful node updated successfully: %s <===", id)
-	return resourceSpotinstStatefulNodeAzureV3Read(resourceData, meta)
+	return resourceSpotinstStatefulNodeAzureV3Read(ctx, resourceData, meta)
 }
 
 func updateAzureV3StatefulNode(statefulNode *azure.StatefulNode, resourceData *schema.ResourceData, meta interface{}) error {
@@ -528,7 +529,7 @@ func expandStatefulNodeAzureDetachDataDiskConfig(data interface{}, statefulNodeI
 	return spec, nil
 }
 
-func resourceSpotinstStatefulNodeAzureV3Delete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstStatefulNodeAzureV3Delete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.StatefulNodeAzureV3Resource.GetName(), id)

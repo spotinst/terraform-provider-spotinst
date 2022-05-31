@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
@@ -18,13 +19,13 @@ func resourceSpotinstMultaiDeployment() *schema.Resource {
 	setupMultaiDeploymentResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstMultaiDeploymentCreate,
-		Read:   resourceSpotinstMultaiDeploymentRead,
-		Update: resourceSpotinstMultaiDeploymentUpdate,
-		Delete: resourceSpotinstMultaiDeploymentDelete,
+		CreateContext: resourceSpotinstMultaiDeploymentCreate,
+		ReadContext:   resourceSpotinstMultaiDeploymentRead,
+		UpdateContext: resourceSpotinstMultaiDeploymentUpdate,
+		DeleteContext: resourceSpotinstMultaiDeploymentDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiDeploymentResource.GetSchemaMap(),
@@ -39,24 +40,24 @@ func setupMultaiDeploymentResource() {
 	commons.MultaiDeploymentResource = commons.NewMultaiDeploymentResource(fieldsMap)
 }
 
-func resourceSpotinstMultaiDeploymentCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiDeploymentCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiDeploymentResource.GetName())
 
 	deployment, err := commons.MultaiDeploymentResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	deploymentId, err := createDeployment(deployment, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(deploymentId))
 	log.Printf("===> Deployment created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstMultaiDeploymentRead(resourceData, meta)
+	return resourceSpotinstMultaiDeploymentRead(ctx, resourceData, meta)
 }
 
 func createDeployment(deployment *multai.Deployment, spotinstClient *Client) (*string, error) {
@@ -67,7 +68,7 @@ func createDeployment(deployment *multai.Deployment, spotinstClient *Client) (*s
 	}
 
 	var resp *multai.CreateDeploymentOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateDeploymentInput{Deployment: deployment}
 		r, err := spotinstClient.multai.CreateDeployment(context.Background(), input)
 		if err != nil {
@@ -83,7 +84,7 @@ func createDeployment(deployment *multai.Deployment, spotinstClient *Client) (*s
 	return resp.Deployment.ID, nil
 }
 
-func resourceSpotinstMultaiDeploymentRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiDeploymentRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	deploymentId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.MultaiDeploymentResource.GetName(), deploymentId)
@@ -102,32 +103,32 @@ func resourceSpotinstMultaiDeploymentRead(resourceData *schema.ResourceData, met
 	}
 
 	if err := commons.MultaiDeploymentResource.OnRead(deployResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Deployment read successfully: %s <===", deploymentId)
 	return nil
 }
 
-func resourceSpotinstMultaiDeploymentUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiDeploymentUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	deploymentId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.MultaiDeploymentResource.GetName(), deploymentId)
 
 	shouldUpdate, deployment, err := commons.MultaiDeploymentResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		deployment.SetId(spotinst.String(deploymentId))
 		if err := updateDeployment(deployment, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Deployment updated successfully: %s <===", deploymentId)
-	return resourceSpotinstMultaiDeploymentRead(resourceData, meta)
+	return resourceSpotinstMultaiDeploymentRead(ctx, resourceData, meta)
 }
 
 func updateDeployment(deployment *multai.Deployment, resourceData *schema.ResourceData, meta interface{}) error {
@@ -147,13 +148,13 @@ func updateDeployment(deployment *multai.Deployment, resourceData *schema.Resour
 	return nil
 }
 
-func resourceSpotinstMultaiDeploymentDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiDeploymentDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	deploymentId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.MultaiDeploymentResource.GetName(), deploymentId)
 
 	if err := deleteDeployment(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Deployment deleted successfully: %s <===", resourceData.Id())

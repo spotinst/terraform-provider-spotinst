@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
@@ -31,13 +32,13 @@ func resourceSpotinstElastigroupAzure() *schema.Resource {
 	setupElastigroupAzureResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstElastigroupAzureCreate,
-		Read:   resourceSpotinstElastigroupAzureRead,
-		Update: resourceSpotinstElastigroupAzureUpdate,
-		Delete: resourceSpotinstElastigroupAzureDelete,
+		CreateContext: resourceSpotinstElastigroupAzureCreate,
+		ReadContext:   resourceSpotinstElastigroupAzureRead,
+		UpdateContext: resourceSpotinstElastigroupAzureUpdate,
+		DeleteContext: resourceSpotinstElastigroupAzureDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupAzureResource.GetSchemaMap(),
@@ -63,25 +64,25 @@ func setupElastigroupAzureResource() {
 	commons.ElastigroupAzureResource = commons.NewElastigroupAzureResource(fieldsMap)
 }
 
-func resourceSpotinstElastigroupAzureCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupAzureResource.GetName())
 
 	elastigroup, err := commons.ElastigroupAzureResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	groupId, err := createAzureGroup(elastigroup, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
 
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstElastigroupAzureRead(resourceData, meta)
+	return resourceSpotinstElastigroupAzureRead(ctx, resourceData, meta)
 }
 
 func createAzureGroup(group *azure.Group, spotinstClient *Client) (*string, error) {
@@ -92,7 +93,7 @@ func createAzureGroup(group *azure.Group, spotinstClient *Client) (*string, erro
 	}
 
 	var resp *azure.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &azure.CreateGroupInput{Group: group}
 		r, err := spotinstClient.elastigroup.CloudProviderAzure().Create(context.Background(), input)
 		if err != nil {
@@ -110,7 +111,7 @@ func createAzureGroup(group *azure.Group, spotinstClient *Client) (*string, erro
 	return resp.Group.ID, nil
 }
 
-func resourceSpotinstElastigroupAzureRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceFieldOnRead),
 		commons.ElastigroupAzureResource.GetName(), id)
@@ -141,31 +142,31 @@ func resourceSpotinstElastigroupAzureRead(resourceData *schema.ResourceData, met
 	}
 
 	if err := commons.ElastigroupAzureResource.OnRead(groupResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> Elastigroup read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstElastigroupAzureUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.ElastigroupAzureResource.GetName(), id)
 
 	shouldUpdate, elastigroup, err := commons.ElastigroupAzureResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		elastigroup.SetId(spotinst.String(id))
 		if err := updateAzureGroup(elastigroup, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Elastigroup updated successfully: %s <===", id)
-	return resourceSpotinstElastigroupAzureRead(resourceData, meta)
+	return resourceSpotinstElastigroupAzureRead(ctx, resourceData, meta)
 }
 
 func updateAzureGroup(elastigroup *azure.Group, resourceData *schema.ResourceData, meta interface{}) error {
@@ -223,7 +224,7 @@ func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
 						return err
 					} else {
 						log.Printf("onRoll() -> Rolling group [%v] with configuration %s", groupId, json)
-						errResult = resource.Retry(time.Minute*5, func() *resource.RetryError {
+						errResult = resource.RetryContext(context.Background(), time.Minute*5, func() *resource.RetryError {
 							rollGroupInput.GroupID = spotinst.String(groupId)
 							_, err := meta.(*Client).elastigroup.CloudProviderAzure().Roll(context.Background(), rollGroupInput)
 							if err != nil {
@@ -253,13 +254,13 @@ func rollAzureGroup(resourceData *schema.ResourceData, meta interface{}) error {
 	return errResult
 }
 
-func resourceSpotinstElastigroupAzureDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.ElastigroupAzureResource.GetName(), id)
 
 	if err := deleteAzureGroup(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())
