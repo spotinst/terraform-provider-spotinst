@@ -119,7 +119,7 @@ func resourceSpotinstMRScalerAWSRead(ctx context.Context, resourceData *schema.R
 	input := &mrscaler.ReadScalerInput{ScalerID: spotinst.String(id)}
 	resp, err := meta.(*Client).mrscaler.Read(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read mr scaler: %s", err)
+		return diag.Errorf("failed to read mr scaler: %s", err)
 	}
 
 	// If nothing was found, then return no state.

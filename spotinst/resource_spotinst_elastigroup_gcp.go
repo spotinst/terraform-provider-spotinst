@@ -127,7 +127,7 @@ func resourceSpotinstElastigroupGCPRead(ctx context.Context, resourceData *schem
 		}
 
 		// report any other error
-		return fmt.Errorf("failed to read group: %s", err)
+		return diag.Errorf("failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.

@@ -60,7 +60,7 @@ func resourceSpotinstHealthCheckRead(ctx context.Context, resourceData *schema.R
 				}
 			}
 		}
-		return fmt.Errorf("failed to read health check: %s", err)
+		return diag.Errorf("failed to read health check: %s", err)
 	}
 
 	// If nothing was found, then return no state.

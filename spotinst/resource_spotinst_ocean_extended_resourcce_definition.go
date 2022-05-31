@@ -59,7 +59,7 @@ func resourceSpotinstOceanAWSExtendedResourceDefinitionRead(ctx context.Context,
 				}
 			}
 		}
-		return fmt.Errorf("failed to read extended resource definition: %s", err)
+		return diag.Errorf("failed to read extended resource definition: %s", err)
 	}
 
 	// If nothing was found, then return no state.

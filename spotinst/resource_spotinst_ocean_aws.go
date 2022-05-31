@@ -135,7 +135,7 @@ func resourceSpotinstClusterAWSRead(ctx context.Context, resourceData *schema.Re
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read cluster: %s", err)
+		return diag.Errorf("failed to read cluster: %s", err)
 	}
 
 	// if nothing was found, return no state

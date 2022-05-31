@@ -92,7 +92,7 @@ func resourceSpotinstMultaiBalancerRead(ctx context.Context, resourceData *schem
 	input := &multai.ReadLoadBalancerInput{BalancerID: spotinst.String(balancerId)}
 	resp, err := meta.(*Client).multai.ReadLoadBalancer(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read balancer: %s", err)
+		return diag.Errorf("failed to read balancer: %s", err)
 	}
 
 	// If nothing was found, return no state

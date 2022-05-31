@@ -146,7 +146,7 @@ func resourceSpotinstClusterGKEImportRead(ctx context.Context, resourceData *sch
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read GKE cluster: %s", err)
+		return diag.Errorf("failed to read GKE cluster: %s", err)
 	}
 
 	// if nothing was found, return no state

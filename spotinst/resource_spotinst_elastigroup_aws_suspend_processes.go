@@ -68,7 +68,7 @@ func resourceSpotinstAWSSuspendProcessesRead(ctx context.Context, resourceData *
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("SUSPEND_PROCESSES:READ failed to read group: %s", err)
+		return diag.Errorf("SUSPEND_PROCESSES:READ failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.

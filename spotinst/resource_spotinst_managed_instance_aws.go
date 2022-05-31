@@ -82,7 +82,7 @@ func resourceSpotinstManagedInstanceAWSRead(ctx context.Context, resourceData *s
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read ManagedInstance: %s", err)
+		return diag.Errorf("failed to read ManagedInstance: %s", err)
 	}
 
 	// If nothing was found, then return no state.

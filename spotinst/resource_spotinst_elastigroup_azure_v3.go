@@ -120,7 +120,7 @@ func resourceSpotinstElastigroupAzureV3Read(ctx context.Context, resourceData *s
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read group: %s", err)
+		return diag.Errorf("failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.
