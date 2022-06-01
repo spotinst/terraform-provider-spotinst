@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -27,13 +28,13 @@ func resourceSpotinstElastigroupGKE() *schema.Resource {
 	setupElastigroupGKEResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstElastigroupGKECreate,
-		Read:   resourceSpotinstElastigroupGKERead,
-		Update: resourceSpotinstElastigroupGKEUpdate,
-		Delete: resourceSpotinstElastigroupGKEDelete,
+		CreateContext: resourceSpotinstElastigroupGKECreate,
+		ReadContext:   resourceSpotinstElastigroupGKERead,
+		UpdateContext: resourceSpotinstElastigroupGKEUpdate,
+		DeleteContext: resourceSpotinstElastigroupGKEDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupGKEResource.GetSchemaMap(),
@@ -119,24 +120,24 @@ func importGKEGroup(resourceData *schema.ResourceData, meta interface{}) (*gcp.G
 
 // resourceSpotinstElastigroupGKECreate begins the creation request and
 // creates an object representing the newly created group or returns an error.
-func resourceSpotinstElastigroupGKECreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGKECreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupGKEResource.GetName())
 
 	// do the import call and get the generated fields
 	gkeGroup, err := importGKEGroup(resourceData, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if gkeGroup == nil {
-		return fmt.Errorf("[ERROR] Failed to import group. Does the GKE cluster exist?")
+		return diag.Errorf("[ERROR] Failed to import group. Does the GKE cluster exist?")
 	}
 
 	// merge the imported group with the user's template group, giving preference to the user's template
 	tempGroup, err := commons.ElastigroupGKEResource.OnMerge(gkeGroup, resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// if the user set cluster_id using deprecated method, set the value in the correct spot
@@ -148,12 +149,12 @@ func resourceSpotinstElastigroupGKECreate(resourceData *schema.ResourceData, met
 	// call create with the reconciled group
 	groupId, err := createGKEGroup(tempGroup, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
 	log.Printf("===> Elastigroup for GKE created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstElastigroupGKERead(resourceData, meta)
+	return resourceSpotinstElastigroupGKERead(ctx, resourceData, meta)
 }
 
 func createGKEGroup(gkeGroup *gcp.Group, spotinstClient *Client) (*string, error) {
@@ -164,7 +165,7 @@ func createGKEGroup(gkeGroup *gcp.Group, spotinstClient *Client) (*string, error
 	}
 
 	var resp *gcp.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &gcp.CreateGroupInput{Group: gkeGroup}
 		r, err := spotinstClient.elastigroup.CloudProviderGCP().Create(context.Background(), input)
 		if err != nil {
@@ -184,7 +185,7 @@ func createGKEGroup(gkeGroup *gcp.Group, spotinstClient *Client) (*string, error
 
 // resourceSpotinstElastigroupGKERead creates an object representing an existing elastigroup
 // by making a get request using the Spotinst API or returns an error.
-func resourceSpotinstElastigroupGKERead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGKERead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.ElastigroupGKEResource.GetName(), groupId)
@@ -203,7 +204,7 @@ func resourceSpotinstElastigroupGKERead(resourceData *schema.ResourceData, meta 
 		}
 
 		// report any other error
-		return fmt.Errorf("failed to read group: %s", err)
+		return diag.Errorf("failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.
@@ -214,7 +215,7 @@ func resourceSpotinstElastigroupGKERead(resourceData *schema.ResourceData, meta 
 	}
 
 	if err := commons.ElastigroupGKEResource.OnRead(groupResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup read successfully: %s <===", groupId)
@@ -223,26 +224,26 @@ func resourceSpotinstElastigroupGKERead(resourceData *schema.ResourceData, meta 
 
 // resourceSpotinstElastigroupGKEUpdate updates an existing elastigroup
 // and creates an object representing the updated group or returns an error.
-func resourceSpotinstElastigroupGKEUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGKEUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.ElastigroupGKEResource.GetName(), groupId)
 
 	shouldUpdate, elastigroup, err := commons.ElastigroupGKEResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		elastigroup.SetID(spotinst.String(groupId))
 
 		if err := updateGKEGroup(elastigroup, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Elastigroup updated successfully: %s <===", groupId)
-	return resourceSpotinstElastigroupGKERead(resourceData, meta)
+	return resourceSpotinstElastigroupGKERead(ctx, resourceData, meta)
 }
 
 // updateGKEGroup sends the update request to the Spotinst API and returns an error if the request fails.
@@ -271,13 +272,13 @@ func updateGKEGroup(elastigroup *gcp.Group, resourceData *schema.ResourceData, m
 }
 
 // resourceSpotinstElastigroupGKEDelete deletes a specific elastigroup or returns an error.
-func resourceSpotinstElastigroupGKEDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGKEDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.ElastigroupGKEResource.GetName(), groupId)
 
 	if err := deleteGKEGroup(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())

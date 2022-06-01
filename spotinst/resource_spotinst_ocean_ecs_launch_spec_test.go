@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -169,8 +169,8 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "attributes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
-					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.0.key", "key"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.0.value", "value"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
@@ -217,10 +217,10 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp3"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.throughput", "500"),
 					resource.TestCheckResourceAttr(resourceName, "attributes.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.key", "key"),
-					resource.TestCheckResourceAttr(resourceName, "attributes.3334082635.value", "value"),
-					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.key", "key2"),
-					resource.TestCheckResourceAttr(resourceName, "attributes.3254712145.value", "value2"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.0.key", "key"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.0.value", "value"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.1.key", "key2"),
+					resource.TestCheckResourceAttr(resourceName, "attributes.1.value", "value2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.1", "m4.2xlarge"),
@@ -335,15 +335,15 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.memory_per_unit", "512"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.cpu_per_unit", "1024"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3560550126.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.1.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Create+".key", "fakeKey"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Create+".value", "fakeVal"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKey"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeVal"),
 				),
 			},
 			{
@@ -355,12 +355,12 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.cpu_per_unit", "1024"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.3869758828.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_headrooms.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Update+".key", "updated"),
-					resource.TestCheckResourceAttr(resourceName, "tags."+OceanECSLaunchSpecTagsHash_Update+".value", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "updated"),
 				),
 			},
 			{
@@ -378,11 +378,6 @@ func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
 		},
 	})
 }
-
-const (
-	OceanECSLaunchSpecTagsHash_Create = "2538041064"
-	OceanECSLaunchSpecTagsHash_Update = "1968254376"
-)
 
 const testAutoScaleOceanECSLaunchSpecConfig_Create = `
 resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
@@ -483,12 +478,12 @@ func TestAccSpotinstOceanECSLaunchSpec_Scheduling(t *testing.T) {
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_headroom.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_headroom.2964054300.cpu_per_unit", "512"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_headroom.2964054300.num_of_units", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.cron_expression", "0 1 * * *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.1564257645.task_type", "manualHeadroomUpdate"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.0.cpu_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.0.num_of_units", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_type", "manualHeadroomUpdate"),
 				),
 			},
 			{
@@ -500,12 +495,12 @@ func TestAccSpotinstOceanECSLaunchSpec_Scheduling(t *testing.T) {
 					testCheckOceanECSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_headroom.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_headroom.4204234574.memory_per_unit", "256"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_headroom.4204234574.num_of_units", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.cron_expression", "0 1 * * *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling_task.471672451.task_type", "manualHeadroomUpdate"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.0.memory_per_unit", "256"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_type", "manualHeadroomUpdate"),
 				),
 			},
 		},

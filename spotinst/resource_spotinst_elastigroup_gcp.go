@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -28,13 +29,13 @@ func resourceSpotinstElastigroupGCP() *schema.Resource {
 	setupElastigroupGCPResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstElastigroupGCPCreate,
-		Read:   resourceSpotinstElastigroupGCPRead,
-		Update: resourceSpotinstElastigroupGCPUpdate,
-		Delete: resourceSpotinstElastigroupGCPDelete,
+		CreateContext: resourceSpotinstElastigroupGCPCreate,
+		ReadContext:   resourceSpotinstElastigroupGCPRead,
+		UpdateContext: resourceSpotinstElastigroupGCPUpdate,
+		DeleteContext: resourceSpotinstElastigroupGCPDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupGCPResource.GetSchemaMap(),
@@ -61,23 +62,23 @@ func setupElastigroupGCPResource() {
 
 // resourceSpotinstElastigroupGCPCreate begins the creation request and
 // creates an object representing the newly created group or returns an error.
-func resourceSpotinstElastigroupGCPCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGCPCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupGCPResource.GetName())
 
 	elastigroup, err := commons.ElastigroupGCPResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	groupId, err := createGCPGroup(elastigroup, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstElastigroupGCPRead(resourceData, meta)
+	return resourceSpotinstElastigroupGCPRead(ctx, resourceData, meta)
 }
 
 // createGCPGroup makes the create request to the spotinst API and returns
@@ -90,7 +91,7 @@ func createGCPGroup(elastigroup *gcp.Group, spotinstClient *Client) (*string, er
 		log.Printf("===> Group create configuration: %s", json)
 	}
 	var resp *gcp.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &gcp.CreateGroupInput{Group: elastigroup}
 		r, err := spotinstClient.elastigroup.CloudProviderGCP().Create(context.Background(), input)
 		if err != nil {
@@ -107,7 +108,7 @@ func createGCPGroup(elastigroup *gcp.Group, spotinstClient *Client) (*string, er
 
 // resourceSpotinstElastigroupGCPRead creates an object representing an existing elastigroup
 // by making a get request using the Spotinst API or returns an error.
-func resourceSpotinstElastigroupGCPRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGCPRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.ElastigroupGCPResource.GetName(), groupId)
@@ -126,7 +127,7 @@ func resourceSpotinstElastigroupGCPRead(resourceData *schema.ResourceData, meta 
 		}
 
 		// report any other error
-		return fmt.Errorf("failed to read group: %s", err)
+		return diag.Errorf("failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.
@@ -137,12 +138,12 @@ func resourceSpotinstElastigroupGCPRead(resourceData *schema.ResourceData, meta 
 	}
 
 	if err := commons.ElastigroupGCPResource.OnRead(groupResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup read successfully: %s <===", groupId)
 	if json, err := commons.ToJson(groupResponse); err != nil {
-		return err
+		return diag.FromErr(err)
 	} else {
 		log.Printf("===> Group read configuration: %s", json)
 	}
@@ -151,25 +152,25 @@ func resourceSpotinstElastigroupGCPRead(resourceData *schema.ResourceData, meta 
 
 // resourceSpotinstElastigroupGCPUpdate updates an existing elastigroup
 // and creates an object representing the updated group or returns an error.
-func resourceSpotinstElastigroupGCPUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGCPUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.ElastigroupGCPResource.GetName(), groupId)
 
 	shouldUpdate, elastigroup, err := commons.ElastigroupGCPResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		elastigroup.SetID(spotinst.String(groupId))
 		if err := updateGCPGroup(elastigroup, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Elastigroup updated successfully: %s <===", groupId)
-	return resourceSpotinstElastigroupGCPRead(resourceData, meta)
+	return resourceSpotinstElastigroupGCPRead(ctx, resourceData, meta)
 }
 
 // updateGCPGroup sends the update request to the Spotinst API and returns an error if the request fails.
@@ -191,13 +192,13 @@ func updateGCPGroup(elastigroup *gcp.Group, resourceData *schema.ResourceData, m
 }
 
 // resourceSpotinstElastigroupGCPDelete deletes a specific elastigroup or returns an error.
-func resourceSpotinstElastigroupGCPDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupGCPDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	groupId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.ElastigroupGCPResource.GetName(), groupId)
 
 	if err := deleteGCPGroup(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())

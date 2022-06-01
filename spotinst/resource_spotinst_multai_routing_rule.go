@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -18,13 +19,13 @@ func resourceSpotinstMultaiRoutingRule() *schema.Resource {
 	setupMultaiRoutingRuleResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstMultaiRoutingRuleCreate,
-		Read:   resourceSpotinstMultaiRoutingRuleRead,
-		Update: resourceSpotinstMultaiRoutingRuleUpdate,
-		Delete: resourceSpotinstMultaiRoutingRuleDelete,
+		CreateContext: resourceSpotinstMultaiRoutingRuleCreate,
+		ReadContext:   resourceSpotinstMultaiRoutingRuleRead,
+		UpdateContext: resourceSpotinstMultaiRoutingRuleUpdate,
+		DeleteContext: resourceSpotinstMultaiRoutingRuleDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiRoutingRuleResource.GetSchemaMap(),
@@ -39,24 +40,24 @@ func setupMultaiRoutingRuleResource() {
 	commons.MultaiRoutingRuleResource = commons.NewMultaiRoutingRuleResource(fieldsMap)
 }
 
-func resourceSpotinstMultaiRoutingRuleCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiRoutingRuleResource.GetName())
 
 	routingRule, err := commons.MultaiRoutingRuleResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	routingRuleId, err := createRoutingRule(routingRule, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(routingRuleId))
 	log.Printf("===> Routing Rule created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstMultaiRoutingRuleRead(resourceData, meta)
+	return resourceSpotinstMultaiRoutingRuleRead(ctx, resourceData, meta)
 }
 
 func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) (*string, error) {
@@ -67,7 +68,7 @@ func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) 
 	}
 
 	var resp *multai.CreateRoutingRuleOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateRoutingRuleInput{RoutingRule: routingRule}
 		r, err := spotinstClient.multai.CreateRoutingRule(context.Background(), input)
 		if err != nil {
@@ -83,7 +84,7 @@ func createRoutingRule(routingRule *multai.RoutingRule, spotinstClient *Client) 
 	return resp.RoutingRule.ID, nil
 }
 
-func resourceSpotinstMultaiRoutingRuleRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	routingRuleId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.MultaiRoutingRuleResource.GetName(), routingRuleId)
@@ -91,7 +92,7 @@ func resourceSpotinstMultaiRoutingRuleRead(resourceData *schema.ResourceData, me
 	input := &multai.ReadRoutingRuleInput{RoutingRuleID: spotinst.String(routingRuleId)}
 	resp, err := meta.(*Client).multai.ReadRoutingRule(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read routing rule: %s", err)
+		return diag.Errorf("failed to read routing rule: %s", err)
 	}
 
 	// If nothing was found, return no state
@@ -102,32 +103,32 @@ func resourceSpotinstMultaiRoutingRuleRead(resourceData *schema.ResourceData, me
 	}
 
 	if err := commons.MultaiRoutingRuleResource.OnRead(routingResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Routing Rule read successfully: %s <===", routingRuleId)
 	return nil
 }
 
-func resourceSpotinstMultaiRoutingRuleUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	routingRuleId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.MultaiRoutingRuleResource.GetName(), routingRuleId)
 
 	shouldUpdate, routingRule, err := commons.MultaiRoutingRuleResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		routingRule.SetId(spotinst.String(routingRuleId))
 		if err := updateRoutingRule(routingRule, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Routing Rule updated successfully: %s <===", routingRuleId)
-	return resourceSpotinstMultaiRoutingRuleRead(resourceData, meta)
+	return resourceSpotinstMultaiRoutingRuleRead(ctx, resourceData, meta)
 }
 
 func updateRoutingRule(routingRule *multai.RoutingRule, resourceData *schema.ResourceData, meta interface{}) error {
@@ -147,13 +148,13 @@ func updateRoutingRule(routingRule *multai.RoutingRule, resourceData *schema.Res
 	return nil
 }
 
-func resourceSpotinstMultaiRoutingRuleDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiRoutingRuleDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	routingRuleId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.MultaiRoutingRuleResource.GetName(), routingRuleId)
 
 	if err := deleteRoutingRule(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Routing Rule deleted successfully: %s <===", resourceData.Id())

@@ -1,14 +1,12 @@
 package managed_instance_aws_compute_launchspecification
 
 import (
-	"bytes"
 	"encoding/base64"
 	"errors"
 	"fmt"
 	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/managedinstance/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -509,7 +507,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
@@ -755,21 +752,12 @@ func isBase64Encoded(data string) bool {
 	return err == nil
 }
 
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
-	return hashcode.String(buf.String())
-}
-
 func flattenTags(tags []*aws.Tag) []interface{} {
 	result := make([]interface{}, 0, len(tags))
 	for _, tag := range tags {
 		m := make(map[string]interface{})
 		m[string(TagKey)] = spotinst.StringValue(tag.Key)
 		m[string(TagValue)] = spotinst.StringValue(tag.Value)
-
 		result = append(result, m)
 	}
 	return result

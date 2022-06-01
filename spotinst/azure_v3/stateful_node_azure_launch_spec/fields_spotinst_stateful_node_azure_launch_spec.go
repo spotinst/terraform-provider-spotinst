@@ -2,9 +2,8 @@ package stateful_node_azure_launch_spec
 
 import (
 	"encoding/base64"
-	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -114,7 +113,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(TagValue): {
 						Type:     schema.TypeString,
 						Optional: true,
-						Computed: true,
 					},
 				},
 			},
@@ -128,9 +126,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				st.Compute.LaunchSpecification.Tags != nil {
 				value = flattenTags(st.Compute.LaunchSpecification.Tags)
 			}
-			if err := resourceData.Set(string(Tag), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tag), err)
+			if value != nil {
+				if err := resourceData.Set(string(Tag), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tag), err)
+				}
+			} else {
+				if err := resourceData.Set(string(Tag), []*azure.Tag{}); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tag), err)
+				}
 			}
+
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -149,16 +154,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 			var value []*azure.Tag = nil
-			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.Tags != nil {
-				if v, ok := resourceData.GetOk(string(Tag)); ok {
-					if tags, err := expandTags(v); err != nil {
-						return err
-					} else {
-						value = tags
-					}
+			if v, ok := resourceData.GetOk(string(Tag)); ok {
+				if tasks, err := expandTags(v); err != nil {
+					return err
+				} else {
+					value = tasks
 				}
-				st.Compute.LaunchSpecification.SetTags(value)
 			}
+			st.Compute.LaunchSpecification.SetTags(value)
 			return nil
 		},
 		nil,
@@ -448,29 +451,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 func expandTags(data interface{}) ([]*azure.Tag, error) {
 	list := data.(*schema.Set).List()
 	tags := make([]*azure.Tag, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		tag := &azure.Tag{}
 
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
-
-		if !ok {
-			continue
+		if v, ok := m[string(TagKey)].(string); ok && v != "" {
+			tag.SetTagKey(spotinst.String(v))
 		}
 
-		if _, ok := attr[string(TagKey)]; !ok {
-			return nil, errors.New("invalid tag attributes: key missing")
+		if v, ok := m[string(TagValue)].(string); ok && v != "" {
+			tag.SetTagValue(spotinst.String(v))
 		}
-
-		if _, ok := attr[string(TagValue)]; !ok {
-			return nil, errors.New("invalid tag attributes: value missing")
-		}
-
-		tag := &azure.Tag{
-			TagKey:   spotinst.String(attr[string(TagKey)].(string)),
-			TagValue: spotinst.String(attr[string(TagValue)].(string)),
-		}
-
 		tags = append(tags, tag)
 	}
+
 	return tags, nil
 }
 

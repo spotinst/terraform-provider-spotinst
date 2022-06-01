@@ -2,7 +2,7 @@ package stateful_node_azure_scheduling
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -73,10 +73,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			statefulNode := snWrapper.GetStatefulNode()
 			var value []*azure.Task = nil
 			if v, ok := resourceData.GetOk(string(SchedulingTask)); ok {
-				if interfaces, err := expandStatefulNodeAzureSchedulingTasks(v); err != nil {
+				if tasks, err := expandStatefulNodeAzureSchedulingTasks(v); err != nil {
 					return err
 				} else {
-					value = interfaces
+					value = tasks
 				}
 			}
 			statefulNode.Scheduling.SetTasks(value)

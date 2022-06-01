@@ -3,9 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -19,13 +20,13 @@ func resourceSpotinstOceanGKELaunchSpec() *schema.Resource {
 	setupOceanGKELaunchSpecResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstOceanGKELaunchSpecCreate,
-		Read:   resourceSpotinstOceanGKELaunchSpecRead,
-		Update: resourceSpotinstOceanGKELaunchSpecUpdate,
-		Delete: resourceSpotinstOceanGKELaunchSpecDelete,
+		CreateContext: resourceSpotinstOceanGKELaunchSpecCreate,
+		ReadContext:   resourceSpotinstOceanGKELaunchSpecRead,
+		UpdateContext: resourceSpotinstOceanGKELaunchSpecUpdate,
+		DeleteContext: resourceSpotinstOceanGKELaunchSpecDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanGKELaunchSpecResource.GetSchemaMap(),
@@ -42,7 +43,7 @@ func setupOceanGKELaunchSpecResource() {
 	commons.OceanGKELaunchSpecResource = commons.NewOceanGKELaunchSpecResource(fieldsMap)
 }
 
-func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanGKELaunchSpecResource.GetName())
 
 	var importedLaunchSpec *gcp.LaunchSpec
@@ -52,7 +53,7 @@ func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData,
 		importedLaunchSpec, err = importGKELaunchSpec(resourceData, meta)
 
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 	}
@@ -60,18 +61,18 @@ func resourceSpotinstOceanGKELaunchSpecCreate(resourceData *schema.ResourceData,
 	launchSpec, err := commons.OceanGKELaunchSpecResource.OnCreate(importedLaunchSpec, resourceData, meta.(*Client))
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	launchSpecId, err := createGKELaunchSpec(launchSpec, meta.(*Client))
 
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(launchSpecId))
 
-	return resourceSpotinstOceanGKELaunchSpecRead(resourceData, meta)
+	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
 }
 
 func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*string, error) {
@@ -92,7 +93,7 @@ func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*s
 
 const ErrCodeGKELaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
-func resourceSpotinstOceanGKELaunchSpecRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanGKELaunchSpecResource.GetName(), id)
 
@@ -112,7 +113,7 @@ func resourceSpotinstOceanGKELaunchSpecRead(resourceData *schema.ResourceData, m
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read GKE launchSpec: %s", err)
+		return diag.Errorf("failed to read GKE launchSpec: %s", err)
 	}
 
 	// if nothing was found, return no state
@@ -123,29 +124,29 @@ func resourceSpotinstOceanGKELaunchSpecRead(resourceData *schema.ResourceData, m
 	}
 
 	if err := commons.OceanGKELaunchSpecResource.OnRead(launchSpecResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> launchSpec GKE read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstOceanGKELaunchSpecUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanGKELaunchSpecUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanGKELaunchSpecResource.GetName(), id)
 
 	shouldUpdate, launchSpec, err := commons.OceanGKELaunchSpecResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		launchSpec.SetId(spotinst.String(id))
 		if err := updateGKELaunchSpec(launchSpec, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> launchSpec GKE updated successfully: %s <===", id)
-	return resourceSpotinstOceanGKELaunchSpecRead(resourceData, meta)
+	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
 }
 
 func updateGKELaunchSpec(launchSpec *gcp.LaunchSpec, resourceData *schema.ResourceData, meta interface{}) error {
@@ -230,13 +231,13 @@ func rollOceanGKELaunchSpec(resourceData *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceSpotinstOceanGKELaunchSpecDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanGKELaunchSpecDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanGKELaunchSpecResource.GetName(), id)
 
 	if err := deleteGKELaunchSpec(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> launchSpec GKE deleted successfully: %s <===", resourceData.Id())

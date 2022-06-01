@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -18,13 +19,13 @@ func resourceSpotinstMultaiBalancer() *schema.Resource {
 	setupMultaiBalancerResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstMultaiBalancerCreate,
-		Read:   resourceSpotinstMultaiBalancerRead,
-		Update: resourceSpotinstMultaiBalancerUpdate,
-		Delete: resourceSpotinstMultaiBalancerDelete,
+		CreateContext: resourceSpotinstMultaiBalancerCreate,
+		ReadContext:   resourceSpotinstMultaiBalancerRead,
+		UpdateContext: resourceSpotinstMultaiBalancerUpdate,
+		DeleteContext: resourceSpotinstMultaiBalancerDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiBalancerResource.GetSchemaMap(),
@@ -39,24 +40,24 @@ func setupMultaiBalancerResource() {
 	commons.MultaiBalancerResource = commons.NewMultaiBalancerResource(fieldsMap)
 }
 
-func resourceSpotinstMultaiBalancerCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiBalancerCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiBalancerResource.GetName())
 
 	balancer, err := commons.MultaiBalancerResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	balancerId, err := createBalancer(balancer, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(balancerId))
 	log.Printf("===> Balancer created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstMultaiBalancerRead(resourceData, meta)
+	return resourceSpotinstMultaiBalancerRead(ctx, resourceData, meta)
 }
 
 func createBalancer(balancer *multai.LoadBalancer, spotinstClient *Client) (*string, error) {
@@ -67,7 +68,7 @@ func createBalancer(balancer *multai.LoadBalancer, spotinstClient *Client) (*str
 	}
 
 	var resp *multai.CreateLoadBalancerOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateLoadBalancerInput{Balancer: balancer}
 		r, err := spotinstClient.multai.CreateLoadBalancer(context.Background(), input)
 		if err != nil {
@@ -83,7 +84,7 @@ func createBalancer(balancer *multai.LoadBalancer, spotinstClient *Client) (*str
 	return resp.Balancer.ID, nil
 }
 
-func resourceSpotinstMultaiBalancerRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiBalancerRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	balancerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.MultaiBalancerResource.GetName(), balancerId)
@@ -91,7 +92,7 @@ func resourceSpotinstMultaiBalancerRead(resourceData *schema.ResourceData, meta 
 	input := &multai.ReadLoadBalancerInput{BalancerID: spotinst.String(balancerId)}
 	resp, err := meta.(*Client).multai.ReadLoadBalancer(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read balancer: %s", err)
+		return diag.Errorf("failed to read balancer: %s", err)
 	}
 
 	// If nothing was found, return no state
@@ -102,32 +103,32 @@ func resourceSpotinstMultaiBalancerRead(resourceData *schema.ResourceData, meta 
 	}
 
 	if err := commons.MultaiBalancerResource.OnRead(balResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Balancer read successfully: %s <===", balancerId)
 	return nil
 }
 
-func resourceSpotinstMultaiBalancerUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiBalancerUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	balancerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.MultaiBalancerResource.GetName(), balancerId)
 
 	shouldUpdate, balancer, err := commons.MultaiBalancerResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		balancer.SetId(spotinst.String(balancerId))
 		if err := updateBalancer(balancer, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Balancer updated successfully: %s <===", balancerId)
-	return resourceSpotinstMultaiBalancerRead(resourceData, meta)
+	return resourceSpotinstMultaiBalancerRead(ctx, resourceData, meta)
 }
 
 func updateBalancer(balancer *multai.LoadBalancer, resourceData *schema.ResourceData, meta interface{}) error {
@@ -147,13 +148,13 @@ func updateBalancer(balancer *multai.LoadBalancer, resourceData *schema.Resource
 	return nil
 }
 
-func resourceSpotinstMultaiBalancerDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiBalancerDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	balancerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.MultaiBalancerResource.GetName(), balancerId)
 
 	if err := deleteBalancer(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Balancer deleted successfully: %s <===", resourceData.Id())

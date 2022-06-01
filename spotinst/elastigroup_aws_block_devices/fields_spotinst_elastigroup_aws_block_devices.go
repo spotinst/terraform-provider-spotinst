@@ -1,11 +1,8 @@
 package elastigroup_aws_block_devices
 
 import (
-	"bytes"
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -70,7 +67,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashAWSGroupEBSBlockDevice,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
@@ -187,21 +183,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-}
-
-func hashAWSGroupEBSBlockDevice(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(DeviceName)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(SnapshotId)].(string)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(VolumeSize)].(int)))
-	buf.WriteString(fmt.Sprintf("%t-", m[string(DeleteOnTermination)].(bool)))
-	buf.WriteString(fmt.Sprintf("%t-", m[string(Encrypted)].(bool)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(Iops)].(int)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(Throughput)].(int)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(VolumeType)].(string)))
-
-	return hashcode.String(buf.String())
 }
 
 func flattenAWSGroupEBSBlockDevices(devices []*aws.BlockDeviceMapping) []interface{} {

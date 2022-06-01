@@ -1,14 +1,12 @@
 package multai_target_set
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"log"
 	"strings"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
@@ -291,7 +289,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashBalancerTargetSetHealthCheck,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			targetSetWrapper := resourceObject.(*commons.MultaiTargetSetWrapper)
@@ -350,7 +347,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -456,25 +452,4 @@ func flattenTargetSetHealthCheck(tshc *multai.TargetSetHealthCheck) []interface{
 	out[string(HealthyThreshold)] = spotinst.IntValue(tshc.HealthyThresholdCount)
 	out[string(UnhealthyThreshold)] = spotinst.IntValue(tshc.UnhealthyThresholdCount)
 	return []interface{}{out}
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TagValue)].(string)))
-	return hashcode.String(buf.String())
-}
-
-func hashBalancerTargetSetHealthCheck(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", strings.ToLower(m[string(Protocol)].(string))))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(Path)].(string)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(Port)].(int)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(Interval)].(int)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(Timeout)].(int)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(HealthyThreshold)].(int)))
-	buf.WriteString(fmt.Sprintf("%d-", m[string(UnhealthyThreshold)].(int)))
-	return hashcode.String(buf.String())
 }

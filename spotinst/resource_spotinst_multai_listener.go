@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -18,13 +19,13 @@ func resourceSpotinstMultaiListener() *schema.Resource {
 	setupMultaiListenerResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstMultaiListenerCreate,
-		Read:   resourceSpotinstMultaiListenerRead,
-		Update: resourceSpotinstMultaiListenerUpdate,
-		Delete: resourceSpotinstMultaiListenerDelete,
+		CreateContext: resourceSpotinstMultaiListenerCreate,
+		ReadContext:   resourceSpotinstMultaiListenerRead,
+		UpdateContext: resourceSpotinstMultaiListenerUpdate,
+		DeleteContext: resourceSpotinstMultaiListenerDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.MultaiListenerResource.GetSchemaMap(),
@@ -39,24 +40,24 @@ func setupMultaiListenerResource() {
 	commons.MultaiListenerResource = commons.NewMultaiListenerResource(fieldsMap)
 }
 
-func resourceSpotinstMultaiListenerCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiListenerCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.MultaiListenerResource.GetName())
 
 	listener, err := commons.MultaiListenerResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	listenerId, err := createListener(listener, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(listenerId))
 	log.Printf("===> Listener created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstMultaiListenerRead(resourceData, meta)
+	return resourceSpotinstMultaiListenerRead(ctx, resourceData, meta)
 }
 
 func createListener(listener *multai.Listener, spotinstClient *Client) (*string, error) {
@@ -67,7 +68,7 @@ func createListener(listener *multai.Listener, spotinstClient *Client) (*string,
 	}
 
 	var resp *multai.CreateListenerOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &multai.CreateListenerInput{Listener: listener}
 		r, err := spotinstClient.multai.CreateListener(context.Background(), input)
 		if err != nil {
@@ -83,7 +84,7 @@ func createListener(listener *multai.Listener, spotinstClient *Client) (*string,
 	return resp.Listener.ID, nil
 }
 
-func resourceSpotinstMultaiListenerRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiListenerRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	listenerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.MultaiListenerResource.GetName(), listenerId)
@@ -91,7 +92,7 @@ func resourceSpotinstMultaiListenerRead(resourceData *schema.ResourceData, meta 
 	input := &multai.ReadListenerInput{ListenerID: spotinst.String(listenerId)}
 	resp, err := meta.(*Client).multai.ReadListener(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to read listener: %s", err)
+		return diag.Errorf("failed to read listener: %s", err)
 	}
 
 	// If nothing was found, return no state
@@ -102,32 +103,32 @@ func resourceSpotinstMultaiListenerRead(resourceData *schema.ResourceData, meta 
 	}
 
 	if err := commons.MultaiListenerResource.OnRead(listenerResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Listener read successfully: %s <===", listenerId)
 	return nil
 }
 
-func resourceSpotinstMultaiListenerUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiListenerUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	listenerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.MultaiListenerResource.GetName(), listenerId)
 
 	shouldUpdate, listener, err := commons.MultaiListenerResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		listener.SetId(spotinst.String(listenerId))
 		if err := updateListener(listener, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Listener updated successfully: %s <===", listenerId)
-	return resourceSpotinstMultaiListenerRead(resourceData, meta)
+	return resourceSpotinstMultaiListenerRead(ctx, resourceData, meta)
 }
 
 func updateListener(listener *multai.Listener, resourceData *schema.ResourceData, meta interface{}) error {
@@ -147,13 +148,13 @@ func updateListener(listener *multai.Listener, resourceData *schema.ResourceData
 	return nil
 }
 
-func resourceSpotinstMultaiListenerDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstMultaiListenerDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	listenerId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.MultaiListenerResource.GetName(), listenerId)
 
 	if err := deleteListener(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Listener deleted successfully: %s <===", resourceData.Id())

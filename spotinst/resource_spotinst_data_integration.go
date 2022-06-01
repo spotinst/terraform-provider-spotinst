@@ -3,8 +3,9 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -18,13 +19,13 @@ func resourceSpotinstDataIntegration() *schema.Resource {
 	setupDataIntegrationResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstDataIntegrationCreate,
-		Update: resourceSpotinstDataIntegrationUpdate,
-		Read:   resourceSpotinstDataIntegrationRead,
-		Delete: resourceSpotinstDataIntegrationDelete,
+		CreateContext: resourceSpotinstDataIntegrationCreate,
+		UpdateContext: resourceSpotinstDataIntegrationUpdate,
+		ReadContext:   resourceSpotinstDataIntegrationRead,
+		DeleteContext: resourceSpotinstDataIntegrationDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.DataIntegrationResource.GetSchemaMap(),
@@ -40,7 +41,7 @@ func setupDataIntegrationResource() {
 
 const ErrCodeDataIntegrationNotFound = "DATA_INTEGRATION_DOESNT_EXIST"
 
-func resourceSpotinstDataIntegrationRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstDataIntegrationRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.DataIntegrationResource.GetName(), resourceId)
 
@@ -57,7 +58,7 @@ func resourceSpotinstDataIntegrationRead(resourceData *schema.ResourceData, meta
 				}
 			}
 		}
-		return fmt.Errorf("failed to read data integration: %s", err)
+		return diag.Errorf("failed to read data integration: %s", err)
 	}
 
 	// If nothing was found, then return no state.
@@ -68,30 +69,30 @@ func resourceSpotinstDataIntegrationRead(resourceData *schema.ResourceData, meta
 	}
 
 	if err := commons.DataIntegrationResource.OnRead(DataIntegrationResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> DataIntegration read successfully: %s <===", resourceId)
 	return nil
 }
 
-func resourceSpotinstDataIntegrationCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstDataIntegrationCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 
 	log.Printf(string(commons.ResourceOnCreate), commons.DataIntegrationResource.GetName())
 
 	DataIntegration, err := commons.DataIntegrationResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	DataIntegrationId, err := createDataIntegration(resourceData, DataIntegration, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(DataIntegrationId))
 
 	log.Printf("===> DataIntegration created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstDataIntegrationRead(resourceData, meta)
+	return resourceSpotinstDataIntegrationRead(ctx, resourceData, meta)
 
 }
 
@@ -102,7 +103,7 @@ func createDataIntegration(resourceData *schema.ResourceData, di *aws.DataIntegr
 		log.Printf("===> DataIntegration create configuration: %s", json)
 	}
 	var resp *aws.CreateDataIntegrationOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateDataIntegrationInput{DataIntegration: di}
 		r, err := spotinstClient.dataIntegration.CloudProviderAWS().CreateDataIntegration(context.Background(), input)
 		if err != nil {
@@ -119,23 +120,23 @@ func createDataIntegration(resourceData *schema.ResourceData, di *aws.DataIntegr
 
 }
 
-func resourceSpotinstDataIntegrationUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstDataIntegrationUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.DataIntegrationResource.GetName(), resourceId)
 
 	shouldUpdate, di, err := commons.DataIntegrationResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		di.SetID(spotinst.String(resourceId))
 		if err := updateDataIntegrationResource(di, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> DataIntegration updated successfully: %s <===", resourceId)
-	return resourceSpotinstDataIntegrationRead(resourceData, meta)
+	return resourceSpotinstDataIntegrationRead(ctx, resourceData, meta)
 }
 
 func updateDataIntegrationResource(di *aws.DataIntegration, resourceData *schema.ResourceData, meta interface{}) error {
@@ -156,12 +157,12 @@ func updateDataIntegrationResource(di *aws.DataIntegration, resourceData *schema
 	return nil
 }
 
-func resourceSpotinstDataIntegrationDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstDataIntegrationDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.DataIntegrationResource.GetName(), resourceId)
 
 	if err := deleteDataIntegration(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> DataIntegration deleted successfully: %s <===", resourceData.Id())

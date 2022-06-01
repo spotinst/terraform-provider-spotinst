@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -23,13 +24,13 @@ func resourceSpotinstOceanGKE() *schema.Resource {
 	setupClusterGKEResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstClusterGKECreate,
-		Read:   resourceSpotinstClusterGKERead,
-		Update: resourceSpotinstClusterGKEUpdate,
-		Delete: resourceSpotinstClusterGKEDelete,
+		CreateContext: resourceSpotinstClusterGKECreate,
+		ReadContext:   resourceSpotinstClusterGKERead,
+		UpdateContext: resourceSpotinstClusterGKEUpdate,
+		DeleteContext: resourceSpotinstClusterGKEDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: commons.OceanGKEResource.GetSchemaMap(),
 	}
@@ -47,24 +48,24 @@ func setupClusterGKEResource() {
 	commons.OceanGKEResource = commons.NewOceanGKEResource(fieldsMap)
 }
 
-func resourceSpotinstClusterGKECreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKECreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanGKEResource.GetName())
 
 	cluster, err := commons.OceanGKEResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	clusterID, err := createGKECluster(cluster, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstClusterGKERead(resourceData, meta)
+	return resourceSpotinstClusterGKERead(ctx, resourceData, meta)
 }
 
 func createGKECluster(cluster *gcp.Cluster, spotinstClient *Client) (*string, error) {
@@ -75,7 +76,7 @@ func createGKECluster(cluster *gcp.Cluster, spotinstClient *Client) (*string, er
 	}
 
 	var resp *gcp.CreateClusterOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &gcp.CreateClusterInput{Cluster: cluster}
 		r, err := spotinstClient.ocean.CloudProviderGCP().CreateCluster(context.Background(), input)
 		if err != nil {
@@ -93,7 +94,7 @@ func createGKECluster(cluster *gcp.Cluster, spotinstClient *Client) (*string, er
 	return resp.Cluster.ID, nil
 }
 
-func resourceSpotinstClusterGKERead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKERead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.OceanGKEResource.GetName(), id)
@@ -114,7 +115,7 @@ func resourceSpotinstClusterGKERead(resourceData *schema.ResourceData, meta inte
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read cluster: %s", err)
+		return diag.Errorf("failed to read cluster: %s", err)
 	}
 
 	// if nothing was found, return no state
@@ -125,30 +126,30 @@ func resourceSpotinstClusterGKERead(resourceData *schema.ResourceData, meta inte
 	}
 
 	if err := commons.OceanGKEResource.OnRead(clusterResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> Cluster read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstClusterGKEUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKEUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanGKEResource.GetName(), id)
 
 	shouldUpdate, cluster, err := commons.OceanGKEResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(id))
 		if err := updateGKECluster(cluster, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> Cluster updated successfully: %s <===", id)
-	return resourceSpotinstClusterGKERead(resourceData, meta)
+	return resourceSpotinstClusterGKERead(ctx, resourceData, meta)
 }
 
 func updateGKECluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
@@ -171,13 +172,13 @@ func updateGKECluster(cluster *gcp.Cluster, resourceData *schema.ResourceData, m
 	return nil
 }
 
-func resourceSpotinstClusterGKEDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstClusterGKEDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanGKEResource.GetName(), id)
 
 	if err := deleteGKECluster(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Cluster deleted successfully: %s <===", resourceData.Id())

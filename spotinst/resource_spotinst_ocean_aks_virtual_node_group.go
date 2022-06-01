@@ -3,9 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -19,13 +20,13 @@ func resourceSpotinstOceanAKSVirtualNodeGroup() *schema.Resource {
 	setupOceanAKSVirtualNodeGroupResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstOceanAKSVirtualNodeGroupCreate,
-		Read:   resourceSpotinstOceanAKSVirtualNodeGroupRead,
-		Update: resourceSpotinstOceanAKSVirtualNodeGroupUpdate,
-		Delete: resourceSpotinstOceanAKSVirtualNodeGroupDelete,
+		CreateContext: resourceSpotinstOceanAKSVirtualNodeGroupCreate,
+		ReadContext:   resourceSpotinstOceanAKSVirtualNodeGroupRead,
+		UpdateContext: resourceSpotinstOceanAKSVirtualNodeGroupUpdate,
+		DeleteContext: resourceSpotinstOceanAKSVirtualNodeGroupDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanAKSVirtualNodeGroupResource.GetSchemaMap(),
@@ -44,23 +45,23 @@ func setupOceanAKSVirtualNodeGroupResource() {
 
 // region Create
 
-func resourceSpotinstOceanAKSVirtualNodeGroupCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAKSVirtualNodeGroupCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanAKSVirtualNodeGroupResource.GetName())
 
 	virtualNodeGroup, err := commons.OceanAKSVirtualNodeGroupResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	virtualNodeGroupID, err := createAKSVirtualNodeGroup(context.TODO(), virtualNodeGroup, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(virtualNodeGroupID))
 	log.Printf("ocean/aks: virtual node group created successfully: %s", resourceData.Id())
 
-	return resourceSpotinstOceanAKSVirtualNodeGroupRead(resourceData, meta)
+	return resourceSpotinstOceanAKSVirtualNodeGroupRead(ctx, resourceData, meta)
 }
 
 func createAKSVirtualNodeGroup(ctx context.Context, virtualNodeGroup *azure.VirtualNodeGroup, spotinstClient *Client) (*string, error) {
@@ -88,13 +89,13 @@ func createAKSVirtualNodeGroup(ctx context.Context, virtualNodeGroup *azure.Virt
 
 const ErrCodeAKSVirtualNodeGroupNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
-func resourceSpotinstOceanAKSVirtualNodeGroupRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAKSVirtualNodeGroupRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	virtualNodeGroupID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanAKSVirtualNodeGroupResource.GetName(), virtualNodeGroupID)
 
 	virtualNodeGroup, err := readAKSVirtualNodeGroup(context.TODO(), virtualNodeGroupID, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// If nothing was found, return no state.
@@ -104,7 +105,7 @@ func resourceSpotinstOceanAKSVirtualNodeGroupRead(resourceData *schema.ResourceD
 	}
 
 	if err := commons.OceanAKSVirtualNodeGroupResource.OnRead(virtualNodeGroup, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("ocean/aks: virtual node group read successfully: %s", virtualNodeGroupID)
@@ -139,24 +140,24 @@ func readAKSVirtualNodeGroup(ctx context.Context, virtualNodeGroupID string, spo
 
 // region Update
 
-func resourceSpotinstOceanAKSVirtualNodeGroupUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAKSVirtualNodeGroupUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	virtualNodeGroupID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSVirtualNodeGroupResource.GetName(), virtualNodeGroupID)
 
 	shouldUpdate, virtualNodeGroup, err := commons.OceanAKSVirtualNodeGroupResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		virtualNodeGroup.SetId(spotinst.String(virtualNodeGroupID))
 		if err = updateAKSVirtualNodeGroup(context.TODO(), virtualNodeGroup, meta.(*Client)); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("ocean/aks: virtual node group updated successfully: %s", virtualNodeGroupID)
-	return resourceSpotinstOceanAKSVirtualNodeGroupRead(resourceData, meta)
+	return resourceSpotinstOceanAKSVirtualNodeGroupRead(ctx, resourceData, meta)
 }
 
 func updateAKSVirtualNodeGroup(ctx context.Context, virtualNodeGroup *azure.VirtualNodeGroup, spotinstClient *Client) error {
@@ -181,12 +182,12 @@ func updateAKSVirtualNodeGroup(ctx context.Context, virtualNodeGroup *azure.Virt
 
 // region Delete
 
-func resourceSpotinstOceanAKSVirtualNodeGroupDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAKSVirtualNodeGroupDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanAKSVirtualNodeGroupResource.GetName(), resourceData.Id())
 
 	if err := deleteAKSVirtualNodeGroup(context.TODO(), resourceData, meta.(*Client)); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("ocean/aks: virtual node group deleted successfully: %s", resourceData.Id())

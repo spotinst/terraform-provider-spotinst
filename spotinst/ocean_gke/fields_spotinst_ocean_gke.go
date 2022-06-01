@@ -1,13 +1,11 @@
 package ocean_gke
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"strconv"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -494,7 +492,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
@@ -559,7 +556,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.GKEClusterWrapper)
@@ -669,14 +665,6 @@ func expandNamedPorts(data interface{}) (*gcp.NamedPorts, error) {
 		}
 	}
 	return namedPorts, nil
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelValue)].(string)))
-	return hashcode.String(buf.String())
 }
 
 func expandLabels(data interface{}) ([]*gcp.Label, error) {

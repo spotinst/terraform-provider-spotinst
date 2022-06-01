@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -392,8 +392,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world")),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.key", "fakeKey"),
-					resource.TestCheckResourceAttr(resourceName, "tags.1116605596.value", "fakeValue"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKey"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeValue"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
@@ -425,8 +425,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world updated")),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.key", "fakeKeyUpdated"),
-					resource.TestCheckResourceAttr(resourceName, "tags.3418058476.value", "fakeValueUpdated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKeyUpdated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeValueUpdated"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
@@ -653,13 +653,13 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.time_windows.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:15:30"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.cron_expression", "testcron2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2055365918.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:15:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "testcron2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
 				),
 			},
 			{
@@ -672,14 +672,14 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.time_windows.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:13:30"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:13:30"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.0.cron_expression", "testcron"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.0.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.4088850594.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:13:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "testcron"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
 				),
 			},
 			{

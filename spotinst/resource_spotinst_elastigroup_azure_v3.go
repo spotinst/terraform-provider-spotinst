@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	v3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -25,13 +26,13 @@ func resourceSpotinstElastigroupAzureV3() *schema.Resource {
 	setupElastigroupAzureV3Resource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstElastigroupAzureV3Create,
-		Read:   resourceSpotinstElastigroupAzureV3Read,
-		Update: resourceSpotinstElastigroupAzureV3Update,
-		Delete: resourceSpotinstElastigroupAzureV3Delete,
+		CreateContext: resourceSpotinstElastigroupAzureV3Create,
+		ReadContext:   resourceSpotinstElastigroupAzureV3Read,
+		UpdateContext: resourceSpotinstElastigroupAzureV3Update,
+		DeleteContext: resourceSpotinstElastigroupAzureV3Delete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.ElastigroupAzureV3Resource.GetSchemaMap(),
@@ -52,25 +53,25 @@ func setupElastigroupAzureV3Resource() {
 	commons.ElastigroupAzureV3Resource = commons.NewElastigroupAzureV3Resource(fieldsMap)
 }
 
-func resourceSpotinstElastigroupAzureV3Create(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureV3Create(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.ElastigroupAzureV3Resource.GetName())
 
 	elastigroup, err := commons.ElastigroupAzureV3Resource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	groupId, err := createAzureV3Group(elastigroup, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(groupId))
 
 	log.Printf("===> Elastigroup created successfully: %s <===", resourceData.Id())
 
-	return resourceSpotinstElastigroupAzureV3Read(resourceData, meta)
+	return resourceSpotinstElastigroupAzureV3Read(ctx, resourceData, meta)
 }
 
 func createAzureV3Group(group *v3.Group, spotinstClient *Client) (*string, error) {
@@ -81,7 +82,7 @@ func createAzureV3Group(group *v3.Group, spotinstClient *Client) (*string, error
 	}
 
 	var resp *v3.CreateGroupOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &v3.CreateGroupInput{Group: group}
 		r, err := spotinstClient.elastigroup.CloudProviderAzureV3().Create(context.Background(), input)
 		if err != nil {
@@ -99,7 +100,7 @@ func createAzureV3Group(group *v3.Group, spotinstClient *Client) (*string, error
 	return resp.Group.ID, nil
 }
 
-func resourceSpotinstElastigroupAzureV3Read(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureV3Read(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceFieldOnRead),
 		commons.ElastigroupAzureV3Resource.GetName(), id)
@@ -119,7 +120,7 @@ func resourceSpotinstElastigroupAzureV3Read(resourceData *schema.ResourceData, m
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read group: %s", err)
+		return diag.Errorf("failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.
@@ -130,31 +131,31 @@ func resourceSpotinstElastigroupAzureV3Read(resourceData *schema.ResourceData, m
 	}
 
 	if err := commons.ElastigroupAzureV3Resource.OnRead(groupResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> Elastigroup read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstElastigroupAzureV3Update(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureV3Update(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.ElastigroupAzureV3Resource.GetName(), id)
 
 	shouldUpdate, elastigroup, err := commons.ElastigroupAzureV3Resource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		elastigroup.SetId(spotinst.String(id))
 		if err := updateAzureV3Group(elastigroup, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	log.Printf("===> Elastigroup updated successfully: %s <===", id)
-	return resourceSpotinstElastigroupAzureV3Read(resourceData, meta)
+	return resourceSpotinstElastigroupAzureV3Read(ctx, resourceData, meta)
 }
 
 func updateAzureV3Group(elastigroup *v3.Group, resourceData *schema.ResourceData, meta interface{}) error {
@@ -176,13 +177,13 @@ func updateAzureV3Group(elastigroup *v3.Group, resourceData *schema.ResourceData
 	return nil
 }
 
-func resourceSpotinstElastigroupAzureV3Delete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstElastigroupAzureV3Delete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.ElastigroupAzureV3Resource.GetName(), id)
 
 	if err := deleteAzureV3Group(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup deleted successfully: %s <===", resourceData.Id())

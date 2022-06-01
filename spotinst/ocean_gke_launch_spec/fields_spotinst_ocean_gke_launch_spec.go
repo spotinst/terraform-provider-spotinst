@@ -1,11 +1,8 @@
 package ocean_gke_launch_spec
 
 import (
-	"bytes"
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -137,7 +134,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
@@ -226,7 +222,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKV,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
@@ -322,7 +317,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 				},
 			},
-			Set: hashKVTaints,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			lsWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
@@ -1074,23 +1068,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
-}
-
-func hashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(LabelValue)].(string)))
-	return hashcode.String(buf.String())
-}
-
-func hashKVTaints(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TaintKey)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TaintValue)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(TaintEffect)].(string)))
-	return hashcode.String(buf.String())
 }
 
 func expandTaints(data interface{}, taints []*gcp.Taint) ([]*gcp.Taint, error) {

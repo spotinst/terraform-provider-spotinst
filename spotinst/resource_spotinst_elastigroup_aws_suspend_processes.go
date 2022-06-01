@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -19,13 +20,13 @@ func resourceSpotinstElastigroupSuspendProcesses() *schema.Resource {
 	setupSuspendProcesses()
 
 	return &schema.Resource{
-		Create: resourceSpotinstAWSSuspendProcessesCreate,
-		Read:   resourceSpotinstAWSSuspendProcessesRead,
-		Update: resourceSpotinstAWSSuspendProcessesUpdate,
-		Delete: resourceSpotinstAWSSuspendProcessesDelete,
+		CreateContext: resourceSpotinstAWSSuspendProcessesCreate,
+		ReadContext:   resourceSpotinstAWSSuspendProcessesRead,
+		UpdateContext: resourceSpotinstAWSSuspendProcessesUpdate,
+		DeleteContext: resourceSpotinstAWSSuspendProcessesDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.SuspendProcessesResource.GetSchemaMap(),
@@ -42,7 +43,7 @@ func setupSuspendProcesses() {
 
 const ErrCodeSuspendProcessesNotFound = "SUSPEND_PROCESSES_DOESNT_EXIST"
 
-func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstAWSSuspendProcessesRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	if resourceData.Id() == "" {
 		resourceData.SetId(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)).(string))
 		resourceData.Set("group_id", resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)))
@@ -67,7 +68,7 @@ func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, 
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("SUSPEND_PROCESSES:READ failed to read group: %s", err)
+		return diag.Errorf("SUSPEND_PROCESSES:READ failed to read group: %s", err)
 	}
 
 	// If nothing was found, then return no state.
@@ -78,31 +79,31 @@ func resourceSpotinstAWSSuspendProcessesRead(resourceData *schema.ResourceData, 
 	}
 
 	if err := commons.SuspendProcessesResource.OnRead(spResponse.SuspendProcesses, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> Elastigroup read successfully: %s <===", resourceData.Id())
 	return nil
 }
 
-func resourceSpotinstAWSSuspendProcessesCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstAWSSuspendProcessesCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate), commons.SuspendProcessesResource.GetName())
 
 	suspendProcesses, err := commons.SuspendProcessesResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	suspendProcessesId, err := createSuspendProcesses(resourceData, suspendProcesses, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	resourceData.SetId(spotinst.StringValue(suspendProcessesId))
 
 	log.Printf("===> SuspendProcesses created successfully for Elastigroup: %s <===", resourceData.Id())
 
-	return resourceSpotinstAWSSuspendProcessesRead(resourceData, meta)
+	return resourceSpotinstAWSSuspendProcessesRead(ctx, resourceData, meta)
 
 }
 
@@ -113,7 +114,7 @@ func createSuspendProcesses(resourceData *schema.ResourceData, suspendProcesses 
 		log.Printf("===> SuspendProcesses create configuration: %s", json)
 	}
 	groupID := spotinst.String(resourceData.Get(string(elastigroup_aws_suspend_processes.GroupID)).(string))
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateSuspensionsInput{
 			GroupID:     groupID,
 			Suspensions: suspendProcesses.Suspensions,
@@ -132,12 +133,12 @@ func createSuspendProcesses(resourceData *schema.ResourceData, suspendProcesses 
 
 }
 
-func resourceSpotinstAWSSuspendProcessesDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstAWSSuspendProcessesDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.SuspendProcessesResource.GetName(), resourceId)
 
 	if err := deleteSuspendProcesses(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> SuspendProcesses deleted successfully for Elastigroup: %s <===", resourceData.Id())
@@ -172,21 +173,21 @@ func deleteSuspendProcesses(resourceData *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceSpotinstAWSSuspendProcessesUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstAWSSuspendProcessesUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.SuspendProcessesResource.GetName(), resourceId)
 
 	shouldUpdate, suspendProcesses, err := commons.SuspendProcessesResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	if shouldUpdate {
 		if err := updateSuspendProcesses(suspendProcesses, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> SuspendProcesses updated successfully: %s <===", resourceId)
-	return resourceSpotinstAWSSuspendProcessesRead(resourceData, meta)
+	return resourceSpotinstAWSSuspendProcessesRead(ctx, resourceData, meta)
 }
 
 func updateSuspendProcesses(suspendProcesses *aws.SuspendProcesses, resourceData *schema.ResourceData, meta interface{}) error {

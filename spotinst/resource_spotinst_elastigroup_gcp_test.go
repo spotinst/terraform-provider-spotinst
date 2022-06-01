@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -568,17 +568,17 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".auto_delete", "false"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".boot", "false"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".device_name", "tf-test-device"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".interface", "SCSI"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".mode", "READ_WRITE"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".source", "fake-source"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".type", "PERSISTENT"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".initialize_params.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".initialize_params."+DiskHash_InitParams_create+".disk_size_gb", "20"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".initialize_params."+DiskHash_InitParams_create+".disk_type", "pd-standard"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_create+".initialize_params."+DiskHash_InitParams_create+".source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.auto_delete", "false"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.boot", "false"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.device_name", "tf-test-device"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.interface", "SCSI"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.mode", "READ_WRITE"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.source", "fake-source"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.type", "PERSISTENT"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_size_gb", "20"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "pd-standard"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
 				),
 			},
 			{
@@ -590,17 +590,17 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".auto_delete", "true"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".boot", "true"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".device_name", "tf-test-device-updated"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".interface", "NVM"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".mode", "READ_ONLY"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".source", "fake-source-updated"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".type", "SCRATCH"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".initialize_params.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".initialize_params."+DiskHash_InitParams_update+".disk_size_gb", "30"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".initialize_params."+DiskHash_InitParams_update+".disk_type", "local-ssd"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_update+".initialize_params."+DiskHash_InitParams_update+".source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.auto_delete", "true"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.boot", "true"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.device_name", "tf-test-device-updated"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.interface", "NVM"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.mode", "READ_ONLY"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.source", "fake-source-updated"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.type", "SCRATCH"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_size_gb", "30"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "local-ssd"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
 				),
 			},
 			{
@@ -612,25 +612,13 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_emptyFields+".auto_delete", "false"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_emptyFields+".boot", "false"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_emptyFields+".initialize_params.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "disk."+DiskHash_emptyFields+".initialize_params."+DiskHash_InitParams_emptyFields+".source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
 				),
 			},
 		},
 	})
 }
-
-// hashed values for Set types change whenever any value in the set changes
-const (
-	DiskHash_create                 = "2990193514"
-	DiskHash_update                 = "2923453124"
-	DiskHash_emptyFields            = "1735496180"
-	DiskHash_InitParams_create      = "2654941069"
-	DiskHash_InitParams_update      = "3325412222"
-	DiskHash_InitParams_emptyFields = "539864920"
-)
 
 const testDiskGCPGroupConfig_Create = `
  // --- DISK ------------------------
@@ -790,8 +778,8 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "gpu.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "gpu.1808591713.count", "2"),
-					resource.TestCheckResourceAttr(resourceName, "gpu.1808591713.type", "nvidia-tesla-p100"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.0.count", "2"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.0.type", "nvidia-tesla-p100"),
 				),
 			},
 			{
@@ -804,8 +792,8 @@ func TestAccSpotinstElastigroupGCP_GPU(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "gpu.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "gpu.3512838290.count", "1"),
-					resource.TestCheckResourceAttr(resourceName, "gpu.3512838290.type", "nvidia-tesla-v100"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.0.count", "1"),
+					resource.TestCheckResourceAttr(resourceName, "gpu.0.type", "nvidia-tesla-v100"),
 				),
 			},
 			{
@@ -955,11 +943,11 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network", "default"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs."+AccessConfig_create+".name", "config1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs."+AccessConfig_create+".type", "ONE_TO_ONE_NAT"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.name", "config1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.type", "ONE_TO_ONE_NAT"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_create+".subnetwork_range_name", "range-name-1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_create+".ip_cidr_range", "10.128.0.0/20"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.subnetwork_range_name", "range-name-1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.ip_cidr_range", "10.128.0.0/20"),
 				),
 			},
 			{
@@ -974,11 +962,11 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs."+AccessConfig_update+".name", "config2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs."+AccessConfig_update+".type", "ONE_TO_ONE_NAT"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.name", "config2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.type", "ONE_TO_ONE_NAT"),
 					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".subnetwork_range_name", "range-name-2"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges."+AliasIP_update+".ip_cidr_range", "10.128.0.0/20"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.subnetwork_range_name", "range-name-2"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.ip_cidr_range", "10.128.0.0/20"),
 				),
 			},
 			{
@@ -997,16 +985,6 @@ func TestAccSpotinstElastigroupGCP_NetworkInterfaces(t *testing.T) {
 		},
 	})
 }
-
-// hashed values for Set types change whenever any value in the set changes
-const (
-	AccessConfig_create  = "1095511731"
-	AccessConfig_update  = "2016707571"
-	AccessConfig2_update = "1864165171"
-	AliasIP_create       = "3190739246"
-	AliasIP_update       = "2500035309"
-	AliasIP2_update      = "2350429100"
-)
 
 const testNetworkInterfacesGCPGroupConfig_Create = `
  // --- NETWORK INTERFACE ------------------
@@ -1077,22 +1055,22 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".policy_name", "policy-name"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".namespace", "test-namespace"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".source", "spectrum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".statistic", "count"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".unit", "seconds"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.0.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".dimensions.0.value", "value-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".threshold", "10"),
-					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".operator", "gte"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".evaluation_periods", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".period", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".action_type", "adjustment"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_create+".adjustment", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.namespace", "test-namespace"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.source", "spectrum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.statistic", "count"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.unit", "seconds"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.threshold", "10"),
+					//resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.operator", "gte"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action_type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.adjustment", "1"),
 				),
 			},
 			{
@@ -1105,22 +1083,22 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".policy_name", "policy-name-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".namespace", "updated-namespace"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".source", "stackdriver"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".unit", "bytes"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".cooldown", "300"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.0.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".dimensions.0.value", "value-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".threshold", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".operator", "lte"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".evaluation_periods", "20"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".period", "300"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".action_type", "adjustment"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy."+UpHash_update+".adjustment", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.namespace", "updated-namespace"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.source", "stackdriver"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.operator", "lte"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.evaluation_periods", "20"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action_type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.adjustment", "2"),
 				),
 			},
 			{
@@ -1138,11 +1116,6 @@ func TestAccSpotinstElastigroupGCP_ScalingUpPolicies(t *testing.T) {
 		},
 	})
 }
-
-const (
-	UpHash_create = "3191844943"
-	UpHash_update = "16398893"
-)
 
 const testScalingUpPolicyGCPGroupConfig_Create = `
 // --- SCALE UP POLICY ------------------
@@ -1232,22 +1205,22 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".policy_name", "policy-name"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".namespace", "test-namespace"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".source", "spectrum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".statistic", "count"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".unit", "seconds"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".cooldown", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.0.name", "name-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".dimensions.0.value", "value-1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".threshold", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".operator", "gte"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".evaluation_periods", "10"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".period", "60"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".action_type", "adjustment"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_create+".adjustment", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.namespace", "test-namespace"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.source", "spectrum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.statistic", "count"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.unit", "seconds"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.threshold", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.operator", "gte"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action_type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.adjustment", "1"),
 				),
 			},
 			{
@@ -1260,22 +1233,22 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".policy_name", "policy-name-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".metric_name", "CPUUtilization"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".namespace", "updated-namespace"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".source", "stackdriver"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".statistic", "sum"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".unit", "bytes"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".cooldown", "300"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.0.name", "name-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".dimensions.0.value", "value-1-update"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".threshold", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".operator", "lte"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".evaluation_periods", "20"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".period", "300"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".action_type", "adjustment"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy."+DownHash_update+".adjustment", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.metric_name", "CPUUtilization"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.namespace", "updated-namespace"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.source", "stackdriver"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.statistic", "sum"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.operator", "lte"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.evaluation_periods", "20"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action_type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.adjustment", "2"),
 				),
 			},
 			{
@@ -1293,11 +1266,6 @@ func TestAccSpotinstElastigroupGCP_ScalingDownPolicies(t *testing.T) {
 		},
 	})
 }
-
-const (
-	DownHash_create = "3191844943"
-	DownHash_update = "16398893"
-)
 
 const testScalingDownPolicyGCPGroupConfig_Create = `
 // --- SCALE DOWN POLICY ------------------
@@ -1387,9 +1355,9 @@ func TestAccSpotinstElastigroupGCP_Subnets(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "subnets.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnets."+SubnetHash_create+".region", "us-central1"),
-					resource.TestCheckResourceAttr(resourceName, "subnets."+SubnetHash_create+".subnet_names.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnets."+SubnetHash_create+".subnet_names.0", "us-central1-a"),
+					resource.TestCheckResourceAttr(resourceName, "subnets.0.region", "us-central1"),
+					resource.TestCheckResourceAttr(resourceName, "subnets.0.subnet_names.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "subnets.0.subnet_names.0", "us-central1-a"),
 				),
 			},
 			{
@@ -1402,10 +1370,10 @@ func TestAccSpotinstElastigroupGCP_Subnets(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "subnets.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnets."+SubnetHash_update+".region", "us-central1"),
-					resource.TestCheckResourceAttr(resourceName, "subnets."+SubnetHash_update+".subnet_names.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnets."+SubnetHash_update+".subnet_names.0", "us-central1-a"),
-					resource.TestCheckResourceAttr(resourceName, "subnets."+SubnetHash_update+".subnet_names.1", "us-central1-b"),
+					resource.TestCheckResourceAttr(resourceName, "subnets.0.region", "us-central1"),
+					resource.TestCheckResourceAttr(resourceName, "subnets.0.subnet_names.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "subnets.0.subnet_names.0", "us-central1-a"),
+					resource.TestCheckResourceAttr(resourceName, "subnets.0.subnet_names.1", "us-central1-b"),
 				),
 			},
 			{
@@ -1423,11 +1391,6 @@ func TestAccSpotinstElastigroupGCP_Subnets(t *testing.T) {
 		},
 	})
 }
-
-const (
-	SubnetHash_create = "3431665273"
-	SubnetHash_update = "267701446"
-)
 
 const testSubnetsGCPGroupConfig_Create = `
 // --- SUBNETS ------------------------------------------
@@ -1560,12 +1523,12 @@ func TestAccSpotinstElastigroupGCP_ScheduledTask(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.task_type", "setCapacity"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.cron_expression", "* * * * *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.min_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.max_capacity", "3"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.3581666928.target_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.task_type", "setCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.cron_expression", "* * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.min_capacity", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.max_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.target_capacity", "2"),
 				),
 			},
 			{
@@ -1578,12 +1541,12 @@ func TestAccSpotinstElastigroupGCP_ScheduledTask(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.task_type", "setCapacity"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.cron_expression", "* * * * *"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.min_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.max_capacity", "4"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.2302305420.target_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.task_type", "setCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.cron_expression", "* * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.min_capacity", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.max_capacity", "4"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.target_capacity", "3"),
 				),
 			},
 			{

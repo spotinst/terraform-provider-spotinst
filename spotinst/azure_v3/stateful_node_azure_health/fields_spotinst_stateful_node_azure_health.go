@@ -2,8 +2,8 @@ package stateful_node_azure_health
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -74,7 +74,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			var value *azurev3.Health = nil
+			var value *azure.Health = nil
 
 			if v, ok := resourceData.GetOk(string(Health)); ok {
 				if health, err := expandHealth(v); err != nil {
@@ -90,7 +90,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenHealth(health *azurev3.Health) []interface{} {
+func flattenHealth(health *azure.Health) []interface{} {
 	var out []interface{}
 
 	if health != nil {
@@ -119,9 +119,9 @@ func flattenHealth(health *azurev3.Health) []interface{} {
 	return out
 }
 
-func expandHealth(data interface{}) (*azurev3.Health, error) {
+func expandHealth(data interface{}) (*azure.Health, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		health := &azurev3.Health{}
+		health := &azure.Health{}
 
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})

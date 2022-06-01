@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-cleanhttp"
-	"github.com/hashicorp/terraform-plugin-sdk/meta"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
@@ -50,13 +51,13 @@ type Client struct {
 }
 
 // Client configures and returns a fully initialized Spotinst client.
-func (c *Config) Client() (*Client, error) {
+func (c *Config) Client() (*Client, diag.Diagnostics) {
 	stdlog.Println("[INFO] Configuring a new Spotinst client")
 
 	// Create a new session.
 	sess, err := c.getSession()
 	if err != nil {
-		return nil, err
+		return nil, diag.FromErr(err)
 	}
 
 	// Create a new client.

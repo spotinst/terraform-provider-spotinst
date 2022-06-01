@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -207,8 +207,8 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "custom_data", "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1624456412.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1624456412.name", "CoreReliabilityResourceIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "CoreReliabilityResourceIdentity"),
 				),
 			},
 			{
@@ -223,10 +223,10 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1624456412.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1624456412.name", "CoreReliabilityResourceIdentity"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.4139019472.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.4139019472.name", "CoreReliabilityResourceIdentity2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "CoreReliabilityResourceIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.name", "CoreReliabilityResourceIdentity2"),
 				),
 			},
 		},
@@ -386,8 +386,8 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.name", "terraformTestSecondaryIpConfig"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.1901856420.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.1901856420.name", "terraform-application-security-group-DO-NOT-DELETE"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.0.name", "terraform-application-security-group-DO-NOT-DELETE"),
 				),
 			},
 		},

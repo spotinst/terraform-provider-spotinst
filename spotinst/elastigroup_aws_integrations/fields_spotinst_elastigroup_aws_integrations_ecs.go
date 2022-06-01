@@ -1,12 +1,9 @@
 package elastigroup_aws_integrations
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -107,7 +104,6 @@ func SetupEcs(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 							},
 						},
-						Set: attributeHashKV,
 					},
 
 					string(Batch): {
@@ -376,12 +372,4 @@ func flattenECSBatch(batch *aws.Batch) []interface{} {
 		result[string(JobQueueNames)] = batch.JobQueueNames
 	}
 	return []interface{}{result}
-}
-
-func attributeHashKV(v interface{}) int {
-	var buf bytes.Buffer
-	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s-", m[string(Key)].(string)))
-	buf.WriteString(fmt.Sprintf("%s-", m[string(Value)].(string)))
-	return hashcode.String(buf.String())
 }

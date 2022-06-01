@@ -3,12 +3,13 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
@@ -20,13 +21,13 @@ func resourceSpotinstOceanAWSLaunchSpec() *schema.Resource {
 	setupOceanAWSLaunchSpecResource()
 
 	return &schema.Resource{
-		Create: resourceSpotinstOceanAWSLaunchSpecCreate,
-		Read:   resourceSpotinstOceanAWSLaunchSpecRead,
-		Update: resourceSpotinstOceanAWSLaunchSpecUpdate,
-		Delete: resourceSpotinstOceanAWSLaunchSpecDelete,
+		CreateContext: resourceSpotinstOceanAWSLaunchSpecCreate,
+		ReadContext:   resourceSpotinstOceanAWSLaunchSpecRead,
+		UpdateContext: resourceSpotinstOceanAWSLaunchSpecUpdate,
+		DeleteContext: resourceSpotinstOceanAWSLaunchSpecDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: commons.OceanAWSLaunchSpecResource.GetSchemaMap(),
@@ -40,21 +41,21 @@ func setupOceanAWSLaunchSpecResource() {
 	commons.OceanAWSLaunchSpecResource = commons.NewOceanAWSLaunchSpecResource(fieldsMap)
 }
 
-func resourceSpotinstOceanAWSLaunchSpecCreate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSLaunchSpecCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanAWSLaunchSpecResource.GetName())
 
 	launchSpec, err := commons.OceanAWSLaunchSpecResource.OnCreate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	launchSpecId, err := createLaunchSpec(resourceData, launchSpec, meta.(*Client))
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	resourceData.SetId(spotinst.StringValue(launchSpecId))
 
-	return resourceSpotinstOceanAWSLaunchSpecRead(resourceData, meta)
+	return resourceSpotinstOceanAWSLaunchSpecRead(ctx, resourceData, meta)
 }
 
 func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchSpec, spotinstClient *Client) (*string, error) {
@@ -65,7 +66,7 @@ func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchS
 	}
 
 	var resp *aws.CreateLaunchSpecOutput = nil
-	err := resource.Retry(time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateLaunchSpecInput{LaunchSpec: launchSpec}
 		if createOptions, exists := resourceData.GetOkExists(string(ocean_aws_launch_spec.CreateOptions)); exists {
 			list := createOptions.([]interface{})
@@ -102,7 +103,7 @@ func createLaunchSpec(resourceData *schema.ResourceData, launchSpec *aws.LaunchS
 
 const ErrCodeLaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
-func resourceSpotinstOceanAWSLaunchSpecRead(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSLaunchSpecRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanAWSLaunchSpecResource.GetName(), id)
 
@@ -122,7 +123,7 @@ func resourceSpotinstOceanAWSLaunchSpecRead(resourceData *schema.ResourceData, m
 		}
 
 		// Some other error, report it.
-		return fmt.Errorf("failed to read launchSpec: %s", err)
+		return diag.Errorf("failed to read launchSpec: %s", err)
 	}
 
 	// if nothing was found, return no state
@@ -133,29 +134,29 @@ func resourceSpotinstOceanAWSLaunchSpecRead(resourceData *schema.ResourceData, m
 	}
 
 	if err := commons.OceanAWSLaunchSpecResource.OnRead(launchSpecResponse, resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	log.Printf("===> launchSpec read successfully: %s <===", id)
 	return nil
 }
 
-func resourceSpotinstOceanAWSLaunchSpecUpdate(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSLaunchSpecUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAWSLaunchSpecResource.GetName(), id)
 
 	shouldUpdate, launchSpec, err := commons.OceanAWSLaunchSpecResource.OnUpdate(resourceData, meta)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		launchSpec.SetId(spotinst.String(id))
 		if err := updateLaunchSpec(launchSpec, resourceData, meta); err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 	log.Printf("===> launchSpec updated successfully: %s <===", id)
-	return resourceSpotinstOceanAWSLaunchSpecRead(resourceData, meta)
+	return resourceSpotinstOceanAWSLaunchSpecRead(ctx, resourceData, meta)
 }
 
 func updateLaunchSpec(launchSpec *aws.LaunchSpec, resourceData *schema.ResourceData, meta interface{}) error {
@@ -239,13 +240,13 @@ func rollOceanAWSLaunchSpec(resourceData *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceSpotinstOceanAWSLaunchSpecDelete(resourceData *schema.ResourceData, meta interface{}) error {
+func resourceSpotinstOceanAWSLaunchSpecDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanAWSLaunchSpecResource.GetName(), id)
 
 	if err := deleteLaunchSpec(resourceData, meta); err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("===> launchSpec deleted successfully: %s <===", resourceData.Id())
