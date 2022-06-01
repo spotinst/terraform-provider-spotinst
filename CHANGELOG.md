@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.76.0 (June 01, 2022)
+
+NOTES:
+* Upgrade terraform-plugin-sdk version to v2.5.0
+
 ## 1.75.0 (May 26, 2022)
 
 ENHANCEMENTS:
