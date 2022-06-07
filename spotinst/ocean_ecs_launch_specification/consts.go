@@ -11,6 +11,7 @@ const (
 	ImageID                  commons.FieldName = "image_id"
 	Monitoring               commons.FieldName = "monitoring"
 	EBSOptimized             commons.FieldName = "ebs_optimized"
+	UseAsTemplateOnly        commons.FieldName = "use_as_template_only"
 )
 
 const (
