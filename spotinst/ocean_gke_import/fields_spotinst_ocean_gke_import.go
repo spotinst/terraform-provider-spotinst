@@ -354,6 +354,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[UseAsTemplateOnly] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		UseAsTemplateOnly,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var value *bool = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.UseAsTemplateOnly != nil {
+
+				value = cluster.Compute.LaunchSpecification.UseAsTemplateOnly
+			}
+
+			if err := resourceData.Set(string(UseAsTemplateOnly), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UseAsTemplateOnly), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(UseAsTemplateOnly)); ok {
+				cluster.Compute.LaunchSpecification.SetUseAsTemplateOnly(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(UseAsTemplateOnly)); ok {
+				cluster.Compute.LaunchSpecification.SetUseAsTemplateOnly(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[UpdatePolicy] = commons.NewGenericField(
 		commons.OceanGKEImport,
 		UpdatePolicy,

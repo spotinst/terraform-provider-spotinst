@@ -45,7 +45,6 @@ const (
 	ResourceLimits            commons.FieldName = "resource_limits"
 	MaxInstanceCount          commons.FieldName = "max_instance_count"
 	MinInstanceCount          commons.FieldName = "min_instance_count"
-	UseAsTemplateOnly         commons.FieldName = "use_as_template_only"
 )
 
 const (

@@ -426,7 +426,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOk(string(UseAsTemplateOnly)); ok {
+			if v, ok := resourceData.GetOkExists(string(UseAsTemplateOnly)); ok {
 				cluster.Compute.LaunchSpecification.SetUseAsTemplateOnly(spotinst.Bool(v.(bool)))
 			}
 			return nil
@@ -435,10 +435,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
 			cluster := clusterWrapper.GetECSCluster()
 
-			if v, ok := resourceData.GetOk(string(UseAsTemplateOnly)); ok {
-				//if v, ok := resourceData.Get(string(UseAsTemplateOnly)).(bool); ok {
+			if v, ok := resourceData.GetOkExists(string(UseAsTemplateOnly)); ok {
 				cluster.Compute.LaunchSpecification.SetUseAsTemplateOnly(spotinst.Bool(v.(bool)))
-				//cluster.Compute.LaunchSpecification.SetUseAsTemplateOnly(spotinst.Bool(v))
 			}
 			return nil
 		},
