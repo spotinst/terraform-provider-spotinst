@@ -42,6 +42,7 @@ const (
 	Storage                   commons.FieldName = "storage"
 	LocalSSDCount             commons.FieldName = "local_ssd_count"
 	ServiceAccount            commons.FieldName = "service_account"
+	Tags                      commons.FieldName = "tags"
 	ResourceLimits            commons.FieldName = "resource_limits"
 	MaxInstanceCount          commons.FieldName = "max_instance_count"
 	MinInstanceCount          commons.FieldName = "min_instance_count"

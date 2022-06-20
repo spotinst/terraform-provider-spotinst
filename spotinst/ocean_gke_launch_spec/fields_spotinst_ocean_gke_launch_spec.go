@@ -925,6 +925,101 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Tags] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		Tags,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Computed: true,
+			//	DiffSuppressFunc: func (k, old, new string, d *schema.ResourceData) bool {
+			//	oldQ, err := resource.ParseQuantity(old)
+			//	if err != nil {
+			//	return false
+			//}
+			//	newQ, err := resource.ParseQuantity(new)
+			//	if err != nil {
+			//	return false
+			//}
+			//	return oldQ.Cmp(newQ) == 0
+			//}
+			Elem: &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value []string = nil
+			if launchSpec != nil && launchSpec.LaunchSpecTags != nil {
+				value = launchSpec.LaunchSpecTags
+			}
+			if err := resourceData.Set(string(Tags), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []string
+			if v, ok := resourceData.GetOk(string(Tags)); ok && v != nil {
+				tagsList := v.([]interface{})
+				//var launchSpecTagsSize int
+				//if launchSpec != nil {
+				//	if launchSpec.LaunchSpecTags != nil {
+				//		launchSpecTagsSize = len(launchSpec.LaunchSpecTags)
+				//	}
+				//}
+				result = make([]string, len(tagsList))
+				if len(tagsList) > 0 {
+					for i, j := range tagsList {
+						result[i] = j.(string)
+					}
+				}
+				//if launchSpec != nil {
+				//	if launchSpec.LaunchSpecTags != nil {
+				//		result = append(result, launchSpec.LaunchSpecTags...)
+				//	}
+				//}
+				//launchSpec.SetLaunchSpecTags(result)
+			}
+			if launchSpec != nil {
+				if launchSpec.LaunchSpecTags != nil {
+					result = append(result, launchSpec.LaunchSpecTags...)
+				}
+			}
+			launchSpec.SetLaunchSpecTags(result)
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []string
+			if v, ok := resourceData.GetOk(string(Tags)); ok && v != nil {
+				tagsList := v.([]interface{})
+				//var launchSpecTagsSize int
+				//if launchSpec != nil {
+				//	if launchSpec.InstanceTypes != nil {
+				//		launchSpecTagsSize = len(launchSpec.LaunchSpecTags)
+				//	}
+				//}
+				result = make([]string, len(tagsList))
+				if len(tagsList) > 0 {
+					for i, j := range tagsList {
+						result[i] = j.(string)
+					}
+				}
+				if launchSpec != nil {
+					if launchSpec.LaunchSpecTags != nil {
+						result = append(result, launchSpec.LaunchSpecTags...)
+					}
+				}
+				launchSpec.SetLaunchSpecTags(result)
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[ResourceLimits] = commons.NewGenericField(
 		commons.OceanGKELaunchSpec,
 		ResourceLimits,
