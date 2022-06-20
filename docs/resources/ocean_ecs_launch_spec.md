@@ -21,6 +21,7 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
   subnet_ids = ["subnet-12345"]
   security_group_ids = ["awseb-12345"]
   restrict_scale_down = true
+  use_as_template_only = true
   instance_types = ["m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge",
       "m4.4xlarge", "m4.2xlarge", "m4.10xlarge", "m4.16xlarge", "m5.large", 
       "m5.xlarge", "m5.2xlarge", "m5.4xlarge", "m5.12xlarge", "m5.24xlarge"
@@ -90,6 +91,7 @@ The following arguments are supported:
 * `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the Ocean cluster.
 * `restrict_scale_down`- (Optional) Boolean. When set to “True”, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in the array should be a subnet ID.
+* `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
 
 * `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The label key.

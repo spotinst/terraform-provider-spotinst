@@ -58,6 +58,7 @@ resource "spotinst_ocean_gke_import" "example" {
     enable_secure_boot =  true
     enable_integrity_monitoring = true
  }
+ use_as_template_only = false
 }
 ```
 
@@ -90,6 +91,8 @@ The following arguments are supported:
 * `shielded_instance_config` - (Optional) The Ocean shielded instance configuration object.
     * `enable_integrity_monitoring` - (Optional) Boolean. Enable the integrity monitoring parameter on the GCP instances.
     * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
+* `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
+
 
 <a id="scheduled-task"></a>
 ## Scheduled task
