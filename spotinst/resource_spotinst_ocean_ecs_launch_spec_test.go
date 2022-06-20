@@ -190,6 +190,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
 				),
 			},
 			{
@@ -228,6 +229,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-02b14c961d7eeba50"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
 				),
 			},
 		},
@@ -264,6 +266,7 @@ block_device_mappings {
   }
 
 subnet_ids = ["subnet-0a290e2be0c309b30"]
+use_as_template_only = false
  %v
 }
 `
@@ -306,6 +309,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
         }
       }
   subnet_ids = ["subnet-0a290e2be0c309b30", "subnet-02b14c961d7eeba50"]
+  use_as_template_only = true
 
 %v
 }
