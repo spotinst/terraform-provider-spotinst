@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.77.0 (June 23, 2022)
+
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: resolved errors with `scaling_policies`
+
 ## 1.76.0 (June 01, 2022)
 
 NOTES:
