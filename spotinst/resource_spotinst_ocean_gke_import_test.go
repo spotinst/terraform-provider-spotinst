@@ -178,7 +178,7 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "true"),
-					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "true"),
 				),
 			},
 			{
@@ -194,7 +194,7 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "false"),
-					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "true"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
 				),
 			},
 		},
@@ -217,7 +217,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
 	enable_secure_boot =  true
     enable_integrity_monitoring = true
  }
-use_as_template_only = false
+use_as_template_only = true
  %v
 }
 
@@ -236,7 +236,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
 	enable_secure_boot =  false
     enable_integrity_monitoring = false
  }
-use_as_template_only = true
+use_as_template_only = false
  %v
 }
 
