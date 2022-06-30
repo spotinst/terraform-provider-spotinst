@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/go-version v1.4.0
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
-	github.com/spotinst/spotinst-sdk-go v1.121.0
+	github.com/spotinst/spotinst-sdk-go v1.122.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 
 )
