@@ -254,6 +254,7 @@ func importAKSCluster(resourceData *schema.ResourceData, spotinstClient *Client)
 		input := &azure.ImportClusterInput{
 			ACDIdentifier: spotinst.String(resourceData.Get("acd_identifier").(string)),
 			Cluster: &azure.ImportCluster{
+				ControllerClusterID: spotinst.String(resourceData.Get("controller_cluster_id").(string)),
 				Name: spotinst.String(resourceData.Get("name").(string)),
 				AKS: &azure.AKS{
 					Name:              spotinst.String(resourceData.Get("aks_name").(string)),
