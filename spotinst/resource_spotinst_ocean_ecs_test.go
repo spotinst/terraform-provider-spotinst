@@ -366,6 +366,7 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "10"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "required"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "true"),
 				),
 			},
 			{
@@ -398,6 +399,7 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "optional"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
 				),
 			},
 		},
@@ -412,6 +414,7 @@ const testLaunchSpecECSConfig_Create = `
  key_pair 					 = "spotinst-labs-oregon"
  user_data 					 = "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
  associate_public_ip_address = false
+use_as_template_only = true
 
 block_device_mappings {
     device_name = "/dev/xvda1"
@@ -439,6 +442,7 @@ const testLaunchSpecECSConfig_Update = `
  key_pair 					 = ""
  user_data					 = "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
  associate_public_ip_address = true
+use_as_template_only = false
 
   block_device_mappings {
         device_name = "/dev/xvda1"
@@ -466,7 +470,7 @@ const testLaunchSpecECSConfig_Update = `
 // endregion
 
 // region oceanECS: Autoscaler
-func TestAccSpotinstoceanECS_Autoscaler(t *testing.T) {
+func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 	name := "test-acc-cluster-auto-scaler"
 	clusterName := "auto-scaler-cluster-name"
 	resourceName := createOceanECSResourceName(clusterName)
@@ -583,7 +587,7 @@ autoscaler {
 // endregion
 
 // region oceanECS: Strategy
-func TestAccSpotinstoceanECS_Strategy(t *testing.T) {
+func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 	name := "test-acc-cluster-strategy"
 	clusterName := "strategy-cluster-name"
 	resourceName := createOceanECSResourceName(clusterName)
@@ -664,7 +668,7 @@ const testStrategy_EmptyFields = `
 // endregion
 
 // region OceanECS: Scheduling
-func TestAccSpotinstoceanECS_Scheduling(t *testing.T) {
+func TestAccSpotinstOceanECS_Scheduling(t *testing.T) {
 	name := "test-acc-cluster-scheduling"
 	clusterName := "scheduling-cluster-name"
 	resourceName := createOceanECSResourceName(clusterName)

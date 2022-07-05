@@ -1,5 +1,17 @@
 ## Unreleased
 
+## 1.78.0 (June 30, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `use_as_template_only`
+* resource/spotinst_ocean_gke_import: added `use_as_template_only`
+
+## 1.77.0 (June 23, 2022)
+
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: resolved errors with `scaling_policies`
+
 ## 1.76.0 (June 01, 2022)
 
 NOTES:
