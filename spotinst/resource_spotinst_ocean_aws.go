@@ -317,7 +317,7 @@ func expandOceanAWSClusterRollConfig(data interface{}, clusterID string) (*aws.R
 		}
 
 		if v, ok := m[string(ocean_aws.RespectPDB)].(bool); ok {
-			spec.RespectPdb = spotinst.Bool(v)
+			spec.RespectPDB = spotinst.Bool(v)
 		}
 	}
 
