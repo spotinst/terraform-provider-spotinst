@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.79.0 (July 05, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `respect_pdb`
+
 ## 1.78.0 (June 30, 2022)
 
 ENHANCEMENTS:
