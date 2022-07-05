@@ -31,4 +31,5 @@ const (
 	BatchSizePercentage       commons.FieldName = "batch_size_percentage"
 	LaunchSpecIDs             commons.FieldName = "launch_spec_ids"
 	BatchMinHealthyPercentage commons.FieldName = "batch_min_healthy_percentage"
+	RespectPdb                commons.FieldName = "respect_pdb"
 )
