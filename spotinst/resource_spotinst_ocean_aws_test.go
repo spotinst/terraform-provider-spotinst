@@ -970,6 +970,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "33"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_min_healthy_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.respect_pdb", "false"),
 				),
 			},
 			{
@@ -988,6 +989,7 @@ func TestAccSpotinstOceanAWS_UpdatePolicy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_size_percentage", "66"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.batch_min_healthy_percentage", "30"),
+					resource.TestCheckResourceAttr(resourceName, "update_policy.0.roll_config.0.respect_pdb", "true"),
 				),
 			},
 			{
@@ -1018,6 +1020,7 @@ const testUpdatePolicyAWSClusterConfig_Create = `
     roll_config {
       	batch_size_percentage = 33
 		batch_min_healthy_percentage = 20
+		respect_pdb = false
     }
   }
  // ----------------------------------
@@ -1034,6 +1037,7 @@ const testUpdatePolicyAWSClusterConfig_Update = `
     roll_config {
       	batch_size_percentage = 66
 		batch_min_healthy_percentage = 30
+		respect_pdb = true
     }
   }
  // ----------------------------------
