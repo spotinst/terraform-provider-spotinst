@@ -386,6 +386,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
+								string(RespectPDB): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
 							},
 						},
 					},

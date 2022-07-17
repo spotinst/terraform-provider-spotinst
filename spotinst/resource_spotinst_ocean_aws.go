@@ -315,6 +315,10 @@ func expandOceanAWSClusterRollConfig(data interface{}, clusterID string) (*aws.R
 		if v, ok := m[string(ocean_aws.BatchMinHealthyPercentage)].(int); ok && v > 0 {
 			spec.BatchMinHealthyPercentage = spotinst.Int(v)
 		}
+
+		if v, ok := m[string(ocean_aws.RespectPDB)].(bool); ok {
+			spec.RespectPDB = spotinst.Bool(v)
+		}
 	}
 
 	return spec, nil
