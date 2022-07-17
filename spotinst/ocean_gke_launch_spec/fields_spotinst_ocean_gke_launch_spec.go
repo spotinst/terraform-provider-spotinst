@@ -963,24 +963,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if v, ok := resourceData.GetOk(string(Tags)); ok && v != nil {
 				tagsList := v.([]interface{})
-				//var launchSpecTagsSize int
-				//if launchSpec != nil {
-				//	if launchSpec.LaunchSpecTags != nil {
-				//		launchSpecTagsSize = len(launchSpec.LaunchSpecTags)
-				//	}
-				//}
 				result = make([]string, len(tagsList))
 				if len(tagsList) > 0 {
 					for i, j := range tagsList {
 						result[i] = j.(string)
 					}
 				}
-				//if launchSpec != nil {
-				//	if launchSpec.LaunchSpecTags != nil {
-				//		result = append(result, launchSpec.LaunchSpecTags...)
-				//	}
-				//}
-				//launchSpec.SetLaunchSpecTags(result)
 			}
 			if launchSpec != nil {
 				if launchSpec.LaunchSpecTags != nil {
@@ -996,12 +984,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var result []string
 			if v, ok := resourceData.GetOk(string(Tags)); ok && v != nil {
 				tagsList := v.([]interface{})
-				//var launchSpecTagsSize int
-				//if launchSpec != nil {
-				//	if launchSpec.InstanceTypes != nil {
-				//		launchSpecTagsSize = len(launchSpec.LaunchSpecTags)
-				//	}
-				//}
 				result = make([]string, len(tagsList))
 				if len(tagsList) > 0 {
 					for i, j := range tagsList {
