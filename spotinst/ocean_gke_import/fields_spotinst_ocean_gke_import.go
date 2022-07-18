@@ -105,6 +105,66 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Blacklist] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		Blacklist,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var result []string
+			if cluster.Compute != nil && cluster.Compute.InstanceTypes != nil &&
+				cluster.Compute.InstanceTypes.Blacklist != nil {
+				result = append(result, cluster.Compute.InstanceTypes.Blacklist...)
+			}
+			if err := resourceData.Set(string(Blacklist), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Blacklist), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
+				if blacklist, err := expandInstanceTypeList(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
+				}
+			}
+
+			//if v, ok := resourceData.GetOk(string(Blacklist)); ok {
+			//	instances := v.([]interface{})
+			//	instanceTypes := make([]string, len(instances))
+			//	for i, j := range instances {
+			//		instanceTypes[i] = j.(string)
+			//	}
+			//	cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
+			//}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var instanceTypes []string = nil
+			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
+				instances := v.([]interface{})
+				instanceTypes = make([]string, len(instances))
+				for i, v := range instances {
+					instanceTypes[i] = v.(string)
+				}
+			}
+			cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[BackendServices] = commons.NewGenericField(
 		commons.OceanGKEImport,
 		BackendServices,
@@ -464,4 +524,16 @@ func expandNamedPorts(data interface{}) (*gcp.NamedPorts, error) {
 		}
 	}
 	return namedPorts, nil
+}
+
+func expandInstanceTypeList(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if instanceTypeList, ok := v.(string); ok && instanceTypeList != "" {
+			result = append(result, instanceTypeList)
+		}
+	}
+	return result, nil
 }
