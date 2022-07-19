@@ -168,6 +168,98 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKEImportExists(&cluster, resourceName),
 					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
+					resource.TestCheckResourceAttr(resourceName, "whitelist.1", "n1-standard-2"),
+					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
+					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
+					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-ssd"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "true"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "true"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "true"),
+				),
+			},
+			{
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName:          spotClusterName,
+					updateBaselineFields: true}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "false"),
+					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "false"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
+				),
+			},
+		},
+	})
+}
+
+const testBaselineOceanGKEImportConfig_Create = `
+resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
+ provider = "%v"
+
+ cluster_name = "terraform-tests-do-not-delete"
+ location     = "us-central1-a"
+
+ whitelist = ["n1-standard-1", "n1-standard-2"]
+ min_size = 0
+ max_size = 2
+ desired_capacity = 0
+ root_volume_type = "pd-ssd"
+ shielded_instance_config {
+	enable_secure_boot =  true
+    enable_integrity_monitoring = true
+ }
+use_as_template_only = true
+ %v
+}
+
+`
+
+const testBaselineOceanGKEImportConfig_Update = `
+resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
+ provider = "%v"
+
+ cluster_name = "terraform-tests-do-not-delete"
+ location     = "us-central1-a"
+
+ whitelist = ["n1-standard-1"]
+ root_volume_type = "pd-standard"
+ shielded_instance_config {
+	enable_secure_boot =  false
+    enable_integrity_monitoring = false
+ }
+use_as_template_only = false
+ %v
+}
+
+`
+
+func TestAccSpotinstOceanGKEImport_Baseline2(t *testing.T) {
+	spotClusterName := "terraform-tests-do-not-delete"
+	resourceName := createOceanGKEImportResourceName(spotClusterName)
+
+	var cluster gcp.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKEImportDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+					clusterName: spotClusterName,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
 					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "n1-standard-1"),
 					resource.TestCheckResourceAttr(resourceName, "blacklist.1", "n1-standard-2"),
@@ -201,7 +293,7 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 	})
 }
 
-const testBaselineOceanGKEImportConfig_Create = `
+const testBaselineOceanGKEImportConfig_Create2 = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
@@ -223,7 +315,7 @@ use_as_template_only = true
 
 `
 
-const testBaselineOceanGKEImportConfig_Update = `
+const testBaselineOceanGKEImportConfig_Update2 = `
 resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
