@@ -137,29 +137,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
 				}
 			}
-
-			//if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-			//	instances := v.([]interface{})
-			//	instanceTypes := make([]string, len(instances))
-			//	for i, j := range instances {
-			//		instanceTypes[i] = j.(string)
-			//	}
-			//	cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
-			//}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var instanceTypes []string = nil
+
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				instances := v.([]interface{})
-				instanceTypes = make([]string, len(instances))
-				for i, v := range instances {
-					instanceTypes[i] = v.(string)
+				if blacklist, err := expandInstanceTypeList(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
 				}
 			}
-			cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			return nil
 		},
 		nil,
