@@ -983,6 +983,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			//resp, err := meta.(*Client).ocean.CloudProviderGCP().ReadLaunchSpec(context.Background(), input)
+			//launchSpec.SetLaunchSpecTags(resp)
+
 			log.Printf("launchspec is : %s",
 				stringutil.Stringify(launchSpec))
 			var result []string
