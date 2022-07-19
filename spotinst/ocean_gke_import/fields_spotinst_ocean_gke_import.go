@@ -129,27 +129,29 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-
+			var instanceTypes []string = nil
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				if blacklist, err := expandInstanceTypeList(v); err != nil {
-					return err
-				} else {
-					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
+				instances := v.([]interface{})
+				instanceTypes = make([]string, len(instances))
+				for i, v := range instances {
+					instanceTypes[i] = v.(string)
 				}
 			}
+			cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-
+			var instanceTypes []string = nil
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				if blacklist, err := expandInstanceTypeList(v); err != nil {
-					return err
-				} else {
-					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
+				instances := v.([]interface{})
+				instanceTypes = make([]string, len(instances))
+				for i, v := range instances {
+					instanceTypes[i] = v.(string)
 				}
 			}
+			cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			return nil
 		},
 		nil,
@@ -514,16 +516,4 @@ func expandNamedPorts(data interface{}) (*gcp.NamedPorts, error) {
 		}
 	}
 	return namedPorts, nil
-}
-
-func expandInstanceTypeList(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if instanceTypeList, ok := v.(string); ok && instanceTypeList != "" {
-			result = append(result, instanceTypeList)
-		}
-	}
-	return result, nil
 }

@@ -78,7 +78,8 @@ The following arguments are supported:
 * `max_size` - (Optional, Default: `1000`) The upper limit of instances the cluster can scale up to.
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster. 
-* `whitelist` - (Optional) Instance types allowed in the Ocean cluster.
+* `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if blacklist list is configured.
+* `blacklist` - (Optional) Instance types to avoid launching in the Ocean cluster. Cannot be configured if whitelist list is configured.
 * `draining_timeout` - (Optional) The draining timeout (in seconds) before terminating the instance.
 * `backend_services` - (Optional) Describes the backend service configurations.
     * `service_name` - (Required) The name of the backend service.

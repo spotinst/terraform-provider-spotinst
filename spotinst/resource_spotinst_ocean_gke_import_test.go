@@ -168,9 +168,9 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKEImportExists(&cluster, resourceName),
 					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.1", "n1-standard-2"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "n1-standard-1"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.1", "n1-standard-2"),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "2"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
@@ -188,8 +188,8 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKEImportExists(&cluster, resourceName),
 					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "n1-standard-1"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "blacklist.0", "n1-standard-1"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_type", "pd-standard"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "false"),
@@ -208,7 +208,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  cluster_name = "terraform-tests-do-not-delete"
  location     = "us-central1-a"
 
- whitelist = ["n1-standard-1", "n1-standard-2"]
+ blacklist = ["n1-standard-1", "n1-standard-2"]
  min_size = 0
  max_size = 2
  desired_capacity = 0
@@ -230,7 +230,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  cluster_name = "terraform-tests-do-not-delete"
  location     = "us-central1-a"
 
- whitelist = ["n1-standard-1"]
+ blacklist = ["n1-standard-1"]
  root_volume_type = "pd-standard"
  shielded_instance_config {
 	enable_secure_boot =  false
