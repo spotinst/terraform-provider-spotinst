@@ -136,8 +136,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				for i, v := range instances {
 					instanceTypes[i] = v.(string)
 				}
+				cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			}
-			cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
+			//cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
