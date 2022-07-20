@@ -987,8 +987,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 			//get imported launchspec tags from commons
 
-			launchSpecTagsWrapper := resourceObject.(*commons.LaunchSpecGKETagsWrapper)
-			launchSpecTags := launchSpecTagsWrapper.GetLaunchSpecTags()
+			//launchSpecTagsWrapper := resourceObject.(*commons.LaunchSpecGKETagsWrapper)
+			//launchSpecTags := launchSpecTagsWrapper.GetLaunchSpecTags()
 
 			log.Printf("launchspec is : %s",
 				stringutil.Stringify(launchSpec))
@@ -1007,7 +1007,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				//	}
 				//}
 			}
-			result = append(result, launchSpecTags...)
+			//result = append(result, launchSpecTags...)
 			launchSpec.SetLaunchSpecTags(result)
 			//result = append(result, launchSpecTags...)
 			return nil
