@@ -22,6 +22,10 @@ type LaunchSpecGKEWrapper struct {
 	launchSpec *gcp.LaunchSpec
 }
 
+type LaunchSpecGKETagsWrapper struct {
+	launchSpecTags []string
+}
+
 func NewOceanGKELaunchSpecResource(fieldsMap map[FieldName]*GenericField) *OceanGKELaunchSpecTerraformResource {
 	return &OceanGKELaunchSpecTerraformResource{
 		GenericResource: GenericResource{
@@ -46,6 +50,8 @@ func (res *OceanGKELaunchSpecTerraformResource) OnCreate(
 		buildEmptyGKELaunchSpecRequirements(importedLaunchSpec)
 		launchSpecWrapper.SetLaunchSpec(importedLaunchSpec)
 	}
+
+	//set lanchspecsTagsWrapper
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
@@ -93,6 +99,7 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 	}
 
 	launchSpecWrapper := NewGKELaunchSpecWrapper()
+	launchSpecTagsWrapper := NewGKELaunchSpecTagsWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -100,8 +107,14 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
-			if err := field.onUpdate(launchSpecWrapper, resourceData, meta); err != nil {
-				return false, nil, err
+			if field.fieldNameStr == "tags" {
+				if err := field.onUpdate(launchSpecTagsWrapper, resourceData, meta); err != nil {
+					return false, nil, err
+				}
+			} else {
+				if err := field.onUpdate(launchSpecWrapper, resourceData, meta); err != nil {
+					return false, nil, err
+				}
 			}
 			hasChanged = true
 		}
@@ -126,12 +139,26 @@ func NewGKELaunchSpecWrapper() *LaunchSpecGKEWrapper {
 	}
 }
 
+func NewGKELaunchSpecTagsWrapper() *LaunchSpecGKETagsWrapper {
+	return &LaunchSpecGKETagsWrapper{
+		launchSpecTags: []string{},
+	}
+}
+
 func (launchSpecWrapper *LaunchSpecGKEWrapper) GetLaunchSpec() *gcp.LaunchSpec {
 	return launchSpecWrapper.launchSpec
 }
 
 func (launchSpecWrapper *LaunchSpecGKEWrapper) SetLaunchSpec(launchSpec *gcp.LaunchSpec) {
 	launchSpecWrapper.launchSpec = launchSpec
+}
+
+func (launchSpecTagsWrapper *LaunchSpecGKETagsWrapper) GetLaunchSpecTags() []string {
+	return launchSpecTagsWrapper.launchSpecTags
+}
+
+func (launchSpecTagsWrapper *LaunchSpecGKETagsWrapper) SetLaunchSpecTags(launchSpecTags []string) {
+	launchSpecTagsWrapper.launchSpecTags = launchSpecTags
 }
 
 func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {

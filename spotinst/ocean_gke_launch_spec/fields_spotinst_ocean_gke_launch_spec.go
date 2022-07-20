@@ -950,6 +950,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
 			var value []string = nil
 			if launchSpec != nil && launchSpec.LaunchSpecTags != nil {
 				value = launchSpec.LaunchSpecTags
@@ -981,13 +982,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			//resp, err := meta.(*Client).ocean.CloudProviderGCP().ReadLaunchSpec(context.Background(), input)
-			//launchSpec.SetLaunchSpecTags(resp)
+			//launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			//launchSpec := launchSpecWrapper.GetLaunchSpec()
 
-			log.Printf("launchspec is : %s",
-				stringutil.Stringify(launchSpec))
+			//get imported launchspec tags from commons
+
+			launchSpecTagsWrapper := resourceObject.(*commons.LaunchSpecGKETagsWrapper)
+			launchSpecTags := launchSpecTagsWrapper.GetLaunchSpecTags()
+
+			//log.Printf("launchspec is : %s",
+			//	stringutil.Stringify(launchSpec))
 			var result []string
 			if v, ok := resourceData.GetOk(string(Tags)); ok && v != nil {
 				tagsList := v.([]interface{})
@@ -997,13 +1001,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						result[i] = j.(string)
 					}
 				}
-				if launchSpec != nil {
-					if launchSpec.LaunchSpecTags != nil {
-						result = append(result, launchSpec.LaunchSpecTags...)
-					}
-				}
-				launchSpec.SetLaunchSpecTags(result)
+				//if launchSpec != nil {
+				//	if launchSpec.LaunchSpecTags != nil {
+				//		result = append(result, launchSpec.LaunchSpecTags...)
+				//	}
+				//}
+				//launchSpec.SetLaunchSpecTags(result)
 			}
+			result = append(result, launchSpecTags...)
+			//launchSpecTags.SetLaunchSpecTags(result)
 			return nil
 		},
 		nil,
