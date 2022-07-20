@@ -982,16 +982,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			//launchSpec := launchSpecWrapper.GetLaunchSpec()
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
 
 			//get imported launchspec tags from commons
 
 			launchSpecTagsWrapper := resourceObject.(*commons.LaunchSpecGKETagsWrapper)
 			launchSpecTags := launchSpecTagsWrapper.GetLaunchSpecTags()
 
-			//log.Printf("launchspec is : %s",
-			//	stringutil.Stringify(launchSpec))
+			log.Printf("launchspec is : %s",
+				stringutil.Stringify(launchSpec))
 			var result []string
 			if v, ok := resourceData.GetOk(string(Tags)); ok && v != nil {
 				tagsList := v.([]interface{})
@@ -1006,10 +1006,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				//		result = append(result, launchSpec.LaunchSpecTags...)
 				//	}
 				//}
-				//launchSpec.SetLaunchSpecTags(result)
 			}
 			result = append(result, launchSpecTags...)
-			//launchSpecTags.SetLaunchSpecTags(result)
+			launchSpec.SetLaunchSpecTags(result)
+			//result = append(result, launchSpecTags...)
 			return nil
 		},
 		nil,

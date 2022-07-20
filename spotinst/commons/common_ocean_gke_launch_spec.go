@@ -53,6 +53,9 @@ func (res *OceanGKELaunchSpecTerraformResource) OnCreate(
 
 	//set lanchspecsTagsWrapper
 
+	tags := NewGKELaunchSpecTagsWrapper()
+	tags.SetLaunchSpecTags(importedLaunchSpec.LaunchSpecTags)
+
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
@@ -99,7 +102,6 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 	}
 
 	launchSpecWrapper := NewGKELaunchSpecWrapper()
-	launchSpecTagsWrapper := NewGKELaunchSpecTagsWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -107,14 +109,8 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
-			if field.fieldNameStr == "tags" {
-				if err := field.onUpdate(launchSpecTagsWrapper, resourceData, meta); err != nil {
-					return false, nil, err
-				}
-			} else {
-				if err := field.onUpdate(launchSpecWrapper, resourceData, meta); err != nil {
-					return false, nil, err
-				}
+			if err := field.onUpdate(launchSpecWrapper, resourceData, meta); err != nil {
+				return false, nil, err
 			}
 			hasChanged = true
 		}
