@@ -138,7 +138,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 				cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			}
-			//cluster.Compute.InstanceTypes.SetBlacklist(instanceTypes)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
