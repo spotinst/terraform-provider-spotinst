@@ -72,6 +72,8 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 
 	resourceData.SetId(spotinst.StringValue(launchSpecId))
 
+	diag.FromErr(fmt.Errorf("[ERROR] Tal Geva failed to create launchSpec: %s", err))
+
 	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
 }
 
@@ -127,6 +129,8 @@ func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *s
 		return diag.FromErr(err)
 	}
 	log.Printf("===> launchSpec GKE read successfully: %s <===", id)
+	diag.FromErr(fmt.Errorf("[ERROR] Tal Geva failed to create launchSpec: %s", err))
+	log.Printf("===> Tal Geva: %s <===", id)
 	return nil
 }
 
