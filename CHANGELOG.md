@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.80.0 (July 19, 2022)
+## 1.80.0 (July 25, 2022)
 
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: added `blacklist`
