@@ -147,6 +147,7 @@ func resourceSpotinstOceanGKELaunchSpecUpdate(ctx context.Context, resourceData 
 	}
 	log.Printf("===> launchSpec GKE updated successfully: %s <===", id)
 	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
+
 }
 
 func updateGKELaunchSpec(launchSpec *gcp.LaunchSpec, resourceData *schema.ResourceData, meta interface{}) error {

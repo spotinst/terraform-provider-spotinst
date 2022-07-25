@@ -1001,11 +1001,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						result[i] = j.(string)
 					}
 				}
-				//if launchSpec != nil {
-				//	if launchSpec.LaunchSpecTags != nil {
-				//		result = append(result, launchSpec.LaunchSpecTags...)
-				//	}
-				//}
+				if launchSpec != nil {
+					if launchSpec.LaunchSpecTags != nil {
+						result = append(result, launchSpec.LaunchSpecTags...)
+						//result = append(result, commons.OceanGKE)
+					}
+				}
 			}
 			//result = append(result, launchSpecTags...)
 			launchSpec.SetLaunchSpecTags(result)
