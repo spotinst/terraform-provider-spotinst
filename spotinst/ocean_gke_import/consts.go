@@ -6,6 +6,7 @@ const (
 	ClusterName         commons.FieldName = "cluster_name"
 	Location            commons.FieldName = "location"
 	Whitelist           commons.FieldName = "whitelist"
+	Blacklist           commons.FieldName = "blacklist"
 	BackendServices     commons.FieldName = "backend_services"
 	LocationType        commons.FieldName = "location_type"
 	Scheme              commons.FieldName = "scheme"
