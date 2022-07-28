@@ -51,7 +51,7 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 
 	if v, ok := resourceData.Get(string(ocean_gke_launch_spec.NodePoolName)).(string); ok && v != "" {
 		importedLaunchSpec, err = importGKELaunchSpec(resourceData, meta)
-
+		//extracting the imported tags
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -72,7 +72,7 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 
 	resourceData.SetId(spotinst.StringValue(launchSpecId))
 
-	diag.FromErr(fmt.Errorf("[ERROR] Tal Geva failed to create launchSpec: %s", err))
+	diag.FromErr(fmt.Errorf("[ERROR] failed to create launchSpec: %s", err))
 
 	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
 }
@@ -94,6 +94,14 @@ func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*s
 }
 
 const ErrCodeGKELaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
+
+var created = false
+
+const WarningMessageAfterCreate = "Please add the imported tags from state file to the tags list"
+
+var afterCreate = false
+
+const InfoMessageBeforeUpdate = "Make sure you updated the tags list"
 
 func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
@@ -129,9 +137,25 @@ func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *s
 		return diag.FromErr(err)
 	}
 	log.Printf("===> launchSpec GKE read successfully: %s <===", id)
-	diag.FromErr(fmt.Errorf("[ERROR] Tal Geva failed to create launchSpec: %s", err))
-	log.Printf("===> Tal Geva: %s <===", id)
-	return nil
+	diag.FromErr(fmt.Errorf("[ERROR] failed to create launchSpec: %s", err))
+
+	var diags diag.Diagnostics
+
+	if created == false {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  WarningMessageAfterCreate,
+			Detail:   "This is a warning, a very detailed one",
+			//AttributePath: cty.Path{cty.GetAttrStep{Name: "foo"}},
+		})
+	}
+
+	// remove the imported tags from launchSpecResponse.tags
+	var tags [0]string
+	//tags[0] = "check"
+	resourceData.Set("tags", tags)
+
+	return diags
 }
 
 func resourceSpotinstOceanGKELaunchSpecUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
