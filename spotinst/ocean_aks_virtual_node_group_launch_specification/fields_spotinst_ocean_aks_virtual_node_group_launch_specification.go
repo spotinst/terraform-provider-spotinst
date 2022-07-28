@@ -57,6 +57,44 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+
+					//	fieldsMap[MaxPods] = commons.NewGenericField(
+					//	commons.OceanAKSLaunchSpecification,
+					//	MaxPods,
+					//	&schema.Schema{
+					//	Type:     schema.TypeInt,
+					//	Optional: true,
+					//},
+					//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+					//	clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
+					//	cluster := clusterWrapper.GetCluster()
+					//	var value *int = nil
+					//	if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.LaunchSpecification != nil && cluster.VirtualNodeGroupTemplate.LaunchSpecification.MaxPods != nil {
+					//	value = cluster.VirtualNodeGroupTemplate.LaunchSpecification.MaxPods
+					//}
+					//	if err := resourceData.Set(string(MaxPods), spotinst.IntValue(value)); err != nil {
+					//	return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxPods), err)
+					//}
+					//	return nil
+					//},
+					//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+					//	clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
+					//	cluster := clusterWrapper.GetCluster()
+					//	if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v >= 10 && v <= 250 {
+					//	cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetMaxPods(spotinst.Int(v))
+					//}
+					//	return nil
+					//},
+					//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+					//	clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
+					//	cluster := clusterWrapper.GetCluster()
+					//	if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v >= 10 && v <= 250 {
+					//	cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetMaxPods(spotinst.Int(v))
+					//}
+					//	return nil
+					//},
+					//	nil,
+					//)
 				},
 			},
 		},

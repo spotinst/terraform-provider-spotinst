@@ -9,6 +9,7 @@ const (
 const (
 	OSDisk                  commons.FieldName = "os_disk"
 	SizeGB                  commons.FieldName = "size_gb"
+	MaxPods                 commons.FieldName = "max_pods"
 	Type                    commons.FieldName = "type"
 	UtilizeEphemeralStorage commons.FieldName = "utilize_ephemeral_storage"
 )
