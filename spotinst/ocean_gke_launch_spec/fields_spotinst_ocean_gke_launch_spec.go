@@ -5,9 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/util/stringutil"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-	"log"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
@@ -1094,10 +1092,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			log.Printf("launchspec is : %s",
-				stringutil.Stringify(launchSpec))
 			var name *string = nil
-
 			if v, ok := resourceData.GetOkExists(string(Name)); ok && v != nil {
 				name = spotinst.String(v.(string))
 			}

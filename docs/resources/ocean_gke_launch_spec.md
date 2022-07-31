@@ -24,6 +24,7 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
   root_volume_size = 10
   root_volume_type = "pd-standard"
   instance_types: ["n1-standard-1, n1-standard-2"]
+  tags: ["tag1", "tag2"]
   
   shielded_instance_config {
     enable_secure_boot = false
@@ -113,6 +114,7 @@ The following arguments are supported:
 * `root_volume_type` - (Optional) Root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`.
 * `root_volume_size` - (Optional) Root volume size (in GB).
 * `instance_types` - (Optional) List of supported machine types for the Launch Spec.
+* `tags` - (Optional) Every node launched from this configuration will be tagged with those tags. Make sure you add the imported tags from state file after creation.
 * `autoscale_headrooms_automatic` - (Optional) Set automatic headroom per launch spec.
   * `auto_headroom_percentage` - (Optional) Number between 0-200 to control the headroom % of the specific Virtual Node Group. Effective when cluster.autoScaler.headroom.automatic.`is_enabled` = true is set on the Ocean cluster.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.
