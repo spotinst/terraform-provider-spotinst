@@ -58,6 +58,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
+					string(MaxPods): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
 					//	fieldsMap[MaxPods] = commons.NewGenericField(
 					//	commons.OceanAKSLaunchSpecification,
 					//	MaxPods,
@@ -175,7 +180,9 @@ func expandLaunchSpecification(data interface{}) (*azure.VirtualNodeGroupLaunchS
 			}
 		}
 	}
-
+	if v, ok := m[string(MaxPods)].(int); ok && v >= 0 {
+		launchSpecification.SetMaxPods(spotinst.Int(v))
+	}
 	return launchSpecification, nil
 }
 
@@ -191,6 +198,10 @@ func flattenLaunchSpecification(launchSpecification *azure.VirtualNodeGroupLaunc
 
 		if launchSpecification.Tags != nil {
 			result[string(Tag)] = flattenTags(launchSpecification.Tags)
+		}
+
+		if launchSpecification.MaxPods != nil {
+			result[string(MaxPods)] = spotinst.IntValue(launchSpecification.MaxPods)
 		}
 
 		return []interface{}{result}
