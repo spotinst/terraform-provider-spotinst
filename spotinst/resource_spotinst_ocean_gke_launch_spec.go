@@ -99,8 +99,6 @@ var created = false
 
 const WarningMessageAfterCreate = "Please add the imported tags from state file to the tags list"
 
-var afterCreate = false
-
 const InfoMessageBeforeUpdate = "Make sure you updated the tags list"
 
 func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -141,20 +139,18 @@ func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *s
 
 	var diags diag.Diagnostics
 
-	if created == false {
+	if created == true {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  InfoMessageBeforeUpdate,
+		})
+	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
 			Summary:  WarningMessageAfterCreate,
-			Detail:   "This is a warning, a very detailed one",
-			//AttributePath: cty.Path{cty.GetAttrStep{Name: "foo"}},
 		})
+		created = true
 	}
-
-	// remove the imported tags from launchSpecResponse.tags
-	var tags [0]string
-	//tags[0] = "check"
-	resourceData.Set("tags", tags)
-
 	return diags
 }
 
@@ -175,7 +171,6 @@ func resourceSpotinstOceanGKELaunchSpecUpdate(ctx context.Context, resourceData 
 	}
 	log.Printf("===> launchSpec GKE updated successfully: %s <===", id)
 	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
-
 }
 
 func updateGKELaunchSpec(launchSpec *gcp.LaunchSpec, resourceData *schema.ResourceData, meta interface{}) error {
@@ -261,6 +256,8 @@ func rollOceanGKELaunchSpec(resourceData *schema.ResourceData, meta interface{})
 }
 
 func resourceSpotinstOceanGKELaunchSpecDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	created = false
+
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanGKELaunchSpecResource.GetName(), id)

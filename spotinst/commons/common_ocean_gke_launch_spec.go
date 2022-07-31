@@ -14,18 +14,12 @@ const (
 
 var OceanGKELaunchSpecResource *OceanGKELaunchSpecTerraformResource
 
-var importedTags []string
-
 type OceanGKELaunchSpecTerraformResource struct {
 	GenericResource
 }
 
 type LaunchSpecGKEWrapper struct {
 	launchSpec *gcp.LaunchSpec
-}
-
-type LaunchSpecGKETagsWrapper struct {
-	launchSpecTags []string
 }
 
 func NewOceanGKELaunchSpecResource(fieldsMap map[FieldName]*GenericField) *OceanGKELaunchSpecTerraformResource {
@@ -52,11 +46,6 @@ func (res *OceanGKELaunchSpecTerraformResource) OnCreate(
 		buildEmptyGKELaunchSpecRequirements(importedLaunchSpec)
 		launchSpecWrapper.SetLaunchSpec(importedLaunchSpec)
 	}
-
-	importedTags = append(importedTags, importedLaunchSpec.LaunchSpecTags...)
-
-	tags := NewGKELaunchSpecTagsWrapper()
-	tags.SetLaunchSpecTags(importedLaunchSpec.LaunchSpecTags)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
@@ -91,7 +80,6 @@ func (res *OceanGKELaunchSpecTerraformResource) OnRead(
 			return err
 		}
 	}
-	launchSpec.LaunchSpecTags = removeImportedTagsFromStateFile(importedTags, resourceData)
 	return nil
 }
 
@@ -105,8 +93,6 @@ func (res *OceanGKELaunchSpecTerraformResource) OnUpdate(
 
 	launchSpecWrapper := NewGKELaunchSpecWrapper()
 	hasChanged := false
-	importedTags = removeDup(importedTags)
-	launchSpecWrapper.launchSpec.SetLaunchSpecTags(append(importedTags, launchSpecWrapper.launchSpec.LaunchSpecTags...))
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
 			continue
@@ -139,26 +125,12 @@ func NewGKELaunchSpecWrapper() *LaunchSpecGKEWrapper {
 	}
 }
 
-func NewGKELaunchSpecTagsWrapper() *LaunchSpecGKETagsWrapper {
-	return &LaunchSpecGKETagsWrapper{
-		launchSpecTags: []string{},
-	}
-}
-
 func (launchSpecWrapper *LaunchSpecGKEWrapper) GetLaunchSpec() *gcp.LaunchSpec {
 	return launchSpecWrapper.launchSpec
 }
 
 func (launchSpecWrapper *LaunchSpecGKEWrapper) SetLaunchSpec(launchSpec *gcp.LaunchSpec) {
 	launchSpecWrapper.launchSpec = launchSpec
-}
-
-func (launchSpecTagsWrapper *LaunchSpecGKETagsWrapper) GetLaunchSpecTags() []string {
-	return launchSpecTagsWrapper.launchSpecTags
-}
-
-func (launchSpecTagsWrapper *LaunchSpecGKETagsWrapper) SetLaunchSpecTags(launchSpecTags []string) {
-	launchSpecTagsWrapper.launchSpecTags = launchSpecTags
 }
 
 func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
@@ -177,41 +149,4 @@ func buildEmptyGKELaunchSpecRequirements(launchSpec *gcp.LaunchSpec) {
 	if launchSpec.LaunchSpecScheduling == nil {
 		launchSpec.SetScheduling(&gcp.GKELaunchSpecScheduling{})
 	}
-}
-
-func removeDup(importedTags []string) []string {
-	inResult := make(map[string]bool)
-	var result []string
-	for _, str := range importedTags {
-		if _, ok := inResult[str]; !ok {
-			inResult[str] = true
-			result = append(result, str)
-		}
-	}
-	return result
-}
-
-func removeImportedTagsFromStateFile(importedTags []string, resourceData *schema.ResourceData) []string {
-	var launchSpecTags []string
-	if v, ok := resourceData.GetOk("tags"); ok && v != nil {
-		tagsList := v.([]interface{})
-		launchSpecTags = make([]string, len(tagsList))
-		if len(tagsList) > 0 {
-			for i, j := range tagsList {
-				launchSpecTags[i] = j.(string)
-			}
-		}
-	}
-
-	for i := 0; i < len(launchSpecTags); i++ {
-		tag := launchSpecTags[i]
-		for _, rem := range importedTags {
-			if tag == rem {
-				launchSpecTags = append(launchSpecTags[:i], launchSpecTags[i+1:]...)
-				i--
-				break
-			}
-		}
-	}
-	return launchSpecTags
 }

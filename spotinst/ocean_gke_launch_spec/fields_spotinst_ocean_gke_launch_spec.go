@@ -934,18 +934,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeList,
 			Optional: true,
 			Computed: true,
-			//	DiffSuppressFunc: func (k, old, new string, d *schema.ResourceData) bool {
-			//	oldQ, err := resource.ParseQuantity(old)
-			//	if err != nil {
-			//	return false
-			//}
-			//	newQ, err := resource.ParseQuantity(new)
-			//	if err != nil {
-			//	return false
-			//}
-			//	return oldQ.Cmp(newQ) == 0
-			//}
-			Elem: &schema.Schema{Type: schema.TypeString},
+			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
@@ -984,14 +973,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-
-			//get imported launchspec tags from commons
-
-			//launchSpecTagsWrapper := resourceObject.(*commons.LaunchSpecGKETagsWrapper)
-			//launchSpecTags := launchSpecTagsWrapper.GetLaunchSpecTags()
-
-			log.Printf("launchspec is : %s",
-				stringutil.Stringify(launchSpec))
 			var result []string
 			if v, ok := resourceData.GetOk(string(Tags)); ok && v != nil {
 				tagsList := v.([]interface{})
@@ -1004,13 +985,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if launchSpec != nil {
 					if launchSpec.LaunchSpecTags != nil {
 						result = append(result, launchSpec.LaunchSpecTags...)
-						//result = append(result, commons.OceanGKE)
 					}
 				}
 			}
-			//result = append(result, launchSpecTags...)
 			launchSpec.SetLaunchSpecTags(result)
-			//result = append(result, launchSpecTags...)
 			return nil
 		},
 		nil,
