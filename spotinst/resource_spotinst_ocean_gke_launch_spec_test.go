@@ -209,7 +209,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.0.max_instance_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.0.min_instance_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec_updated"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
 		},
@@ -283,7 +282,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  instance_types = ["n1-standard-1", "n1-standard-2"]
  service_account = "default"
  name = "test_ocean_gke_launch_spec_updated" 
- tags = ["a"]
 
  metadata {
      key = "gci-update-strategy"
