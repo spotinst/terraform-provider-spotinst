@@ -180,7 +180,7 @@ func expandLaunchSpecification(data interface{}) (*azure.VirtualNodeGroupLaunchS
 			}
 		}
 	}
-	if v, ok := m[string(MaxPods)].(int); ok && v >= 0 {
+	if v, ok := m[string(MaxPods)].(int); ok && v > 0 {
 		launchSpecification.SetMaxPods(spotinst.Int(v))
 	}
 	return launchSpecification, nil

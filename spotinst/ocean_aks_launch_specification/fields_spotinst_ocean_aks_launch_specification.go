@@ -130,7 +130,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v >= 0 {
+			if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v > 0 {
 				cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetMaxPods(spotinst.Int(v))
 			}
 			return nil
@@ -138,7 +138,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v >= 0 {
+			if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v > 0 {
 				cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetMaxPods(spotinst.Int(v))
 			}
 			return nil
