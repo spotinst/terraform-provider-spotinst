@@ -41,7 +41,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    container: bflad/tfproviderlint:0.19
+    container: bflad/tfproviderlint:0.28.1
     steps:
       - uses: actions/checkout@v2
       - run: |
