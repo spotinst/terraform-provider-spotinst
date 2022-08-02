@@ -51,7 +51,6 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 
 	if v, ok := resourceData.Get(string(ocean_gke_launch_spec.NodePoolName)).(string); ok && v != "" {
 		importedLaunchSpec, err = importGKELaunchSpec(resourceData, meta)
-		//extracting the imported tags
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -71,8 +70,6 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 	}
 
 	resourceData.SetId(spotinst.StringValue(launchSpecId))
-
-	diag.FromErr(fmt.Errorf("[ERROR] failed to create launchSpec: %s", err))
 
 	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
 }
