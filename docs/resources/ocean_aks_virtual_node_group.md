@@ -55,6 +55,8 @@ resource "spotinst_ocean_aks_virtual_node_group" "example" {
        key = "label_key"
        value = "label_value"
      }
+     
+     max_pods = 30
    }
 }
 ```
@@ -96,3 +98,4 @@ The following arguments are supported:
     * `tag` - (Optional) Additional key-value pairs to be used to tag the VMs in the virtual node group.
         * `key` - (Optional) Tag Key for Vms in the cluster.
         * `value` - (Optional) Tag Value for VMs in the cluster.
+  * `max_pods` - (Optional) The maximum number of pods per node in an AKS cluster.

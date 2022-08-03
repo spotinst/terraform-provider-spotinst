@@ -4,12 +4,12 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	LaunchSpecification commons.FieldName = "launch_specification"
+	MaxPods             commons.FieldName = "max_pods"
 )
 
 const (
 	OSDisk                  commons.FieldName = "os_disk"
 	SizeGB                  commons.FieldName = "size_gb"
-	MaxPods                 commons.FieldName = "max_pods"
 	Type                    commons.FieldName = "type"
 	UtilizeEphemeralStorage commons.FieldName = "utilize_ephemeral_storage"
 )

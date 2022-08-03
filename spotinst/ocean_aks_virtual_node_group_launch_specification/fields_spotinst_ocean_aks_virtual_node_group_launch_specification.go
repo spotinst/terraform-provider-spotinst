@@ -62,44 +62,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
-
-					//	fieldsMap[MaxPods] = commons.NewGenericField(
-					//	commons.OceanAKSLaunchSpecification,
-					//	MaxPods,
-					//	&schema.Schema{
-					//	Type:     schema.TypeInt,
-					//	Optional: true,
-					//},
-					//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-					//	clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
-					//	cluster := clusterWrapper.GetCluster()
-					//	var value *int = nil
-					//	if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.LaunchSpecification != nil && cluster.VirtualNodeGroupTemplate.LaunchSpecification.MaxPods != nil {
-					//	value = cluster.VirtualNodeGroupTemplate.LaunchSpecification.MaxPods
-					//}
-					//	if err := resourceData.Set(string(MaxPods), spotinst.IntValue(value)); err != nil {
-					//	return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxPods), err)
-					//}
-					//	return nil
-					//},
-					//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-					//	clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
-					//	cluster := clusterWrapper.GetCluster()
-					//	if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v >= 10 && v <= 250 {
-					//	cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetMaxPods(spotinst.Int(v))
-					//}
-					//	return nil
-					//},
-					//	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-					//	clusterWrapper := resourceObject.(*commons.AKSClusterWrapper)
-					//	cluster := clusterWrapper.GetCluster()
-					//	if v, ok := resourceData.Get(string(MaxPods)).(int); ok && v >= 10 && v <= 250 {
-					//	cluster.VirtualNodeGroupTemplate.LaunchSpecification.SetMaxPods(spotinst.Int(v))
-					//}
-					//	return nil
-					//},
-					//	nil,
-					//)
 				},
 			},
 		},
@@ -115,7 +77,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 			if len(result) > 0 {
 				if err := resourceData.Set(string(LaunchSpecification), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OSDisk), err)
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LaunchSpecification), err)
 				}
 			}
 			return nil
@@ -137,7 +99,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
 			var value *azure.VirtualNodeGroupLaunchSpecification = nil
 
-			if v, ok := resourceData.GetOk(string(OSDisk)); ok {
+			if v, ok := resourceData.GetOk(string(LaunchSpecification)); ok {
 				if launchSpecification, err := expandLaunchSpecification(v); err != nil {
 					return err
 				} else {
@@ -180,9 +142,13 @@ func expandLaunchSpecification(data interface{}) (*azure.VirtualNodeGroupLaunchS
 			}
 		}
 	}
+
 	if v, ok := m[string(MaxPods)].(int); ok && v > 0 {
 		launchSpecification.SetMaxPods(spotinst.Int(v))
+	} else {
+		launchSpecification.SetMaxPods(nil)
 	}
+
 	return launchSpecification, nil
 }
 
