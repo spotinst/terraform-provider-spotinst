@@ -92,7 +92,7 @@ func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*s
 
 const ErrCodeGKELaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
-var created = false
+var isResourceCreated = false
 
 const WarningMessageAfterCreate = "Please add the imported tags from state file to the tags list"
 
@@ -136,7 +136,7 @@ func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *s
 
 	var diags diag.Diagnostics
 
-	if created == true {
+	if isResourceCreated == true {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Warning,
 			Summary:  InfoMessageBeforeUpdate,
@@ -146,7 +146,7 @@ func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *s
 			Severity: diag.Warning,
 			Summary:  WarningMessageAfterCreate,
 		})
-		created = true
+		isResourceCreated = true
 	}
 	return diags
 }
@@ -253,7 +253,7 @@ func rollOceanGKELaunchSpec(resourceData *schema.ResourceData, meta interface{})
 }
 
 func resourceSpotinstOceanGKELaunchSpecDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	created = false
+	isResourceCreated = false
 
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),

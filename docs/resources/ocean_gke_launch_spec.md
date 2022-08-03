@@ -114,7 +114,7 @@ The following arguments are supported:
 * `root_volume_type` - (Optional) Root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`.
 * `root_volume_size` - (Optional) Root volume size (in GB).
 * `instance_types` - (Optional) List of supported machine types for the Launch Spec.
-* `tags` - (Optional) Every node launched from this configuration will be tagged with those tags. Make sure you add the imported tags from state file after creation.
+* `tags` - (Optional) Every node launched from this configuration will be tagged with those tags. Note: during creation some tags are automatically imported to the state file, it is required to manually add it to the template configuration
 * `autoscale_headrooms_automatic` - (Optional) Set automatic headroom per launch spec.
   * `auto_headroom_percentage` - (Optional) Number between 0-200 to control the headroom % of the specific Virtual Node Group. Effective when cluster.autoScaler.headroom.automatic.`is_enabled` = true is set on the Ocean cluster.
 * `autoscale_headrooms` - (Optional) Set custom headroom per launch spec. provide list of headrooms object.

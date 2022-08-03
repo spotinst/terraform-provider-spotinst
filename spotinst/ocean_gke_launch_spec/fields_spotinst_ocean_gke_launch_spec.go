@@ -980,11 +980,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						result[i] = j.(string)
 					}
 				}
-				if launchSpec != nil {
-					if launchSpec.LaunchSpecTags != nil {
-						result = append(result, launchSpec.LaunchSpecTags...)
-					}
-				}
 			}
 			launchSpec.SetLaunchSpecTags(result)
 			return nil
