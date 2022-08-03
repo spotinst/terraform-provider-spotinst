@@ -4,6 +4,7 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	LaunchSpecification commons.FieldName = "launch_specification"
+	MaxPods             commons.FieldName = "max_pods"
 )
 
 const (
