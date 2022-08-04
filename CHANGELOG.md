@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.81.0 (Aug 04, 2022)
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: added `tags`
+* resource/spotinst_ocean_aks_virtual_node_group: added `max_pods`
+* resource/spotinst_ocean_aks: added `max_pods`
+
 ## 1.80.0 (July 25, 2022)
 
 ENHANCEMENTS:
