@@ -80,7 +80,6 @@ func (res *OceanGKELaunchSpecTerraformResource) OnRead(
 			return err
 		}
 	}
-
 	return nil
 }
 

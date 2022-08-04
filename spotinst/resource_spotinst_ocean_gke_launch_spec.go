@@ -51,7 +51,6 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 
 	if v, ok := resourceData.Get(string(ocean_gke_launch_spec.NodePoolName)).(string); ok && v != "" {
 		importedLaunchSpec, err = importGKELaunchSpec(resourceData, meta)
-
 		if err != nil {
 			return diag.FromErr(err)
 		}
@@ -93,6 +92,12 @@ func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*s
 
 const ErrCodeGKELaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
+var isResourceCreated = false
+
+const WarningMessageAfterCreate = "Please add the imported tags from state file to the tags list"
+
+const InfoMessageBeforeUpdate = "Make sure you updated the tags list"
+
 func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanGKELaunchSpecResource.GetName(), id)
@@ -127,7 +132,23 @@ func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *s
 		return diag.FromErr(err)
 	}
 	log.Printf("===> launchSpec GKE read successfully: %s <===", id)
-	return nil
+	diag.FromErr(fmt.Errorf("[ERROR] failed to create launchSpec: %s", err))
+
+	var diags diag.Diagnostics
+
+	if isResourceCreated == true {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  InfoMessageBeforeUpdate,
+		})
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  WarningMessageAfterCreate,
+		})
+		isResourceCreated = true
+	}
+	return diags
 }
 
 func resourceSpotinstOceanGKELaunchSpecUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -232,6 +253,8 @@ func rollOceanGKELaunchSpec(resourceData *schema.ResourceData, meta interface{})
 }
 
 func resourceSpotinstOceanGKELaunchSpecDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	isResourceCreated = false
+
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanGKELaunchSpecResource.GetName(), id)
