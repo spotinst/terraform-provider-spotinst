@@ -55,6 +55,7 @@ resource "spotinst_ocean_aks" "example" {
   // --- Launch Specification ------------------------------------------
   resource_group_name = "some-resource-group-name"
   custom_data         = "[... redacted ...]"
+  max_pods            = 30
 
   managed_service_identity {
     resource_group_name = "MC_ocean-westus-dev_ocean-westus-dev-aks_westus"
@@ -192,6 +193,7 @@ The following arguments are supported:
 * `user_name` - (Optional) Username for admin access to VMs.
 * `resource_group_name` - (Optional) Name of the Azure Resource Group into which VMs will be launched. Cannot be updated.
 * `custom_data` - (Optional) Must contain a valid Base64 encoded string.
+* `max_pods` - (Optional) The maximum number of pods per node in an AKS cluster.
 * `managed_service_identity` - (Optional) List of Managed Service Identity objects.
     * `resource_group_name` - (Required) Name of the Azure Resource Group where the Managed Service Identity is located.
     * `name` - (Required) Name of the Managed Service Identity.
