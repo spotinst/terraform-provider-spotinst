@@ -415,7 +415,8 @@ func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_group_name", "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"),
 					resource.TestCheckResourceAttr(resourceName, "tag.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tag.0.key", "tag-key"),
-					resource.TestCheckResourceAttr(resourceName, "tag.0.value", "tag-value")),
+					resource.TestCheckResourceAttr(resourceName, "tag.0.value", "tag-value"),
+					resource.TestCheckResourceAttr(resourceName, "max_pods", "30")),
 			},
 			{
 				Config: createOceanAKSTerraform(&OceanAKSMetadata{
@@ -434,6 +435,7 @@ func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tag.0.value", "first-tag-value"),
 					resource.TestCheckResourceAttr(resourceName, "tag.1.key", "second-tag-key"),
 					resource.TestCheckResourceAttr(resourceName, "tag.1.value", "second-tag-value"),
+					resource.TestCheckResourceAttr(resourceName, "max_pods", "40"),
 				),
 			},
 		},
@@ -443,7 +445,7 @@ func TestAccSpotinstOceanAKS_LaunchSpecification(t *testing.T) {
 const testLaunchSpecificationOceanAKSConfig_Create = `
   // --- Launch Specification ------------------------------------------------
     resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
-    
+    max_pods = 30
 	tag {
       key = "tag-key"
       value = "tag-value"
@@ -459,7 +461,7 @@ const testLaunchSpecificationOceanAKSConfig_Create = `
 const testLaunchSpecificationOceanAKSConfig_Update = `
   // --- Launch Specification ------------------------------------------------
     resource_group_name = "MC_terraform-resource-group-DO-NOT-DELETE_terraform-Kubernetes-cluster_eastus"
-    
+    max_pods = 40
 	tag {
       key = "first-tag-key"
       value = "first-tag-value"
