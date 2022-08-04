@@ -183,7 +183,6 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.0.min_instance_count", "0"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "default"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec"),
-					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
 			{
@@ -209,6 +208,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.0.max_instance_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.0.min_instance_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec_updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 				),
 			},
 		},
@@ -228,7 +228,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  instance_types = ["n1-standard-1"]
  service_account = "default"
  name = "test_ocean_gke_launch_spec"
- tags = ["a"]
 
  metadata {
      key = "gci-update-strategy"
@@ -282,6 +281,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  instance_types = ["n1-standard-1", "n1-standard-2"]
  service_account = "default"
  name = "test_ocean_gke_launch_spec_updated" 
+tags = ["a","gke-terraform-tests-do-not-delete-f0fbf73b-node"]
 
  metadata {
      key = "gci-update-strategy"
