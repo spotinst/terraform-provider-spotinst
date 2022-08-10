@@ -1208,8 +1208,6 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "extension.0.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.publisher", "Microsoft.Azure.Extensions"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.type", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
 				),
 			},
 			{
@@ -1226,8 +1224,6 @@ func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "extension.0.name", "terraform-extension"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.publisher", "Microsoft.Azure.Extensions"),
 					resource.TestCheckResourceAttr(resourceName, "extension.0.type", "Linux"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.%", "1"),
-					resource.TestCheckResourceAttr(resourceName, "extension.0.protected_settings.script", "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="),
 				),
 			},
 			{
@@ -1251,9 +1247,6 @@ extension {
 	name = "terraform-extension"
 	publisher = "Microsoft.Azure.Extensions"
 	type = "Linux"
-	protected_settings = {
-		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
-	}
 }
 `
 const testExtensionsStatefulNodeAzureV3Config_Update = `
@@ -1263,9 +1256,6 @@ extension {
 	name = "terraform-extension"
 	publisher = "Microsoft.Azure.Extensions"
 	type = "Linux"
-	protected_settings = {
-		script = "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob21lL25pci9uaXIudHh0Cg=="
-	}
 }
 `
 
