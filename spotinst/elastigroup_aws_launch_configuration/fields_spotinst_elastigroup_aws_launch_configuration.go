@@ -52,6 +52,63 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Images] = commons.NewGenericField(
+		commons.ElastigroupAWSLaunchConfiguration,
+		Images,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Id): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []interface = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.Images != nil {
+				value = flattenImages(elastigroup.Compute.LaunchSpecification.Images)
+			}
+			if value != nil {
+				if err := resourceData.Set(string(Images), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Images), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(Images)); ok {
+				if value, err := expandImages(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetImages(value)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(Images)); ok {
+				if value, err := expandImages(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetImages(value)
+				}
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[IamInstanceProfile] = commons.NewGenericField(
 		commons.ElastigroupAWSLaunchConfiguration,
 		IamInstanceProfile,
@@ -1454,6 +1511,30 @@ func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSp
 	if resourceTagSpecification != nil && resourceTagSpecification.Volumes != nil {
 		result[string(ShouldTagVolumes)] = spotinst.BoolValue(resourceTagSpecification.Volumes.ShouldTag)
 	}
+
+	return []interface{}{result}
+}
+
+func expandImages(data interface{}) (*aws.Images, error) {
+	Images := &aws.Images{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return Images, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(Id)].(int); ok && v >= 0 {
+		Images.SetImageId(spotinst.Int(v))
+	} else {
+		Images.SetImageId(nil)
+	}
+
+	return cpuOptions, nil
+}
+
+func flattenImages(Images *aws.Images) []interface{} {
+	result := make(map[string]interface{})
+	result[string(ImageId)] = spotinst.IntValue(Images.ImageId)
 
 	return []interface{}{result}
 }
