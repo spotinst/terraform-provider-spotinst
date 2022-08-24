@@ -70,7 +70,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value []interface = nil
+			var value []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
 				elastigroup.Compute.LaunchSpecification.Images != nil {
 				value = flattenImages(elastigroup.Compute.LaunchSpecification.Images)
@@ -1515,26 +1515,30 @@ func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSp
 	return []interface{}{result}
 }
 
-func expandImages(data interface{}) (*aws.Images, error) {
-	Images := &aws.Images{}
-	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return Images, nil
-	}
-	m := list[0].(map[string]interface{})
+func expandImages(data interface{}) ([]*aws.Image, error) {
+	list := data.(*schema.Set).List()
+	images := make([]*aws.Image, 0, len(list))
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		image := &aws.Image{}
 
-	if v, ok := m[string(Id)].(int); ok && v >= 0 {
-		Images.SetImageId(spotinst.Int(v))
-	} else {
-		Images.SetImageId(nil)
-	}
+		if v, ok := m[string(Id)].(string); ok && v != "" {
+			image.SetId(spotinst.String(v))
+		}
 
-	return cpuOptions, nil
+		if image.Id != nil {
+			images = append(images, image)
+		}
+	}
+	return images, nil
 }
 
-func flattenImages(Images *aws.Images) []interface{} {
-	result := make(map[string]interface{})
-	result[string(ImageId)] = spotinst.IntValue(Images.ImageId)
-
-	return []interface{}{result}
+func flattenImages(Images []*aws.Image) []interface{} {
+	result := make([]interface{}, 0, len(Images))
+	for _, image := range Images {
+		m := make(map[string]interface{})
+		m[string(Id)] = spotinst.StringValue(image.Id)
+		result = append(result, m)
+	}
+	return result
 }

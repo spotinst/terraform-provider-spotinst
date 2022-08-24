@@ -124,8 +124,6 @@ func NewElastigroupWrapper() *ElastigroupWrapper {
 			Integration: &aws.Integration{},
 			Compute: &aws.Compute{
 				LaunchSpecification: &aws.LaunchSpecification{
-					Images: &aws.Image{}
-					Image:               &aws.Image{},
 					LoadBalancersConfig: &aws.LoadBalancersConfig{},
 				},
 				InstanceTypes: &aws.InstanceTypes{},

@@ -157,7 +157,9 @@ Note: Must be a sublist of `availability_zones` and `orientation` value must not
 * `capacity_unit` - (Optional, Default: `instance`) The capacity unit to launch instances by. If not specified, when choosing the weight unit, each instance will weight as the number of its vCPUs. Valid values: `instance`, `weight`.
 
 * `security_groups` - (Required) A list of associated security group IDS.
-* `image_id` - (Required) The ID of the AMI used to launch the instance.
+* `image_id` - (Optional) The ID of the AMI used to launch the instance.
+* `images` - (Optional) An array of image objects. 
+Note: Elastigroup can be configured with either imageId or images, but not both.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `key_name` - (Optional) The key name that should be used for the instance.
 * `enable_monitoring` - (Optional) Indicates whether monitoring is enabled for the instance.

@@ -435,8 +435,10 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
+					//resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
+					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -461,8 +463,10 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
+					//resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
+					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-31394949"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -488,8 +492,10 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
+					//resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
+					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-31394949"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "cannot set empty key name"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -505,8 +511,11 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 
 const testLaunchConfigurationGroupConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
- image_id             = "ami-e251209a"
+ //image_id             = "ami-e251209a"
  //iam_instance_profile = "iam-profile"
+images {
+id = "ami-e251209a"
+}
  key_name             = "my-key.ssh"
  security_groups      = ["sg-123456"]
  user_data            = "ZWNobyBoZWxsbyB3b3JsZA=="
@@ -527,8 +536,11 @@ cpu_options {
 
 const testLaunchConfigurationGroupConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
- image_id             = "ami-31394949"
+ //image_id             = "ami-31394949"
  //iam_instance_profile = "iam-profile updated"
+images {
+id = "ami-31394949"
+}
  key_name             = "my-key-updated.ssh"
  security_groups      = ["sg-123456", "sg-987654"]
  user_data            = "echo hello world updated"
@@ -549,7 +561,10 @@ const testLaunchConfigurationGroupConfig_Update = `
 
 const testLaunchConfigurationGroupConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
- image_id        = "ami-31394949"
+ //image_id        = "ami-31394949"
+images {
+id = "ami-31394949"
+}
  user_data       = "cannot set empty user data"
  shutdown_script = "cannot set empty shutdown script"
  key_name        = "cannot set empty key name"
