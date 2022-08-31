@@ -435,10 +435,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					//resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
-					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -463,10 +461,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					//resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
-					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-31394949"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -492,7 +488,151 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupExists(&group, resourceName),
 					testCheckElastigroupAttributes(&group, groupName),
-					//resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-31394949"),
+					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
+					resource.TestCheckResourceAttr(resourceName, "key_name", "cannot set empty key name"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("cannot set empty user data")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_aws_launch_configuration.Base64StateFunc("cannot set empty shutdown script")),
+					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
+				),
+			},
+		},
+	})
+}
+
+const testLaunchConfigurationGroupConfig_Create = `
+ // --- LAUNCH CONFIGURATION --------------
+ image_id             = "ami-e251209a"
+ //iam_instance_profile = "iam-profile"
+ key_name             = "my-key.ssh"
+ security_groups      = ["sg-123456"]
+ user_data            = "ZWNobyBoZWxsbyB3b3JsZA=="
+ shutdown_script      = "echo goodbye world"
+ enable_monitoring    = false
+ ebs_optimized        = false
+ placement_tenancy    = "default"
+ cpu_credits          = "standard"
+ metadata_options {
+ 	http_tokens = "required"
+    http_put_response_hop_limit = 10
+ }
+cpu_options {
+	threads_per_core = 1
+ }
+ // ---------------------------------------
+`
+
+const testLaunchConfigurationGroupConfig_Update = `
+ // --- LAUNCH CONFIGURATION --------------
+ image_id             = "ami-31394949"
+ //iam_instance_profile = "iam-profile updated"
+ key_name             = "my-key-updated.ssh"
+ security_groups      = ["sg-123456", "sg-987654"]
+ user_data            = "echo hello world updated"
+ shutdown_script      = "echo goodbye world updated"
+ enable_monitoring    = true
+ ebs_optimized        = true
+ placement_tenancy    = "default"
+ cpu_credits          = "unlimited"
+ metadata_options {
+ 	http_tokens = "optional"
+    http_put_response_hop_limit = 20
+ }
+ cpu_options {
+	threads_per_core = 2
+ }
+ // ---------------------------------------
+`
+
+const testLaunchConfigurationGroupConfig_EmptyFields = `
+ // --- LAUNCH CONFIGURATION --------------
+ image_id        = "ami-31394949"
+user_data       = "cannot set empty user data"
+ shutdown_script = "cannot set empty shutdown script"
+ key_name        = "cannot set empty key name"
+ security_groups = ["sg-123456"]
+ // ---------------------------------------
+`
+
+func TestAccSpotinstElastigroupAWS_LaunchConfigurationWithMultipleImages(t *testing.T) {
+	groupName := "test-acc-eg-launch-configuration"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupDestroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:    groupName,
+					launchConfig: testLaunchConfigurationGroupConfigWithMultipleImages_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
+					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-e251209a"),
+					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("echo hello world")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_aws_launch_configuration.Base64StateFunc("echo goodbye world")),
+					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "standard"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "10"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "required"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", "1"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:    groupName,
+					launchConfig: testLaunchConfigurationGroupConfigWithMultipleImages_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
+					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-31394949"),
+					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-987654"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("echo hello world updated")),
+					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_aws_launch_configuration.Base64StateFunc("echo goodbye world updated")),
+					resource.TestCheckResourceAttr(resourceName, "enable_monitoring", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_credits", "unlimited"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "optional"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", "2"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:    groupName,
+					launchConfig: testLaunchConfigurationGroupConfigWithMultipleImages_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
 					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-31394949"),
@@ -509,9 +649,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 	})
 }
 
-const testLaunchConfigurationGroupConfig_Create = `
+const testLaunchConfigurationGroupConfigWithMultipleImages_Create = `
  // --- LAUNCH CONFIGURATION --------------
- //image_id             = "ami-e251209a"
  //iam_instance_profile = "iam-profile"
 images {
 id = "ami-e251209a"
@@ -534,9 +673,8 @@ cpu_options {
  // ---------------------------------------
 `
 
-const testLaunchConfigurationGroupConfig_Update = `
+const testLaunchConfigurationGroupConfigWithMultipleImages_Update = `
  // --- LAUNCH CONFIGURATION --------------
- //image_id             = "ami-31394949"
  //iam_instance_profile = "iam-profile updated"
 images {
 id = "ami-31394949"
@@ -559,9 +697,8 @@ id = "ami-31394949"
  // ---------------------------------------
 `
 
-const testLaunchConfigurationGroupConfig_EmptyFields = `
+const testLaunchConfigurationGroupConfigWithMultipleImages_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
- //image_id        = "ami-31394949"
 images {
 id = "ami-31394949"
 }
