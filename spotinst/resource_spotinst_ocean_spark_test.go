@@ -14,6 +14,8 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
+var oceanClusterID = "o-fa711aaf" // NOTE: This needs to be an existing ocean cluster
+
 func init() {
 	resource.AddTestSweepers("spotinst_ocean_spark_aws", &resource.Sweeper{
 		Name: "spotinst_ocean_spark_aws",
@@ -21,8 +23,9 @@ func init() {
 	})
 }
 
+// TODO This needs to be provider agnostic. We also need a way to find OfAS clusters that we should delete, we don't have names to tag them.
 func testSweepOceanSparkAWS(region string) error {
-	client, err := getProviderClient("aws")
+	client, err := getProviderClient("aws") // TODO This should be provider agnostic
 	if err != nil {
 		return fmt.Errorf("error getting client: %v", err)
 	}
@@ -100,11 +103,8 @@ func testCheckOceanSparkExists(cluster *spark.Cluster, resourceName string) reso
 }
 
 type SparkClusterConfigMetadata struct {
-	provider             string
-	oceanClusterID       string
-	updateBaselineFields bool
-	variables            string
-	fieldsToAppend       string
+	oceanClusterID string
+	fieldsToAppend string
 }
 
 func createOceanSparkTerraform(sccm *SparkClusterConfigMetadata) string {
@@ -112,43 +112,28 @@ func createOceanSparkTerraform(sccm *SparkClusterConfigMetadata) string {
 		return ""
 	}
 
-	if sccm.provider == "" {
-		sccm.provider = "aws"
-	}
-
-	template :=
-		`provider "aws" {
-	 token   = "fake"
-	 account = "fake"
-	}
-	`
-	if sccm.updateBaselineFields {
-		format := testBaselineSparkConfig_Update
-		template += fmt.Sprintf(format,
-			sccm.oceanClusterID,
-			sccm.provider,
-			sccm.oceanClusterID,
-		)
-	} else {
-		format := testBaselineSparkConfig_Create
-		template += fmt.Sprintf(format,
-			sccm.oceanClusterID,
-			sccm.provider,
-			sccm.oceanClusterID,
-		)
-	}
-
-	if sccm.variables != "" {
-		template = sccm.variables + "\n" + template
-	}
+	format := testBaseSparkConfig
+	template := fmt.Sprintf(format,
+		sccm.oceanClusterID,
+		sccm.oceanClusterID,
+		sccm.fieldsToAppend,
+	)
 
 	log.Printf("Terraform [%v] template:\n%v", sccm.oceanClusterID, template)
 	return template
 }
 
-//region OceanAWS: Baseline
-func TestAccSpotinstOceanSpark_Baseline(t *testing.T) {
-	oceanClusterID := "o-fa711aaf"
+const testBaseSparkConfig = `
+resource "` + string(commons.OceanSparkResourceName) + `" "%v" {
+  provider = "aws"
+
+  ocean_cluster_id = "%v"
+
+  %v
+}
+`
+
+func TestAccSpotinstOceanSpark_noConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -165,44 +150,115 @@ func TestAccSpotinstOceanSpark_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					//resource.TestCheckResourceAttr(resourceName, "max_size", "1000"),
-					//resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					//resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
 				),
 			},
-			/*{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID:       clusterName,
-					updateBaselineFields: true}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "max_size", "10"),
-					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
-					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "1"),
-				),
-			},*/
 		},
 	})
 }
 
-const testBaselineSparkConfig_Create = `
-resource "` + string(commons.OceanSparkResourceName) + `" "%v" {
-  provider = "%v"
+func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
+	resourceName := createOceanSparkResourceName(oceanClusterID)
 
-  ocean_cluster_id = "%v"
+	var cluster spark.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanSparkAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressCreate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.key", "my-annotation-1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.value", "my-annotation-value-1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.key", "my-annotation-2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.value", "my-annotation-value-2"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressUpdate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.key", "my-annotation-2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.value", "my-annotation-value-2-updated"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.key", "my-annotation-3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.value", "my-annotation-value-3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.2.key", "my-new-annotation"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.2.value", "my-new-annotation-value"),
+				),
+			},
+			{
+				// TODO Need wave-core changes to properly handle explicitly null fields
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressEmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.#", "0"),
+				),
+			},
+		},
+	})
 }
+
+const testConfigWithIngressCreate = `
+ ingress {
+
+    service_annotations {
+     key = "my-annotation-1"
+     value = "my-annotation-value-1"
+	}
+
+	service_annotations {
+     key = "my-annotation-2"
+     value = "my-annotation-value-2"
+   }
+
+ }
 `
 
-const testBaselineSparkConfig_Update = `
-resource "` + string(commons.OceanSparkResourceName) + `" "%v" {
-  provider = "%v"
+const testConfigWithIngressUpdate = `
+ ingress {
 
-  ocean_cluster_id = "%v"
-}
+    service_annotations {
+     key = "my-new-annotation"
+     value = "my-new-annotation-value"
+	}
+
+	service_annotations {
+     key = "my-annotation-2"
+     value = "my-annotation-value-2-updated"
+   }
+
+	service_annotations {
+     key = "my-annotation-3"
+     value = "my-annotation-value-3"
+   }
+
+ }
 `
 
-// endregion
+const testConfigWithIngressEmptyFields = `
+ ingress {
+
+ }
+`
 
 // region OceanAWS: Instance Types Whitelist
 /*

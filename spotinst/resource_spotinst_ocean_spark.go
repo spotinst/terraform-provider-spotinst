@@ -15,7 +15,7 @@ import (
 
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark_config"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark_ingress"
 )
 
 func resourceSpotinstOceanSpark() *schema.Resource {
@@ -38,7 +38,7 @@ func setupClusterSparkResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	ocean_spark.Setup(fieldsMap)
-	ocean_spark_config.Setup(fieldsMap)
+	ocean_spark_ingress.Setup(fieldsMap)
 
 	commons.OceanSparkResource = commons.NewOceanSparkResource(fieldsMap)
 }
@@ -52,7 +52,7 @@ func resourceSpotinstClusterSparkCreate(ctx context.Context, resourceData *schem
 		return diag.FromErr(err)
 	}
 
-	clusterID, err := createSparkCluster(resourceData, cluster, meta.(*Client))
+	clusterID, err := createSparkCluster(cluster, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -63,21 +63,16 @@ func resourceSpotinstClusterSparkCreate(ctx context.Context, resourceData *schem
 	return resourceSpotinstClusterSparkRead(ctx, resourceData, meta)
 }
 
-func createSparkCluster(resourceData *schema.ResourceData, cluster *spark.Cluster, spotinstClient *Client) (*string, error) {
+func createSparkCluster(cluster *spark.Cluster, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(cluster); err != nil {
 		return nil, err
 	} else {
 		log.Printf("===> Cluster create configuration: %s", json)
 	}
 
-	/*if v, ok := resourceData.Get(string(ocean_aws_launch_configuration.IAMInstanceProfile)).(string); ok && v != "" {
-		// Wait for IAM instance profile to be ready.
-		time.Sleep(10 * time.Second)
-	}*/
-
 	createClusterRequest := &spark.CreateClusterRequest{
 		OceanClusterID: cluster.OceanClusterID,
-		Config:         nil,
+		Config:         cluster.Config,
 	}
 
 	var resp *spark.CreateClusterOutput = nil
@@ -85,16 +80,6 @@ func createSparkCluster(resourceData *schema.ResourceData, cluster *spark.Cluste
 		input := &spark.CreateClusterInput{Cluster: createClusterRequest}
 		r, err := spotinstClient.ocean.Spark().CreateCluster(context.Background(), input)
 		if err != nil {
-			// Checks whether we should retry cluster creation.
-			/*if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
-				for _, err := range errs {
-					if err.Code == "InvalidParamterValue" &&
-						strings.Contains(err.Message, "Invalid IAM Instance Profile") {
-						return resource.NonRetryableError(err)
-					}
-				}
-			}*/
-			// Some other error, report it.
 			return resource.NonRetryableError(err)
 		}
 		resp = r
@@ -157,7 +142,7 @@ func resourceSpotinstClusterSparkUpdate(ctx context.Context, resourceData *schem
 
 	if shouldUpdate {
 		cluster.ID = spotinst.String(id)
-		if err := updateSparkCluster(cluster, resourceData, meta); err != nil {
+		if err := updateSparkCluster(cluster, meta); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -165,16 +150,15 @@ func resourceSpotinstClusterSparkUpdate(ctx context.Context, resourceData *schem
 	return resourceSpotinstClusterSparkRead(ctx, resourceData, meta)
 }
 
-func updateSparkCluster(cluster *spark.Cluster, resourceData *schema.ResourceData, meta interface{}) error {
+func updateSparkCluster(cluster *spark.Cluster, meta interface{}) error {
 	updateClusterRequest := &spark.UpdateClusterRequest{
 		Config: cluster.Config,
 	}
 
 	var input = &spark.UpdateClusterInput{
-		Cluster: updateClusterRequest,
+		ClusterID: cluster.ID,
+		Cluster:   updateClusterRequest,
 	}
-
-	clusterID := resourceData.Id()
 
 	if json, err := commons.ToJson(updateClusterRequest); err != nil {
 		return err
@@ -183,7 +167,7 @@ func updateSparkCluster(cluster *spark.Cluster, resourceData *schema.ResourceDat
 	}
 
 	if _, err := meta.(*Client).ocean.Spark().UpdateCluster(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", clusterID, err)
+		return fmt.Errorf("[ERROR] Failed to update cluster [%v]: %v", cluster.ID, err)
 	}
 
 	return nil

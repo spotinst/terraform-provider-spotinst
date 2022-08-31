@@ -163,8 +163,8 @@ const (
 	StatefulNodeAzureExtensions          ResourceAffinity = "Stateful_Node_Azure_Extensions"
 	StatefulNodeAzureSecret              ResourceAffinity = "Stateful_Node_Azure_Secret"
 
-	OceanSpark       ResourceAffinity = "Ocean_Spark"
-	OceanSparkConfig ResourceAffinity = "Ocean_Spark_Config"
+	OceanSpark        ResourceAffinity = "Ocean_Spark"
+	OceanSparkIngress ResourceAffinity = "Ocean_Spark_Ingress"
 
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
