@@ -56,13 +56,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSLaunchConfiguration,
 		Images,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Id): {
-						Type:     schema.TypeString,
+					string(Image): {
+						Type:     schema.TypeSet,
 						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Id): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
 					},
 				},
 			},
@@ -1516,25 +1524,74 @@ func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSp
 }
 
 func expandImages(data interface{}) ([]*aws.Image, error) {
+	//list := data.([]interface{})
+	//images := make([]*aws.Image, 0, len(list))
+	//
+	//for _, item := range list {
+	//	m := item.(map[string]interface{})
+	//	image := &aws.Image{}
+	//
+	//	if v, ok := m[string(Image)]; ok {
+	//		image.SetId(spotinst.String(""))
+	//		log.Printf("%v", v)
+	//	}
+	//
+	//	//if image.Id != nil {
+	//	//	images = append(images, image)
+	//	//}
+	//}
+	//return images, nil
+	//images := &aws.Image{}
+	var images []*aws.Image
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(Image)]; ok {
+			imagesFromExpand, err := expandImage(v)
+			if err != nil {
+				return nil, err
+			}
+			images = imagesFromExpand
+		}
+	}
+
+	return images, nil
+}
+
+func expandImage(data interface{}) ([]*aws.Image, error) {
 	list := data.(*schema.Set).List()
 	images := make([]*aws.Image, 0, len(list))
-	for _, item := range list {
-		m := item.(map[string]interface{})
-		image := &aws.Image{}
-
-		if v, ok := m[string(Id)].(string); ok && v != "" {
-			image.SetId(spotinst.String(v))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(Id)]; !ok {
+			return nil, errors.New("invalid deployment group attributes: application_name missing")
 		}
 
-		if image.Id != nil {
-			images = append(images, image)
+		im := &aws.Image{
+			Id: spotinst.String(attr[string(Id)].(string)),
 		}
+		images = append(images, im)
 	}
 	return images, nil
 }
 
 func flattenImages(Images []*aws.Image) []interface{} {
+	result := make(map[string]interface{})
+
+	//for _, image := range Images {
+	//	m := make(map[string]interface{})
+	result[string(Image)] = flattenImage(Images)
+
+	return []interface{}{result}
+}
+
+func flattenImage(Images []*aws.Image) []interface{} {
 	result := make([]interface{}, 0, len(Images))
+
 	for _, image := range Images {
 		m := make(map[string]interface{})
 		m[string(Id)] = spotinst.StringValue(image.Id)
@@ -1542,3 +1599,48 @@ func flattenImages(Images []*aws.Image) []interface{} {
 	}
 	return result
 }
+
+//
+//func flattenAzureGroupNetworkInterfaces(networkInterfaces []*azurev3.NetworkInterface) []interface{} {
+//	result := make([]interface{}, 0, len(networkInterfaces))
+//
+//	for _, inter := range networkInterfaces {
+//		m := make(map[string]interface{})
+//		m[string(SubnetName)] = spotinst.StringValue(inter.SubnetName)
+//		m[string(IsPrimary)] = spotinst.BoolValue(inter.IsPrimary)
+//		m[string(AssignPublicIP)] = spotinst.BoolValue(inter.AssignPublicIP)
+//		if inter.AdditionalIPConfigs != nil {
+//			m[string(AdditionalIPConfigs)] = flattenAzureAdditionalIPConfigs(inter.AdditionalIPConfigs)
+//		}
+//		if inter.ApplicationSecurityGroups != nil {
+//			m[string(ApplicationSecurityGroup)] = flattenApplicationSecurityGroups(inter.ApplicationSecurityGroups)
+//		}
+//		result = append(result, m)
+//	}
+//
+//	return result
+//}
+//
+//func flattenImage(Image []*aws.Image) []interface{} {
+//	result := make([]interface{}, 0, len(Image))
+//
+//	for _, image := range Image {
+//		m := make(map[string]interface{})
+//		m[string(Id] = spotinst.StringValue(image.Id)
+//		result = append(result, m)
+//	}
+//
+//	return result
+//}
+//func flattenApplicationSecurityGroups(applicationSecurityGroups []*azurev3.ApplicationSecurityGroup) []interface{} {
+//	result := make([]interface{}, 0, len(applicationSecurityGroups))
+//
+//	for _, applicationSecurityGroup := range applicationSecurityGroups {
+//		m := make(map[string]interface{})
+//		m[string(Name)] = spotinst.StringValue(applicationSecurityGroup.Name)
+//		m[string(ResourceGroupName)] = spotinst.StringValue(applicationSecurityGroup.ResourceGroupName)
+//		result = append(result, m)
+//	}
+//
+//	return result
+//}
