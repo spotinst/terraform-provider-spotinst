@@ -15,6 +15,7 @@ import (
 
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark_compute"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark_ingress"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark_webhook"
 )
@@ -41,6 +42,7 @@ func setupClusterSparkResource() {
 	ocean_spark.Setup(fieldsMap)
 	ocean_spark_ingress.Setup(fieldsMap)
 	ocean_spark_webhook.Setup(fieldsMap)
+	ocean_spark_compute.Setup(fieldsMap)
 
 	commons.OceanSparkResource = commons.NewOceanSparkResource(fieldsMap)
 }
@@ -100,7 +102,7 @@ func resourceSpotinstClusterSparkRead(ctx context.Context, resourceData *schema.
 		commons.OceanSparkResource.GetName(), id)
 
 	input := &spark.ReadClusterInput{ClusterID: spotinst.String(id)}
-	resp, err := meta.(*Client).ocean.Spark().ReadCluster(context.Background(), input)
+	resp, err := meta.(*Client).ocean.Spark().ReadCluster(ctx, input)
 
 	if err != nil {
 		// If the cluster was not found, return nil so that we can show
@@ -180,7 +182,7 @@ func resourceSpotinstClusterSparkDelete(ctx context.Context, resourceData *schem
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanSparkResource.GetName(), id)
 
-	if err := deleteSparkCluster(resourceData, meta); err != nil {
+	if err := deleteSparkCluster(ctx, resourceData, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -189,7 +191,7 @@ func resourceSpotinstClusterSparkDelete(ctx context.Context, resourceData *schem
 	return nil
 }
 
-func deleteSparkCluster(resourceData *schema.ResourceData, meta interface{}) error {
+func deleteSparkCluster(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) error {
 	clusterID := resourceData.Id()
 	input := &spark.DeleteClusterInput{
 		ClusterID: spotinst.String(clusterID),
@@ -201,7 +203,7 @@ func deleteSparkCluster(resourceData *schema.ResourceData, meta interface{}) err
 		log.Printf("===> Cluster delete configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).ocean.Spark().DeleteCluster(context.Background(), input); err != nil {
+	if _, err := meta.(*Client).ocean.Spark().DeleteCluster(ctx, input); err != nil {
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete cluster: %s", err)
 	}
 

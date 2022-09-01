@@ -274,6 +274,60 @@ func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
 	})
 }
 
+func TestAccSpotinstOceanSpark_withComputeConfig(t *testing.T) {
+	resourceName := createOceanSparkResourceName(oceanClusterID)
+
+	var cluster spark.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanSparkAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithComputeCreate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "compute.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "compute.0.use_taints", "true"),
+					resource.TestCheckResourceAttr(resourceName, "compute.0.create_vngs", "true"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithComputeUpdate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "compute.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "compute.0.use_taints", "false"),
+					resource.TestCheckResourceAttr(resourceName, "compute.0.create_vngs", "false"),
+				),
+			},
+			{
+				// TODO Need wave-core changes to properly handle explicitly null fields
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithComputeEmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "compute.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "compute.0.use_taints", "true"),  // Default value
+					resource.TestCheckResourceAttr(resourceName, "compute.0.create_vngs", "true"), // Default value
+				),
+			},
+		},
+	})
+}
+
 const testConfigWithIngressCreate = `
  ingress {
 
@@ -339,6 +393,32 @@ const testConfigWithWebhookUpdate = `
 
 const testConfigWithWebhookEmptyFields = `
  webhook {
+
+ }
+`
+
+const testConfigWithComputeCreate = `
+ compute {
+
+    use_taints = true
+
+	create_vngs = true
+
+ }
+`
+
+const testConfigWithComputeUpdate = `
+ compute {
+
+    use_taints = false
+
+	create_vngs = false
+
+ }
+`
+
+const testConfigWithComputeEmptyFields = `
+ compute {
 
  }
 `
