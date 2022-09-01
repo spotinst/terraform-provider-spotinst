@@ -217,6 +217,63 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 	})
 }
 
+func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
+	resourceName := createOceanSparkResourceName(oceanClusterID)
+
+	var cluster spark.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanSparkAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWebhookCreate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "webhook.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "true"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.0", "12345"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWebhookUpdate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "webhook.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "false"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.0", "12345"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.1", "54321"),
+				),
+			},
+			{
+				// TODO Need wave-core changes to properly handle explicitly null fields
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWebhookEmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "webhook.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "false"), // Default value
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.#", "0"),
+				),
+			},
+		},
+	})
+}
+
 const testConfigWithIngressCreate = `
  ingress {
 
@@ -256,6 +313,32 @@ const testConfigWithIngressUpdate = `
 
 const testConfigWithIngressEmptyFields = `
  ingress {
+
+ }
+`
+
+const testConfigWithWebhookCreate = `
+ webhook {
+
+    use_host_network = true
+
+	host_network_ports = [12345]
+
+ }
+`
+
+const testConfigWithWebhookUpdate = `
+ webhook {
+
+    use_host_network = false
+
+	host_network_ports = [12345, 54321]
+
+ }
+`
+
+const testConfigWithWebhookEmptyFields = `
+ webhook {
 
  }
 `
