@@ -1,4 +1,4 @@
-package ocean_spark_compute
+package ocean_spark_log_collection
 
 import (
 	"fmt"
@@ -11,9 +11,9 @@ import (
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-	fieldsMap[Compute] = commons.NewGenericField(
-		commons.OceanSparkCompute,
-		Compute,
+	fieldsMap[LogCollection] = commons.NewGenericField(
+		commons.OceanSparkLogCollection,
+		LogCollection,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -22,13 +22,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 
-					string(UseTaints): {
-						Type:     schema.TypeBool,
-						Optional: true,
-						Computed: true,
-					},
-
-					string(CreateVNGs): {
+					string(CollectDriverLogs): {
 						Type:     schema.TypeBool,
 						Optional: true,
 						Computed: true,
@@ -40,12 +34,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var result []interface{} = nil
-			if cluster.Config != nil && cluster.Config.Compute != nil {
-				result = flattenCompute(cluster.Config.Compute)
+			if cluster.Config != nil && cluster.Config.LogCollection != nil {
+				result = flattenLogCollection(cluster.Config.LogCollection)
 			}
 			if len(result) > 0 {
-				if err := resourceData.Set(string(Compute), result); err != nil {
-					return fmt.Errorf(commons.FailureFieldReadPattern, string(Compute), err)
+				if err := resourceData.Set(string(LogCollection), result); err != nil {
+					return fmt.Errorf(commons.FailureFieldReadPattern, string(LogCollection), err)
 				}
 			}
 			return nil
@@ -53,14 +47,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if value, ok := resourceData.GetOk(string(Compute)); ok {
-				if compute, err := expandCompute(value, false); err != nil {
+			if value, ok := resourceData.GetOk(string(LogCollection)); ok {
+				if logCollection, err := expandLogCollection(value, false); err != nil {
 					return err
 				} else {
 					if cluster.Config == nil {
 						cluster.Config = &spark.Config{}
 					}
-					cluster.Config.SetCompute(compute)
+					cluster.Config.SetLogCollection(logCollection)
 				}
 			}
 			return nil
@@ -68,50 +62,45 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var value *spark.ComputeConfig = nil
-			if v, ok := resourceData.GetOk(string(Compute)); ok {
-				if compute, err := expandCompute(v, true); err != nil {
+			var value *spark.LogCollectionConfig = nil
+			if v, ok := resourceData.GetOk(string(LogCollection)); ok {
+				if logCollection, err := expandLogCollection(v, true); err != nil {
 					return err
 				} else {
-					value = compute
+					value = logCollection
 				}
 			}
 			if cluster.Config == nil {
 				cluster.Config = &spark.Config{}
 			}
-			cluster.Config.SetCompute(value)
+			cluster.Config.SetLogCollection(value)
 			return nil
 		},
 		nil,
 	)
 }
 
-func flattenCompute(compute *spark.ComputeConfig) []interface{} {
-	if compute == nil {
+func flattenLogCollection(logCollection *spark.LogCollectionConfig) []interface{} {
+	if logCollection == nil {
 		return nil
 	}
 	result := make(map[string]interface{})
-	result[string(UseTaints)] = spotinst.BoolValue(compute.UseTaints)
-	result[string(CreateVNGs)] = spotinst.BoolValue(compute.CreateVngs)
+	result[string(CollectDriverLogs)] = spotinst.BoolValue(logCollection.CollectDriverLogs)
 	return []interface{}{result}
 }
 
-func expandCompute(data interface{}, nullify bool) (*spark.ComputeConfig, error) {
-	compute := &spark.ComputeConfig{}
+func expandLogCollection(data interface{}, nullify bool) (*spark.LogCollectionConfig, error) {
+	logCollection := &spark.LogCollectionConfig{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
-		return compute, nil
+		return logCollection, nil
 	}
 	m := list[0].(map[string]interface{})
 
 	// TODO Do I need to nullify the bools? Will become clear once the wave-core PR goes through, in the empty fields test
-	if v, ok := m[string(UseTaints)].(bool); ok {
-		compute.SetUseTaints(spotinst.Bool(v))
+	if v, ok := m[string(CollectDriverLogs)].(bool); ok {
+		logCollection.SetCollectDriverLogs(spotinst.Bool(v))
 	}
 
-	if v, ok := m[string(CreateVNGs)].(bool); ok {
-		compute.SetCreateVNGs(spotinst.Bool(v))
-	}
-
-	return compute, nil
+	return logCollection, nil
 }
