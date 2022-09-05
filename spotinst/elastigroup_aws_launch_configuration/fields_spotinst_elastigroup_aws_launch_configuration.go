@@ -46,6 +46,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(ImageId)).(string); ok && v != "" {
 				elastigroup.Compute.LaunchSpecification.SetImageId(spotinst.String(v))
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetImageId(nil)
 			}
 			return nil
 		},
@@ -105,13 +107,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var result []*aws.Image
 			if v, ok := resourceData.GetOk(string(Images)); ok {
 				if value, err := expandImages(v); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.LaunchSpecification.SetImages(value)
+					result = value
 				}
 			}
+			elastigroup.Compute.LaunchSpecification.SetImages(result)
 			return nil
 		},
 		nil,
@@ -1524,24 +1528,6 @@ func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSp
 }
 
 func expandImages(data interface{}) ([]*aws.Image, error) {
-	//list := data.([]interface{})
-	//images := make([]*aws.Image, 0, len(list))
-	//
-	//for _, item := range list {
-	//	m := item.(map[string]interface{})
-	//	image := &aws.Image{}
-	//
-	//	if v, ok := m[string(Image)]; ok {
-	//		image.SetId(spotinst.String(""))
-	//		log.Printf("%v", v)
-	//	}
-	//
-	//	//if image.Id != nil {
-	//	//	images = append(images, image)
-	//	//}
-	//}
-	//return images, nil
-	//images := &aws.Image{}
 	var images []*aws.Image
 	list := data.([]interface{})
 	if list != nil && list[0] != nil {
@@ -1567,9 +1553,6 @@ func expandImage(data interface{}) ([]*aws.Image, error) {
 		if !ok {
 			continue
 		}
-		if _, ok := attr[string(Id)]; !ok {
-			return nil, errors.New("invalid deployment group attributes: application_name missing")
-		}
 
 		im := &aws.Image{
 			Id: spotinst.String(attr[string(Id)].(string)),
@@ -1582,10 +1565,7 @@ func expandImage(data interface{}) ([]*aws.Image, error) {
 func flattenImages(Images []*aws.Image) []interface{} {
 	result := make(map[string]interface{})
 
-	//for _, image := range Images {
-	//	m := make(map[string]interface{})
 	result[string(Image)] = flattenImage(Images)
-
 	return []interface{}{result}
 }
 
@@ -1599,48 +1579,3 @@ func flattenImage(Images []*aws.Image) []interface{} {
 	}
 	return result
 }
-
-//
-//func flattenAzureGroupNetworkInterfaces(networkInterfaces []*azurev3.NetworkInterface) []interface{} {
-//	result := make([]interface{}, 0, len(networkInterfaces))
-//
-//	for _, inter := range networkInterfaces {
-//		m := make(map[string]interface{})
-//		m[string(SubnetName)] = spotinst.StringValue(inter.SubnetName)
-//		m[string(IsPrimary)] = spotinst.BoolValue(inter.IsPrimary)
-//		m[string(AssignPublicIP)] = spotinst.BoolValue(inter.AssignPublicIP)
-//		if inter.AdditionalIPConfigs != nil {
-//			m[string(AdditionalIPConfigs)] = flattenAzureAdditionalIPConfigs(inter.AdditionalIPConfigs)
-//		}
-//		if inter.ApplicationSecurityGroups != nil {
-//			m[string(ApplicationSecurityGroup)] = flattenApplicationSecurityGroups(inter.ApplicationSecurityGroups)
-//		}
-//		result = append(result, m)
-//	}
-//
-//	return result
-//}
-//
-//func flattenImage(Image []*aws.Image) []interface{} {
-//	result := make([]interface{}, 0, len(Image))
-//
-//	for _, image := range Image {
-//		m := make(map[string]interface{})
-//		m[string(Id] = spotinst.StringValue(image.Id)
-//		result = append(result, m)
-//	}
-//
-//	return result
-//}
-//func flattenApplicationSecurityGroups(applicationSecurityGroups []*azurev3.ApplicationSecurityGroup) []interface{} {
-//	result := make([]interface{}, 0, len(applicationSecurityGroups))
-//
-//	for _, applicationSecurityGroup := range applicationSecurityGroups {
-//		m := make(map[string]interface{})
-//		m[string(Name)] = spotinst.StringValue(applicationSecurityGroup.Name)
-//		m[string(ResourceGroupName)] = spotinst.StringValue(applicationSecurityGroup.ResourceGroupName)
-//		result = append(result, m)
-//	}
-//
-//	return result
-//}

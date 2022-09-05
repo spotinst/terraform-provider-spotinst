@@ -580,7 +580,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfigurationWithMultipleImages(t *test
 					testCheckElastigroupAttributes(&group, groupName),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
 					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-e251209a"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.image.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.image.0.id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -607,7 +608,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfigurationWithMultipleImages(t *test
 					testCheckElastigroupAttributes(&group, groupName),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
 					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-31394949"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.image.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.image.0.id", "ami-31394949"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -635,7 +637,8 @@ func TestAccSpotinstElastigroupAWS_LaunchConfigurationWithMultipleImages(t *test
 					testCheckElastigroupAttributes(&group, groupName),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
 					resource.TestCheckResourceAttr(resourceName, "images.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "images.0.id", "ami-31394949"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.image.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "images.0.image.0.id", "ami-31394949"),
 					resource.TestCheckResourceAttr(resourceName, "key_name", "cannot set empty key name"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-123456"),
@@ -653,7 +656,9 @@ const testLaunchConfigurationGroupConfigWithMultipleImages_Create = `
  // --- LAUNCH CONFIGURATION --------------
  //iam_instance_profile = "iam-profile"
 images {
-id = "ami-e251209a"
+	image{
+		id = "ami-e251209a"
+	}
 }
  key_name             = "my-key.ssh"
  security_groups      = ["sg-123456"]
@@ -677,7 +682,9 @@ const testLaunchConfigurationGroupConfigWithMultipleImages_Update = `
  // --- LAUNCH CONFIGURATION --------------
  //iam_instance_profile = "iam-profile updated"
 images {
-id = "ami-31394949"
+	image{
+		id = "ami-31394949"
+	}
 }
  key_name             = "my-key-updated.ssh"
  security_groups      = ["sg-123456", "sg-987654"]
@@ -700,7 +707,9 @@ id = "ami-31394949"
 const testLaunchConfigurationGroupConfigWithMultipleImages_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
 images {
-id = "ami-31394949"
+	image{
+		id = "ami-31394949"
+	}
 }
  user_data       = "cannot set empty user data"
  shutdown_script = "cannot set empty shutdown script"
