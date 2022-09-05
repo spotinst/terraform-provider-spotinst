@@ -176,11 +176,9 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.key", "my-annotation-1"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.value", "my-annotation-value-1"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.key", "my-annotation-2"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.value", "my-annotation-value-2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-1", "my-annotation-value-1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2"),
 				),
 			},
 			{
@@ -192,13 +190,10 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.key", "my-annotation-2"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.0.value", "my-annotation-value-2-updated"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.key", "my-annotation-3"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.1.value", "my-annotation-value-3"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.2.key", "my-new-annotation"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.2.value", "my-new-annotation-value"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2-updated"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-3", "my-annotation-value-3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-new-annotation", "my-new-annotation-value"),
 				),
 			},
 			{
@@ -211,7 +206,7 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "0"),
 				),
 			},
 		},
@@ -383,15 +378,10 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 const testConfigWithIngressCreate = `
  ingress {
 
-    service_annotations {
-     key = "my-annotation-1"
-     value = "my-annotation-value-1"
+    service_annotations = {
+     my-annotation-1 = "my-annotation-value-1"
+     my-annotation-2 = "my-annotation-value-2"
 	}
-
-	service_annotations {
-     key = "my-annotation-2"
-     value = "my-annotation-value-2"
-   }
 
  }
 `
@@ -399,26 +389,19 @@ const testConfigWithIngressCreate = `
 const testConfigWithIngressUpdate = `
  ingress {
 
-    service_annotations {
-     key = "my-new-annotation"
-     value = "my-new-annotation-value"
+    service_annotations = {
+     my-new-annotation = "my-new-annotation-value"
+     my-annotation-2 = "my-annotation-value-2-updated"
+     my-annotation-3 = "my-annotation-value-3"
 	}
-
-	service_annotations {
-     key = "my-annotation-2"
-     value = "my-annotation-value-2-updated"
-   }
-
-	service_annotations {
-     key = "my-annotation-3"
-     value = "my-annotation-value-3"
-   }
 
  }
 `
 
 const testConfigWithIngressEmptyFields = `
  ingress {
+
+	service_annotations = {}
 
  }
 `

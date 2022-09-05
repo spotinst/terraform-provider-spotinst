@@ -104,7 +104,6 @@ func flattenWebhook(webhook *spark.WebhookConfig) []interface{} {
 }
 
 func expandWebhook(data interface{}, nullify bool) (*spark.WebhookConfig, error) {
-	// TODO return nil if nothing set?
 	webhook := &spark.WebhookConfig{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {

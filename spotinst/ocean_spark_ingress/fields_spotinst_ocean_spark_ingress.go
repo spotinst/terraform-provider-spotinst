@@ -1,7 +1,6 @@
 package ocean_spark_ingress
 
 import (
-	"errors"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/spark"
@@ -19,23 +18,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-
 					string(ServiceAnnotations): {
-						Type:     schema.TypeSet,
+						Type:     schema.TypeMap,
 						Optional: true,
 						Computed: true,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(AnnotationKey): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(AnnotationValue): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-							},
-						},
+						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 				},
 			},
@@ -124,34 +111,26 @@ func expandIngress(data interface{}, nullify bool) (*spark.IngressConfig, error)
 	return ingress, nil
 }
 
-func flattenAnnotations(annotations map[string]string) []interface{} {
-	result := make([]interface{}, 0, len(annotations))
+func flattenAnnotations(annotations map[string]string) map[string]interface{} {
+	result := make(map[string]interface{}, len(annotations))
 	for k, v := range annotations {
-		m := make(map[string]interface{})
-		m[string(AnnotationKey)] = k
-		m[string(AnnotationValue)] = v
-		result = append(result, m)
+		result[k] = v
 	}
 	return result
 }
 
 func expandAnnotations(data interface{}) (map[string]string, error) {
-	list := data.(*schema.Set).List()
-	annotations := make(map[string]string, len(list))
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		if _, ok := attr[string(AnnotationKey)]; !ok {
-			return nil, errors.New("invalid annotation: key missing")
-		}
-		if _, ok := attr[string(AnnotationValue)]; !ok {
-			return nil, errors.New("invalid annotation: value missing")
-		}
-		key := attr[string(AnnotationKey)].(string)
-		value := attr[string(AnnotationValue)].(string)
-		annotations[key] = value
+	m, ok := data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("could not cast annotations")
 	}
-	return annotations, nil
+	result := make(map[string]string, len(m))
+	for k, v := range m {
+		val, ok := v.(string)
+		if !ok {
+			return nil, fmt.Errorf("could not cast annotation value to string")
+		}
+		result[k] = val
+	}
+	return result, nil
 }
