@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.82.0 (Sep 05, 2022)
+## 1.82.0 (Sep 06, 2022)
 
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added `images`
