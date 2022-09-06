@@ -46,7 +46,76 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(ImageId)).(string); ok && v != "" {
 				elastigroup.Compute.LaunchSpecification.SetImageId(spotinst.String(v))
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetImageId(nil)
 			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Images] = commons.NewGenericField(
+		commons.ElastigroupAWSLaunchConfiguration,
+		Images,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Image): {
+						Type:     schema.TypeSet,
+						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Id): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []interface{} = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.Images != nil {
+				value = flattenImages(elastigroup.Compute.LaunchSpecification.Images)
+			}
+			if value != nil {
+				if err := resourceData.Set(string(Images), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Images), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(Images)); ok {
+				if value, err := expandImages(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetImages(value)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []*aws.Image
+			if v, ok := resourceData.GetOk(string(Images)); ok {
+				if value, err := expandImages(v); err != nil {
+					return err
+				} else {
+					result = value
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetImages(result)
 			return nil
 		},
 		nil,
@@ -1456,4 +1525,57 @@ func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSp
 	}
 
 	return []interface{}{result}
+}
+
+func expandImages(data interface{}) ([]*aws.Image, error) {
+	var images []*aws.Image
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(Image)]; ok {
+			imagesFromExpand, err := expandImage(v)
+			if err != nil {
+				return nil, err
+			}
+			images = imagesFromExpand
+		}
+	}
+
+	return images, nil
+}
+
+func expandImage(data interface{}) ([]*aws.Image, error) {
+	list := data.(*schema.Set).List()
+	images := make([]*aws.Image, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		im := &aws.Image{
+			Id: spotinst.String(attr[string(Id)].(string)),
+		}
+		images = append(images, im)
+	}
+	return images, nil
+}
+
+func flattenImages(Images []*aws.Image) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(Image)] = flattenImage(Images)
+	return []interface{}{result}
+}
+
+func flattenImage(Images []*aws.Image) []interface{} {
+	result := make([]interface{}, 0, len(Images))
+
+	for _, image := range Images {
+		m := make(map[string]interface{})
+		m[string(Id)] = spotinst.StringValue(image.Id)
+		result = append(result, m)
+	}
+	return result
 }
