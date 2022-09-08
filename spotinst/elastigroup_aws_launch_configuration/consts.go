@@ -8,6 +8,9 @@ const (
 
 const (
 	ImageId            commons.FieldName = "image_id"
+	Images             commons.FieldName = "images"
+	Image              commons.FieldName = "image"
+	Id                 commons.FieldName = "id"
 	IamInstanceProfile commons.FieldName = "iam_instance_profile"
 	KeyName            commons.FieldName = "key_name"
 	SecurityGroups     commons.FieldName = "security_groups"
