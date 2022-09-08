@@ -54,7 +54,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if value, ok := resourceData.GetOk(string(Compute)); ok {
-				if compute, err := expandCompute(value, false); err != nil {
+				if compute, err := expandCompute(value); err != nil {
 					return err
 				} else {
 					if cluster.Config == nil {
@@ -70,7 +70,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetCluster()
 			var value *spark.ComputeConfig = nil
 			if v, ok := resourceData.GetOk(string(Compute)); ok {
-				if compute, err := expandCompute(v, true); err != nil {
+				if compute, err := expandCompute(v); err != nil {
 					return err
 				} else {
 					value = compute
@@ -96,7 +96,7 @@ func flattenCompute(compute *spark.ComputeConfig) []interface{} {
 	return []interface{}{result}
 }
 
-func expandCompute(data interface{}, nullify bool) (*spark.ComputeConfig, error) {
+func expandCompute(data interface{}) (*spark.ComputeConfig, error) {
 	compute := &spark.ComputeConfig{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
@@ -104,7 +104,6 @@ func expandCompute(data interface{}, nullify bool) (*spark.ComputeConfig, error)
 	}
 	m := list[0].(map[string]interface{})
 
-	// TODO Do I need to nullify the bools? Will become clear once the wave-core PR goes through, in the empty fields test
 	if v, ok := m[string(UseTaints)].(bool); ok {
 		compute.SetUseTaints(spotinst.Bool(v))
 	}

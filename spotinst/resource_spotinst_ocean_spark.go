@@ -21,6 +21,10 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_spark_webhook"
 )
 
+const (
+	ErrCodeResourceDoesNotExist = "RESOURCE_DOES_NOT_EXIST"
+)
+
 func resourceSpotinstOceanSpark() *schema.Resource {
 	setupClusterSparkResource()
 
@@ -111,7 +115,7 @@ func resourceSpotinstClusterSparkRead(ctx context.Context, resourceData *schema.
 		// that the cluster does not exist
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
-				if err.Code == ErrCodeClusterNotFound { // TODO WAVE CORE NEEDS TO RETURN CLUSTER NOT FOUND CODE
+				if err.Code == ErrCodeResourceDoesNotExist {
 					resourceData.SetId("")
 					return nil
 				}

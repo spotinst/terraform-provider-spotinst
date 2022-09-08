@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"testing"
 
@@ -15,18 +16,17 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-var oceanClusterID = "o-fa711aaf" // NOTE: This needs to be an existing ocean cluster
+var oceanClusterID = os.Getenv("TEST_ACC_OCEAN_SPARK_OCEAN_ID") // NOTE: This needs to be an existing ocean cluster
 
 func init() {
-	resource.AddTestSweepers("spotinst_ocean_spark_aws", &resource.Sweeper{
-		Name: "spotinst_ocean_spark_aws",
-		F:    testSweepOceanSparkAWS,
+	resource.AddTestSweepers("spotinst_ocean_spark", &resource.Sweeper{
+		Name: "spotinst_ocean_spark",
+		F:    testSweepOceanSpark,
 	})
 }
 
-// TODO This needs to be provider agnostic. We also need a way to find OfAS clusters that we should delete, we don't have names to tag them.
-func testSweepOceanSparkAWS(region string) error {
-	client, err := getProviderClient("aws") // TODO This should be provider agnostic
+func testSweepOceanSpark(_ string) error {
+	client, err := getProviderClient("aws")
 	if err != nil {
 		return fmt.Errorf("error getting client: %v", err)
 	}
@@ -40,7 +40,8 @@ func testSweepOceanSparkAWS(region string) error {
 			log.Printf("[INFO] No clusters to sweep")
 		}
 		for _, cluster := range resp.Clusters {
-			if strings.Contains(spotinst.StringValue(cluster.ControllerClusterID), "test-acc-") {
+			// Our test clusters should have a controller cluster ID starting with "tf-test-acc-"
+			if strings.Contains(spotinst.StringValue(cluster.ControllerClusterID), "tf-test-acc-") {
 				if _, err := conn.DeleteCluster(context.Background(), &spark.DeleteClusterInput{ClusterID: cluster.ID}); err != nil {
 					return fmt.Errorf("unable to delete cluster %v in sweep", spotinst.StringValue(cluster.ID))
 				} else {
@@ -74,7 +75,7 @@ func testOceanSparkAWSDestroy(s *terraform.State) error {
 func testCheckOceanSparkAttributes(cluster *spark.Cluster, oceanClusterID string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if spotinst.StringValue(cluster.OceanClusterID) != oceanClusterID {
-			return fmt.Errorf("bad content: %v", cluster.ControllerClusterID)
+			return fmt.Errorf("bad content: %v", cluster.OceanClusterID)
 		}
 		return nil
 	}
@@ -197,7 +198,6 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 				),
 			},
 			{
-				// TODO Need wave-core changes to properly handle explicitly null fields
 				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
 					oceanClusterID: oceanClusterID,
 					fieldsToAppend: testConfigWithIngressEmptyFields,
@@ -232,7 +232,7 @@ func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "webhook.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "true"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "false"),
 					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.0", "12345"),
 				),
@@ -246,14 +246,13 @@ func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "webhook.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "false"),
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "true"),
 					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.0", "12345"),
 					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.1", "54321"),
 				),
 			},
 			{
-				// TODO Need wave-core changes to properly handle explicitly null fields
 				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
 					oceanClusterID: oceanClusterID,
 					fieldsToAppend: testConfigWithWebhookEmptyFields,
@@ -262,7 +261,7 @@ func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "webhook.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "false"), // Default value
+					resource.TestCheckResourceAttr(resourceName, "webhook.0.use_host_network", "false"),
 					resource.TestCheckResourceAttr(resourceName, "webhook.0.host_network_ports.#", "0"),
 				),
 			},
@@ -307,7 +306,6 @@ func TestAccSpotinstOceanSpark_withComputeConfig(t *testing.T) {
 				),
 			},
 			{
-				// TODO Need wave-core changes to properly handle explicitly null fields
 				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
 					oceanClusterID: oceanClusterID,
 					fieldsToAppend: testConfigWithComputeEmptyFields,
@@ -316,8 +314,8 @@ func TestAccSpotinstOceanSpark_withComputeConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "compute.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "compute.0.use_taints", "true"),  // Default value
-					resource.TestCheckResourceAttr(resourceName, "compute.0.create_vngs", "true"), // Default value
+					resource.TestCheckResourceAttr(resourceName, "compute.0.use_taints", "true"),
+					resource.TestCheckResourceAttr(resourceName, "compute.0.create_vngs", "true"),
 				),
 			},
 		},
@@ -359,7 +357,6 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 				),
 			},
 			{
-				// TODO Need wave-core changes to properly handle explicitly null fields
 				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
 					oceanClusterID: oceanClusterID,
 					fieldsToAppend: testConfigWithLogCollectionEmptyFields,
@@ -368,7 +365,7 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "log_collection.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_driver_logs", "true"), // Default value
+					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_driver_logs", "true"),
 				),
 			},
 		},
@@ -409,7 +406,7 @@ const testConfigWithIngressEmptyFields = `
 const testConfigWithWebhookCreate = `
  webhook {
 
-    use_host_network = true
+    use_host_network = false
 
 	host_network_ports = [12345]
 
@@ -419,7 +416,7 @@ const testConfigWithWebhookCreate = `
 const testConfigWithWebhookUpdate = `
  webhook {
 
-    use_host_network = false
+    use_host_network = true
 
 	host_network_ports = [12345, 54321]
 
@@ -428,6 +425,10 @@ const testConfigWithWebhookUpdate = `
 
 const testConfigWithWebhookEmptyFields = `
  webhook {
+
+	use_host_network = false
+
+	host_network_ports = []
 
  }
 `
@@ -455,6 +456,10 @@ const testConfigWithComputeUpdate = `
 const testConfigWithComputeEmptyFields = `
  compute {
 
+	use_taints = true
+
+	create_vngs = true
+
  }
 `
 
@@ -476,6 +481,8 @@ const testConfigWithLogCollectionUpdate = `
 
 const testConfigWithLogCollectionEmptyFields = `
  log_collection {
+
+	collect_driver_logs = true
 
  }
 `

@@ -48,7 +48,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if value, ok := resourceData.GetOk(string(LogCollection)); ok {
-				if logCollection, err := expandLogCollection(value, false); err != nil {
+				if logCollection, err := expandLogCollection(value); err != nil {
 					return err
 				} else {
 					if cluster.Config == nil {
@@ -64,7 +64,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetCluster()
 			var value *spark.LogCollectionConfig = nil
 			if v, ok := resourceData.GetOk(string(LogCollection)); ok {
-				if logCollection, err := expandLogCollection(v, true); err != nil {
+				if logCollection, err := expandLogCollection(v); err != nil {
 					return err
 				} else {
 					value = logCollection
@@ -89,7 +89,7 @@ func flattenLogCollection(logCollection *spark.LogCollectionConfig) []interface{
 	return []interface{}{result}
 }
 
-func expandLogCollection(data interface{}, nullify bool) (*spark.LogCollectionConfig, error) {
+func expandLogCollection(data interface{}) (*spark.LogCollectionConfig, error) {
 	logCollection := &spark.LogCollectionConfig{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
@@ -97,7 +97,6 @@ func expandLogCollection(data interface{}, nullify bool) (*spark.LogCollectionCo
 	}
 	m := list[0].(map[string]interface{})
 
-	// TODO Do I need to nullify the bools? Will become clear once the wave-core PR goes through, in the empty fields test
 	if v, ok := m[string(CollectDriverLogs)].(bool); ok {
 		logCollection.SetCollectDriverLogs(spotinst.Bool(v))
 	}
