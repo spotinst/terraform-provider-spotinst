@@ -305,19 +305,6 @@ func TestAccSpotinstOceanSpark_withComputeConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "compute.0.create_vngs", "false"),
 				),
 			},
-			{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID: oceanClusterID,
-					fieldsToAppend: testConfigWithComputeEmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					resource.TestCheckResourceAttr(resourceName, "compute.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "compute.0.use_taints", "true"),
-					resource.TestCheckResourceAttr(resourceName, "compute.0.create_vngs", "true"),
-				),
-			},
 		},
 	})
 }
@@ -354,18 +341,6 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "log_collection.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_driver_logs", "false"),
-				),
-			},
-			{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID: oceanClusterID,
-					fieldsToAppend: testConfigWithLogCollectionEmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					resource.TestCheckResourceAttr(resourceName, "log_collection.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_driver_logs", "true"),
 				),
 			},
 		},
@@ -453,16 +428,6 @@ const testConfigWithComputeUpdate = `
  }
 `
 
-const testConfigWithComputeEmptyFields = `
- compute {
-
-	use_taints = true
-
-	create_vngs = true
-
- }
-`
-
 const testConfigWithLogCollectionCreate = `
  log_collection {
 
@@ -475,14 +440,6 @@ const testConfigWithLogCollectionUpdate = `
  log_collection {
 
     collect_driver_logs = false
-
- }
-`
-
-const testConfigWithLogCollectionEmptyFields = `
- log_collection {
-
-	collect_driver_logs = true
 
  }
 `
