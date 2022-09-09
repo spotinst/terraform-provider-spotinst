@@ -120,7 +120,7 @@ func expandWebhook(data interface{}, nullify bool) (*spark.WebhookConfig, error)
 		if err != nil {
 			return nil, err
 		}
-		if ports != nil && len(ports) > 0 {
+		if len(ports) > 0 {
 			webhook.SetHostNetworkPorts(ports)
 		} else {
 			if nullify {
