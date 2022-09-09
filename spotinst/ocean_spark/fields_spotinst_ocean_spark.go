@@ -16,7 +16,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		OceanClusterID,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
