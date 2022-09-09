@@ -95,10 +95,10 @@ func createSparkCluster(cluster *spark.Cluster, spotinstClient *Client) (*string
 		resp = r
 		return nil
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create cluster: %s", err)
 	}
+
 	return resp.Cluster.ID, nil
 }
 
@@ -109,7 +109,6 @@ func resourceSpotinstSparkClusterRead(ctx context.Context, resourceData *schema.
 
 	input := &spark.ReadClusterInput{ClusterID: spotinst.String(id)}
 	resp, err := meta.(*Client).ocean.Spark().ReadCluster(ctx, input)
-
 	if err != nil {
 		// If the cluster was not found, return nil so that we can show
 		// that the cluster does not exist
@@ -136,6 +135,7 @@ func resourceSpotinstSparkClusterRead(ctx context.Context, resourceData *schema.
 	if err := commons.OceanSparkResource.OnRead(clusterResponse, resourceData, meta); err != nil {
 		return diag.FromErr(err)
 	}
+
 	log.Printf("===> Cluster read successfully: %s <===", id)
 	return nil
 }
@@ -156,6 +156,7 @@ func resourceSpotinstSparkClusterUpdate(ctx context.Context, resourceData *schem
 			return diag.FromErr(err)
 		}
 	}
+
 	log.Printf("===> Cluster updated successfully: %s <===", id)
 	return resourceSpotinstSparkClusterRead(ctx, resourceData, meta)
 }
@@ -194,6 +195,7 @@ func resourceSpotinstSparkClusterDelete(ctx context.Context, resourceData *schem
 
 	log.Printf("===> Cluster deleted successfully: %s <===", resourceData.Id())
 	resourceData.SetId("")
+
 	return nil
 }
 
