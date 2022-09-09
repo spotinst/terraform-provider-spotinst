@@ -101,7 +101,7 @@ func expandIngress(data interface{}, nullify bool) (*spark.IngressConfig, error)
 		if err != nil {
 			return nil, err
 		}
-		if annotations != nil && len(annotations) > 0 {
+		if len(annotations) > 0 {
 			ingress.SetServiceAnnotations(annotations)
 		} else {
 			if nullify {
