@@ -26,13 +26,13 @@ const (
 )
 
 func resourceSpotinstOceanSpark() *schema.Resource {
-	setupClusterSparkResource()
+	setupSparkClusterResource()
 
 	return &schema.Resource{
-		CreateContext: resourceSpotinstClusterSparkCreate,
-		ReadContext:   resourceSpotinstClusterSparkRead,
-		UpdateContext: resourceSpotinstClusterSparkUpdate,
-		DeleteContext: resourceSpotinstClusterSparkDelete,
+		CreateContext: resourceSpotinstSparkClusterCreate,
+		ReadContext:   resourceSpotinstSparkClusterRead,
+		UpdateContext: resourceSpotinstSparkClusterUpdate,
+		DeleteContext: resourceSpotinstSparkClusterDelete,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -41,7 +41,7 @@ func resourceSpotinstOceanSpark() *schema.Resource {
 	}
 }
 
-func setupClusterSparkResource() {
+func setupSparkClusterResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	ocean_spark.Setup(fieldsMap)
@@ -53,7 +53,7 @@ func setupClusterSparkResource() {
 	commons.OceanSparkResource = commons.NewOceanSparkResource(fieldsMap)
 }
 
-func resourceSpotinstClusterSparkCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstSparkClusterCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanSparkResource.GetName())
 
@@ -70,7 +70,7 @@ func resourceSpotinstClusterSparkCreate(ctx context.Context, resourceData *schem
 	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> Cluster created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstClusterSparkRead(ctx, resourceData, meta)
+	return resourceSpotinstSparkClusterRead(ctx, resourceData, meta)
 }
 
 func createSparkCluster(cluster *spark.Cluster, spotinstClient *Client) (*string, error) {
@@ -102,7 +102,7 @@ func createSparkCluster(cluster *spark.Cluster, spotinstClient *Client) (*string
 	return resp.Cluster.ID, nil
 }
 
-func resourceSpotinstClusterSparkRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstSparkClusterRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.OceanSparkResource.GetName(), id)
@@ -140,7 +140,7 @@ func resourceSpotinstClusterSparkRead(ctx context.Context, resourceData *schema.
 	return nil
 }
 
-func resourceSpotinstClusterSparkUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstSparkClusterUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanSparkResource.GetName(), id)
@@ -157,7 +157,7 @@ func resourceSpotinstClusterSparkUpdate(ctx context.Context, resourceData *schem
 		}
 	}
 	log.Printf("===> Cluster updated successfully: %s <===", id)
-	return resourceSpotinstClusterSparkRead(ctx, resourceData, meta)
+	return resourceSpotinstSparkClusterRead(ctx, resourceData, meta)
 }
 
 func updateSparkCluster(cluster *spark.Cluster, meta interface{}) error {
@@ -183,7 +183,7 @@ func updateSparkCluster(cluster *spark.Cluster, meta interface{}) error {
 	return nil
 }
 
-func resourceSpotinstClusterSparkDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstSparkClusterDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanSparkResource.GetName(), id)
