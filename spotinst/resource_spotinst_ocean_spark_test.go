@@ -16,6 +16,10 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
+const (
+	testOceanClusterID = "o-d552c5b5"
+)
+
 var oceanClusterID = getOceanClusterID() // NOTE: This needs to be an existing ocean cluster
 
 func init() {
@@ -30,7 +34,7 @@ func getOceanClusterID() string {
 	oceanClusterID := os.Getenv("TEST_ACC_OCEAN_SPARK_OCEAN_ID")
 	if oceanClusterID == "" {
 		// Default to hardcoded ID
-		oceanClusterID = "o-d552c5b5"
+		oceanClusterID = testOceanClusterID
 	}
 
 	return oceanClusterID
