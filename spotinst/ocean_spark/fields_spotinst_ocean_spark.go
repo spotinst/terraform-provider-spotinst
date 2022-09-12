@@ -37,10 +37,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
-			cluster := clusterWrapper.GetCluster()
-			cluster.OceanClusterID = spotinst.String(resourceData.Get(string(OceanClusterID)).(string))
-			return nil
+			return fmt.Errorf(string(commons.FieldUpdateNotAllowedPattern), string(OceanClusterID))
 		},
 		nil,
 	)
