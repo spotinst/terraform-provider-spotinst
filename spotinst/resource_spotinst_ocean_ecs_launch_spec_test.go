@@ -187,6 +187,8 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "t3.medium"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.0", "t3.medium"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
@@ -224,6 +226,8 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.1", "m4.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
@@ -245,6 +249,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   security_group_ids = ["EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"]
   iam_instance_profile = "ecsInstanceRole"
   instance_types = ["t3.medium"]
+  preferred_spot_types = ["t3.medium"]
   restrict_scale_down = true
 
   attributes {
@@ -278,6 +283,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   image_id = "ami-0e92f5873da29c633"
   iam_instance_profile = "ecsInstanceRole"
   instance_types = ["m4.xlarge","m4.2xlarge"]
+  preferred_spot_types = ["m4.xlarge"]
   restrict_scale_down = false
 
   attributes {
