@@ -16,13 +16,24 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-var oceanClusterID = os.Getenv("TEST_ACC_OCEAN_SPARK_OCEAN_ID") // NOTE: This needs to be an existing ocean cluster
+var oceanClusterID = getOceanClusterID() // NOTE: This needs to be an existing ocean cluster
 
 func init() {
 	resource.AddTestSweepers("spotinst_ocean_spark", &resource.Sweeper{
 		Name: "spotinst_ocean_spark",
 		F:    testSweepOceanSpark,
 	})
+}
+
+func getOceanClusterID() string {
+	// Prefer environment variable
+	oceanClusterID := os.Getenv("TEST_ACC_OCEAN_SPARK_OCEAN_ID")
+	if oceanClusterID == "" {
+		// Default to hardcoded ID
+		oceanClusterID = "o-d552c5b5"
+	}
+
+	return oceanClusterID
 }
 
 func testSweepOceanSpark(_ string) error {
