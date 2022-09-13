@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.83.0 (Sep 13, 2022)
+
+FEATURES:
+* **New Resource:** `spotinst_ocean_spark`
+
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `preferred_spot_types`
+
 ## 1.82.0 (Sep 06, 2022)
 
 ENHANCEMENTS:
