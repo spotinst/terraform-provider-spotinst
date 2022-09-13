@@ -80,6 +80,9 @@ func Provider() *schema.Provider {
 
 			// Stateful
 			string(commons.StatefulNodeAzureResourceName): resourceSpotinstStatefulNodeAzureV3(),
+
+			// Ocean Spark
+			string(commons.OceanSparkResourceName): resourceSpotinstOceanSpark(),
 		},
 	}
 
