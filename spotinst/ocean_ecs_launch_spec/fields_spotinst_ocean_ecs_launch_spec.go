@@ -686,6 +686,56 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[PreferredSpotTypes] = commons.NewGenericField(
+		commons.OceanECSLaunchSpec,
+		PreferredSpotTypes,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value []string = nil
+			if launchSpec.PreferredSpotTypes != nil {
+				value = launchSpec.PreferredSpotTypes
+			}
+			if err := resourceData.Set(string(PreferredSpotTypes), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredSpotTypes), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(PreferredSpotTypes)); ok {
+				if preferredSpotTypes, err := expandPreferredSpotTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetPreferredSpotTypes(preferredSpotTypes)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(PreferredSpotTypes)); ok {
+				if preferredSpotTypes, err := expandInstanceTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetPreferredSpotTypes(preferredSpotTypes)
+				}
+			} else {
+				launchSpec.SetPreferredSpotTypes(nil)
+			}
+
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[RestrictScaleDown] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
 		RestrictScaleDown,
@@ -1174,6 +1224,18 @@ func expandInstanceTypes(data interface{}) ([]string, error) {
 	for _, v := range list {
 		if instanceType, ok := v.(string); ok && instanceType != "" {
 			result = append(result, instanceType)
+		}
+	}
+	return result, nil
+}
+
+func expandPreferredSpotTypes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if preferredSpotTypes, ok := v.(string); ok && preferredSpotTypes != "" {
+			result = append(result, preferredSpotTypes)
 		}
 	}
 	return result, nil

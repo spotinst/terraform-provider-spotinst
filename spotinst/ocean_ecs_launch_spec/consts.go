@@ -25,6 +25,7 @@ const (
 	AutoscaleHeadrooms commons.FieldName = "autoscale_headrooms"
 	Tags               commons.FieldName = "tags"
 	InstanceTypes      commons.FieldName = "instance_types"
+	PreferredSpotTypes commons.FieldName = "preferred_spot_types"
 	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
 	SubnetIDs          commons.FieldName = "subnet_ids"
 	SchedulingTask     commons.FieldName = "scheduling_task"
