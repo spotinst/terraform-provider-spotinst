@@ -560,7 +560,7 @@ func expandAWSGroupScalingPolicies(data interface{}) ([]*aws.ScalingPolicy, erro
 			policy.SetUnit(spotinst.String(v))
 		}
 
-		if v, ok := m[string(Threshold)].(float64); ok && v > 0 {
+		if v, ok := m[string(Threshold)].(float64); ok && v >= 0 {
 			policy.SetThreshold(spotinst.Float64(v))
 		}
 
@@ -698,7 +698,7 @@ func expandAWSGroupScalingPolicyStepAdjustments(data interface{}) []*aws.StepAdj
 		m := item.(map[string]interface{})
 		stepAdjustment := &aws.StepAdjustment{}
 
-		if v, ok := m[string(Threshold)].(int); ok && v > 0 {
+		if v, ok := m[string(Threshold)].(int); ok && v >= 0 {
 			stepAdjustment.SetThreshold(spotinst.Int(v))
 		}
 
