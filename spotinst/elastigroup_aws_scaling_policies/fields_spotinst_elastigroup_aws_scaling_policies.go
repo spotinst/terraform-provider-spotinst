@@ -21,7 +21,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var policiesResult []interface{} = nil
 			if elastigroup.Scaling != nil && elastigroup.Scaling.Up != nil {
 				scaleUpPolicies := elastigroup.Scaling.Up
-				policiesResult = flattenAWSGroupScalingPolicy(scaleUpPolicies)
+				policiesResult = flattenAWSGroupScalingPolicy(scaleUpPolicies, true)
 			}
 			if err := resourceData.Set(string(ScalingUpPolicy), policiesResult); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingUpPolicy), err)
@@ -32,7 +32,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok {
-				if policies, err := expandAWSGroupScalingPolicies(v, false); err != nil {
+				if policies, err := expandAWSGroupScalingPolicies(v, false, true); err != nil {
 					return err
 				} else {
 					elastigroup.Scaling.SetUp(policies)
@@ -45,7 +45,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var value []*aws.ScalingPolicy = nil
 			if v, ok := resourceData.GetOk(string(ScalingUpPolicy)); ok && v != nil {
-				if policies, err := expandAWSGroupScalingPolicies(v, true); err != nil {
+				if policies, err := expandAWSGroupScalingPolicies(v, true, true); err != nil {
 					return err
 				} else {
 					value = policies
@@ -67,7 +67,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var policiesResult []interface{} = nil
 			if elastigroup.Scaling != nil && elastigroup.Scaling.Down != nil {
 				scaleDownPolicies := elastigroup.Scaling.Down
-				policiesResult = flattenAWSGroupScalingPolicy(scaleDownPolicies)
+				policiesResult = flattenAWSGroupScalingPolicy(scaleDownPolicies, true)
 			}
 			if err := resourceData.Set(string(ScalingDownPolicy), policiesResult); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingDownPolicy), err)
@@ -78,7 +78,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok {
-				if policies, err := expandAWSGroupScalingPolicies(v, false); err != nil {
+				if policies, err := expandAWSGroupScalingPolicies(v, false, true); err != nil {
 					return err
 				} else {
 					elastigroup.Scaling.SetDown(policies)
@@ -91,7 +91,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var value []*aws.ScalingPolicy = nil
 			if v, ok := resourceData.GetOk(string(ScalingDownPolicy)); ok && v != nil {
-				if policies, err := expandAWSGroupScalingPolicies(v, true); err != nil {
+				if policies, err := expandAWSGroupScalingPolicies(v, true, true); err != nil {
 					return err
 				} else {
 					value = policies
@@ -113,7 +113,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var policiesResult []interface{} = nil
 			if elastigroup.Scaling != nil && elastigroup.Scaling.Target != nil {
 				scaleTargetPolicies := elastigroup.Scaling.Target
-				policiesResult = flattenAWSGroupScalingPolicy(scaleTargetPolicies)
+				policiesResult = flattenAWSGroupScalingPolicy(scaleTargetPolicies, false)
 			}
 			if err := resourceData.Set(string(ScalingTargetPolicy), policiesResult); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScalingTargetPolicy), err)
@@ -124,7 +124,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(ScalingTargetPolicy)); ok {
-				if policies, err := expandAWSGroupScalingPolicies(v, false); err != nil {
+				if policies, err := expandAWSGroupScalingPolicies(v, false, false); err != nil {
 					return err
 				} else {
 					elastigroup.Scaling.SetTarget(policies)
@@ -137,7 +137,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			var value []*aws.ScalingPolicy = nil
 			if v, ok := resourceData.GetOk(string(ScalingTargetPolicy)); ok && v != nil {
-				if policies, err := expandAWSGroupScalingPolicies(v, true); err != nil {
+				if policies, err := expandAWSGroupScalingPolicies(v, true, false); err != nil {
 					return err
 				} else {
 					value = policies
@@ -536,7 +536,7 @@ func expandMultipleMetrics(data interface{}) (*aws.MultipleMetrics, error) {
 	return nil, nil
 }
 
-func expandAWSGroupScalingPolicies(data interface{}, nullify bool) ([]*aws.ScalingPolicy, error) {
+func expandAWSGroupScalingPolicies(data interface{}, nullify bool, scalingUpDown bool) ([]*aws.ScalingPolicy, error) {
 	list := data.(*schema.Set).List()
 	policies := make([]*aws.ScalingPolicy, 0, len(list))
 	for _, item := range list {
@@ -567,10 +567,14 @@ func expandAWSGroupScalingPolicies(data interface{}, nullify bool) ([]*aws.Scali
 			policy.SetUnit(spotinst.String(v))
 		}
 
-		if v, ok := m[string(Threshold)].(float64); ok && v > -1 {
-			policy.SetThreshold(spotinst.Float64(v))
-		} else if nullify {
-			policy.SetThreshold(nil)
+		if scalingUpDown {
+
+			if v, ok := m[string(Threshold)].(float64); ok && v > -1 {
+				policy.SetThreshold(spotinst.Float64(v))
+			} else if nullify {
+				policy.SetThreshold(nil)
+			}
+
 		}
 
 		if v, ok := m[string(Operator)].(string); ok && v != "" {
@@ -837,7 +841,7 @@ func expandExpressions(data interface{}) []*aws.Expressions {
 	return expressions
 }
 
-func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
+func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy, scalingUpDown bool) []interface{} {
 	result := make([]interface{}, 0, len(policies))
 	for _, policy := range policies {
 		m := make(map[string]interface{})
@@ -875,7 +879,7 @@ func flattenAWSGroupScalingPolicy(policies []*aws.ScalingPolicy) []interface{} {
 			m[string(Period)] = spotinst.IntValue(policy.Period)
 			m[string(Operator)] = spotinst.StringValue(policy.Operator)
 			m[string(Threshold)] = spotinst.Float64Value(policy.Threshold)
-		} else {
+		} else if scalingUpDown {
 			m[string(Threshold)] = spotinst.Float64(-1)
 		}
 
