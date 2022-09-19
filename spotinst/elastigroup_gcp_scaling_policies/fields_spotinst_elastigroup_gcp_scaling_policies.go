@@ -267,7 +267,7 @@ func expandGCPGroupScalingPolicies(data interface{}) ([]*gcp.ScalingPolicy, erro
 			policy.SetStatistic(spotinst.String(v))
 		}
 
-		if v, ok := m[string(Threshold)].(float64); ok && v > 0 {
+		if v, ok := m[string(Threshold)].(float64); ok && v >= 0 {
 			policy.SetThreshold(spotinst.Float64(v))
 		}
 
