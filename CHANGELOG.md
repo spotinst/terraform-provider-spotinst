@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.84.0 (Sep 19, 2022)
+
+BUG FIXES:
+
+* resource/spotinst_elastigroup_aws: resolved errors with `scaling_policies`
+* * resource/spotinst_elastigroup_azure: resolved errors with `scaling_policies`
+* resource/spotinst_elastigroup_gcp: resolved errors with `scaling_policies`
+
 ## 1.83.0 (Sep 13, 2022)
 
 FEATURES:
