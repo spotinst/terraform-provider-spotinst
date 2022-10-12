@@ -24,7 +24,6 @@ resource "spotinst_ocean_ecs" "example" {
 
     subnet_ids = ["subnet-12345"]
     whitelist = ["t3.medium"]
-  // blacklist = ["t1.micro", "m1.small"]
 
     security_group_ids = ["sg-12345"]
     image_id = "ami-12345"
@@ -104,8 +103,7 @@ The following arguments are supported:
 * `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
     * `key` - (Optional) The tag key.
     * `value` - (Optional) The tag value.
-* `whitelist` - (Optional) Instance types allowed in the Ocean cluster, Cannot be configured if blacklist is configured.
-* `blacklist` - (Optional) Instance types to avoid launching in the Ocean cluster. Cannot be configured if whitelist is configured.
+* `whitelist` - (Optional) Instance types allowed in the Ocean cluster.
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Required) ID of the image used to launch the instances.
 * `security_group_ids` - (Required) One or more security group ids.
