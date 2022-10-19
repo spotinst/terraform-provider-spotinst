@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.85.1 (Oct 19, 2022)
+
+NOTES:
+* documentation: add preferred_spot_types in resource/spotinst_ocean_ecs_launcspec
 ## 1.85.0 (Oct 12, 2022)
 
 NOTES:
