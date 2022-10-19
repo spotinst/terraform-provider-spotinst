@@ -25,6 +25,7 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
       "m4.4xlarge", "m4.2xlarge", "m4.10xlarge", "m4.16xlarge", "m5.large", 
       "m5.xlarge", "m5.2xlarge", "m5.4xlarge", "m5.12xlarge", "m5.24xlarge"
     ]
+  preferred_spot_types = ["m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge"]
   
   block_device_mappings {
         device_name = "/dev/xvda1"
@@ -88,6 +89,7 @@ The following arguments are supported:
 * `security_group_ids` - (Optional) One or more security group ids.
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the Ocean cluster.
+* `preferred_spot_types` - (Optional) When Ocean scales up instances, it takes your preferred types into consideration while maintaining a variety of machine types running for optimized distribution.
 * `restrict_scale_down`- (Optional) Boolean. When set to “True”, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in the array should be a subnet ID.
 
