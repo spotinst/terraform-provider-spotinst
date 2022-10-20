@@ -565,7 +565,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							return false
 						},
 					},
-					},
 					string(MinInstanceCount): {
 						Type:     schema.TypeInt,
 						Optional: true,
@@ -576,7 +575,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							}
 							return false
 						},
-					},
 					},
 				},
 			},
