@@ -1338,6 +1338,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Required: true,
 					},
+					string(DeleteNodes): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 				},
 			},
 		},

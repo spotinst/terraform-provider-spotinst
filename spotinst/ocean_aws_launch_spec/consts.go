@@ -104,6 +104,7 @@ const (
 const (
 	DeleteOptions commons.FieldName = "delete_options"
 	ForceDelete   commons.FieldName = "force_delete"
+	DeleteNodes   commons.FieldName = "delete_nodes"
 )
 
 const (
