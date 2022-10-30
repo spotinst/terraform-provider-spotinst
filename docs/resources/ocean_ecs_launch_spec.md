@@ -53,6 +53,10 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
     cpu_per_unit = 1000
     memory_per_unit = 2048
   }
+  
+  strategy {
+    spot_percentage = 50
+  }
 
   tags {
      key   = "Env"
@@ -110,6 +114,8 @@ The following arguments are supported:
         * `num_of_units` - (Required) The number of units to retain as headroom, where each unit has the defined headroom CPU, memory and GPU.
         * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
         * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+*  `strategy` - (Optional) Similar to a strategy for an Ocean cluster, but applying only to a virtual node group.
+    * `spot_percentage` - (Optional- if not using `spot_percentege` under `ocean strategy`) When set, Ocean will proactively try to maintain as close as possible to the percentage of Spot instances out of all the Virtual Node Group instances.
 
 <a id="block-devices"></a>
 ## Block Devices

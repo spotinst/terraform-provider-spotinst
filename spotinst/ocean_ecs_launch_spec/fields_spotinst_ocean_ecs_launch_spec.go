@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -921,6 +922,101 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Strategy] = commons.NewGenericField(
+		commons.OceanECSLaunchSpec,
+		Strategy,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(SpotPercentage): {
+						Type:         schema.TypeInt,
+						Optional:     true,
+						Default:      -1,
+						ValidateFunc: validation.IntAtLeast(-1),
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.Strategy != nil {
+				strategy := launchSpec.Strategy
+				result = flattenStrategy(strategy)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Strategy), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Strategy), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(Strategy)); ok {
+				if strategy, err := expandStrategy(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetStrategy(strategy)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.ECSLaunchSpecStrategy = nil
+
+			if v, ok := resourceData.GetOk(string(Strategy)); ok {
+				if strategy, err := expandStrategy(v); err != nil {
+					return err
+				} else {
+					value = strategy
+				}
+			}
+			launchSpec.SetStrategy(value)
+			return nil
+		},
+		nil,
+	)
+
+}
+
+func expandStrategy(data interface{}) (*aws.ECSLaunchSpecStrategy, error) {
+	if list := data.(*schema.Set).List(); len(list) > 0 {
+		strategy := &aws.ECSLaunchSpecStrategy{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(SpotPercentage)].(int); ok && v > -1 {
+				strategy.SetSpotPercentage(spotinst.Int(v))
+			} else {
+				strategy.SetSpotPercentage(nil)
+			}
+		}
+		return strategy, nil
+	}
+	return nil, nil
+}
+
+func flattenStrategy(strategy *aws.ECSLaunchSpecStrategy) []interface{} {
+	var out []interface{}
+
+	if strategy != nil {
+		result := make(map[string]interface{})
+
+		if strategy.SpotPercentage != nil {
+			result[string(SpotPercentage)] = spotinst.IntValue(strategy.SpotPercentage)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
