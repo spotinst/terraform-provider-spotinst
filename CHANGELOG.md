@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.86.0 (Oct 31, 2022)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `delete_nodes`
+
+BUG FIXES:
+* resource/spotinst_ocean_aws_launch_spec: resolved errors with `max_instance_count` and `min_instance_count`
+
 ## 1.85.1 (Oct 19, 2022)
 
 NOTES:
