@@ -3,6 +3,9 @@ package spotinst
 import (
 	"errors"
 	"fmt"
+	stdlog "log"
+	"strings"
+
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
@@ -21,8 +24,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/log"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/session"
 	"github.com/spotinst/terraform-provider-spotinst/version"
-	stdlog "log"
-	"strings"
 )
 
 var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +

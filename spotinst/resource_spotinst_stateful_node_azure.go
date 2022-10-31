@@ -3,6 +3,9 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_extension"
@@ -17,8 +20,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_secret"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_strategy"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/stateful_node_azure_vm_sizes"
-	"log"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

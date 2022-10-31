@@ -3,10 +3,11 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -272,6 +273,9 @@ func deleteLaunchSpec(resourceData *schema.ResourceData, meta interface{}) error
 			m := list[0].(map[string]interface{})
 			if force, ok := m[string(ocean_aws_launch_spec.ForceDelete)].(bool); ok {
 				input.ForceDelete = spotinst.Bool(force)
+			}
+			if deleteNodes, ok := m[string(ocean_aws_launch_spec.DeleteNodes)].(bool); ok {
+				input.DeleteNodes = spotinst.Bool(deleteNodes)
 			}
 		}
 	}

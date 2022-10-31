@@ -3,13 +3,14 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"testing"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-	"log"
-	"testing"
 )
 
 func createStatefulNodeAzureV3ResourceName(name string) string {
