@@ -2,6 +2,7 @@ package dataintegration
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"

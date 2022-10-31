@@ -102,6 +102,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   
   delete_options {
     force_delete = true
+    delete_nodes = true
   }
   
   scheduling_task {
@@ -188,6 +189,7 @@ The following arguments are supported:
     * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created Virtual Node Group. The parameter is recommended in case the use_as_template_only (in spotinst_ocean_aws resource) is set to true during Ocean resource creation.
 * `delete_options` - (Optional)
     * `force_delete` - (Optional) When set to `true`, delete even if it is the last Virtual Node Group (also, the default Virtual Node Group must be configured with `useAsTemlateOnly = true`). Should be set at creation or update, but will be used only at deletion.
+    * `delete_nodes` - (Optional) When set to "true", all instances belonging to the deleted launch specification will be drained, detached, and terminated.
 * `scheduling_task` - (Optional) Used to define scheduled tasks such as a manual headroom update.
     * `is_enabled` - (Required) Describes whether the task is enabled. When True, the task runs. When False, it does not run.
     * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ". The cron job runs in UTC time and is in Unix cron format.

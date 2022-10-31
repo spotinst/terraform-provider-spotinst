@@ -2,9 +2,10 @@ package commons
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )

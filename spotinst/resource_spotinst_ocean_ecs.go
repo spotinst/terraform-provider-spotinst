@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"log"

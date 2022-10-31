@@ -2,6 +2,7 @@ package stateful_node_azure_persistence
 
 import (
 	"fmt"
+
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
