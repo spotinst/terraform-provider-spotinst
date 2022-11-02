@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.87.0 (Nov 02, 2022)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `spot_percentage`
+
 ## 1.86.0 (Oct 31, 2022)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `delete_nodes`
