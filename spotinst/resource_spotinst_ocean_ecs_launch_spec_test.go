@@ -192,6 +192,8 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "50"),
 				),
 			},
 			{
@@ -232,6 +234,8 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-02b14c961d7eeba50"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "100"),
 				),
 			},
 		},
@@ -256,6 +260,10 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
     key = "key"
     value = "value"
   }
+
+strategy {
+	spot_percentage = 50
+}
 
 block_device_mappings {
     device_name = "/dev/xvda1"
@@ -295,6 +303,10 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   	key = "key2"
   	value = "value2"
   }
+
+strategy {
+	spot_percentage = 100
+}
 
   block_device_mappings {
         device_name = "/dev/xvda1"

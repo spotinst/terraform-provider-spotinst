@@ -29,6 +29,11 @@ const (
 	RestrictScaleDown  commons.FieldName = "restrict_scale_down"
 	SubnetIDs          commons.FieldName = "subnet_ids"
 	SchedulingTask     commons.FieldName = "scheduling_task"
+	Strategy           commons.FieldName = "strategy"
+)
+
+const (
+	SpotPercentage commons.FieldName = "spot_percentage"
 )
 
 const (
