@@ -1,5 +1,7 @@
 ## Unreleased
-
+BUG FIXES:
+* resource/spotinst_ocean_aws_launch_spec: resolved permanent diff on `max_instance_count` and `min_instance_count` #365
+   
 ## 1.87.0 (Nov 02, 2022)
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs_launch_spec: added `spot_percentage`
