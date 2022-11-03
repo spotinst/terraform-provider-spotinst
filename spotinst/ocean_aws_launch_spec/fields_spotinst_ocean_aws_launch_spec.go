@@ -557,7 +557,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(MaxInstanceCount): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
+						Default:  0,
 						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 							if old == "-1" && new == "null" {
 								return true
@@ -568,7 +568,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(MinInstanceCount): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
+						Default:  0,
 						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 							if old == "-1" && new == "null" {
 								return true

@@ -182,7 +182,7 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 	return template
 }
 
-//region Elastigroup Azure: Baseline
+// region Elastigroup Azure: Baseline
 func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 	groupName := "test-acc-eg-azure-v3-baseline"
 	resourceName := createElastigroupAzureV3ResourceName(groupName)
