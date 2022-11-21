@@ -549,7 +549,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSLaunchConfiguration,
 		ResourceLimits,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -2018,7 +2018,7 @@ func flattenTagSelector(tagSelector *aws.TagSelector) []interface{} {
 }
 
 func expandResourceLimits(data interface{}) (*aws.ResourceLimits, error) {
-	if list := data.(*schema.Set).List(); len(list) > 0 {
+	if list := data.([]interface{}); len(list) > 0 {
 		resLimits := &aws.ResourceLimits{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
