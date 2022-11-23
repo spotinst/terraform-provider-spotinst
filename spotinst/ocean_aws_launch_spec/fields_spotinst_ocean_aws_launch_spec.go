@@ -1995,6 +1995,10 @@ func flattenResourceLimits(resourceLimits *aws.ResourceLimits) []interface{} {
 	if resourceLimits != nil {
 		result := make(map[string]interface{})
 
+		value := spotinst.Int(-1)
+		result[string(MinInstanceCount)] = value
+		result[string(MaxInstanceCount)] = value
+
 		if resourceLimits.MaxInstanceCount != nil {
 			result[string(MaxInstanceCount)] = spotinst.IntValue(resourceLimits.MaxInstanceCount)
 		}
