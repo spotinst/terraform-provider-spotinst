@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.87.1 (Nov 30, 2022)
+
+BUG FIXES:
+
+* resource/spotinst_ocean_aws_launch_spec: resolved errors with `resource_limits`
+* * resource/spotinst_elastigroup_azure: resolved errors with `resource_limits`
+
 ## 1.87.0 (Nov 02, 2022)
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs_launch_spec: added `spot_percentage`
