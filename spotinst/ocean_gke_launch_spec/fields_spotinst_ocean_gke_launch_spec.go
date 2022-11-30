@@ -992,7 +992,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchSpec,
 		ResourceLimits,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -1000,10 +1000,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(MaxInstanceCount): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 					string(MinInstanceCount): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 				},
 			},
@@ -1281,7 +1283,7 @@ func expandStorage(data interface{}) (*gcp.Storage, error) {
 func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 	var resourceLimits *gcp.ResourceLimits
 	updated := 0
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
@@ -1290,14 +1292,18 @@ func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 
 		r := &gcp.ResourceLimits{}
 
-		if v, ok := attr[string(MaxInstanceCount)].(int); ok {
+		if v, ok := attr[string(MaxInstanceCount)].(int); ok && v >= 0 {
 			updated = 1
 			r.SetMaxInstanceCount(spotinst.Int(v))
+		} else {
+			r.SetMaxInstanceCount(nil)
 		}
 
-		if v, ok := attr[string(MinInstanceCount)].(int); ok {
+		if v, ok := attr[string(MinInstanceCount)].(int); ok && v >= 0 {
 			updated = 1
 			r.SetMinInstanceCount(spotinst.Int(v))
+		} else {
+			r.SetMinInstanceCount(nil)
 		}
 
 		resourceLimits = r
@@ -1387,6 +1393,10 @@ func flattenResourceLimits(resourceLimits *gcp.ResourceLimits) []interface{} {
 
 	if resourceLimits != nil {
 		result := make(map[string]interface{})
+
+		value := spotinst.Int(-1)
+		result[string(MinInstanceCount)] = value
+		result[string(MaxInstanceCount)] = value
 
 		if resourceLimits.MaxInstanceCount != nil {
 			result[string(MaxInstanceCount)] = spotinst.IntValue(resourceLimits.MaxInstanceCount)
