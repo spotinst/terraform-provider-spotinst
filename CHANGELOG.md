@@ -5,7 +5,7 @@
 BUG FIXES:
 
 * resource/spotinst_ocean_aws_launch_spec: resolved errors with `resource_limits`
-* * resource/spotinst_elastigroup_azure: resolved errors with `resource_limits`
+* resource/spotinst_ocean_gke_launch_spec: resolved errors with `resource_limits`
 
 ## 1.87.0 (Nov 02, 2022)
 ENHANCEMENTS:
