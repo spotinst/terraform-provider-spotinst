@@ -992,7 +992,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchSpec,
 		ResourceLimits,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -1283,7 +1283,7 @@ func expandStorage(data interface{}) (*gcp.Storage, error) {
 func expandResourceLimits(data interface{}) (*gcp.ResourceLimits, error) {
 	var resourceLimits *gcp.ResourceLimits
 	updated := 0
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
