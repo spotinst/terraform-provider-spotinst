@@ -94,7 +94,7 @@ output "ocean_id" {
 The following arguments are supported:
 
 * `name` - (Required) The Ocean cluster name.
-* `cluster_name` - (Required) The ocean cluster name.
+* `cluster_name` - (Required) The name of the ECS cluster.
 * `region` - (Required) The region the cluster will run in.
 * `max_size` - (Optional, Default: `1000`) The upper limit of instances the cluster can scale up to.
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
