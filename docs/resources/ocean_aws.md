@@ -224,7 +224,7 @@ update_policy {
 ```
 
 <a id="scheduled-task"></a>
-## scheduled task
+## Scheduled Task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional) Toggle the shutdown hours task. (Example: `true`).
@@ -251,7 +251,17 @@ scheduled_task {
 }
 ```
 
+<a id="attributes-reference"></a>
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Cluster ID.
+
+
+<a id="import"></a>
+## Import
+
+Clusters can be imported using the Ocean `id`, e.g.,
+```hcl
+$ terraform import spotinst_ocean_aws.this o-12345678
+```
