@@ -268,9 +268,35 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 				),
 			},
 			{
+				// Reverts to default values if resources in terraform are empty
 				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
 					oceanClusterID: oceanClusterID,
 					fieldsToAppend: testConfigWithIngressEmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", ""),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", ""),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", ""),
+				),
+			},
+			{
+				// Deletes config objects if resources not defined in terraform
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressEmptyFields2,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanSparkExists(&cluster, resourceName),
@@ -522,6 +548,30 @@ const testConfigWithIngressUpdate2 = `
 `
 
 const testConfigWithIngressEmptyFields = `
+ ingress {
+
+	service_annotations = {}
+
+	controller {
+
+    }
+
+	load_balancer {
+	
+	}
+
+	custom_endpoint {
+	
+	}
+
+    private_link {
+	
+	}
+
+ }
+`
+
+const testConfigWithIngressEmptyFields2 = `
  ingress {
 
 	service_annotations = {}

@@ -38,6 +38,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeBool,
 									Optional: true,
 									Computed: false,
+									Default:  true,
 								},
 							},
 						},
@@ -59,6 +60,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeBool,
 									Optional: true,
 									Computed: false,
+									Default:  true,
 								},
 								string(TargetGroupARN): {
 									Type:     schema.TypeString,
@@ -79,6 +81,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeBool,
 									Optional: true,
 									Computed: false,
+									Default:  false,
 								},
 								string(Address): {
 									Type:     schema.TypeString,
@@ -99,6 +102,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeBool,
 									Optional: true,
 									Computed: false,
+									Default:  false,
 								},
 								string(VPCEndpointService): {
 									Type:     schema.TypeString,
@@ -167,22 +171,10 @@ func flattenIngress(ingress *spark.IngressConfig) []interface{} {
 	}
 	result := make(map[string]interface{})
 	result[string(ServiceAnnotations)] = flattenAnnotations(ingress.ServiceAnnotations)
-
-	if ingress.Controller != nil {
-		result[string(Controller)] = flattenController(ingress.Controller)
-	}
-
-	if ingress.LoadBalancer != nil {
-		result[string(LoadBalancer)] = flattenLoadBalancer(ingress.LoadBalancer)
-	}
-
-	if ingress.CustomEndpoint != nil {
-		result[string(CustomEndpoint)] = flattenCustomEndpoint(ingress.CustomEndpoint)
-	}
-
-	if ingress.PrivateLink != nil {
-		result[string(PrivateLink)] = flattenPrivateLink(ingress.PrivateLink)
-	}
+	result[string(Controller)] = flattenController(ingress.Controller)
+	result[string(LoadBalancer)] = flattenLoadBalancer(ingress.LoadBalancer)
+	result[string(CustomEndpoint)] = flattenCustomEndpoint(ingress.CustomEndpoint)
+	result[string(PrivateLink)] = flattenPrivateLink(ingress.PrivateLink)
 
 	return []interface{}{result}
 }
