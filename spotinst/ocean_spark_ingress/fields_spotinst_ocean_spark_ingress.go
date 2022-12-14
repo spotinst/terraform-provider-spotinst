@@ -30,14 +30,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Controller): {
 						Type:     schema.TypeList,
 						Optional: true,
-						Computed: false,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Managed): {
 									Type:     schema.TypeBool,
 									Optional: true,
-									Computed: false,
 									Default:  true,
 								},
 							},
@@ -46,26 +44,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(LoadBalancer): {
 						Type:     schema.TypeList,
 						Optional: true,
-						Computed: false,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(ServiceAnnotations): {
 									Type:     schema.TypeMap,
 									Optional: true,
-									Computed: false,
 									Elem:     &schema.Schema{Type: schema.TypeString},
 								},
 								string(Managed): {
 									Type:     schema.TypeBool,
 									Optional: true,
-									Computed: false,
 									Default:  true,
 								},
 								string(TargetGroupARN): {
 									Type:     schema.TypeString,
 									Optional: true,
-									Computed: false,
 								},
 							},
 						},
@@ -73,20 +67,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(CustomEndpoint): {
 						Type:     schema.TypeList,
 						Optional: true,
-						Computed: false,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Enabled): {
 									Type:     schema.TypeBool,
 									Optional: true,
-									Computed: false,
 									Default:  false,
 								},
 								string(Address): {
 									Type:     schema.TypeString,
 									Optional: true,
-									Computed: false,
 								},
 							},
 						},
@@ -94,20 +85,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(PrivateLink): {
 						Type:     schema.TypeList,
 						Optional: true,
-						Computed: false,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Enabled): {
 									Type:     schema.TypeBool,
 									Optional: true,
-									Computed: false,
 									Default:  false,
 								},
 								string(VPCEndpointService): {
 									Type:     schema.TypeString,
 									Optional: true,
-									Computed: false,
 								},
 							},
 						},
