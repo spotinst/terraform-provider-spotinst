@@ -44,8 +44,32 @@ resource "spotinst_ocean_aws" "example" {
   desired_capacity = 2
 
   subnet_ids = ["subnet-123456789"]
+  
+  //region INSTANCETYPES
   whitelist  = ["t1.micro", "m1.small"]
   // blacklist = ["t1.micro", "m1.small"]
+  // region FILTERS
+  architectures         =   ["x86_64", "i386"]
+  categories            =   ["Accelerated_computing", "Compute_optimized"]
+  diskTypes             =   ["EBS", "SSD"]
+  excludeFamilies       =   ["m*"]
+  excludeMetal          =   flase
+  hypervisor            =   ["xen"]
+  includeFamilies       =   ["c*", "t*"]
+  isEnaSupported        =   false
+  maxGpu                =   4
+  minGpu                =   0
+  maxMemoryGiB          =   16
+  maxNetworkPerformance =   20
+  maxVcpu               =   16
+  minEnis               =   2
+  minMemoryGiB          =   8
+  minNetworkPerformance =   2
+  minVcpu               =   2
+  rootDeviceTypes       =   ["ebs"]
+  virtualizationTypes   =   ["hvm"]
+  
+  
 
   // region LAUNCH CONFIGURATION
   image_id                    = "ami-123456"
@@ -114,8 +138,29 @@ The following arguments are supported:
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster.
 * `subnet_ids` - (Required) A comma-separated list of subnet identifiers for the Ocean cluster. Subnet IDs should be configured with auto assign public IP.
-* `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if `blacklist` is configured.
-* `blacklist` - (Optional) Instance types not allowed in the Ocean cluster. Cannot be configured if `whitelist` is configured.
+* `instanceTypes` - (Optional) The type of instances that may or may not be a part of the Ocean cluster.
+  * `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if `blacklist` is configured.
+  * `blacklist` - (Optional) Instance types not allowed in the Ocean cluster. Cannot be configured if `whitelist` is configured.
+  * `filters` - (Optional) List of filters. The Instance types that match with all filters compose the Ocean's whitelist parameter. Cannot be configured together with whitelist/blacklist.
+    * `architectures` - (Optional) The filtered instance types will support at least one of the architectures from this list.
+    * `categories` - (Optional) The filtered instance types will belong to one of the categories types from this list.
+    * `diskTypes` - (Optional) The filtered instance types will have one of the disk type from this list.
+    * `excludeFamilies` - (Optional) Types belonging to a family from the ExcludeFamilies will not be available for scaling (asterisk wildcard is also supported). For example, C* will exclude instance types from these families: c5, c4, c4a, etc.
+    * `excludeMetal` - (Optional, Default: false) In case excludeMetal is set to true, metal types will not be available for scaling.
+    * `hypervisor` - (Optional) The filtered instance types will have a hypervisor type from this list.
+    * `includeFamilies` - (Optional) Types belonging to a family from the IncludeFamilies will be available for scaling (asterisk wildcard is also supported). For example, C* will include instance types from these families: c5, c4, c4a, etc.
+    * `isEnaSupported` - (Optional) Ena is supported or not.
+    * `maxGpu` - (Optional) Maximum total number of GPUs.
+    * `maxMemoryGiB` - (Optional) Maximum amount of Memory (GiB).
+    * `maxNetworkPerformance` - (Optional) Maximum Bandwidth in Gib/s of network performance.
+    * `maxVcpu` - (Optional) Maximum number of vcpus available.
+    * `minEnis` - (Optional) Minimum number of network interfaces (ENIs).
+    * `minGpu` - (Optional) Minimum total number of GPUs.
+    * `minMemoryGiB` - (Optional) Minimum amount of Memory (GiB).
+    * `minNetworkPerformance` - (Optional) Minimum Bandwidth in Gib/s of network performance.
+    * `minVcpu` - (Optional) Minimum number of vcpus available.
+    * `rootDeviceTypes` - (Optional) The filtered instance types will have a root device types from this list.
+    * `virtualizationTypes` - (Optional) The filtered instance types will support at least one of the virtualization types from this list.
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Required) ID of the image used to launch the instances.
 * `security_groups` - (Required) One or more security group ids.
