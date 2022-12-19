@@ -3,7 +3,7 @@ layout: "spotinst"
 page_title: "Spotinst: ocean_spark"
 subcategory: "Ocean"
 description: |-
-Provides a Spotinst Ocean Spark resource.
+  Provides a Spotinst Ocean Spark resource.
 ---
 
 # spotinst\_ocean\_spark
