@@ -15,7 +15,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSInstanceTypes,
 		Whitelist,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
@@ -36,7 +36,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Whitelist)); ok {
-				if whitelist, err := expandInstanceTypeParameterList(v); err != nil {
+				if whitelist, err := expandInstanceTypeList(v); err != nil {
 					return err
 				} else {
 					cluster.Compute.InstanceTypes.SetWhitelist(whitelist)
@@ -48,7 +48,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Whitelist)); ok {
-				if whitelist, err := expandInstanceTypeParameterList(v); err != nil {
+				if whitelist, err := expandInstanceTypeList(v); err != nil {
 					return err
 				} else {
 					cluster.Compute.InstanceTypes.SetWhitelist(whitelist)
@@ -66,7 +66,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSInstanceTypes,
 		Blacklist,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
@@ -87,7 +87,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				if blacklist, err := expandInstanceTypeParameterList(v); err != nil {
+				if blacklist, err := expandInstanceTypeList(v); err != nil {
 					return err
 				} else {
 					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
@@ -99,7 +99,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				if blacklist, err := expandInstanceTypeParameterList(v); err != nil {
+				if blacklist, err := expandInstanceTypeList(v); err != nil {
 					return err
 				} else {
 					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
@@ -291,7 +291,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(Architectures)]; ok {
-		architectures, err := expandInstanceTypeParameterList(v)
+		architectures, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -305,7 +305,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	}
 
 	if v, ok := m[string(Categories)]; ok {
-		categories, err := expandInstanceTypeParameterList(v)
+		categories, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -319,7 +319,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	}
 
 	if v, ok := m[string(DiskTypes)]; ok {
-		diskTypes, err := expandInstanceTypeParameterList(v)
+		diskTypes, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -333,7 +333,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	}
 
 	if v, ok := m[string(ExcludeFamilies)]; ok {
-		excludeFamilies, err := expandInstanceTypeParameterList(v)
+		excludeFamilies, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -347,7 +347,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	}
 
 	if v, ok := m[string(Hypervisor)]; ok {
-		hypervisor, err := expandInstanceTypeParameterList(v)
+		hypervisor, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -365,7 +365,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	}
 
 	if v, ok := m[string(IncludeFamilies)]; ok {
-		includeFamilies, err := expandInstanceTypeParameterList(v)
+		includeFamilies, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -419,7 +419,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	}
 
 	if v, ok := m[string(RootDeviceTypes)]; ok {
-		rootDevicetypes, err := expandInstanceTypeParameterList(v)
+		rootDevicetypes, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -433,7 +433,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	}
 
 	if v, ok := m[string(VirtualizationTypes)]; ok {
-		virtualizationtypes, err := expandInstanceTypeParameterList(v)
+		virtualizationtypes, err := expandInstanceTypeFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -449,7 +449,19 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 	return filters, nil
 }
 
-func expandInstanceTypeParameterList(data interface{}) ([]string, error) {
+func expandInstanceTypeList(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if instanceTypeList, ok := v.(string); ok && instanceTypeList != "" {
+			result = append(result, instanceTypeList)
+		}
+	}
+	return result, nil
+}
+
+func expandInstanceTypeFiltersList(data interface{}) ([]string, error) {
 	list := data.(*schema.Set).List()
 	result := make([]string, 0, len(list))
 
