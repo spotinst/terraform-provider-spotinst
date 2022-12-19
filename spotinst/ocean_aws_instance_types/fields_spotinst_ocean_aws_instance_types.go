@@ -15,7 +15,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSInstanceTypes,
 		Whitelist,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
@@ -66,7 +66,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSInstanceTypes,
 		Blacklist,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
@@ -87,10 +87,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Blacklist)); ok {
-				if whitelist, err := expandInstanceTypeParameterList(v); err != nil {
+				if blacklist, err := expandInstanceTypeParameterList(v); err != nil {
 					return err
 				} else {
-					cluster.Compute.InstanceTypes.SetBlacklist(whitelist)
+					cluster.Compute.InstanceTypes.SetBlacklist(blacklist)
 				}
 			}
 			return nil
@@ -125,25 +125,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 
 					string(Architectures): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 
 					string(Categories): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 
 					string(DiskTypes): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 
 					string(ExcludeFamilies): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
@@ -155,13 +155,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(Hypervisor): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 
 					string(IncludeFamilies): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
@@ -217,13 +217,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(RootDeviceTypes): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 
 					string(VirtualizationTypes): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
@@ -450,7 +450,7 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 }
 
 func expandInstanceTypeParameterList(data interface{}) ([]string, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
