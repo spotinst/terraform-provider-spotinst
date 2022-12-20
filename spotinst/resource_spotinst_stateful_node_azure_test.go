@@ -1118,7 +1118,7 @@ const testSchedulingStatefulNodeAzureV3Config_EmptyFields = ``
 
 //endregion
 
-//region Stateful Node Azure : Tag
+// region Stateful Node Azure : Tag
 func TestAccSpotinstStatefulNodeAzureV3_Tag(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
@@ -1185,7 +1185,7 @@ const testTagStatefulNodeAzureV3Config_EmptyFields = ``
 
 //endregion
 
-//region Stateful Node Azure : Extensions
+// region Stateful Node Azure : Extensions
 func TestAccSpotinstStatefulNodeAzureV3_Extensions(t *testing.T) {
 	statefulNodeName := "terraform-tests-do-not-delete"
 	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)

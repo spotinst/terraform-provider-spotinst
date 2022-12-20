@@ -4,7 +4,7 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//Network
+// Network
 const (
 	Network            commons.FieldName = "network"
 	VirtualNetworkName commons.FieldName = "virtual_network_name"
@@ -12,7 +12,7 @@ const (
 	NetworkInterface   commons.FieldName = "network_interface"
 )
 
-//NetworkInterfaces
+// NetworkInterfaces
 const (
 	SubnetName                 commons.FieldName = "subnet_name"
 	AssignPublicIP             commons.FieldName = "assign_public_ip"
