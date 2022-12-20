@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.88.0 (Dec 19, 2022)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_instance_types: added `filters`
+
 ## 1.87.1 (Nov 30, 2022)
 
 BUG FIXES:
