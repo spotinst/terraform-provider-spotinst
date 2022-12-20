@@ -51,25 +51,25 @@ resource "spotinst_ocean_aws" "example" {
     //blacklist = ["t1.micro", "m1.small"]
     
     filters {
-      architectures         =   ["x86_64", "i386"]
-      categories            =   ["Accelerated_computing", "Compute_optimized"]
-      disk_types             =   ["EBS", "SSD"]
-      exclude_families       =   ["m*"]
-      exclude_metal          =   flase
-      hypervisor            =   ["xen"]
-      include_families       =   ["c*", "t*"]
-      is_ena_supported        =   false
-      max_gpu                =   4
-      min_gpu                =   0
-      max_memory_gib          =   16
-      max_network_performance =   20
-      max_vcpu               =   16
-      min_enis               =   2
-      min_memory_gib          =   8
-      min_network_performance =   2
-      min_vcpu               =   2
-      root_device_types       =   ["ebs"]
-      virtualization_types   =   ["hvm"] 
+      architectures             =   ["x86_64", "i386"]
+      categories                =   ["Accelerated_computing", "Compute_optimized"]
+      disk_types                =   ["EBS", "SSD"]
+      exclude_families          =   ["m*"]
+      exclude_metal             =   false
+      hypervisor                =   ["xen"]
+      include_families          =   ["c*", "t*"]
+      is_ena_supported          =   false
+      max_gpu                   =   4
+      min_gpu                   =   0
+      max_memory_gib            =   16
+      max_network_performance   =   20
+      max_vcpu                  =   16
+      min_enis                  =   2
+      min_memory_gib            =   8
+      min_network_performance   =   2
+      min_vcpu                  =   2
+      root_device_types         =   ["ebs"]
+      virtualization_types      =   ["hvm"] 
     }
   }
   
