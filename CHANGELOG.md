@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.90.0 (Dec 20, 2022)
+NOTES:
+* documentation: resource/spotinst_ocean_aws_instance_types: update `filters`
+
 ## 1.89.0 (Dec 20, 2022)
 ENHANCEMENTS:
 * resource/spotinst_ocean_spark: added cluster ingress configs
