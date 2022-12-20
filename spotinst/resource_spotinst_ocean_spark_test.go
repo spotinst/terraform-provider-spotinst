@@ -195,6 +195,20 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-1", "my-annotation-value-1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", "some-test-target-group-arn"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-1", "my-lb-service-annotation-value-1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-2", "my-lb-service-annotation-value-2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "test-custom-endpoint-address"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service"),
 				),
 			},
 			{
@@ -210,9 +224,51 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2-updated"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-3", "my-annotation-value-3"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-new-annotation", "my-new-annotation-value"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", "some-test-target-group-arn-active"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-1", "my-lb-service-annotation-value-1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-3", "my-lb-service-annotation-value-3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "test-custom-endpoint-address-active"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service"),
 				),
 			},
 			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressUpdate2,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2-updated"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-3", "my-annotation-value-3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-new-annotation", "my-new-annotation-value"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", "some-test-target-group-arn-inactive"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "test-custom-endpoint-address-inactive"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service-active"),
+				),
+			},
+			{
+				// Reverts to default values if resources in terraform are empty
 				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
 					oceanClusterID: oceanClusterID,
 					fieldsToAppend: testConfigWithIngressEmptyFields,
@@ -222,6 +278,35 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", ""),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", ""),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", ""),
+				),
+			},
+			{
+				// Deletes config objects if resources not defined in terraform
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressEmptyFields2,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "0"),
 				),
 			},
 		},
@@ -370,6 +455,29 @@ const testConfigWithIngressCreate = `
      my-annotation-2 = "my-annotation-value-2"
 	}
 
+	controller {
+	 managed = true
+    }
+
+	load_balancer {
+	 managed = true
+     target_group_arn = "some-test-target-group-arn"
+	 service_annotations = {
+      my-lb-service-annotation-1 = "my-lb-service-annotation-value-1"
+      my-lb-service-annotation-2 = "my-lb-service-annotation-value-2"
+	 }
+	}
+
+	custom_endpoint {
+	 enabled = false
+	 address = "test-custom-endpoint-address"
+	}
+
+    private_link {
+	 enabled = false
+	 vpc_endpoint_service = "test-vpc-endpoint-service"
+	}
+
  }
 `
 
@@ -382,10 +490,88 @@ const testConfigWithIngressUpdate = `
      my-annotation-3 = "my-annotation-value-3"
 	}
 
+	controller {
+	 managed = true
+    }
+
+	load_balancer {
+	 managed = false
+     target_group_arn = "some-test-target-group-arn-active"
+	 service_annotations = {
+      my-lb-service-annotation-1 = "my-lb-service-annotation-value-1"
+      my-lb-service-annotation-3 = "my-lb-service-annotation-value-3"
+	 }
+	}
+
+	custom_endpoint {
+	 enabled = true
+	 address = "test-custom-endpoint-address-active"
+	}
+
+    private_link {
+	 enabled = false
+	 vpc_endpoint_service = "test-vpc-endpoint-service"
+	}
+
+ }
+`
+
+const testConfigWithIngressUpdate2 = `
+ ingress {
+
+    service_annotations = {
+     my-new-annotation = "my-new-annotation-value"
+     my-annotation-2 = "my-annotation-value-2-updated"
+     my-annotation-3 = "my-annotation-value-3"
+	}
+
+	controller {
+	 managed = false
+    }
+
+	load_balancer {
+	 managed = false
+     target_group_arn = "some-test-target-group-arn-inactive"
+	}
+
+	custom_endpoint {
+	 enabled = false
+	 address = "test-custom-endpoint-address-inactive"
+	}
+
+    private_link {
+	 enabled = true
+	 vpc_endpoint_service = "test-vpc-endpoint-service-active"
+	}
+
  }
 `
 
 const testConfigWithIngressEmptyFields = `
+ ingress {
+
+	service_annotations = {}
+
+	controller {
+
+    }
+
+	load_balancer {
+	
+	}
+
+	custom_endpoint {
+	
+	}
+
+    private_link {
+	
+	}
+
+ }
+`
+
+const testConfigWithIngressEmptyFields2 = `
  ingress {
 
 	service_annotations = {}
