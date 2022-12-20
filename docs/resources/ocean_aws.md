@@ -45,29 +45,33 @@ resource "spotinst_ocean_aws" "example" {
 
   subnet_ids = ["subnet-123456789"]
   
-  //region INSTANCETYPES
-  whitelist  = ["t1.micro", "m1.small"]
-  // blacklist = ["t1.micro", "m1.small"]
-  // region FILTERS
-  architectures         =   ["x86_64", "i386"]
-  categories            =   ["Accelerated_computing", "Compute_optimized"]
-  diskTypes             =   ["EBS", "SSD"]
-  excludeFamilies       =   ["m*"]
-  excludeMetal          =   flase
-  hypervisor            =   ["xen"]
-  includeFamilies       =   ["c*", "t*"]
-  isEnaSupported        =   false
-  maxGpu                =   4
-  minGpu                =   0
-  maxMemoryGiB          =   16
-  maxNetworkPerformance =   20
-  maxVcpu               =   16
-  minEnis               =   2
-  minMemoryGiB          =   8
-  minNetworkPerformance =   2
-  minVcpu               =   2
-  rootDeviceTypes       =   ["ebs"]
-  virtualizationTypes   =   ["hvm"]
+  instanceTypes {
+    //whitelist  = ["t1.micro", "m1.small"]
+    
+    //blacklist = ["t1.micro", "m1.small"]
+    
+    filters {
+      architectures         =   ["x86_64", "i386"]
+      categories            =   ["Accelerated_computing", "Compute_optimized"]
+      diskTypes             =   ["EBS", "SSD"]
+      excludeFamilies       =   ["m*"]
+      excludeMetal          =   flase
+      hypervisor            =   ["xen"]
+      includeFamilies       =   ["c*", "t*"]
+      isEnaSupported        =   false
+      maxGpu                =   4
+      minGpu                =   0
+      maxMemoryGiB          =   16
+      maxNetworkPerformance =   20
+      maxVcpu               =   16
+      minEnis               =   2
+      minMemoryGiB          =   8
+      minNetworkPerformance =   2
+      minVcpu               =   2
+      rootDeviceTypes       =   ["ebs"]
+      virtualizationTypes   =   ["hvm"] 
+    }
+  }
   
   
 
