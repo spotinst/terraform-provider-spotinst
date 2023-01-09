@@ -143,12 +143,25 @@ The following arguments are supported:
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
+* `block_device_mappings` - (Optional) Object. Array list of block devices that are exposed to the instance, specify either virtual devices and EBS volumes.
+    * `device_name` - (Optional) String. Set device name. (Example: `/dev/xvda`).
+    * `ebs`- (Optional) Object. Set Elastic Block Store properties .
+        * `delete_on_termination` - (Optional) Boolean. Flag to delete the EBS on instance termination.
+        * `encrypted` - (Optional) Boolean. Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
+        * `iops` - (Required for requests to create io1 volumes; it is not used in requests to create `gp2`, `st1`, `sc1`, or standard volumes) Int. The number of I/O operations per second (IOPS) that the volume supports.
+        * `kms_key_id` - (Optional) String. Identifier (key ID, key alias, ID ARN, or alias ARN) for a customer managed CMK under which the EBS volume is encrypted.
+        * `snapshot_id` - (Optional) (Optional) String. The Snapshot ID to mount by.
+        * `volume_type` - (Optional, Default: `"standard"`) String. The type of the volume. (Example: `gp2`).
+        * `volume_size` - (Optional) Int. The size, in GB of the volume.
+        * `throughput` - (Optional) The amount of data transferred to or from a storage device per second, you can use this param just in a case that `volume_type` = `gp3`.
+        * `dynamic_volume_size` - (Optional) Object. Set dynamic volume size properties. When using this object, you cannot use volumeSize. You must use one or the other.
+            * `base_size`- (Required) Int. Initial size for volume. (Example: 50)
+            * `resource`- (Required) String. Resource type to increase volume size dynamically by. (Valid values: `CPU`)
+            * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: `baseSize=50`, `sizePerResourceUnit=20`, and instance with 2 CPU is launched; its total disk size will be: 90GB).
 * `logging` - (Optional) Logging configuration.
     * `export` - (Optional) Logging Export configuration.
         * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
             * `id` - (Required) The identifier of The S3 data integration to export the logs to.
-
-<a id="auto-scaler"></a>
 ## Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes Auto Scaler.
     * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Auto Scaler.
