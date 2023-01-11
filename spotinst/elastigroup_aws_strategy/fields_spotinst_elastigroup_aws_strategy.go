@@ -463,7 +463,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ConsiderODPricing,
 		&schema.Schema{
 			Type:     schema.TypeBool,
-			Required: true,
+			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
