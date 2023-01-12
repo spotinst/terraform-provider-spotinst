@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.91.0 (Jan 12, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added consider od pricing
+
 ## 1.90.0 (Dec 20, 2022)
 NOTES:
 * documentation: resource/spotinst_ocean_aws_instance_types: update `filters`
