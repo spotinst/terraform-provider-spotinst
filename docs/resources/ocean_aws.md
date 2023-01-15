@@ -104,6 +104,9 @@ resource "spotinst_ocean_aws" "example" {
   grace_period               = 600
   spot_percentage            = 100
   utilize_commitments        = false
+  cluster_orientation{
+    availability_vs_cost="cheapset"
+  }
   // endregion
 
   tags {
@@ -192,6 +195,8 @@ The following arguments are supported:
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
+* `cluster_orientation` - (Optional) Ocean is designed to take advantage of costs savings without compromising availability.
+    * `availability_vs_cost` - (Optional, Default: `balanced`) How Ocean cluster determines which instances to add and replace.
 * `logging` - (Optional) Logging configuration.
     * `export` - (Optional) Logging Export configuration.
         * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
