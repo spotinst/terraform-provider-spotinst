@@ -300,6 +300,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(AvailabilityVsCost): {
 						Type:     schema.TypeString,
 						Optional: true,
+						Default:  "balanced",
 					},
 				},
 			},
