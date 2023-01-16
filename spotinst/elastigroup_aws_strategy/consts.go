@@ -19,4 +19,5 @@ const (
 	TerminationPolicy           commons.FieldName = "termination_policy"
 	UtilizeCommitments          commons.FieldName = "utilize_commitments"
 	MinimumInstanceLifetime     commons.FieldName = "minimum_instance_lifetime"
+	ConsiderODPricing           commons.FieldName = "consider_od_pricing"
 )
