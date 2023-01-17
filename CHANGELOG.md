@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.93.0 (Jan 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `immediate_od_recover_threshold`
+
 ## 1.92.0 (Jan 17, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `cluster_orientation`
