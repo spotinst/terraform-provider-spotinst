@@ -11,6 +11,8 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
-	github.com/spotinst/spotinst-sdk-go v1.138.0
+	github.com/spotinst/spotinst-sdk-go v1.334.0
+	github.com/stretchr/testify v1.8.1 // indirect
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
+	gopkg.in/ini.v1 v1.67.0 // indirect
 )
