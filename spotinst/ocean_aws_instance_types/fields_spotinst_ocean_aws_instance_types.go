@@ -2,7 +2,6 @@ package ocean_aws_instance_types
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -15,7 +14,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSInstanceTypes,
 		Whitelist,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type: schema.TypeList,
+
 			Optional: true,
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
@@ -167,53 +167,62 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(IsEnaSupported): {
-						Type:     schema.TypeBool,
+						Type:     schema.TypeString,
 						Optional: true,
 					},
 
 					string(MaxGpu): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MaxMemoryGiB): {
 						Type:     schema.TypeFloat,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MaxNetworkPerformance): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MaxVcpu): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MinEnis): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MinGpu): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MinMemoryGiB): {
 						Type:     schema.TypeFloat,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MinNetworkPerformance): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MinVcpu): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(RootDeviceTypes): {
@@ -378,43 +387,49 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 		}
 	}
 
-	if v, ok := m[string(IsEnaSupported)].(bool); ok {
-		filters.SetIsEnaSupported(spotinst.Bool(v))
+	if v, ok := m[string(IsEnaSupported)].(string); ok && v != "" {
+		if v == "true" {
+			filters.SetIsEnaSupported(spotinst.Bool(true))
+		} else if v == "false" {
+			filters.SetIsEnaSupported(spotinst.Bool(false))
+		}
 	}
 
-	if v, ok := m[string(MaxGpu)].(int); ok && v > 0 {
+	if v, ok := m[string(MaxGpu)].(int); ok && v >= 1 {
 		filters.SetMaxGpu(spotinst.Int(v))
 	}
 
-	if v, ok := m[string(MaxMemoryGiB)].(float64); ok && v > 0 {
+	if v, ok := m[string(MaxMemoryGiB)].(float64); ok && v >= 0 {
 		filters.SetMaxMemoryGiB(spotinst.Float64(v))
 	}
 
-	if v, ok := m[string(MaxNetworkPerformance)].(int); ok && v > 0 {
+	if v, ok := m[string(MaxNetworkPerformance)].(int); ok && v >= 1 {
 		filters.SetMaxNetworkPerformance(spotinst.Int(v))
 	}
 
-	if v, ok := m[string(MaxVcpu)].(int); ok && v > 0 {
+	if v, ok := m[string(MaxVcpu)].(int); ok && v >= 1 {
 		filters.SetMaxVcpu(spotinst.Int(v))
 	}
 
-	if v, ok := m[string(MinEnis)].(int); ok && v > 0 {
+	if v, ok := m[string(MinEnis)].(int); ok && v >= 0 {
 		filters.SetMinEnis(spotinst.Int(v))
 	}
 
-	if v, ok := m[string(MinGpu)].(int); ok && v > 0 {
+	if v, ok := m[string(MinGpu)].(int); ok && v >= 0 {
 		filters.SetMinGpu(spotinst.Int(v))
 	}
 
-	if v, ok := m[string(MinMemoryGiB)].(float64); ok && v > 0 {
+	if v, ok := m[string(MinMemoryGiB)].(float64); ok && v >= 0 {
 		filters.SetMinMemoryGiB(spotinst.Float64(v))
+	} else {
+		filters.SetMinMemoryGiB(nil)
 	}
 
-	if v, ok := m[string(MinNetworkPerformance)].(int); ok && v > 0 {
+	if v, ok := m[string(MinNetworkPerformance)].(int); ok && v >= 0 {
 		filters.SetMinNetworkPerformance(spotinst.Int(v))
 	}
 
-	if v, ok := m[string(MinVcpu)].(int); ok && v > 0 {
+	if v, ok := m[string(MinVcpu)].(int); ok && v >= 0 {
 		filters.SetMinVcpu(spotinst.Int(v))
 	}
 
@@ -480,7 +495,6 @@ func flattenFilters(filters *aws.Filters) []interface{} {
 		result := make(map[string]interface{})
 
 		result[string(ExcludeMetal)] = spotinst.BoolValue(filters.ExcludeMetal)
-		result[string(IsEnaSupported)] = spotinst.BoolValue(filters.IsEnaSupported)
 		result[string(MaxGpu)] = spotinst.IntValue(filters.MaxGpu)
 		result[string(MinGpu)] = spotinst.IntValue(filters.MinGpu)
 		result[string(MaxMemoryGiB)] = spotinst.Float64Value(filters.MaxMemoryGiB)
@@ -490,6 +504,16 @@ func flattenFilters(filters *aws.Filters) []interface{} {
 		result[string(MaxNetworkPerformance)] = spotinst.IntValue(filters.MaxNetworkPerformance)
 		result[string(MinNetworkPerformance)] = spotinst.IntValue(filters.MinNetworkPerformance)
 		result[string(MinEnis)] = spotinst.IntValue(filters.MinEnis)
+
+		if filters.IsEnaSupported != nil {
+			if *filters.IsEnaSupported == true {
+				b := "true"
+				result[string(IsEnaSupported)] = b
+			} else {
+				b := "false"
+				result[string(IsEnaSupported)] = b
+			}
+		}
 
 		if filters.Architectures != nil {
 			result[string(Architectures)] = filters.Architectures
