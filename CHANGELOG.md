@@ -1,5 +1,21 @@
 ## Unreleased
 
+## 1.94.0 (Jan 17, 2023)
+NOTES:
+* documentation: resource/spotinst_elastigroup_gcp: corrected example usage
+
+## 1.93.0 (Jan 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `immediate_od_recover_threshold`
+
+## 1.92.0 (Jan 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `cluster_orientation`
+
+## 1.91.0 (Jan 12, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `consider_od_pricing`
+
 ## 1.90.0 (Dec 20, 2022)
 NOTES:
 * documentation: resource/spotinst_ocean_aws_instance_types: update `filters`
