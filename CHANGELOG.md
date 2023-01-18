@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.95.0 (Jan 18, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `filter`
+* resource/spotinst_ocean_ecs: updated `isEnaSupported`
+
 ## 1.94.0 (Jan 17, 2023)
 NOTES:
 * documentation: resource/spotinst_elastigroup_gcp: corrected example usage
