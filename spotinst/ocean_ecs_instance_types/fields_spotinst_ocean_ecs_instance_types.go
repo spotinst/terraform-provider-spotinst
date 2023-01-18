@@ -66,9 +66,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanECSInstanceTypes,
 		Blacklist,
 		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     &schema.Schema{Type: schema.TypeString},
+			Type:          schema.TypeList,
+			Optional:      true,
+			Elem:          &schema.Schema{Type: schema.TypeString},
+			ConflictsWith: []string{string(Whitelist)},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
@@ -397,38 +398,56 @@ func expandFilters(data interface{}, nullify bool) (*aws.ECSFilters, error) {
 
 	if v, ok := m[string(MaxGpu)].(int); ok && v >= 1 {
 		filters.SetMaxGpu(spotinst.Int(v))
+	} else {
+		filters.SetMaxGpu(nil)
 	}
 
 	if v, ok := m[string(MaxMemoryGiB)].(float64); ok && v >= 0 {
 		filters.SetMaxMemoryGiB(spotinst.Float64(v))
+	} else {
+		filters.SetMaxMemoryGiB(nil)
 	}
 
 	if v, ok := m[string(MaxNetworkPerformance)].(int); ok && v >= 1 {
 		filters.SetMaxNetworkPerformance(spotinst.Int(v))
+	} else {
+		filters.SetMaxNetworkPerformance(nil)
 	}
 
 	if v, ok := m[string(MaxVcpu)].(int); ok && v >= 1 {
 		filters.SetMaxVcpu(spotinst.Int(v))
+	} else {
+		filters.SetMaxVcpu(nil)
 	}
 
 	if v, ok := m[string(MinEnis)].(int); ok && v >= 0 {
 		filters.SetMinEnis(spotinst.Int(v))
+	} else {
+		filters.SetMinEnis(nil)
 	}
 
 	if v, ok := m[string(MinGpu)].(int); ok && v >= 0 {
 		filters.SetMinGpu(spotinst.Int(v))
+	} else {
+		filters.SetMinGpu(nil)
 	}
 
 	if v, ok := m[string(MinMemoryGiB)].(float64); ok && v >= 0 {
 		filters.SetMinMemoryGiB(spotinst.Float64(v))
+	} else {
+		filters.SetMinMemoryGiB(nil)
 	}
 
 	if v, ok := m[string(MinNetworkPerformance)].(int); ok && v >= 0 {
 		filters.SetMinNetworkPerformance(spotinst.Int(v))
+	} else {
+		filters.SetMinNetworkPerformance(nil)
 	}
 
 	if v, ok := m[string(MinVcpu)].(int); ok && v >= 0 {
 		filters.SetMinVcpu(spotinst.Int(v))
+	} else {
+		filters.SetMinVcpu(nil)
 	}
 
 	if v, ok := m[string(RootDeviceTypes)]; ok {
