@@ -190,7 +190,7 @@ func deleteGKELaunchSpecImport(resourceData *schema.ResourceData, meta interface
 	return nil
 }
 
-//region Import Ocean GKE Launch Spec
+// region Import Ocean GKE Launch Spec
 func importOceanGKELaunchSpec(resourceData *schema.ResourceData, meta interface{}) (*gcp.LaunchSpec, error) {
 	input := &gcp.ImportOceanGKELaunchSpecInput{
 		OceanId:      spotinst.String(resourceData.Get("ocean_id").(string)),

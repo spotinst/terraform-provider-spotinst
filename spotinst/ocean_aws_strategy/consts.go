@@ -11,4 +11,6 @@ const (
 	DrainingTimeout          commons.FieldName = "draining_timeout"
 	GracePeriod              commons.FieldName = "grace_period"
 	UtilizeCommitments       commons.FieldName = "utilize_commitments"
+	ClusterOrientation       commons.FieldName = "cluster_orientation"
+	AvailabilityVsCost       commons.FieldName = "availability_vs_cost"
 )

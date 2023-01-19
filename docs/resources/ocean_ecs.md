@@ -23,7 +23,33 @@ resource "spotinst_ocean_ecs" "example" {
     desired_capacity = "0" 
 
     subnet_ids = ["subnet-12345"]
-    whitelist = ["t3.medium"]
+    instanceTypes {
+    //whitelist  = ["c3.large", "m4.large"]
+    
+    //blacklist = ["t1.micro", "m1.small"]
+    
+    filters {
+      architectures             =   ["x86_64", "i386"]
+      categories                =   ["Accelerated_computing", "Compute_optimized"]
+      disk_types                =   ["EBS", "SSD"]
+      exclude_families          =   ["m*"]
+      exclude_metal             =   false
+      hypervisor                =   ["xen"]
+      include_families          =   ["c*", "t*"]
+      is_ena_supported          =   false
+      max_gpu                   =   4
+      min_gpu                   =   0
+      max_memory_gib            =   16
+      max_network_performance   =   20
+      max_vcpu                  =   16
+      min_enis                  =   2
+      min_memory_gib            =   8
+      min_network_performance   =   2
+      min_vcpu                  =   2
+      root_device_types         =   ["ebs"]
+      virtualization_types      =   ["hvm"] 
+    }
+  }
 
     security_group_ids = ["sg-12345"]
     image_id = "ami-12345"
@@ -103,7 +129,28 @@ The following arguments are supported:
 * `tags` - (Optional) Optionally adds tags to instances launched in an Ocean cluster.
     * `key` - (Optional) The tag key.
     * `value` - (Optional) The tag value.
-* `whitelist` - (Optional) Instance types allowed in the Ocean cluster.
+* `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if `blacklist`/`filters` is configured.
+* `blacklist` - (Optional) Instance types not allowed in the Ocean cluster. Cannot be configured if `whitelist`/`filters` is configured.
+* `filters` - (Optional) List of filters. The Instance types that match with all filters compose the Ocean's whitelist parameter. Cannot be configured together with `whitelist`/`blacklist`.
+    * `architectures` - (Optional) The filtered instance types will support at least one of the architectures from this list.
+    * `categories` - (Optional) The filtered instance types will belong to one of the categories types from this list.
+    * `disk_types` - (Optional) The filtered instance types will have one of the disk type from this list.
+    * `exclude_families` - (Optional) Types belonging to a family from the ExcludeFamilies will not be available for scaling (asterisk wildcard is also supported). For example, C* will exclude instance types from these families: c5, c4, c4a, etc.
+    * `exclude_metal` - (Optional, Default: false) In case excludeMetal is set to true, metal types will not be available for scaling.
+    * `hypervisor` - (Optional) The filtered instance types will have a hypervisor type from this list.
+    * `include_families` - (Optional) Types belonging to a family from the IncludeFamilies will be available for scaling (asterisk wildcard is also supported). For example, C* will include instance types from these families: c5, c4, c4a, etc.
+    * `is_ena_supported` - (Optional) Ena is supported or not.
+    * `max_gpu` - (Optional) Maximum total number of GPUs.
+    * `max_memory_gib` - (Optional) Maximum amount of Memory (GiB).
+    * `max_network_performance` - (Optional) Maximum Bandwidth in Gib/s of network performance.
+    * `max_vcpu` - (Optional) Maximum number of vcpus available.
+    * `min_enis` - (Optional) Minimum number of network interfaces (ENIs).
+    * `min_gpu` - (Optional) Minimum total number of GPUs.
+    * `min_memory_gib` - (Optional) Minimum amount of Memory (GiB).
+    * `min_network_performance` - (Optional) Minimum Bandwidth in Gib/s of network performance.
+    * `min_vcpu` - (Optional) Minimum number of vcpus available.
+    * `root_device_types` - (Optional) The filtered instance types will have a root device types from this list.
+    * `virtualization_types` - (Optional) The filtered instance types will support at least one of the virtualization types from this list.
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Required) ID of the image used to launch the instances.
 * `security_group_ids` - (Required) One or more security group ids.

@@ -1,5 +1,42 @@
 ## Unreleased
 
+## 1.95.0 (Jan 18, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `filter`
+* resource/spotinst_ocean_ecs: updated `isEnaSupported`
+
+## 1.94.0 (Jan 17, 2023)
+NOTES:
+* documentation: resource/spotinst_elastigroup_gcp: corrected example usage
+
+## 1.93.0 (Jan 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `immediate_od_recover_threshold`
+
+## 1.92.0 (Jan 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `cluster_orientation`
+
+## 1.91.0 (Jan 12, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `consider_od_pricing`
+
+## 1.90.0 (Dec 20, 2022)
+NOTES:
+* documentation: resource/spotinst_ocean_aws_instance_types: update `filters`
+
+## 1.89.0 (Dec 20, 2022)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: added cluster ingress configs
+
+## 1.88.1 (Dec 20, 2022)
+NOTES:
+* documentation: resource/spotinst_ocean_aws_instance_types: added `filters`
+
+## 1.88.0 (Dec 20, 2022)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_instance_types: added `filters`
+
 ## 1.87.1 (Nov 30, 2022)
 
 BUG FIXES:

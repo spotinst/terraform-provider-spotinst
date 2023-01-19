@@ -8,7 +8,7 @@ const (
 	Image commons.FieldName = "image"
 )
 
-//MarketPlaceImage
+// MarketPlaceImage
 const (
 	MarketPlaceImage commons.FieldName = "marketplace_image"
 	Publisher        commons.FieldName = "publisher"
@@ -17,14 +17,14 @@ const (
 	Version          commons.FieldName = "version"
 )
 
-//CustomImage
+// CustomImage
 const (
 	CustomImage                  commons.FieldName = "custom_image"
 	CustomImageResourceGroupName commons.FieldName = "custom_image_resource_group_name"
 	Name                         commons.FieldName = "name"
 )
 
-//Gallery
+// Gallery
 const (
 	Gallery                  commons.FieldName = "gallery"
 	GalleryResourceGroupName commons.FieldName = "gallery_resource_group_name"
