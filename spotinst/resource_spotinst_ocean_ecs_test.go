@@ -943,7 +943,7 @@ const testOptimizeImagesECSConfig_Update = `
  }
 `
 
-//region OceanECS: Logging
+// region OceanECS: Logging
 func TestAccSpotinstOceanECS_Logging(t *testing.T) {
 	name := "test-acc-cluster-logging"
 	clusterName := "logging-cluster-name"

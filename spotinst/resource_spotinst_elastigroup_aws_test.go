@@ -3515,7 +3515,7 @@ const testIntegrationRoute53GroupConfig_EmptyFields = `
 
 // endregion
 
-//region Elastigroup: ECS Integration
+// region Elastigroup: ECS Integration
 func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 	groupName := "test-acc-eg-integration-ecs"
 	resourceName := createElastigroupResourceName(groupName)
