@@ -244,7 +244,7 @@ use_as_template_only = false
 
 //endregion
 
-//region Ocean GKE Import: BackendServices
+// region Ocean GKE Import: BackendServices
 func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
 	spotClusterName := "terraform-tests-do-not-delete"
 	resourceName := createOceanGKEImportResourceName(spotClusterName)

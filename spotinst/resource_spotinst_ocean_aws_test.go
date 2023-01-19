@@ -166,7 +166,7 @@ func createOceanAWSTerraform(ccm *ClusterConfigMetadata) string {
 	return template
 }
 
-//region OceanAWS: Baseline
+// region OceanAWS: Baseline
 func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 	clusterName := "test-acc-cluster-baseline"
 	controllerClusterID := "baseline-controller-id"
@@ -1051,7 +1051,7 @@ const testUpdatePolicyAWSClusterConfig_EmptyFields = `
 
 // endregion
 
-//region OceanAWS: Baseline
+// region OceanAWS: Baseline
 func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 	clusterName := "test-acc-cluster-logging"
 	controllerClusterID := "logging-controller-id"
