@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.95.1 (Jan 19, 2023)
+NOTES:
+* documentation: resource/ocean_gke_launch_spec: Fixed typos in documentation 
+* documentation: resource/ocean_ecs: Added example for import cluster to ocean
+* documentation: resource/ocean_aws: Added example for import cluster to ocean
+
 ## 1.95.0 (Jan 18, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added `filter`
