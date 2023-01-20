@@ -105,7 +105,7 @@ resource "spotinst_ocean_aws" "example" {
   spot_percentage            = 100
   utilize_commitments        = false
   cluster_orientation{
-    availability_vs_cost="cheapset"
+    availability_vs_cost="balanced"
   }
   // endregion
 
@@ -196,7 +196,7 @@ The following arguments are supported:
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
 * `cluster_orientation`
-    * `availability_vs_cost` - (Optional, Default: `balanced`) You can control the approach that Ocean takes while launching nodes by configuring this value. Possible values: costOriented, balanced, cheapest.
+    * `availability_vs_cost` - (Optional, Default: `balanced`) You can control the approach that Ocean takes while launching nodes by configuring this value. Possible values: `costOriented`,`balanced`,`cheapest`.
 * `logging` - (Optional) Logging configuration.
     * `export` - (Optional) Logging Export configuration.
         * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
@@ -278,7 +278,7 @@ update_policy {
 ```
 
 <a id="scheduled-task"></a>
-## scheduled task
+## Scheduled Task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional) Toggle the shutdown hours task. (Example: `true`).
@@ -305,7 +305,17 @@ scheduled_task {
 }
 ```
 
+<a id="attributes-reference"></a>
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Cluster ID.
+
+
+<a id="import"></a>
+## Import
+
+Clusters can be imported using the Ocean `id`, e.g.,
+```hcl
+$ terraform import spotinst_ocean_aws.this o-12345678
+```

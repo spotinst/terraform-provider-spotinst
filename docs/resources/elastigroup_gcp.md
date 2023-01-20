@@ -38,13 +38,15 @@ resource "spotinst_elastigroup_gcp" "example" {
   
   tags = ["http", "https"]
   
-  backend_services_config {
-    service_name = "spotinst-elb-backend-service"
-    ports {
-      port_name = "port-name"
-      ports = [8000, 6000]
-    }
-  }
+  backend_services {
+     service_name = "spotinst-elb-backend-service"
+     location_type = "regional"
+     scheme       = "INTERNAL"
+     named_ports {
+        name = "port-name"
+        ports = [8000, 6000]
+      }
+   }
 
   disks {
     device_name = "device"
@@ -65,43 +67,38 @@ resource "spotinst_elastigroup_gcp" "example" {
     network = "spot-network"
   }
 
-  instance_types_ondemand    = ["n1-standard-1"]
+  instance_types_ondemand    = "n1-standard-1"
   instance_types_preemptible = ["n1-standard-1", "n1-standard-2"]
 
   instance_types_custom {
-    vCPU      = 2
-    memoryGiB = 7.5
+    vcpu      = 2
+    memory_gib = 7
   }
 
   subnets {
     region       = "asia-east1"
-    subnet_names = ""
+    subnet_names = [
+    "default"
+    ]
   }
 
-  scaling {
-    up {
-      policy_name = "scale_up_1"
-      source      = "stackdriver"
-      metric_name = "instance/disk/read_ops_count"
-      namespace   = "compute"
-      statistic   = "average"
-      unit        = "percent"
-      threshold   = 10000
-      period      = 300
-      cooldown    = 300
-      operator    = "gte"
-
-      evaluation_periods = 1
-      
-      action {
-        type       = "adjustment"
-        adjustment = 1
-      }
-
-      dimensions {
-        name  = "storage_type"
-        value = "pd-ssd"
-      }
+  scaling_up_policy {
+    policy_name = "scale_up_1"
+    source      = "stackdriver"
+    metric_name = "instance/disk/read_ops_count"
+    namespace   = "compute"
+    statistic   = "average"
+    unit        = "percent"
+    threshold   = 10000
+    period      = 300
+    cooldown    = 300
+    operator    = "gte"
+    evaluation_periods = 1
+    action_type = "adjustment"
+    adjustment = 1
+    dimensions {
+    name  = "storage_type"
+    value = "pd-ssd"
     }
   }
 }
@@ -151,7 +148,7 @@ The following arguments are supported:
 Usage:
 
 ```hcl
-  gpu = {
+  gpu {
     count = 2
     type = "nvidia-tesla-p100"
   }
@@ -179,24 +176,22 @@ Usage:
     * `service_name` - (Required) The name of the backend service.
     * `location_type` - (Optional) Sets which location the backend services will be active. Valid values: `regional`, `global`.
     * `scheme` - (Optional) Use when `location_type` is "regional". Set the traffic for the backend service to either between the instances in the vpc or to traffic from the internet. Valid values: `INTERNAL`, `EXTERNAL`.
-    * `named_port` - (Optional) Describes a named port and a list of ports.
-        * `port_name` - (Required) The name of the port.
+    * `named_ports` - (Optional) Describes a named port and a list of ports.
+        * `name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
 
 Usage:
 
 ```hcl
-  backend_services_config = [
-    {
-      service_name = "spotinst-elb-backend-service"
-      locationType = "regional"
-      scheme       = "INTERNAL"
-      ports = {
-        port_name = "port-name"
+  backend_services {
+     service_name = "spotinst-elb-backend-service"
+     location_type = "regional"
+     scheme       = "INTERNAL"
+     named_ports {
+        name = "port-name"
         ports = [8000, 6000]
       }
-    },
-  ]
+   }
 ```
 
 <a id="disks"></a>
@@ -218,8 +213,7 @@ Usage:
 Usage:
 
 ```hcl
-  disks = [
-    {
+  disks {
       device_name = "device"
       mode        = "READ_WRITE"
       type        = "PERSISTENT"
@@ -233,7 +227,6 @@ Usage:
         source_image = ""
       }
     }
-  ]
 ```
 
 <a id="network-interface"></a>
@@ -251,7 +244,7 @@ to understand the implications of using these attributes.
         * `type` - (Optional) Array of configurations for this interface. Currently, only ONE_TO_ONE_NAT is supported.
 
 ```hcl
-  network_interface = [{ 
+  network_interface { 
     network = "default"
 	
     access_configs = {
@@ -263,7 +256,7 @@ to understand the implications of using these attributes.
      subnetwork_range_name = "range-name-1"
      ip_cidr_range = "10.128.0.0/20"
     }
-  }]
+  }
 ```
 
 <a id="scaling-policy"></a>
@@ -282,9 +275,8 @@ Each `scaling_*_policy` supports the following:
 * `evaluation_periods` - (Optional) Number of consecutive periods in which the threshold must be met in order to trigger a scaling action.
 * `cooldown` - (Optional) Time (seconds) to wait after a scaling action before resuming monitoring.
 * `operator` - (Optional) The operator used to evaluate the threshold against the current metric value. Valid values: "gt" (greater than), "get" (greater-than or equal), "lt" (less than), "lte" (less than or equal).
-* `action` - (Optional) Scaling action to take when the policy is triggered.
-    * `type` - (Optional) Type of scaling action to take when the scaling policy is triggered. Valid values: "adjustment", "setMinTarget", "updateCapacity", "percentageAdjustment"
-    * `adjustment` - (Optional) Value to which the action type will be adjusted. Required if using "numeric" or "percentageAdjustment" action types.
+* `action_type` - (Optional) Type of scaling action to take when the scaling policy is triggered. Valid values: "adjustment", "setMinTarget", "updateCapacity", "percentageAdjustment"
+* `adjustment` - (Optional) Value to which the action type will be adjusted. Required if using "numeric" or "percentageAdjustment" action types.
 * `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
     * `name` - (Required) The dimension name.
     * `value` - (Required) The dimension value.
@@ -292,34 +284,25 @@ Each `scaling_*_policy` supports the following:
 Usage:
 
 ```hcl
-  scaling = {
-      up = {
-        policy_name = "scale_up_1"
-        source      = "stackdriver"
-        metric_name = "instance/disk/read_ops_count"
-        namespace   = "compute"
-        statistic   = "average"
-        unit        = "percent"
-        threshold   = 10000
-        period      = 300
-        cooldown    = 300
-        operator    = "gte"
-  
-        evaluation_periods = 1
-        
-        action = {
-          type       = "adjustment"
-          adjustment = 1
-        }
-  
-        dimensions = [
-          {
-            name  = "storage_type"
-            value = "pd-ssd"
-          }
-        ]
-      }
+  scaling_up_policy {
+    policy_name = "scale_up_1"
+    source      = "stackdriver"
+    metric_name = "instance/disk/read_ops_count"
+    namespace   = "compute"
+    statistic   = "average"
+    unit        = "percent"
+    threshold   = 10000
+    period      = 300
+    cooldown    = 300
+    operator    = "gte"
+    evaluation_periods = 1
+    action_type = "adjustment"
+    adjustment = 1
+    dimensions {
+    name  = "storage_type"
+    value = "pd-ssd"
     }
+  }
 ```
 
 <a id="third-party-integrations"></a>
@@ -353,12 +336,12 @@ Each `scheduled_task` supports the following:
 Usage:
 
 ```hcl
-  scheduled_task = [{
+  scheduled_task {
     task_type             = "setCapacity"
     cron_expression       = ""
     is_enabled            = false
     target_capacity       = 5
     min_capacity          = 0
     max_capacity          = 10
-  }]
+  }
 ```
