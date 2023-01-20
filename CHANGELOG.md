@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.95.2 (Jan 20, 2023)
+NOTES:
+* documentation: resource/elastigroup_aws_suspension: Fixed typos in documentation 
+* documentation: resource/ocean_ecs: Fixed documentation for `instance_types`
+
 ## 1.95.1 (Jan 19, 2023)
 NOTES:
 * documentation: resource/ocean_gke_launch_spec: Fixed typos in documentation 
