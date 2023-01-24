@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.96.0 (Jan 24, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `max_scale_down_percentage`
+
 ## 1.95.2 (Jan 20, 2023)
 NOTES:
 * documentation: resource/elastigroup_aws_suspension: Fixed typos in documentation 
