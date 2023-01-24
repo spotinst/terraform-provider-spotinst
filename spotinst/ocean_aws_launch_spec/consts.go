@@ -62,6 +62,8 @@ const (
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
 	SchedulingTask           commons.FieldName = "scheduling_task"
 	SchedulingShutdownHours  commons.FieldName = "scheduling_shutdown_hours"
+	AutoscaleDown            commons.FieldName = "autoscale_down"
+	MaxScaleDownPercentage   commons.FieldName = "max_scale_down_percentage"
 )
 
 const (
