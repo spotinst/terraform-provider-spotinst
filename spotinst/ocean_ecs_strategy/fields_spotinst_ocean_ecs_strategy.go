@@ -2,6 +2,7 @@ package ocean_ecs_strategy
 
 import (
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -196,4 +197,89 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[ClusterOrientation] = commons.NewGenericField(
+		commons.OceanECSStrategy,
+		ClusterOrientation,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(AvailabilityVsCost): {
+						Type:     schema.TypeString,
+						Optional: true,
+						Default:  "balanced",
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var value []interface{} = nil
+			if cluster.Strategy != nil && cluster.Strategy.ClusterOrientation != nil {
+				clusterOrientation := cluster.Strategy.ClusterOrientation
+				value = flattenClusterOrientation(clusterOrientation)
+			}
+			if value != nil {
+				if err := resourceData.Set(string(ClusterOrientation), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ClusterOrientation), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			if value, ok := resourceData.GetOk(string(ClusterOrientation)); ok {
+				if clusterOrientation, err := expandClusterOrientation(value); err != nil {
+					return err
+				} else {
+					cluster.Strategy.SetECSClusterOrientation(clusterOrientation)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
+			cluster := clusterWrapper.GetECSCluster()
+			var result *aws.ECSClusterOrientation = nil
+			if v, ok := resourceData.GetOk(string(ClusterOrientation)); ok {
+				if clusterOrientation, err := expandClusterOrientation(v); err != nil {
+					return err
+				} else {
+					result = clusterOrientation
+				}
+			}
+			cluster.Strategy.SetECSClusterOrientation(result)
+			return nil
+		},
+		nil,
+	)
+}
+func flattenClusterOrientation(clusterOrientation *aws.ECSClusterOrientation) []interface{} {
+	var out []interface{}
+	if clusterOrientation != nil {
+		result := make(map[string]interface{})
+		if clusterOrientation.AvailabilityVsCost != nil {
+			result[string(AvailabilityVsCost)] = spotinst.StringValue(clusterOrientation.AvailabilityVsCost)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+func expandClusterOrientation(co interface{}) (*aws.ECSClusterOrientation, error) {
+	if list := co.([]interface{}); len(list) > 0 {
+		clusterOrientation := &aws.ECSClusterOrientation{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(AvailabilityVsCost)].(string); ok {
+				clusterOrientation.SetECSAvailabilityVsCost(spotinst.String(v))
+			}
+		}
+		return clusterOrientation, nil
+	}
+	return nil, nil
 }
