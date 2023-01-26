@@ -73,7 +73,7 @@ func resourceSpotinstSparkClusterVirtualNodeGroupRead(ctx context.Context, resou
 		return diag.FromErr(err)
 	}
 
-	log.Printf("===> Cluster read successfully: %s <===", id)
+	log.Printf("===> VNG read successfully: %s <===", id)
 	return nil
 }
 
