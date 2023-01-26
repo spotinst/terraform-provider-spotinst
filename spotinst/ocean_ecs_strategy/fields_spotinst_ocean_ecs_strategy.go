@@ -2,6 +2,7 @@ package ocean_ecs_strategy
 
 import (
 	"fmt"
+
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
