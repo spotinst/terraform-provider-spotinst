@@ -64,8 +64,11 @@ resource "spotinst_ocean_ecs" "example" {
     ebs_optimized               = true
     use_as_template_only        = true
 
-    spot_percentage     = 100
-    utilize_commitments = false
+    spot_percentage             = 100
+    utilize_commitments         = false
+    cluster_orientation {
+    availability_vs_cost        = "balanced"
+  }
 
   instance_metadata_options {
     http_tokens                 = "required"
@@ -165,6 +168,8 @@ The following arguments are supported:
 * `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
 * `spot_percentage` - (Optional) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
+* `cluster_orientation`
+    * `availability_vs_cost` - (Optional, Default: `balanced`) You can control the approach that Ocean takes while launching nodes by configuring this value. Possible values: `costOriented`,`balanced`,`cheapest`.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
