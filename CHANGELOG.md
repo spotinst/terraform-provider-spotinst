@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.97.0 (Jan 26, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `cluster_orientation`
+
 ## 1.96.0 (Jan 24, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `max_scale_down_percentage`
