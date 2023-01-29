@@ -921,6 +921,64 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[AutoscaleDown] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		AutoscaleDown,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(MaxScaleDownPercentage): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.AutoScale != nil && launchSpec.AutoScale.Down != nil {
+				down := launchSpec.AutoScale.Down
+				result = flattenAutoscaleDown(down)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(AutoscaleDown), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoscaleDown), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(AutoscaleDown)); ok {
+				if autoscaleDown, err := expandAutoscaleDown(value); err != nil {
+					return err
+				} else {
+					launchSpec.AutoScale.SetAutoScalerDownVNG(autoscaleDown)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result *aws.AutoScalerDownVNG = nil
+			if value, ok := resourceData.GetOk(string(AutoscaleDown)); ok {
+				if autoscaleDown, err := expandAutoscaleDown(value); err != nil {
+					return err
+				} else {
+					result = autoscaleDown
+				}
+			}
+			launchSpec.AutoScale.SetAutoScalerDownVNG(result)
+			return nil
+		},
+		nil,
+	)
 
 	fieldsMap[SubnetIDs] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
@@ -2230,4 +2288,34 @@ func expandTimeWindows(data interface{}) ([]string, error) {
 	}
 
 	return result, nil
+}
+
+func flattenAutoscaleDown(down *aws.AutoScalerDownVNG) []interface{} {
+	var out []interface{}
+	if down != nil {
+		result := make(map[string]interface{})
+		if down.MaxScaleDownPercentage != nil {
+			result[string(MaxScaleDownPercentage)] = spotinst.Float64Value(down.MaxScaleDownPercentage)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+
+func expandAutoscaleDown(down interface{}) (*aws.AutoScalerDownVNG, error) {
+	if list := down.([]interface{}); len(list) > 0 {
+		autoscaleDown := &aws.AutoScalerDownVNG{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok {
+				autoscaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
+			} else {
+				autoscaleDown.SetMaxScaleDownPercentage(nil)
+			}
+		}
+		return autoscaleDown, nil
+	}
+	return nil, nil
 }

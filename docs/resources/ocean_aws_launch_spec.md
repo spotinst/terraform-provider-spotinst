@@ -58,7 +58,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     gpu_per_unit    = 0
     memory_per_unit = 2048
   }
-
+  
+  autoscale_down {
+    max_scale_down_percentage    = 20
+  }
+  
   elastic_ip_pool {
     tag_selector {
       tag_key   = "key"
@@ -180,6 +184,8 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+* `autoscale_down` - (Optional) Auto Scaling scale down operations.
+    * `max_scale_down_percentage` - (Optional) The maximum percentage allowed to scale down in a single scaling action on the nodes running in a specific VNG. Allowed only if maxScaleDownPercentage is set to null at the cluster level. Number between [0.1-100].
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) Set a maximum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
     * `min_instance_count` - (Optional) Set a minimum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
