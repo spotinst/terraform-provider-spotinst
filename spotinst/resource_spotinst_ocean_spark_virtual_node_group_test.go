@@ -60,8 +60,7 @@ func testSweepOceanSparkVng(_ string) error {
 	}
 
 	conn := client.(*Client).ocean.Spark()
-	input := &spark.ListVngsInput{}
-	input.ClusterID = spotinst.String(oceanSparkClusterID)
+	input := &spark.ListVngsInput{ClusterID: spotinst.String(oceanSparkClusterID)}
 	if resp, err := conn.ListVirtualNodeGroups(context.Background(), input); err != nil {
 		return fmt.Errorf("error getting VNGs to sweep")
 	} else {
@@ -88,16 +87,20 @@ func testOceanSparkVngDetach(s *terraform.State) error {
 		if rs.Type != string(commons.OceanSparkVirtualNodeGroupResourceName) {
 			continue
 		}
-		input := &spark.ListVngsInput{ClusterID: spotinst.String(rs.Primary.ID)}
+		input := &spark.ListVngsInput{ClusterID: spotinst.String(rs.Primary.Attributes["ocean_spark_cluster_id"])}
 		resp, err := client.ocean.Spark().ListVirtualNodeGroups(context.Background(), input)
 		if err == nil && resp != nil && resp.VirtualNodeGroups != nil {
-			return fmt.Errorf("VNG still attached")
+			for i := range resp.VirtualNodeGroups {
+				if spotinst.StringValue(resp.VirtualNodeGroups[i].VngID) == rs.Primary.ID {
+					return fmt.Errorf("VNG still attached")
+				}
+			}
 		}
 	}
 	return nil
 }
 
-func testCheckOceanSparkVngAttached(cluster *spark.Cluster, resourceName string) resource.TestCheckFunc {
+func testCheckOceanSparkVngAttached(vng *spark.DedicatedVirtualNodeGroup, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -107,16 +110,20 @@ func testCheckOceanSparkVngAttached(cluster *spark.Cluster, resourceName string)
 			return fmt.Errorf("no resource ID is set")
 		}
 		client := testAccProviderAWS.Meta().(*Client)
-		input := &spark.ReadClusterInput{ClusterID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.ocean.Spark().ReadCluster(context.Background(), input)
+		input := &spark.ListVngsInput{ClusterID: spotinst.String(rs.Primary.Attributes["ocean_spark_cluster_id"])}
+		resp, err := client.ocean.Spark().ListVirtualNodeGroups(context.Background(), input)
 		if err != nil {
 			return err
 		}
-		if spotinst.StringValue(resp.Cluster.OceanClusterID) != rs.Primary.Attributes["ocean_cluster_id"] {
-			return fmt.Errorf("Cluster not found: %+v,\n %+v\n", resp.Cluster, rs.Primary.Attributes)
+
+		for i := range resp.VirtualNodeGroups {
+			if spotinst.StringValue(resp.VirtualNodeGroups[i].VngID) == rs.Primary.ID {
+				*vng = *resp.VirtualNodeGroups[i]
+				return nil
+			}
 		}
-		*cluster = *resp.Cluster
-		return nil
+
+		return fmt.Errorf("VNG not found: %+v,\n %+v\n", resp.VirtualNodeGroups, rs.Primary.Attributes)
 	}
 }
 
@@ -126,7 +133,7 @@ type SparkClusterVngAttachMetadata struct {
 }
 
 func createOceanSparkVngResourceName(name string) string {
-	return fmt.Sprintf("%v.%v", string(commons.OceanSparkResourceName), name)
+	return fmt.Sprintf("%v.%v", string(commons.OceanSparkVirtualNodeGroupResourceName), name)
 }
 
 func attachOceanSparkVngTerraform(scvam *SparkClusterVngAttachMetadata) string {
@@ -148,7 +155,7 @@ func attachOceanSparkVngTerraform(scvam *SparkClusterVngAttachMetadata) string {
 func TestAccSpotinstOceanSparkVng_attach(t *testing.T) {
 	resourceName := createOceanSparkVngResourceName(oceanSparkVngID)
 
-	var cluster spark.Cluster
+	var vng spark.DedicatedVirtualNodeGroup
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "aws") },
 		Providers:    TestAccProviders,
@@ -161,10 +168,7 @@ func TestAccSpotinstOceanSparkVng_attach(t *testing.T) {
 					oceanSparkClusterID: oceanSparkClusterID,
 				}),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkVngAttached(&cluster, resourceName),
-					resource.TestCheckResourceAttr(resourceName, "webhook.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "webhook.0.ocean_spark_cluster_id", testOceanSparkClusterID),
-					resource.TestCheckResourceAttr(resourceName, "webhook.0.virtual_node_group_id", testOceanDedicatedVngID),
+					testCheckOceanSparkVngAttached(&vng, resourceName),
 				),
 			},
 		},
@@ -173,6 +177,8 @@ func TestAccSpotinstOceanSparkVng_attach(t *testing.T) {
 
 const testAttachVngConfig = `
 resource "` + string(commons.OceanSparkVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "aws"
+
   virtual_node_group_id = "%v"
   ocean_spark_cluster_id = "%v"
 }

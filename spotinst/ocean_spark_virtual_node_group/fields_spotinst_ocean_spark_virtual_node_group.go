@@ -22,8 +22,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			vngWrapper := resourceObject.(*commons.SparkVirtualNodeGroupWrapper)
 			vng := vngWrapper.GetVirtualNodeGroup()
 			var value *string = nil
-			if vng.OceanClusterID != nil {
-				value = vng.OceanClusterID
+			if vng.OceanSparkClusterID != nil {
+				value = vng.OceanSparkClusterID
 			}
 			if err := resourceData.Set(string(OceanSparkClusterID), value); err != nil {
 				return fmt.Errorf(commons.FailureFieldReadPattern, string(OceanSparkClusterID), err)

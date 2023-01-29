@@ -23,12 +23,12 @@ func resourceSpotinstOceanSparkVirtualNodeGroup() *schema.Resource {
 		CreateContext: resourceSpotinstSparkVirtualNodeGroupCreate,
 		DeleteContext: resourceSpotinstSparkClusterVirtualNodeGroupDelete,
 		ReadContext:   resourceSpotinstSparkClusterVirtualNodeGroupRead,
-		UpdateContext: nil,
+		UpdateContext: resourceSpotinstSparkClusterVirtualNodeGroupUpdate,
 
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Schema: commons.OceanSparkResource.GetSchemaMap(),
+		Schema: commons.OceanSparkVirtualNodeGroupResource.GetSchemaMap(),
 	}
 }
 
@@ -37,7 +37,7 @@ func resourceSpotinstSparkClusterVirtualNodeGroupRead(ctx context.Context, resou
 	log.Printf(string(commons.ResourceOnRead),
 		commons.OceanSparkVirtualNodeGroupResource.GetName(), id)
 
-	input := &spark.ListVngsInput{ClusterID: spotinst.String(id)}
+	input := &spark.ListVngsInput{ClusterID: spotinst.String(resourceData.Get("ocean_spark_cluster_id").(string))}
 	resp, err := meta.(*Client).ocean.Spark().ListVirtualNodeGroups(ctx, input)
 	if err != nil {
 		// If the VNG was not found, return nil so that we can show
@@ -74,6 +74,10 @@ func resourceSpotinstSparkClusterVirtualNodeGroupRead(ctx context.Context, resou
 	}
 
 	log.Printf("===> VNG read successfully: %s <===", id)
+	return nil
+}
+
+func resourceSpotinstSparkClusterVirtualNodeGroupUpdate(context.Context, *schema.ResourceData, interface{}) diag.Diagnostics {
 	return nil
 }
 
@@ -118,7 +122,7 @@ func resourceSpotinstSparkVirtualNodeGroupCreate(ctx context.Context, resourceDa
 	resourceData.SetId(spotinst.StringValue(clusterID))
 
 	log.Printf("===> VNG attached successfully: %s <===", resourceData.Id())
-	return resourceSpotinstSparkClusterRead(ctx, resourceData, meta)
+	return resourceSpotinstSparkClusterVirtualNodeGroupRead(ctx, resourceData, meta)
 }
 
 func attachVng(vng *spark.DedicatedVirtualNodeGroup, spotinstClient *Client) (*string, error) {
@@ -134,7 +138,7 @@ func attachVng(vng *spark.DedicatedVirtualNodeGroup, spotinstClient *Client) (*s
 
 	var resp *spark.AttachVngOutput = nil
 	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
-		input := &spark.AttachVngInput{VirtualNodeGroup: attachRequest}
+		input := &spark.AttachVngInput{ClusterID: vng.OceanSparkClusterID, VirtualNodeGroup: attachRequest}
 		r, err := spotinstClient.ocean.Spark().AttachVirtualNodeGroup(context.Background(), input)
 		if err != nil {
 			return resource.NonRetryableError(err)
@@ -152,7 +156,7 @@ func attachVng(vng *spark.DedicatedVirtualNodeGroup, spotinstClient *Client) (*s
 func detachVng(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) error {
 	input := &spark.DetachVngInput{
 		ClusterID: spotinst.String(resourceData.Get("ocean_spark_cluster_id").(string)),
-		VngID:     spotinst.String(resourceData.Get("virtual_node_group_id").(string)),
+		VngID:     spotinst.String(resourceData.Id()),
 	}
 
 	if json, err := commons.ToJson(input); err != nil {
