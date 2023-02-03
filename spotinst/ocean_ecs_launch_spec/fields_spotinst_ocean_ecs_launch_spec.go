@@ -985,6 +985,71 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[InstanceMetadataOptions] = commons.NewGenericField(
+		commons.OceanECSLaunchSpec,
+		InstanceMetadataOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(HTTPTokens): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(HTTPPutResponseHopLimit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec != nil && launchSpec.InstanceMetadataOptions != nil {
+				result = flattenInstanceMetadataOptions(launchSpec.InstanceMetadataOptions)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(InstanceMetadataOptions), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceMetadataOptions), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetECSLaunchspecInstanceMetadataOptions(metaDataOptions)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			LaunchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := LaunchSpecWrapper.GetLaunchSpec()
+			var value *aws.ECSLaunchspecInstanceMetadataOptions = nil
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					value = metaDataOptions
+				}
+			}
+			launchSpec.SetECSLaunchspecInstanceMetadataOptions(value)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func expandStrategy(data interface{}) (*aws.ECSLaunchSpecStrategy, error) {
@@ -1454,4 +1519,30 @@ func expandTaskHeadroom(data interface{}) (*aws.ECSTaskConfig, error) {
 	}
 
 	return taskConfig, nil
+}
+func flattenInstanceMetadataOptions(instanceMetadataOptions *aws.ECSLaunchspecInstanceMetadataOptions) []interface{} {
+	result := make(map[string]interface{})
+	result[string(HTTPTokens)] = spotinst.StringValue(instanceMetadataOptions.HTTPTokens)
+	result[string(HTTPPutResponseHopLimit)] = spotinst.IntValue(instanceMetadataOptions.HTTPPutResponseHopLimit)
+
+	return []interface{}{result}
+}
+func expandInstanceMetadataOptions(data interface{}) (*aws.ECSLaunchspecInstanceMetadataOptions, error) {
+	instanceMetadataOptions := &aws.ECSLaunchspecInstanceMetadataOptions{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return instanceMetadataOptions, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(HTTPTokens)].(string); ok && v != "" {
+		instanceMetadataOptions.SetHTTPTokens(spotinst.String(v))
+	}
+	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok && v >= 0 {
+		instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
+	} else {
+		instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+	}
+
+	return instanceMetadataOptions, nil
 }
