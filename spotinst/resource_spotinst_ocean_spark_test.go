@@ -205,7 +205,7 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-2", "my-lb-service-annotation-value-2"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "test-custom-endpoint-address"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "valid-load.balancer"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service"),
@@ -234,7 +234,7 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-3", "my-lb-service-annotation-value-3"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "test-custom-endpoint-address-active"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "active-load.balancer"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service"),
@@ -261,7 +261,7 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "0"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "test-custom-endpoint-address-inactive"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "inactive-load.balancer"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service-active"),
@@ -470,7 +470,7 @@ const testConfigWithIngressCreate = `
 
 	custom_endpoint {
 	 enabled = false
-	 address = "test-custom-endpoint-address"
+	 address = "valid-load.balancer"
 	}
 
     private_link {
@@ -505,7 +505,7 @@ const testConfigWithIngressUpdate = `
 
 	custom_endpoint {
 	 enabled = true
-	 address = "test-custom-endpoint-address-active"
+	 address = "active-load.balancer"
 	}
 
     private_link {
@@ -536,7 +536,7 @@ const testConfigWithIngressUpdate2 = `
 
 	custom_endpoint {
 	 enabled = false
-	 address = "test-custom-endpoint-address-inactive"
+	 address = "inactive-load.balancer"
 	}
 
     private_link {
