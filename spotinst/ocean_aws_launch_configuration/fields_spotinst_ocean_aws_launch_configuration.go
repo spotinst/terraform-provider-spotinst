@@ -575,6 +575,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(HTTPPutResponseHopLimit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  1357997531,
 					},
 				},
 			},
@@ -701,10 +702,12 @@ func expandInstanceMetadataOptions(data interface{}) (*aws.InstanceMetadataOptio
 	if v, ok := m[string(HTTPTokens)].(string); ok && v != "" {
 		instanceMetadataOptions.SetHTTPTokens(spotinst.String(v))
 	}
-	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok && v >= 0 {
-		instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
-	} else {
-		instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok {
+		if v == 1357997531 {
+			instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+		} else {
+			instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
+		}
 	}
 
 	return instanceMetadataOptions, nil
