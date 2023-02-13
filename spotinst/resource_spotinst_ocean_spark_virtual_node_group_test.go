@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	testOceanSparkClusterID = "osc-d552c5b5"
-	testOceanDedicatedVngID = "ols-b66e444f"
+	testOceanSparkClusterID = "osc-cc4b42b4"
+	testOceanDedicatedVngID = "ols-d04cb833"
 )
 
 var oceanSparkClusterID = getOceanSparkClusterID() // NOTE: This needs to be an existing ocean cluster
@@ -44,7 +44,7 @@ func getOceanSparkClusterID() string {
 
 func getOceanSparkVngID() string {
 	// Prefer environment variable
-	oceanDedicatedVngID := os.Getenv("TEST_ACC_OCEAN_DEDICATED_VNG_ID")
+	oceanDedicatedVngID := os.Getenv("TEST_ACC_OCEAN_SPARK_DEDICATED_VNG_ID")
 	if oceanDedicatedVngID == "" {
 		// Default to hardcoded ID
 		oceanDedicatedVngID = testOceanDedicatedVngID

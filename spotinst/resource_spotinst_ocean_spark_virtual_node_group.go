@@ -114,12 +114,12 @@ func resourceSpotinstSparkVirtualNodeGroupCreate(ctx context.Context, resourceDa
 		return diag.FromErr(err)
 	}
 
-	clusterID, err := attachVng(vng, meta.(*Client))
+	vngID, err := attachVng(vng, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceData.SetId(spotinst.StringValue(clusterID))
+	resourceData.SetId(spotinst.StringValue(vngID))
 
 	log.Printf("===> VNG attached successfully: %s <===", resourceData.Id())
 	return resourceSpotinstSparkClusterVirtualNodeGroupRead(ctx, resourceData, meta)

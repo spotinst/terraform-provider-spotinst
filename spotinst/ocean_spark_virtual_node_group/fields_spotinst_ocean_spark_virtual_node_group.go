@@ -47,7 +47,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		VngID,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.SparkVirtualNodeGroupWrapper)
