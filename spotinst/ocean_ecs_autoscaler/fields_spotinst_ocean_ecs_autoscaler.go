@@ -73,6 +73,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 
+					string(ShouldScaleDownNonServiceTasks): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+
 					string(ResourceLimits): {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -189,6 +195,10 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.ECSAutoScaler, error
 		autoscaler.SetIsEnabled(spotinst.Bool(v))
 	}
 
+	if v, ok := m[string(ShouldScaleDownNonServiceTasks)].(bool); ok {
+		autoscaler.SetShouldScaleDownNonServiceTasks(spotinst.Bool(v))
+	}
+
 	if v, ok := m[string(ResourceLimits)]; ok {
 		resLimits, err := expandOceanAWSAutoScalerResourceLimits(v)
 		if err != nil {
@@ -278,6 +288,7 @@ func flattenAutoscaler(autoScaler *aws.ECSAutoScaler) []interface{} {
 		result[string(IsEnabled)] = spotinst.BoolValue(autoScaler.IsEnabled)
 		result[string(Cooldown)] = spotinst.IntValue(autoScaler.Cooldown)
 		result[string(IsAutoConfig)] = spotinst.BoolValue(autoScaler.IsAutoConfig)
+		result[string(ShouldScaleDownNonServiceTasks)] = spotinst.BoolValue(autoScaler.ShouldScaleDownNonServiceTasks)
 		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(autoScaler.AutoHeadroomPercentage)
 
 		if autoScaler.Headroom != nil {
