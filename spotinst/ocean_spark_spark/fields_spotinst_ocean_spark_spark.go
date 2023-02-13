@@ -99,8 +99,6 @@ func flattenSparkConfig(sparkConfig *spark.SparkConfig) []interface{} {
 				// We filter out the default app namespace which is always present in the appNamespaces list given by the API.
 				// To make this work well with terraform, we call the field additional_app_namespaces,
 				// and enforce behind the scenes that the spark-apps namespace is filtered out.
-				// Better to have "bad behaviour" if you put spark-apps in a field called additional_app_namespaces,
-				// rather than having "bad behaviour" if you don’t put spark-apps in a field called app_namespaces.
 				continue
 			}
 			namespaces = append(namespaces, namespace)
