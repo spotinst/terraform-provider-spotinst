@@ -1577,7 +1577,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(HTTPPutResponseHopLimit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  1357997531,
+						// Value mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
+						Default: 1357997531,
 					},
 				},
 			},
@@ -2405,6 +2406,7 @@ func expandInstanceMetadataOptions(data interface{}) (*aws.LaunchspecInstanceMet
 		instanceMetadataOptions.SetHTTPTokens(spotinst.String(v))
 	}
 	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok {
+		// Value(1357997531) mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
 		if v == 1357997531 {
 			instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
 		} else {
