@@ -171,4 +171,4 @@ Optional:
 
 Optional:
 
-- **additional_app_namespaces** (List of String) - List of Kubernetes namespaces that should be configured to run Spark applications, in addition to the default Spark application namespace `spark-apps`. The default namespace `spark-apps` should not be included in the list. 
+- **additional_app_namespaces** (List of String) - List of Kubernetes namespaces that should be configured to run Spark applications, in addition to the default Spark application namespace `spark-apps`. 
