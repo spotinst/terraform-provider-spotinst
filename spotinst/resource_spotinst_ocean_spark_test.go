@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	testOceanClusterID = "o-6cf35461"
+	testOceanClusterID = "o-10f9d5e6"
 )
 
 var oceanClusterID = getOceanClusterID() // NOTE: This needs to be an existing ocean cluster
@@ -447,6 +447,63 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 	})
 }
 
+func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
+	resourceName := createOceanSparkResourceName(oceanClusterID)
+
+	var cluster spark.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanSparkAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigCreate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.app_namespaces.#", "3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-2"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigUpdate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.app_namespaces.#", "3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-3"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigEmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.app_namespaces.#", "1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps"),
+				),
+			},
+		},
+	})
+}
+
 const testConfigWithIngressCreate = `
  ingress {
 
@@ -605,6 +662,32 @@ const testConfigWithWebhookEmptyFields = `
 	use_host_network = false
 
 	host_network_ports = []
+
+ }
+`
+
+// TODO This doesn't work - ordering of "spark-apps" is wrong
+
+const testConfigWithSparkConfigCreate = `
+ spark {
+
+	app_namespaces = ["spark-apps","spark-apps-ns-1","spark-apps-ns-2"]
+
+ }
+`
+
+const testConfigWithSparkConfigUpdate = `
+ spark {
+
+	app_namespaces = ["spark-apps","spark-apps-ns-1","spark-apps-ns-3"]
+
+ }
+`
+
+const testConfigWithSparkConfigEmptyFields = `
+ spark {
+
+	app_namespaces = ["spark-apps"]
 
  }
 `

@@ -168,6 +168,7 @@ const (
 	OceanSparkWebhook       ResourceAffinity = "Ocean_Spark_Webhook"
 	OceanSparkCompute       ResourceAffinity = "Ocean_Spark_Compute"
 	OceanSparkLogCollection ResourceAffinity = "Ocean_Spark_Log_Collection"
+	OceanSparkSpark         ResourceAffinity = "Ocean_Spark_Spark"
 
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
