@@ -600,7 +600,7 @@ func TestAccSpotinstOceanSpark_withSparkConfig_withDefaultNamespaceIncludedInApp
 				}
 
 				We ignore this edge case here, and rely on the terraform module to prevent this.
-				There we will have validation that the default 'spark-apps' namespace is not provided in the namespace list.
+				There we have validation that the default 'spark-apps' namespace should not be provided in the additional namespace list.
 			*/
 		},
 	})
