@@ -27,10 +27,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(AdditionalAppNamespaces): {
-						Type:     schema.TypeSet, // We don't care about ordering, so we use a set here
-						Optional: true,
-						Computed: true,
-						Elem:     &schema.Schema{Type: schema.TypeString},
+						Type:             schema.TypeSet, // We don't care about ordering, so we use a set here
+						Optional:         true,
+						Computed:         true,
+						Elem:             &schema.Schema{Type: schema.TypeString},
+						DiffSuppressFunc: SuppressDiffDefaultAppNamespace,
 					},
 				},
 			},
@@ -136,12 +137,22 @@ func expandSparkConfig(data interface{}, nullify bool) (*spark.SparkConfig, erro
 
 func expandAppNamespaces(data interface{}) ([]*string, error) {
 	list := data.(*schema.Set).List()
-	result := make([]*string, 0, len(list))
+	result := make([]*string, 0)
 	for _, v := range list {
-		if namespace, ok := v.(string); ok {
+		if namespace, ok := v.(string); ok && namespace != "" {
 			result = append(result, spotinst.String(namespace))
 		}
 	}
 
 	return result, nil
+}
+
+func SuppressDiffDefaultAppNamespace(_, old, new string, _ *schema.ResourceData) bool {
+	if old == "" && new == defaultAppNamespace {
+		return true
+	}
+	if old == defaultAppNamespace && new == "" {
+		return true
+	}
+	return false
 }
