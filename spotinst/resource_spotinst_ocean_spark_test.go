@@ -466,10 +466,9 @@ func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.app_namespaces.#", "3"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-1"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-2"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-2"),
 				),
 			},
 			{
@@ -481,10 +480,10 @@ func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.app_namespaces.#", "3"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-1"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps-ns-3"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
 				),
 			},
 			{
@@ -496,8 +495,7 @@ func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.app_namespaces.#", "1"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.app_namespaces.*", "spark-apps"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "0"),
 				),
 			},
 		},
@@ -666,12 +664,10 @@ const testConfigWithWebhookEmptyFields = `
  }
 `
 
-// TODO This doesn't work - ordering of "spark-apps" is wrong
-
 const testConfigWithSparkConfigCreate = `
  spark {
 
-	app_namespaces = ["spark-apps","spark-apps-ns-1","spark-apps-ns-2"]
+	additional_app_namespaces = ["spark-apps-ns-1","spark-apps-ns-2"]
 
  }
 `
@@ -679,7 +675,7 @@ const testConfigWithSparkConfigCreate = `
 const testConfigWithSparkConfigUpdate = `
  spark {
 
-	app_namespaces = ["spark-apps","spark-apps-ns-1","spark-apps-ns-3"]
+	additional_app_namespaces = ["spark-apps-ns-1","spark-apps-ns-3","spark-apps-ns-4"]
 
  }
 `
@@ -687,7 +683,7 @@ const testConfigWithSparkConfigUpdate = `
 const testConfigWithSparkConfigEmptyFields = `
  spark {
 
-	app_namespaces = ["spark-apps"]
+	additional_app_namespaces = []
 
  }
 `
