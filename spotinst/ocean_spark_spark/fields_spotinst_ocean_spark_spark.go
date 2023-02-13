@@ -145,6 +145,8 @@ func expandAppNamespaces(data interface{}) ([]*string, error) {
 	return result, nil
 }
 
+// SuppressDiffDefaultAppNamespace suppresses diff involving the default spark apps namespace.
+// The default spark apps namespace is always returned in the API response, even if it is not defined in terraform.
 func SuppressDiffDefaultAppNamespace(_, old, new string, _ *schema.ResourceData) bool {
 	if old == "" && new == defaultAppNamespace {
 		return true
