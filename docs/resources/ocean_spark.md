@@ -66,6 +66,10 @@ resource "spotinst_ocean_spark" "example" {
     host_network_ports = [25554]
   }
 
+  spark {
+    additional_app_namespaces = ["extra-spark-app-ns-1", "extra-spark-app-ns-2"]
+  }
+
 }
 ```
 ```
@@ -87,6 +91,7 @@ output "ocean_spark_id" {
 - **ingress** (Block List, Max: 1) (see [below for nested schema](#nestedblock--ingress))
 - **log_collection** (Block List, Max: 1) (see [below for nested schema](#nestedblock--log_collection))
 - **webhook** (Block List, Max: 1) (see [below for nested schema](#nestedblock--webhook))
+- **spark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spark))
 
 <a id="nestedblock--compute"></a>
 ### Nested Schema for `compute`
@@ -161,4 +166,9 @@ Optional:
 - **host_network_ports** (List of Number) - List of ports allowed to use on the host network - if empty default is `25554`.
 - **use_host_network** (Boolean, default: `false`) - Enable/disable host networking for the Spark Operator. Host networking can be useful when using custom CNI plugins like Calico on EKS.
 
+<a id="nestedblock--spark"></a>
+### Nested Schema for `spark`
 
+Optional:
+
+- **additional_app_namespaces** (List of String) - List of Kubernetes namespaces that should be configured to run Spark applications, in addition to the default Spark application namespace `spark-apps`. The default namespace `spark-apps` should not be included in the list. 
