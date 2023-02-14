@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.98.0 (Jan 26, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `instance_metadata_options`
+* resource/spotinst_ocean_aws_launch_spec: added `instance_metadata_options`
+
 ## 1.97.0 (Jan 26, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added `cluster_orientation`

@@ -109,6 +109,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     delete_nodes = true
   }
   
+  instance_metadata_options {
+    http_tokens = "required"
+    http_put_response_hop_limit = 10
+  }
+  
   scheduling_task {
     is_enabled = true
     cron_expression = "0 1 * * *"
@@ -208,6 +213,9 @@ The following arguments are supported:
 * `scheduling_shutdown_hours` - (Optional) Used to specify times that the nodes in the virtual node group will be taken down.
     * `time_windows` - (Required ) The times that the shutdown hours will apply.
     * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the virtual node group remains in its current state.
+* `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
+    * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
+    * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
 
 <a id="update-policy"></a>
 ## Update Policy

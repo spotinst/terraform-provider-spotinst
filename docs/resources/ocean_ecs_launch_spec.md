@@ -48,6 +48,11 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
     value = "fakeValue"
   }
   
+  instance_metadata_options {
+    http_tokens = "required"
+    http_put_response_hop_limit = 10
+  }
+  
   autoscale_headrooms {
     num_of_units = 5
     cpu_per_unit = 1000
@@ -96,6 +101,9 @@ The following arguments are supported:
 * `preferred_spot_types` - (Optional) When Ocean scales up instances, it takes your preferred types into consideration while maintaining a variety of machine types running for optimized distribution.
 * `restrict_scale_down`- (Optional) Boolean. When set to “True”, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in the array should be a subnet ID.
+* `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
+    * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
+    * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
 
 * `attributes` - (Optional) Optionally adds labels to instances launched in an Ocean cluster.
     * `key` - (Required) The label key.
