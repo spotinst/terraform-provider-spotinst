@@ -564,6 +564,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 					resource.TestCheckResourceAttr(resourceName, "grace_period", "50"),
+					resource.TestCheckResourceAttr(resourceName, "spread_nodes_by", "count"),
 				),
 			},
 			{
@@ -580,6 +581,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 					resource.TestCheckResourceAttr(resourceName, "grace_period", "100"),
+					resource.TestCheckResourceAttr(resourceName, "spread_nodes_by", "vcpu"),
 				),
 			},
 			{
