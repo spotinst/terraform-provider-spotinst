@@ -76,7 +76,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ShouldScaleDownNonServiceTasks): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						Default:  false,
 					},
 
 					string(ResourceLimits): {
