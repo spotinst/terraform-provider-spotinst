@@ -219,6 +219,7 @@ The following arguments are supported:
         * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
     * `auto_headroom_percentage` - (Optional) The auto-headroom percentage. Set a number between 0-200 to control the headroom % of the cluster. Relevant when `isAutoConfig`= true.
+    * `should_scale_down_non_service_tasks` - (Optional, Default: `false`) Option to scale down non-service tasks. If not set, Ocean does not scale down standalone tasks.  
 
 ```hcl
   autoscaler {
@@ -242,6 +243,7 @@ The following arguments are supported:
     }
    
     auto_headroom_percentage = 10
+    should_scale_down_non_service_tasks = false
   }
 ```
 

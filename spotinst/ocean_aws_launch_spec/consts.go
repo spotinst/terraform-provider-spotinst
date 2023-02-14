@@ -119,3 +119,9 @@ const (
 const (
 	TimeWindows commons.FieldName = "time_windows"
 )
+
+const (
+	InstanceMetadataOptions commons.FieldName = "instance_metadata_options"
+	HTTPTokens              commons.FieldName = "http_tokens"
+	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
+)
