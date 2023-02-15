@@ -104,6 +104,7 @@ resource "spotinst_ocean_aws" "example" {
   grace_period               = 600
   spot_percentage            = 100
   utilize_commitments        = false
+  spread_nodes_by            = "count"
   cluster_orientation{
     availability_vs_cost="balanced"
   }
@@ -192,6 +193,7 @@ The following arguments are supported:
 * `grace_period` - (Optional, Default: 600) The amount of time, in seconds, after the instance has launched to start checking its health.
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
+* `spread_nodes_by` - (Optional, Default: `count`) Ocean will spread the nodes across markets by this value. Possible values: `vcpu` or `count`.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.

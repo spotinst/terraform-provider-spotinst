@@ -13,4 +13,5 @@ const (
 	UtilizeCommitments       commons.FieldName = "utilize_commitments"
 	ClusterOrientation       commons.FieldName = "cluster_orientation"
 	AvailabilityVsCost       commons.FieldName = "availability_vs_cost"
+	SpreadNodesBy            commons.FieldName = "spread_nodes_by"
 )
