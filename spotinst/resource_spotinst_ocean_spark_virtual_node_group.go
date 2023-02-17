@@ -20,7 +20,7 @@ func resourceSpotinstOceanSparkVirtualNodeGroup() *schema.Resource {
 	setupOceanSparkVirtualNodeGroupResource()
 
 	return &schema.Resource{
-		CreateContext: resourceSpotinstSparkVirtualNodeGroupCreate,
+		CreateContext: resourceSpotinstSparkClusterVirtualNodeGroupCreate,
 		DeleteContext: resourceSpotinstSparkClusterVirtualNodeGroupDelete,
 		ReadContext:   resourceSpotinstSparkClusterVirtualNodeGroupRead,
 		UpdateContext: resourceSpotinstSparkClusterVirtualNodeGroupUpdate,
@@ -105,7 +105,7 @@ func resourceSpotinstSparkClusterVirtualNodeGroupDelete(ctx context.Context, res
 	return nil
 }
 
-func resourceSpotinstSparkVirtualNodeGroupCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstSparkClusterVirtualNodeGroupCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanSparkVirtualNodeGroupResource.GetName())
 

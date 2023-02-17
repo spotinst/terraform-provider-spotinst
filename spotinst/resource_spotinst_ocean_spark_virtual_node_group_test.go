@@ -68,10 +68,9 @@ func testSweepOceanSparkVng(_ string) error {
 			log.Printf("[INFO] No VNGs to sweep")
 		}
 		for _, vng := range resp.VirtualNodeGroups {
-			// Our test clusters should have a controller cluster ID starting with "tf-test-acc-"
 			if strings.Compare(spotinst.StringValue(vng.VngID), oceanSparkVngID) == 0 {
 				if _, err := conn.DetachVirtualNodeGroup(context.Background(), &spark.DetachVngInput{ClusterID: spotinst.String(oceanSparkClusterID), VngID: vng.VngID}); err != nil {
-					return fmt.Errorf("unable to detach VNG %v in sweep", spotinst.StringValue(vng.VngID))
+					return fmt.Errorf("unable to detach VNG %v in sweep, %w", spotinst.StringValue(vng.VngID), err)
 				} else {
 					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(vng.VngID))
 				}
