@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.100.0 (Feb 15, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `spread_nodes_by`
+
 ## 1.99.0 (Feb 14, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added `should_scale_down_non_service_tasks`

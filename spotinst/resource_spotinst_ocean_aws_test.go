@@ -564,6 +564,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 					resource.TestCheckResourceAttr(resourceName, "grace_period", "50"),
+					resource.TestCheckResourceAttr(resourceName, "spread_nodes_by", "count"),
 				),
 			},
 			{
@@ -608,7 +609,8 @@ const testStrategyConfig_Create = `
  spot_percentage            = 100
  utilize_reserved_instances = false
  draining_timeout			= 120
- grace_period = 50
+ grace_period 				= 50
+ spread_nodes_by			= "count"
  // ---------------------------------
 `
 

@@ -350,6 +350,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[SpreadNodesBy] = commons.NewGenericField(
+		commons.OceanECS,
+		SpreadNodesBy,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *string = nil
+			if cluster.Strategy != nil && cluster.Strategy.SpreadNodesBy != nil {
+				value = cluster.Strategy.SpreadNodesBy
+			}
+			if err := resourceData.Set(string(SpreadNodesBy), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpreadNodesBy), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.Get(string(SpreadNodesBy)).(string); ok && v != "" {
+				spreadNodesBy := spotinst.String(resourceData.Get(string(SpreadNodesBy)).(string))
+				cluster.Strategy.SetSpreadNodesBy(spreadNodesBy)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var spreadNodesBy *string = nil
+			if v, ok := resourceData.Get(string(SpreadNodesBy)).(string); ok && v != "" {
+				spreadNodesBy = spotinst.String(resourceData.Get(string(SpreadNodesBy)).(string))
+				cluster.Strategy.SetSpreadNodesBy(spreadNodesBy)
+			} else {
+				cluster.Strategy.SetSpreadNodesBy(spreadNodesBy)
+			}
+			return nil
+		},
+		nil,
+	)
+
 }
 func flattenClusterOrientation(clusterOrientation *aws.ClusterOrientation) []interface{} {
 	var out []interface{}
