@@ -730,15 +730,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			//launchSpec := launchSpecWrapper.GetLaunchSpec()
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var result []interface{} = nil
 
-			//if launchSpec != nil && launchSpec.BlockDeviceMappings != nil {
-			//result = flattenBlockDeviceMappings(launchSpec.BlockDeviceMappings)
-			//}
 			if cluster != nil && cluster.Compute.LaunchSpecification.BlockDeviceMappings != nil {
 				result = flattenBlockDeviceMappings(cluster.Compute.LaunchSpecification.BlockDeviceMappings)
 			}
@@ -752,8 +747,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			//launchSpec := launchSpecWrapper.GetLaunchSpec()
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
@@ -767,8 +760,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			//launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			//launchSpec := launchSpecWrapper.GetLaunchSpec()
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value []*aws.ClusterBlockDeviceMapping = nil
