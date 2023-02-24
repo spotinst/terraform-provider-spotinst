@@ -55,6 +55,7 @@ func Provider() *schema.Provider {
 			string(commons.OceanECSLaunchSpecResourceName):       resourceSpotinstOceanECSLaunchSpec(),
 			string(commons.OceanAKSResourceName):                 resourceSpotinstOceanAKS(),
 			string(commons.OceanAKSVirtualNodeGroupResourceName): resourceSpotinstOceanAKSVirtualNodeGroup(),
+			string(commons.OceanAKSNPResourceName):               resourceSpotinstOceanAKSNP(),
 
 			// Multai.
 			string(commons.MultaiBalancerResourceName):    resourceSpotinstMultaiBalancer(),

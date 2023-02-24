@@ -169,6 +169,13 @@ const (
 	OceanSparkCompute       ResourceAffinity = "Ocean_Spark_Compute"
 	OceanSparkLogCollection ResourceAffinity = "Ocean_Spark_Log_Collection"
 
+	OceanAKSNP                ResourceAffinity = "Ocean_AKS_NP"
+	OceanAKSNPAutoScaler      ResourceAffinity = "Ocean_AKS_NP_Auto_Scaler"
+	OceanAKSNPStrategy        ResourceAffinity = "Ocean_AKS_NP_Strategy"
+	OceanAKSNPProperties      ResourceAffinity = "Ocean_AKS_NP_Properties"
+	OceanAKSNPNodeCountLimits ResourceAffinity = "Ocean_AKS_NP_Node_Count_Limits"
+	OceanAKSNPHealth          ResourceAffinity = "Ocean_AKS_NP_Health"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"
