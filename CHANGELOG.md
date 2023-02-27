@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.101.0 (Feb 27, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: added `additional_app_namespaces`
+* resource/spotinst_ocean_spark: added support for ocean spark cluster dedicated VNGs.
+
 ## 1.100.0 (Feb 15, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `spread_nodes_by`
