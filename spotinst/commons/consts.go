@@ -169,6 +169,7 @@ const (
 	OceanSparkCompute          ResourceAffinity = "Ocean_Spark_Compute"
 	OceanSparkLogCollection    ResourceAffinity = "Ocean_Spark_Log_Collection"
 	OceanSparkVirtualNodeGroup ResourceAffinity = "Ocean_Spark_Virtual_Node_Group"
+	OceanSparkSpark            ResourceAffinity = "Ocean_Spark_Spark"
 
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
