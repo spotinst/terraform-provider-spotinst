@@ -84,6 +84,9 @@ func Provider() *schema.Provider {
 
 			// Ocean Spark
 			string(commons.OceanSparkResourceName): resourceSpotinstOceanSpark(),
+
+			// Ocean Spark Virtual Node Group
+			string(commons.OceanSparkVirtualNodeGroupResourceName): resourceSpotinstOceanSparkVirtualNodeGroup(),
 		},
 	}
 
