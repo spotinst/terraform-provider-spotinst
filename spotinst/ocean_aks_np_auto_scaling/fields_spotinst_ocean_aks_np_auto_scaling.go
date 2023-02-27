@@ -23,7 +23,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(AutoscaleIsEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						Computed: true,
+						Default:  true,
 					},
 					string(ResourceLimits): {
 						Type:     schema.TypeList,
@@ -35,11 +35,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(MaxVCPU): {
 									Type:     schema.TypeInt,
 									Optional: true,
+									// Value mentioned below is used to set MaxVCPU field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
+									Default: 1357997531,
 								},
 								string(MaxMemoryGib): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									Computed: true,
+									// Value mentioned below is used to set MaxMemoryGib field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
+									Default: 1357997531,
 								},
 							},
 						},
@@ -54,7 +57,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(MaxScaleDownPercentage): {
 									Type:     schema.TypeFloat,
 									Optional: true,
-									Computed: true,
+									// Value mentioned below is used to set MaxScaleDownPercentage field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
+									Default: 1357997531,
 								},
 							},
 						},
@@ -76,7 +80,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											string(IsEnabled): {
 												Type:     schema.TypeBool,
 												Optional: true,
-												Computed: true,
+												Default:  true,
 											},
 											string(Percentage): {
 												Type:     schema.TypeInt,
@@ -208,14 +212,23 @@ func expandResourceLimits(data interface{}) (*azure_np.ResourceLimits, error) {
 
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(MaxMemoryGib)].(int); ok && v >= 0 {
-		resLimits.SetMaxMemoryGib(spotinst.Int(v))
+	if v, ok := m[string(MaxMemoryGib)].(int); ok {
+		// Value(1357997531) mentioned below is used to set MaxMemoryGib field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
+		if v == 1357997531 {
+			resLimits.SetMaxMemoryGib(nil)
+		} else {
+			resLimits.SetMaxMemoryGib(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MaxVCPU)].(int); ok && v >= 0 {
-		resLimits.SetMaxVcpu(spotinst.Int(v))
+	if v, ok := m[string(MaxVCPU)].(int); ok {
+		// Value(1357997531) mentioned below is used to set MaxVCPU field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
+		if v == 1357997531 {
+			resLimits.SetMaxVcpu(nil)
+		} else {
+			resLimits.SetMaxVcpu(spotinst.Int(v))
+		}
 	}
-
 	return resLimits, nil
 }
 
@@ -223,14 +236,19 @@ func expandDown(data interface{}) (*azure_np.Down, error) {
 	down := &azure_np.Down{}
 	list := data.([]interface{})
 
-	if list == nil || list[0] == nil {
+	if list == nil || len(list) == 0 {
 		return nil, nil
 	}
 
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v >= 0 {
-		down.SetMaxScaleDownPercentage(spotinst.Float64(v))
+	if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok {
+		// Value(1357997531) mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
+		if v == 1357997531 {
+			down.SetMaxScaleDownPercentage(nil)
+		} else {
+			down.SetMaxScaleDownPercentage(spotinst.Float64(v))
+		}
 	}
 
 	return down, nil
@@ -265,7 +283,7 @@ func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {
 	automatic := &azure_np.Automatic{}
 	list := data.([]interface{})
 
-	if list == nil || list[0] == nil {
+	if list == nil || len(list) == 0 {
 		return nil, nil
 	}
 
