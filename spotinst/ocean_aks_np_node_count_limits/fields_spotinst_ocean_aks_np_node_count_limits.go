@@ -1,7 +1,6 @@
 package ocean_aks_np_node_count_limits
 
 import (
-	"errors"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
@@ -97,21 +96,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[Tag] = commons.NewGenericField(
+	fieldsMap[Tags] = commons.NewGenericField(
 		commons.OceanAKSNPNodeCountLimits,
-		Tag,
+		Tags,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(TagKey): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 					},
 					string(TagValue): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 					},
 				},
 			},
@@ -124,15 +123,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.Tags != nil {
 				value = flattenTags(cluster.VirtualNodeGroupTemplate.Tags)
 			}
-			if err := resourceData.Set(string(Tag), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tag), err)
+			if value != nil {
+				if err := resourceData.Set(string(Tags), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.GetOk(string(Tag)); ok {
+			if v, ok := resourceData.GetOk(string(Tags)); ok {
 				if tags, err := expandTags(v); err != nil {
 					return err
 				} else {
@@ -144,17 +145,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			var value []*azure_np.Tag = nil
-			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.Tags != nil {
-				if v, ok := resourceData.GetOk(string(Tag)); ok {
-					if tags, err := expandTags(v); err != nil {
-						return err
-					} else {
-						value = tags
-					}
+			var value *azure_np.Tag = nil
+			if v, ok := resourceData.GetOk(string(Tags)); ok {
+				if tags, err := expandTags(v); err != nil {
+					return err
+				} else {
+					value = tags
 				}
-				cluster.VirtualNodeGroupTemplate.SetTags(value)
 			}
+			cluster.VirtualNodeGroupTemplate.SetTags(value)
 			return nil
 		},
 		nil,
@@ -164,7 +163,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAKSNPNodeCountLimits,
 		Label,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -209,7 +208,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			var value []*azure_np.Label = nil
+			var value *azure_np.Label = nil
 
 			if v, ok := resourceData.GetOk(string(Label)); ok {
 				if labels, err := expandLabels(v); err != nil {
@@ -292,76 +291,60 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func expandTags(data interface{}) ([]*azure_np.Tag, error) {
-	list := data.(*schema.Set).List()
-	tags := make([]*azure_np.Tag, 0, len(list))
+func expandTags(data interface{}) (*azure_np.Tag, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		tags := &azure_np.Tag{}
 
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
+		if list != nil || list[0] != nil {
+			m := list[0].(map[string]interface{})
 
-		if !ok {
-			continue
+			if v, ok := m[string(TagKey)].(string); ok {
+				tags.SetKey(spotinst.String(v))
+			}
+
+			if v, ok := m[string(TagValue)].(string); ok {
+				tags.SetValue(spotinst.String(v))
+			}
 		}
-
-		if _, ok := attr[string(TagKey)]; !ok {
-			return nil, errors.New("invalid tag attributes: key missing")
-		}
-
-		if _, ok := attr[string(TagValue)]; !ok {
-			return nil, errors.New("invalid tag attributes: value missing")
-		}
-
-		tag := &azure_np.Tag{
-			Key:   spotinst.String(attr[string(TagKey)].(string)),
-			Value: spotinst.String(attr[string(TagValue)].(string)),
-		}
-
-		tags = append(tags, tag)
+		return tags, nil
 	}
-	return tags, nil
+	return nil, nil
 }
 
-func flattenTags(tags []*azure_np.Tag) []interface{} {
-	result := make([]interface{}, 0, len(tags))
-	for _, tag := range tags {
-		m := make(map[string]interface{})
-		m[string(TagKey)] = spotinst.StringValue(tag.Key)
-		m[string(TagValue)] = spotinst.StringValue(tag.Value)
+func flattenTags(tags *azure_np.Tag) []interface{} {
+	tag := make(map[string]interface{})
+	tag[string(TagKey)] = spotinst.StringValue(tags.Key)
+	tag[string(TagValue)] = spotinst.StringValue(tags.Value)
 
-		result = append(result, m)
-	}
-	return result
+	return []interface{}{tag}
 }
 
-func expandLabels(data interface{}) ([]*azure_np.Label, error) {
-	list := data.(*schema.Set).List()
-	labels := make([]*azure_np.Label, 0, len(list))
+func expandLabels(data interface{}) (*azure_np.Label, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		labels := &azure_np.Label{}
 
-	for _, v := range list {
-		attr, ok := v.(map[string]interface{})
-		if !ok {
-			continue
+		if list != nil || list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(LabelKey)].(string); ok {
+				labels.SetKey(spotinst.String(v))
+			}
+
+			if v, ok := m[string(LabelValue)].(string); ok {
+				labels.SetValue(spotinst.String(v))
+			}
 		}
-		labels = append(labels, &azure_np.Label{
-			Key:   spotinst.String(attr[string(LabelKey)].(string)),
-			Value: spotinst.String(attr[string(LabelValue)].(string)),
-		})
+		return labels, nil
 	}
-
-	return labels, nil
+	return nil, nil
 }
 
-func flattenLabels(labels []*azure_np.Label) []interface{} {
-	result := make([]interface{}, 0, len(labels))
+func flattenLabels(labels *azure_np.Label) []interface{} {
+	label := make(map[string]interface{})
+	label[string(LabelKey)] = spotinst.StringValue(labels.Key)
+	label[string(LabelValue)] = spotinst.StringValue(labels.Value)
 
-	for _, label := range labels {
-		m := make(map[string]interface{})
-		m[string(LabelKey)] = spotinst.StringValue(label.Key)
-		m[string(LabelValue)] = spotinst.StringValue(label.Value)
-		result = append(result, m)
-	}
-
-	return result
+	return []interface{}{label}
 }
 
 func expandTaints(data interface{}) ([]*azure_np.Taint, error) {

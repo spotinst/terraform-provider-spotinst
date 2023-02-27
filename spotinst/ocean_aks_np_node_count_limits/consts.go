@@ -7,20 +7,22 @@ const (
 	MaxCount commons.FieldName = "max_count"
 )
 
+type TagField string
+
 const (
-	Tag      commons.FieldName = "tag"
-	TagKey   commons.FieldName = "key"
-	TagValue commons.FieldName = "value"
+	Tags     commons.FieldName = "tags"
+	TagKey   TagField          = "key"
+	TagValue TagField          = "value"
 )
 
 const (
-	Label      commons.FieldName = "label"
+	Label      commons.FieldName = "labels"
 	LabelKey   commons.FieldName = "key"
 	LabelValue commons.FieldName = "value"
 )
 
 const (
-	Taint       commons.FieldName = "taint"
+	Taint       commons.FieldName = "taints"
 	TaintKey    commons.FieldName = "key"
 	TaintValue  commons.FieldName = "value"
 	TaintEffect commons.FieldName = "effect"
