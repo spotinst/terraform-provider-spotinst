@@ -33,7 +33,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(MinCount)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(MinCount)).(int); ok && v >= 0 {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMinCount(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMinCount(nil)
@@ -43,7 +43,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(MinCount)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(MinCount)).(int); ok && v >= 0 {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMinCount(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMinCount(nil)
@@ -76,7 +76,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(MaxCount)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(MaxCount)).(int); ok && v >= 0 {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMaxCount(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMaxCount(nil)
@@ -86,7 +86,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(MaxCount)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(MaxCount)).(int); ok && v >= 0 {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMaxCount(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.NodeCountLimits.SetMaxCount(nil)
@@ -100,40 +100,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAKSNPNodeCountLimits,
 		Tags,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeMap,
 			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(TagKey): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-					string(TagValue): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-				},
-			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			var value []interface{} = nil
 
-			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.Tags != nil {
-				value = flattenTags(cluster.VirtualNodeGroupTemplate.Tags)
-			}
-			if value != nil {
-				if err := resourceData.Set(string(Tags), value); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
-				}
+			if err := resourceData.Set(string(Tags), cluster.VirtualNodeGroupTemplate.Tags); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.GetOk(string(Tags)); ok {
+			if v, ok := resourceData.Get(string(Tags)).(interface{}); ok {
 				if tags, err := expandTags(v); err != nil {
 					return err
 				} else {
@@ -145,13 +127,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			var value *azure_np.Tag = nil
+			var value *map[string]string = nil
 			if v, ok := resourceData.GetOk(string(Tags)); ok {
-				if tags, err := expandTags(v); err != nil {
+				if label, err := expandTags(v); err != nil {
 					return err
 				} else {
-					value = tags
+					value = label
 				}
+			}
+			if cluster.VirtualNodeGroupTemplate.Labels == nil {
+				cluster.VirtualNodeGroupTemplate.Labels = &map[string]string{}
 			}
 			cluster.VirtualNodeGroupTemplate.SetTags(value)
 			return nil
@@ -163,32 +148,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAKSNPNodeCountLimits,
 		Label,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeMap,
 			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(LabelKey): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-					string(LabelValue): {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-				},
-			},
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			var result []interface{} = nil
 
-			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.Labels != nil {
-				result = flattenLabels(cluster.VirtualNodeGroupTemplate.Labels)
-			}
-
-			if err := resourceData.Set(string(Label), result); err != nil {
+			if err := resourceData.Set(string(Label), cluster.VirtualNodeGroupTemplate.Labels); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Label), err)
 			}
 			return nil
@@ -196,7 +164,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if value, ok := resourceData.GetOk(string(Label)); ok && value != nil {
+			if value, ok := resourceData.Get(string(Label)).(interface{}); ok {
 				if labels, err := expandLabels(value); err != nil {
 					return err
 				} else {
@@ -208,14 +176,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			var value *azure_np.Label = nil
 
+			var value *map[string]string = nil
 			if v, ok := resourceData.GetOk(string(Label)); ok {
-				if labels, err := expandLabels(v); err != nil {
+				if label, err := expandLabels(v); err != nil {
 					return err
 				} else {
-					value = labels
+					value = label
 				}
+			}
+			if cluster.VirtualNodeGroupTemplate.Labels == nil {
+				cluster.VirtualNodeGroupTemplate.Labels = &map[string]string{}
 			}
 			cluster.VirtualNodeGroupTemplate.SetLabels(value)
 			return nil
@@ -291,60 +262,52 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func expandTags(data interface{}) (*azure_np.Tag, error) {
-	if list := data.([]interface{}); len(list) > 0 {
-		tags := &azure_np.Tag{}
-
-		if list != nil || list[0] != nil {
-			m := list[0].(map[string]interface{})
-
-			if v, ok := m[string(TagKey)].(string); ok {
-				tags.SetKey(spotinst.String(v))
-			}
-
-			if v, ok := m[string(TagValue)].(string); ok {
-				tags.SetValue(spotinst.String(v))
-			}
-		}
-		return tags, nil
+func expandTags(data interface{}) (*map[string]string, error) {
+	m, ok := data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("could not cast tags")
 	}
-	return nil, nil
-}
-
-func flattenTags(tags *azure_np.Tag) []interface{} {
-	tag := make(map[string]interface{})
-	tag[string(TagKey)] = spotinst.StringValue(tags.Key)
-	tag[string(TagValue)] = spotinst.StringValue(tags.Value)
-
-	return []interface{}{tag}
-}
-
-func expandLabels(data interface{}) (*azure_np.Label, error) {
-	if list := data.([]interface{}); len(list) > 0 {
-		labels := &azure_np.Label{}
-
-		if list != nil || list[0] != nil {
-			m := list[0].(map[string]interface{})
-
-			if v, ok := m[string(LabelKey)].(string); ok {
-				labels.SetKey(spotinst.String(v))
-			}
-
-			if v, ok := m[string(LabelValue)].(string); ok {
-				labels.SetValue(spotinst.String(v))
-			}
+	result := make(map[string]string, len(m))
+	for k, v := range m {
+		val, ok := v.(string)
+		if !ok {
+			return nil, fmt.Errorf("could not cast tags value to string")
 		}
-		return labels, nil
+		result[k] = val
 	}
-	return nil, nil
+	return &result, nil
 }
 
-func flattenLabels(labels *azure_np.Label) []interface{} {
-	label := make(map[string]interface{})
-	label[string(LabelKey)] = spotinst.StringValue(labels.Key)
-	label[string(LabelValue)] = spotinst.StringValue(labels.Value)
+func flattenTags(tags map[string]string) map[string]interface{} {
+	result := make(map[string]interface{}, len(tags))
+	for k, v := range tags {
+		result[k] = v
+	}
+	return result
+}
 
-	return []interface{}{label}
+func expandLabels(data interface{}) (*map[string]string, error) {
+	m, ok := data.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("could not cast labels")
+	}
+	result := make(map[string]string, len(m))
+	for k, v := range m {
+		val, ok := v.(string)
+		if !ok {
+			return nil, fmt.Errorf("could not cast labels value to string")
+		}
+		result[k] = val
+	}
+	return &result, nil
+}
+
+func flattenLabels(labels map[string]string) map[string]interface{} {
+	result := make(map[string]interface{}, len(labels))
+	for k, v := range labels {
+		result[k] = v
+	}
+	return result
 }
 
 func expandTaints(data interface{}) ([]*azure_np.Taint, error) {
@@ -362,7 +325,6 @@ func expandTaints(data interface{}) ([]*azure_np.Taint, error) {
 			Effect: spotinst.String(attr[string(TaintEffect)].(string)),
 		})
 	}
-
 	return taints, nil
 }
 
@@ -376,6 +338,5 @@ func flattenTaints(taints []*azure_np.Taint) []interface{} {
 		m[string(TaintEffect)] = spotinst.StringValue(taint.Effect)
 		result = append(result, m)
 	}
-
 	return result
 }

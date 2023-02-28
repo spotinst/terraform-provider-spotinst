@@ -3,8 +3,8 @@ package ocean_aks_np
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	ControllerClusterID                commons.FieldName = "controller_cluster_id"
 	Name                               commons.FieldName = "name"
+	ControllerClusterID                commons.FieldName = "controller_cluster_id"
 	AvailabilityZones                  commons.FieldName = "availability_zones"
 	AKSClusterName                     commons.FieldName = "aks_cluster_name"
 	AKSResourceGroupName               commons.FieldName = "aks_resource_group_name"

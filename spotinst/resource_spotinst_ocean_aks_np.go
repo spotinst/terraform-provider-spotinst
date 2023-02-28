@@ -54,11 +54,6 @@ func setupClusterAKSNPResource() {
 func resourceSpotinstClusterAKSNPCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate), commons.OceanAKSResource.GetName())
 
-	/*importedCluster, err := importAKSNPCluster(resourceData, meta.(*Client))
-	if err != nil {
-		return diag.FromErr(err)
-	}*/
-
 	cluster, err := commons.OceanAKSNPResource.OnCreate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -228,43 +223,5 @@ func deleteAKSNPCluster(clusterID string, spotinstClient *Client) error {
 
 	return nil
 }
-
-// endregion
-
-// region Import
-
-/*func importAKSNPCluster(resourceData *schema.ResourceData, spotinstClient *Client) (*azure_np.Cluster, error) {
-	var cluster *azure_np.Cluster
-	err := resource.RetryContext(context.Background(), time.Hour, func() *resource.RetryError {
-		input := &azure_np.ImportClusterInput{
-			ACDIdentifier: spotinst.String(resourceData.Get("acd_identifier").(string)),
-			Cluster: &azure_np.ImportCluster{
-				Name: spotinst.String(resourceData.Get("name").(string)),
-				AKS: &azure_np.AKS{
-					ClusterName:       spotinst.String(resourceData.Get("aks_name").(string)),
-					ResourceGroupName: spotinst.String(resourceData.Get("aks_resource_group_name").(string)),
-				}},
-		}
-		output, err := spotinstClient.ocean.CloudProviderAzureNP().ImportCluster(context.TODO(), input)
-		if err != nil {
-			// Check whether the request should be retried.
-			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
-				for _, e := range errs {
-					if strings.Contains(e.Code, "FAILED_TO_IMPORT_OCEAN_CLUSTER") {
-						return resource.RetryableError(e)
-					}
-				}
-			}
-			// Some other error, report it.
-			return resource.NonRetryableError(err)
-		}
-		cluster = output.Cluster
-		return nil
-	})
-	if err != nil {
-		return nil, fmt.Errorf("ocean/aks: failed to import cluster: %v", err)
-	}
-	return cluster, err
-}*/
 
 // endregion

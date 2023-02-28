@@ -92,10 +92,8 @@ func expandHealth(data interface{}) (*azure_np.Health, error) {
 				health.SetGracePeriod(nil)
 			}
 		}
-
 		return health, nil
 	}
-
 	return nil, nil
 }
 

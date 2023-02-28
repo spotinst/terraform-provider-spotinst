@@ -55,7 +55,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(MaxScaleDownPercentage): {
-									Type:     schema.TypeFloat,
+									Type:     schema.TypeInt,
 									Optional: true,
 									// Value mentioned below is used to set MaxScaleDownPercentage field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
 									Default: 1357997531,
@@ -195,10 +195,8 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 				}
 			}
 		}
-
 		return autoScaler, nil
 	}
-
 	return nil, nil
 }
 
@@ -242,15 +240,14 @@ func expandDown(data interface{}) (*azure_np.Down, error) {
 
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok {
+	if v, ok := m[string(MaxScaleDownPercentage)].(int); ok {
 		// Value(1357997531) mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
 		if v == 1357997531 {
 			down.SetMaxScaleDownPercentage(nil)
 		} else {
-			down.SetMaxScaleDownPercentage(spotinst.Float64(v))
+			down.SetMaxScaleDownPercentage(spotinst.Int(v))
 		}
 	}
-
 	return down, nil
 }
 
@@ -275,7 +272,6 @@ func expandHeadroom(data interface{}) (*azure_np.Headroom, error) {
 			headroom.Automatic = nil
 		}
 	}
-
 	return headroom, nil
 }
 
@@ -296,7 +292,6 @@ func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {
 	if v, ok := m[string(IsEnabled)].(bool); ok {
 		automatic.SetIsEnabled(spotinst.Bool(v))
 	}
-
 	return automatic, nil
 }
 
@@ -315,7 +310,6 @@ func flattenAutoScaler(autoScaler *azure_np.AutoScaler) []interface{} {
 	if autoScaler.ResourceLimits != nil {
 		result[string(ResourceLimits)] = flattenResourceLimits(autoScaler.ResourceLimits)
 	}
-
 	return []interface{}{result}
 }
 
@@ -325,13 +319,12 @@ func flattenHeadroom(headroom *azure_np.Headroom) []interface{} {
 	if headroom.Automatic != nil {
 		result[string(Automatic)] = flattenAutomatic(headroom.Automatic)
 	}
-
 	return []interface{}{result}
 }
 
 func flattenDown(autoScaleDown *azure_np.Down) []interface{} {
 	down := make(map[string]interface{})
-	down[string(MaxScaleDownPercentage)] = spotinst.Float64Value(autoScaleDown.MaxScaleDownPercentage)
+	down[string(MaxScaleDownPercentage)] = spotinst.IntValue(autoScaleDown.MaxScaleDownPercentage)
 
 	return []interface{}{down}
 }

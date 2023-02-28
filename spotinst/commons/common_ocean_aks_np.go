@@ -39,13 +39,6 @@ func (res *OceanAKSNPTerraformResource) OnCreate(
 
 	clusterWrapper := NewAKSNPClusterWrapper()
 
-	/*if importedCluster != nil {
-		// This is the merge part of the import action
-		// onCreate on every field is the override action on top of what returned from Spot API
-		buildEmptyAKSNPClusterImportRequirements(importedCluster)
-		clusterWrapper.SetNPCluster(importedCluster)
-	}*/
-
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
@@ -117,8 +110,8 @@ func NewAKSNPClusterWrapper() *AKSNPClusterWrapper {
 				NodePoolProperties: &azure_np.NodePoolProperties{},
 				NodeCountLimits:    &azure_np.NodeCountLimits{},
 				Strategy:           &azure_np.Strategy{},
-				Tags:               &azure_np.Tag{},
-				Labels:             &azure_np.Label{},
+				Tags:               &map[string]string{},
+				Labels:             &map[string]string{},
 				Taints:             []*azure_np.Taint{},
 			},
 			Health: &azure_np.Health{},
