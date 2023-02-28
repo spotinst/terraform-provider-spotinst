@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,6 +26,8 @@ import (
 
 const (
 	ErrCodeResourceDoesNotExist = "RESOURCE_DOES_NOT_EXIST"
+	deleteTimeout               = 20 * time.Minute
+	sleepBetweenDeleteChecks    = 30 * time.Second
 )
 
 func resourceSpotinstOceanSpark() *schema.Resource {
@@ -191,7 +195,8 @@ func resourceSpotinstSparkClusterDelete(ctx context.Context, resourceData *schem
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OceanSparkResource.GetName(), id)
 
-	if err := deleteSparkCluster(ctx, resourceData, meta); err != nil {
+	oceanSparkClient := meta.(*Client).ocean.Spark()
+	if err := deleteSparkCluster(ctx, resourceData, oceanSparkClient); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -201,10 +206,17 @@ func resourceSpotinstSparkClusterDelete(ctx context.Context, resourceData *schem
 	return nil
 }
 
-func deleteSparkCluster(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) error {
+func deleteSparkCluster(ctx context.Context, resourceData *schema.ResourceData, oceanSparkClient spark.Service) error {
 	clusterID := resourceData.Id()
+	forceDelete := false
+	if os.Getenv("TF_ACC") == "1" {
+		log.Printf("===> Force delete set to true for integration tests")
+		forceDelete = true
+	}
+
 	input := &spark.DeleteClusterInput{
-		ClusterID: spotinst.String(clusterID),
+		ClusterID:   spotinst.String(clusterID),
+		ForceDelete: spotinst.Bool(forceDelete),
 	}
 
 	if json, err := commons.ToJson(input); err != nil {
@@ -213,9 +225,60 @@ func deleteSparkCluster(ctx context.Context, resourceData *schema.ResourceData, 
 		log.Printf("===> Cluster delete configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).ocean.Spark().DeleteCluster(ctx, input); err != nil {
+	if _, err := oceanSparkClient.DeleteCluster(ctx, input); err != nil {
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete cluster: %s", err)
 	}
 
+	if forceDelete {
+		log.Printf("===> Cluster has been force deleted: %s <===", resourceData.Id())
+		return nil
+	}
+
+	if err := waitUntilClusterDeleted(ctx, resourceData, oceanSparkClient); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func waitUntilClusterDeleted(ctx context.Context, resourceData *schema.ResourceData, oceanSparkClient spark.Service) error {
+	timeout := time.After(deleteTimeout)
+	for {
+		select {
+		case <-timeout:
+			return fmt.Errorf("timed out waiting for cluster deletion")
+		default:
+			isDeleted, err := isClusterDeleted(ctx, resourceData, oceanSparkClient)
+			if err != nil {
+				return fmt.Errorf("could not verify cluster deletion, %w", err)
+			}
+
+			if isDeleted {
+				return nil
+			}
+
+			time.Sleep(sleepBetweenDeleteChecks)
+		}
+	}
+}
+
+func isClusterDeleted(ctx context.Context, resourceData *schema.ResourceData, oceanSparkClient spark.Service) (bool, error) {
+	id := resourceData.Id()
+
+	input := &spark.ReadClusterInput{ClusterID: spotinst.String(id)}
+	cluster, err := oceanSparkClient.ReadCluster(ctx, input)
+
+	if err != nil && strings.Contains(err.Error(), "RESOURCE_DOES_NOT_EXIST") {
+		return true, nil
+	}
+
+	if err != nil {
+		return false, fmt.Errorf("could not read cluster, %w", err)
+	}
+
+	if cluster == nil || cluster.Cluster == nil {
+		return true, nil
+	}
+
+	return false, nil
 }
