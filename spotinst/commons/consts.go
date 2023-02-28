@@ -163,11 +163,13 @@ const (
 	StatefulNodeAzureExtensions          ResourceAffinity = "Stateful_Node_Azure_Extensions"
 	StatefulNodeAzureSecret              ResourceAffinity = "Stateful_Node_Azure_Secret"
 
-	OceanSpark              ResourceAffinity = "Ocean_Spark"
-	OceanSparkIngress       ResourceAffinity = "Ocean_Spark_Ingress"
-	OceanSparkWebhook       ResourceAffinity = "Ocean_Spark_Webhook"
-	OceanSparkCompute       ResourceAffinity = "Ocean_Spark_Compute"
-	OceanSparkLogCollection ResourceAffinity = "Ocean_Spark_Log_Collection"
+	OceanSpark                 ResourceAffinity = "Ocean_Spark"
+	OceanSparkIngress          ResourceAffinity = "Ocean_Spark_Ingress"
+	OceanSparkWebhook          ResourceAffinity = "Ocean_Spark_Webhook"
+	OceanSparkCompute          ResourceAffinity = "Ocean_Spark_Compute"
+	OceanSparkLogCollection    ResourceAffinity = "Ocean_Spark_Log_Collection"
+	OceanSparkVirtualNodeGroup ResourceAffinity = "Ocean_Spark_Virtual_Node_Group"
+	OceanSparkSpark            ResourceAffinity = "Ocean_Spark_Spark"
 
 	OceanAKSNP                ResourceAffinity = "Ocean_AKS_NP"
 	OceanAKSNPAutoScaler      ResourceAffinity = "Ocean_AKS_NP_Auto_Scaler"
