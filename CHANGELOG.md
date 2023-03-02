@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.102.0 (Mar 1, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support for create/delete cluster (initial version)
+
 ## 1.101.0 (Feb 27, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_spark: added `additional_app_namespaces`
