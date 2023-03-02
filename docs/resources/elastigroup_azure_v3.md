@@ -50,12 +50,10 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   // -------------------------------------------------------------------
 
   // --- STRATEGY ------------------------------------------------------
-  strategy {
-    od_count              = 1
+    //on_demand_count     = 1
     spot_percentage       = 65
     draining_timeout      = 300
     fallback_to_on_demand = true
-  }
   // -------------------------------------------------------------------
 
   // --- NETWORK -------------------------------------------------------
@@ -113,8 +111,8 @@ The following arguments are supported:
 ## Strategy
 
 * `strategy` - (Required) Describes the deployment strategy.
-    * `spot_percentage` - TODO
-    * `od_count` - (Optional) Number of On-Demand instances to maintain. Required if `low_priority_percentage` is not specified.
+    * `spot_percentage` - (Optional) Percentage of Spot-VMs to maintain. Required if `on_demand_count` is not specified.
+    * `on_demand_count` - (Optional) Number of On-Demand VMs to maintain. Required if `spot_percentage` is not specified.
     * `fallback_to_on_demand` - 
     * `draining_timeout` - (Optional, Default `120`) Time (seconds) to allow the instance to be drained from incoming TCP connections and detached from MLB before terminating it during a scale-down operation.
 
