@@ -178,22 +178,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(FallbackToOnDemand)); ok && v != nil {
-				ftod := v.(bool)
-				fallback := spotinst.Bool(ftod)
-				elastigroup.Strategy.SetFallbackToOnDemand(fallback)
+			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok {
+				elastigroup.Strategy.SetFallbackToOnDemand(spotinst.Bool(v))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var fallback *bool = nil
-			if v, ok := resourceData.GetOk(string(FallbackToOnDemand)); ok && v != nil {
-				result := v.(bool)
-				fallback = spotinst.Bool(result)
+			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok {
+				elastigroup.Strategy.SetFallbackToOnDemand(spotinst.Bool(v))
 			}
-			elastigroup.Strategy.SetFallbackToOnDemand(fallback)
 			return nil
 		},
 		nil,

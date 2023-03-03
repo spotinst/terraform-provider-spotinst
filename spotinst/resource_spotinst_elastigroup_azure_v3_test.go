@@ -455,8 +455,8 @@ func TestAccSpotinstElastigroupAzureV3_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "300"),
+					resource.TestCheckResourceAttr(resourceName, "on_demand_count", "2"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_on_demand", "false"),
 				),
 			},
@@ -474,9 +474,9 @@ const testAzureV3StrategyGroupConfig_Create = `
 
 const testAzureV3StrategyGroupConfig_Update = `
 // --- STRATEGY --------------------------------
-    spot_percentage = 50
     draining_timeout = 300
     fallback_to_on_demand = false
+	on_demand_count  = 2
 // ---------------------------------------------
 `
 
