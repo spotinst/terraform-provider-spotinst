@@ -1,8 +1,12 @@
 ## Unreleased
 
+## 1.103.0 (Mar 3, 2023)
+BUG FIXES:
+* resource/spotinst_elastigroup_azure_v3: resolved errors with `spot_percentage` and `on_demand_count`
+
 ## 1.102.0 (Mar 1, 2023)
-ENHANCEMENTS:
-* resource/spotinst_ocean_aks_np: Added support for create/delete cluster (initial version)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_aks_np`
 
 ## 1.101.0 (Feb 27, 2023)
 ENHANCEMENTS:
