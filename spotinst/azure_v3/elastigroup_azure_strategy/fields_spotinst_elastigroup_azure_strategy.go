@@ -2,64 +2,96 @@ package elastigroup_azure_strategy
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[Strategy] = commons.NewGenericField(
+	fieldsMap[SpotPercentage] = commons.NewGenericField(
 		commons.ElastigroupAzureStrategy,
-		Strategy,
+		SpotPercentage,
 		&schema.Schema{
-			Type:     schema.TypeList,
-			Required: true,
-			MaxItems: 1,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(SpotPercentage): {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-					string(OnDemandCount): {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-					string(DrainingTimeout): {
-						Type:     schema.TypeInt,
-						Optional: true,
-					},
-					string(FallbackToOnDemand): {
-						Type:     schema.TypeBool,
-						Optional: true,
-					},
-				},
+			Type:          schema.TypeInt,
+			Optional:      true,
+			ConflictsWith: []string{string(OnDemandCount)},
+			//Force setting -1 as default value if it's not exists in initial creation,
+			// to allow initialization of the field to 0
+			Default:      -1,
+			ValidateFunc: validation.IntAtLeast(-1),
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				if old == "-1" && new == "null" {
+					return true
+				}
+				return false
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value []interface{} = nil
+			var value *int = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.SpotPercentage != nil {
+				value = elastigroup.Strategy.SpotPercentage
+			}
+			if value != nil {
+				if err := resourceData.Set(string(SpotPercentage), spotinst.Int(int(*value))); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v > -1 {
+				elastigroup.Strategy.SetSpotPercentage(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v > -1 {
+				elastigroup.Strategy.SetSpotPercentage(spotinst.Int(v))
+			} else {
+				elastigroup.Strategy.SetSpotPercentage(nil)
+			}
 
-			if elastigroup.Strategy != nil {
-				value = flattenAzureGroupStrategy(elastigroup.Strategy)
-			}
-			if err := resourceData.Set(string(Strategy), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Strategy), err)
-			}
 			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[OnDemandCount] = commons.NewGenericField(
+		commons.ElastigroupAzureStrategy,
+		OnDemandCount,
+		&schema.Schema{
+			Type:          schema.TypeInt,
+			Optional:      true,
+			ConflictsWith: []string{string(SpotPercentage)},
+			//Force setting -1 as default value if it's not exists in initial creation,
+			// to allow initialization of the field to 0
+			Default:      -1,
+			ValidateFunc: validation.IntAtLeast(-1),
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				if old == "-1" && new == "null" {
+					return true
+				}
+				return false
+			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(Strategy)); ok {
-				if strategy, err := expandAzureGroupStrategy(v); err != nil {
-					return err
-				} else {
-					elastigroup.SetStrategy(strategy)
+			var value *int = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.OnDemandCount != nil {
+				value = elastigroup.Strategy.OnDemandCount
+			}
+			if value != nil {
+				if err := resourceData.Set(string(OnDemandCount), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OnDemandCount), err)
 				}
 			}
 			return nil
@@ -67,49 +99,98 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(Strategy)); ok {
-				if strategy, err := expandAzureGroupStrategy(v); err != nil {
-					return err
-				} else {
-					elastigroup.SetStrategy(strategy)
-				}
+			if v, ok := resourceData.Get(string(OnDemandCount)).(int); ok && v > -1 {
+				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(OnDemandCount)).(int); ok && v > -1 {
+				elastigroup.Strategy.SetOnDemandCount(spotinst.Int(v))
+			} else {
+				elastigroup.Strategy.SetOnDemandCount(nil)
 			}
 			return nil
 		},
 		nil,
 	)
-}
 
-func flattenAzureGroupStrategy(strategy *azurev3.Strategy) []interface{} {
-	result := make(map[string]interface{})
+	fieldsMap[DrainingTimeout] = commons.NewGenericField(
+		commons.ElastigroupAzureStrategy,
+		DrainingTimeout,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *int = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.DrainingTimeout != nil {
+				value = elastigroup.Strategy.DrainingTimeout
+			}
+			if err := resourceData.Set(string(DrainingTimeout), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DrainingTimeout), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(DrainingTimeout)).(int); ok && v > 0 {
+				elastigroup.Strategy.SetDrainingTimeout(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(DrainingTimeout)).(int); ok && v > 0 {
+				elastigroup.Strategy.SetDrainingTimeout(spotinst.Int(v))
+			}
+			return nil
+		},
+		nil,
+	)
 
-	result[string(SpotPercentage)] = spotinst.IntValue(strategy.SpotPercentage)
-	result[string(OnDemandCount)] = spotinst.IntValue(strategy.OnDemandCount)
-	result[string(DrainingTimeout)] = spotinst.IntValue(strategy.DrainingTimeout)
-	result[string(FallbackToOnDemand)] = spotinst.BoolValue(strategy.FallbackToOnDemand)
-
-	return []interface{}{result}
-}
-
-func expandAzureGroupStrategy(data interface{}) (*azurev3.Strategy, error) {
-	strategy := &azurev3.Strategy{}
-	list := data.([]interface{})
-
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
-		if v, ok := m[string(SpotPercentage)].(int); ok && v > 0 {
-			strategy.SetSpotPercentage(spotinst.Int(v))
-		}
-		if v, ok := m[string(OnDemandCount)].(int); ok && v > 0 {
-			strategy.SetOnDemandCount(spotinst.Int(v))
-		}
-		if v, ok := m[string(DrainingTimeout)].(int); ok && v >= 0 {
-			strategy.SetDrainingTimeout(spotinst.Int(v))
-		}
-		if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
-			strategy.SetFallbackToOnDemand(spotinst.Bool(v))
-		}
-	}
-
-	return strategy, nil
+	fieldsMap[FallbackToOnDemand] = commons.NewGenericField(
+		commons.ElastigroupAzureStrategy,
+		FallbackToOnDemand,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Required: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *bool = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.FallbackToOnDemand != nil {
+				value = elastigroup.Strategy.FallbackToOnDemand
+			}
+			if err := resourceData.Set(string(FallbackToOnDemand), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(FallbackToOnDemand), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok {
+				elastigroup.Strategy.SetFallbackToOnDemand(spotinst.Bool(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok {
+				elastigroup.Strategy.SetFallbackToOnDemand(spotinst.Bool(v))
+			}
+			return nil
+		},
+		nil,
+	)
 }
