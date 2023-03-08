@@ -85,6 +85,7 @@ resource "spotinst_ocean_aws" "example" {
   monitoring                  = true
   ebs_optimized               = true
   associate_public_ip_address = true
+  associate_ipv6_address      = true
   use_as_template_only        = true
 
   load_balancers {
@@ -175,6 +176,7 @@ The following arguments are supported:
 * `key_name` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
+* `associate_ipv6_address` - (Optional, Default: `false`) Configure IPv6 address allocation.
 * `root_volume_size` - (Optional) The size (in Gb) to allocate for the root volume. Minimum `20`.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
