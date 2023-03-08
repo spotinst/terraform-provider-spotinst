@@ -9,6 +9,7 @@ const (
 	UserData                 commons.FieldName = "user_data"
 	SecurityGroups           commons.FieldName = "security_groups"
 	AssociatePublicIpAddress commons.FieldName = "associate_public_ip_address"
+	AssociateIPv6Address     commons.FieldName = "associate_ipv6_address"
 	LoadBalancers            commons.FieldName = "load_balancers"
 	Arn                      commons.FieldName = "arn"
 	Name                     commons.FieldName = "name"
