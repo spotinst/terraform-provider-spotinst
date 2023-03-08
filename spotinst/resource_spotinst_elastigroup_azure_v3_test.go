@@ -441,10 +441,9 @@ func TestAccSpotinstElastigroupAzureV3_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "65"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "30"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "true"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "65"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "30"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_on_demand", "true"),
 				),
 			},
 			{
@@ -456,10 +455,9 @@ func TestAccSpotinstElastigroupAzureV3_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "50"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "300"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.fallback_to_on_demand", "false"),
+					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "300"),
+					resource.TestCheckResourceAttr(resourceName, "on_demand_count", "2"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_on_demand", "false"),
 				),
 			},
 		},
@@ -468,21 +466,17 @@ func TestAccSpotinstElastigroupAzureV3_Strategy(t *testing.T) {
 
 const testAzureV3StrategyGroupConfig_Create = `
 // --- STRATEGY --------------------------------
-  strategy {
     spot_percentage = 65
     draining_timeout = 30
     fallback_to_on_demand = true
-  }
 // ---------------------------------------------
 `
 
 const testAzureV3StrategyGroupConfig_Update = `
 // --- STRATEGY --------------------------------
- strategy {
-    spot_percentage = 50
     draining_timeout = 300
     fallback_to_on_demand = false
- }
+	on_demand_count  = 2
 // ---------------------------------------------
 `
 
