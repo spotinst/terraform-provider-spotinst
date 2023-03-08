@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.104.0 (Mar 8, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `associate_ipv6_address`
+
 ## 1.103.0 (Mar 3, 2023)
 BUG FIXES:
 * resource/spotinst_elastigroup_azure_v3: resolved errors with `spot_percentage` and `on_demand_count`
