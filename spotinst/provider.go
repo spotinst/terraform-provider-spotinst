@@ -46,16 +46,17 @@ func Provider() *schema.Provider {
 			string(commons.MRScalerAWSResourceName):             resourceSpotinstMRScalerAWS(),
 
 			// Ocean.
-			string(commons.OceanAWSResourceName):                 resourceSpotinstOceanAWS(),
-			string(commons.OceanAWSLaunchSpecResourceName):       resourceSpotinstOceanAWSLaunchSpec(),
-			string(commons.OceanGKEImportResourceName):           resourceSpotinstOceanGKEImport(),
-			string(commons.OceanGKELaunchSpecResourceName):       resourceSpotinstOceanGKELaunchSpec(),
-			string(commons.OceanGKELaunchSpecImportResourceName): resourceSpotinstOceanGKELaunchSpecImport(),
-			string(commons.OceanECSResourceName):                 resourceSpotinstOceanECS(),
-			string(commons.OceanECSLaunchSpecResourceName):       resourceSpotinstOceanECSLaunchSpec(),
-			string(commons.OceanAKSResourceName):                 resourceSpotinstOceanAKS(),
-			string(commons.OceanAKSVirtualNodeGroupResourceName): resourceSpotinstOceanAKSVirtualNodeGroup(),
-			string(commons.OceanAKSNPResourceName):               resourceSpotinstOceanAKSNP(),
+			string(commons.OceanAWSResourceName):                   resourceSpotinstOceanAWS(),
+			string(commons.OceanAWSLaunchSpecResourceName):         resourceSpotinstOceanAWSLaunchSpec(),
+			string(commons.OceanGKEImportResourceName):             resourceSpotinstOceanGKEImport(),
+			string(commons.OceanGKELaunchSpecResourceName):         resourceSpotinstOceanGKELaunchSpec(),
+			string(commons.OceanGKELaunchSpecImportResourceName):   resourceSpotinstOceanGKELaunchSpecImport(),
+			string(commons.OceanECSResourceName):                   resourceSpotinstOceanECS(),
+			string(commons.OceanECSLaunchSpecResourceName):         resourceSpotinstOceanECSLaunchSpec(),
+			string(commons.OceanAKSResourceName):                   resourceSpotinstOceanAKS(),
+			string(commons.OceanAKSVirtualNodeGroupResourceName):   resourceSpotinstOceanAKSVirtualNodeGroup(),
+			string(commons.OceanAKSNPResourceName):                 resourceSpotinstOceanAKSNP(),
+			string(commons.OceanAKSNPVirtualNodeGroupResourceName): resourceSpotinstOceanAKSNPVirtualNodeGroup(),
 
 			// Multai.
 			string(commons.MultaiBalancerResourceName):    resourceSpotinstMultaiBalancer(),

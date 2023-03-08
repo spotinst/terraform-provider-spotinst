@@ -129,14 +129,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetNPCluster()
 			var value *map[string]string = nil
 			if v, ok := resourceData.GetOk(string(Tags)); ok {
-				if label, err := expandTags(v); err != nil {
+				if tag, err := expandTags(v); err != nil {
 					return err
 				} else {
-					value = label
+					value = tag
 				}
 			}
-			if cluster.VirtualNodeGroupTemplate.Labels == nil {
-				cluster.VirtualNodeGroupTemplate.Labels = &map[string]string{}
+			if cluster.VirtualNodeGroupTemplate.Tags == nil {
+				cluster.VirtualNodeGroupTemplate.Tags = &map[string]string{}
 			}
 			cluster.VirtualNodeGroupTemplate.SetTags(value)
 			return nil
