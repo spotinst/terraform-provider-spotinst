@@ -178,6 +178,12 @@ const (
 	OceanAKSNPNodeCountLimits ResourceAffinity = "Ocean_AKS_NP_Node_Count_Limits"
 	OceanAKSNPHealth          ResourceAffinity = "Ocean_AKS_NP_Health"
 
+	OceanAKSNPVirtualNodeGroup                   ResourceAffinity = "Ocean_AKS_NP_virtual_node_group"
+	OceanAKSNPVirtualNodeGroupStrategy           ResourceAffinity = "Ocean_AKS_NP_virtual_node_groups_strategy"
+	OceanAKSNPVirtualNodeGroupAutoScale          ResourceAffinity = "Ocean_AKS_NP_virtual_node_group_auto_scale"
+	OceanAKSNPVirtualNodeGroupNodeCountLimits    ResourceAffinity = "Ocean_AKS_NP_virtual_node_group_node_count_limits"
+	OceanAKSNPVirtualNodeGroupNodePoolProperties ResourceAffinity = "Ocean_AKS_NP_virtual_node_group_node_pool_properties"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

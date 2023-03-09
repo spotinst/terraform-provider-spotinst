@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.105.0 (Mar 9, 2023)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_aks_np_virtual_node_group`
+
 ## 1.104.0 (Mar 8, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `associate_ipv6_address`
