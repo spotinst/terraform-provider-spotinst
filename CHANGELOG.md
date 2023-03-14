@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.106.0 (Mar 14, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `instance_metadata_tags` in `metadata_options`
+
 ## 1.105.0 (Mar 9, 2023)
 FEATURES:
 * **New Resource:** `resource/spotinst_ocean_aks_np_virtual_node_group`
