@@ -582,6 +582,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
+
+					string(InstanceMetadataTags): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -1437,6 +1442,9 @@ func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
 	} else {
 		metadataOptions.SetHTTPPutResponseHopLimit(nil)
 	}
+	if v, ok := m[string(InstanceMetadataTags)].(string); ok && v != "" {
+		metadataOptions.SetInstanceMetadataTags(spotinst.String(v))
+	}
 
 	return metadataOptions, nil
 }
@@ -1445,6 +1453,7 @@ func flattenMetadataOptions(metadataOptions *aws.MetadataOptions) []interface{} 
 	result := make(map[string]interface{})
 	result[string(HTTPTokens)] = spotinst.StringValue(metadataOptions.HTTPTokens)
 	result[string(HTTPPutResponseHopLimit)] = spotinst.IntValue(metadataOptions.HTTPPutResponseHopLimit)
+	result[string(InstanceMetadataTags)] = spotinst.StringValue(metadataOptions.InstanceMetadataTags)
 
 	return []interface{}{result}
 }

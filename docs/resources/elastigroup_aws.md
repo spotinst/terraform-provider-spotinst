@@ -39,6 +39,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   metadata_options {
     http_tokens                 = "optional"
     http_put_response_hop_limit = 10
+    instance_metadata_tags      = "enabled"
   }
   cpu_options {
     threads_per_core = 1
@@ -170,6 +171,7 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
 * `metadata_options` - (Optional) Data that used to configure or manage the running instances:
     * `http_tokens` - (Required) The state of token usage for your instance metadata requests. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional, Default: `1`) The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further instance metadata requests can travel. Valid values: Integers from `1` to `64`.
+    * `instance_metadata_tags` - (Optional) Indicates whether access to instance tags from the instance metadata is enabled or disabled. Can’t be null.
 * `cpu_options` - (Optional) The CPU options for the instances that are launched within the group:
     * `threads_per_core` - (Required) The ability to define the number of threads per core in instances that allow this.
 
