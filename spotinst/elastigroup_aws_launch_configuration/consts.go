@@ -26,6 +26,7 @@ const (
 	// - MetadataOptions -----------------------------
 	HTTPTokens              commons.FieldName = "http_tokens"
 	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
+	InstanceMetadataTags    commons.FieldName = "instance_metadata_tags"
 	// -----------------------------------
 
 	// - CPUOptions -----------------------------
