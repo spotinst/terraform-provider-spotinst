@@ -1,5 +1,87 @@
 ## Unreleased
 
+## 1.106.0 (Mar 14, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `instance_metadata_tags` in `metadata_options`
+
+## 1.105.0 (Mar 9, 2023)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_aks_np_virtual_node_group`
+
+## 1.104.0 (Mar 8, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `associate_ipv6_address`
+
+## 1.103.0 (Mar 3, 2023)
+BUG FIXES:
+* resource/spotinst_elastigroup_azure_v3: resolved errors with `spot_percentage` and `on_demand_count`
+
+## 1.102.0 (Mar 1, 2023)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_aks_np`
+
+## 1.101.0 (Feb 27, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: added `additional_app_namespaces`
+* resource/spotinst_ocean_spark: added support for ocean spark cluster dedicated VNGs.
+
+## 1.100.0 (Feb 15, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `spread_nodes_by`
+
+## 1.99.0 (Feb 14, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `should_scale_down_non_service_tasks`
+
+## 1.98.0 (Feb 14, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `instance_metadata_options`
+* resource/spotinst_ocean_aws_launch_spec: added `instance_metadata_options`
+
+NOTES:
+* documentation: resource/spotinst_ocean_spark: Fixed Tests - use the valid
+ domain name for custom endpoint address
+
+## 1.97.0 (Jan 26, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `cluster_orientation`
+
+## 1.96.0 (Jan 24, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `max_scale_down_percentage`
+
+## 1.95.2 (Jan 20, 2023)
+NOTES:
+* documentation: resource/elastigroup_aws_suspension: Fixed typos in documentation 
+* documentation: resource/ocean_ecs: Fixed documentation for `instance_types`
+
+## 1.95.1 (Jan 19, 2023)
+NOTES:
+* documentation: resource/ocean_gke_launch_spec: Fixed typos in documentation 
+* documentation: resource/ocean_ecs: Added example for import cluster to ocean
+* documentation: resource/ocean_aws: Added example for import cluster to ocean
+
+## 1.95.0 (Jan 18, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `filter`
+* resource/spotinst_ocean_ecs: updated `isEnaSupported`
+
+## 1.94.0 (Jan 17, 2023)
+NOTES:
+* documentation: resource/spotinst_elastigroup_gcp: corrected example usage
+
+## 1.93.0 (Jan 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `immediate_od_recover_threshold`
+
+## 1.92.0 (Jan 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `cluster_orientation`
+
+## 1.91.0 (Jan 12, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: added `consider_od_pricing`
+
 ## 1.90.0 (Dec 20, 2022)
 NOTES:
 * documentation: resource/spotinst_ocean_aws_instance_types: update `filters`

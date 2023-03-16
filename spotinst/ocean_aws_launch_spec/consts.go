@@ -62,6 +62,8 @@ const (
 	RestrictScaleDown        commons.FieldName = "restrict_scale_down"
 	SchedulingTask           commons.FieldName = "scheduling_task"
 	SchedulingShutdownHours  commons.FieldName = "scheduling_shutdown_hours"
+	AutoscaleDown            commons.FieldName = "autoscale_down"
+	MaxScaleDownPercentage   commons.FieldName = "max_scale_down_percentage"
 )
 
 const (
@@ -116,4 +118,10 @@ const (
 
 const (
 	TimeWindows commons.FieldName = "time_windows"
+)
+
+const (
+	InstanceMetadataOptions commons.FieldName = "instance_metadata_options"
+	HTTPTokens              commons.FieldName = "http_tokens"
+	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
 )

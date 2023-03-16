@@ -72,3 +72,9 @@ const (
 	TaskType       commons.FieldName = "task_type"
 	TaskHeadroom   commons.FieldName = "task_headroom"
 )
+
+const (
+	InstanceMetadataOptions commons.FieldName = "instance_metadata_options"
+	HTTPTokens              commons.FieldName = "http_tokens"
+	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
+)

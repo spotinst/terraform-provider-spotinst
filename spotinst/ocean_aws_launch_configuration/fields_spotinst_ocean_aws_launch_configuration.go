@@ -347,6 +347,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[AssociateIPv6Address] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		AssociateIPv6Address,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var value *bool = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.AssociateIPv6Address != nil {
+
+				value = cluster.Compute.LaunchSpecification.AssociateIPv6Address
+			}
+
+			if err := resourceData.Set(string(AssociateIPv6Address), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AssociateIPv6Address), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(AssociateIPv6Address)); ok {
+				cluster.Compute.LaunchSpecification.SetAssociateIPv6Address(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(AssociateIPv6Address)); ok {
+				cluster.Compute.LaunchSpecification.SetAssociateIPv6Address(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[LoadBalancers] = commons.NewGenericField(
 		commons.OceanAWSLaunchConfiguration,
 		LoadBalancers,
@@ -575,6 +620,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(HTTPPutResponseHopLimit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						// Value mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
+						Default: 1357997531,
 					},
 				},
 			},
@@ -701,10 +748,13 @@ func expandInstanceMetadataOptions(data interface{}) (*aws.InstanceMetadataOptio
 	if v, ok := m[string(HTTPTokens)].(string); ok && v != "" {
 		instanceMetadataOptions.SetHTTPTokens(spotinst.String(v))
 	}
-	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok && v >= 0 {
-		instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
-	} else {
-		instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok {
+		// Value(1357997531) mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
+		if v == 1357997531 {
+			instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+		} else {
+			instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
+		}
 	}
 
 	return instanceMetadataOptions, nil

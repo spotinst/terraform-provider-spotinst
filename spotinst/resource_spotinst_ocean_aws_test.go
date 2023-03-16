@@ -166,7 +166,7 @@ func createOceanAWSTerraform(ccm *ClusterConfigMetadata) string {
 	return template
 }
 
-//region OceanAWS: Baseline
+// region OceanAWS: Baseline
 func TestAccSpotinstOceanAWS_Baseline(t *testing.T) {
 	clusterName := "test-acc-cluster-baseline"
 	controllerClusterID := "baseline-controller-id"
@@ -388,6 +388,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
+					resource.TestCheckResourceAttr(resourceName, "associate_ipv6_address", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world")),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
@@ -421,6 +422,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "associate_ipv6_address", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world updated")),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
@@ -469,6 +471,7 @@ const testLaunchConfigAWSConfig_Create = `
   user_data                   = "echo hello world"
   //iam_instance_profile      = "iam-profile"
   associate_public_ip_address = false
+  associate_ipv6_address 	  = false
   root_volume_size            = 20
   monitoring                  = true
   ebs_optimized               = true
@@ -503,6 +506,7 @@ const testLaunchConfigAWSConfig_Update = `
   user_data                   = "echo hello world updated"
   //iam_instance_profile      = "iam-profile updated"
   associate_public_ip_address = true
+  associate_ipv6_address 	  = true
   root_volume_size            = 24
   monitoring                  = false
   ebs_optimized               = false
@@ -564,6 +568,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 					resource.TestCheckResourceAttr(resourceName, "grace_period", "50"),
+					resource.TestCheckResourceAttr(resourceName, "spread_nodes_by", "count"),
 				),
 			},
 			{
@@ -608,7 +613,8 @@ const testStrategyConfig_Create = `
  spot_percentage            = 100
  utilize_reserved_instances = false
  draining_timeout			= 120
- grace_period = 50
+ grace_period 				= 50
+ spread_nodes_by			= "count"
  // ---------------------------------
 `
 
@@ -1051,7 +1057,7 @@ const testUpdatePolicyAWSClusterConfig_EmptyFields = `
 
 // endregion
 
-//region OceanAWS: Baseline
+// region OceanAWS: Baseline
 func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 	clusterName := "test-acc-cluster-logging"
 	controllerClusterID := "logging-controller-id"

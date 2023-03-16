@@ -85,6 +85,7 @@ resource "spotinst_ocean_aws" "example" {
   monitoring                  = true
   ebs_optimized               = true
   associate_public_ip_address = true
+  associate_ipv6_address      = true
   use_as_template_only        = true
 
   load_balancers {
@@ -104,6 +105,10 @@ resource "spotinst_ocean_aws" "example" {
   grace_period               = 600
   spot_percentage            = 100
   utilize_commitments        = false
+  spread_nodes_by            = "count"
+  cluster_orientation{
+    availability_vs_cost="balanced"
+  }
   // endregion
 
   tags {
@@ -171,6 +176,7 @@ The following arguments are supported:
 * `key_name` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
+* `associate_ipv6_address` - (Optional, Default: `false`) Configure IPv6 address allocation.
 * `root_volume_size` - (Optional) The size (in Gb) to allocate for the root volume. Minimum `20`.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
@@ -189,9 +195,12 @@ The following arguments are supported:
 * `grace_period` - (Optional, Default: 600) The amount of time, in seconds, after the instance has launched to start checking its health.
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
+* `spread_nodes_by` - (Optional, Default: `count`) Ocean will spread the nodes across markets by this value. Possible values: `vcpu` or `count`.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
+* `cluster_orientation`
+    * `availability_vs_cost` - (Optional, Default: `balanced`) You can control the approach that Ocean takes while launching nodes by configuring this value. Possible values: `costOriented`,`balanced`,`cheapest`.
 * `logging` - (Optional) Logging configuration.
     * `export` - (Optional) Logging Export configuration.
         * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
@@ -273,7 +282,7 @@ update_policy {
 ```
 
 <a id="scheduled-task"></a>
-## scheduled task
+## Scheduled Task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional) Toggle the shutdown hours task. (Example: `true`).
@@ -300,7 +309,17 @@ scheduled_task {
 }
 ```
 
+<a id="attributes-reference"></a>
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Cluster ID.
+
+
+<a id="import"></a>
+## Import
+
+Clusters can be imported using the Ocean `id`, e.g.,
+```hcl
+$ terraform import spotinst_ocean_aws.this o-12345678
+```
