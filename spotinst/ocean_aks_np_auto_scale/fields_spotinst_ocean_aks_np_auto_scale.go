@@ -1,4 +1,4 @@
-package ocean_aks_np_virtual_node_group_auto_scale
+package ocean_aks_np_auto_scale
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Headrooms] = commons.NewGenericField(
-		commons.OceanAKSNPVirtualNodeGroupAutoScale,
+		commons.OceanAKSNPGroupAutoScale,
 		Headrooms,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -43,12 +43,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
-			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
 
 			var headroomsResults []interface{} = nil
-			if virtualNodeGroup != nil && virtualNodeGroup.AutoScale != nil && virtualNodeGroup.AutoScale.Headrooms != nil {
-				headrooms := virtualNodeGroup.AutoScale.Headrooms
+			if cluster != nil && cluster.VirtualNodeGroupTemplate.AutoScale != nil && cluster.VirtualNodeGroupTemplate.AutoScale.Headrooms != nil {
+				headrooms := cluster.VirtualNodeGroupTemplate.AutoScale.Headrooms
 				headroomsResults = flattenHeadrooms(headrooms)
 			}
 
@@ -59,21 +59,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
-			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
 
 			if value, ok := resourceData.GetOkExists(string(Headrooms)); ok {
 				if headrooms, err := expandHeadrooms(value); err != nil {
 					return err
 				} else {
-					virtualNodeGroup.AutoScale.SetHeadrooms(headrooms)
+					cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(headrooms)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
-			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
 
 			var result []*azure_np.Headrooms = nil
 			if value, ok := resourceData.GetOkExists(string(Headrooms)); ok {
@@ -84,7 +84,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 			}
 
-			virtualNodeGroup.AutoScale.SetHeadrooms(result)
+			cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(result)
 			return nil
 		},
 		nil,

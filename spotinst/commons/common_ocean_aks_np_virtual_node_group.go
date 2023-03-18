@@ -109,8 +109,8 @@ func NewVirtualNodeGroupAKSNPWrapper() *VirtualNodeGroupAKSNPWrapper {
 			NodePoolProperties: &azure_np.NodePoolProperties{},
 			NodeCountLimits:    &azure_np.NodeCountLimits{},
 			Strategy:           &azure_np.Strategy{},
-			AutoScale: &azure_np.VirtualNodeGroupAutoScale{
-				Headrooms: []*azure_np.VirtualNodeGroupHeadrooms{},
+			AutoScale: &azure_np.AutoScale{
+				Headrooms: []*azure_np.Headrooms{},
 			},
 			Taints: []*azure_np.Taint{},
 		},

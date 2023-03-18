@@ -1,4 +1,4 @@
-package ocean_aks_np_auto_scaling
+package ocean_aks_np_auto_scaler
 
 import (
 	"fmt"
@@ -66,26 +66,26 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Headroom): {
 						Type:     schema.TypeList,
 						Optional: true,
-						Computed: true,
+						//Computed: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Automatic): {
 									Type:     schema.TypeList,
 									Optional: true,
-									Computed: true,
+									//Computed: true,
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(IsEnabled): {
 												Type:     schema.TypeBool,
 												Optional: true,
-												Default:  true,
+												//Computed: true,
 											},
 											string(Percentage): {
 												Type:     schema.TypeInt,
 												Optional: true,
-												Computed: true,
+												//Computed: true,
 											},
 										},
 									},
@@ -117,7 +117,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetNPCluster()
 			var value *azure_np.AutoScaler = nil
 
-			if v, ok := resourceData.GetOk(string(AutoScaler)); ok {
+			if v, ok := resourceData.GetOkExists(string(AutoScaler)); ok {
 				if autoScaler, err := expandAutoScaler(v); err != nil {
 					return err
 				} else {
@@ -132,7 +132,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetNPCluster()
 			var value *azure_np.AutoScaler = nil
 
-			if v, ok := resourceData.GetOk(string(AutoScaler)); ok {
+			if v, ok := resourceData.GetOkExists(string(AutoScaler)); ok {
 				if autoScaler, err := expandAutoScaler(v); err != nil {
 					return err
 				} else {
@@ -285,7 +285,7 @@ func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {
 
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(Percentage)].(int); ok && v >= 0 {
+	if v, ok := m[string(Percentage)].(int); ok && v > 0 {
 		automatic.SetPercentage(spotinst.Int(v))
 	}
 

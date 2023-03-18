@@ -1,4 +1,4 @@
-package ocean_aks_np_auto_scaling
+package ocean_aks_np_auto_scaler
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 

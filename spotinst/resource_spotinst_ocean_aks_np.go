@@ -6,7 +6,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scaling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scale"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scaler"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_health"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_count_limits"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_pool_properties"
@@ -40,11 +41,12 @@ func setupClusterAKSNPResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	ocean_aks_np.Setup(fieldsMap)
-	ocean_aks_np_auto_scaling.Setup(fieldsMap)
+	ocean_aks_np_auto_scaler.Setup(fieldsMap)
 	ocean_aks_np_strategy.Setup(fieldsMap)
 	ocean_aks_np_health.Setup(fieldsMap)
 	ocean_aks_np_node_pool_properties.Setup(fieldsMap)
 	ocean_aks_np_node_count_limits.Setup(fieldsMap)
+	ocean_aks_np_auto_scale.Setup(fieldsMap)
 
 	commons.OceanAKSNPResource = commons.NewOceanAKSNPResource(fieldsMap)
 }
@@ -152,16 +154,16 @@ func readAKSNPCluster(ctx context.Context, clusterID string, spotinstClient *Cli
 
 func resourceSpotinstClusterAKSNPUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clusterID := resourceData.Id()
-	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSResource.GetName(), clusterID)
+	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSNPResource.GetName(), clusterID)
 
-	shouldUpdate, cluster, err := commons.OceanAKSResource.OnUpdate(resourceData, meta)
+	shouldUpdate, cluster, err := commons.OceanAKSNPResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(clusterID))
-		if err := updateAKSCluster(cluster, meta.(*Client)); err != nil {
+		if err := updateAKSNPCluster(cluster, meta.(*Client)); err != nil {
 			return diag.FromErr(err)
 		}
 	}

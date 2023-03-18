@@ -113,6 +113,9 @@ func NewAKSNPClusterWrapper() *AKSNPClusterWrapper {
 				Tags:               &map[string]string{},
 				Labels:             &map[string]string{},
 				Taints:             []*azure_np.Taint{},
+				AutoScale: &azure_np.AutoScale{
+					Headrooms: []*azure_np.Headrooms{},
+				},
 			},
 			Health: &azure_np.Health{},
 			AutoScaler: &azure_np.AutoScaler{
@@ -132,18 +135,4 @@ func (clusterWrapper *AKSNPClusterWrapper) GetNPCluster() *azure_np.Cluster {
 
 func (clusterWrapper *AKSNPClusterWrapper) SetNPCluster(cluster *azure_np.Cluster) {
 	clusterWrapper.cluster = cluster
-}
-
-func buildEmptyAKSNPClusterImportRequirements(cluster *azure_np.Cluster) {
-	if cluster == nil {
-		return
-	}
-
-	if cluster.AutoScaler == nil {
-		cluster.SetAutoScaler(&azure_np.AutoScaler{})
-	}
-
-	if cluster.Health == nil {
-		cluster.SetHealth(&azure_np.Health{})
-	}
 }
