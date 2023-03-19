@@ -38,10 +38,42 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeString,
 									Required: true,
 								},
-
-								string(BatchSizePercentage): {
-									Type:     schema.TypeInt,
+								string(TaskParameters): {
+									Type:     schema.TypeList,
 									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(ClusterRoll): {
+												Type:     schema.TypeList,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(BatchMinHealthyPercentage): {
+															Type:     schema.TypeInt,
+															Optional: true,
+														},
+
+														string(BatchSizePercentage): {
+															Type:     schema.TypeInt,
+															Optional: true,
+														},
+
+														string(Comment): {
+															Type:     schema.TypeString,
+															Optional: true,
+														},
+
+														string(RespectPdb): {
+															Type:     schema.TypeBool,
+															Optional: true,
+														},
+													},
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -185,7 +217,6 @@ func flattenTasks(tasks []*gcp.Task) []interface{} {
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
 		m[string(TaskType)] = spotinst.StringValue(task.Type)
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
-		m[string(BatchSizePercentage)] = spotinst.IntValue(task.BatchSizePercentage)
 		result = append(result, m)
 	}
 	return result
@@ -241,13 +272,60 @@ func expandtasks(data interface{}) ([]*gcp.Task, error) {
 		if v, ok := m[string(CronExpression)].(string); ok && v != "" {
 			task.SetCronExpression(spotinst.String(v))
 		}
-
-		if v, ok := m[string(BatchSizePercentage)].(int); ok {
-			task.SetBatchSizePercentage(spotinst.Int(v))
+		if v, ok := m[string(TaskParameters)]; ok {
+			parameters, err := expandParameters(v)
+			if err != nil {
+				return nil, err
+			}
+			if parameters != nil {
+				task.SetParameters(parameters)
+			} else {
+				task.SetParameters(nil)
+			}
 		}
-
 		tasks = append(tasks, task)
 	}
-
 	return tasks, nil
+}
+func expandParameters(data interface{}) (*gcp.Parameters, error) {
+	parameters := &gcp.Parameters{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return parameters, nil
+	}
+	m := list[0].(map[string]interface{})
+	if v, ok := m[string(ClusterRoll)]; ok {
+		clusterRoll, err := expandClusterRoll(v)
+		if err != nil {
+			return nil, err
+		}
+		if clusterRoll != nil {
+			parameters.SetClusterRoll(clusterRoll)
+		} else {
+			parameters.SetClusterRoll(nil)
+		}
+	}
+	return parameters, nil
+}
+
+func expandClusterRoll(data interface{}) (*gcp.ClusterRoll, error) {
+	clusterRoll := &gcp.ClusterRoll{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return clusterRoll, nil
+	}
+	m := list[0].(map[string]interface{})
+	if v, ok := m[string(BatchMinHealthyPercentage)].(int); ok {
+		clusterRoll.SetBatchMinHealthyPercentage(spotinst.Int(v))
+	}
+	if v, ok := m[string(BatchSizePercentage)].(int); ok {
+		clusterRoll.SetBatchSizePercentage(spotinst.Int(v))
+	}
+	if v, ok := m[string(Comment)].(string); ok && v != "" {
+		clusterRoll.SetComment(spotinst.String(v))
+	}
+	if v, ok := m[string(RespectPdb)].(bool); ok {
+		clusterRoll.SetRespectPdb(spotinst.Bool(v))
+	}
+	return clusterRoll, nil
 }
