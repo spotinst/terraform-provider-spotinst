@@ -53,6 +53,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(BatchMinHealthyPercentage): {
 															Type:     schema.TypeInt,
 															Optional: true,
+															Default:  50,
 														},
 
 														string(BatchSizePercentage): {
@@ -68,6 +69,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(RespectPdb): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Default:  false,
 														},
 													},
 												},
