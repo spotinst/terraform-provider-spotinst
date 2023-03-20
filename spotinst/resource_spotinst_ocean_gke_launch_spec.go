@@ -95,10 +95,6 @@ const ErrCodeGKELaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
 var isResourceCreated = false
 
-const WarningMessageAfterCreate = "Please add the imported tags from state file to the tags list"
-
-const InfoMessageBeforeUpdate = "Make sure you updated the tags list"
-
 func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanGKELaunchSpecResource.GetName(), id)
@@ -134,22 +130,7 @@ func resourceSpotinstOceanGKELaunchSpecRead(ctx context.Context, resourceData *s
 	}
 	log.Printf("===> launchSpec GKE read successfully: %s <===", id)
 	diag.FromErr(fmt.Errorf("[ERROR] failed to create launchSpec: %s", err))
-
-	var diags diag.Diagnostics
-
-	if isResourceCreated == true {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  InfoMessageBeforeUpdate,
-		})
-	} else {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Warning,
-			Summary:  WarningMessageAfterCreate,
-		})
-		isResourceCreated = true
-	}
-	return diags
+	return nil
 }
 
 func resourceSpotinstOceanGKELaunchSpecUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
