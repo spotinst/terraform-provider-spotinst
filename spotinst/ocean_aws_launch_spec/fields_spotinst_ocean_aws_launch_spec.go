@@ -921,6 +921,64 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[AutoscaleDown] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		AutoscaleDown,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(MaxScaleDownPercentage): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.AutoScale != nil && launchSpec.AutoScale.Down != nil {
+				down := launchSpec.AutoScale.Down
+				result = flattenAutoscaleDown(down)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(AutoscaleDown), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoscaleDown), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(AutoscaleDown)); ok {
+				if autoscaleDown, err := expandAutoscaleDown(value); err != nil {
+					return err
+				} else {
+					launchSpec.AutoScale.SetAutoScalerDownVNG(autoscaleDown)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result *aws.AutoScalerDownVNG = nil
+			if value, ok := resourceData.GetOk(string(AutoscaleDown)); ok {
+				if autoscaleDown, err := expandAutoscaleDown(value); err != nil {
+					return err
+				} else {
+					result = autoscaleDown
+				}
+			}
+			launchSpec.AutoScale.SetAutoScalerDownVNG(result)
+			return nil
+		},
+		nil,
+	)
 
 	fieldsMap[SubnetIDs] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
@@ -1497,6 +1555,73 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 			}
 			launchSpec.LaunchSpecScheduling.SetShutdownHours(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[InstanceMetadataOptions] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		InstanceMetadataOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(HTTPTokens): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(HTTPPutResponseHopLimit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						// Value mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
+						Default: 1357997531,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec != nil && launchSpec.InstanceMetadataOptions != nil {
+				result = flattenInstanceMetadataOptions(launchSpec.InstanceMetadataOptions)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(InstanceMetadataOptions), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceMetadataOptions), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetLaunchspecInstanceMetadataOptions(metaDataOptions)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.LaunchspecInstanceMetadataOptions = nil
+			if v, ok := resourceData.GetOk(string(InstanceMetadataOptions)); ok {
+				if metaDataOptions, err := expandInstanceMetadataOptions(v); err != nil {
+					return err
+				} else {
+					value = metaDataOptions
+				}
+			}
+			launchSpec.SetLaunchspecInstanceMetadataOptions(value)
 			return nil
 		},
 		nil,
@@ -2230,4 +2355,64 @@ func expandTimeWindows(data interface{}) ([]string, error) {
 	}
 
 	return result, nil
+}
+
+func flattenAutoscaleDown(down *aws.AutoScalerDownVNG) []interface{} {
+	var out []interface{}
+	if down != nil {
+		result := make(map[string]interface{})
+		if down.MaxScaleDownPercentage != nil {
+			result[string(MaxScaleDownPercentage)] = spotinst.Float64Value(down.MaxScaleDownPercentage)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+
+func expandAutoscaleDown(down interface{}) (*aws.AutoScalerDownVNG, error) {
+	if list := down.([]interface{}); len(list) > 0 {
+		autoscaleDown := &aws.AutoScalerDownVNG{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok {
+				autoscaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
+			} else {
+				autoscaleDown.SetMaxScaleDownPercentage(nil)
+			}
+		}
+		return autoscaleDown, nil
+	}
+	return nil, nil
+}
+
+func flattenInstanceMetadataOptions(instanceMetadataOptions *aws.LaunchspecInstanceMetadataOptions) []interface{} {
+	result := make(map[string]interface{})
+	result[string(HTTPTokens)] = spotinst.StringValue(instanceMetadataOptions.HTTPTokens)
+	result[string(HTTPPutResponseHopLimit)] = spotinst.IntValue(instanceMetadataOptions.HTTPPutResponseHopLimit)
+
+	return []interface{}{result}
+}
+func expandInstanceMetadataOptions(data interface{}) (*aws.LaunchspecInstanceMetadataOptions, error) {
+	instanceMetadataOptions := &aws.LaunchspecInstanceMetadataOptions{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return instanceMetadataOptions, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(HTTPTokens)].(string); ok && v != "" {
+		instanceMetadataOptions.SetHTTPTokens(spotinst.String(v))
+	}
+	if v, ok := m[string(HTTPPutResponseHopLimit)].(int); ok {
+		// Value(1357997531) mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
+		if v == 1357997531 {
+			instanceMetadataOptions.SetHTTPPutResponseHopLimit(nil)
+		} else {
+			instanceMetadataOptions.SetHTTPPutResponseHopLimit(spotinst.Int(v))
+		}
+	}
+
+	return instanceMetadataOptions, nil
 }

@@ -457,6 +457,101 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ConsiderODPricing] = commons.NewGenericField(
+		commons.ElastigroupAWSStrategy,
+		ConsiderODPricing,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *bool = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.ConsiderODPricing != nil {
+				value = elastigroup.Strategy.ConsiderODPricing
+			}
+			if err := resourceData.Set(string(ConsiderODPricing), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ConsiderODPricing), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOkExists(string(ConsiderODPricing)); ok && v != nil {
+				codp := v.(bool)
+				cnsdrodprice := spotinst.Bool(codp)
+				elastigroup.Strategy.SetConsiderODPricing(cnsdrodprice)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var cnsdrodprice *bool = nil
+			if v, ok := resourceData.GetOkExists(string(ConsiderODPricing)); ok && v != nil {
+				codp := v.(bool)
+				cnsdrodprice = spotinst.Bool(codp)
+			}
+			elastigroup.Strategy.SetConsiderODPricing(cnsdrodprice)
+			return nil
+		},
+		nil,
+	)
+	fieldsMap[ImmediateODRecoverThreshold] = commons.NewGenericField(
+		commons.ElastigroupAWSStrategy,
+		ImmediateODRecoverThreshold,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+			Default:  -1,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *int = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.ImmediateODRecoverThreshold != nil {
+				value = elastigroup.Strategy.ImmediateODRecoverThreshold
+			} else {
+				value = spotinst.Int(-1)
+			}
+			if err := resourceData.Set(string(ImmediateODRecoverThreshold), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ImmediateODRecoverThreshold), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOkExists(string(ImmediateODRecoverThreshold)); ok && v != nil {
+				temp := v.(int)
+				if temp >= 0 {
+					immediateODRecoverThreshold := spotinst.Int(temp)
+					elastigroup.Strategy.SetImmediateODRecoverThreshold(immediateODRecoverThreshold)
+				} else {
+					elastigroup.Strategy.SetImmediateODRecoverThreshold(nil)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOkExists(string(ImmediateODRecoverThreshold)); ok && v != nil {
+				temp := v.(int)
+				if temp >= 0 {
+					immediateODRecoverThreshold := spotinst.Int(temp)
+					elastigroup.Strategy.SetImmediateODRecoverThreshold(immediateODRecoverThreshold)
+				} else {
+					elastigroup.Strategy.SetImmediateODRecoverThreshold(nil)
+				}
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 func flattenAWSGroupScalingStrategy(strategy *aws.ScalingStrategy) []interface{} {

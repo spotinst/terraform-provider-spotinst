@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	testOceanClusterID = "o-d552c5b5"
+	testOceanClusterID = "o-6cf35461"
 )
 
 var oceanClusterID = getOceanClusterID() // NOTE: This needs to be an existing ocean cluster
@@ -195,6 +195,20 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-1", "my-annotation-value-1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", "some-test-target-group-arn"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-1", "my-lb-service-annotation-value-1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-2", "my-lb-service-annotation-value-2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "valid-load.balancer"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service"),
 				),
 			},
 			{
@@ -210,9 +224,51 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2-updated"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-3", "my-annotation-value-3"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-new-annotation", "my-new-annotation-value"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", "some-test-target-group-arn-active"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "2"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-1", "my-lb-service-annotation-value-1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.my-lb-service-annotation-3", "my-lb-service-annotation-value-3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "active-load.balancer"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service"),
 				),
 			},
 			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressUpdate2,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-2", "my-annotation-value-2-updated"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-annotation-3", "my-annotation-value-3"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.my-new-annotation", "my-new-annotation-value"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", "some-test-target-group-arn-inactive"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", "inactive-load.balancer"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", "test-vpc-endpoint-service-active"),
+				),
+			},
+			{
+				// Reverts to default values if resources in terraform are empty
 				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
 					oceanClusterID: oceanClusterID,
 					fieldsToAppend: testConfigWithIngressEmptyFields,
@@ -222,6 +278,35 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.managed", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.target_group_arn", ""),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.0.address", ""),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.0.vpc_endpoint_service", ""),
+				),
+			},
+			{
+				// Deletes config objects if resources not defined in terraform
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithIngressEmptyFields2,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "ingress.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.service_annotations.%", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.controller.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.load_balancer.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.custom_endpoint.#", "0"),
+					resource.TestCheckResourceAttr(resourceName, "ingress.0.private_link.#", "0"),
 				),
 			},
 		},
@@ -362,12 +447,194 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 	})
 }
 
+func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
+	resourceName := createOceanSparkResourceName(oceanClusterID)
+
+	var cluster spark.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanSparkAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigCreate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-2"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigUpdate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigEmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+func TestAccSpotinstOceanSpark_withSparkConfig_withDefaultNamespaceIncludedInAppNamespaceList_shouldIgnoreDefaultNamespace(t *testing.T) {
+	resourceName := createOceanSparkResourceName(oceanClusterID)
+
+	var cluster spark.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanSparkAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListCreate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-2"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate2,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate3,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-5"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListEmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "0"),
+				),
+			},
+			/*
+				This case does not work:
+				spark {
+					additional_app_namespaces = ["spark-apps"]
+				 }
+
+				i.e. where the list only contains one element, and that element is diff-suppressed.
+				We get a list with length 1 (spark.0.additional_app_namespaces.# == 1), but it does not actually contain any elements.
+				The test case also fails with the following:
+
+				After applying this test step and performing a `terraform refresh`, the plan was not empty.
+				~ spark {
+				  ~ additional_app_namespaces = [
+					  + null,
+					]
+				}
+
+				We ignore this edge case here, and rely on the terraform module to prevent this.
+				There we have validation that the default 'spark-apps' namespace should not be provided in the additional namespace list.
+			*/
+		},
+	})
+}
+
 const testConfigWithIngressCreate = `
  ingress {
 
     service_annotations = {
      my-annotation-1 = "my-annotation-value-1"
      my-annotation-2 = "my-annotation-value-2"
+	}
+
+	controller {
+	 managed = true
+    }
+
+	load_balancer {
+	 managed = true
+     target_group_arn = "some-test-target-group-arn"
+	 service_annotations = {
+      my-lb-service-annotation-1 = "my-lb-service-annotation-value-1"
+      my-lb-service-annotation-2 = "my-lb-service-annotation-value-2"
+	 }
+	}
+
+	custom_endpoint {
+	 enabled = false
+	 address = "valid-load.balancer"
+	}
+
+    private_link {
+	 enabled = false
+	 vpc_endpoint_service = "test-vpc-endpoint-service"
 	}
 
  }
@@ -382,10 +649,88 @@ const testConfigWithIngressUpdate = `
      my-annotation-3 = "my-annotation-value-3"
 	}
 
+	controller {
+	 managed = true
+    }
+
+	load_balancer {
+	 managed = false
+     target_group_arn = "some-test-target-group-arn-active"
+	 service_annotations = {
+      my-lb-service-annotation-1 = "my-lb-service-annotation-value-1"
+      my-lb-service-annotation-3 = "my-lb-service-annotation-value-3"
+	 }
+	}
+
+	custom_endpoint {
+	 enabled = true
+	 address = "active-load.balancer"
+	}
+
+    private_link {
+	 enabled = false
+	 vpc_endpoint_service = "test-vpc-endpoint-service"
+	}
+
+ }
+`
+
+const testConfigWithIngressUpdate2 = `
+ ingress {
+
+    service_annotations = {
+     my-new-annotation = "my-new-annotation-value"
+     my-annotation-2 = "my-annotation-value-2-updated"
+     my-annotation-3 = "my-annotation-value-3"
+	}
+
+	controller {
+	 managed = false
+    }
+
+	load_balancer {
+	 managed = false
+     target_group_arn = "some-test-target-group-arn-inactive"
+	}
+
+	custom_endpoint {
+	 enabled = false
+	 address = "inactive-load.balancer"
+	}
+
+    private_link {
+	 enabled = true
+	 vpc_endpoint_service = "test-vpc-endpoint-service-active"
+	}
+
  }
 `
 
 const testConfigWithIngressEmptyFields = `
+ ingress {
+
+	service_annotations = {}
+
+	controller {
+
+    }
+
+	load_balancer {
+	
+	}
+
+	custom_endpoint {
+	
+	}
+
+    private_link {
+	
+	}
+
+ }
+`
+
+const testConfigWithIngressEmptyFields2 = `
  ingress {
 
 	service_annotations = {}
@@ -419,6 +764,70 @@ const testConfigWithWebhookEmptyFields = `
 	use_host_network = false
 
 	host_network_ports = []
+
+ }
+`
+
+const testConfigWithSparkConfigCreate = `
+ spark {
+
+	additional_app_namespaces = ["spark-apps-ns-1","spark-apps-ns-2"]
+
+ }
+`
+
+const testConfigWithSparkConfigUpdate = `
+ spark {
+
+	additional_app_namespaces = ["spark-apps-ns-1","spark-apps-ns-3","spark-apps-ns-4"]
+
+ }
+`
+
+const testConfigWithSparkConfigEmptyFields = `
+ spark {
+
+	additional_app_namespaces = []
+
+ }
+`
+
+const testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListCreate = `
+ spark {
+
+	additional_app_namespaces = ["spark-apps","spark-apps-ns-1","spark-apps-ns-2"]
+
+ }
+`
+
+const testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate = `
+ spark {
+
+	additional_app_namespaces = ["spark-apps","spark-apps-ns-1","spark-apps-ns-3","spark-apps-ns-4"]
+
+ }
+`
+
+const testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate2 = `
+ spark {
+
+	additional_app_namespaces = ["spark-apps-ns-1","spark-apps-ns-3","spark-apps-ns-4"]
+
+ }
+`
+
+const testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate3 = `
+ spark {
+
+	additional_app_namespaces = ["spark-apps-ns-5","spark-apps-ns-3","spark-apps"]
+
+ }
+`
+
+const testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListEmptyFields = `
+ spark {
+
+	additional_app_namespaces = []
 
  }
 `

@@ -7,4 +7,6 @@ const (
 	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
 	UtilizeCommitments       commons.FieldName = "utilize_commitments"
 	SpotPercentage           commons.FieldName = "spot_percentage"
+	ClusterOrientation       commons.FieldName = "cluster_orientation"
+	AvailabilityVsCost       commons.FieldName = "availability_vs_cost"
 )

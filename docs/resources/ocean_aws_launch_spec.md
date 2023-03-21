@@ -58,7 +58,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     gpu_per_unit    = 0
     memory_per_unit = 2048
   }
-
+  
+  autoscale_down {
+    max_scale_down_percentage    = 20
+  }
+  
   elastic_ip_pool {
     tag_selector {
       tag_key   = "key"
@@ -103,6 +107,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   delete_options {
     force_delete = true
     delete_nodes = true
+  }
+  
+  instance_metadata_options {
+    http_tokens = "required"
+    http_put_response_hop_limit = 10
   }
   
   scheduling_task {
@@ -180,6 +189,8 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+* `autoscale_down` - (Optional) Auto Scaling scale down operations.
+    * `max_scale_down_percentage` - (Optional) The maximum percentage allowed to scale down in a single scaling action on the nodes running in a specific VNG. Allowed only if maxScaleDownPercentage is set to null at the cluster level. Number between [0.1-100].
 * `resource_limits` - (Optional) 
     * `max_instance_count` - (Optional) Set a maximum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
     * `min_instance_count` - (Optional) Set a minimum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
@@ -202,6 +213,9 @@ The following arguments are supported:
 * `scheduling_shutdown_hours` - (Optional) Used to specify times that the nodes in the virtual node group will be taken down.
     * `time_windows` - (Required ) The times that the shutdown hours will apply.
     * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the virtual node group remains in its current state.
+* `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
+    * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
+    * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
 
 <a id="update-policy"></a>
 ## Update Policy

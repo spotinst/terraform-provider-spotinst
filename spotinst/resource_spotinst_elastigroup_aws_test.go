@@ -448,6 +448,7 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "10"),
 					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "required"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.instance_metadata_tags", "enabled"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", "1"),
 				),
@@ -475,6 +476,7 @@ func TestAccSpotinstElastigroupAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_put_response_hop_limit", "20"),
 					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.http_tokens", "optional"),
+					resource.TestCheckResourceAttr(resourceName, "metadata_options.0.instance_metadata_tags", "disabled"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "cpu_options.0.threads_per_core", "2"),
 				),
@@ -518,6 +520,7 @@ const testLaunchConfigurationGroupConfig_Create = `
  metadata_options {
  	http_tokens = "required"
     http_put_response_hop_limit = 10
+	instance_metadata_tags = "enabled"
  }
 cpu_options {
 	threads_per_core = 1
@@ -540,6 +543,7 @@ const testLaunchConfigurationGroupConfig_Update = `
  metadata_options {
  	http_tokens = "optional"
     http_put_response_hop_limit = 20
+	instance_metadata_tags = "disabled"
  }
  cpu_options {
 	threads_per_core = 2
@@ -3515,7 +3519,7 @@ const testIntegrationRoute53GroupConfig_EmptyFields = `
 
 // endregion
 
-//region Elastigroup: ECS Integration
+// region Elastigroup: ECS Integration
 func TestAccSpotinstElastigroupAWS_IntegrationECS(t *testing.T) {
 	groupName := "test-acc-eg-integration-ecs"
 	resourceName := createElastigroupResourceName(groupName)

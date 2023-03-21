@@ -507,6 +507,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "10"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.should_scale_down_non_service_tasks", "true"),
 				),
 			},
 			{
@@ -532,6 +533,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.should_scale_down_non_service_tasks", "false"),
 				),
 			},
 		},
@@ -557,6 +559,7 @@ autoscaler {
    max_memory_gib = 1
  }
  auto_headroom_percentage = 10
+ should_scale_down_non_service_tasks = true
 }
 // --------------------------------
 `
@@ -580,6 +583,7 @@ autoscaler {
    max_memory_gib = 2
  }
  auto_headroom_percentage = 20
+ should_scale_down_non_service_tasks = false
 }
 // --------------------------------
 `
@@ -943,7 +947,7 @@ const testOptimizeImagesECSConfig_Update = `
  }
 `
 
-//region OceanECS: Logging
+// region OceanECS: Logging
 func TestAccSpotinstOceanECS_Logging(t *testing.T) {
 	name := "test-acc-cluster-logging"
 	clusterName := "logging-cluster-name"

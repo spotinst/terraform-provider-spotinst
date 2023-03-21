@@ -44,8 +44,36 @@ resource "spotinst_ocean_aws" "example" {
   desired_capacity = 2
 
   subnet_ids = ["subnet-123456789"]
-  whitelist  = ["t1.micro", "m1.small"]
-  // blacklist = ["t1.micro", "m1.small"]
+  
+  instanceTypes {
+    //whitelist  = ["t1.micro", "m1.small"]
+    
+    //blacklist = ["t1.micro", "m1.small"]
+    
+    filters {
+      architectures             =   ["x86_64", "i386"]
+      categories                =   ["Accelerated_computing", "Compute_optimized"]
+      disk_types                =   ["EBS", "SSD"]
+      exclude_families          =   ["m*"]
+      exclude_metal             =   false
+      hypervisor                =   ["xen"]
+      include_families          =   ["c*", "t*"]
+      is_ena_supported          =   false
+      max_gpu                   =   4
+      min_gpu                   =   0
+      max_memory_gib            =   16
+      max_network_performance   =   20
+      max_vcpu                  =   16
+      min_enis                  =   2
+      min_memory_gib            =   8
+      min_network_performance   =   2
+      min_vcpu                  =   2
+      root_device_types         =   ["ebs"]
+      virtualization_types      =   ["hvm"] 
+    }
+  }
+  
+  
 
   // region LAUNCH CONFIGURATION
   image_id                    = "ami-123456"
@@ -57,6 +85,7 @@ resource "spotinst_ocean_aws" "example" {
   monitoring                  = true
   ebs_optimized               = true
   associate_public_ip_address = true
+  associate_ipv6_address      = true
   use_as_template_only        = true
 
   load_balancers {
@@ -76,6 +105,10 @@ resource "spotinst_ocean_aws" "example" {
   grace_period               = 600
   spot_percentage            = 100
   utilize_commitments        = false
+  spread_nodes_by            = "count"
+  cluster_orientation{
+    availability_vs_cost="balanced"
+  }
   // endregion
 
   tags {
@@ -130,14 +163,36 @@ The following arguments are supported:
 * `min_size` - (Optional) The lower limit of instances the cluster can scale down to.
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster.
 * `subnet_ids` - (Required) A comma-separated list of subnet identifiers for the Ocean cluster. Subnet IDs should be configured with auto assign public IP.
-* `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if `blacklist` is configured.
-* `blacklist` - (Optional) Instance types not allowed in the Ocean cluster. Cannot be configured if `whitelist` is configured.
+* `instanceTypes` - (Optional) The type of instances that may or may not be a part of the Ocean cluster.
+  * `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if `blacklist` is configured.
+  * `blacklist` - (Optional) Instance types not allowed in the Ocean cluster. Cannot be configured if `whitelist` is configured.
+  * `filters` - (Optional) List of filters. The Instance types that match with all filters compose the Ocean's whitelist parameter. Cannot be configured together with whitelist/blacklist.
+    * `architectures` - (Optional) The filtered instance types will support at least one of the architectures from this list.
+    * `categories` - (Optional) The filtered instance types will belong to one of the categories types from this list.
+    * `disk_types` - (Optional) The filtered instance types will have one of the disk type from this list.
+    * `exclude_families` - (Optional) Types belonging to a family from the ExcludeFamilies will not be available for scaling (asterisk wildcard is also supported). For example, C* will exclude instance types from these families: c5, c4, c4a, etc.
+    * `exclude_metal` - (Optional, Default: false) In case excludeMetal is set to true, metal types will not be available for scaling.
+    * `hypervisor` - (Optional) The filtered instance types will have a hypervisor type from this list.
+    * `include_families` - (Optional) Types belonging to a family from the IncludeFamilies will be available for scaling (asterisk wildcard is also supported). For example, C* will include instance types from these families: c5, c4, c4a, etc.
+    * `is_ena_supported` - (Optional) Ena is supported or not.
+    * `max_gpu` - (Optional) Maximum total number of GPUs.
+    * `max_memory_gib` - (Optional) Maximum amount of Memory (GiB).
+    * `max_network_performance` - (Optional) Maximum Bandwidth in Gib/s of network performance.
+    * `max_vcpu` - (Optional) Maximum number of vcpus available.
+    * `min_enis` - (Optional) Minimum number of network interfaces (ENIs).
+    * `min_gpu` - (Optional) Minimum total number of GPUs.
+    * `min_memory_gib` - (Optional) Minimum amount of Memory (GiB).
+    * `min_network_performance` - (Optional) Minimum Bandwidth in Gib/s of network performance.
+    * `min_vcpu` - (Optional) Minimum number of vcpus available.
+    * `root_device_types` - (Optional) The filtered instance types will have a root device types from this list.
+    * `virtualization_types` - (Optional) The filtered instance types will support at least one of the virtualization types from this list.
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Required) ID of the image used to launch the instances.
 * `security_groups` - (Required) One or more security group ids.
 * `key_name` - (Optional) The key pair to attach the instances.
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
+* `associate_ipv6_address` - (Optional, Default: `false`) Configure IPv6 address allocation.
 * `root_volume_size` - (Optional) The size (in Gb) to allocate for the root volume. Minimum `20`.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
@@ -156,6 +211,7 @@ The following arguments are supported:
 * `grace_period` - (Optional, Default: 600) The amount of time, in seconds, after the instance has launched to start checking its health.
 * `spot_percentage` - (Optional; Required if not using `ondemand_count`) The percentage of Spot instances that would spin up from the `desired_capacity` number.
 * `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
+* `spread_nodes_by` - (Optional, Default: `count`) Ocean will spread the nodes across markets by this value. Possible values: `vcpu` or `count`.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
@@ -174,6 +230,8 @@ The following arguments are supported:
             * `base_size`- (Required) Int. Initial size for volume. (Example: 50)
             * `resource`- (Required) String. Resource type to increase volume size dynamically by. (Valid values: `CPU`)
             * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: `baseSize=50`, `sizePerResourceUnit=20`, and instance with 2 CPU is launched; its total disk size will be: 90GB).
+* `cluster_orientation`
+    * `availability_vs_cost` - (Optional, Default: `balanced`) You can control the approach that Ocean takes while launching nodes by configuring this value. Possible values: `costOriented`,`balanced`,`cheapest`.
 * `logging` - (Optional) Logging configuration.
     * `export` - (Optional) Logging Export configuration.
         * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
@@ -253,7 +311,7 @@ update_policy {
 ```
 
 <a id="scheduled-task"></a>
-## scheduled task
+## Scheduled Task
 * `scheduled_task` - (Optional) Set scheduling object.
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional) Toggle the shutdown hours task. (Example: `true`).
@@ -280,7 +338,17 @@ scheduled_task {
 }
 ```
 
+<a id="attributes-reference"></a>
 ## Attributes Reference
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Cluster ID.
+
+
+<a id="import"></a>
+## Import
+
+Clusters can be imported using the Ocean `id`, e.g.,
+```hcl
+$ terraform import spotinst_ocean_aws.this o-12345678
+```
