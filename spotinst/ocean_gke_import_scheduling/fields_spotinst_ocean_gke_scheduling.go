@@ -293,18 +293,18 @@ func expandParameters(data interface{}) (*gcp.Parameters, error) {
 	parameters := &gcp.Parameters{}
 	list := data.([]interface{})
 	if list == nil || list[0] == nil {
-		return parameters, nil
-	}
-	m := list[0].(map[string]interface{})
-	if v, ok := m[string(ClusterRoll)]; ok {
-		clusterRoll, err := expandClusterRoll(v)
-		if err != nil {
-			return nil, err
-		}
-		if clusterRoll != nil {
-			parameters.SetClusterRoll(clusterRoll)
-		} else {
-			parameters.SetClusterRoll(nil)
+
+		m := list[0].(map[string]interface{})
+		if v, ok := m[string(ClusterRoll)]; ok {
+			clusterRoll, err := expandClusterRoll(v)
+			if err != nil {
+				return nil, err
+			}
+			if clusterRoll != nil {
+				parameters.SetClusterRoll(clusterRoll)
+			} else {
+				parameters.SetClusterRoll(nil)
+			}
 		}
 	}
 	return parameters, nil
