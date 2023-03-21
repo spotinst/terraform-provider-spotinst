@@ -88,6 +88,22 @@ resource "spotinst_ocean_aws" "example" {
     http_put_response_hop_limit = 10
   }
   
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      delete_on_termination = "true"
+      encrypted             = "false"
+      volume_type           = "gp2"
+      volume_size           = 50
+      throughput            = 500
+      dynamic_volume_size {
+        base_size              = 50
+        resource               = "CPU"
+        size_per_resource_unit = 20
+      }
+    }
+  }
+  
   logging {
     export {
       s3 {
