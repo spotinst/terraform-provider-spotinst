@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.106.1 (Mar 21, 2023)
+BUG FIXES:
+* resource/spotinst_ocean_gke: Commented warnings `Please add the imported tags from state file to the tags list`
+
 ## 1.106.0 (Mar 14, 2023)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added `instance_metadata_tags` in `metadata_options`
