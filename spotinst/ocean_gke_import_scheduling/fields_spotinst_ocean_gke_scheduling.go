@@ -292,19 +292,20 @@ func expandtasks(data interface{}) ([]*gcp.Task, error) {
 func expandParameters(data interface{}) (*gcp.Parameters, error) {
 	parameters := &gcp.Parameters{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
+	if list == nil || len(list) == 0 {
+		return parameters, nil
+	}
 
-		m := list[0].(map[string]interface{})
-		if v, ok := m[string(ClusterRoll)]; ok {
-			clusterRoll, err := expandClusterRoll(v)
-			if err != nil {
-				return nil, err
-			}
-			if clusterRoll != nil {
-				parameters.SetClusterRoll(clusterRoll)
-			} else {
-				parameters.SetClusterRoll(nil)
-			}
+	m := list[0].(map[string]interface{})
+	if v, ok := m[string(ClusterRoll)]; ok {
+		clusterRoll, err := expandClusterRoll(v)
+		if err != nil {
+			return nil, err
+		}
+		if clusterRoll != nil {
+			parameters.SetClusterRoll(clusterRoll)
+		} else {
+			parameters.SetClusterRoll(nil)
 		}
 	}
 	return parameters, nil
@@ -313,7 +314,7 @@ func expandParameters(data interface{}) (*gcp.Parameters, error) {
 func expandClusterRoll(data interface{}) (*gcp.ClusterRoll, error) {
 	clusterRoll := &gcp.ClusterRoll{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
+	if list == nil || len(list) == 0 {
 		return clusterRoll, nil
 	}
 	m := list[0].(map[string]interface{})
