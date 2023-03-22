@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.108.0 (Mar 22, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `block_device_mappings` object in the `launch_specification`
+
 ## 1.107.0 (Mar 22, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke: added `respect_pdb` field for create and roll cluster `scheduling`
