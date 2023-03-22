@@ -2,6 +2,7 @@ package ocean_aks_np_health
 
 import (
 	"fmt"
+
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
 	"github.com/spotinst/spotinst-sdk-go/spotinst"

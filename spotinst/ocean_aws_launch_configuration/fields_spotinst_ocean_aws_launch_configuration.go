@@ -762,16 +762,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
-
-					string(NoDevice): {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-
-					string(VirtualName): {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
 				},
 			},
 		},
@@ -809,7 +799,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var value []*aws.ClusterBlockDeviceMapping = nil
+			var value []*aws.ClusterBlockDeviceMappings = nil
 
 			if v, ok := resourceData.GetOk(string(BlockDeviceMappings)); ok {
 				if blockdevicemappings, err := expandBlockDeviceMappings(v); err != nil {
@@ -920,7 +910,7 @@ func flattenInstanceMetadataOptions(instanceMetadataOptions *aws.InstanceMetadat
 
 	return []interface{}{result}
 }
-func flattenBlockDeviceMappings(bdms []*aws.ClusterBlockDeviceMapping) []interface{} {
+func flattenBlockDeviceMappings(bdms []*aws.ClusterBlockDeviceMappings) []interface{} {
 	result := make([]interface{}, 0, len(bdms))
 
 	for _, bdm := range bdms {
@@ -929,8 +919,7 @@ func flattenBlockDeviceMappings(bdms []*aws.ClusterBlockDeviceMapping) []interfa
 		if bdm.EBS != nil {
 			m[string(Ebs)] = flattenEbs(bdm.EBS)
 		}
-		m[string(NoDevice)] = spotinst.StringValue(bdm.NoDevice)
-		m[string(VirtualName)] = spotinst.StringValue(bdm.VirtualName)
+
 		result = append(result, m)
 	}
 	return result
@@ -962,14 +951,14 @@ func flattenDynamicVolumeSize(dvs *aws.ClusterDynamicVolumeSize) interface{} {
 
 	return []interface{}{DynamicVS}
 }
-func expandBlockDeviceMappings(data interface{}) ([]*aws.ClusterBlockDeviceMapping, error) {
+func expandBlockDeviceMappings(data interface{}) ([]*aws.ClusterBlockDeviceMappings, error) {
 
 	list := data.([]interface{})
-	bdms := make([]*aws.ClusterBlockDeviceMapping, 0, len(list))
+	bdms := make([]*aws.ClusterBlockDeviceMappings, 0, len(list))
 
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
-		bdm := &aws.ClusterBlockDeviceMapping{}
+		bdm := &aws.ClusterBlockDeviceMappings{}
 
 		if !ok {
 			continue
@@ -985,14 +974,6 @@ func expandBlockDeviceMappings(data interface{}) ([]*aws.ClusterBlockDeviceMappi
 			} else {
 				bdm.SetEBS(ebs)
 			}
-		}
-
-		if v, ok := attr[string(NoDevice)].(string); ok && v != "" {
-			bdm.SetNoDevice(spotinst.String(v))
-		}
-
-		if v, ok := attr[string(VirtualName)].(string); ok && v != "" {
-			bdm.SetVirtualName(spotinst.String(v))
 		}
 		bdms = append(bdms, bdm)
 	}
