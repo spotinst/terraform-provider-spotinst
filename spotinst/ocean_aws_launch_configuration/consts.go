@@ -40,7 +40,5 @@ const (
 	Resource            commons.FieldName = "resource"
 	SizePerResourceUnit commons.FieldName = "size_per_resource_unit"
 	VolumeType          commons.FieldName = "volume_type"
-	NoDevice            commons.FieldName = "no_device"
-	VirtualName         commons.FieldName = "virtual_name"
 	Throughput          commons.FieldName = "throughput"
 )
