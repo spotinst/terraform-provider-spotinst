@@ -59,6 +59,7 @@ resource "spotinst_ocean_gke_import" "example" {
     enable_integrity_monitoring = true
  }
  use_as_template_only = false
+  
 }
 ```
 
@@ -110,6 +111,12 @@ The following arguments are supported:
         * `task_type` - (Required) Valid values: "clusterRoll". Required for cluster.scheduling.tasks object.
         * `batch_size_percentage` - (Optional)  Value in % to set size of batch in roll. Valid values are 0-100
                                                 Example: 20.
+        * `task_parameters` - (Optional) The scheduling parameters for the cluster.
+          * `cluster_roll` - (Optional)  The cluster roll parameters for the cluster.
+            * `batch_min_healthy_percentage` - (Optional, Default: 50)  Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the cluster roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch.
+            * `batch_size_percentage` - (Optional)  Value as a percent to set the size of a batch in a roll. Valid values are 0-100.
+            * `comment` - (Optional)  Add a comment description for the roll. The comment is limited to 256 chars.
+            * `respect_pdb` - (Optional, Default: 'false' )  During the roll, if the parameter is set to true we honor PDB during the instance replacement.
                           
              
 ```hcl
@@ -122,7 +129,14 @@ The following arguments are supported:
       is_enabled = false
       cron_expression = "0 1 * * *"
       task_type = "clusterRoll"
-      batch_size_percentage = 20
+      task_parameters {
+        cluster_roll{
+          batch_min_healthy_percentage = 50
+          batch_size_percentage = 10
+          comment="some comment"
+          respect_pdb=false
+        }
+      }
     }
   }
 ```
@@ -201,6 +215,7 @@ The following arguments are supported:
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
         * `launch_spec_ids` - (Optional) List of Virtual Node Group identifiers to be rolled.
         * `batch_min_healthy_percentage` - (Optional) Default: 50. Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the cluster roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch.
+        * `respect_pdb` - (Optional) Default: False. During the roll, if the parameter is set to True we honor PDB during the instance replacement.
 
 ```hcl
 update_policy {
@@ -211,6 +226,7 @@ update_policy {
     batch_size_percentage = 33
     launch_spec_ids = ["ols-1a2b3c4d"]
     batch_min_healthy_percentage = 20
+    respect_pdb = true
   }
 }
 ```

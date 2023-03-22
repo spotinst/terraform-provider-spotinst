@@ -113,6 +113,16 @@ func NewGKEClusterWrapper() *GKEClusterWrapper {
 				InstanceTypes:       &gcp.InstanceTypes{},
 			},
 			Strategy: &gcp.Strategy{},
+			Scheduling: &gcp.Scheduling{
+				ShutdownHours: &gcp.ShutdownHours{},
+				Tasks: []*gcp.Task{
+					{
+						Parameters: &gcp.Parameters{
+							ClusterRoll: &gcp.ClusterRoll{},
+						},
+					},
+				},
+			},
 		},
 	}
 }

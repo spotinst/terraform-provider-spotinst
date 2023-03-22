@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.107.0 (Mar 22, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke: added `respect_pdb` field for create and roll cluster `scheduling`
+
 ## 1.106.1 (Mar 21, 2023)
 BUG FIXES:
 * resource/spotinst_ocean_gke: Commented warnings `Please add the imported tags from state file to the tags list`
