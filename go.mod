@@ -13,5 +13,4 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/spotinst/spotinst-sdk-go v1.155.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
-	
 )
