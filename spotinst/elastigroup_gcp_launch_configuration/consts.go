@@ -24,10 +24,11 @@ const (
 	Scheme          commons.FieldName = "scheme"
 	NamedPorts      commons.FieldName = "named_ports"
 
-	Ports          commons.FieldName = "ports"
-	ServiceName    commons.FieldName = "service_name"
-	ServiceAccount commons.FieldName = "service_account"
-	StartupScript  commons.FieldName = "startup_script"
-	ShutdownScript commons.FieldName = "shutdown_script"
-	IPForwarding   commons.FieldName = "ip_forwarding"
+	Ports              commons.FieldName = "ports"
+	ServiceName        commons.FieldName = "service_name"
+	ServiceAccount     commons.FieldName = "service_account"
+	StartupScript      commons.FieldName = "startup_script"
+	ShutdownScript     commons.FieldName = "shutdown_script"
+	IPForwarding       commons.FieldName = "ip_forwarding"
+	InstanceNamePrefix commons.FieldName = "instance_name_prefix"
 )
