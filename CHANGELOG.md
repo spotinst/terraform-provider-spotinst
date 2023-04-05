@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.109.0 (Apr 5, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_gcp: added `instance_name_prefix` field in `launch_specification`
+
 ## 1.108.0 (Mar 22, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `block_device_mappings` object in the `launch_specification`
