@@ -138,7 +138,7 @@ The following arguments are supported:
     * `key` - (Optional) Labels key.
     * `value` - (Optional) Labels value.
 * `tags` - (Optional) Tags to mark created instances.
-  * `instance_name_prefix` - (Optional) Set an instance name prefix to be used for all launched instances and their boot disk. The prefix value should comply with the following limitations: 
+* `instance_name_prefix` - (Optional) Set an instance name prefix to be used for all launched instances and their boot disk. The prefix value should comply with the following limitations: 
     * A maximal length of 25 characters.
     * The first character must be a lowercase letter, and all the following characters must be hyphens, lowercase letters, or digits, except the last character, which cannot be a hyphen.
 
