@@ -18,7 +18,7 @@ resource "spotinst_elastigroup_gcp" "example" {
   description     = "spotinst gcp group"
   service_account = "example@myProject.iam.gservicecct.com"
   startup_script  = ""
-  instance_name_prefix = "test"
+  instance_name_prefix = "test-123a"
   
   min_size         = 0
   max_size         = 1
@@ -138,8 +138,9 @@ The following arguments are supported:
     * `key` - (Optional) Labels key.
     * `value` - (Optional) Labels value.
 * `tags` - (Optional) Tags to mark created instances.
-  * `instance_name_prefix` - (Optional) Set an instance name prefix to be used for all launched instances and their boot disk. The prefix value should comply with the following limitations: A maximal length of 25 characters.
-  The first character must be a lowercase letter, and all the following characters must be hyphens, lowercase letters, or digits, except the last character, which cannot be a hyphen.
+  * `instance_name_prefix` - (Optional) Set an instance name prefix to be used for all launched instances and their boot disk. The prefix value should comply with the following limitations: 
+    * A maximal length of 25 characters.
+    * The first character must be a lowercase letter, and all the following characters must be hyphens, lowercase letters, or digits, except the last character, which cannot be a hyphen.
 
 <a id="GPU"></a>
 ## GPU
