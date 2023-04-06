@@ -229,7 +229,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_root_device = "true"
   block_devices_mode = "reattach"
   subnet_ids = ["subnet-0faad0b6bb7e99d9f", "subnet-0bd585d2c2177c7ee", "subnet-0b40f863ba34956ba"]
-  instance_types = ["t3.xlarge"]
+  instance_types = ["t3.xlarge","t3.nano","t3.micro","t3.small","t3.medium"]
   preferred_type = "t3.xlarge"
   image_id = "ami-082b5a644766e0e6f"
   vpc_id = "vpc-9dee6bfa"
