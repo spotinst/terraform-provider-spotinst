@@ -1631,7 +1631,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSLaunchSpec,
 		Images,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -2487,7 +2487,7 @@ func flattenImages(images []*aws.Images) []interface{} {
 }
 
 func expandImages(data interface{}) ([]*aws.Images, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	images := make([]*aws.Images, 0, len(list))
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
