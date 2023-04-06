@@ -1626,6 +1626,65 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[Images] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		Images,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ImageId): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.Images != nil {
+				images := launchSpec.Images
+				result = flattenImages(images)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Images), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Images), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(Images)); ok {
+				if images, err := expandImages(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetImages(images)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var imagesToAdd []*aws.Images = nil
+			if value, ok := resourceData.GetOk(string(Images)); ok {
+				if images, err := expandImages(value); err != nil {
+					return err
+				} else {
+					imagesToAdd = images
+				}
+			}
+			launchSpec.SetImages(imagesToAdd)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -2415,4 +2474,33 @@ func expandInstanceMetadataOptions(data interface{}) (*aws.LaunchspecInstanceMet
 	}
 
 	return instanceMetadataOptions, nil
+}
+
+func flattenImages(images []*aws.Images) []interface{} {
+	result := make([]interface{}, 0, len(images))
+	for _, image := range images {
+		m := make(map[string]interface{})
+		m[string(ImageId)] = spotinst.StringValue(image.ImageId)
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandImages(data interface{}) ([]*aws.Images, error) {
+	list := data.([]interface{})
+	images := make([]*aws.Images, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(ImageId)]; !ok {
+			return nil, errors.New("invalid tag attributes: value missing")
+		}
+		image := &aws.Images{
+			ImageId: spotinst.String(attr[string(ImageId)].(string)),
+		}
+		images = append(images, image)
+	}
+	return images, nil
 }
