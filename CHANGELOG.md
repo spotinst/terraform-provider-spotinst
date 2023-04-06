@@ -2,7 +2,7 @@
 
 ## 1.110.0 (Apr 6, 2023)
 ENHANCEMENTS:
-* resource/spotinst_ocean_aws_launch_spec: added `images` object in `launch_spec`
+* resource/spotinst_ocean_aws_launch_spec: added `images` object
 
 ## 1.109.0 (Apr 5, 2023)
 ENHANCEMENTS:
