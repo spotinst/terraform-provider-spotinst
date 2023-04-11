@@ -221,7 +221,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-4333093a"]
+  subnet_ids         = ["subnet-0bd585d2c2177c7ee"]
   security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
   utilize_reserved_instances = false
 
