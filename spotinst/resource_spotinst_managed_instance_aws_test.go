@@ -511,7 +511,8 @@ elastic_ip = "eipalloc-987654"
 ebs_optimized = "false"
 enable_monitoring = "false"
 placement_tenancy = "default"
-iam_instance_profile = "EC2Access"
+//iam_instance_profile = "EC2Access"
+iam_instance_profile = "BaseIAMRole"
 security_group_ids = ["sg-065c82e9ff8b192a1"]
 key_pair = "core-services-keypair"
 
