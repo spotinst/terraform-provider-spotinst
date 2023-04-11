@@ -183,7 +183,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
