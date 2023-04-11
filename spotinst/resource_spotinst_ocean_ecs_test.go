@@ -183,7 +183,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
@@ -221,7 +221,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-0bd585d2c2177c7ee"]
+  subnet_ids         = ["subnet-4333093a"]
   security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
   utilize_reserved_instances = false
 
@@ -508,6 +508,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.should_scale_down_non_service_tasks", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "true"),
 				),
 			},
 			{
@@ -534,6 +535,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.should_scale_down_non_service_tasks", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
 				),
 			},
 		},
@@ -560,6 +562,7 @@ autoscaler {
  }
  auto_headroom_percentage = 10
  should_scale_down_non_service_tasks = true
+ enable_automatic_and_manual_headroom = true
 }
 // --------------------------------
 `
@@ -584,6 +587,7 @@ autoscaler {
  }
  auto_headroom_percentage = 20
  should_scale_down_non_service_tasks = false
+ enable_automatic_and_manual_headroom = false
 }
 // --------------------------------
 `
