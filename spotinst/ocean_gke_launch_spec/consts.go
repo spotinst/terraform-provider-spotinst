@@ -64,3 +64,17 @@ const (
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
 )
+
+const (
+	VNGNetworkInterface commons.FieldName = "vng_network_interface"
+	Network             commons.FieldName = "network"
+	ProjectId           commons.FieldName = "project_id"
+
+	VNGAccessConfigs commons.FieldName = "vng_access_configs"
+	VNGName          commons.FieldName = "vng_name"
+	Type             commons.FieldName = "type"
+
+	VNGAliasIPRanges    commons.FieldName = "vng_alias_ip_ranges"
+	IPCIDRRange         commons.FieldName = "ip_cidr_range"
+	SubnetworkRangeName commons.FieldName = "subnetwork_range_name"
+)

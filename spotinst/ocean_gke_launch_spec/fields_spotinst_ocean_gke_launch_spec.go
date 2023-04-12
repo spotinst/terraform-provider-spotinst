@@ -1132,6 +1132,92 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+
+	fieldsMap[VNGNetworkInterface] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		VNGNetworkInterface,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Network): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(ProjectId): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(VNGAccessConfigs): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(VNGName): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(Type): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+							},
+						},
+					},
+
+					string(VNGAliasIPRanges): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(IPCIDRRange): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(SubnetworkRangeName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(VNGNetworkInterface)); ok {
+				if networks, err := expandVNGNetworkInterface(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetVNGNetworkInterfaces(networks)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(VNGNetworkInterface)); ok {
+				if networks, err := expandVNGNetworkInterface(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetVNGNetworkInterfaces(networks)
+				}
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandTaints(data interface{}, taints []*gcp.Taint) ([]*gcp.Taint, error) {
@@ -1520,4 +1606,99 @@ func checkTaintKeyExists(taint *gcp.Taint, taints []*gcp.Taint) bool {
 		}
 	}
 	return false
+}
+
+// expandVNGNetworkInterface sets the values from the plan as objects
+func expandVNGNetworkInterface(data interface{}) ([]*gcp.VNGNetworkInterface, error) {
+	list := data.([]interface{})
+
+	if list != nil && list[0] != nil {
+		ifaces := make([]*gcp.VNGNetworkInterface, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			iface := &gcp.VNGNetworkInterface{}
+
+			if v, ok := m[string(Network)].(string); ok && v != "" {
+				iface.SetNetwork(spotinst.String(v))
+			}
+
+			if v, ok := m[string(ProjectId)].(string); ok && v != "" {
+				iface.SetProjectId(spotinst.String(v))
+			}
+
+			if v, ok := m[string(VNGAccessConfigs)]; ok {
+				accessConfigs, err := expandVNGAccessConfigs(v)
+				if err != nil {
+					return nil, err
+				}
+
+				if accessConfigs != nil {
+					iface.SetVNGAccessConfigs(accessConfigs)
+				}
+			} else {
+				iface.VNGAccessConfigs = nil
+			}
+
+			if v, ok := m[string(VNGAliasIPRanges)]; ok {
+				aliasRange, err := expandVNGAliasIPRanges(v)
+				if err != nil {
+					return nil, err
+				}
+				if aliasRange != nil {
+					iface.SetVNGAliasIPRanges(aliasRange)
+				}
+			} else {
+				iface.VNGAliasIPRanges = nil
+			}
+
+			ifaces = append(ifaces, iface)
+		}
+		return ifaces, nil
+	}
+	return nil, nil
+}
+
+// expandAccessConfigs sets the values from the plan as objects
+func expandVNGAccessConfigs(data interface{}) ([]*gcp.VNGAccessConfig, error) {
+	list := data.(*schema.Set).List()
+	accessConfigs := make([]*gcp.VNGAccessConfig, 0, len(list))
+
+	for _, item := range list {
+		attr := item.(map[string]interface{})
+
+		accessConfig := &gcp.VNGAccessConfig{}
+
+		if v, ok := attr[string(VNGName)].(string); ok && v != "" {
+			accessConfig.SetVNGName(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(Type)].(string); ok && v != "" {
+			accessConfig.SetType(spotinst.String(v))
+		}
+
+		accessConfigs = append(accessConfigs, accessConfig)
+	}
+	return accessConfigs, nil
+}
+
+// expandAccessConfigs sets the values from the plan as objects
+func expandVNGAliasIPRanges(data interface{}) ([]*gcp.VNGAliasIPRange, error) {
+	list := data.(*schema.Set).List()
+	aliasRanges := make([]*gcp.VNGAliasIPRange, 0, len(list))
+
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		aliasRange := &gcp.VNGAliasIPRange{}
+
+		if v, ok := m[string(SubnetworkRangeName)].(string); ok && v != "" {
+			aliasRange.SetSubnetworkRangeName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(IPCIDRRange)].(string); ok && v != "" {
+			aliasRange.SetIPCIDRRange(spotinst.String(v))
+		}
+
+		aliasRanges = append(aliasRanges, aliasRange)
+	}
+	return aliasRanges, nil
 }
