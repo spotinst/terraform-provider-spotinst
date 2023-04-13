@@ -508,6 +508,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.should_scale_down_non_service_tasks", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "true"),
 				),
 			},
 			{
@@ -534,6 +535,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "2"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.auto_headroom_percentage", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.should_scale_down_non_service_tasks", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
 				),
 			},
 		},
@@ -560,6 +562,7 @@ autoscaler {
  }
  auto_headroom_percentage = 10
  should_scale_down_non_service_tasks = true
+ enable_automatic_and_manual_headroom = true
 }
 // --------------------------------
 `
@@ -584,6 +587,7 @@ autoscaler {
  }
  auto_headroom_percentage = 20
  should_scale_down_non_service_tasks = false
+ enable_automatic_and_manual_headroom = false
 }
 // --------------------------------
 `
