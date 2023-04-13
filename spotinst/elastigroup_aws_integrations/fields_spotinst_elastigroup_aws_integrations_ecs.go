@@ -310,14 +310,17 @@ func flattenAutoScale(autoScale *aws.AutoScale) []interface{} {
 }
 
 func flattenECSIntegrationAutoScaleAttributes(attrs []*aws.AutoScaleAttributes) []interface{} {
-	result := make(map[string]interface{})
+	result := make([]interface{}, 0, len(attrs))
 
 	for _, attr := range attrs {
-		result[string(Key)] = spotinst.StringValue(attr.Key)
-		result[string(Value)] = spotinst.StringValue(attr.Value)
+		m := make(map[string]interface{})
+		m[string(Key)] = spotinst.StringValue(attr.Key)
+		m[string(Value)] = spotinst.StringValue(attr.Value)
+
+		result = append(result, m)
 	}
 
-	return []interface{}{result}
+	return result
 }
 
 func flattenECSIntegration(ecs *aws.EC2ContainerServiceIntegration) []interface{} {
