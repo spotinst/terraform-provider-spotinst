@@ -235,7 +235,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   image_id = "ami-082b5a644766e0e6f"
    tags {
     key = "creator"
-    value = "sharad"
+    value = "terraform-automation"
   }
   vpc_id = "vpc-9dee6bfa"
  %v
@@ -515,8 +515,7 @@ elastic_ip = "eipalloc-987654"
 ebs_optimized = "false"
 enable_monitoring = "false"
 placement_tenancy = "default"
-//iam_instance_profile = "EC2Access"
-iam_instance_profile = "BaseIAMRole"
+iam_instance_profile = "EC2Access"
 security_group_ids = ["sg-065c82e9ff8b192a1"]
 key_pair = "core-services-keypair"
 
