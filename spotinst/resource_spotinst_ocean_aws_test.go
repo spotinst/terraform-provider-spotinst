@@ -495,6 +495,10 @@ const testLaunchConfigAWSConfig_Create = `
     key   = "fakeKey"
     value = "fakeValue"
   }
+  tags {
+    key   = "creator"
+    value = "terraform-automation"
+  }
  // ---------------------------------------
 `
 
