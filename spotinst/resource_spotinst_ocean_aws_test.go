@@ -393,8 +393,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world")),
 					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKey"),
-					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeValue"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "creator"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "terraform-automation"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
@@ -492,8 +492,8 @@ const testLaunchConfigAWSConfig_Create = `
     }
 
   tags {
-    key   = "fakeKey"
-    value = "fakeValue"
+    key   = "creator"
+    value = "terraform-automation"
   }
  // ---------------------------------------
 `
