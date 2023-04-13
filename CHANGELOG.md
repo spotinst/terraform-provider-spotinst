@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.111.0 (Apr 13, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `enable_automatic_and_manual_headroom` field in `autoscaler`
+
 ## 1.110.0 (Apr 6, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `images` object
