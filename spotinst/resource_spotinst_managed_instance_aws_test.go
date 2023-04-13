@@ -232,6 +232,10 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   instance_types = ["t3.xlarge"]
   preferred_type = "t3.xlarge"
   image_id = "ami-082b5a644766e0e6f"
+   tags {
+    key = "creator"
+    value = "terraform-automation"
+  }
   vpc_id = "vpc-9dee6bfa"
  %v
 }
