@@ -84,6 +84,19 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
         memory_per_unit = 2048
     }
   }
+  
+  network_interface {
+    network = "test-vng-network"
+    project_id = "test-vng-network-project"
+    access_configs {
+      name = "external-nat-vng"
+      type     = "ONE_TO_ONE_NAT"
+    }
+    alias_ip_ranges {
+      ip_cidr_range         = "/25"
+      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+    }
+  }
 }
 ```
 ```

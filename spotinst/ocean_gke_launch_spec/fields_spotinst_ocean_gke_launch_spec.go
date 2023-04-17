@@ -1133,9 +1133,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil, nil, nil, nil,
 	)
 
-	fieldsMap[LaunchSpecNetworkInterfaces] = commons.NewGenericField(
+	fieldsMap[NetworkInterfaces] = commons.NewGenericField(
 		commons.OceanGKELaunchSpec,
-		LaunchSpecNetworkInterfaces,
+		NetworkInterfaces,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -1195,7 +1195,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.GetOk(string(LaunchSpecNetworkInterfaces)); ok {
+			if v, ok := resourceData.GetOk(string(NetworkInterfaces)); ok {
 				if networks, err := expandVNGNetworkInterface(v); err != nil {
 					return err
 				} else {
@@ -1207,7 +1207,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.GetOk(string(LaunchSpecNetworkInterfaces)); ok {
+			if v, ok := resourceData.GetOk(string(NetworkInterfaces)); ok {
 				if networks, err := expandVNGNetworkInterface(v); err != nil {
 					return err
 				} else {

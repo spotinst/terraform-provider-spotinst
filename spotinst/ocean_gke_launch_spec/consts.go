@@ -66,9 +66,9 @@ const (
 )
 
 const (
-	LaunchSpecNetworkInterfaces commons.FieldName = "network_interface"
-	Network                     commons.FieldName = "network"
-	ProjectId                   commons.FieldName = "project_id"
+	NetworkInterfaces commons.FieldName = "network_interface"
+	Network           commons.FieldName = "network"
+	ProjectId         commons.FieldName = "project_id"
 
 	LaunchSpecAccessConfigs     commons.FieldName = "access_configs"
 	LaunchSpecAccessConfigsName commons.FieldName = "name"
