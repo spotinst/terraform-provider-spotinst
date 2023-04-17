@@ -94,7 +94,7 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
     }
     alias_ip_ranges {
       ip_cidr_range         = "/25"
-      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+      subnetwork_range_name = "gke-test-native-vpc-pods-123456-vng"
     }
   }
 }
