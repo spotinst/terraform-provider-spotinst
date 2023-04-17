@@ -89,7 +89,7 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
     network = "test-vng-network"
     project_id = "test-vng-network-project"
     access_configs {
-      name = "external-nat-vng"
+      access_configs_name = "external-nat-vng"
       type     = "ONE_TO_ONE_NAT"
     }
     alias_ip_ranges {
