@@ -142,6 +142,15 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+* `network_interface` - (Optional) Settings for network interfaces.
+  * `network` - (Required) The name of the network.
+  * `project_id` - (Optional) Use a network resource from a different project. Set the project identifier to use its network resource. This parameter is relevant only if the network resource is in a different project.
+  * `access_configs` - (Optional) The network protocol of the VNG.
+    * `access_configs_name` - (Optional) The name of the access configuration.
+    * `type` - (Optional) The type of the access configuration.
+  * `alias_ip_ranges` - (Optional) use the imported node pool’s associated aliasIpRange to assign secondary IP addresses to the nodes. Cannot be changed after VNG creation.
+    * `ip_cidr_range` - (Required) specify the IP address range in CIDR notation that can be used for the alias IP addresses associated with the imported node pool.
+    * `subnetwork_range_name` - (Required) specify the IP address range for the subnet secondary IP range.
 
 <a id="update-policy"></a>
 ## Update Policy

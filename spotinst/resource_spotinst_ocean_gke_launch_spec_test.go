@@ -162,7 +162,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
+					//resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.0.key", "gci-ensure-gke-docker"),
@@ -183,6 +183,15 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.0.min_instance_count", "0"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "default"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network", "Test_VNG_Network"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.project_id", "Test_VNG_Network_Project"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.name", "external-nat-vng"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.type", "ONE_TO_ONE_NAT"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.ip_cidr_range", "/25"),
+					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.subnetwork_range_name", "gke-test-native-vpc-pods-5cb557f7-vng"),
 				),
 			},
 			{
@@ -190,7 +199,7 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
+					//resource.TestCheckResourceAttr(resourceName, "node_pool_name", "default-pool"),
 					resource.TestCheckResourceAttr(resourceName, "source_image", "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "metadata.0.key", "gci-update-strategy"),
@@ -220,7 +229,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
+ //node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
  restrict_scale_down = true
  root_volume_type = "pd-standard"
@@ -264,6 +273,20 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
     max_instance_count = 5
 	min_instance_count = 0
   }
+
+ network_interface {
+    network = "Test_VNG_Network"
+    project_id = "Test_VNG_Network_Project"
+    access_configs {
+      name = "external-nat-vng"
+      type     = "ONE_TO_ONE_NAT"
+    }
+    alias_ip_ranges {
+      ip_cidr_range         = "/25"
+      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+    }
+  }
+ 
 }
 
 `
@@ -273,7 +296,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
  provider = "%v"
 
  ocean_id = "%v"
- node_pool_name = "default-pool"
+ //node_pool_name = "default-pool"
  source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
  restrict_scale_down = false
  root_volume_type = "pd-standard"

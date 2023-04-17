@@ -66,15 +66,15 @@ const (
 )
 
 const (
-	VNGNetworkInterface commons.FieldName = "vng_network_interface"
-	Network             commons.FieldName = "network"
-	ProjectId           commons.FieldName = "project_id"
+	LaunchSpecNetworkInterfaces commons.FieldName = "network_interface"
+	Network                     commons.FieldName = "network"
+	ProjectId                   commons.FieldName = "project_id"
 
-	VNGAccessConfigs commons.FieldName = "vng_access_configs"
-	VNGName          commons.FieldName = "vng_name"
-	Type             commons.FieldName = "type"
+	LaunchSpecAccessConfigs     commons.FieldName = "access_configs"
+	LaunchSpecAccessConfigsName commons.FieldName = "name"
+	Type                        commons.FieldName = "type"
 
-	VNGAliasIPRanges    commons.FieldName = "vng_alias_ip_ranges"
-	IPCIDRRange         commons.FieldName = "ip_cidr_range"
-	SubnetworkRangeName commons.FieldName = "subnetwork_range_name"
+	LaunchSpecAliasIPRanges commons.FieldName = "alias_ip_ranges"
+	IPCidrRange             commons.FieldName = "ip_cidr_range"
+	SubnetworkRangeName     commons.FieldName = "subnetwork_range_name"
 )
