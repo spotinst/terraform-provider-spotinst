@@ -183,15 +183,15 @@ func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "resource_limits.0.min_instance_count", "0"),
 					resource.TestCheckResourceAttr(resourceName, "service_account", "default"),
 					resource.TestCheckResourceAttr(resourceName, "name", "test_ocean_gke_launch_spec"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.network", "Test_VNG_Network"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.project_id", "Test_VNG_Network_Project"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.name", "external-nat-vng"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.access_configs.0.type", "ONE_TO_ONE_NAT"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.ip_cidr_range", "/25"),
-					resource.TestCheckResourceAttr(resourceName, "network_interface.0.alias_ip_ranges.0.subnetwork_range_name", "gke-test-native-vpc-pods-5cb557f7-vng"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.network", "Test_VNG_Network"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.project_id", "Test_VNG_Network_Project"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.access_configs.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.access_configs.0.name", "external-nat-vng"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.access_configs.0.type", "ONE_TO_ONE_NAT"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.alias_ip_ranges.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.alias_ip_ranges.0.ip_cidr_range", "/25"),
+					resource.TestCheckResourceAttr(resourceName, "network_interfaces.0.alias_ip_ranges.0.subnetwork_range_name", "gke-test-native-vpc-pods-5cb557f7-vng"),
 				),
 			},
 			{
@@ -274,7 +274,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 	min_instance_count = 0
   }
 
- network_interface {
+ network_interfaces {
     network = "Test_VNG_Network"
     project_id = "Test_VNG_Network_Project"
     access_configs {
@@ -336,6 +336,7 @@ tags = ["a","gke-terraform-tests-do-not-delete-f0fbf73b-node"]
     max_instance_count = 3
 	min_instance_count = 1
   }
+
 }
 
 `

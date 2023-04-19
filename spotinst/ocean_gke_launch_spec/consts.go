@@ -66,15 +66,15 @@ const (
 )
 
 const (
-	NetworkInterfaces commons.FieldName = "network_interface"
+	NetworkInterfaces commons.FieldName = "network_interfaces"
 	Network           commons.FieldName = "network"
 	ProjectId         commons.FieldName = "project_id"
 
-	LaunchSpecAccessConfigs     commons.FieldName = "access_configs"
-	LaunchSpecAccessConfigsName commons.FieldName = "name"
-	Type                        commons.FieldName = "type"
+	AccessConfigs     commons.FieldName = "access_configs"
+	AccessConfigsName commons.FieldName = "name"
+	Type              commons.FieldName = "type"
 
-	LaunchSpecAliasIPRanges commons.FieldName = "alias_ip_ranges"
-	IPCidrRange             commons.FieldName = "ip_cidr_range"
-	SubnetworkRangeName     commons.FieldName = "subnetwork_range_name"
+	AliasIPRanges       commons.FieldName = "alias_ip_ranges"
+	IPCidrRange         commons.FieldName = "ip_cidr_range"
+	SubnetworkRangeName commons.FieldName = "subnetwork_range_name"
 )

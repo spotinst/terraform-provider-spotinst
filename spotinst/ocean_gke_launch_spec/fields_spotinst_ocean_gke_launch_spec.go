@@ -2,7 +2,6 @@ package ocean_gke_launch_spec
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -1151,12 +1150,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 
-					string(LaunchSpecAccessConfigs): {
+					string(AccessConfigs): {
 						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(LaunchSpecAccessConfigsName): {
+								string(AccessConfigsName): {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
@@ -1169,7 +1168,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 
-					string(LaunchSpecAliasIPRanges): {
+					string(AliasIPRanges): {
 						Type:     schema.TypeSet,
 						Optional: true,
 						Elem: &schema.Resource{
@@ -1190,13 +1189,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.LaunchSpecNetworkInterfaces != nil {
+				networkInterfaces := launchSpec.LaunchSpecNetworkInterfaces
+				result = flattenLaunchSpecNetworkIntefaces(networkInterfaces)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(NetworkInterfaces), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(NetworkInterfaces), err)
+				}
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(NetworkInterfaces)); ok {
-				if networks, err := expandVNGNetworkInterface(v); err != nil {
+				if networks, err := expandLaunchSpecNetworkInterfaces(v); err != nil {
 					return err
 				} else {
 					launchSpec.SetLaunchSpecNetworkInterfaces(networks)
@@ -1207,13 +1218,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value []*gcp.LaunchSpecNetworkInterfaces = nil
 			if v, ok := resourceData.GetOk(string(NetworkInterfaces)); ok {
-				if networks, err := expandVNGNetworkInterface(v); err != nil {
+				if networks, err := expandLaunchSpecNetworkInterfaces(v); err != nil {
 					return err
 				} else {
-					launchSpec.SetLaunchSpecNetworkInterfaces(networks)
+					value = networks
 				}
 			}
+			launchSpec.SetLaunchSpecNetworkInterfaces(value)
 			return nil
 		},
 		nil,
@@ -1609,7 +1622,7 @@ func checkTaintKeyExists(taint *gcp.Taint, taints []*gcp.Taint) bool {
 }
 
 // expandVNGNetworkInterface sets the values from the plan as objects
-func expandVNGNetworkInterface(data interface{}) ([]*gcp.LaunchSpecNetworkInterfaces, error) {
+func expandLaunchSpecNetworkInterfaces(data interface{}) ([]*gcp.LaunchSpecNetworkInterfaces, error) {
 	list := data.([]interface{})
 
 	if list != nil && list[0] != nil {
@@ -1626,7 +1639,7 @@ func expandVNGNetworkInterface(data interface{}) ([]*gcp.LaunchSpecNetworkInterf
 				iface.SetProjectId(spotinst.String(v))
 			}
 
-			if v, ok := m[string(LaunchSpecAccessConfigs)]; ok {
+			if v, ok := m[string(AccessConfigs)]; ok {
 				accessConfigs, err := expandVNGAccessConfigs(v)
 				if err != nil {
 					return nil, err
@@ -1639,7 +1652,7 @@ func expandVNGNetworkInterface(data interface{}) ([]*gcp.LaunchSpecNetworkInterf
 				iface.LaunchSpecAccessConfigs = nil
 			}
 
-			if v, ok := m[string(LaunchSpecAliasIPRanges)]; ok {
+			if v, ok := m[string(AliasIPRanges)]; ok {
 				aliasRange, err := expandVNGAliasIPRanges(v)
 				if err != nil {
 					return nil, err
@@ -1668,7 +1681,7 @@ func expandVNGAccessConfigs(data interface{}) ([]*gcp.LaunchSpecAccessConfigs, e
 
 		accessConfig := &gcp.LaunchSpecAccessConfigs{}
 
-		if v, ok := attr[string(LaunchSpecAccessConfigsName)].(string); ok && v != "" {
+		if v, ok := attr[string(AccessConfigsName)].(string); ok && v != "" {
 			accessConfig.SetLaunchSpecAccessConfigsName(spotinst.String(v))
 		}
 
@@ -1701,4 +1714,54 @@ func expandVNGAliasIPRanges(data interface{}) ([]*gcp.LaunchSpecAliasIPRanges, e
 		aliasRanges = append(aliasRanges, aliasRange)
 	}
 	return aliasRanges, nil
+}
+
+func flattenLaunchSpecNetworkIntefaces(networkInterfaces []*gcp.LaunchSpecNetworkInterfaces) []interface{} {
+	result := make([]interface{}, 0, len(networkInterfaces))
+
+	for _, networkInterface := range networkInterfaces {
+		m := make(map[string]interface{})
+		m[string(Network)] = spotinst.StringValue(networkInterface.Network)
+		m[string(ProjectId)] = spotinst.StringValue(networkInterface.ProjectID)
+
+		if networkInterface.LaunchSpecAccessConfigs != nil {
+			m[string(AccessConfigs)] = flattenLaunchSpecAccessConfigs(networkInterface.LaunchSpecAccessConfigs)
+		}
+
+		if networkInterface.LaunchSpecAliasIPRanges != nil {
+			m[string(AliasIPRanges)] = flattenLaunchSpecAliasIPRanges(networkInterface.LaunchSpecAliasIPRanges)
+		}
+
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenLaunchSpecAccessConfigs(accessConfigs []*gcp.LaunchSpecAccessConfigs) []interface{} {
+	result := make([]interface{}, 0, len(accessConfigs))
+
+	for _, accessConfig := range accessConfigs {
+		m := make(map[string]interface{})
+		m[string(AccessConfigsName)] = spotinst.StringValue(accessConfig.LaunchSpecAccessConfigsName)
+		m[string(Type)] = spotinst.StringValue(accessConfig.Type)
+
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenLaunchSpecAliasIPRanges(aliasIPRanges []*gcp.LaunchSpecAliasIPRanges) []interface{} {
+	result := make([]interface{}, 0, len(aliasIPRanges))
+
+	for _, aliasIPRange := range aliasIPRanges {
+		m := make(map[string]interface{})
+		m[string(IPCidrRange)] = spotinst.StringValue(aliasIPRange.IPCidrRange)
+		m[string(SubnetworkRangeName)] = spotinst.StringValue(aliasIPRange.SubnetworkRangeName)
+
+		result = append(result, m)
+	}
+
+	return result
 }

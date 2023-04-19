@@ -159,7 +159,7 @@ The following arguments are supported:
   * `network` - (Required) The name of the network.
   * `project_id` - (Optional) Use a network resource from a different project. Set the project identifier to use its network resource. This parameter is relevant only if the network resource is in a different project.
   * `access_configs` - (Optional) The network protocol of the VNG.
-    * `access_configs_name` - (Optional) The name of the access configuration.
+    * `name` - (Optional) The name of the access configuration.
     * `type` - (Optional) The type of the access configuration.
   * `alias_ip_ranges` - (Optional) use the imported node pool’s associated aliasIpRange to assign secondary IP addresses to the nodes. Cannot be changed after VNG creation.
     * `ip_cidr_range` - (Required) specify the IP address range in CIDR notation that can be used for the alias IP addresses associated with the imported node pool.
