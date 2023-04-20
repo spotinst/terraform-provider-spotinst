@@ -337,6 +337,19 @@ tags = ["a","gke-terraform-tests-do-not-delete-f0fbf73b-node"]
 	min_instance_count = 1
   }
 
+ network_interfaces {
+    network = "Test_VNG_Network"
+    project_id = "Test_VNG_Network_Project"
+    access_configs {
+      name = "external-nat-vng"
+      type     = "ONE_TO_ONE_NAT"
+    }
+    alias_ip_ranges {
+      ip_cidr_range         = "/25"
+      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+    }
+  }
+
 }
 
 `
