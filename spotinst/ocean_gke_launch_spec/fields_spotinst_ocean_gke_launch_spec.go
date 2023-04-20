@@ -1136,7 +1136,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchSpec,
 		NetworkInterfaces,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -1623,7 +1623,7 @@ func checkTaintKeyExists(taint *gcp.Taint, taints []*gcp.Taint) bool {
 
 // expandVNGNetworkInterface sets the values from the plan as objects
 func expandLaunchSpecNetworkInterfaces(data interface{}) ([]*gcp.LaunchSpecNetworkInterfaces, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 
 	if list != nil && list[0] != nil {
 		ifaces := make([]*gcp.LaunchSpecNetworkInterfaces, 0, len(list))
