@@ -286,7 +286,6 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
       subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
     }
   }
- 
 }
 
 `
@@ -349,7 +348,6 @@ tags = ["a","gke-terraform-tests-do-not-delete-f0fbf73b-node"]
       subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
     }
   }
-
 }
 
 `
