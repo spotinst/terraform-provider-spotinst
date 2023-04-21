@@ -85,11 +85,11 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
     }
   }
   
-  network_interface {
+  network_interfaces {
     network = "test-vng-network"
     project_id = "test-vng-network-project"
     access_configs {
-      access_configs_name = "external-nat-vng"
+      name = "external-nat-vng"
       type     = "ONE_TO_ONE_NAT"
     }
     alias_ip_ranges {
@@ -155,7 +155,7 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
-* `network_interface` - (Optional) Settings for network interfaces.
+* `network_interfaces` - (Optional) Settings for network interfaces.
   * `network` - (Required) The name of the network.
   * `project_id` - (Optional) Use a network resource from a different project. Set the project identifier to use its network resource. This parameter is relevant only if the network resource is in a different project.
   * `access_configs` - (Optional) The network protocol of the VNG.
