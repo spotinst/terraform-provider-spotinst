@@ -17,7 +17,7 @@ Manages a custom Spotinst Ocean GKE Launch Spec resource.
 ```hcl
 resource "spotinst_ocean_gke_launch_spec" "example" {
   ocean_id     = "o-123456"
-#  node_pool_name  = "default-pool"
+  node_pool_name  = "default-pool"
   name = "specialty.nodes.spotk8s.com"
   source_image = "image"
   restrict_scale_down = true
@@ -110,7 +110,7 @@ output "ocean_launchspec_id" {
 The following arguments are supported:
 
 * `ocean_id` - (Required) The Ocean cluster ID.
-<!-- * `node_pool_name` - (Optional) The node pool you wish to use in your Launch Spec. -->
+* `node_pool_name` - (Optional) The node pool you wish to use in your Launch Spec.
 * `name` - (Optional) The launch specification name.
 * `source_image` - (Required) Image URL.
 * `metadata` - (Required only if `node_pool_name` is not set) Cluster's metadata.
