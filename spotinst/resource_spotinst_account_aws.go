@@ -60,7 +60,7 @@ func resourceSpotinstAccountAWSCreate(ctx context.Context, resourceData *schema.
 	resourceData.SetId(spotinst.StringValue(accountID))
 
 	log.Printf("===> Account created successfully: %s <===", resourceData.Id())
-	return resourceSpotinstClusterAWSRead(ctx, resourceData, meta)
+	return resourceSpotinstAccontAWSRead(ctx, resourceData, meta)
 }
 
 func createAWSAccount(resourceData *schema.ResourceData, account *aws.Account, spotinstClient *Client) (*string, error) {
