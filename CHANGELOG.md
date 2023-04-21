@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.113.0 (Apr 20, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: added `network_interfaces` object 
+* documentation: resource/spotinst_ocean_aws_launch_spec: added `images` object in the documentation
+
 ## 1.112.0 (Apr 13, 2023)
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: fixed `autoscale_attributes` field in `integration_ecs` to read as an array
