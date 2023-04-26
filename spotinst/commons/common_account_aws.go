@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/account/providers/aws"
 	"log"
+	"strings"
 )
 
 const (
@@ -89,4 +90,40 @@ func (accountWrapper *AWSAccountWrapper) GetAccount() *aws.Account {
 
 func (accountWrapper *AWSAccountWrapper) SetAccount(account *aws.Account) {
 	accountWrapper.account = account
+}
+
+func (res *AccountAWSTerraformResource) OnUpdate(
+	resourceData *schema.ResourceData,
+	meta interface{}) (bool, bool, bool, *aws.Account, error) {
+
+	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
+		return false, false, false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
+	}
+
+	accountWrapper := NewAccountWrapper()
+	hasChanged := false
+	changesRequiredRoll := false
+	tagsChanged := false
+
+	for _, field := range res.fields.fieldsMap {
+		if field.onUpdate == nil {
+			continue
+		}
+		if field.hasFieldChange(resourceData, meta) {
+			if contains(conditionedRollFieldsAWS, field.fieldNameStr) {
+				changesRequiredRoll = true
+			}
+
+			if strings.Compare(field.fieldNameStr, "tags") == 0 {
+				tagsChanged = true
+			}
+			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
+			if err := field.onUpdate(accountWrapper, resourceData, meta); err != nil {
+				return false, false, false, nil, err
+			}
+			hasChanged = true
+		}
+	}
+
+	return hasChanged, changesRequiredRoll, tagsChanged, accountWrapper.GetAccount(), nil
 }

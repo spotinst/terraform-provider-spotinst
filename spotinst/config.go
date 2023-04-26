@@ -74,6 +74,7 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		managedInstance: managedinstance.New(sess),
 		dataIntegration: dataintegration.New(sess),
 		statefulNode:    stateful.New(sess),
+		account:         account.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")

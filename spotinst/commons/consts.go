@@ -193,4 +193,6 @@ const (
 	ResourceOnUpdate LogFormat = "onUpdate() -> %s -> started for %s..."
 	ResourceOnRead   LogFormat = "onRead() -> %s -> started for %s..."
 	ResourceOnCreate LogFormat = "onCreate() -> %s -> started..."
+
+	AccountAWS ResourceAffinity = "Account_AWS"
 )
