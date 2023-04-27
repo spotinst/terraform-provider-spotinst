@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 1.115.0 (Apr 28, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: added `collectAppLogs` object
 
 ## 1.114.0 (Apr 27, 2023)
 NOTES:
