@@ -27,6 +27,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Computed: true,
 					},
+					string(CollectAppLogs): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Computed: true,
+					},
 				},
 			},
 		},
@@ -86,6 +91,7 @@ func flattenLogCollection(logCollection *spark.LogCollectionConfig) []interface{
 	}
 	result := make(map[string]interface{})
 	result[string(CollectDriverLogs)] = spotinst.BoolValue(logCollection.CollectDriverLogs)
+	result[string(CollectAppLogs)] = spotinst.BoolValue(logCollection.CollectAppLogs)
 	return []interface{}{result}
 }
 
@@ -99,6 +105,9 @@ func expandLogCollection(data interface{}) (*spark.LogCollectionConfig, error) {
 
 	if v, ok := m[string(CollectDriverLogs)].(bool); ok {
 		logCollection.SetCollectDriverLogs(spotinst.Bool(v))
+	}
+	if v, ok := m[string(CollectAppLogs)].(bool); ok {
+		logCollection.SetCollectAppLogs(spotinst.Bool(v))
 	}
 
 	return logCollection, nil
