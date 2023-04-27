@@ -1,5 +1,10 @@
 ## Unreleased
 
+
+## 1.114.0 (Apr 27, 2023)
+NOTES:
+* documentation: resource/spotinst_ocean_aws_launch_spec: updated example usage for `images`
+
 ## 1.113.0 (Apr 20, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: added `network_interfaces` object 

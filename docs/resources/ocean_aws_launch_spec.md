@@ -25,8 +25,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   root_volume_size            = 30
   associate_public_ip_address = true
   
-  images  {
-    image_id = "ami-id"
+  images {
+    image_id = "ami-id1"
+    }
+  images {
+    image_id = "ami-id2"
     }
 
   instance_types = [
