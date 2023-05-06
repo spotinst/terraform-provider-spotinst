@@ -53,7 +53,7 @@ func setupClusterAKSNPResource() {
 // region Create
 
 func resourceSpotinstClusterAKSNPCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	log.Printf(string(commons.ResourceOnCreate), commons.OceanAKSResource.GetName())
+	log.Printf(string(commons.ResourceOnCreate), commons.OceanAKSNPResource.GetName())
 
 	cluster, err := commons.OceanAKSNPResource.OnCreate(resourceData, meta)
 	if err != nil {
@@ -153,16 +153,16 @@ func readAKSNPCluster(ctx context.Context, clusterID string, spotinstClient *Cli
 
 func resourceSpotinstClusterAKSNPUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clusterID := resourceData.Id()
-	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSResource.GetName(), clusterID)
+	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSNPResource.GetName(), clusterID)
 
-	shouldUpdate, cluster, err := commons.OceanAKSResource.OnUpdate(resourceData, meta)
+	shouldUpdate, cluster, err := commons.OceanAKSNPResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(clusterID))
-		if err := updateAKSCluster(cluster, meta.(*Client)); err != nil {
+		if err := updateAKSNPCluster(cluster, meta.(*Client)); err != nil {
 			return diag.FromErr(err)
 		}
 	}
