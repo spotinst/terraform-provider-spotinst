@@ -55,7 +55,7 @@ func setupClusterAKSNPResource() {
 // region Create
 
 func resourceSpotinstClusterAKSNPCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	log.Printf(string(commons.ResourceOnCreate), commons.OceanAKSResource.GetName())
+	log.Printf(string(commons.ResourceOnCreate), commons.OceanAKSNPResource.GetName())
 
 	cluster, err := commons.OceanAKSNPResource.OnCreate(resourceData, meta)
 	if err != nil {

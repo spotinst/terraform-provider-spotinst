@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.116.0 (May 6, 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: corrected update cluster route
+
 ## 1.115.0 (Apr 28, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_spark: added `collectAppLogs` object
