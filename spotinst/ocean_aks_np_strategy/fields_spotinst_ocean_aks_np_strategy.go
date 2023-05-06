@@ -78,7 +78,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.GetOk(string(FallbackToOnDemand)); ok && v != nil {
+			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
 				ftod := v.(bool)
 				fallback := spotinst.Bool(ftod)
 				cluster.VirtualNodeGroupTemplate.Strategy.SetFallbackToOD(fallback)
@@ -89,7 +89,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
 			var fallback *bool = nil
-			if v, ok := resourceData.GetOk(string(FallbackToOnDemand)); ok && v != nil {
+			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
 				ftod := v.(bool)
 				fallback = spotinst.Bool(ftod)
 			}
