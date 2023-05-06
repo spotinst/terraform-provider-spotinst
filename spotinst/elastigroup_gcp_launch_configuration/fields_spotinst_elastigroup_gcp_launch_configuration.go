@@ -394,6 +394,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[InstanceNamePrefix] = commons.NewGenericField(
+		commons.ElastigroupGCPLaunchConfiguration,
+		InstanceNamePrefix,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.InstanceNamePrefix != nil {
+				value = elastigroup.Compute.LaunchSpecification.InstanceNamePrefix
+			}
+			if err := resourceData.Set(string(InstanceNamePrefix), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceNamePrefix), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(InstanceNamePrefix)); ok && v != nil {
+				elastigroup.Compute.LaunchSpecification.SetInstanceNamePrefix(spotinst.String(resourceData.Get(string(InstanceNamePrefix)).(string)))
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetInstanceNamePrefix(nil)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(InstanceNamePrefix)); ok && v != nil {
+				elastigroup.Compute.LaunchSpecification.SetInstanceNamePrefix(spotinst.String(resourceData.Get(string(InstanceNamePrefix)).(string)))
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetInstanceNamePrefix(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[ServiceAccount] = commons.NewGenericField(
 		commons.ElastigroupAWSLaunchConfiguration,
 		ServiceAccount,

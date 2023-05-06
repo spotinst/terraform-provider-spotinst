@@ -2,8 +2,9 @@ package commons
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"log"
+
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )

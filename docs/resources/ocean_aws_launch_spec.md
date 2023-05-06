@@ -24,6 +24,13 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   restrict_scale_down         = true
   root_volume_size            = 30
   associate_public_ip_address = true
+  
+  images {
+    image_id = "ami-id1"
+    }
+  images {
+    image_id = "ami-id2"
+    }
 
   instance_types = [
     "m4.large",
@@ -146,6 +153,9 @@ The following arguments are supported:
 * `name` - (Optional) The name of the Virtual Node Group.
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id` - (Optional) ID of the image used to launch the instances.
+* `images` - Array of objects (Image object, containing the id of the image used to launch instances.) You can configure VNG with either the imageId or images objects, but not both simultaneously.
+              For each architecture type (amd64, arm64) only one AMI is allowed. Valid values: null, or an array with at least one element.
+    * `image_id` - Identifier of the image in AWS. Valid values: any string which is not empty or null.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_groups` - (Optional) Optionally adds security group IDs.
 * `subnet_ids` - (Optional) A list of subnet IDs.

@@ -64,3 +64,17 @@ const (
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
 )
+
+const (
+	NetworkInterfaces commons.FieldName = "network_interfaces"
+	Network           commons.FieldName = "network"
+	ProjectId         commons.FieldName = "project_id"
+
+	AccessConfigs     commons.FieldName = "access_configs"
+	AccessConfigsName commons.FieldName = "name"
+	Type              commons.FieldName = "type"
+
+	AliasIPRanges       commons.FieldName = "alias_ip_ranges"
+	IPCidrRange         commons.FieldName = "ip_cidr_range"
+	SubnetworkRangeName commons.FieldName = "subnetwork_range_name"
+)

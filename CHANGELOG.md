@@ -1,5 +1,46 @@
 ## Unreleased
 
+## 1.115.0 (Apr 28, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: added `collectAppLogs` object
+
+## 1.114.0 (Apr 27, 2023)
+NOTES:
+* documentation: resource/spotinst_ocean_aws_launch_spec: updated example usage for `images`
+
+## 1.113.0 (Apr 20, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: added `network_interfaces` object 
+* documentation: resource/spotinst_ocean_aws_launch_spec: added `images` object in the documentation
+
+## 1.112.0 (Apr 13, 2023)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: fixed `autoscale_attributes` field in `integration_ecs` to read as an array
+
+## 1.111.0 (Apr 13, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `enable_automatic_and_manual_headroom` field in `autoscaler`
+
+## 1.110.0 (Apr 6, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: added `images` object
+
+## 1.109.0 (Apr 5, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_gcp: added `instance_name_prefix` field in `launch_specification`
+
+## 1.108.0 (Mar 22, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `block_device_mappings` object in the `launch_specification`
+
+## 1.107.0 (Mar 22, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke: added `respect_pdb` field for create and roll cluster `scheduling`
+
+## 1.106.1 (Mar 21, 2023)
+BUG FIXES:
+* resource/spotinst_ocean_gke: Commented warnings `Please add the imported tags from state file to the tags list`
+
 ## 1.106.0 (Mar 14, 2023)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: added `instance_metadata_tags` in `metadata_options`

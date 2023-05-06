@@ -3,6 +3,8 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np"
@@ -12,7 +14,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_count_limits"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_pool_properties"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_strategy"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
