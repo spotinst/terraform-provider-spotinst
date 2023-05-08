@@ -51,6 +51,7 @@ type Client struct {
 	dataIntegration dataintegration.Service
 	statefulNode    stateful.Service
 	account         account.Service
+	//credential      account.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.

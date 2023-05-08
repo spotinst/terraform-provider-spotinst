@@ -4,23 +4,21 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/account_aws"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/credential_aws"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/account/providers/aws"
-	"github.com/spotinst/spotinst-sdk-go/spotinst"
-	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-func resourceSpotinstAccountAWS() *schema.Resource {
-	setupAccountAWSResource()
+func resourceSpotinstCredentialAWS() *schema.Resource {
+	setupCredentialAWSResource()
 
 	return &schema.Resource{
-		CreateContext: resourceSpotinstAccountAWSCreate,
+		CreateContext: resourceSpotinstCredentialAWSCreate,
 		ReadContext:   resourceSpotinstAccountAWSRead,
-		UpdateContext: resourceSpotinstAccountAWSUpdate,
+		//UpdateContext: resourceSpotinstAccountAWSUpdate,
 		DeleteContext: resourceSpotinstAccountAWSDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -30,54 +28,57 @@ func resourceSpotinstAccountAWS() *schema.Resource {
 	}
 }
 
-func setupAccountAWSResource() {
+func setupCredentialAWSResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
-	account_aws.Setup(fieldsMap)
+	credential_aws.Setup(fieldsMap)
 
-	commons.AccountAWSResource = commons.NewAccountAWSResource(fieldsMap)
+	commons.CredentialAWSResource = commons.NewCredentialAWSResource(fieldsMap)
 }
 
-func resourceSpotinstAccountAWSCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstCredentialAWSCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
-		commons.AccountAWSResource.GetName())
+		commons.CredentialAWSResource.GetName())
 
-	account, err := commons.AccountAWSResource.OnCreate(resourceData, meta)
+	credential, err := commons.CredentialAWSResource.OnCreate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	accountID, err := createAWSAccount(account, meta.(*Client))
+	err = createAWSCredential(credential, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceData.SetId(spotinst.StringValue(accountID))
+	//resourceData.SetId(spotinst.StringValue(accountID))
 
 	log.Printf("===> Account created successfully: %s <===", resourceData.Id())
 	//return diag.FromErr(err)
-	return resourceSpotinstAccountAWSRead(ctx, resourceData, meta)
+	//return resourceSpotinstAccountAWSRead(ctx, resourceData, meta)
+	return nil
 }
 
-func createAWSAccount(account *aws.Account, spotinstClient *Client) (*string, error) {
-	if json, err := commons.ToJson(account); err != nil {
-		return nil, err
+func createAWSCredential(credential *aws.Credentials, spotinstClient *Client) error {
+	if json, err := commons.ToJson(credential); err != nil {
+		return err
 	} else {
 		log.Printf("===> Account create configuration: %s", json)
 	}
-	var resp *aws.CreateAccountOutput = nil
-	input := &aws.CreateAccountInput{Account: account}
+	//var resp *aws.CreateCredentialOutput = nil
+	input := &aws.SetCredentialInput{Credential: credential}
 	println(input)
-	resp, err := spotinstClient.account.CloudProviderAWS().CreateAccount(context.Background(), input)
+	//resp, err := spotinstClient.account.CloudProviderAWS().CreateAccount(context.Background(), input)
+	err := spotinstClient.account.CloudProviderAWS().SetCredential(context.Background(), input)
 	if err != nil {
-		return nil, fmt.Errorf("[ERROR] failed to create account: %s", err)
+		return fmt.Errorf("[ERROR] failed to create account: %s", err)
 	}
-	return resp.Account.ID, nil
+	//return resp.Account.ID, nil
+	return nil
 }
 
-const ErrCodeAccountNotFound = "Account_DOESNT_EXIST"
+//const ErrCodeAccountNotFound = "Account_DOESNT_EXIST"
 
-func resourceSpotinstAccountAWSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+/*func resourceSpotinstAccountAWSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
 		commons.AccountAWSResource.GetName(), id)
@@ -113,9 +114,9 @@ func resourceSpotinstAccountAWSRead(ctx context.Context, resourceData *schema.Re
 	}
 	log.Printf("===> Account read successfully: %s <===", id)
 	return nil
-}
+}*/
 
-func resourceSpotinstAccountAWSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+/*func resourceSpotinstAccountAWSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.AccountAWSResource.GetName(), id)
@@ -145,9 +146,9 @@ func deleteAWSAccount(resourceData *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete account: %s", err)
 	}
 	return nil
-}
+}*/
 
-func resourceSpotinstAccountAWSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+/*func resourceSpotinstAccountAWSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.AccountAWSResource.GetName(), id)
@@ -165,8 +166,8 @@ func resourceSpotinstAccountAWSUpdate(ctx context.Context, resourceData *schema.
 	}
 	log.Printf("===> Account updated successfully: %s <===", id)
 	return resourceSpotinstAccountAWSRead(ctx, resourceData, meta)
-}
-
+}*/
+/*
 func updateAWSAccount(account *aws.Account, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool, tagsChanged bool) error {
 	var input = &aws.UpdateAccountInput{
 		Account: account,
@@ -184,4 +185,4 @@ func updateAWSAccount(account *aws.Account, resourceData *schema.ResourceData, m
 	}
 
 	return nil
-}
+}*/
