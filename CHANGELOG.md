@@ -1,6 +1,13 @@
 ## Unreleased
 
-## 1.116.0 (May 6, 2023)
+## 1.117.0 (May 09, 2023)
+BUG FIXES:
+* resource/spotinst_ocean_gke_launch_spec: fixed `network_interfaces` block for vng import flow
+
+NOTES:
+* documentation: resource/spotinst_stateful_node_azure: fixed `public_ip_sku` value
+
+## 1.116.0 (May 06, 2023)
 BUG FIXES:
 * resource/spotinst_ocean_aks_np: corrected update cluster route
 
@@ -25,7 +32,7 @@ BUG FIXES:
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added `enable_automatic_and_manual_headroom` field in `autoscaler`
 
-## 1.110.0 (Apr 6, 2023)
+## 1.110.0 (Apr 06, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: added `images` object
 
