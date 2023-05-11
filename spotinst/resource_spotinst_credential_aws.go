@@ -24,7 +24,7 @@ func resourceSpotinstCredentialAWS() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Schema: commons.AccountAWSResource.GetSchemaMap(),
+		Schema: commons.CredentialAWSResource.GetSchemaMap(),
 	}
 }
 
@@ -52,7 +52,7 @@ func resourceSpotinstCredentialAWSCreate(ctx context.Context, resourceData *sche
 
 	//resourceData.SetId(spotinst.StringValue(accountID))
 
-	log.Printf("===> Account created successfully: %s <===", resourceData.Id())
+	log.Printf("===> Credential set successfully successfully: %s <===", resourceData.Id())
 	//return diag.FromErr(err)
 	//return resourceSpotinstAccountAWSRead(ctx, resourceData, meta)
 	return nil
@@ -62,7 +62,7 @@ func createAWSCredential(credential *aws.Credentials, spotinstClient *Client) er
 	if json, err := commons.ToJson(credential); err != nil {
 		return err
 	} else {
-		log.Printf("===> Account create configuration: %s", json)
+		log.Printf("===> Set credential configuration: %s", json)
 	}
 	//var resp *aws.CreateCredentialOutput = nil
 	input := &aws.SetCredentialInput{Credential: credential}
@@ -70,7 +70,7 @@ func createAWSCredential(credential *aws.Credentials, spotinstClient *Client) er
 	//resp, err := spotinstClient.account.CloudProviderAWS().CreateAccount(context.Background(), input)
 	err := spotinstClient.account.CloudProviderAWS().SetCredential(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("[ERROR] failed to create account: %s", err)
+		return fmt.Errorf("[ERROR] failed to set credential: %s", err)
 	}
 	//return resp.Account.ID, nil
 	return nil
