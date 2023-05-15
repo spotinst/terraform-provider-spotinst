@@ -20,7 +20,6 @@ func resourceSpotinstAccountAWS() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceSpotinstAccountAWSCreate,
 		ReadContext:   resourceSpotinstAccountAWSRead,
-		UpdateContext: resourceSpotinstAccountAWSUpdate,
 		DeleteContext: resourceSpotinstAccountAWSDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -55,7 +54,6 @@ func resourceSpotinstAccountAWSCreate(ctx context.Context, resourceData *schema.
 	resourceData.SetId(spotinst.StringValue(accountID))
 
 	log.Printf("===> Account created successfully: %s <===", resourceData.Id())
-	//return diag.FromErr(err)
 	return resourceSpotinstAccountAWSRead(ctx, resourceData, meta)
 }
 
@@ -144,44 +142,5 @@ func deleteAWSAccount(resourceData *schema.ResourceData, meta interface{}) error
 	if _, err := meta.(*Client).account.CloudProviderAWS().DeleteAccount(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete account: %s", err)
 	}
-	return nil
-}
-
-func resourceSpotinstAccountAWSUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	id := resourceData.Id()
-	log.Printf(string(commons.ResourceOnUpdate),
-		commons.AccountAWSResource.GetName(), id)
-
-	shouldUpdate, changesRequiredRoll, tagsChanged, account, err := commons.AccountAWSResource.OnUpdate(resourceData, meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	if shouldUpdate {
-		account.SetId(spotinst.String(id))
-		if err := updateAWSAccount(account, resourceData, meta, changesRequiredRoll, tagsChanged); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-	log.Printf("===> Account updated successfully: %s <===", id)
-	return resourceSpotinstAccountAWSRead(ctx, resourceData, meta)
-}
-
-func updateAWSAccount(account *aws.Account, resourceData *schema.ResourceData, meta interface{}, changesRequiredRoll bool, tagsChanged bool) error {
-	var input = &aws.UpdateAccountInput{
-		Account: account,
-	}
-	accountID := resourceData.Id()
-
-	if json, err := commons.ToJson(account); err != nil {
-		return err
-	} else {
-		log.Printf("===> Account update configuration: %s", json)
-	}
-
-	if _, err := meta.(*Client).account.CloudProviderAWS().UpdateAccount(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to update account [%v]: %v", accountID, err)
-	}
-
 	return nil
 }

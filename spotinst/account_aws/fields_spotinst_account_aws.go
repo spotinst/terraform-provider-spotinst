@@ -14,7 +14,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
+			ForceNew: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			accountWrapper := resourceObject.(*commons.AWSAccountWrapper)
