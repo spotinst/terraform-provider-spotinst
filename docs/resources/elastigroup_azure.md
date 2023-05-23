@@ -1,6 +1,6 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: elastigroup_azure_v3"
+page_title: "Spotinst: elastigroup_azure"
 subcategory: "Elastigroup"
 description: |-
  Provides a Spotinst elastigroup resource for Microsoft Azure.
