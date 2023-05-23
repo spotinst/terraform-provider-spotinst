@@ -1,6 +1,7 @@
 package elastigroup_azure_launchspecification
 
 import (
+	"errors"
 	"fmt"
 
 	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
@@ -116,6 +117,71 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[Tags] = commons.NewGenericField(
+		commons.ElastigroupAzure,
+		Tags,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(TagKey): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					string(TagValue): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []interface{} = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.Tags != nil {
+				tags := elastigroup.Compute.LaunchSpecification.Tags
+				result = flattenTags(tags)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Tags), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Tags), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if value, ok := resourceData.GetOk(string(Tags)); ok {
+				if tags, err := expandTags(value); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetTags(tags)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var tagsToAdd []*azurev3.Tags = nil
+			if value, ok := resourceData.GetOk(string(Tags)); ok {
+				if tags, err := expandTags(value); err != nil {
+					return err
+				} else {
+					tagsToAdd = tags
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetTags(tagsToAdd)
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandManagedServiceIdentities(data interface{}) ([]*azurev3.ManagedServiceIdentity, error) {
@@ -143,4 +209,40 @@ func flattenManagedServiceIdentities(msis []*azurev3.ManagedServiceIdentity) []i
 		result = append(result, m)
 	}
 	return result
+}
+
+func flattenTags(tags []*azurev3.Tags) []interface{} {
+	result := make([]interface{}, 0, len(tags))
+	for _, tag := range tags {
+		m := make(map[string]interface{})
+		m[string(TagKey)] = spotinst.StringValue(tag.TagKey)
+		m[string(TagValue)] = spotinst.StringValue(tag.TagValue)
+
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandTags(data interface{}) ([]*azurev3.Tags, error) {
+	list := data.(*schema.Set).List()
+	tags := make([]*azurev3.Tags, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(TagKey)]; !ok {
+			return nil, errors.New("invalid tag attributes: key missing")
+		}
+
+		if _, ok := attr[string(TagValue)]; !ok {
+			return nil, errors.New("invalid tag attributes: value missing")
+		}
+		tag := &azurev3.Tags{
+			TagKey:   spotinst.String(attr[string(TagKey)].(string)),
+			TagValue: spotinst.String(attr[string(TagValue)].(string)),
+		}
+		tags = append(tags, tag)
+	}
+	return tags, nil
 }
