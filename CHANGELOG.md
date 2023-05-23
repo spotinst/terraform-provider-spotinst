@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.118.0 (May 23, 2023)
+NOTES:
+* documentation: Renamed `managed_instance` to `stateful_node_aws` (documentation change only, terraform resource not modified)
+* documentation: Renamed `elastigroup_azure_v3` to `elastigroup_azure` (documentation change only, terraform resource not modified)
+* documentation: Removed `elastigroup_azure_v2` from documentation
+
+
 ## 1.117.0 (May 09, 2023)
 BUG FIXES:
 * resource/spotinst_ocean_gke_launch_spec: fixed `network_interfaces` block for vng import flow
