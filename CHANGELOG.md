@@ -1,11 +1,14 @@
 ## Unreleased
 
+## 1.119.0 (May 23, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: added `tags` object
+
 ## 1.118.0 (May 23, 2023)
 NOTES:
 * documentation: Renamed `managed_instance` to `stateful_node_aws` (documentation change only, terraform resource not modified)
 * documentation: Renamed `elastigroup_azure_v3` to `elastigroup_azure` (documentation change only, terraform resource not modified)
 * documentation: Removed `elastigroup_azure_v2` from documentation
-
 
 ## 1.117.0 (May 09, 2023)
 BUG FIXES:
