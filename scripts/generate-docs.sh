@@ -26,6 +26,7 @@ exclude_files=(
 	"docs/resources/ocean_gke_launch_spec_import.md"
 	"docs/resources/subscription.md"
 	"docs/resources/data_integration.md"
+	"docs/resources/stateful_node_azure.md"
 )
 
 # Check if manual changes were made to any excluded files and exit.
