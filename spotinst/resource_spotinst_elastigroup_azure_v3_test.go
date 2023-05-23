@@ -209,6 +209,11 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "CoreReliabilityResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "CoreReliabilityResourceIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "key1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "value1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1.key", "key2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1.value", "value2"),
 				),
 			},
 			{
@@ -227,6 +232,13 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "CoreReliabilityResourceIdentity"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.resource_group_name", "CoreReliabilityResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.name", "CoreReliabilityResourceIdentity2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "key1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "value1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1.key", "key2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.1.value", "value2"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2.key", "key3"),
+					resource.TestCheckResourceAttr(resourceName, "tags.2.value", "value3"),
 				),
 			},
 		},
@@ -255,6 +267,16 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  managed_service_identity {
     resource_group_name = "CoreReliabilityResourceGroup"
     name                = "CoreReliabilityResourceIdentity"
+  }
+
+ tags {
+    key = "key1"
+    value = "value1"
+  }
+
+  tags {
+    key = "key2"
+    value = "value2"
   }
  // -------------------------
 
@@ -291,6 +313,21 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  managed_service_identity {
     resource_group_name = "CoreReliabilityResourceGroup"
     name                = "CoreReliabilityResourceIdentity2"
+  }
+
+ tags {
+    key = "key1"
+    value = "value1"
+  }
+
+  tags {
+    key = "key2"
+    value = "value2"
+  }
+
+ tags {
+    key = "key3"
+    value = "value3"
   }
  
  %v

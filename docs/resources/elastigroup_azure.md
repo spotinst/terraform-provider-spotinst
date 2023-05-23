@@ -38,6 +38,16 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   name                = "ocean-westus-dev-aks-agentpool"
   }
   
+  tags {
+  key = "key1"
+  value = "value1"
+  }
+  
+  tags {
+  key = "key2"
+  value = "value2"
+  }
+  
   // --- IMAGE ---------------------------------------------------------
   image {
     marketplace {
@@ -104,6 +114,9 @@ The following arguments are supported:
     * `resource_group_name` - (Required) Name of the Azure Resource Group where the Managed Service Identity is located.
     * `name` - (Required) Name of the Managed Service Identity.
   
+* `tags` - (Optional) Key-Value pairs for VMs in the Elastigroup.
+    * `key` - (Required) Tag Key for Vms in Elastigroup.
+    * `value` - (Required) Tag Value for Vms in Elastigroup.
 * `od_sizes` - (Required) Available On-Demand sizes
 * `spot_sizes` - (Required) Available Low-Priority sizes.
 
