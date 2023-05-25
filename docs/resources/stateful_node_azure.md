@@ -3,7 +3,7 @@ layout: "spotinst"
 page_title: "Spotinst: stateful_node_azure"
 subcategory: "Stateful Node"
 description: |-
-Provides a Spotinst Stateful Node resource using Azure.
+  Provides a Spotinst Stateful Node resource using Azure.
 ---
 
 # spotinst\_stateful\_node\_azure
@@ -220,6 +220,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     type    = "vmReady"
     timeout = 40
   }
+}
   // -------------------------------------------------------------------
 
 ```
