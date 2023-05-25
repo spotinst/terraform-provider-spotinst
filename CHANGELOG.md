@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.119.1 (May 25, 2023)
+NOTES:
+* documentation: Moved `stateful_node_azure` under `Stateful Node` category (documentation change only, terraform resource not modified)
+
 ## 1.119.0 (May 23, 2023)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: added `tags` object
