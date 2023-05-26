@@ -20,24 +20,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(CpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(MemoryPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(GpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(NumOfUnits): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
 					},
 				},
 			},
@@ -61,7 +58,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-
 			if value, ok := resourceData.GetOkExists(string(Headrooms)); ok {
 				if headrooms, err := expandHeadrooms(value); err != nil {
 					return err
@@ -74,7 +70,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-
 			var result []*azure_np.Headrooms = nil
 			if value, ok := resourceData.GetOkExists(string(Headrooms)); ok {
 				if headrooms, err := expandHeadrooms(value); err != nil {
@@ -83,7 +78,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					result = headrooms
 				}
 			}
-
 			cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(result)
 			return nil
 		},
@@ -100,7 +94,6 @@ func expandHeadrooms(headroom interface{}) ([]*azure_np.Headrooms, error) {
 		if !ok {
 			continue
 		}
-
 		headrooms = append(headrooms, &azure_np.Headrooms{
 			CpuPerUnit:    spotinst.Int(m[string(CpuPerUnit)].(int)),
 			GpuPerUnit:    spotinst.Int(m[string(GpuPerUnit)].(int)),

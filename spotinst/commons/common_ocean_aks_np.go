@@ -126,6 +126,9 @@ func NewAKSNPClusterWrapper() *AKSNPClusterWrapper {
 					Automatic: &azure_np.Automatic{},
 				},
 			},
+			Scheduling: &azure_np.Scheduling{
+				ShutdownHours: &azure_np.ShutdownHours{},
+			},
 		},
 	}
 }

@@ -29,21 +29,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ResourceLimits): {
 						Type:     schema.TypeList,
 						Optional: true,
-						Computed: true,
+						//Computed: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(MaxVCPU): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									// Value mentioned below is used to set MaxVCPU field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
-									Default: 1357997531,
+									// here -1 is used to set MaxVCPU field to null when the customer doesn't want to set this param,
+									//as terraform set it 0 for integer type param by default
+									Default: -1,
 								},
 								string(MaxMemoryGib): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									// Value mentioned below is used to set MaxMemoryGib field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
-									Default: 1357997531,
+									// here -1 is used to set MaxMemoryGib field to null when the customer doesn't want to set this param,
+									//as terraform set it 0 for integer type param by default
+									Default: -1,
 								},
 							},
 						},
@@ -51,15 +53,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Down): {
 						Type:     schema.TypeList,
 						Optional: true,
-						Computed: true,
+						//Computed: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(MaxScaleDownPercentage): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									// Value mentioned below is used to set MaxScaleDownPercentage field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default
-									Default: 1357997531,
+									// here -1 is used to set MaxScaleDownPercentage field to null when the customer
+									//doesn't want to set this param, as terraform set it 0 for integer type param by default
+									Default: -1,
 								},
 							},
 						},
@@ -78,15 +81,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
-											string(IsEnabled): {
+											/*string(IsEnabled): {
 												Type:     schema.TypeBool,
 												Optional: true,
 												//Computed: true,
-											},
+											},*/
 											string(Percentage): {
 												Type:     schema.TypeInt,
 												Optional: true,
 												//Computed: true,
+												Default: -1,
 											},
 										},
 									},
@@ -132,7 +136,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
 			var value *azure_np.AutoScaler = nil
-
 			if v, ok := resourceData.GetOkExists(string(AutoScaler)); ok {
 				if autoScaler, err := expandAutoScaler(v); err != nil {
 					return err
@@ -205,15 +208,16 @@ func expandResourceLimits(data interface{}) (*azure_np.ResourceLimits, error) {
 	resLimits := &azure_np.ResourceLimits{}
 	list := data.([]interface{})
 
-	if list == nil || list[0] == nil {
+	if list == nil || len(list) == 0 {
 		return nil, nil
 	}
 
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(MaxMemoryGib)].(int); ok {
-		// Value(1357997531) mentioned below is used to set MaxMemoryGib field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
-		if v == 1357997531 {
+		// here -1 is used to set MaxMemoryGib field to null when the customer doesn't want to set this param,
+		//as terraform set it 0 for integer type param by default.
+		if v == -1 {
 			resLimits.SetMaxMemoryGib(nil)
 		} else {
 			resLimits.SetMaxMemoryGib(spotinst.Int(v))
@@ -221,8 +225,9 @@ func expandResourceLimits(data interface{}) (*azure_np.ResourceLimits, error) {
 	}
 
 	if v, ok := m[string(MaxVCPU)].(int); ok {
-		// Value(1357997531) mentioned below is used to set MaxVCPU field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
-		if v == 1357997531 {
+		//Here -1 is used to set MaxVCPU field to null when the customer doesn't want to set this param,
+		//as terraform set it 0 for integer type param by default.
+		if v == -1 {
 			resLimits.SetMaxVcpu(nil)
 		} else {
 			resLimits.SetMaxVcpu(spotinst.Int(v))
@@ -242,8 +247,9 @@ func expandDown(data interface{}) (*azure_np.Down, error) {
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(MaxScaleDownPercentage)].(int); ok {
-		// Value(1357997531) mentioned below is used to set HTTPPutResponseHopLimit field to null when the customer doesn't want to set this param, as terraform set it 0 for integer type param by default.
-		if v == 1357997531 {
+		// here -1 is used to set MaxScaleDownPercentage field to null when the customer doesn't want to set this param,
+		//as terraform set it 0 for integer type param by default.
+		if v == -1 {
 			down.SetMaxScaleDownPercentage(nil)
 		} else {
 			down.SetMaxScaleDownPercentage(spotinst.Int(v))
@@ -253,27 +259,30 @@ func expandDown(data interface{}) (*azure_np.Down, error) {
 }
 
 func expandHeadroom(data interface{}) (*azure_np.Headroom, error) {
-	headroom := &azure_np.Headroom{}
+	//if list := data.([]interface{}); len(list) > 0 {
 	list := data.([]interface{})
-
-	if list == nil || list[0] == nil {
+	headroom := &azure_np.Headroom{}
+	if list == nil || len(list) == 0 {
 		return nil, nil
 	}
+	if list[0] != nil {
+		m := list[0].(map[string]interface{})
 
-	m := list[0].(map[string]interface{})
-
-	if v, ok := m[string(Automatic)]; ok {
-		automatic, err := expandAutomatic(v)
-		if err != nil {
-			return nil, err
-		}
-		if automatic != nil {
-			headroom.SetAutomatic(automatic)
-		} else {
-			headroom.Automatic = nil
+		if v, ok := m[string(Automatic)]; ok {
+			automatic, err := expandAutomatic(v)
+			if err != nil {
+				return nil, err
+			}
+			if automatic != nil {
+				headroom.SetAutomatic(automatic)
+			} else {
+				headroom.Automatic = nil
+			}
 		}
 	}
 	return headroom, nil
+	//}
+	//return nil, nil
 }
 
 func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {
@@ -283,16 +292,21 @@ func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {
 	if list == nil || len(list) == 0 {
 		return nil, nil
 	}
-
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(Percentage)].(int); ok && v > 0 {
-		automatic.SetPercentage(spotinst.Int(v))
+	if v, ok := m[string(Percentage)].(int); ok {
+		// here -1 is used to set Percentage field to null when the customer doesn't want to set this param,
+		//as terraform set it 0 for integer type param by default.
+		if v == -1 {
+			automatic.SetPercentage(nil)
+		} else {
+			automatic.SetPercentage((spotinst.Int(v)))
+		}
 	}
 
-	if v, ok := m[string(IsEnabled)].(bool); ok {
+	/*if v, ok := m[string(IsEnabled)].(bool); ok {
 		automatic.SetIsEnabled(spotinst.Bool(v))
-	}
+	}*/
 	return automatic, nil
 }
 
@@ -325,23 +339,45 @@ func flattenHeadroom(headroom *azure_np.Headroom) []interface{} {
 
 func flattenDown(autoScaleDown *azure_np.Down) []interface{} {
 	down := make(map[string]interface{})
-	down[string(MaxScaleDownPercentage)] = spotinst.IntValue(autoScaleDown.MaxScaleDownPercentage)
 
+	if autoScaleDown != nil {
+		value := spotinst.Int(-1)
+		down[string(MaxScaleDownPercentage)] = value
+
+		if autoScaleDown.MaxScaleDownPercentage != nil {
+			down[string(MaxScaleDownPercentage)] = spotinst.IntValue(autoScaleDown.MaxScaleDownPercentage)
+		}
+	}
 	return []interface{}{down}
 }
 
 func flattenResourceLimits(autoScaleResourceLimits *azure_np.ResourceLimits) []interface{} {
 	resourceLimits := make(map[string]interface{})
-	resourceLimits[string(MaxVCPU)] = spotinst.IntValue(autoScaleResourceLimits.MaxVCPU)
-	resourceLimits[string(MaxMemoryGib)] = spotinst.IntValue(autoScaleResourceLimits.MaxMemoryGib)
+	if autoScaleResourceLimits != nil {
+		value := spotinst.Int(-1)
+		resourceLimits[string(MaxVCPU)] = value
+		resourceLimits[string(MaxMemoryGib)] = value
+
+		if autoScaleResourceLimits.MaxVCPU != nil {
+			resourceLimits[string(MaxVCPU)] = spotinst.IntValue(autoScaleResourceLimits.MaxVCPU)
+		}
+		if autoScaleResourceLimits.MaxMemoryGib != nil {
+			resourceLimits[string(MaxMemoryGib)] = spotinst.IntValue(autoScaleResourceLimits.MaxMemoryGib)
+		}
+	}
 
 	return []interface{}{resourceLimits}
 }
 
 func flattenAutomatic(autoScaleAutomatic *azure_np.Automatic) []interface{} {
 	automatic := make(map[string]interface{})
-	automatic[string(IsEnabled)] = spotinst.BoolValue(autoScaleAutomatic.IsEnabled)
-	automatic[string(Percentage)] = spotinst.IntValue(autoScaleAutomatic.Percentage)
-
+	if autoScaleAutomatic != nil {
+		value := spotinst.Int(-1)
+		automatic[string(Percentage)] = value
+		//automatic[string(IsEnabled)] = spotinst.BoolValue(autoScaleAutomatic.IsEnabled)
+		if autoScaleAutomatic.Percentage != nil {
+			automatic[string(Percentage)] = spotinst.IntValue(autoScaleAutomatic.Percentage)
+		}
+	}
 	return []interface{}{automatic}
 }

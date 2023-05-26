@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -48,6 +49,7 @@ func setupClusterAKSNPResource() {
 	ocean_aks_np_node_pool_properties.Setup(fieldsMap)
 	ocean_aks_np_node_count_limits.Setup(fieldsMap)
 	ocean_aks_np_auto_scale.Setup(fieldsMap)
+	ocean_aks_np_scheduling.Setup(fieldsMap)
 
 	commons.OceanAKSNPResource = commons.NewOceanAKSNPResource(fieldsMap)
 }

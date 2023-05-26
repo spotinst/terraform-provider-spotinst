@@ -25,7 +25,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value *int = nil
 			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodeCountLimits != nil && cluster.VirtualNodeGroupTemplate.NodeCountLimits.MinCount != nil {
 				value = cluster.VirtualNodeGroupTemplate.NodeCountLimits.MinCount
+			} else {
+				value = spotinst.Int(-1)
 			}
+
 			if err := resourceData.Set(string(MinCount), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MinCount), err)
 			}
@@ -68,6 +71,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value *int = nil
 			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodeCountLimits != nil && cluster.VirtualNodeGroupTemplate.NodeCountLimits.MaxCount != nil {
 				value = cluster.VirtualNodeGroupTemplate.NodeCountLimits.MaxCount
+			} else {
+				value = spotinst.Int(-1)
 			}
 			if err := resourceData.Set(string(MaxCount), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxCount), err)
