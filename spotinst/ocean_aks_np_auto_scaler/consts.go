@@ -1,4 +1,4 @@
-package ocean_aks_np_auto_scaling
+package ocean_aks_np_auto_scaler
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
@@ -19,8 +19,8 @@ const (
 )
 
 const (
-	Headroom   commons.FieldName = "autoscale_headroom"
-	Automatic  commons.FieldName = "automatic"
-	IsEnabled  commons.FieldName = "is_enabled"
+	Headroom  commons.FieldName = "autoscale_headroom"
+	Automatic commons.FieldName = "automatic"
+	//IsEnabled  commons.FieldName = "is_enabled"
 	Percentage commons.FieldName = "percentage"
 )

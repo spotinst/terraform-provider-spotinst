@@ -177,6 +177,8 @@ const (
 	OceanAKSNPProperties      ResourceAffinity = "Ocean_AKS_NP_Properties"
 	OceanAKSNPNodeCountLimits ResourceAffinity = "Ocean_AKS_NP_Node_Count_Limits"
 	OceanAKSNPHealth          ResourceAffinity = "Ocean_AKS_NP_Health"
+	OceanAKSNPGroupAutoScale  ResourceAffinity = "Ocean_AKS_NP_Auto_Scale"
+	OceanAKSNPScheduling      ResourceAffinity = "Ocean_AKS_NP_Scheduling"
 
 	OceanAKSNPVirtualNodeGroup                   ResourceAffinity = "Ocean_AKS_NP_virtual_node_group"
 	OceanAKSNPVirtualNodeGroupStrategy           ResourceAffinity = "Ocean_AKS_NP_virtual_node_groups_strategy"

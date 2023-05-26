@@ -16,7 +16,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
-			Default:  -1,
+			Default:  110,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
@@ -105,7 +105,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
-			Default:  -1,
+			//Default:  -1,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)

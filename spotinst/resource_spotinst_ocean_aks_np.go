@@ -3,12 +3,14 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scaling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scale"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scaler"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_health"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_count_limits"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_pool_properties"
@@ -41,11 +43,13 @@ func setupClusterAKSNPResource() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	ocean_aks_np.Setup(fieldsMap)
-	ocean_aks_np_auto_scaling.Setup(fieldsMap)
+	ocean_aks_np_auto_scaler.Setup(fieldsMap)
 	ocean_aks_np_strategy.Setup(fieldsMap)
 	ocean_aks_np_health.Setup(fieldsMap)
 	ocean_aks_np_node_pool_properties.Setup(fieldsMap)
 	ocean_aks_np_node_count_limits.Setup(fieldsMap)
+	ocean_aks_np_auto_scale.Setup(fieldsMap)
+	ocean_aks_np_scheduling.Setup(fieldsMap)
 
 	commons.OceanAKSNPResource = commons.NewOceanAKSNPResource(fieldsMap)
 }

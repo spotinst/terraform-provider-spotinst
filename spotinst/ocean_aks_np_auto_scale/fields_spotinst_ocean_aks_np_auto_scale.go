@@ -1,8 +1,7 @@
-package ocean_aks_np_virtual_node_group_auto_scale
+package ocean_aks_np_auto_scale
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -11,7 +10,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Headrooms] = commons.NewGenericField(
-		commons.OceanAKSNPVirtualNodeGroupAutoScale,
+		commons.OceanAKSNPGroupAutoScale,
 		Headrooms,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -21,35 +20,32 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(CpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(MemoryPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(GpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(NumOfUnits): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
 					},
 				},
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
-			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
 
 			var headroomsResults []interface{} = nil
-			if virtualNodeGroup != nil && virtualNodeGroup.AutoScale != nil && virtualNodeGroup.AutoScale.Headrooms != nil {
-				headrooms := virtualNodeGroup.AutoScale.Headrooms
+			if cluster != nil && cluster.VirtualNodeGroupTemplate.AutoScale != nil && cluster.VirtualNodeGroupTemplate.AutoScale.Headrooms != nil {
+				headrooms := cluster.VirtualNodeGroupTemplate.AutoScale.Headrooms
 				headroomsResults = flattenHeadrooms(headrooms)
 			}
 
@@ -60,22 +56,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
-			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
-
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
 			if value, ok := resourceData.GetOkExists(string(Headrooms)); ok {
 				if headrooms, err := expandHeadrooms(value); err != nil {
 					return err
 				} else {
-					virtualNodeGroup.AutoScale.SetHeadrooms(headrooms)
+					cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(headrooms)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
-			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
-
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
 			var result []*azure_np.Headrooms = nil
 			if value, ok := resourceData.GetOkExists(string(Headrooms)); ok {
 				if headrooms, err := expandHeadrooms(value); err != nil {
@@ -84,8 +78,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					result = headrooms
 				}
 			}
-
-			virtualNodeGroup.AutoScale.SetHeadrooms(result)
+			cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(result)
 			return nil
 		},
 		nil,
@@ -101,7 +94,6 @@ func expandHeadrooms(headroom interface{}) ([]*azure_np.Headrooms, error) {
 		if !ok {
 			continue
 		}
-
 		headrooms = append(headrooms, &azure_np.Headrooms{
 			CpuPerUnit:    spotinst.Int(m[string(CpuPerUnit)].(int)),
 			GpuPerUnit:    spotinst.Int(m[string(GpuPerUnit)].(int)),
