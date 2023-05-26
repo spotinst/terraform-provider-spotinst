@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.120.0 (May 27, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: new fields supported in AKS cluster update
+
 ## 1.119.1 (May 25, 2023)
 NOTES:
 * documentation: Moved `stateful_node_azure` under `Stateful Node` category (documentation change only, terraform resource not modified)
