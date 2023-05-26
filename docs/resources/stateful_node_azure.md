@@ -1,9 +1,9 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: stateful_node_azure"
-subcategory: "Elastigroup"
+subcategory: "Stateful Node"
 description: |-
-Provides a Spotinst Stateful Node resource using Azure.
+  Provides a Spotinst Stateful Node resource using Azure.
 ---
 
 # spotinst\_stateful\_node\_azure
@@ -121,7 +121,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
       is_primary       = true
       subnet_name      = "testSubnet"
       assign_public_ip = true
-      public_ip_sku    = "STANDARD"
+      public_ip_sku    = "Standard"
       network_security_group {
         network_resource_group_name = "test"
         name                        = "test"
@@ -220,6 +220,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     type    = "vmReady"
     timeout = 40
   }
+}
   // -------------------------------------------------------------------
 
 ```
@@ -340,7 +341,7 @@ The following arguments are supported:
     * `is_primary` - (Required) Defines whether the network interface is primary or not.
     * `subnet_name` - (Required) Subnet name.
     * `assign_public_ip` - (Optional) Assign public IP.
-    * `public_ip_sku` - (Optional) Required if assignPublicIp=true values=[STANDARD/BASIC].
+    * `public_ip_sku` - (Optional) Required if assignPublicIp=true values=[Standard/Basic].
     * `network_security_group` - (Optional) Network Security Group.
       * `network_resource_group_name` - (Required) Requires valid security group name.
       * `name` - (Required) Requires valid resource group name.

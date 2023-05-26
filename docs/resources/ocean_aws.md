@@ -44,13 +44,12 @@ resource "spotinst_ocean_aws" "example" {
   desired_capacity = 2
 
   subnet_ids = ["subnet-123456789"]
+
+  // region INSTANCE-TYPES
   
-  instanceTypes {
-    //whitelist  = ["t1.micro", "m1.small"]
-    
-    //blacklist = ["t1.micro", "m1.small"]
-    
-    filters {
+  //whitelist  = ["t1.micro", "m1.small"]
+  //blacklist = ["t1.micro", "m1.small"]
+  filters {
       architectures             =   ["x86_64", "i386"]
       categories                =   ["Accelerated_computing", "Compute_optimized"]
       disk_types                =   ["EBS", "SSD"]

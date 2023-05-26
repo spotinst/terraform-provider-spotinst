@@ -1190,18 +1190,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			var result []interface{} = nil
-			if launchSpec.LaunchSpecNetworkInterfaces != nil {
-				networkInterfaces := launchSpec.LaunchSpecNetworkInterfaces
-				result = flattenLaunchSpecNetworkIntefaces(networkInterfaces)
-			}
-			if result != nil {
-				if err := resourceData.Set(string(NetworkInterfaces), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(NetworkInterfaces), err)
-				}
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
