@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.121.0 (Jun 01, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `vm_sizes` object support
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added `vm_sizes` object support
+
 ## 1.120.0 (May 27, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: new fields supported in AKS cluster update
