@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_vm_sizes"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -43,6 +44,7 @@ func setupOceanAKSNPVirtualNodeGroupResource() {
 	ocean_aks_np_virtual_node_group_node_pool_properties.Setup(fieldsMap)
 	ocean_aks_np_virtual_node_group_node_count_limits.Setup(fieldsMap)
 	ocean_aks_np_virtual_node_group_strategy.Setup(fieldsMap)
+	ocean_aks_np_virtual_node_group_vm_sizes.Setup(fieldsMap)
 
 	commons.OceanAKSNPVirtualNodeGroupResource = commons.NewOceanAKSNPVirtualNodeGroupResource(fieldsMap)
 }

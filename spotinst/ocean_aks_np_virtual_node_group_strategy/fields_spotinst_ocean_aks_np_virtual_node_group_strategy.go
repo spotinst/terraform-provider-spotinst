@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -15,16 +14,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAKSNPVirtualNodeGroupStrategy,
 		SpotPercentage,
 		&schema.Schema{
-			Type:         schema.TypeInt,
-			Optional:     true,
-			Default:      -1,
-			ValidateFunc: validation.IntAtLeast(-1),
-			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-				if old == "-1" && new == "null" {
-					return true
-				}
-				return false
-			},
+			Type:     schema.TypeInt,
+			Optional: true,
+			Default:  100,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
@@ -43,8 +35,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
 			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v > -1 {
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v > 0 {
 				virtualNodeGroup.Strategy.SetSpotPercentage(spotinst.Int(v))
+			} else {
+				virtualNodeGroup.Strategy.SetSpotPercentage(nil)
 			}
 			return nil
 		},
@@ -87,18 +81,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
 			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
 
-			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok {
-				virtualNodeGroup.Strategy.SetFallbackToOD(spotinst.Bool(v))
+			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
+				ftod := v.(bool)
+				fallback := spotinst.Bool(ftod)
+				virtualNodeGroup.Strategy.SetFallbackToOD(fallback)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
 			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
-
-			if v, ok := resourceData.Get(string(FallbackToOnDemand)).(bool); ok {
-				virtualNodeGroup.Strategy.SetFallbackToOD(spotinst.Bool(v))
+			var fallback *bool = nil
+			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
+				ftod := v.(bool)
+				fallback = spotinst.Bool(ftod)
 			}
+			virtualNodeGroup.Strategy.SetFallbackToOD(fallback)
 			return nil
 		},
 		nil,

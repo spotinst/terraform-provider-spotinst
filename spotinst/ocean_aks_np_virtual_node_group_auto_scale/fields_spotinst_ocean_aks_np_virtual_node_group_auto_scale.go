@@ -21,24 +21,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(CpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(MemoryPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(GpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
 					},
 
 					string(NumOfUnits): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
 					},
 				},
 			},

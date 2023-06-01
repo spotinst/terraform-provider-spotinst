@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -29,7 +28,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ResourceLimits): {
 						Type:     schema.TypeList,
 						Optional: true,
-						//Computed: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
@@ -53,7 +51,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Down): {
 						Type:     schema.TypeList,
 						Optional: true,
-						//Computed: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
@@ -70,14 +67,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Headroom): {
 						Type:     schema.TypeList,
 						Optional: true,
-						//Computed: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Automatic): {
 									Type:     schema.TypeList,
 									Optional: true,
-									//Computed: true,
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
@@ -89,8 +84,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											string(Percentage): {
 												Type:     schema.TypeInt,
 												Optional: true,
-												//Computed: true,
-												Default: -1,
+												Default:  -1,
 											},
 										},
 									},
@@ -259,7 +253,6 @@ func expandDown(data interface{}) (*azure_np.Down, error) {
 }
 
 func expandHeadroom(data interface{}) (*azure_np.Headroom, error) {
-	//if list := data.([]interface{}); len(list) > 0 {
 	list := data.([]interface{})
 	headroom := &azure_np.Headroom{}
 	if list == nil || len(list) == 0 {
@@ -281,8 +274,6 @@ func expandHeadroom(data interface{}) (*azure_np.Headroom, error) {
 		}
 	}
 	return headroom, nil
-	//}
-	//return nil, nil
 }
 
 func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {

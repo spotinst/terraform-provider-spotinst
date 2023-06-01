@@ -209,11 +209,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAKSNP,
 		AvailabilityZones,
 		&schema.Schema{
-			Type: schema.TypeList,
+			Type:     schema.TypeList,
+			Optional: true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString},
-			Optional: true,
-			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
@@ -230,7 +229,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 				if zones, err := expandZones(value); err != nil {
 					return err
 				} else {
@@ -242,12 +241,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 				if zones, err := expandZones(value); err != nil {
 					return err
 				} else {
 					cluster.VirtualNodeGroupTemplate.SetAvailabilityZones(zones)
 				}
+			} else {
+				cluster.VirtualNodeGroupTemplate.SetAvailabilityZones(nil)
 			}
 			return nil
 		},
