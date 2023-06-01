@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 )
 
 const OceanAKSNPResourceName ResourceName = "spotinst_ocean_aks_np"
@@ -111,27 +110,9 @@ func NewAKSNPClusterWrapper() *AKSNPClusterWrapper {
 				NodePoolProperties: &azure_np.NodePoolProperties{},
 				NodeCountLimits:    &azure_np.NodeCountLimits{},
 				Strategy:           &azure_np.Strategy{},
-				/*Tags:               &map[string]string{},
-				Labels:             &map[string]string{},
-				Taints:             []*azure_np.Taint{},*/
-				AutoScale: &azure_np.AutoScale{
-					//Headrooms: []*azure_np.Headrooms{},
-				},
-				VmSizes: &azure_np.VmSizes{
-					//Filters: &azure_np.Filters{},
-				},
+				AutoScale:          &azure_np.AutoScale{},
+				VmSizes:            &azure_np.VmSizes{},
 			},
-			/*Health: &azure_np.Health{},
-			AutoScaler: &azure_np.AutoScaler{
-				ResourceLimits: &azure_np.ResourceLimits{},
-				Down:           &azure_np.Down{},
-				Headroom: &azure_np.Headroom{
-					Automatic: &azure_np.Automatic{},
-				},
-			},
-			Scheduling: &azure_np.Scheduling{
-				ShutdownHours: &azure_np.ShutdownHours{},
-			},*/
 		},
 	}
 }

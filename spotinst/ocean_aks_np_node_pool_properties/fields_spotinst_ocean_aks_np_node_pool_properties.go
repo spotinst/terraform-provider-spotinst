@@ -80,20 +80,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetNPCluster()
 			if v, ok := resourceData.GetOk(string(EnableNodePublicIP)); ok && v != nil {
 				publicIp := v.(bool)
-				fallback := spotinst.Bool(publicIp)
-				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEnableNodePublicIP(fallback)
+				enableIp := spotinst.Bool(publicIp)
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEnableNodePublicIP(enableIp)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			var fallback *bool = nil
+			var enableIp *bool = nil
 			if v, ok := resourceData.GetOk(string(EnableNodePublicIP)); ok && v != nil {
 				publicIp := v.(bool)
-				fallback = spotinst.Bool(publicIp)
+				enableIp = spotinst.Bool(publicIp)
 			}
-			cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEnableNodePublicIP(fallback)
+			cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEnableNodePublicIP(enableIp)
 			return nil
 		},
 		nil,

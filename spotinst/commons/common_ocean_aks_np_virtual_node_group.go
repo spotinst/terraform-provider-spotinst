@@ -105,18 +105,11 @@ func (res *OceanAKSNPVirtualNodeGroupTerraformResource) OnUpdate(
 func NewVirtualNodeGroupAKSNPWrapper() *VirtualNodeGroupAKSNPWrapper {
 	return &VirtualNodeGroupAKSNPWrapper{
 		VirtualNodeGroup: &azure_np.VirtualNodeGroup{
-			//Tags:               &map[string]string{},
-			//Labels:             &map[string]string{},
 			NodePoolProperties: &azure_np.NodePoolProperties{},
 			NodeCountLimits:    &azure_np.NodeCountLimits{},
 			Strategy:           &azure_np.Strategy{},
-			AutoScale:          &azure_np.AutoScale{
-				//Headrooms: []*azure_np.Headrooms{},
-			},
-			VmSizes: &azure_np.VmSizes{
-				//Filters: &azure_np.Filters{},
-			},
-			//Taints: []*azure_np.Taint{},
+			AutoScale:          &azure_np.AutoScale{},
+			VmSizes:            &azure_np.VmSizes{},
 		},
 	}
 }

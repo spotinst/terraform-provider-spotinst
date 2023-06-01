@@ -3,9 +3,8 @@ package ocean_aks_np_virtual_node_group
 import (
 	"fmt"
 
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -87,10 +86,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAKSNPVirtualNodeGroup,
 		AvailabilityZones,
 		&schema.Schema{
-			Type: schema.TypeList,
+			Type:     schema.TypeList,
+			Optional: true,
 			Elem: &schema.Schema{
 				Type: schema.TypeString},
-			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
@@ -107,7 +106,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
 			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
-			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 				if zones, err := expandAvailaiblityZones(value); err != nil {
 					return err
 				} else {
@@ -119,12 +118,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
 			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
-			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 				if zones, err := expandAvailaiblityZones(value); err != nil {
 					return err
 				} else {
 					virtualNodeGroup.SetAvailabilityZones(zones)
 				}
+			} else {
+				virtualNodeGroup.SetAvailabilityZones(nil)
 			}
 			return nil
 		},
