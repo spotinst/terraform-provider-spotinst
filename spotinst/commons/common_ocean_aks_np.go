@@ -111,14 +111,17 @@ func NewAKSNPClusterWrapper() *AKSNPClusterWrapper {
 				NodePoolProperties: &azure_np.NodePoolProperties{},
 				NodeCountLimits:    &azure_np.NodeCountLimits{},
 				Strategy:           &azure_np.Strategy{},
-				Tags:               &map[string]string{},
+				/*Tags:               &map[string]string{},
 				Labels:             &map[string]string{},
-				Taints:             []*azure_np.Taint{},
+				Taints:             []*azure_np.Taint{},*/
 				AutoScale: &azure_np.AutoScale{
-					Headrooms: []*azure_np.Headrooms{},
+					//Headrooms: []*azure_np.Headrooms{},
+				},
+				VmSizes: &azure_np.VmSizes{
+					//Filters: &azure_np.Filters{},
 				},
 			},
-			Health: &azure_np.Health{},
+			/*Health: &azure_np.Health{},
 			AutoScaler: &azure_np.AutoScaler{
 				ResourceLimits: &azure_np.ResourceLimits{},
 				Down:           &azure_np.Down{},
@@ -128,7 +131,7 @@ func NewAKSNPClusterWrapper() *AKSNPClusterWrapper {
 			},
 			Scheduling: &azure_np.Scheduling{
 				ShutdownHours: &azure_np.ShutdownHours{},
-			},
+			},*/
 		},
 	}
 }
