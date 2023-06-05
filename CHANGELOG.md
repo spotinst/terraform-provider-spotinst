@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.122.0 (Jun 05, 2023)
+NOTES:
+* documentation: resource/spotinst_elastigroup_aws: added `gp3` to the list of supported `volume_type`
+
 ## 1.121.0 (Jun 01, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added `vm_sizes` object support
