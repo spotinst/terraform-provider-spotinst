@@ -428,7 +428,7 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "log_collection.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_driver_logs", "true"),
+					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_app_logs", "true"),
 				),
 			},
 			{
@@ -440,7 +440,7 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 					testCheckOceanSparkExists(&cluster, resourceName),
 					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
 					resource.TestCheckResourceAttr(resourceName, "log_collection.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_driver_logs", "false"),
+					resource.TestCheckResourceAttr(resourceName, "log_collection.0.collect_app_logs", "false"),
 				),
 			},
 		},
@@ -855,7 +855,7 @@ const testConfigWithComputeUpdate = `
 const testConfigWithLogCollectionCreate = `
  log_collection {
 
-    collect_driver_logs = true
+    collect_app_logs = true
 
  }
 `
@@ -863,7 +863,7 @@ const testConfigWithLogCollectionCreate = `
 const testConfigWithLogCollectionUpdate = `
  log_collection {
 
-    collect_driver_logs = false
+    collect_app_logs = false
 
  }
 `
