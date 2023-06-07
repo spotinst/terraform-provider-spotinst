@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.122.1 (Jun 07, 2023)
+NOTES:
+* documentation: resource/spotinst_ocean_spark: Fixed Tests - removed deprecated `collect_driver_log` property
+
 ## 1.122.0 (Jun 05, 2023)
 NOTES:
 * documentation: resource/spotinst_elastigroup_aws: added `gp3` to the list of supported `volume_type`
