@@ -2,7 +2,7 @@ package ocean_spark_log_collection
 
 import (
 	"fmt"
-
+	cty2 "github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/spark"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -52,8 +52,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			if value, ok := resourceData.GetOk(string(LogCollection)); ok {
-				if logCollection, err := expandLogCollection(value); err != nil {
+			if _, ok := resourceData.GetOk(string(LogCollection)); ok {
+				v := resourceData.GetRawConfig().GetAttr(string(LogCollection))
+				if logCollection, err := expandLogCollection(v); err != nil {
 					return err
 				} else {
 					if cluster.Config == nil {
@@ -68,7 +69,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			clusterWrapper := resourceObject.(*commons.SparkClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *spark.LogCollectionConfig = nil
-			if v, ok := resourceData.GetOk(string(LogCollection)); ok {
+			if _, ok := resourceData.GetOk(string(LogCollection)); ok {
+				v := resourceData.GetRawConfig().GetAttr(string(LogCollection))
 				if logCollection, err := expandLogCollection(v); err != nil {
 					return err
 				} else {
@@ -95,18 +97,14 @@ func flattenLogCollection(logCollection *spark.LogCollectionConfig) []interface{
 	return []interface{}{result}
 }
 
-func expandLogCollection(data interface{}) (*spark.LogCollectionConfig, error) {
+func expandLogCollection(rawData cty2.Value) (*spark.LogCollectionConfig, error) {
 	logCollection := &spark.LogCollectionConfig{}
-	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return logCollection, nil
-	}
-	m := list[0].(map[string]interface{})
-
-	if v, ok := m[string(CollectDriverLogs)].(bool); ok {
+	if !rawData.AsValueSlice()[0].AsValueMap()[string(CollectDriverLogs)].IsNull() {
+		v := rawData.AsValueSlice()[0].AsValueMap()[string(CollectDriverLogs)].True()
 		logCollection.SetCollectDriverLogs(spotinst.Bool(v))
 	}
-	if v, ok := m[string(CollectAppLogs)].(bool); ok {
+	if !rawData.AsValueSlice()[0].AsValueMap()[string(CollectAppLogs)].IsNull() {
+		v := rawData.AsValueSlice()[0].AsValueMap()[string(CollectAppLogs)].True()
 		logCollection.SetCollectAppLogs(spotinst.Bool(v))
 	}
 
