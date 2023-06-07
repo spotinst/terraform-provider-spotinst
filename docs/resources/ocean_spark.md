@@ -58,7 +58,7 @@ resource "spotinst_ocean_spark" "example" {
   }
 
   log_collection {
-    collect_driver_logs = true
+    collect_app_logs = true
   }
 
   webhook {
@@ -155,7 +155,7 @@ Optional:
 
 Optional:
 
-- **collect_driver_logs** (Boolean, default: `true`) - Enable/disable the collection of driver logs. When enabled, driver logs are stored by NetApp and can be downloaded from the Spot console web interface. The driver logs are deleted after 30 days.
+- **collect_app_logs** (Boolean, default: `true`) - Enable/Disable collecting driver and executor logs. When enabled, logs are stored by NetApp and can be downloaded from the Spot console web interface. The logs are deleted after 30 days.
 
 
 <a id="nestedblock--webhook"></a>
