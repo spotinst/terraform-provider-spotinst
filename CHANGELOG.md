@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.122.2 (Jun 08, 2023)
+NOTES:
+* documentation: resource/spotinst_elastigroup_aws: Fixed Tests - removed `statefulUpdateCapacity` taskType from `scheduled_task` test
+
 ## 1.122.1 (Jun 07, 2023)
 NOTES:
 * documentation: resource/spotinst_ocean_spark: Fixed Tests - removed deprecated `collect_driver_log` property

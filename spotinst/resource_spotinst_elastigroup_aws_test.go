@@ -2556,10 +2556,8 @@ func TestAccSpotinstElastigroupAWS_ScheduledTask(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.is_enabled", "true"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.task_type", "statefulUpdateCapacity"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.target_capacity", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.min_capacity", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.max_capacity", "3"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.task_type", "scaleUp"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.adjustment", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.start_time", "2100-01-01T00:00:00Z"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.cron_expression", "0 0 12 1/1 * ? *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.batch_size_percentage", "66"),
@@ -2618,10 +2616,8 @@ const testScheduledTaskGroupConfig_Update2 = `
  // --- SCHEDULED TASK ------------------
   scheduled_task {
     is_enabled = true
-    task_type = "statefulUpdateCapacity"
-    target_capacity = 2
-    min_capacity = 1
-    max_capacity = 3
+    task_type = "scaleUp"
+	adjustment = 1
     start_time = "2100-01-01T00:00:00Z"
     cron_expression = "0 0 12 1/1 * ? *"
     batch_size_percentage = 66
