@@ -1,6 +1,6 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: ocean_aks_np"
+page_title: "Spotinst: ocean_aks_np_vng"
 subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean Virtual Node Group resource using AKS.
