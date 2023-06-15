@@ -17,6 +17,8 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   
   name  = "oceanVNGName"
 
+  ocean_id = "o-12345"
+
   // --- autoscale ----------------------------------------------------------------
   headrooms {
     cpu_per_unit    = 6
@@ -84,7 +86,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
 ```
 
 ```
-output "ocean_id" {
+output "vng_id" {
   value = spotinst_ocean_aks_np_virtual_node_group.example.id
 }
 ```
@@ -94,6 +96,7 @@ output "ocean_id" {
 The following arguments are supported:
 
 * `name` - (Required) Enter a name for the virtual node group.
+* `ocean_id` - (Required) The Ocean cluster identifier. Required for Launch Spec creation.
 * `headrooms` - (Optional) Specify the custom headroom per VNG. Provide a list of headroom objects.
   * `cpu_per_unit` - (Optional) Configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
   * `memory_per_unit` - (Optional) Amont of GPU to allocate for headroom unit.
