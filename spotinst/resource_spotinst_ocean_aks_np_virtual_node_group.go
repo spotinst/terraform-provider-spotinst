@@ -3,8 +3,9 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_vm_sizes"
 	"log"
+
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_vm_sizes"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
