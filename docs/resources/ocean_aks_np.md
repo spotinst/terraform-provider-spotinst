@@ -24,11 +24,10 @@ module "ocean-controller" {
 
   # Configuration.
   cluster_identifier = "ocean-westus-dev-aks"
-  acd_identifier     = "acd-12345678"
 }
 ```
 
-~> You must configure the same `cluster_identifier` and `acd_identifier` both for the Ocean controller and for the `spotinst_ocean_aks` resource.
+~> You must configure the same `cluster_identifier` for the Ocean controller and for the `spotinst_ocean_aks_np` resource.
 
 ## Example Usage
 
@@ -146,7 +145,7 @@ resource "spotinst_ocean_aks_np" "example" {
     min_memory_gib = 10
     max_memory_gib = 18
     architectures = ["X86_64"]
-    series = ["D v3"]
+    series = ["D v3","Ddsv5", "Dds_v4"]
   }
   
   // ----------------------------------------------------------------------------
@@ -189,42 +188,19 @@ The following arguments are supported:
         * `time_windows` - (Optional) The times that the shutdown hours will apply.
 * `headrooms` - (Optional) Specify the custom headroom per VNG. Provide a list of headroom objects.
   * `cpu_per_unit` - (Optional) Configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
-  * `memory_per_unit` - (Optional) Amont of GPU to allocate for headroom unit.
-  * `gpu_per_unit` - (Optional) Configure the amount of memory (MiB) to allocate the headroom.
+  * `memory_per_unit` - (Optional) Configure the amount of memory (MiB) to allocate the headroom.
+  * `gpu_per_unit` - (Optional) Amount of GPU to allocate for headroom unit.
   * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
 * `availability_zones` - (Optional) An Array holding Availability Zones, this configures the availability zones the Ocean may launch instances in per VNG.
-* `labels` - (Optional) An array of labels to add to the virtual node group.Only custom user labels are allowed, and not Kubernetes built-in labels or Spot internal labels.
-    * `key` - (Required) Set label key.
-    * The following are not allowed:
-    * "kubernetes.azure.com/agentpool"
-"kubernetes.io/arch"
-"kubernetes.io/os"
-"node.kubernetes.io/instance-type"
-"topology.kubernetes.io/region"
-"topology.kubernetes.io/zone"
-"kubernetes.azure.com/cluster"
-"kubernetes.azure.com/mode"
-"kubernetes.azure.com/role"
-"kubernetes.azure.com/scalesetpriority"
-"kubernetes.io/hostname"
-"kubernetes.azure.com/storageprofile"
-"kubernetes.azure.com/storagetier"
-"kubernetes.azure.com/instance-sku"
-"kubernetes.azure.com/node-image-version"
-"kubernetes.azure.com/subnet"
-"kubernetes.azure.com/vnet"
-"kubernetes.azure.com/ppg"
-"kubernetes.azure.com/encrypted-set"
-"kubernetes.azure.com/accelerator"
-"kubernetes.azure.com/fips_enabled"
-"kubernetes.azure.com/os-sku"
+* `labels` - (Optional) An array of labels to add to the virtual node group. Only custom user labels are allowed, and not Kubernetes built-in labels or Spot internal labels.
+    * `key` - (Required) Set label key. The following are not allowed: ["kubernetes.azure.com/agentpool","kubernetes.io/arch","kubernetes.io/os","node.kubernetes.io/instance-type", "topology.kubernetes.io/region", "topology.kubernetes.io/zone", "kubernetes.azure.com/cluster", "kubernetes.azure.com/mode", "kubernetes.azure.com/role", "kubernetes.azure.com/scalesetpriority", "kubernetes.io/hostname", "kubernetes.azure.com/storageprofile", "kubernetes.azure.com/storagetier", "kubernetes.azure.com/instance-sku", "kubernetes.azure.com/node-image-version", "kubernetes.azure.com/subnet", "kubernetes.azure.com/vnet", "kubernetes.azure.com/ppg", "kubernetes.azure.com/encrypted-set", "kubernetes.azure.com/accelerator", "kubernetes.azure.com/fips_enabled", "kubernetes.azure.com/os-sku"]
     * `value` - (Required) Set label value.
 * `max_count` - (Optional) Maximum node count limit.
 * `min_count` - (Optional) Minimum node count limit.
 * `enable_node_public_ip` - (Optional) Enable node public IP.
 * `max_pods_per_node` - (Optional) The maximum number of pods per node in the node pools.
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
-* `os_disk_type` - (Optional) The type of the OS disk.
+* `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
 * `os_type` - (Optional) The OS type of the OS disk.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
 * `spot_percentage` - (Optional,Default: `100`) Percentage of spot VMs to maintain.
