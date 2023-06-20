@@ -146,13 +146,11 @@ resource "spotinst_ocean_aks_np" "example" {
   filters {
     min_vcpu = 2
     max_vcpu = 16
-    min_memory_gib = 8
-    max_memory_gib = 16
+    min_memory_gib = 10
+    max_memory_gib = 18
     architectures = ["X86_64"]
-    series = ["D v3", "F", "E v4"]
+    series = ["D v3", "Dds_v4", "Dsv2"]
   }
-  
-  // ----------------------------------------------------------------------------
   
   // ----------------------------------------------------------------------------
 }
