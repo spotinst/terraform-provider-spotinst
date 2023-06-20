@@ -15,37 +15,42 @@ Manages a Spotinst Ocean AKS Virtual Node Groups resource.
 ```hcl
 resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   
-  name  = "oceanVNGName"
+  name  = "testVng"
 
-  ocean_id = "o-12345"
+  ocean_id = "o-134abcd"
 
   // --- autoscale ----------------------------------------------------------------
   headrooms {
-    cpu_per_unit    = 6
-    memory_per_unit = 10
-    gpu_per_unit    = 4
-    num_of_units    = 10
+    cpu_per_unit    = 1024
+    memory_per_unit = 512
+    gpu_per_unit    = 0
+    num_of_units    = 2
   }
   // ----------------------------------------------------------------------------
   
-  availability_zones = [1]
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+  
   labels ={
-    key1   = "label1"
-    key2 = "label2"
+    key   = "env"
+    value = "test"
   }
   
   // --- nodeCountLimits ----------------------------------------------------
   
-  min_count = 11
+  min_count = 1
   max_count = 100
   
   // -------------------------------------------------------------------------
 
   // --- nodePoolProperties --------------------------------------------------
   
-  max_pods_per_node     = 110
-  enable_node_public_ip = false
-  os_disk_size_gb       = 128
+  max_pods_per_node     = 30
+  enable_node_public_ip = true
+  os_disk_size_gb       = 30
   os_disk_type         = "Managed"
   os_type             = "Linux"
 
@@ -53,30 +58,30 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
 
   // --- strategy -------------------------------------------------------------
   
-  spot_percentage      = 100
+  spot_percentage      = 50
   fallback_to_ondemand = true
 
   // ---------------------------------------------------------------------------
 
   taints {
-    key    = "key"
-    value  = "value"
+    key    = "taintKey"
+    value  = "taintValue"
     effect = "NoSchedule"
   }
 
   tags ={
-    key1   = "value1"
-    key2   = "value2"
+    tagKey   = "env"
+    tagValue   = "staging"
   }
   // --- vmSizes ---------------------------------------------------------------
   
   filters {
     min_vcpu = 2
     max_vcpu = 16
-    min_memory_gib = 10
-    max_memory_gib = 18
+    min_memory_gib = 8
+    max_memory_gib = 16
     architectures = ["X86_64"]
-    series = ["D v3","Ddsv5", "Dds_v4"]
+    series = ["D v3", "F", "E v4"]
   }
   
   // ----------------------------------------------------------------------------

@@ -34,33 +34,33 @@ module "ocean-controller" {
 ```hcl
 resource "spotinst_ocean_aks_np" "example" {
   
-  name                                   = "oceanClusterName"
+  name                                   = "test"
   
   // --- AKS -----------------------------------------------------------
   
   aks_region                             = "eastus"
-  aks_cluster_name                       = "aksClusterName"
-  aks_infrastructure_resource_group_name = "aksInfrastructureResourceGroupName"
-  aks_resource_group_name                = "resourceGroup"
+  aks_cluster_name                       = "test-cluster"
+  aks_infrastructure_resource_group_name = "MC_TestResourceGroup_test-cluster_eastus"
+  aks_resource_group_name                = "TestResourceGroup"
   
   // -------------------------------------------------------------------
 
-  controller_cluster_id                  = "controllerId"
+  controller_cluster_id                  = "test-123124"
 
   // --- Auto Scaler -----------------------------------------------------
   
   autoscaler {
     autoscale_is_enabled      = true
     resource_limits {
-      max_vcpu       = 121
-      max_memory_gib = 120
+      max_vcpu       = 750
+      max_memory_gib = 1500
     }
     autoscale_down {
-      max_scale_down_percentage = 10
+      max_scale_down_percentage = 30
     }
     autoscale_headroom {
       automatic {
-        percentage = 10
+        percentage = 5
       }
     }
   }
@@ -70,7 +70,7 @@ resource "spotinst_ocean_aks_np" "example" {
   // --- Health -----------------------------------------------------------
   
   health {
-    grace_period = 400
+    grace_period = 600
   }
   
   // ----------------------------------------------------------------------
@@ -79,8 +79,8 @@ resource "spotinst_ocean_aks_np" "example" {
   
   scheduling{
     shutdown_hours{
-      is_enabled=false
-      time_windows=["Mon:08:00-Sun:08:00"]
+      is_enabled=true
+      time_windows=["Sat:08:00-Sun:08:00"]
     }
   }
   
@@ -90,31 +90,35 @@ resource "spotinst_ocean_aks_np" "example" {
 
   // --- autoscale ----------------------------------------------------------------
   headrooms {
-    cpu_per_unit    = 6
-    memory_per_unit = 10
-    gpu_per_unit    = 4
-    num_of_units    = 10
+    cpu_per_unit    = 1024
+    memory_per_unit = 512
+    gpu_per_unit    = 0
+    num_of_units    = 2
   }
   // ----------------------------------------------------------------------------
   
-  availability_zones = [1]
+  availability_zones =  [
+    "1",
+    "2",
+    "3"
+  ],
   labels ={
-    key1   = "label1"
-    key2 = "label2"
+    key   = "env"
+    value = "test"
   }
   
   // --- nodeCountLimits ----------------------------------------------------
   
-  min_count = 11
+  min_count = 1
   max_count = 100
   
   // -------------------------------------------------------------------------
 
   // --- nodePoolProperties --------------------------------------------------
   
-  max_pods_per_node     = 110
-  enable_node_public_ip = false
-  os_disk_size_gb       = 128
+  max_pods_per_node     = 30
+  enable_node_public_ip = true
+  os_disk_size_gb       = 30
   os_disk_type         = "Managed"
   os_type             = "Linux"
 
@@ -122,30 +126,30 @@ resource "spotinst_ocean_aks_np" "example" {
 
   // --- strategy -------------------------------------------------------------
   
-  spot_percentage      = 100
+  spot_percentage      = 50
   fallback_to_ondemand = true
 
   // ---------------------------------------------------------------------------
 
   taints {
-    key    = "key"
-    value  = "value"
+    key    = "taintKey"
+    value  = "taintValue"
     effect = "NoSchedule"
     }
 
   tags ={
-    key1   = "value1"
-    key2   = "value2"
+    tagKey   = "env"
+    tagValue   = "staging"
   }
   // --- vmSizes ---------------------------------------------------------------
   
   filters {
     min_vcpu = 2
     max_vcpu = 16
-    min_memory_gib = 10
-    max_memory_gib = 18
+    min_memory_gib = 8
+    max_memory_gib = 16
     architectures = ["X86_64"]
-    series = ["D v3","Ddsv5", "Dds_v4"]
+    series = ["D v3", "F", "E v4"]
   }
   
   // ----------------------------------------------------------------------------
