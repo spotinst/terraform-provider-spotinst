@@ -1,12 +1,12 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: ocean_aks"
+page_title: "Spotinst: ocean_aks (Deprecated)"
 subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean Virtual Node Group resource using AKS.
 ---
 
-# spotinst\_ocean\_aks\_virtual\_node\_group
+# spotinst\_ocean\_aks\_virtual\_node\_group (Deprecated)
 
 Manages a Spotinst Ocean AKS Virtual Node Group resource.
 

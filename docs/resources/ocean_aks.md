@@ -1,12 +1,12 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: ocean_aks"
+page_title: "Spotinst: ocean_aks(Deprecated)"
 subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean resource using AKS.
 ---
 
-# spotinst\_ocean\_aks
+# spotinst\_ocean\_aks (Deprecated)
 
 Manages a Spotinst Ocean AKS resource.
 
