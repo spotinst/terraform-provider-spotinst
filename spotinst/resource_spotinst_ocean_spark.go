@@ -243,11 +243,14 @@ func deleteSparkCluster(ctx context.Context, resourceData *schema.ResourceData, 
 
 func waitUntilClusterDeleted(ctx context.Context, resourceData *schema.ResourceData, oceanSparkClient spark.Service) error {
 	timeout := time.After(deleteTimeout)
+	checkDeleted := time.NewTicker(sleepBetweenDeleteChecks)
+	defer checkDeleted.Stop()
+
 	for {
 		select {
 		case <-timeout:
 			return fmt.Errorf("timed out waiting for cluster deletion")
-		default:
+		case <-checkDeleted.C:
 			isDeleted, err := isClusterDeleted(ctx, resourceData, oceanSparkClient)
 			if err != nil {
 				return fmt.Errorf("could not verify cluster deletion, %w", err)
@@ -256,8 +259,6 @@ func waitUntilClusterDeleted(ctx context.Context, resourceData *schema.ResourceD
 			if isDeleted {
 				return nil
 			}
-
-			time.Sleep(sleepBetweenDeleteChecks)
 		}
 	}
 }
