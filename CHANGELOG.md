@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.124.0 (Jun 28, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: Fixed "Delete cluster waits for the cluster to be deleted if forceDeleted"
+
+## 1.123.0 (Jun 20, 2023)
+NOTES:
+* documentation: Added documentation for `spotinst_ocean_aks_np` and `spotinst_ocean_aks_np_virtual_node_group`
+
 ## 1.122.2 (Jun 08, 2023)
 NOTES:
 * documentation: resource/spotinst_elastigroup_aws: Fixed Tests - removed `statefulUpdateCapacity` taskType from `scheduled_task` test
