@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.125.0 (Jun 30, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `user_data` field in `launch_spec` object
+
 ## 1.124.0 (Jun 28, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_spark: Fixed "Delete cluster waits for the cluster to be deleted if forceDeleted"
