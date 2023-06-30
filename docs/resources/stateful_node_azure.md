@@ -40,7 +40,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   preferred_zones      = ["1"]
   custom_data          = ""
   shutdown_script      = ""
-
+  user_data            = ""
   // -------------------------------------------------------------------
 
   // --- BOOT DIAGNOSTICS ----------------------------------------------
@@ -256,6 +256,7 @@ The following arguments are supported:
 * `preferred_zones` - (Optional, Enum `"1", "2", "3"`) The AZs to prioritize when launching VMs. If no markets are available in the Preferred AZs, VMs are launched in the non-preferred AZs. Must be a sublist of compute.zones.
 * `custom_data` - (Optional) This value will hold the YAML in base64 and will be executed upon VM launch.
 * `shutdown_script` - (Optional) Shutdown script for the stateful node. Value should be passed as a string encoded at Base64 only.
+* `user_data` - (Optional) Define a set of scripts or other metadata that's inserted to an Azure virtual machine at provision time. (Base64 encoded)
 
 <a id="boot_diagnostics"></a>
 ## Boot Diagnostics

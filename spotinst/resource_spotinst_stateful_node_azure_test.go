@@ -225,6 +225,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform-stateful-node-azure"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="),
 				),
 			},
 			{
@@ -237,6 +238,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"),
 				),
 			},
 		},
@@ -250,7 +252,8 @@ name = "%v"
 os = "Linux"
 region = "eastus"
 description = "terraform-stateful-node-azure"
-resource_group_name = "CoreReliabilityResourceGroup" 
+resource_group_name = "CoreReliabilityResourceGroup"
+user_data = "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="
 %v
 %v
 %v
@@ -286,6 +289,7 @@ name = "%v"
 os = "Linux"
 region = "eastus"
 resource_group_name = "CoreReliabilityResourceGroup"
+user_data = "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"
 %v
 %v
 %v
