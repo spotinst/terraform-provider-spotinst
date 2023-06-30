@@ -98,6 +98,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[UserData] = commons.NewGenericField(
+		commons.StatefulNodeAzureExtensions,
+		UserData,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.UserData != nil {
+				value = st.Compute.LaunchSpecification.UserData
+			}
+			if err := resourceData.Set(string(UserData), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserData), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
+				userData := spotinst.String(v)
+				st.Compute.LaunchSpecification.SetUserData(userData)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
+				userData := spotinst.String(v)
+				value = userData
+			}
+			st.Compute.LaunchSpecification.SetUserData(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[Tag] = commons.NewGenericField(
 		commons.StatefulNodeAzureLaunchSpecification,
 		Tag,
