@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.125.1 (July 11, 2023)
+NOTES:
+* documentation: Modified description of `spot_percentage` in documentation for `spotinst_ocean_aws` and `spotinst_ocean_aws_launch_spec`
+
 ## 1.125.0 (Jun 30, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `user_data` field in `launch_spec` object
