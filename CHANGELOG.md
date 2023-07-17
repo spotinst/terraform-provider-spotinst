@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.126.0 (July 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `should_tag_volumes` attribute in `resource_tag_specification` object
+
 ## 1.125.1 (July 11, 2023)
 NOTES:
 * documentation: Modified description of `spot_percentage` in documentation for `spotinst_ocean_aws` and `spotinst_ocean_aws_launch_spec`
