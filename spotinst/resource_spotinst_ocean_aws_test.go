@@ -406,6 +406,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "10"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "required"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "true"),
 				),
 			},
 			{
@@ -441,6 +442,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "optional"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "false"),
 				),
 			},
 			{
@@ -495,6 +497,10 @@ const testLaunchConfigAWSConfig_Create = `
     key   = "creator"
     value = "terraform-automation"
   }
+  
+  resource_tag_specification {
+    should_tag_volumes = true
+  }
  // ---------------------------------------
 `
 
@@ -528,6 +534,10 @@ const testLaunchConfigAWSConfig_Update = `
   tags {
     key   = "fakeKeyUpdated"
     value = "fakeValueUpdated"
+  }
+
+  resource_tag_specification {
+    should_tag_volumes = false
   }
  // ---------------------------------------
 `

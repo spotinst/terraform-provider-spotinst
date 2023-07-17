@@ -95,6 +95,10 @@ resource "spotinst_ocean_aws" "example" {
     name = "example"
     type = "CLASSIC"
   }
+  
+  resource_tag_specification {
+    should_tag_volumes = true
+  }
   // endregion
 
   // region STRATEGY 
@@ -235,6 +239,8 @@ The following arguments are supported:
     * `export` - (Optional) Logging Export configuration.
         * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
             * `id` - (Required) The identifier of The S3 data integration to export the logs to.
+* `resource_tag_specification` - (Optional) Specify which resources should be tagged with Virtual Node Group tags or Ocean tags. If tags are set on the VNG, the resources will be tagged with the VNG tags; otherwise, they will be tagged with the Ocean tags.
+    * `should_tag_volumes` - (Optional) Specify if Volume resources will be tagged with Virtual Node Group tags or Ocean tags.
 ## Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes Auto Scaler.
     * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Auto Scaler.

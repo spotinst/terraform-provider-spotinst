@@ -813,6 +813,96 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[ResourceTagSpecification] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		ResourceTagSpecification,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldTagVolumes): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var result []interface{} = nil
+			if cluster != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.ResourceTagSpecification != nil {
+				resourceTagSpecification := cluster.Compute.LaunchSpecification.ResourceTagSpecification
+				result = flattenResourceTagSpecification(resourceTagSpecification)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(ResourceTagSpecification), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ResourceTagSpecification), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(ResourceTagSpecification)); ok {
+				if v, err := expandResourceTagSpecification(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.LaunchSpecification.SetResourceTagSpecification(v)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *aws.ResourceTagSpecification = nil
+			if v, ok := resourceData.GetOk(string(ResourceTagSpecification)); ok {
+				if resourceTagSpecification, err := expandResourceTagSpecification(v); err != nil {
+					return err
+				} else {
+					value = resourceTagSpecification
+				}
+			}
+			cluster.Compute.LaunchSpecification.SetResourceTagSpecification(value)
+			return nil
+		},
+		nil,
+	)
+
+}
+
+func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSpecification) []interface{} {
+	result := make(map[string]interface{})
+
+	if resourceTagSpecification != nil && resourceTagSpecification.Volumes != nil {
+		result[string(ShouldTagVolumes)] = spotinst.BoolValue(resourceTagSpecification.Volumes.ShouldTag)
+	}
+
+	return []interface{}{result}
+}
+
+func expandResourceTagSpecification(data interface{}) (*aws.ResourceTagSpecification, error) {
+	resourceTagSpecification := &aws.ResourceTagSpecification{}
+	list := data.([]interface{})
+
+	if list == nil || list[0] == nil {
+		return resourceTagSpecification, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(ShouldTagVolumes)].(bool); ok {
+		volumes := &aws.Volumes{}
+		resourceTagSpecification.SetVolumes(volumes)
+		resourceTagSpecification.Volumes.SetShouldTag(spotinst.Bool(v))
+
+	}
+
+	return resourceTagSpecification, nil
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)

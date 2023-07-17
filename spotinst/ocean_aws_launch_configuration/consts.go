@@ -18,6 +18,8 @@ const (
 	Monitoring               commons.FieldName = "monitoring"
 	EBSOptimized             commons.FieldName = "ebs_optimized"
 	UseAsTemplateOnly        commons.FieldName = "use_as_template_only"
+	ResourceTagSpecification commons.FieldName = "resource_tag_specification"
+	ShouldTagVolumes         commons.FieldName = "should_tag_volumes"
 )
 
 const (
