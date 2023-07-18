@@ -490,6 +490,48 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[VMName] = commons.NewGenericField(
+		commons.StatefulNodeAzureLaunchSpecification,
+		VMName,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.VMName != nil {
+				value = st.Compute.LaunchSpecification.VMName
+			}
+			if err := resourceData.Set(string(VMName), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VMName), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			if v, ok := resourceData.Get(string(VMName)).(string); ok && v != "" {
+				vmName := spotinst.String(v)
+				st.Compute.LaunchSpecification.SetVMName(vmName)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if v, ok := resourceData.Get(string(VMName)).(string); ok && v != "" {
+				vmName := spotinst.String(v)
+				value = vmName
+			}
+			st.Compute.LaunchSpecification.SetVMName(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandTags(data interface{}) ([]*azure.Tag, error) {
