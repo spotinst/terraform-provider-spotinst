@@ -7,6 +7,7 @@ const (
 	CustomData     commons.FieldName = "custom_data"
 	UserData       commons.FieldName = "user_data"
 	ShutdownScript commons.FieldName = "shutdown_script"
+	VMName         commons.FieldName = "vm_name"
 )
 
 // Tags
