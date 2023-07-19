@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.127.0 (July 19, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `vm_name` field in `launch_spec` object
+
 ## 1.126.0 (July 17, 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `should_tag_volumes` attribute in `resource_tag_specification` object
