@@ -288,26 +288,78 @@ func resourceSpotinstManagedInstanceAWSDelete(ctx context.Context, resourceData 
 
 func deleteManagedInstance(resourceData *schema.ResourceData, meta interface{}) error {
 	managedInstanceId := resourceData.Id()
-	input := &aws.DeleteManagedInstanceInput{
-		ManagedInstanceID: spotinst.String(managedInstanceId),
-		AMIBackup: &aws.AMIBackup{
-			ShouldDeleteImages: spotinst.Bool(true),
-		},
-		DeallocationConfig: &aws.DeallocationConfig{
-			ShouldDeleteImages:            spotinst.Bool(true),
-			ShouldTerminateInstance:       spotinst.Bool(true),
-			ShouldDeleteVolumes:           spotinst.Bool(true),
-			ShouldDeleteNetworkInterfaces: spotinst.Bool(true),
-		},
+	var deleteManagedInstanceAWSInput *aws.DeleteManagedInstanceInput
+	if deleteConfig, ok := resourceData.GetOk(string(managed_instance_aws.Delete)); ok {
+		input, err := expandManagedInstanceAWSDeleteConfig(deleteConfig, managedInstanceId)
+		if err != nil {
+			return fmt.Errorf("stateful node/azure: failed expanding delete configuration: %v", err)
+		}
+		deleteManagedInstanceAWSInput = input
+	} else {
+		input := &aws.DeleteManagedInstanceInput{
+			ManagedInstanceID: spotinst.String(resourceData.Id()),
+			AMIBackup: &aws.AMIBackup{
+				ShouldDeleteImages: spotinst.Bool(true),
+			},
+			DeallocationConfig: &aws.DeallocationConfig{
+				ShouldDeleteImages:            spotinst.Bool(true),
+				ShouldTerminateInstance:       spotinst.Bool(true),
+				ShouldDeleteVolumes:           spotinst.Bool(true),
+				ShouldDeleteNetworkInterfaces: spotinst.Bool(true),
+				ShouldDeleteSnapshots:         spotinst.Bool(true),
+			},
+		}
+		deleteManagedInstanceAWSInput = input
 	}
-	if json, err := commons.ToJson(input); err != nil {
+
+	if json, err := commons.ToJson(deleteManagedInstanceAWSInput); err != nil {
 		return err
 	} else {
 		log.Printf("===> ManagedInstance delete configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).managedInstance.CloudProviderAWS().Delete(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete ManagedInstance: %s", err)
+	if _, err := meta.(*Client).managedInstance.CloudProviderAWS().Delete(context.Background(), deleteManagedInstanceAWSInput); err != nil {
+		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete managed instance: %s", err)
 	}
+
 	return nil
+}
+
+func expandManagedInstanceAWSDeleteConfig(data interface{}, managedInstanceID string) (*aws.DeleteManagedInstanceInput, error) {
+	spec := &aws.DeleteManagedInstanceInput{
+		ManagedInstanceID:  spotinst.String(managedInstanceID),
+		AMIBackup:          &aws.AMIBackup{},
+		DeallocationConfig: &aws.DeallocationConfig{},
+	}
+
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(managed_instance_aws.AmiBackupShouldDeleteImages)].(bool); ok {
+			spec.AMIBackup.ShouldDeleteImages = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(managed_instance_aws.DeallocationConfigShouldDeleteImages)].(bool); ok {
+			spec.DeallocationConfig.ShouldDeleteImages = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(managed_instance_aws.ShouldDeleteNetworkInterfaces)].(bool); ok {
+			spec.DeallocationConfig.ShouldDeleteNetworkInterfaces = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(managed_instance_aws.ShouldDeleteSnapshots)].(bool); ok {
+			spec.DeallocationConfig.ShouldDeleteSnapshots = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(managed_instance_aws.ShouldDeleteVolumes)].(bool); ok {
+			spec.DeallocationConfig.ShouldDeleteVolumes = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(managed_instance_aws.ShouldTerminateInstance)].(bool); ok {
+			spec.DeallocationConfig.ShouldTerminateInstance = spotinst.Bool(v)
+		}
+	}
+
+	return spec, nil
 }
