@@ -152,11 +152,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(AmiBackupShouldDeleteImages): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 					string(DeallocationConfigShouldDeleteImages): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 					string(ShouldDeleteNetworkInterfaces): {
 						Type:     schema.TypeBool,
@@ -164,7 +164,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 					string(ShouldDeleteSnapshots): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 					string(ShouldDeleteVolumes): {
 						Type:     schema.TypeBool,
@@ -172,7 +172,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 					string(ShouldTerminateInstance): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 				},
 			},

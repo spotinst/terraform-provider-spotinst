@@ -317,6 +317,31 @@ managed_instance_action {
 }    
 ```
 
+<a id="delete"></a>
+## Delete
+
+* `delete` - (Optional) Specify deallocation parameters for stateful node deletion. If delete configuration is not present, all below parameters will be set to "true" by default.
+   * `ami_backup_should_delete_images` - (Optional) Mark if images collected during AMI Auto Backup should be deleted during instance deletion. Default: `"false"`.
+   * `deallocation_config_should_delete_images` - (Optional) Flag to remove persistent image. Default: `"false"`
+   * `should_delete_network_interfaces` - (Optional) Flag to remove network interfaces. Default: `"false"`
+   * `deallocation_config_should_delete_images` - (Optional) Flag to remove persistent image. Default: `"false"`
+   * `should_delete_snapshots` - (Optional) Flag to remove snapshots. Default: `"false"`
+   * `should_delete_volumes` - (Optional) Flag to remove persistent volumes. Default: `"false"`
+   * `should_terminate_instance` - (Optional) Flag to detach a machine without terminating it on AWS side. This will enable rollback to AWS. Default: `"false"`
+
+Usage:
+
+```hcl
+delete {
+  ami_backup_should_delete_images = false
+  deallocation_config_should_delete_images = false
+  should_delete_network_interfaces = false
+  should_delete_snapshots = false
+  should_delete_volumes = false
+  should_terminate_instance = true
+}
+```
+
 ## Attributes Reference
 
 The following attributes are exported:

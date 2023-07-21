@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.128.0 (July 21, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_aws: Added `delete` block in `stateful_node_aws` for aws stateful node deletion
+
 ## 1.127.0 (July 19, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `vm_name` field in `launch_spec` object
