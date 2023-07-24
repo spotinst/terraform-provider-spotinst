@@ -2,7 +2,7 @@
 
 ## 1.128.0 (July 21, 2023)
 ENHANCEMENTS:
-* resource/spotinst_stateful_node_aws: Added `delete` block in `stateful_node_aws` for aws stateful node deletion
+* resource/spotinst_stateful_node_aws: Exposing `deallocation_config` to provide an option to the user to choose whether to keep the underlying resources alive or not using `delete` block
 
 ## 1.127.0 (July 19, 2023)
 ENHANCEMENTS:

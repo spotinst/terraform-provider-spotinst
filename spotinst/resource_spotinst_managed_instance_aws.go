@@ -292,7 +292,7 @@ func deleteManagedInstance(resourceData *schema.ResourceData, meta interface{}) 
 	if deleteConfig, ok := resourceData.GetOk(string(managed_instance_aws.Delete)); ok {
 		input, err := expandManagedInstanceAWSDeleteConfig(deleteConfig, managedInstanceId)
 		if err != nil {
-			return fmt.Errorf("stateful node/azure: failed expanding delete configuration: %v", err)
+			return fmt.Errorf("stateful node/aws: failed expanding delete configuration: %v", err)
 		}
 		deleteManagedInstanceAWSInput = input
 	} else {
