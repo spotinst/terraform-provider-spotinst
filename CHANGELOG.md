@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.128.0 (July 24, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_aws: Exposing `deallocation_config` to provide an option to the user to choose whether to keep the underlying resources alive or not using `delete` block
+
 ## 1.127.0 (July 19, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `vm_name` field in `launch_spec` object
