@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.128.0 (July 21, 2023)
+## 1.128.0 (July 24, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_aws: Exposing `deallocation_config` to provide an option to the user to choose whether to keep the underlying resources alive or not using `delete` block
 
