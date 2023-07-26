@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.129.0 (July 26, 2023)
+BUG FIXES:
+* resource/spotinst_stateful_node_azure: Modified `network`, `image` and `login` blocks as optional to support import workflow
+
 ## 1.128.0 (July 24, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_aws: Exposing `deallocation_config` to provide an option to the user to choose whether to keep the underlying resources alive or not using `delete` block
