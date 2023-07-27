@@ -646,15 +646,13 @@ func expandServices(data interface{}) ([]*gcp.BackendService, error) {
 		if v, ok := attr[string(LocationType)].(string); ok && v != "" {
 			elem.SetLocationType(spotinst.String(v))
 
-			if v != "regional" {
-				if v, ok := attr[string(NamedPorts)]; ok {
-					namedPorts, err := expandNamedPorts(v)
-					if err != nil {
-						return nil, err
-					}
-					if namedPorts != nil {
-						elem.SetNamedPorts(namedPorts)
-					}
+			if v, ok := attr[string(NamedPorts)]; ok {
+				namedPorts, err := expandNamedPorts(v)
+				if err != nil {
+					return nil, err
+				}
+				if namedPorts != nil {
+					elem.SetNamedPorts(namedPorts)
 				}
 			}
 		}
