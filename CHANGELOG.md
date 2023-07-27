@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.130.0 (July 26, 2023)
+## 1.130.0 (July 27, 2023)
 BUG FIXES:
 * resource/spotinst_elastigroup_gcp: Fix for allowing `named_ports` to be configured when `location_type` is regional
 
