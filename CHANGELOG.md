@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.130.0 (July 26, 2023)
+BUG FIXES:
+* resource/spotinst_elastigroup_gcp: Fix for allowing `named_ports` to be configured when `location_type` is regional
+
 ## 1.129.0 (July 26, 2023)
 BUG FIXES:
 * resource/spotinst_stateful_node_azure: Modified `network`, `image` and `login` blocks as optional to support import workflow
