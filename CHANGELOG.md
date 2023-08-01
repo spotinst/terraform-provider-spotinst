@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.131.0 (August 01, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `security` block in `launch_specification` object
+  NOTES:
+* documentation: Added `delete` usage to the `spotinst_stateful_node_azure` documentation
+
 ## 1.130.0 (July 27, 2023)
 BUG FIXES:
 * resource/spotinst_elastigroup_gcp: Fix for allowing `named_ports` to be configured when `location_type` is regional
