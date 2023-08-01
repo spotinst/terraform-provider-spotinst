@@ -105,7 +105,7 @@ resource "spotinst_ocean_aws" "example" {
   fallback_to_ondemand       = true
   draining_timeout           = 120
   utilize_reserved_instances = false
-  grace_period               = 600
+  grace_period               = 300
   spot_percentage            = 100
   utilize_commitments        = false
   spread_nodes_by            = "count"
@@ -211,7 +211,7 @@ The following arguments are supported:
 * `fallback_to_ondemand` - (Optional, Default: `true`) If not Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
 * `utilize_reserved_instances` - (Optional, Default `true`) If Reserved instances exist, Ocean will utilize them before launching Spot instances.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
-* `grace_period` - (Optional, Default: 600) The amount of time, in seconds, after the instance has launched to start checking its health.
+* `grace_period` - (Optional, Default: 300) The amount of time, in seconds, after the instance has launched to start checking its health.
 * `spot_percentage` - (Optional) The desired percentage of Spot instances out of all running instances. Only available when the field is not set in any VNG directly (launchSpec.strategy.spotPercentage).
 * `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
 * `spread_nodes_by` - (Optional, Default: `count`) Ocean will spread the nodes across markets by this value. Possible values: `vcpu` or `count`.

@@ -167,7 +167,7 @@ func expandLoadBalancers(data interface{}, loadBalancers []*azure.LoadBalancer) 
 				if backendPoolNames, err := expandBackendPoolNames(v); err != nil {
 					return nil, err
 				} else {
-					loadBalancer.SeBackendPoolNames(backendPoolNames)
+					loadBalancer.SetBackendPoolNames(backendPoolNames)
 				}
 			}
 

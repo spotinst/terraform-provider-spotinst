@@ -46,3 +46,11 @@ const (
 	BootDiagnosticsStorageURL commons.FieldName = "storage_url"
 	BootDiagnosticsType       commons.FieldName = "type"
 )
+
+// Security
+const (
+	Security          commons.FieldName = "security"
+	SecureBootEnabled commons.FieldName = "secure_boot_enabled"
+	SecurityType      commons.FieldName = "security_type"
+	VTpmEnabled       commons.FieldName = "vtpm_enabled"
+)
