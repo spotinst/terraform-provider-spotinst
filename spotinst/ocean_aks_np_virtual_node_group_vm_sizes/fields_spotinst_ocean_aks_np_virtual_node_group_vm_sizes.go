@@ -54,6 +54,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
+
+					string(ExcludeSeries): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
 				},
 			},
 		},
@@ -145,6 +151,20 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 		}
 	}
 
+	if v, ok := m[string(ExcludeSeries)]; ok {
+		excludeSeries, err := expandVmSizesFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if excludeSeries != nil && len(excludeSeries) > 0 {
+			filters.SetExcludeSeries(excludeSeries)
+		} else {
+			if nullify {
+				filters.SetExcludeSeries(nil)
+			}
+		}
+	}
+
 	if v, ok := m[string(MaxMemoryGiB)].(float64); ok && v >= 0 {
 		filters.SetMaxMemoryGiB(spotinst.Float64(v))
 	} else {
@@ -201,6 +221,10 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 
 		if filters.Series != nil {
 			result[string(Series)] = filters.Series
+		}
+
+		if filters.Series != nil {
+			result[string(ExcludeSeries)] = filters.ExcludeSeries
 		}
 
 		if len(result) > 0 {
