@@ -223,7 +223,7 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 			result[string(Series)] = filters.Series
 		}
 
-		if filters.Series != nil {
+		if filters.ExcludeSeries != nil {
 			result[string(ExcludeSeries)] = filters.ExcludeSeries
 		}
 

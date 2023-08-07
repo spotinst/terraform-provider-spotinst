@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.132.0 (August 07, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `resource_requirements` block in `instance_types` object
+* resource/spotinst_ocean_aks_np: Added `exclude_series` in `vm_sizes` object
+
 ## 1.131.0 (August 01, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `security` block in `launch_specification` object
