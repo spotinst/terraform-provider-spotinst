@@ -48,6 +48,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   instance_types_ondemand       = "m3.2xlarge"
   instance_types_spot           = ["m3.xlarge", "m3.2xlarge"]
   instance_types_preferred_spot = ["m3.xlarge"]
+  on_demand_types = ["c3.large"]
 
   instance_types_weights {
     instance_type = "m3.xlarge"
@@ -57,6 +58,18 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   instance_types_weights {
     instance_type = "m3.2xlarge"
     weight        = 16
+  }
+
+  resource_requirements {
+    excluded_instance_families = ["a", "m"]
+    excluded_instance_types= ["m3.large"]
+    excluded_instance_generations= ["1", "2"]
+    required_gpu_minimum = 1
+    required_gpu_maximum = 16
+    required_memory_minimum = 1
+    required_memory_maximum = 512
+    required_vcpu_minimum = 1
+    required_vcpu_maximum = 64
   }
 
   orientation               = "balanced"
@@ -175,12 +188,24 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
 * `cpu_options` - (Optional) The CPU options for the instances that are launched within the group:
     * `threads_per_core` - (Required) The ability to define the number of threads per core in instances that allow this.
 
-* `instance_types_ondemand` - (Required) The type of instance determines your instance's CPU capacity, memory and storage (e.g., m1.small, c1.xlarge).
-* `instance_types_spot` - (Required) One or more instance types.
+* `instance_types_ondemand` - (Optional) The type of instance determines your instance's CPU capacity, memory and storage (e.g., m1.small, c1.xlarge).
+* `on_demand_types` - (Optional) Available ondemand instance types. Note: Either ondemand or onDemandTypes must be defined, but not both.
+* `instance_types_spot` - (Optional) One or more instance types. Note: Cannot be defined if 'resourceRequirements' is defined.
 * `instance_types_preferred_spot` - (Optional) Prioritize a subset of spot instance types. Must be a subset of the selected spot instance types.
 * `instance_types_weights` - (Optional) List of weights per instance type for weighted groups. Each object in the list should have the following attributes:
     * `weight` - (Required) Weight per instance type (Integer).
     * `instance_type` - (Required) Name of instance type (String).
+* `resource_requirements` - (Optional) Required instance attributes. Instance types will be selected based on these requirements.
+    * `excluded_instance_families` - (Optional) Instance families to exclude
+    * `excluded_instance_types` - (Optional) Instance types to exclude
+    * `excluded_instance_generations` - (Optional)Instance generations to exclude
+    * `required_gpu_minimum` - (Optional) Required minimum instance GPU (>=1)
+    * `required_gpu_maximum` - (Optional) Required maximum instance GPU (<=16)
+    * `required_memory_minimum` - (Required) Required minimum instance memory (>=1)
+    * `required_memory_maximum` - (Required) Required maximum instance memory (<=512)
+    * `required_vcpu_minimum` - (Required) Required minimum instance vCPU (>=1)
+    * `required_vcpu_maximum` - (Required) Required maximum instance vCPU (<=64)
+  
 
 * `cpu_credits` - (Optional) Controls how T3 instances are launched. Valid values: `standard`, `unlimited`.
 * `fallback_to_ondemand` - (Required) In a case of no Spot instances available, Elastigroup will launch on-demand instances instead.

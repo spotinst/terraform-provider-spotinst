@@ -209,4 +209,38 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[OsSKU] = commons.NewGenericField(
+		commons.OceanAKSNPProperties,
+		OsSKU,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if err := resourceData.Set(string(OsSKU), spotinst.StringValue(cluster.VirtualNodeGroupTemplate.NodePoolProperties.OsSKU)); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(OsSKU), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOk(string(OsSKU)); ok {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetOsSKU(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOk(string(OsSKU)); ok {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetOsSKU(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
 }

@@ -209,4 +209,38 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[OsSKU] = commons.NewGenericField(
+		commons.OceanAKSNPVirtualNodeGroupNodePoolProperties,
+		OsSKU,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if err := resourceData.Set(string(OsSKU), spotinst.StringValue(virtualNodeGroup.NodePoolProperties.OsSKU)); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(OsSKU), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOkExists(string(OsSKU)); ok {
+				virtualNodeGroup.NodePoolProperties.SetOsSKU(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOkExists(string(OsSKU)); ok {
+				virtualNodeGroup.NodePoolProperties.SetOsSKU(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
 }
