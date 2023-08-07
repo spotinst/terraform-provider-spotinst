@@ -1,5 +1,23 @@
 ## Unreleased
 
+## 1.131.0 (August 01, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `security` block in `launch_specification` object
+  NOTES:
+* documentation: Added `delete` usage to the `spotinst_stateful_node_azure` documentation
+
+## 1.130.0 (July 27, 2023)
+BUG FIXES:
+* resource/spotinst_elastigroup_gcp: Fix for allowing `named_ports` to be configured when `location_type` is regional
+
+## 1.129.0 (July 26, 2023)
+BUG FIXES:
+* resource/spotinst_stateful_node_azure: Modified `network`, `image` and `login` blocks as optional to support import workflow
+
+## 1.128.0 (July 24, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_aws: Exposing `deallocation_config` to provide an option to the user to choose whether to keep the underlying resources alive or not using `delete` block
+
 ## 1.127.0 (July 19, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `vm_name` field in `launch_spec` object
