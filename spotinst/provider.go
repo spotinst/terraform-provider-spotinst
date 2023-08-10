@@ -98,6 +98,9 @@ func Provider() *schema.Provider {
 
 			// Organization Programmatic User
 			string(commons.OrgProgUserResourceName): resourceOrgProgUser(),
+
+			// Organization User Group
+			string(commons.OrgUserGroupResourceName): resourceOrgUserGroup(),
 		},
 	}
 

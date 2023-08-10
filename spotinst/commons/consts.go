@@ -101,6 +101,7 @@ const (
 	AdministrationOrgUser             ResourceAffinity = "Administration_Org_User"
 	AdministrationOrgPolicy           ResourceAffinity = "Administration_Org_Policy"
 	AdministrationOrgProgrammaticUser ResourceAffinity = "Administration_Org_Progammatic_User"
+	AdministrationOrgUserGroup        ResourceAffinity = "Administration_Org_User_Group"
 
 	ElastigroupGCP                    ResourceAffinity = "Elastigroup_GCP"
 	ElastigroupGCPDisk                ResourceAffinity = "Elastigroup_GCP_Disk"
