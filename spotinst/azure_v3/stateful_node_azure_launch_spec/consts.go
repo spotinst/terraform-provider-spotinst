@@ -7,6 +7,7 @@ const (
 	CustomData     commons.FieldName = "custom_data"
 	UserData       commons.FieldName = "user_data"
 	ShutdownScript commons.FieldName = "shutdown_script"
+	VMName         commons.FieldName = "vm_name"
 )
 
 // Tags
@@ -44,4 +45,12 @@ const (
 	BootDiagnosticsIsEnabled  commons.FieldName = "is_enabled"
 	BootDiagnosticsStorageURL commons.FieldName = "storage_url"
 	BootDiagnosticsType       commons.FieldName = "type"
+)
+
+// Security
+const (
+	Security          commons.FieldName = "security"
+	SecureBootEnabled commons.FieldName = "secure_boot_enabled"
+	SecurityType      commons.FieldName = "security_type"
+	VTpmEnabled       commons.FieldName = "vtpm_enabled"
 )

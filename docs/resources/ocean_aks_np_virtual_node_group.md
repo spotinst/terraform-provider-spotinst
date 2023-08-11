@@ -53,6 +53,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   os_disk_size_gb       = 30
   os_disk_type         = "Managed"
   os_type             = "Linux"
+  os_sku              = "Ubuntu"
 
   // --------------------------------------------------------------------------
 
@@ -82,6 +83,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
     max_memory_gib = 16
     architectures = ["X86_64"]
     series = ["D v3", "F", "E v4"]
+    exclude_series = ["Bs", "Da v4"]
   }
   
   // ----------------------------------------------------------------------------
@@ -116,6 +118,7 @@ The following arguments are supported:
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
 * `os_type` - (Optional) The OS type of the OS disk.
+* `os_sku` - (Optional, Enum: `"Ubuntu", "Windows2019", "Windows2022", "AzureLinux", "CBLMariner"`) The OS SKU of the OS type. Must correlate with the os type.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
 * `spot_percentage` - (Optional, Default: `100`) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
@@ -132,3 +135,4 @@ The following arguments are supported:
     * `min_memory_gib` - (Optional) Minimum amount of Memory (GiB).
     * `min_vcpu` - (Optional) Minimum number of vcpus available.
     * `series` - (Optional) Vm sizes belonging to a series from the list will be available for scaling.
+    * `exclude_series` - (Optional) Vm sizes belonging to a series from the list will not be available for scaling.

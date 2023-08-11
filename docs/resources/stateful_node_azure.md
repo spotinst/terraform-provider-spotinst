@@ -41,6 +41,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   custom_data          = ""
   shutdown_script      = ""
   user_data            = ""
+  vm_name              = "VMName"
   // -------------------------------------------------------------------
 
   // --- BOOT DIAGNOSTICS ----------------------------------------------
@@ -165,6 +166,15 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   }
   // -------------------------------------------------------------------
   
+  // --- Security ------------------------------------------------------
+
+  security {
+    security_type = "Standard"
+    secure_boot_enabled = false
+    vtpm_enabled = false
+  }
+  // -------------------------------------------------------------------
+  
   // --- TAGS ----------------------------------------------------------
   tag {
     tag_key   = "Creator"
@@ -222,6 +232,20 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   }
 }
   // -------------------------------------------------------------------
+  
+  // ---DELETE----------------------------------------------------------
+  delete {
+    should_terminate_vm = true
+    network_should_deallocate = true
+    network_ttl_in_hours = 0
+    disk_should_deallocate = true
+    disk_ttl_in_hours = 0
+    snapshot_should_deallocate = true
+    snapshot_ttl_in_hours = 0
+    public_ip_should_deallocate = true
+    public_ip_ttl_in_hours = 0
+  }
+  // -------------------------------------------------------------------
 
 ```
 
@@ -257,6 +281,7 @@ The following arguments are supported:
 * `custom_data` - (Optional) This value will hold the YAML in base64 and will be executed upon VM launch.
 * `shutdown_script` - (Optional) Shutdown script for the stateful node. Value should be passed as a string encoded at Base64 only.
 * `user_data` - (Optional) Define a set of scripts or other metadata that's inserted to an Azure virtual machine at provision time. (Base64 encoded)
+* `vm_name` - (Optional) Set a VM name that will be persisted throughout the entire node lifecycle.
 
 <a id="boot_diagnostics"></a>
 ## Boot Diagnostics
@@ -378,6 +403,14 @@ The following arguments are supported:
       * This field is required only when using Windows OS type
       * This field must be ‘null’ when the OS type is Linux
 
+<a id="secutiry"></a>
+## Security
+
+* `security` - (Optional) Specifies the Security related profile settings for the virtual machine.
+    * `secure_boot_enabled` - (Optional) Specifies whether secure boot should be enabled on the virtual machine.
+    * `security_type` - (Optional) Enum: `"Standard", "TrustedLaunch"` Security type refers to the different security features of a virtual machine. Security features like Trusted launch virtual machines help to improve the security of Azure generation 2 virtual machines.
+    * `vtpm_enabled` - (Optional) Specifies whether vTPM should be enabled on the virtual machine.
+
 
 <a id="tag"></a>
 ## Tag
@@ -455,6 +488,20 @@ The following arguments are supported:
   * `original_vm_name` - (Required) Azure Import Stateful Node Name.
   * `draining_timeout` - (Optional) Hours to keep resources alive.
   * `resources_retention_time` - (Optional) Hours to keep resources alive.
+
+<a id="delete"></a>
+## Deallocation Config
+
+* `delete` - (Required) Specify deallocation parameters for stateful node deletion.
+    * `should_terminate_vm` - (Required) Indicates whether to delete the stateful node's VM.
+    * `network_should_deallocate` - (Required) Indicates whether to delete the stateful node's network resources.
+    * `network_ttl_in_hours` - (Optional, Default: 96) Hours to keep the network resource alive before deletion.
+    * `disk_should_deallocate` - (Required) Indicates whether to delete the stateful node's disk resources.
+    * `disk_ttl_in_hours` - (Optional, Default: 96) Hours to keep the disk resource alive before deletion.
+    * `snapshot_should_deallocate` - (Required) Indicates whether to delete the stateful node's snapshot resources.
+    * `snapshot_ttl_in_hours` - (Optional, Default: 96) Hours to keep the snapshots alive before deletion.
+    * `public_ip_should_deallocate` - (Required) Indicates whether to delete the stateful node's public ip resources.
+    * `public_ip_ttl_in_hours` - (Optional, Default: 96) Hours to keep the public ip alive before deletion.
 
 
 

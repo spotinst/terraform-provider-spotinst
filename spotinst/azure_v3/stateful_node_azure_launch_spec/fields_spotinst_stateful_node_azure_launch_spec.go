@@ -490,6 +490,120 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[VMName] = commons.NewGenericField(
+		commons.StatefulNodeAzureLaunchSpecification,
+		VMName,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.VMName != nil {
+				value = st.Compute.LaunchSpecification.VMName
+			}
+			if err := resourceData.Set(string(VMName), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VMName), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			if v, ok := resourceData.Get(string(VMName)).(string); ok && v != "" {
+				vmName := spotinst.String(v)
+				st.Compute.LaunchSpecification.SetVMName(vmName)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if v, ok := resourceData.Get(string(VMName)).(string); ok && v != "" {
+				vmName := spotinst.String(v)
+				value = vmName
+			}
+			st.Compute.LaunchSpecification.SetVMName(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Security] = commons.NewGenericField(
+		commons.StatefulNodeAzureLaunchSpecification,
+		Security,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(SecureBootEnabled): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(SecurityType): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(VTpmEnabled): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value interface{} = nil
+
+			if st.Compute != nil && st.Compute.LaunchSpecification != nil &&
+				st.Compute.LaunchSpecification.Security != nil {
+				value = flattenSecurity(st.Compute.LaunchSpecification.Security)
+			}
+			if err := resourceData.Set(string(Security), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Security), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *azure.Security = nil
+
+			if v, ok := resourceData.GetOk(string(Security)); ok {
+				if security, err := expandSecurity(v); err != nil {
+					return err
+				} else {
+					value = security
+				}
+			}
+			st.Compute.LaunchSpecification.SetSecurity(value)
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *azure.Security = nil
+
+			if v, ok := resourceData.GetOk(string(Security)); ok {
+				if security, err := expandSecurity(v); err != nil {
+					return err
+				} else {
+					value = security
+				}
+			}
+			st.Compute.LaunchSpecification.SetSecurity(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandTags(data interface{}) ([]*azure.Tag, error) {
@@ -668,6 +782,43 @@ func expandBootDiagnostics(data interface{}) (*azure.BootDiagnostics, error) {
 		}
 
 		return bootDiagnostic, nil
+	}
+
+	return nil, nil
+}
+
+func flattenSecurity(secure *azure.Security) interface{} {
+	security := make(map[string]interface{})
+
+	security[string(SecureBootEnabled)] = spotinst.BoolValue(secure.SecureBootEnabled)
+	security[string(SecurityType)] = spotinst.StringValue(secure.SecurityType)
+	security[string(VTpmEnabled)] = spotinst.BoolValue(secure.VTpmEnabled)
+
+	return []interface{}{security}
+}
+
+func expandSecurity(data interface{}) (*azure.Security, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		security := &azure.Security{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(SecureBootEnabled)].(bool); ok {
+				security.SetSecureBootEnabled(spotinst.Bool(v))
+			}
+
+			if v, ok := m[string(SecurityType)].(string); ok && v != "" {
+				security.SetSecurityType(spotinst.String(v))
+			}
+
+			if v, ok := m[string(VTpmEnabled)].(bool); ok {
+				security.SetVTpmEnabled(spotinst.Bool(v))
+			}
+
+		}
+
+		return security, nil
 	}
 
 	return nil, nil

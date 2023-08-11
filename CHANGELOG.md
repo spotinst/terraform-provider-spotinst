@@ -1,5 +1,36 @@
 ## Unreleased
 
+## 1.132.0 (August 07, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `resource_requirements` block in `instance_types` object
+* resource/spotinst_ocean_aks_np: Added `exclude_series` in `vm_sizes` object
+
+## 1.131.0 (August 01, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `security` block in `launch_specification` object
+  NOTES:
+* documentation: Added `delete` usage to the `spotinst_stateful_node_azure` documentation
+
+## 1.130.0 (July 27, 2023)
+BUG FIXES:
+* resource/spotinst_elastigroup_gcp: Fix for allowing `named_ports` to be configured when `location_type` is regional
+
+## 1.129.0 (July 26, 2023)
+BUG FIXES:
+* resource/spotinst_stateful_node_azure: Modified `network`, `image` and `login` blocks as optional to support import workflow
+
+## 1.128.0 (July 24, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_aws: Exposing `deallocation_config` to provide an option to the user to choose whether to keep the underlying resources alive or not using `delete` block
+
+## 1.127.0 (July 19, 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `vm_name` field in `launch_spec` object
+
+## 1.126.0 (July 17, 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `should_tag_volumes` attribute in `resource_tag_specification` object
+
 ## 1.125.1 (July 11, 2023)
 NOTES:
 * documentation: Modified description of `spot_percentage` in documentation for `spotinst_ocean_aws` and `spotinst_ocean_aws_launch_spec`

@@ -2,7 +2,6 @@ package managed_instance_aws
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -137,6 +136,53 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		nil, nil,
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Delete] = commons.NewGenericField(
+		commons.ManagedInstanceAWS,
+		Delete,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(AmiBackupShouldDeleteImages): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(DeallocationConfigShouldDeleteImages): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldDeleteNetworkInterfaces): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldDeleteSnapshots): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldDeleteVolumes): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ShouldTerminateInstance): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
 		},

@@ -10,4 +10,5 @@ const (
 	MaxMemoryGiB  commons.FieldName = "max_memory_gib"
 	Series        commons.FieldName = "series"
 	Architectures commons.FieldName = "architectures"
+	ExcludeSeries commons.FieldName = "exclude_series"
 )

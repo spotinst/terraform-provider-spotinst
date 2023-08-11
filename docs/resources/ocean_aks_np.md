@@ -120,7 +120,8 @@ resource "spotinst_ocean_aks_np" "example" {
   enable_node_public_ip = true
   os_disk_size_gb       = 30
   os_disk_type         = "Managed"
-  os_type             = "Linux"
+  os_type             = "Windows"
+  os_sku              = "Windows2022"
 
   // --------------------------------------------------------------------------
 
@@ -150,6 +151,7 @@ resource "spotinst_ocean_aks_np" "example" {
     max_memory_gib = 18
     architectures = ["X86_64"]
     series = ["D v3", "Dds_v4", "Dsv2"]
+    exclude_series = ["Bs", "Da v4"]
   }
   
   // ----------------------------------------------------------------------------
