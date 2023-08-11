@@ -222,3 +222,4 @@ The following arguments are supported:
     * `min_memory_gib` - (Optional) Minimum amount of Memory (GiB).
     * `min_vcpu` - (Optional) Minimum number of vcpus available.
     * `series` - (Optional) Vm sizes belonging to a series from the list will be available for scaling. We can specify include list and series can be specified with capital or small letters, with space, without space or with underscore '_' .  For example all of these "DSv2", "Ds v2", "ds_v2" refer to same DS_v2 series.
+    * `exclude_series` - (Optional) Vm sizes belonging to a series from the list will not be available for scaling
