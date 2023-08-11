@@ -178,14 +178,14 @@ The following arguments are supported:
         * `max_vcpu` - (Optional) The maximum cpu in vCpu units that can be allocated to the cluster.
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
     * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of pods without waiting for new resources to launch.
-        * `automatic` - (Optional) Automatic headroom configuration.
+        * `automatic` - (Optional) [Automatic headroom](https://docs.spot.io/ocean/features/headroom?id=automatic-headroom) configuration.
             * `percentage` - (Optional) Optionally set a number between 0-100 to control the percentage of total cluster resources dedicated to headroom.
-* `controller_cluster_id` - (Required) Enter a unique Ocean cluster identifier. Cannot be updated.
+* `controller_cluster_id` - (Required) Enter a unique Ocean cluster identifier. Cannot be updated. This needs to match with string that was used to install the controller in the cluster, typically clusterName + 8 digit string.
 * `health` - (Optional) The Ocean AKS Health object.
     * `grace_period` - (Optional, Default: `600`) The amount of time to wait, in seconds, from the moment the instance has launched until monitoring of its health checks begins.
 * `name` - (Required) Add a name for the Ocean cluster.
 * `scheduling` - (Optional) An object used to specify times when the cluster will turn off. Once the shutdown time will be over, the cluster will return to its previous state.
-    * `shutdown_hours` - (Optional) An object used to specify times that the nodes in the cluster will be taken down.
+    * `shutdown_hours` - (Optional) [Shutdown Hours](https://docs.spot.io/ocean/features/running-hours?id=shutdown-hours)An object used to specify times that the nodes in the cluster will be taken down.
         * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the cluster remains in its current state.
         * `time_windows` - (Optional) The times that the shutdown hours will apply.
 * `headrooms` - (Optional) Specify the custom headroom per VNG. Provide a list of headroom objects.
@@ -194,8 +194,8 @@ The following arguments are supported:
   * `gpu_per_unit` - (Optional) Amount of GPU to allocate for headroom unit.
   * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
 * `availability_zones` - (Optional) An Array holding Availability Zones, this configures the availability zones the Ocean may launch instances in per VNG.
-* `labels` - (Optional) An array of labels to add to the virtual node group. Only custom user labels are allowed, and not Kubernetes built-in labels or Spot internal labels.
-    * `key` - (Required) Set label key. The following are not allowed: ["kubernetes.azure.com/agentpool","kubernetes.io/arch","kubernetes.io/os","node.kubernetes.io/instance-type", "topology.kubernetes.io/region", "topology.kubernetes.io/zone", "kubernetes.azure.com/cluster", "kubernetes.azure.com/mode", "kubernetes.azure.com/role", "kubernetes.azure.com/scalesetpriority", "kubernetes.io/hostname", "kubernetes.azure.com/storageprofile", "kubernetes.azure.com/storagetier", "kubernetes.azure.com/instance-sku", "kubernetes.azure.com/node-image-version", "kubernetes.azure.com/subnet", "kubernetes.azure.com/vnet", "kubernetes.azure.com/ppg", "kubernetes.azure.com/encrypted-set", "kubernetes.azure.com/accelerator", "kubernetes.azure.com/fips_enabled", "kubernetes.azure.com/os-sku"]
+* `labels` - (Optional) An array of labels to add to the virtual node group. Only custom user labels are allowed, and not [Kubernetes well-known labels](https://kubernetes.io/docs/reference/labels-annotations-taints/) or [ Azure AKS labels](https://learn.microsoft.com/en-us/azure/aks/use-labels) or [Spot labels](https://docs.spot.io/ocean/features/labels-and-taints?id=spot-labels).
+    * `key` - (Required) Set label key [spot labels](https://docs.spot.io/ocean/features/labels-and-taints?id=spotinstionode-lifecycle) and [Azure labels](https://learn.microsoft.com/en-us/azure/aks/use-labels). The following are not allowed: ["kubernetes.azure.com/agentpool","kubernetes.io/arch","kubernetes.io/os","node.kubernetes.io/instance-type", "topology.kubernetes.io/region", "topology.kubernetes.io/zone", "kubernetes.azure.com/cluster", "kubernetes.azure.com/mode", "kubernetes.azure.com/role", "kubernetes.azure.com/scalesetpriority", "kubernetes.io/hostname", "kubernetes.azure.com/storageprofile", "kubernetes.azure.com/storagetier", "kubernetes.azure.com/instance-sku", "kubernetes.azure.com/node-image-version", "kubernetes.azure.com/subnet", "kubernetes.azure.com/vnet", "kubernetes.azure.com/ppg", "kubernetes.azure.com/encrypted-set", "kubernetes.azure.com/accelerator", "kubernetes.azure.com/fips_enabled", "kubernetes.azure.com/os-sku"]
     * `value` - (Required) Set label value.
 * `max_count` - (Optional) Maximum node count limit.
 * `min_count` - (Optional) Minimum node count limit.
@@ -203,14 +203,14 @@ The following arguments are supported:
 * `max_pods_per_node` - (Optional) The maximum number of pods per node in the node pools.
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
-* `os_type` - (Optional) The OS type of the OS disk.
-* `fallback_to_ondemand` - (Optional, Default: `true`) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
+* `os_type` - (Optional, Enum:`"Linux","Windows"`) The OS type of the OS disk.
+* `fallback_to_ondemand` - (Optional, Default: `true`) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `spot_percentage` - (Optional,Default: `100`) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
     * `key` - (Optional) Tag key for VMs in the cluster.
     * `value` - (Optional) Tag value for VMs in the cluster.
-* `taints` - (Optional) Add taints to a virtual node group.
-    * `key` - (Optional) Set taint key. The following are not allowed: "kubernetes.azure.com/scalesetpriority".
+* `taints` - (Optional) Add taints to a virtual node group. Only custom user taints are allowed, and not [Kubernetes well-known taints](https://kubernetes.io/docs/reference/labels-annotations-taints/) or Azure AKS [ScaleSetPrioirty (Spot VM) taint](https://learn.microsoft.com/en-us/azure/aks/spot-node-pool). For all Spot VMs, AKS injects a taint kubernetes.azure.com/scalesetpriority=spot:NoSchedule, to ensure that only workloads that can handle interruptions are scheduled on Spot nodes. To [schedule a pod to run on Spot node](https://learn.microsoft.com/en-us/azure/aks/spot-node-pool#schedule-a-pod-to-run-on-the-spot-node), add a toleration but dont include the nodeAffinity (not supported for Spot Ocean), this will prevent the pod from being scheduled using Spot Ocean.
+    * `key` - (Optional) Set taint key. The following taint keys are not allowed: ["node.kubernetes.io/not-ready",  "node.kubernetes.io/unreachable", "node.kubernetes.io/unschedulable",  "node.kubernetes.io/memory-pressure",  "node.kubernetes.io/disk-pressure",  "node.kubernetes.io/network-unavailable",  "node.kubernetes.io/pid-pressure",  "node.kubernetes.io/out-of-service",  "node.cloudprovider.kubernetes.io/uninitialized",  "node.cloudprovider.kubernetes.io/shutdown", "kubernetes.azure.com/scalesetpriority"]
     * `value` - (Optional) Set taint value.
     * `effect` - (Optional, Enum: `"NoSchedule", "PreferNoSchedule", "NoExecute", "PreferNoExecute"`) Set taint effect.
 * `filters` - (Optional) Filters for the VM sizes that can be launched from the virtual node group.
@@ -219,4 +219,4 @@ The following arguments are supported:
     * `max_vcpu` - (Optional) Maximum number of vcpus available.
     * `min_memory_gib` - (Optional) Minimum amount of Memory (GiB).
     * `min_vcpu` - (Optional) Minimum number of vcpus available.
-    * `series` - (Optional) Vm sizes belonging to a series from the list will be available for scaling.
+    * `series` - (Optional) Vm sizes belonging to a series from the list will be available for scaling. We can specify include list and series can be specified with capital or small letters, with space, without space or with underscore '_' .  For example all of these "DSv2", "Ds v2", "ds_v2" refer to same DS_v2 series.
