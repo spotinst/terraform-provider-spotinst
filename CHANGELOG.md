@@ -2,7 +2,7 @@
 
 ## 1.132.1 (August 11, 2023)
 NOTES:
-* documentation: Modified description of `controller_cluster_id`, `os_type`, `series` and added external link for detailed description of `automatic`, `shutdown_hours`, `labels`, `taints` in documentation for `spotinst_ocean_aks_np`
+* documentation: Updated description of `controller_cluster_id`, `os_type`, `series` and added detailed description for `automatic`, `shutdown_hours`, `labels`, `taints` in documentation for `spotinst_ocean_aks_np`
 
 ## 1.132.0 (August 07, 2023)
 ENHANCEMENTS:
