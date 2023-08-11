@@ -234,9 +234,7 @@ func expandStatements(data interface{}) ([]*administration.Statement, error) {
 
 func flattenPolicyContent(policyContent *administration.PolicyContent) []interface{} {
 	result := make(map[string]interface{})
-	if policyContent.Statements != nil {
-		result[string(Statements)] = flattenStatements(policyContent.Statements)
-	}
+	result[string(Statements)] = flattenStatements(policyContent.Statements)
 	return []interface{}{result}
 }
 
