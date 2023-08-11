@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.132.1 (August 11, 2023)
+NOTES:
+* documentation: Updated description of `controller_cluster_id`, `os_type`, `series` and added detailed description for `automatic`, `shutdown_hours`, `labels`, `taints` in documentation for `spotinst_ocean_aks_np`
+
 ## 1.132.0 (August 07, 2023)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: Added `resource_requirements` block in `instance_types` object
