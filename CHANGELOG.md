@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.133 (August 12, 2023)
+## 1.133.0 (August 12, 2023)
 BUG FIXES:
 * resource/spotinst_stateful_node_azure: Fix for allowing `data_disks`, `os_disk` and `network` blocks to be modified when `persistency` is modified
 NOTES:
