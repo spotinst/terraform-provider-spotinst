@@ -48,6 +48,42 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+					string(CapacityReservation): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(ShouldUtilize): {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								string(UtilizationStrategy): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(CapacityReservationGroups): {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(CRGName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(CRGResourceGroupName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(CRGShouldPrioritize): {
+												Type:     schema.TypeBool,
+												Optional: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 					string(OptimizationWindows): {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -209,6 +245,10 @@ func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 		result[string(RevertToSpot)] = flattenRevertToSpot(strategy.RevertToSpot)
 	}
 
+	if strategy.CapacityReservation != nil {
+		result[string(CapacityReservation)] = flattenStatefulNodeAzureCapacityReservation(strategy.CapacityReservation)
+	}
+
 	if strategy.OptimizationWindows != nil {
 		result[string(OptimizationWindows)] = spotinst.StringSlice(strategy.OptimizationWindows)
 	}
@@ -242,6 +282,17 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 
 			if revertToSpot != nil {
 				strategy.SetRevertToSpot(revertToSpot)
+			}
+		}
+
+		if v, ok := m[string(CapacityReservation)]; ok {
+			capacityReservation, err := expandStatefulNodeAzureStrategyCapacityReservation(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if capacityReservation != nil {
+				strategy.SetCapacityReservation(capacityReservation)
 			}
 		}
 
@@ -324,4 +375,85 @@ func expandStatefulNodeAzureStrategyRevertToSpot(data interface{}) (*azure.Rever
 	}
 
 	return nil, nil
+}
+
+func expandStatefulNodeAzureStrategyCapacityReservation(data interface{}) (*azure.CapacityReservation, error) {
+	list := data.(*schema.Set).List()
+	capacityReservations := make([]*azure.CapacityReservation, 0, len(list))
+
+	for _, item := range list {
+		attr := item.(map[string]interface{})
+
+		capacityReservation := &azure.CapacityReservation{}
+
+		if v, ok := attr[string(CapacityReservationGroups)]; ok {
+			capacityReservationGroups, err := expandCapacityReservationGroups(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if capacityReservationGroups != nil {
+				capacityReservation.SetCapacityReservationGroups(capacityReservationGroups)
+			}
+		} else {
+			capacityReservation.CapacityReservationGroups = nil
+		}
+
+		if v, ok := attr[string(ShouldUtilize)].(bool); ok {
+			capacityReservation.SetShouldUtilize(spotinst.Bool(v))
+		}
+
+		if v, ok := attr[string(UtilizationStrategy)].(string); ok {
+			capacityReservation.SetUtilizationStrategy(spotinst.String(v))
+		}
+
+		capacityReservations = append(capacityReservations, capacityReservation)
+	}
+	return capacityReservations[0], nil
+}
+
+func expandCapacityReservationGroups(data interface{}) ([]*azure.CapacityReservationGroup, error) {
+	list := data.(*schema.Set).List()
+	capacityReservationGroups := make([]*azure.CapacityReservationGroup, 0, len(list))
+
+	for _, item := range list {
+		attr := item.(map[string]interface{})
+
+		capacityReservationGroup := &azure.CapacityReservationGroup{}
+
+		if v, ok := attr[string(CRGName)].(string); ok && v != "" {
+			capacityReservationGroup.SetCRGName(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(CRGResourceGroupName)].(string); ok && v != "" {
+			capacityReservationGroup.SetCRGResourceGroupName(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(CRGShouldPrioritize)].(bool); ok {
+			capacityReservationGroup.SetShouldPrioritize(spotinst.Bool(v))
+		}
+
+		capacityReservationGroups = append(capacityReservationGroups, capacityReservationGroup)
+	}
+	return capacityReservationGroups, nil
+}
+
+func flattenStatefulNodeAzureCapacityReservation(capacityReservation *azure.CapacityReservation) []interface{} {
+	result := make(map[string]interface{})
+	result[string(CapacityReservationGroups)] = flattenCapacityReservationGroups(capacityReservation.CapacityReservationGroups)
+	return []interface{}{result}
+}
+
+func flattenCapacityReservationGroups(capacityReservationGroups []*azure.CapacityReservationGroup) []interface{} {
+	result := make([]interface{}, 0, len(capacityReservationGroups))
+
+	for _, capacityReservationGroup := range capacityReservationGroups {
+		m := make(map[string]interface{})
+		m[string(CRGName)] = spotinst.StringValue(capacityReservationGroup.Name)
+		m[string(CRGResourceGroupName)] = spotinst.StringValue(capacityReservationGroup.ResourceGroupName)
+		m[string(CRGShouldPrioritize)] = spotinst.BoolValue(capacityReservationGroup.ShouldPrioritize)
+		result = append(result, m)
+	}
+
+	return result
 }
