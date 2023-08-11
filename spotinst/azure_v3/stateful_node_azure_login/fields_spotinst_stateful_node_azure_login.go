@@ -27,12 +27,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Password): {
 						Type:     schema.TypeString,
 						Optional: true,
-						Computed: true,
 					},
 					string(SSHPublicKey): {
 						Type:     schema.TypeString,
 						Optional: true,
-						Computed: true,
 					},
 				},
 			},
@@ -72,6 +70,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					statefulNode.Compute.LaunchSpecification.SetLogin(login)
 				}
+			} else {
+				statefulNode.Compute.LaunchSpecification.SetLogin(nil)
 			}
 			return nil
 		},

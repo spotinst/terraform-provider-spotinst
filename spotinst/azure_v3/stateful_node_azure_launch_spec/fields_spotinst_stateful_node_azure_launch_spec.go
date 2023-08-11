@@ -282,14 +282,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
-			Computed: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(OSDiskSizeGB): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true,
 					},
 					string(OSDiskType): {
 						Type:     schema.TypeString,
@@ -339,8 +337,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					value = osDisk
 				}
+				st.Compute.LaunchSpecification.SetOSDisk(value)
+			} else {
+				st.Compute.LaunchSpecification.SetOSDisk(nil)
 			}
-			st.Compute.LaunchSpecification.SetOSDisk(value)
 			return nil
 		},
 		nil,
@@ -352,7 +352,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
-			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(DataDiskSizeGB): {
@@ -409,8 +408,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					value = dataDisks
 				}
+				st.Compute.LaunchSpecification.SetDataDisks(value)
+			} else {
+				st.Compute.LaunchSpecification.SetDataDisks(nil)
 			}
-			st.Compute.LaunchSpecification.SetDataDisks(value)
 			return nil
 		},
 		nil,
@@ -724,20 +725,14 @@ func expandDataDisks(data interface{}) ([]*azure.DataDisk, error) {
 		dataDisk := &azure.DataDisk{}
 		if v, ok := attr[string(DataDiskSizeGB)].(int); ok && v > 0 {
 			dataDisk.SetSizeGB(spotinst.Int(v))
-		} else {
-			dataDisk.SetSizeGB(nil)
 		}
 
 		if v, ok := attr[string(DataDiskLUN)].(int); ok && v >= 0 {
 			dataDisk.SetLUN(spotinst.Int(v))
-		} else {
-			dataDisk.SetLUN(nil)
 		}
 
 		if v, ok := attr[string(DataDiskType)].(string); ok && v != "" {
 			dataDisk.SetType(spotinst.String(v))
-		} else {
-			dataDisk.SetType(nil)
 		}
 
 		dd = append(dd, dataDisk)
