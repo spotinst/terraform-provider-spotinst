@@ -181,7 +181,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 				statefulNode.Compute.LaunchSpecification.SetNetwork(value)
 			} else {
-				statefulNode.Compute.LaunchSpecification.SetNetwork(value)
+				statefulNode.Compute.LaunchSpecification.SetNetwork(nil)
 			}
 			return nil
 		},

@@ -339,7 +339,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 				st.Compute.LaunchSpecification.SetOSDisk(value)
 			} else {
-				st.Compute.LaunchSpecification.SetOSDisk(value)
+				st.Compute.LaunchSpecification.SetOSDisk(nil)
 			}
 			return nil
 		},
