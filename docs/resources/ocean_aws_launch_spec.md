@@ -134,7 +134,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   }
   
   scheduling_shutdown_hours {
-    is_enabled = true
+    is_enabled = false
     time_windows = ["Sat:08:00-Sat:08:30", "Sun:08:00-Sun:08:30"]
   }
 }

@@ -329,7 +329,7 @@ update_policy {
 ```hcl
 scheduled_task {
   shutdown_hours {
-    is_enabled   = true
+    is_enabled   = false
     time_windows = [
       "Fri:15:30-Sat:13:30", 
       "Sun:15:30-Mon:13:30",
