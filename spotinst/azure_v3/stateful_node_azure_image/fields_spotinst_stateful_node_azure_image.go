@@ -139,9 +139,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					value = image
 				}
-
+				statefulNode.Compute.LaunchSpecification.SetImage(value)
+			} else {
+				statefulNode.Compute.LaunchSpecification.SetImage(nil)
 			}
-			statefulNode.Compute.LaunchSpecification.SetImage(value)
 			return nil
 		},
 		nil,
