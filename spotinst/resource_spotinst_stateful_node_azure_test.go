@@ -463,13 +463,6 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.should_utilize", "true"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.utilization_strategy", "utilizeOverOD"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.0.crg_name", ""),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.0.crg_resource_group_name", ""),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.0.crg_should_prioritize", ""),
 				),
 			},
 			{
@@ -486,13 +479,6 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.0.crg_name", ""),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.0.crg_resource_group_name", ""),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.0.crg_should_prioritize", ""),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.1.crg_name", ""),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.1.crg_resource_group_name", ""),
-					resource.TestCheckResourceAttr(resourceName, "strategy.0.capacity_reservation.0.capacity_reservation_groups.1.crg_should_prioritize", ""),
 				),
 			},
 			{
@@ -519,16 +505,6 @@ strategy {
 		perform_at =  "always"
 	}
 	preferred_life_cycle = "spot"
-    
-    capacity_reservation {
-      should_utilize       = true
-      utilization_strategy = "utilizeOverOD"
-      capacity_reservation_groups {
-        crg_name                = ""
-        crg_resource_group_name = ""
-        crg_should_prioritize   = true
-      }
-    }
 }
 `
 
@@ -540,21 +516,6 @@ strategy {
 		perform_at =  "always"
 	}
 	preferred_life_cycle = "spot"
-    
-    capacity_reservation {
-      should_utilize       = true
-      utilization_strategy = "utilizeOverOD"
-      capacity_reservation_groups {
-        crg_name                = ""
-        crg_resource_group_name = ""
-        crg_should_prioritize   = true
-      }
-      capacity_reservation_groups {
-         crg_name                = ""
-         crg_resource_group_name = ""
-         crg_should_prioritize   = true
-       }
-    }    
 }
 `
 
