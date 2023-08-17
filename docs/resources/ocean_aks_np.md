@@ -29,28 +29,58 @@ module "ocean-controller" {
 
 ~> You must configure the same `cluster_identifier` for the Ocean controller and for the `spotinst_ocean_aks_np` resource.
 
-## Example Usage
+## Basic Ocean Cluster Creation Example Usage
 
 ```hcl
 resource "spotinst_ocean_aks_np" "example" {
   
-  name                                   = "test"
+  name = "test"
   
-  // --- AKS -----------------------------------------------------------
+  // --- AKS ------------------------------------------------------------------------
   
   aks_region                             = "eastus"
   aks_cluster_name                       = "test-cluster"
   aks_infrastructure_resource_group_name = "MC_TestResourceGroup_test-cluster_eastus"
   aks_resource_group_name                = "TestResourceGroup"
   
+  // --------------------------------------------------------------------------------
+
+  controller_cluster_id = "test-123124"
+  
+  // --- virtualNodeGroupTemplate --------------------------------------
+  
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+  
   // -------------------------------------------------------------------
+}
+```  
+  
+## Detailed Example Usage
 
-  controller_cluster_id                  = "test-123124"
+```hcl  
+resource "spotinst_ocean_aks_np" "example" {
+  
+  name = "test"
+  
+  // --- AKS -------------------------------------------------------------------------
+  
+  aks_region                             = "eastus"
+  aks_cluster_name                       = "test-cluster"
+  aks_infrastructure_resource_group_name = "MC_TestResourceGroup_test-cluster_eastus"
+  aks_resource_group_name                = "TestResourceGroup"
+  
+  // ---------------------------------------------------------------------------------
 
-  // --- Auto Scaler -----------------------------------------------------
+  controller_cluster_id = "test-123124"
+
+  // --- Auto Scaler ---------------------------------------------------
   
   autoscaler {
-    autoscale_is_enabled      = true
+    autoscale_is_enabled = true
     resource_limits {
       max_vcpu       = 750
       max_memory_gib = 1500
@@ -79,8 +109,8 @@ resource "spotinst_ocean_aks_np" "example" {
   
   scheduling{
     shutdown_hours{
-      is_enabled=true
-      time_windows=["Sat:08:00-Sun:08:00"]
+      is_enabled = true
+      time_windows = ["Sat:08:00-Sun:08:00"]
     }
   }
   
@@ -88,73 +118,73 @@ resource "spotinst_ocean_aks_np" "example" {
 
   // --- virtualNodeGroupTemplate -----------------------------------------
 
-  // --- autoscale ----------------------------------------------------------------
+  // --- autoscale --------------------------------------------------------
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512
     gpu_per_unit    = 0
     num_of_units    = 2
   }
-  // ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
   
-  availability_zones =  [
+  availability_zones = [
     "1",
     "2",
     "3"
-  ],
-  labels ={
+  ]
+  labels = {
     key   = "env"
     value = "test"
   }
   
-  // --- nodeCountLimits ----------------------------------------------------
+  // --- nodeCountLimits --------------------------------------------------
   
   min_count = 1
   max_count = 100
   
-  // -------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 
-  // --- nodePoolProperties --------------------------------------------------
+  // --- nodePoolProperties -----------------------------------------------
   
   max_pods_per_node     = 30
   enable_node_public_ip = true
   os_disk_size_gb       = 30
-  os_disk_type         = "Managed"
-  os_type             = "Windows"
-  os_sku              = "Windows2022"
+  os_disk_type          = "Managed"
+  os_type               = "Windows"
+  os_sku                = "Windows2022"
 
-  // --------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 
-  // --- strategy -------------------------------------------------------------
+  // --- strategy ---------------------------------------------------------
   
   spot_percentage      = 50
   fallback_to_ondemand = true
 
-  // ---------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 
   taints {
     key    = "taintKey"
     value  = "taintValue"
     effect = "NoSchedule"
-    }
-
-  tags ={
-    tagKey   = "env"
-    tagValue   = "staging"
   }
-  // --- vmSizes ---------------------------------------------------------------
+
+  tags = {
+    tagKey   = "env"
+    tagValue = "staging"
+  }
+  // --- vmSizes ----------------------------------------------------------
   
   filters {
-    min_vcpu = 2
-    max_vcpu = 16
+    min_vcpu       = 2
+    max_vcpu       = 16
     min_memory_gib = 10
     max_memory_gib = 18
-    architectures = ["X86_64"]
-    series = ["D v3", "Dds_v4", "Dsv2"]
+    architectures  = ["X86_64"]
+    series         = ["D v3", "Dds_v4", "Dsv2"]
     exclude_series = ["Bs", "Da v4"]
   }
   
-  // ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 }
 ```
 
