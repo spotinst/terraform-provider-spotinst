@@ -286,7 +286,7 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 		}
 
 		if v, ok := m[string(CapacityReservation)]; ok {
-			capacityReservation, err := expandStatefulNodeAzureStrategyCapacityReservation(v)
+			capacityReservation, err := expandStrategyCapacityReservation(v)
 			if err != nil {
 				return nil, err
 			}
@@ -376,7 +376,7 @@ func expandStatefulNodeAzureStrategyRevertToSpot(data interface{}) (*azure.Rever
 	return nil, nil
 }
 
-func expandStatefulNodeAzureStrategyCapacityReservation(data interface{}) (*azure.CapacityReservation, error) {
+func expandStrategyCapacityReservation(data interface{}) (*azure.CapacityReservation, error) {
 
 	list := data.(*schema.Set).List()
 	capacityReservation := &azure.CapacityReservation{}

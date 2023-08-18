@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.134.0 (August 14, 2023)
+## 1.134.0 (August 18, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `capacity_reservation` block in `strategy` object
 
