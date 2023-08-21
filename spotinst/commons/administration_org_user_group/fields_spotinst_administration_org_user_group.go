@@ -95,15 +95,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
-			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
-			var value []string = nil
-			if orgUserGroup.UserIds != nil {
-				value = orgUserGroup.UserIds
-			}
-			if err := resourceData.Set(string(UserIds), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserIds), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -119,15 +110,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
-			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
-			if value, ok := resourceData.GetOk(string(UserIds)); ok && value != nil {
-				if userIds, err := expandUserIds(value); err != nil {
-					return err
-				} else {
-					orgUserGroup.SetUserIds(userIds)
-				}
-			}
 			return nil
 		},
 		nil,
@@ -155,18 +137,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
-			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
-			var result []interface{} = nil
-			if orgUserGroup.Policies != nil {
-				policies := orgUserGroup.Policies
-				result = flattenPolicies(policies)
-			}
-			if result != nil {
-				if err := resourceData.Set(string(Policies), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Policies), err)
-				}
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -182,17 +152,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
-			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
-			var value []*administration.UserGroupPolicy = nil
-			if v, ok := resourceData.GetOk(string(Policies)); ok {
-				if policies, err := expandPolicies(v); err != nil {
-					return err
-				} else {
-					value = policies
-				}
-			}
-			orgUserGroup.SetPolicies(value)
 			return nil
 		},
 		nil,

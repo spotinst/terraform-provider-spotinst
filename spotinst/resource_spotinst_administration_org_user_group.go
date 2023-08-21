@@ -133,7 +133,7 @@ func updateUserGroup(userGroup *administration.UserGroup, resourceData *schema.R
 		log.Printf("===> user group update configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).administration.UpdateUserGroup(context.Background(), input); err != nil {
+	if err := meta.(*Client).administration.UpdateUserGroup(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] failed to update user group %s: %s", resourceData.Id(), err)
 	}
 	return nil
