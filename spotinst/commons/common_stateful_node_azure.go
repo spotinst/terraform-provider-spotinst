@@ -108,8 +108,12 @@ func NewStatefulNodeAzureV3Wrapper() *StatefulNodeAzureV3Wrapper {
 		statefulNode: &azure.StatefulNode{
 			Strategy: &azure.Strategy{},
 			Compute: &azure.Compute{
-				LaunchSpecification: &azure.LaunchSpecification{},
-				VMSizes:             &azure.VMSizes{},
+				LaunchSpecification: &azure.LaunchSpecification{
+					LoadBalancersConfig: &azure.LoadBalancersConfig{
+						LoadBalancers: []*azure.LoadBalancer{},
+					},
+				},
+				VMSizes: &azure.VMSizes{},
 			},
 			Scheduling: &azure.Scheduling{
 				Tasks: []*azure.Task{},
