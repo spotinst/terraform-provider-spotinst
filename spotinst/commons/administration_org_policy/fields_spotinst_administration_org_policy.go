@@ -91,7 +91,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		PolicyContent,
 		&schema.Schema{
 			Type:     schema.TypeSet,
-			Optional: true,
+			Required: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Statements): {
