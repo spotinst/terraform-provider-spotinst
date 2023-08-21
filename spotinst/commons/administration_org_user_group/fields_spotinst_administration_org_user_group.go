@@ -110,6 +110,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
+			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
+			if value, ok := resourceData.GetOk(string(UserIds)); ok && value != nil {
+				if userIds, err := expandUserIds(value); err != nil {
+					return err
+				} else {
+					orgUserGroup.SetUserIds(userIds)
+				}
+			}
 			return nil
 		},
 		nil,
@@ -152,6 +161,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
+			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
+			if v, ok := resourceData.GetOk(string(Policies)); ok {
+				if policies, err := expandPolicies(v); err != nil {
+					return err
+				} else {
+					orgUserGroup.SetPolicies(policies)
+				}
+			}
 			return nil
 		},
 		nil,
