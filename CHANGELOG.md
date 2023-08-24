@@ -1,7 +1,7 @@
 ## Unreleased
 
-## 1.135.0 (August 21, 2023)
-BUG FIX:
+## 1.135.0 (August 25, 2023)
+BUG FIXES:
 * resource/spotinst_stateful_node_azure: Fix for `load_balancer_config` block in `launch_specification` object
 
 ## 1.134.0 (August 18, 2023)
