@@ -226,6 +226,13 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "description", "terraform-stateful-node-azure"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.type", "loadBalancer"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Terraform-statefulNode-loadBalancer"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.sku", "Standard"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Terraform-backend-pool"),
 				),
 			},
 			{
@@ -239,6 +246,13 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "region", "eastus"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.type", "loadBalancer"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Terraform-statefulNode-loadBalancer"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.sku", "Basic"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Terraform-backend-pool"),
 				),
 			},
 		},
@@ -254,6 +268,13 @@ region = "eastus"
 description = "terraform-stateful-node-azure"
 resource_group_name = "CoreReliabilityResourceGroup"
 user_data = "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="
+load_balancer {
+	name =  "Terraform-statefulNode-loadBalancer"
+	type = "loadBalancer"
+	resource_group_name = "CoreReliabilityResourceGroup"
+	sku =  "Standard"
+	backend_pool_names = ["Terraform-backend-pool"]
+}
 %v
 %v
 %v
@@ -290,6 +311,13 @@ os = "Linux"
 region = "eastus"
 resource_group_name = "CoreReliabilityResourceGroup"
 user_data = "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"
+load_balancer {
+	name =  "Terraform-statefulNode-loadBalancer"
+	type = "loadBalancer"
+	resource_group_name = "CoreReliabilityResourceGroup"
+	sku =  "Basic"
+	backend_pool_names = ["Terraform-backend-pool"]
+}
 %v
 %v
 %v
