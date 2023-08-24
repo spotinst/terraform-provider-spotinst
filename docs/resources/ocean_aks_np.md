@@ -107,7 +107,7 @@ resource "spotinst_ocean_aks_np" "example" {
 
   // --- Scheduling -------------------------------------------------------
   
-  scheduling{
+  scheduling {
     shutdown_hours{
       is_enabled   = true
       time_windows = ["Sat:08:00-Sun:08:00"]
