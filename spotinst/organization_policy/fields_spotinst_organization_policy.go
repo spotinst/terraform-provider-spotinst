@@ -168,29 +168,23 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 func expandPolicyContent(data interface{}) (*administration.PolicyContent, error) {
 	list := data.(*schema.Set).List()
+	policyContent := &administration.PolicyContent{}
 
-	if list != nil && list[0] != nil {
-		ifaces := make([]*administration.PolicyContent, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			iface := &administration.PolicyContent{}
-
-			if v, ok := m[string(Statements)]; ok {
-				statements, err := expandStatements(v)
-				if err != nil {
-					return nil, err
-				}
-
-				if statements != nil {
-					iface.SetStatements(statements)
-				}
-			} else {
-				iface.Statements = nil
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+		if v, ok := m[string(Statements)]; ok {
+			statements, err := expandStatements(v)
+			if err != nil {
+				return nil, err
 			}
-
-			ifaces = append(ifaces, iface)
+			if statements != nil {
+				policyContent.SetStatements(statements)
+			}
+		} else {
+			policyContent.Statements = nil
 		}
-		return ifaces[0], nil
+		return policyContent, nil
 	}
 	return nil, nil
 }
@@ -243,9 +237,15 @@ func flattenStatements(statements []*administration.Statement) []interface{} {
 
 	for _, statement := range statements {
 		m := make(map[string]interface{})
-		m[string(Actions)] = statement.Actions
+		if statement.Actions != nil {
+			m[string(Actions)] = statement.Actions
+		}
+
 		m[string(Effect)] = spotinst.StringValue(statement.Effect)
-		m[string(Resources)] = statement.Resources
+		
+		if statement.Resources != nil {
+			m[string(Resources)] = statement.Resources
+		}
 		result = append(result, m)
 	}
 
