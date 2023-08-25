@@ -1,24 +1,24 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: health_check"
-subcategory: "Elastigroup"
+page_title: "Spotinst: organization_user_group"
+subcategory: "Organization"
 description: |-
-  Provides a Spotinst Health Check resource.
+  Provides a Spotinst user-group of your Spot organization.
 ---
 
-# spotinst\_administration\_org\_user\_group
+# spotinst\_organization\_user\_group
 
-Provides a Spotinst user-group of your Spot organization
+Provides a Spotinst user-group of your Spot organization.
 
 ## Example Usage
 
 ```hcl 
-resource "spotinst_administration_org_user_group" "terraform_user_group" {
+resource "spotinst_organization_user_group" "terraform_user_group" {
   name = "test_user_group"
   description = "user group by terraform"
   user_ids = ["u-372ef6ae"]
   policies{
-    account_ids = ["act-9c46c6df"]
+    account_ids = ["act-a1b2c3d4"]
     policy_id = "pol-v75d8c06"
   }
 }

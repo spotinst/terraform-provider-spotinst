@@ -1,4 +1,4 @@
-package administration_org_user_group
+package organization_user_group
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 

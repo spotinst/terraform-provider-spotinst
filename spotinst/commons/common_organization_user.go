@@ -9,30 +9,30 @@ import (
 )
 
 const (
-	OrgPolicyResourceName ResourceName = "spotinst_administration_org_policy"
+	OrgUserResourceName ResourceName = "spotinst_organization_user"
 )
 
-var OrgPolicyResource *OrgPolicyTerraformResource
+var OrgUserResource *OrgUserTerraformResource
 
-type OrgPolicyTerraformResource struct {
+type OrgUserTerraformResource struct {
 	GenericResource
 }
 
-type OrgPolicyWrapper struct {
-	OrgPolicy *administration.Policy
+type OrgUserWrapper struct {
+	orgUser *administration.User
 }
 
-func NewOrgPolicyResource(fieldsMap map[FieldName]*GenericField) *OrgPolicyTerraformResource {
-	return &OrgPolicyTerraformResource{
+func NewOrgUserResource(fieldsMap map[FieldName]*GenericField) *OrgUserTerraformResource {
+	return &OrgUserTerraformResource{
 		GenericResource: GenericResource{
-			resourceName: OrgPolicyResourceName,
+			resourceName: OrgUserResourceName,
 			fields:       NewGenericFields(fieldsMap),
 		},
 	}
 }
 
-func (res *OrgPolicyTerraformResource) OnRead(
-	OrgPolicy *administration.Policy,
+func (res *OrgUserTerraformResource) OnRead(
+	orgUser *administration.User,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -40,52 +40,52 @@ func (res *OrgPolicyTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	OrgPolicyWrapper := NewOrgPolicyWrapper()
-	OrgPolicyWrapper.SetOrgPolicy(OrgPolicy)
+	orgUserWrapper := NewOrgUserWrapper()
+	orgUserWrapper.SetOrgUser(orgUser)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onRead(OrgPolicyWrapper, resourceData, meta); err != nil {
+		if err := field.onRead(orgUserWrapper, resourceData, meta); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (res *OrgPolicyTerraformResource) OnCreate(
+func (res *OrgUserTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*administration.Policy, error) {
+	meta interface{}) (*administration.User, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	OrgPolicyWrapper := NewOrgPolicyWrapper()
+	orgUserWrapper := NewOrgUserWrapper()
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(OrgPolicyWrapper, resourceData, meta); err != nil {
+		if err := field.onCreate(orgUserWrapper, resourceData, meta); err != nil {
 			return nil, err
 		}
 	}
-	return OrgPolicyWrapper.GetOrgPolicy(), nil
+	return orgUserWrapper.GetOrgUser(), nil
 }
 
-func (res *OrgPolicyTerraformResource) OnUpdate(
+func (res *OrgUserTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *administration.Policy, error) {
+	meta interface{}) (bool, *administration.User, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	OrgPolicyWrapper := NewOrgPolicyWrapper()
+	orgUserWrapper := NewOrgUserWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -93,26 +93,26 @@ func (res *OrgPolicyTerraformResource) OnUpdate(
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
-			if err := field.onUpdate(OrgPolicyWrapper, resourceData, meta); err != nil {
+			if err := field.onUpdate(orgUserWrapper, resourceData, meta); err != nil {
 				return false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, OrgPolicyWrapper.GetOrgPolicy(), nil
+	return hasChanged, orgUserWrapper.GetOrgUser(), nil
 }
 
-func NewOrgPolicyWrapper() *OrgPolicyWrapper {
-	return &OrgPolicyWrapper{
-		OrgPolicy: &administration.Policy{},
+func NewOrgUserWrapper() *OrgUserWrapper {
+	return &OrgUserWrapper{
+		orgUser: &administration.User{},
 	}
 }
 
-func (OrgPolicyWrapper *OrgPolicyWrapper) GetOrgPolicy() *administration.Policy {
-	return OrgPolicyWrapper.OrgPolicy
+func (orgUserWrapper *OrgUserWrapper) GetOrgUser() *administration.User {
+	return orgUserWrapper.orgUser
 }
 
-func (OrgPolicyWrapper *OrgPolicyWrapper) SetOrgPolicy(OrgPolicy *administration.Policy) {
-	OrgPolicyWrapper.OrgPolicy = OrgPolicy
+func (orgUserWrapper *OrgUserWrapper) SetOrgUser(orgUser *administration.User) {
+	orgUserWrapper.orgUser = orgUser
 }

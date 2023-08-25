@@ -1,4 +1,4 @@
-package administration_org_user
+package organization_user
 
 import (
 	"fmt"

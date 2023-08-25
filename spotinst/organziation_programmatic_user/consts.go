@@ -1,4 +1,4 @@
-package administration_org_programmatic_user
+package organziation_programmatic_user
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 

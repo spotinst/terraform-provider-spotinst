@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/spotinst/spotinst-sdk-go/service/administration"
+	administrationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_policy"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -11,8 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-
-	administrationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/commons/administration_org_policy"
 )
 
 func resourceOrgPolicy() *schema.Resource {

@@ -1,4 +1,4 @@
-package administration_org_policy
+package organization_policy
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 

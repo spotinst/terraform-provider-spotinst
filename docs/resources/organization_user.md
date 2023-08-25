@@ -1,19 +1,19 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: health_check"
-subcategory: "Elastigroup"
+page_title: "Spotinst: organization_user"
+subcategory: "Organization"
 description: |-
-  Provides a Spotinst Health Check resource.
+  Provides a Spotinst User in the creator's organization.
 ---
 
-# spotinst\_administration\_org\_user
+# spotinst\_organization\_user
 
-Provides a Spotinst User in the creator's organization
+Provides a Spotinst User in the creator's organization.
 
 ## Example Usage
 
 ```hcl 
-resource "spotinst_administration_org_user" "terraform_user" {
+resource "spotinst_organization_user" "terraform_user" {
   
   email = "abc@xyz.com"
   first_name = "test"

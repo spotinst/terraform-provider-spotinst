@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	OrgUserGroupResourceName ResourceName = "spotinst_administration_org_user_group"
+	OrgUserGroupResourceName ResourceName = "spotinst_organization_user_group"
 )
 
 var OrgUserGroupResource *OrgUserGroupTerraformResource
