@@ -131,8 +131,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Password,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 			ForceNew: true,
+			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
@@ -170,7 +171,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Role,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 			ForceNew: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {

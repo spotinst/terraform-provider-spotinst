@@ -242,7 +242,7 @@ func flattenStatements(statements []*administration.Statement) []interface{} {
 		}
 
 		m[string(Effect)] = spotinst.StringValue(statement.Effect)
-		
+
 		if statement.Resources != nil {
 			m[string(Resources)] = statement.Resources
 		}
