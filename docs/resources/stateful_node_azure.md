@@ -28,6 +28,15 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
       perform_at            = "timeWindow"
     }
     preferred_life_cycle    = "od" 
+    capacity_reservation {
+      should_utilize       = true
+      utilization_strategy = "utilizeOverOD"
+      capacity_reservation_groups {
+         crg_name                = "crg name"
+         crg_resource_group_name = "resourceGroupName"
+         crg_should_prioritize   = true
+       }
+    }    
   }
   // -------------------------------------------------------------------
 
@@ -37,7 +46,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   spot_sizes           = ["standard_ds1_v2", "standard_ds2_v2"]
   preferred_spot_sizes = ["standard_ds1_v2"]
   zones                = ["1","3"]
-  preferred_zones      = ["1"]
+  preferred_zone      = "1"
   custom_data          = ""
   shutdown_script      = ""
   user_data            = ""
@@ -268,6 +277,13 @@ The following arguments are supported:
   * `preferred_life_cycle` - (Optional, Enum `"od", "spot"`, Default `"spot"`) The desired type of VM.
   * `revert_to_spot` - (Optional) Hold settings for strategy correction - replacing On-Demand for Spot VMs.
     * `perform_at` - (Required, Enum `"timeWindow", "never", "always"`, Default `"always"`) Settings for maintenance strategy.
+  * `capacity_reservation` - (Optional) On-demand Capacity Reservation group enables you to reserve Compute capacity in an Azure region or an Availability Zone for any duration of time. [CRG can only be created on the Azure end.](https://learn.microsoft.com/en-us/azure/virtual-machines/capacity-reservation-create)
+    * `should_utilize` - (Required) Determines whether capacity reservations should be utilized.
+    * `utilization_strategy` - (Required, Enum `"utilizeOverSpot", "utilizeOverOD"`) The priority requested for using CRG. This value will determine if CRG is used ahead of spot VMs or On-demand VMs. (`"utilizeOverOD"`- If picked, we will use CRG only in case On demand should be launched. `"utilizeOverSpot"`- CRG will be preferred over Spot. Only after CRG is fully used, spot VMs can be used.)
+    * `capacity_reservation_groups` - (Optional) List of the desired CRGs to use under the associated Azure subscription. When null we will utilize any available reservation that matches the launch specification.
+      * `crg_name` - (Required) The name of the CRG.
+      * `crg_resource_group_name` - (Required) Azure resource group name
+      * `crg_should_prioritize` - The desired CRG to utilize ahead of other CRGs in the subscription.
 
 <a id="compute"></a>
 ## Compute
@@ -277,7 +293,7 @@ The following arguments are supported:
 * `spot_sizes` - (Required) Available Spot-VM sizes.
 * `preferred_spot_sizes` - (Optional) Prioritize Spot VM sizes when launching Spot VMs for the group. If set, must be a sublist of compute.vmSizes.spotSizes.
 * `zones` - (Optional, Enum `"1", "2", "3"`) List of Azure Availability Zones in the defined region. If not defined, Virtual machines will be launched regionally.
-* `preferred_zones` - (Optional, Enum `"1", "2", "3"`) The AZs to prioritize when launching VMs. If no markets are available in the Preferred AZs, VMs are launched in the non-preferred AZs. Must be a sublist of compute.zones.
+* `preferred_zone` - (Optional, Enum `"1", "2", "3"`) The AZ to prioritize when launching VMs. If no markets are available in the Preferred AZ, VMs are launched in the non-preferred AZ. Must be a sublist of compute.zones.
 * `custom_data` - (Optional) This value will hold the YAML in base64 and will be executed upon VM launch.
 * `shutdown_script` - (Optional) Shutdown script for the stateful node. Value should be passed as a string encoded at Base64 only.
 * `user_data` - (Optional) Define a set of scripts or other metadata that's inserted to an Azure virtual machine at provision time. (Base64 encoded)
