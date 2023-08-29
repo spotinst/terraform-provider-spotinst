@@ -14,13 +14,11 @@ Provides a Spotinst User in the creator's organization.
 
 ```hcl
 resource "spotinst_organization_user" "terraform_user" {
-  
   email = "abc@xyz.com"
   first_name = "test"
   last_name = "user"
   password = "testUser@123"
   role = "viewer"
-  
 }
 // Update is not supported for this resource.
 ```

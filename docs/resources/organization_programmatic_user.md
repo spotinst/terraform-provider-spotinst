@@ -16,11 +16,11 @@ Provides a Spotinst programmatic user in the creator's organization.
 resource "spotinst_organization_programmatic_user" "terraform_prog_user" {
   name = "test-prog-user"
   description = "desc"
-  policies{
+  policies {
     policy_id = "pol-g75d8c06"
     policy_account_ids = ["act-a1b2c3d4"]
   }
-  /*accounts{
+  /*accounts {
     account_id = "act-a1b2c3d4"
     account_role = "viewer"
   }*/  

@@ -17,7 +17,7 @@ resource "spotinst_organization_user_group" "terraform_user_group" {
   name = "test_user_group"
   description = "user group by terraform"
   user_ids = ["u-372ef6ae"]
-  policies{
+  policies {
     account_ids = ["act-a1b2c3d4"]
     policy_id = "pol-v75d8c06"
   }

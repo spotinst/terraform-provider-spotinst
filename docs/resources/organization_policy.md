@@ -16,13 +16,13 @@ Provides a Spotinst access policy.
 resource "spotinst_organization_policy" "terraform_policy" {
   name = "test-policy"
   description = "policy by terraform"
-  policy_content{
-    statements{
+  policy_content {
+    statements {
       actions = ["ocean:deleteCluster"]
       effect = "ALLOW"
       resources = ["*"]
     }
-    statements{
+    statements {
       actions = ["ocean:updateCluster"]
       effect = "DENY"
       resources = ["*"]
