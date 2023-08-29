@@ -18,7 +18,7 @@ func resourceOrgUser() *schema.Resource {
 	setupOrgUser()
 	return &schema.Resource{
 		CreateContext: resourceOrgUserCreate,
-		//UpdateContext: resourceOrgUserUpdate,
+		UpdateContext: resourceOrgUserUpdate,
 		ReadContext:   resourceOrgUserRead,
 		DeleteContext: resourceOrgUserDelete,
 
@@ -104,37 +104,5 @@ func createUser(userObj *administration.User, spotinstClient *Client) (*string, 
 }
 
 func resourceOrgUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	id := resourceData.Id()
-	log.Printf(string(commons.ResourceOnUpdate),
-		commons.OrgUserResource.GetName(), id)
-
-	shouldUpdate, user, err := commons.OrgUserResource.OnUpdate(resourceData, meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	if shouldUpdate {
-		user.UserID = spotinst.String(id)
-		if err := updateUser(user, resourceData, meta); err != nil {
-			return diag.FromErr(err)
-		}
-	}
-
-	log.Printf("===> User updated successfully: %s <===", id)
-	return resourceOrgUserRead(ctx, resourceData, meta)
-}
-
-func updateUser(user *administration.User, resourceData *schema.ResourceData, meta interface{}) error {
-	/*input := user
-
-	if json, err := commons.ToJson(user); err != nil {
-		return err
-	} else {
-		log.Printf("===> user update configuration: %s", json)
-	}
-
-	if _, err := meta.(*Client).administration.Update(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] failed to update user %s: %s", resourceData.Id(), err)
-	}*/
 	return nil
 }

@@ -22,6 +22,7 @@ resource "spotinst_organization_user" "terraform_user" {
   role = "viewer"
   
 }
+// 
 ```
 
 ## Argument Reference

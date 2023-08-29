@@ -8,11 +8,11 @@ description: |-
 
 # spotinst\_organization\_policy
 
-Provides a Spotinst access policy. 
+Provides a Spotinst access policy.
 
 ## Example Usage
 
-```hcl 
+```hcl
 resource "spotinst_organization_policy" "terraform_policy" {
   name = "test-policy"
   description = "policy by terraform"
@@ -39,7 +39,8 @@ The following arguments are supported:
 * `description` - Short description of policy.
 * `policy_content` - Set permissions objects list.
   * `statements` - List of permissions statements.
-    * `actions` - Set a list of required actions for this permissions statement. Full list of actions can be found in [https://docs.spot.io/account-user-management/user-management/access-policies-actions/](https://docs.spot.io/account-user-management/user-management/access-policies-actions/)
+    * `actions` - Set a list of required actions for this permissions statement.
+    Full list of actions can be found in [https://docs.spot.io/account-user-management/user-management/access-policies-actions/](https://docs.spot.io/account-user-management/user-management/access-policies-actions/).
     * `effect` - Valid values "ALLOW", "DENY".
     * `resources` - Set a list of resources IDs.
 
