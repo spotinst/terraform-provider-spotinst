@@ -18,7 +18,7 @@ func resourceOrgProgUser() *schema.Resource {
 	setupOrgProgUser()
 	return &schema.Resource{
 		CreateContext: resourceOrgProgUserCreate,
-		//UpdateContext: resourceOrgProgUserUpdate,
+		UpdateContext: resourceOrgProgUserUpdate,
 		ReadContext:   resourceOrgProgUserRead,
 		DeleteContext: resourceOrgProgUserDelete,
 
@@ -104,5 +104,5 @@ func createProgUser(userObj *administration.ProgrammaticUser, spotinstClient *Cl
 }
 
 func resourceOrgProgUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return resourceOrgProgUserRead(ctx, resourceData, meta)
+	return nil
 }

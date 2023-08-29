@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.135.0 (August 29, 2023)
+FEATURES:
+* **New Resource:** `spotinst_organization_user`
+* **New Resource:** `spotinst_organization_policy`
+* **New Resource:** `spotinst_organization_programmatic_user`
+* **New Resource:** `spotinst_organization_user_group`
+
 ## 1.134.0 (August 18, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `capacity_reservation` block in `strategy` object

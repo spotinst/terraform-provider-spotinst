@@ -12,7 +12,7 @@ Provides a Spotinst User in the creator's organization.
 
 ## Example Usage
 
-```hcl 
+```hcl
 resource "spotinst_organization_user" "terraform_user" {
   
   email = "abc@xyz.com"
