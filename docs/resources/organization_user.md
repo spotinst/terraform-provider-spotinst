@@ -22,7 +22,7 @@ resource "spotinst_organization_user" "terraform_user" {
   role = "viewer"
   
 }
-// 
+// Update is not supported for this resource.
 ```
 
 ## Argument Reference
