@@ -34,9 +34,9 @@ The following arguments are supported:
    (should be existing users only).
 * `policies` - The policies to register under the given group
    (should be existing policies only).
-  * `account_ids` - A list of accounts to register with the assigned under the 
+  * `account_ids` - A list of accounts to register with the assigned under the
      given group (should be existing accounts only).
-  * `policy_id` - A policy to register under the given group 
+  * `policy_id` - A policy to register under the given group
      (should be existing policy only).
 
 ## Attributes Reference

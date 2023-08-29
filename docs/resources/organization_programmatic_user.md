@@ -37,7 +37,7 @@ The following arguments are supported:
 * `description` - Brief description of the user.
 * `policies` - All the policies the programmatic user will have access to.
    If used - Cannot be empty.
-  * `policy_account_ids` - A list of the accounts that the policy should be 
+  * `policy_account_ids` - A list of the accounts that the policy should be
   enforced for the user.
   * `policy_id` - Policy ID the programmatic user will have access to.
 * `accounts` - All the accounts the programmatic user will have access to.
