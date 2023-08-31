@@ -3,6 +3,7 @@ package organization_user
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/administration"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -200,4 +201,113 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Policies] = commons.NewGenericField(
+		commons.AdministrationOrgProgrammaticUser,
+		Policies,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(PolicyAccountIds): {
+						Type:     schema.TypeList,
+						Required: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+					string(PolicyId): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
+			orgUser := orgUserWrapper.GetOrgUser()
+			var result []interface{} = nil
+			if orgUser.Policies != nil {
+				policies := orgUser.Policies
+				result = flattenPolicies(policies)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Policies), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Policies), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
+			orgUser := orgUserWrapper.GetOrgUser()
+			if v, ok := resourceData.GetOk(string(Policies)); ok {
+				if policies, err := expandPolicies(v); err != nil {
+					return err
+				} else {
+					orgUser.SetUserPolicies(policies)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
+			orgProgUser := orgUserWrapper.GetOrgUser()
+			var value []*administration.UserPolicy = nil
+			if v, ok := resourceData.GetOk(string(Policies)); ok {
+				if policies, err := expandPolicies(v); err != nil {
+					return err
+				} else {
+					value = policies
+				}
+			}
+			orgProgUser.SetUserPolicies(value)
+			return nil
+		},
+		nil,
+	)
+
+}
+
+func expandPolicies(data interface{}) ([]*administration.UserPolicy, error) {
+	list := data.(*schema.Set).List()
+
+	if list != nil && list[0] != nil {
+		ifaces := make([]*administration.UserPolicy, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			iface := &administration.UserPolicy{}
+
+			if v, ok := m[string(PolicyAccountIds)]; ok && v != nil {
+				accountIdsList := v.([]interface{})
+				accountIds := make([]string, len(accountIdsList))
+				for i, j := range accountIdsList {
+					accountIds[i] = j.(string)
+				}
+
+				if accountIds != nil {
+					iface.SetUserPolicyAccountIds(accountIds)
+				}
+			}
+
+			if v, ok := m[string(PolicyId)].(string); ok && v != "" {
+				iface.SetUserPolicyId(spotinst.String(v))
+			}
+
+			ifaces = append(ifaces, iface)
+		}
+		return ifaces, nil
+	}
+	return nil, nil
+}
+
+func flattenPolicies(policies []*administration.UserPolicy) []interface{} {
+	result := make([]interface{}, 0, len(policies))
+
+	for _, policy := range policies {
+		m := make(map[string]interface{})
+		m[string(PolicyId)] = spotinst.StringValue(policy.PolicyId)
+		m[string(PolicyAccountIds)] = policy.AccountIds
+		result = append(result, m)
+	}
+
+	return result
 }

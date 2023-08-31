@@ -229,18 +229,6 @@ func expandPolicies(data interface{}) ([]*administration.ProgPolicy, error) {
 				for i, j := range accountIdsList {
 					accountIds[i] = j.(string)
 				}
-
-				if accountIds != nil {
-					iface.SetAccountIds(accountIds)
-				}
-			}
-
-			if v, ok := m[string(PolicyAccountIds)]; ok && v != nil {
-				accountIdsList := v.([]interface{})
-				accountIds := make([]string, len(accountIdsList))
-				for i, j := range accountIdsList {
-					accountIds[i] = j.(string)
-				}
 				if accountIds != nil {
 					iface.SetAccountIds(accountIds)
 				}

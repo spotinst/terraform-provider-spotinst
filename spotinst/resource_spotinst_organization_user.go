@@ -79,6 +79,10 @@ func resourceOrgUserCreate(ctx context.Context, resourceData *schema.ResourceDat
 		commons.OrgUserResource.GetName())
 
 	user, err := commons.OrgUserResource.OnCreate(resourceData, meta)
+	var policies []*administration.UserPolicy = user.Policies
+
+	user.Policies = nil
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -86,6 +90,12 @@ func resourceOrgUserCreate(ctx context.Context, resourceData *schema.ResourceDat
 	userId, err := createUser(user, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
+	}
+
+	updateErr := updatePolicyMapping(policies, userId, meta.(*Client))
+
+	if updateErr != nil {
+		return diag.FromErr(updateErr)
 	}
 
 	resourceData.SetId(spotinst.StringValue(userId))
@@ -101,6 +111,17 @@ func createUser(userObj *administration.User, spotinstClient *Client) (*string, 
 		return nil, fmt.Errorf("[ERROR] failed to create user: %s", err)
 	}
 	return resp.User.UserID, nil
+}
+
+func updatePolicyMapping(policies []*administration.UserPolicy, userId *string, spotinstClient *Client) error {
+	err := spotinstClient.administration.UpdatePolicyMappingOfUser(context.Background(), &administration.UpdatePolicyMappingOfUserInput{
+		UserID:   userId,
+		Policies: policies,
+	})
+	if err != nil {
+		return fmt.Errorf("[ERROR] failed to update policy mapping for user: %s", err)
+	}
+	return nil
 }
 
 func resourceOrgUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
