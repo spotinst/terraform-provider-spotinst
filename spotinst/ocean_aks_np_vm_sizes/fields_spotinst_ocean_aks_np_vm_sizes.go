@@ -165,28 +165,36 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 		}
 	}
 
-	if v, ok := m[string(MaxMemoryGiB)].(float64); ok && v >= 0 {
-		filters.SetMaxMemoryGiB(spotinst.Float64(v))
-	} else {
-		filters.SetMaxMemoryGiB(nil)
+	if v, ok := m[string(MaxMemoryGiB)].(float64); ok {
+		if v == -1 {
+			filters.SetMaxMemoryGiB(nil)
+		} else {
+			filters.SetMaxMemoryGiB(spotinst.Float64(v))
+		}
 	}
 
-	if v, ok := m[string(MaxVcpu)].(int); ok && v >= 1 {
-		filters.SetMaxVcpu(spotinst.Int(v))
-	} else {
-		filters.SetMaxVcpu(nil)
+	if v, ok := m[string(MaxVcpu)].(int); ok {
+		if v == -1 {
+			filters.SetMaxVcpu(nil)
+		} else {
+			filters.SetMaxVcpu(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MinMemoryGiB)].(float64); ok && v >= 0 {
-		filters.SetMinMemoryGiB(spotinst.Float64(v))
-	} else {
-		filters.SetMinMemoryGiB(nil)
+	if v, ok := m[string(MinMemoryGiB)].(float64); ok {
+		if v == -1 {
+			filters.SetMinMemoryGiB(nil)
+		} else {
+			filters.SetMinMemoryGiB(spotinst.Float64(v))
+		}
 	}
 
-	if v, ok := m[string(MinVcpu)].(int); ok && v >= 0 {
-		filters.SetMinVcpu(spotinst.Int(v))
-	} else {
-		filters.SetMinVcpu(nil)
+	if v, ok := m[string(MinVcpu)].(int); ok {
+		if v == -1 {
+			filters.SetMinVcpu(nil)
+		} else {
+			filters.SetMinVcpu(spotinst.Int(v))
+		}
 	}
 
 	return filters, nil
@@ -209,11 +217,24 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 
 	if filters != nil {
 		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(MinVcpu)] = value
+		result[string(MaxVcpu)] = value
+		result[string(MinMemoryGiB)] = value
+		result[string(MaxMemoryGiB)] = value
 
-		result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)
-		result[string(MaxVcpu)] = spotinst.IntValue(filters.MaxVcpu)
-		result[string(MinMemoryGiB)] = spotinst.Float64Value(filters.MinMemoryGiB)
-		result[string(MaxMemoryGiB)] = spotinst.Float64Value(filters.MaxMemoryGiB)
+		if filters.MinVcpu != nil {
+			result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)
+		}
+		if filters.MaxVcpu != nil {
+			result[string(MaxVcpu)] = spotinst.IntValue(filters.MaxVcpu)
+		}
+		if filters.MinMemoryGiB != nil {
+			result[string(MinMemoryGiB)] = spotinst.Float64Value(filters.MinMemoryGiB)
+		}
+		if filters.MaxMemoryGiB != nil {
+			result[string(MaxMemoryGiB)] = spotinst.Float64Value(filters.MaxMemoryGiB)
+		}
 
 		if filters.Architectures != nil {
 			result[string(Architectures)] = filters.Architectures

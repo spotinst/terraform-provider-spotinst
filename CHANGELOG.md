@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.135.0 (September, 06 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+
 ## 1.134.0 (August 18, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `capacity_reservation` block in `strategy` object
