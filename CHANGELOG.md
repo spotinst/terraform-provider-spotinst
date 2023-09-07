@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.136.0 (September 07, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `max_scale_down_percentage` field in `kubernetes_integrations` object
+
 ## 1.135.0 (September, 06 2023)
 BUG FIXES:
 * resource/spotinst_ocean_aks_np: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
