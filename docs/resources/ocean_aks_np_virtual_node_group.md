@@ -51,9 +51,10 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   max_pods_per_node     = 30
   enable_node_public_ip = true
   os_disk_size_gb       = 30
-  os_disk_type         = "Managed"
-  os_type             = "Linux"
-  os_sku              = "Ubuntu"
+  os_disk_type          = "Managed"
+  os_type               = "Linux"
+  os_sku                = "Ubuntu"
+  kubernetes_version    = "1.26"
 
   // --------------------------------------------------------------------------
 

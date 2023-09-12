@@ -1,5 +1,11 @@
 ## Unreleased
 
+## 1.137.0 (September, 13 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `kubernetes_version` attribute support in cluster and vng
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fixed default values in virtual_node_groups_template object
+
 ## 1.136.0 (September 07, 2023)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: Added `max_scale_down_percentage` field in `kubernetes_integrations` object
