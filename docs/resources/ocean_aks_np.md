@@ -59,7 +59,7 @@ resource "spotinst_ocean_aks_np" "example" {
 }
 ```  
   
-## Detailed Example Usage
+## Detailed  Ocean Cluster Creation Usage Example - using all available parameters with  sample values
 
 ```hcl  
 resource "spotinst_ocean_aks_np" "example" {
