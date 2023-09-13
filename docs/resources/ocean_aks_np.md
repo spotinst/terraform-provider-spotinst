@@ -29,7 +29,7 @@ module "ocean-controller" {
 
 ~> You must configure the same `cluster_identifier` for the Ocean controller and for the `spotinst_ocean_aks_np` resource.
 
-## Basic Ocean Cluster Creation Example Usage
+## Basic Ocean Cluster Creation Usage Example - using minimum configuration with only required parameters
 
 ```hcl
 resource "spotinst_ocean_aks_np" "example" {
