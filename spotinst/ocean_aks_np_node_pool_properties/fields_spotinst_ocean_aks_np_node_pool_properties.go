@@ -16,7 +16,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
-			Default:  110,
+			Default:  -1,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
@@ -24,6 +24,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value *int = nil
 			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties.MaxPodsPerNode != nil {
 				value = cluster.VirtualNodeGroupTemplate.NodePoolProperties.MaxPodsPerNode
+			} else {
+				value = spotinst.Int(-1)
 			}
 			if err := resourceData.Set(string(MaxPodsPerNode), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxPodsPerNode), err)
@@ -33,7 +35,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(MaxPodsPerNode)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(MaxPodsPerNode)).(int); ok && v > -1 {
 				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetMaxPodsPerNode(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetMaxPodsPerNode(nil)
@@ -43,7 +45,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(MaxPodsPerNode)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(MaxPodsPerNode)).(int); ok && v > -1 {
 				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetMaxPodsPerNode(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetMaxPodsPerNode(nil)
@@ -105,7 +107,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
-			//Default:  -1,
+			Default:  -1,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
@@ -113,6 +115,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value *int = nil
 			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties.OsDiskSizeGB != nil {
 				value = cluster.VirtualNodeGroupTemplate.NodePoolProperties.OsDiskSizeGB
+			} else {
+				value = spotinst.Int(-1)
 			}
 			if err := resourceData.Set(string(OsDiskSizeGB), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OsDiskSizeGB), err)
@@ -238,6 +242,40 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetNPCluster()
 			if v, ok := resourceData.GetOk(string(OsSKU)); ok {
 				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetOsSKU(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[KubernetesVersion] = commons.NewGenericField(
+		commons.OceanAKSNPProperties,
+		KubernetesVersion,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if err := resourceData.Set(string(KubernetesVersion), spotinst.StringValue(cluster.VirtualNodeGroupTemplate.NodePoolProperties.KubernetesVersion)); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(KubernetesVersion), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOk(string(KubernetesVersion)); ok {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetKubernetesVersion(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOk(string(KubernetesVersion)); ok {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetKubernetesVersion(spotinst.String(v.(string)))
 			}
 			return nil
 		},

@@ -152,6 +152,7 @@ resource "spotinst_ocean_aks_np" "example" {
   os_disk_type          = "Managed"
   os_type               = "Windows"
   os_sku                = "Windows2022"
+  kubernetes_version    = "1.26"
 
   // ----------------------------------------------------------------------
 

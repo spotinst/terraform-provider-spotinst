@@ -9,4 +9,5 @@ const (
 	OsDiskType         commons.FieldName = "os_disk_type"
 	OsType             commons.FieldName = "os_type"
 	OsSKU              commons.FieldName = "os_sku"
+	KubernetesVersion  commons.FieldName = "kubernetes_version"
 )

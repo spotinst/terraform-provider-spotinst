@@ -89,6 +89,11 @@ func SetupKubernetes(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
+
+								string(MaxScaleDownPercentage): {
+									Type:     schema.TypeFloat,
+									Optional: true,
+								},
 							},
 						},
 					},
@@ -205,7 +210,7 @@ func expandAWSGroupKubernetesIntegration(data interface{}) (*aws.KubernetesInteg
 	}
 
 	if v, ok := m[string(AutoscaleDown)]; ok {
-		down, err := expandAWSGroupAutoScaleDown(v, false)
+		down, err := expandAWSGroupAutoScaleDown(v, true)
 		if err != nil {
 			return nil, err
 		}

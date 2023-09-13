@@ -3708,6 +3708,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationKubernetes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.memory_per_unit", "512"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.num_of_units", "2"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.evaluation_periods", "300"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.max_scale_down_percentage", "70"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.0.key", "test.key.k8s"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.0.value", "test.value.k8s"),
 				),
@@ -3733,6 +3734,7 @@ func TestAccSpotinstElastigroupAWS_IntegrationKubernetes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.memory_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_headroom.0.num_of_units", "1"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.evaluation_periods", "150"),
+					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_down.0.max_scale_down_percentage", "30"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.0.key", "test.key.k8s.update"),
 					resource.TestCheckResourceAttr(resourceName, "integration_kubernetes.0.autoscale_labels.0.value", "test.value.k8s.update"),
 				),
@@ -3771,6 +3773,7 @@ const testIntegrationKubernetesGroupConfig_Create = `
 
     autoscale_down {
       evaluation_periods = 300
+	  max_scale_down_percentage = 70
     }
 
     autoscale_labels {
@@ -3800,6 +3803,7 @@ const testIntegrationKubernetesGroupConfig_Update = `
 
     autoscale_down {
       evaluation_periods = 150
+	  max_scale_down_percentage = 30
     }
 
     autoscale_labels {

@@ -1,5 +1,20 @@
 ## Unreleased
 
+## 1.137.0 (September, 13 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `kubernetes_version` attribute support in cluster and vng
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fixed default values in virtual_node_groups_template object
+
+## 1.136.0 (September 07, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `max_scale_down_percentage` field in `kubernetes_integrations` object
+
+## 1.135.0 (September, 06 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+
 ## 1.134.0 (August 18, 2023)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `capacity_reservation` block in `strategy` object
