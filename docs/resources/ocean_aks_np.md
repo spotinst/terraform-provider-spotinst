@@ -179,7 +179,7 @@ resource "spotinst_ocean_aks_np" "example" {
     max_vcpu       = 16
     min_memory_gib = 10
     max_memory_gib = 18
-    architectures  = ["X86_64"]
+    architectures  = ["x86_64", "arm64"]
     series         = ["D v3", "Dds_v4", "Dsv2"]
     exclude_series = ["Bs", "Da v4"]
   }
