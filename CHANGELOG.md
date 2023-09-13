@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.138.0 (September, 13 2023)
+NOTES:
+* resource/spotinst_ocean_aks_np: Added basic cluster creation usage example
+
 ## 1.137.0 (September, 13 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added `kubernetes_version` attribute support in cluster and vng

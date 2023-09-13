@@ -59,7 +59,7 @@ resource "spotinst_ocean_aks_np" "example" {
 }
 ```  
   
-## Detailed  Ocean Cluster Creation Usage Example - using all available parameters with  sample values
+## Detailed Ocean Cluster Creation Usage Example - using all available parameters with sample values
 
 ```hcl  
 resource "spotinst_ocean_aks_np" "example" {
@@ -237,6 +237,7 @@ The following arguments are supported:
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
 * `os_type` - (Optional, Enum:`"Linux","Windows"`) The OS type of the OS disk.
+* `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `spot_percentage` - (Optional,Default: `100`) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
