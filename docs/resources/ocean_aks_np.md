@@ -181,7 +181,7 @@ resource "spotinst_ocean_aks_np" "example" {
     max_memory_gib = 128
     architectures  = ["x86_64", "arm64"]
     series         = ["D v3", "Dds_v4", "Dsv2"]
-    exclude_series = ["Bs", "Da v4"]
+    exclude_series = ["Av2",  "A", "Bs", "D", "E"]
   }
   
   // ----------------------------------------------------------------------
