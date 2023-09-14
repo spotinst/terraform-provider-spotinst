@@ -92,6 +92,9 @@ func Provider() *schema.Provider {
 
 			// AWS Account Creation
 			string(commons.AccountAWSResourceName): resourceSpotinstAccountAWS(),
+
+			// AWS set credential
+			string(commons.SetCredentialAWSResourceName): resourceSpotinstCredentialAWS(),
 		},
 	}
 
