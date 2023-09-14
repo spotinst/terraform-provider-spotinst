@@ -89,6 +89,9 @@ func Provider() *schema.Provider {
 
 			// Ocean Spark Virtual Node Group
 			string(commons.OceanSparkVirtualNodeGroupResourceName): resourceSpotinstOceanSparkVirtualNodeGroup(),
+
+			// AWS Account Creation
+			string(commons.AccountAWSResourceName): resourceSpotinstAccountAWS(),
 		},
 	}
 

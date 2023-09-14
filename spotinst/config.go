@@ -3,6 +3,7 @@ package spotinst
 import (
 	"errors"
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/account"
 	stdlog "log"
 	"strings"
 
@@ -49,6 +50,7 @@ type Client struct {
 	managedInstance managedinstance.Service
 	dataIntegration dataintegration.Service
 	statefulNode    stateful.Service
+	account         account.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
@@ -72,6 +74,7 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		managedInstance: managedinstance.New(sess),
 		dataIntegration: dataintegration.New(sess),
 		statefulNode:    stateful.New(sess),
+		account:         account.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")
