@@ -129,12 +129,17 @@ resource "spotinst_ocean_aws" "example" {
     ebs {
       delete_on_termination = "true"
       encrypted             = "false"
-      volume_type           = "gp2"
+      volume_type           = "gp3"
       volume_size           = 50
       throughput            = 500
       dynamic_volume_size {
         base_size              = 50
         resource               = "CPU"
+        size_per_resource_unit = 20
+      }
+      dynamic_iops {
+        base_size              = 50
+        resource               = "memory"
         size_per_resource_unit = 20
       }
     }
@@ -233,6 +238,11 @@ The following arguments are supported:
             * `base_size`- (Required) Int. Initial size for volume. (Example: 50)
             * `resource`- (Required) String. Resource type to increase volume size dynamically by. (Valid values: `CPU`)
             * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: `baseSize=50`, `sizePerResourceUnit=20`, and instance with 2 CPU is launched; its total disk size will be: 90GB).
+        * `iops` - (Optional) Must be greater than or equal to 0.
+        * `dynamic_iops` - (Optional) Set dynamic IOPS properties. When using this object, you cannot use the `iops` attribute. You must use one or the other.
+            * `base_size`- (Required) Initial size for IOPS.
+            * `resource`- (Required, ENUM: `CPU`, `memory`)
+            * `size_per_resource_unit`- (Required) Additional size per resource unit (in IOPS). (Example: `baseSize=50`, `sizePerResourceUnit=20`, and an instance with 2 CPU is launched; its IOPS size will be: 90).
 * `cluster_orientation`
     * `availability_vs_cost` - (Optional, Default: `balanced`) You can control the approach that Ocean takes while launching nodes by configuring this value. Possible values: `costOriented`,`balanced`,`cheapest`.
 * `logging` - (Optional) Logging configuration.

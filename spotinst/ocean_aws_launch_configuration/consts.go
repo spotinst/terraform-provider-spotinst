@@ -44,3 +44,9 @@ const (
 	VolumeType          commons.FieldName = "volume_type"
 	Throughput          commons.FieldName = "throughput"
 )
+const (
+	DynamicIops             commons.FieldName = "dynamic_iops"
+	IopsBaseSize            commons.FieldName = "base_size"
+	IopsResource            commons.FieldName = "resource"
+	IopsSizePerResourceUnit commons.FieldName = "size_per_resource_unit"
+)
