@@ -51,9 +51,10 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   max_pods_per_node     = 30
   enable_node_public_ip = true
   os_disk_size_gb       = 30
-  os_disk_type         = "Managed"
-  os_type             = "Linux"
-  os_sku              = "Ubuntu"
+  os_disk_type          = "Managed"
+  os_type               = "Linux"
+  os_sku                = "Ubuntu"
+  kubernetes_version    = "1.26"
 
   // --------------------------------------------------------------------------
 
@@ -119,6 +120,7 @@ The following arguments are supported:
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
 * `os_type` - (Optional) The OS type of the OS disk.
 * `os_sku` - (Optional, Enum: `"Ubuntu", "Windows2019", "Windows2022", "AzureLinux", "CBLMariner"`) The OS SKU of the OS type. Must correlate with the os type.
+* `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
 * `spot_percentage` - (Optional, Default: `100`) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.

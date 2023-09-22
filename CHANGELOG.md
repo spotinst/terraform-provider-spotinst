@@ -1,11 +1,27 @@
 ## Unreleased
 
-## 1.135.0 (August 29, 2023)
-FEATURES:
-* **New Resource:** `spotinst_organization_user`
-* **New Resource:** `spotinst_organization_policy`
-* **New Resource:** `spotinst_organization_programmatic_user`
-* **New Resource:** `spotinst_organization_user_group`
+## 1.139.0 (September, 15 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `dynamic_iops` object in `ebs`
+
+## 1.138.0 (September, 13 2023)
+NOTES:
+* resource/spotinst_ocean_aks_np: Added basic cluster creation usage example
+
+## 1.137.0 (September, 13 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `kubernetes_version` attribute support in cluster and vng
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fixed default values in virtual_node_groups_template object
+
+## 1.136.0 (September 07, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `max_scale_down_percentage` field in `kubernetes_integrations` object
+
+## 1.135.0 (September, 06 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
 
 ## 1.134.0 (August 18, 2023)
 ENHANCEMENTS:

@@ -891,6 +891,7 @@ integration_docker_swarm {
         * `num_of_units` - (Optional, Default: `0`) How many units to allocate for headroom unit.
     * `autoscale_down` - (Optional) Setting for scale down actions.
         * `evaluation_periods` - (Optional, Default: `5`) How many evaluation periods should accumulate before a scale down action takes place.
+        * `max_scale_down_percentage` - (Optional) Represents the maximum percent to scale-down. Number between 1-100.
     * `autoscale_labels` - (Optional) A key/value mapping of tags to assign to the resource.
 
 Usage:
@@ -918,6 +919,7 @@ Usage:
     
     autoscale_down {
       evaluation_periods = 300
+      max_scale_down_percentage = 50
     }
     
     autoscale_labels {
