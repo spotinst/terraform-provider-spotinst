@@ -3,8 +3,8 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
-	administrationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_policy"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
+	organizationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_policy"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -29,7 +29,7 @@ func resourceOrgPolicy() *schema.Resource {
 func setupOrgPolicy() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
-	administrationPackage.Setup(fieldsMap)
+	organizationPackage.Setup(fieldsMap)
 
 	commons.OrgPolicyResource = commons.NewOrgPolicyResource(fieldsMap)
 }
@@ -39,8 +39,8 @@ func resourceOrgPolicyDelete(ctx context.Context, resourceData *schema.ResourceD
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OrgPolicyResource.GetName(), id)
 
-	input := &administration.DeletePolicyInput{PolicyID: spotinst.String(id)}
-	if _, err := meta.(*Client).administration.DeletePolicy(context.Background(), input); err != nil {
+	input := &organization.DeletePolicyInput{PolicyID: spotinst.String(id)}
+	if _, err := meta.(*Client).organization.DeletePolicy(context.Background(), input); err != nil {
 		return diag.Errorf("[ERROR] Failed to delete policy: %s", err)
 	}
 
@@ -54,8 +54,8 @@ func resourceOrgPolicyRead(ctx context.Context, resourceData *schema.ResourceDat
 		commons.OrgPolicyResource.GetName(), id)
 
 	client := meta.(*Client)
-	input := &administration.ReadPolicyInput{PolicyID: spotinst.String(resourceData.Id())}
-	policyResponse, err := client.administration.ReadPolicy(context.Background(), input)
+	input := &organization.ReadPolicyInput{PolicyID: spotinst.String(resourceData.Id())}
+	policyResponse, err := client.organization.ReadPolicy(context.Background(), input)
 	if err != nil {
 		return diag.Errorf("[ERROR] Failed to read policy: %s", err)
 	}
@@ -94,11 +94,11 @@ func resourceOrgPolicyCreate(ctx context.Context, resourceData *schema.ResourceD
 	return resourceOrgPolicyRead(ctx, resourceData, meta)
 }
 
-func createPolicy(policyObj *administration.Policy, spotinstClient *Client) (*string, error) {
-	input := &administration.CreatePolicyInput{
+func createPolicy(policyObj *organization.Policy, spotinstClient *Client) (*string, error) {
+	input := &organization.CreatePolicyInput{
 		Policy: policyObj,
 	}
-	resp, err := spotinstClient.administration.CreatePolicy(context.Background(), input)
+	resp, err := spotinstClient.organization.CreatePolicy(context.Background(), input)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create policy: %s", err)
 	}
@@ -126,8 +126,8 @@ func resourceOrgPolicyUpdate(ctx context.Context, resourceData *schema.ResourceD
 	return resourceOrgPolicyRead(ctx, resourceData, meta)
 }
 
-func updatePolicy(policy *administration.Policy, resourceData *schema.ResourceData, meta interface{}) error {
-	input := &administration.UpdatePolicyInput{
+func updatePolicy(policy *organization.Policy, resourceData *schema.ResourceData, meta interface{}) error {
+	input := &organization.UpdatePolicyInput{
 		Policy: policy,
 	}
 	if json, err := commons.ToJson(policy); err != nil {
@@ -136,7 +136,7 @@ func updatePolicy(policy *administration.Policy, resourceData *schema.ResourceDa
 		log.Printf("===> policy update configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).administration.UpdatePolicy(context.Background(), input); err != nil {
+	if _, err := meta.(*Client).organization.UpdatePolicy(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] failed to update policy %s: %s", resourceData.Id(), err)
 	}
 	return nil

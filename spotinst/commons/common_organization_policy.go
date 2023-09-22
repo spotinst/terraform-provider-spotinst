@@ -2,10 +2,9 @@ package commons
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
+	"log"
 )
 
 const (
@@ -19,7 +18,7 @@ type OrgPolicyTerraformResource struct {
 }
 
 type OrgPolicyWrapper struct {
-	OrgPolicy *administration.Policy
+	OrgPolicy *organization.Policy
 }
 
 func NewOrgPolicyResource(fieldsMap map[FieldName]*GenericField) *OrgPolicyTerraformResource {
@@ -32,7 +31,7 @@ func NewOrgPolicyResource(fieldsMap map[FieldName]*GenericField) *OrgPolicyTerra
 }
 
 func (res *OrgPolicyTerraformResource) OnRead(
-	OrgPolicy *administration.Policy,
+	OrgPolicy *organization.Policy,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -57,7 +56,7 @@ func (res *OrgPolicyTerraformResource) OnRead(
 
 func (res *OrgPolicyTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*administration.Policy, error) {
+	meta interface{}) (*organization.Policy, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -79,7 +78,7 @@ func (res *OrgPolicyTerraformResource) OnCreate(
 
 func (res *OrgPolicyTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *administration.Policy, error) {
+	meta interface{}) (bool, *organization.Policy, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -105,14 +104,14 @@ func (res *OrgPolicyTerraformResource) OnUpdate(
 
 func NewOrgPolicyWrapper() *OrgPolicyWrapper {
 	return &OrgPolicyWrapper{
-		OrgPolicy: &administration.Policy{},
+		OrgPolicy: &organization.Policy{},
 	}
 }
 
-func (OrgPolicyWrapper *OrgPolicyWrapper) GetOrgPolicy() *administration.Policy {
+func (OrgPolicyWrapper *OrgPolicyWrapper) GetOrgPolicy() *organization.Policy {
 	return OrgPolicyWrapper.OrgPolicy
 }
 
-func (OrgPolicyWrapper *OrgPolicyWrapper) SetOrgPolicy(OrgPolicy *administration.Policy) {
+func (OrgPolicyWrapper *OrgPolicyWrapper) SetOrgPolicy(OrgPolicy *organization.Policy) {
 	OrgPolicyWrapper.OrgPolicy = OrgPolicy
 }

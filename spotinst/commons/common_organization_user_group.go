@@ -2,10 +2,9 @@ package commons
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
+	"log"
 )
 
 const (
@@ -19,7 +18,7 @@ type OrgUserGroupTerraformResource struct {
 }
 
 type OrgUserGroupWrapper struct {
-	OrgUserGroup *administration.UserGroup
+	OrgUserGroup *organization.UserGroup
 }
 
 func NewOrgUserGroupResource(fieldsMap map[FieldName]*GenericField) *OrgUserGroupTerraformResource {
@@ -32,7 +31,7 @@ func NewOrgUserGroupResource(fieldsMap map[FieldName]*GenericField) *OrgUserGrou
 }
 
 func (res *OrgUserGroupTerraformResource) OnRead(
-	OrgUserGroup *administration.UserGroup,
+	OrgUserGroup *organization.UserGroup,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -57,7 +56,7 @@ func (res *OrgUserGroupTerraformResource) OnRead(
 
 func (res *OrgUserGroupTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*administration.UserGroup, error) {
+	meta interface{}) (*organization.UserGroup, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -79,7 +78,7 @@ func (res *OrgUserGroupTerraformResource) OnCreate(
 
 func (res *OrgUserGroupTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *administration.UserGroup, error) {
+	meta interface{}) (bool, *organization.UserGroup, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -105,14 +104,14 @@ func (res *OrgUserGroupTerraformResource) OnUpdate(
 
 func NewOrgUserGroupWrapper() *OrgUserGroupWrapper {
 	return &OrgUserGroupWrapper{
-		OrgUserGroup: &administration.UserGroup{},
+		OrgUserGroup: &organization.UserGroup{},
 	}
 }
 
-func (OrgUserGroupWrapper *OrgUserGroupWrapper) GetOrgUserGroup() *administration.UserGroup {
+func (OrgUserGroupWrapper *OrgUserGroupWrapper) GetOrgUserGroup() *organization.UserGroup {
 	return OrgUserGroupWrapper.OrgUserGroup
 }
 
-func (OrgUserGroupWrapper *OrgUserGroupWrapper) SetOrgUserGroup(OrgUserGroup *administration.UserGroup) {
+func (OrgUserGroupWrapper *OrgUserGroupWrapper) SetOrgUserGroup(OrgUserGroup *organization.UserGroup) {
 	OrgUserGroupWrapper.OrgUserGroup = OrgUserGroup
 }

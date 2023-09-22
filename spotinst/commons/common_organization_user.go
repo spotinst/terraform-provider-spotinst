@@ -2,10 +2,9 @@ package commons
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
+	"log"
 )
 
 const (
@@ -19,7 +18,7 @@ type OrgUserTerraformResource struct {
 }
 
 type OrgUserWrapper struct {
-	orgUser *administration.User
+	orgUser *organization.User
 }
 
 func NewOrgUserResource(fieldsMap map[FieldName]*GenericField) *OrgUserTerraformResource {
@@ -32,7 +31,7 @@ func NewOrgUserResource(fieldsMap map[FieldName]*GenericField) *OrgUserTerraform
 }
 
 func (res *OrgUserTerraformResource) OnRead(
-	orgUser *administration.User,
+	orgUser *organization.User,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -57,7 +56,7 @@ func (res *OrgUserTerraformResource) OnRead(
 
 func (res *OrgUserTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*administration.User, error) {
+	meta interface{}) (*organization.User, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -79,7 +78,7 @@ func (res *OrgUserTerraformResource) OnCreate(
 
 func (res *OrgUserTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *administration.User, error) {
+	meta interface{}) (bool, *organization.User, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -105,14 +104,14 @@ func (res *OrgUserTerraformResource) OnUpdate(
 
 func NewOrgUserWrapper() *OrgUserWrapper {
 	return &OrgUserWrapper{
-		orgUser: &administration.User{},
+		orgUser: &organization.User{},
 	}
 }
 
-func (orgUserWrapper *OrgUserWrapper) GetOrgUser() *administration.User {
+func (orgUserWrapper *OrgUserWrapper) GetOrgUser() *organization.User {
 	return orgUserWrapper.orgUser
 }
 
-func (orgUserWrapper *OrgUserWrapper) SetOrgUser(orgUser *administration.User) {
+func (orgUserWrapper *OrgUserWrapper) SetOrgUser(orgUser *organization.User) {
 	orgUserWrapper.orgUser = orgUser
 }

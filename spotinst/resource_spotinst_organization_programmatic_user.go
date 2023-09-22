@@ -3,8 +3,8 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
-	administrationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organziation_programmatic_user"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
+	organizationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_programmatic_user"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -29,7 +29,7 @@ func resourceOrgProgUser() *schema.Resource {
 func setupOrgProgUser() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
-	administrationPackage.Setup(fieldsMap)
+	organizationPackage.Setup(fieldsMap)
 
 	commons.OrgProgUserResource = commons.NewOrgProgUserResource(fieldsMap)
 }
@@ -39,8 +39,8 @@ func resourceOrgProgUserDelete(ctx context.Context, resourceData *schema.Resourc
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OrgProgUserResource.GetName(), id)
 
-	input := &administration.DeleteUserInput{UserID: spotinst.String(id)}
-	if _, err := meta.(*Client).administration.DeleteUser(context.Background(), input); err != nil {
+	input := &organization.DeleteUserInput{UserID: spotinst.String(id)}
+	if _, err := meta.(*Client).organization.DeleteUser(context.Background(), input); err != nil {
 		return diag.Errorf("[ERROR] Failed to delete user: %s", err)
 	}
 
@@ -54,8 +54,8 @@ func resourceOrgProgUserRead(ctx context.Context, resourceData *schema.ResourceD
 		commons.OrgProgUserResource.GetName(), id)
 
 	client := meta.(*Client)
-	input := &administration.ReadUserInput{UserID: spotinst.String(resourceData.Id())}
-	userResponse, err := client.administration.ReadProgUser(context.Background(), input)
+	input := &organization.ReadUserInput{UserID: spotinst.String(resourceData.Id())}
+	userResponse, err := client.organization.ReadProgUser(context.Background(), input)
 	if err != nil {
 		return diag.Errorf("[ERROR] Failed to read user: %s", err)
 	}
@@ -94,9 +94,9 @@ func resourceOrgProgUserCreate(ctx context.Context, resourceData *schema.Resourc
 	return resourceOrgProgUserRead(ctx, resourceData, meta)
 }
 
-func createProgUser(userObj *administration.ProgrammaticUser, spotinstClient *Client) (*string, error) {
+func createProgUser(userObj *organization.ProgrammaticUser, spotinstClient *Client) (*string, error) {
 	input := userObj
-	resp, err := spotinstClient.administration.CreateProgUser(context.Background(), input)
+	resp, err := spotinstClient.organization.CreateProgUser(context.Background(), input)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create user: %s", err)
 	}
@@ -104,5 +104,35 @@ func createProgUser(userObj *administration.ProgrammaticUser, spotinstClient *Cl
 }
 
 func resourceOrgProgUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return nil
+	id := resourceData.Id()
+	log.Printf(string(commons.ResourceOnUpdate),
+		commons.OrgUserResource.GetName(), id)
+
+	shouldUpdate, user, err := commons.OrgUserResource.OnUpdate(resourceData, meta)
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	//var policies []*organization.UserPolicy = user.Policies
+	var userGroupIds []string = user.UserGroupIds
+
+	if shouldUpdate {
+		user.UserID = spotinst.String(id)
+
+		/*		if policies!=nil {
+				if err := updatePolicyMapping(policies, &id, meta.(*Client)); err != nil {
+					return diag.FromErr(err)
+				}
+			}*/
+
+		if userGroupIds != nil {
+			if err := updateUserGroupMapping(userGroupIds, &id, meta.(*Client)); err != nil {
+				return diag.FromErr(err)
+			}
+		}
+	}
+
+	log.Printf("===> User mapping updated successfully: %s <===", id)
+	return resourceOrgProgUserRead(ctx, resourceData, meta)
 }

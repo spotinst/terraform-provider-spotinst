@@ -3,7 +3,7 @@ package organization_user
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -11,22 +11,13 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Email] = commons.NewGenericField(
-		commons.AdministrationOrgUser,
+		commons.OrganizationUser,
 		Email,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
-			orgUser := orgUserWrapper.GetOrgUser()
-			var value *string = nil
-			if orgUser.Email != nil {
-				value = orgUser.Email
-			}
-			if err := resourceData.Set(string(Email), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Email), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -49,22 +40,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[FirstName] = commons.NewGenericField(
-		commons.AdministrationOrgUser,
+		commons.OrganizationUser,
 		FirstName,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
-			orgUser := orgUserWrapper.GetOrgUser()
-			var value *string = nil
-			if orgUser.FirstName != nil {
-				value = orgUser.FirstName
-			}
-			if err := resourceData.Set(string(FirstName), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(FirstName), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -87,22 +69,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[LastName] = commons.NewGenericField(
-		commons.AdministrationOrgUser,
+		commons.OrganizationUser,
 		LastName,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
-			orgUser := orgUserWrapper.GetOrgUser()
-			var value *string = nil
-			if orgUser.LastName != nil {
-				value = orgUser.LastName
-			}
-			if err := resourceData.Set(string(LastName), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LastName), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -125,7 +98,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Password] = commons.NewGenericField(
-		commons.AdministrationOrgUser,
+		commons.OrganizationUser,
 		Password,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -133,15 +106,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Computed: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
-			orgUser := orgUserWrapper.GetOrgUser()
-			var value *string = nil
-			if orgUser.Password != nil {
-				value = orgUser.Password
-			}
-			if err := resourceData.Set(string(Password), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Password), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -164,22 +128,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Role] = commons.NewGenericField(
-		commons.AdministrationOrgUser,
+		commons.OrganizationUser,
 		Role,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
-			orgUser := orgUserWrapper.GetOrgUser()
-			var value *string = nil
-			if orgUser.Role != nil {
-				value = orgUser.Role
-			}
-			if err := resourceData.Set(string(Role), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Role), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -202,7 +157,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Policies] = commons.NewGenericField(
-		commons.AdministrationOrgProgrammaticUser,
+		commons.OrganizationProgrammaticUser,
 		Policies,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -250,8 +205,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
-			orgProgUser := orgUserWrapper.GetOrgUser()
-			var value []*administration.UserPolicy = nil
+			orgUser := orgUserWrapper.GetOrgUser()
+			var value []*organization.UserPolicy = nil
 			if v, ok := resourceData.GetOk(string(Policies)); ok {
 				if policies, err := expandPolicies(v); err != nil {
 					return err
@@ -259,7 +214,56 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = policies
 				}
 			}
-			orgProgUser.SetUserPolicies(value)
+			orgUser.SetUserPolicies(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[UserGroupIds] = commons.NewGenericField(
+		commons.OrganizationUser,
+		UserGroupIds,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
+			orgUser := orgUserWrapper.GetOrgUser()
+			var value []string = nil
+			if orgUser.UserGroupIds != nil {
+				value = orgUser.UserGroupIds
+			}
+			if value != nil {
+				if err := resourceData.Set(string(UserGroupIds), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserGroupIds), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
+			orgUser := orgUserWrapper.GetOrgUser()
+			if value, ok := resourceData.GetOk(string(UserGroupIds)); ok && value != nil {
+				if userGroupIds, err := expandUserGroupIds(value); err != nil {
+					return err
+				} else {
+					orgUser.SetUserGroupIds(userGroupIds)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
+			orgUser := orgUserWrapper.GetOrgUser()
+			if value, ok := resourceData.GetOk(string(UserGroupIds)); ok && value != nil {
+				if userGroupIds, err := expandUserGroupIds(value); err != nil {
+					return err
+				} else {
+					orgUser.SetUserGroupIds(userGroupIds)
+				}
+			}
 			return nil
 		},
 		nil,
@@ -267,14 +271,26 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-func expandPolicies(data interface{}) ([]*administration.UserPolicy, error) {
+func expandUserGroupIds(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if userGroupId, ok := v.(string); ok && userGroupId != "" {
+			result = append(result, userGroupId)
+		}
+	}
+	return result, nil
+}
+
+func expandPolicies(data interface{}) ([]*organization.UserPolicy, error) {
 	list := data.(*schema.Set).List()
 
 	if list != nil && list[0] != nil {
-		ifaces := make([]*administration.UserPolicy, 0, len(list))
+		ifaces := make([]*organization.UserPolicy, 0, len(list))
 		for _, item := range list {
 			m := item.(map[string]interface{})
-			iface := &administration.UserPolicy{}
+			iface := &organization.UserPolicy{}
 
 			if v, ok := m[string(PolicyAccountIds)]; ok && v != nil {
 				accountIdsList := v.([]interface{})
@@ -299,7 +315,7 @@ func expandPolicies(data interface{}) ([]*administration.UserPolicy, error) {
 	return nil, nil
 }
 
-func flattenPolicies(policies []*administration.UserPolicy) []interface{} {
+func flattenPolicies(policies []*organization.UserPolicy) []interface{} {
 	result := make([]interface{}, 0, len(policies))
 
 	for _, policy := range policies {

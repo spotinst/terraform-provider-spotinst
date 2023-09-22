@@ -19,6 +19,11 @@ resource "spotinst_organization_user" "terraform_user" {
   last_name = "user"
   password = "testUser@123"
   role = "viewer"
+  user_group_ids=["ugr-abcd1234","ugr-defg8763"]
+  policies{
+    policy_id = "pol-abcd1236"
+    policy_account_ids = ["act-abcf4245"]
+  }
 }
 // Update is not supported for this resource.
 ```

@@ -1,4 +1,4 @@
-package organziation_programmatic_user
+package organization_programmatic_user
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
@@ -11,4 +11,5 @@ const (
 	Policies         commons.FieldName = "policies"
 	PolicyAccountIds commons.FieldName = "policy_account_ids"
 	PolicyId         commons.FieldName = "policy_id"
+	UserGroupIds     commons.FieldName = "user_group_ids"
 )

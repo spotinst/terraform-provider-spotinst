@@ -3,7 +3,7 @@ package organization_user_group
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -11,7 +11,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
-		commons.AdministrationOrgUserGroup,
+		commons.OrganizationUserGroup,
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -49,7 +49,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Description] = commons.NewGenericField(
-		commons.AdministrationOrgUserGroup,
+		commons.OrganizationUserGroup,
 		Description,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -87,7 +87,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[UserIds] = commons.NewGenericField(
-		commons.AdministrationOrgUserGroup,
+		commons.OrganizationUserGroup,
 		UserIds,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -95,6 +95,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
+			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
+			var value []string = nil
+			if orgUserGroup.UserIds != nil {
+				value = orgUserGroup.UserIds
+			}
+			if value != nil {
+				if err := resourceData.Set(string(UserIds), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(UserIds), err)
+				}
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -125,7 +136,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Policies] = commons.NewGenericField(
-		commons.AdministrationOrgUserGroup,
+		commons.OrganizationUserGroup,
 		Policies,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -176,14 +187,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func expandPolicies(data interface{}) ([]*administration.UserGroupPolicy, error) {
+func expandPolicies(data interface{}) ([]*organization.UserGroupPolicy, error) {
 	list := data.(*schema.Set).List()
 
 	if list != nil && list[0] != nil {
-		ifaces := make([]*administration.UserGroupPolicy, 0, len(list))
+		ifaces := make([]*organization.UserGroupPolicy, 0, len(list))
 		for _, item := range list {
 			m := item.(map[string]interface{})
-			iface := &administration.UserGroupPolicy{}
+			iface := &organization.UserGroupPolicy{}
 
 			if v, ok := m[string(AccountIds)]; ok {
 				accounts, err := expandAccountIds(v)
@@ -233,7 +244,7 @@ func expandUserIds(data interface{}) ([]string, error) {
 	return result, nil
 }
 
-func flattenPolicies(policies []*administration.UserGroupPolicy) []interface{} {
+func flattenPolicies(policies []*organization.UserGroupPolicy) []interface{} {
 	result := make([]interface{}, 0, len(policies))
 
 	for _, policy := range policies {

@@ -3,7 +3,7 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	stdlog "log"
 	"strings"
 
@@ -50,7 +50,7 @@ type Client struct {
 	managedInstance managedinstance.Service
 	dataIntegration dataintegration.Service
 	statefulNode    stateful.Service
-	administration  administration.Service
+	organization    organization.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
@@ -74,7 +74,7 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		managedInstance: managedinstance.New(sess),
 		dataIntegration: dataintegration.New(sess),
 		statefulNode:    stateful.New(sess),
-		administration:  administration.New(sess),
+		organization:    organization.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")

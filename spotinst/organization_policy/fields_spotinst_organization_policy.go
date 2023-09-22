@@ -3,7 +3,7 @@ package organization_policy
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -11,7 +11,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[Name] = commons.NewGenericField(
-		commons.AdministrationOrgPolicy,
+		commons.OrganizationPolicy,
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -49,7 +49,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Description] = commons.NewGenericField(
-		commons.AdministrationOrgPolicy,
+		commons.OrganizationPolicy,
 		Description,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -87,7 +87,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[PolicyContent] = commons.NewGenericField(
-		commons.AdministrationOrgPolicy,
+		commons.OrganizationPolicy,
 		PolicyContent,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -151,7 +151,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			orgPolicyWrapper := resourceObject.(*commons.OrgPolicyWrapper)
 			orgPolicy := orgPolicyWrapper.GetOrgPolicy()
-			var value *administration.PolicyContent = nil
+			var value *organization.PolicyContent = nil
 			if v, ok := resourceData.GetOk(string(PolicyContent)); ok {
 				if policyContent, err := expandPolicyContent(v); err != nil {
 					return err
@@ -166,9 +166,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func expandPolicyContent(data interface{}) (*administration.PolicyContent, error) {
+func expandPolicyContent(data interface{}) (*organization.PolicyContent, error) {
 	list := data.(*schema.Set).List()
-	policyContent := &administration.PolicyContent{}
+	policyContent := &organization.PolicyContent{}
 
 	if len(list) > 0 {
 		item := list[0]
@@ -190,14 +190,14 @@ func expandPolicyContent(data interface{}) (*administration.PolicyContent, error
 }
 
 // expandStatements sets the values from the plan as objects
-func expandStatements(data interface{}) ([]*administration.Statement, error) {
+func expandStatements(data interface{}) ([]*organization.Statement, error) {
 	list := data.(*schema.Set).List()
-	statements := make([]*administration.Statement, 0, len(list))
+	statements := make([]*organization.Statement, 0, len(list))
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
 
-		statement := &administration.Statement{}
+		statement := &organization.Statement{}
 
 		if v, ok := attr[string(Actions)]; ok {
 			actionsList := v.([]interface{})
@@ -226,13 +226,13 @@ func expandStatements(data interface{}) ([]*administration.Statement, error) {
 	return statements, nil
 }
 
-func flattenPolicyContent(policyContent *administration.PolicyContent) []interface{} {
+func flattenPolicyContent(policyContent *organization.PolicyContent) []interface{} {
 	result := make(map[string]interface{})
 	result[string(Statements)] = flattenStatements(policyContent.Statements)
 	return []interface{}{result}
 }
 
-func flattenStatements(statements []*administration.Statement) []interface{} {
+func flattenStatements(statements []*organization.Statement) []interface{} {
 	result := make([]interface{}, 0, len(statements))
 
 	for _, statement := range statements {

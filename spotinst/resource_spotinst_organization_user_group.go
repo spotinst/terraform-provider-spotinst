@@ -3,8 +3,8 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
-	administrationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_user_group"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
+	organizationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_user_group"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -29,7 +29,7 @@ func resourceOrgUserGroup() *schema.Resource {
 func setupOrgUserGroup() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
-	administrationPackage.Setup(fieldsMap)
+	organizationPackage.Setup(fieldsMap)
 
 	commons.OrgUserGroupResource = commons.NewOrgUserGroupResource(fieldsMap)
 }
@@ -39,8 +39,8 @@ func resourceOrgUserGroupDelete(ctx context.Context, resourceData *schema.Resour
 	log.Printf(string(commons.ResourceOnDelete),
 		commons.OrgUserGroupResource.GetName(), id)
 
-	input := &administration.DeleteUserGroupInput{UserGroupID: spotinst.String(id)}
-	if _, err := meta.(*Client).administration.DeleteUserGroup(context.Background(), input); err != nil {
+	input := &organization.DeleteUserGroupInput{UserGroupID: spotinst.String(id)}
+	if _, err := meta.(*Client).organization.DeleteUserGroup(context.Background(), input); err != nil {
 		return diag.Errorf("[ERROR] Failed to delete User Group: %s", err)
 	}
 
@@ -54,8 +54,8 @@ func resourceOrgUserGroupRead(ctx context.Context, resourceData *schema.Resource
 		commons.OrgUserGroupResource.GetName(), id)
 
 	client := meta.(*Client)
-	input := &administration.ReadUserGroupInput{UserGroupID: spotinst.String(resourceData.Id())}
-	userGroupResponse, err := client.administration.ReadUserGroup(context.Background(), input)
+	input := &organization.ReadUserGroupInput{UserGroupID: spotinst.String(resourceData.Id())}
+	userGroupResponse, err := client.organization.ReadUserGroup(context.Background(), input)
 	if err != nil {
 		return diag.Errorf("[ERROR] Failed to read User Group: %s", err)
 	}
@@ -94,9 +94,9 @@ func resourceOrgUserGroupCreate(ctx context.Context, resourceData *schema.Resour
 	return resourceOrgUserGroupRead(ctx, resourceData, meta)
 }
 
-func createUserGroup(userGroupObj *administration.UserGroup, spotinstClient *Client) (*string, error) {
+func createUserGroup(userGroupObj *organization.UserGroup, spotinstClient *Client) (*string, error) {
 	input := userGroupObj
-	resp, err := spotinstClient.administration.CreateUserGroup(context.Background(), input)
+	resp, err := spotinstClient.organization.CreateUserGroup(context.Background(), input)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create user group: %s", err)
 	}
@@ -115,8 +115,15 @@ func resourceOrgUserGroupUpdate(ctx context.Context, resourceData *schema.Resour
 
 	if shouldUpdate {
 		userGroup.UserGroupId = spotinst.String(id)
-		if err := updateUserGroup(userGroup, resourceData, meta); err != nil {
-			return diag.FromErr(err)
+		if userGroup.UserIds != nil {
+			userIds := userGroup.UserIds
+			updateUserIdsMapping(userIds, &id, meta.(*Client))
+		}
+		userGroup.UserIds = nil
+		if userGroup.Name != nil || userGroup.Description != nil {
+			if err := updateUserGroup(userGroup, resourceData, meta); err != nil {
+				return diag.FromErr(err)
+			}
 		}
 	}
 
@@ -124,7 +131,18 @@ func resourceOrgUserGroupUpdate(ctx context.Context, resourceData *schema.Resour
 	return resourceOrgUserGroupRead(ctx, resourceData, meta)
 }
 
-func updateUserGroup(userGroup *administration.UserGroup, resourceData *schema.ResourceData, meta interface{}) error {
+func updateUserIdsMapping(userIds []string, userGroupId *string, spotinstClient *Client) error {
+	err := spotinstClient.organization.UpdateUserMappingOfUserGroup(context.Background(), &organization.UpdateUserMappingOfUserGroupInput{
+		UserGroupId: userGroupId,
+		UserIds:     userIds,
+	})
+	if err != nil {
+		return fmt.Errorf("[ERROR] failed to update policy mapping for user: %s", err)
+	}
+	return nil
+}
+
+func updateUserGroup(userGroup *organization.UserGroup, resourceData *schema.ResourceData, meta interface{}) error {
 	input := userGroup
 	if json, err := commons.ToJson(userGroup); err != nil {
 		return err
@@ -132,7 +150,7 @@ func updateUserGroup(userGroup *administration.UserGroup, resourceData *schema.R
 		log.Printf("===> user group update configuration: %s", json)
 	}
 
-	if err := meta.(*Client).administration.UpdateUserGroup(context.Background(), input); err != nil {
+	if err := meta.(*Client).organization.UpdateUserGroup(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] failed to update user group %s: %s", resourceData.Id(), err)
 	}
 	return nil

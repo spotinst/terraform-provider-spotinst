@@ -98,10 +98,10 @@ const (
 	ManagedInstanceAWSScheduling          ResourceAffinity = "Managed_Instance_AWS_Scheduling"
 	ManagedInstanceAWSComputeInstanceType ResourceAffinity = "Managed_Instance_AWS_Compute_Instance_Type"
 
-	AdministrationOrgUser             ResourceAffinity = "Administration_Org_User"
-	AdministrationOrgPolicy           ResourceAffinity = "Administration_Org_Policy"
-	AdministrationOrgProgrammaticUser ResourceAffinity = "Administration_Org_Progammatic_User"
-	AdministrationOrgUserGroup        ResourceAffinity = "Administration_Org_User_Group"
+	OrganizationUser             ResourceAffinity = "Organization_User"
+	OrganizationPolicy           ResourceAffinity = "Organization_Policy"
+	OrganizationProgrammaticUser ResourceAffinity = "Organization_Progammatic_User"
+	OrganizationUserGroup        ResourceAffinity = "Organization_User_Group"
 
 	ElastigroupGCP                    ResourceAffinity = "Elastigroup_GCP"
 	ElastigroupGCPDisk                ResourceAffinity = "Elastigroup_GCP_Disk"

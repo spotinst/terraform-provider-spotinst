@@ -2,10 +2,9 @@ package commons
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/administration"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
+	"log"
 )
 
 const (
@@ -19,7 +18,7 @@ type OrgProgUserTerraformResource struct {
 }
 
 type OrgProgUserWrapper struct {
-	orgProgUser *administration.ProgrammaticUser
+	orgProgUser *organization.ProgrammaticUser
 }
 
 func NewOrgProgUserResource(fieldsMap map[FieldName]*GenericField) *OrgProgUserTerraformResource {
@@ -32,7 +31,7 @@ func NewOrgProgUserResource(fieldsMap map[FieldName]*GenericField) *OrgProgUserT
 }
 
 func (res *OrgProgUserTerraformResource) OnRead(
-	orgProgUser *administration.ProgrammaticUser,
+	orgProgUser *organization.ProgrammaticUser,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -57,7 +56,7 @@ func (res *OrgProgUserTerraformResource) OnRead(
 
 func (res *OrgProgUserTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*administration.ProgrammaticUser, error) {
+	meta interface{}) (*organization.ProgrammaticUser, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -79,7 +78,7 @@ func (res *OrgProgUserTerraformResource) OnCreate(
 
 func (res *OrgProgUserTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *administration.ProgrammaticUser, error) {
+	meta interface{}) (bool, *organization.ProgrammaticUser, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -105,14 +104,14 @@ func (res *OrgProgUserTerraformResource) OnUpdate(
 
 func NewOrgProgUserWrapper() *OrgProgUserWrapper {
 	return &OrgProgUserWrapper{
-		orgProgUser: &administration.ProgrammaticUser{},
+		orgProgUser: &organization.ProgrammaticUser{},
 	}
 }
 
-func (orgProgUserWrapper *OrgProgUserWrapper) GetOrgProgUser() *administration.ProgrammaticUser {
+func (orgProgUserWrapper *OrgProgUserWrapper) GetOrgProgUser() *organization.ProgrammaticUser {
 	return orgProgUserWrapper.orgProgUser
 }
 
-func (orgProgUserWrapper *OrgProgUserWrapper) SetOrgProgUser(orgProgUser *administration.ProgrammaticUser) {
+func (orgProgUserWrapper *OrgProgUserWrapper) SetOrgProgUser(orgProgUser *organization.ProgrammaticUser) {
 	orgProgUserWrapper.orgProgUser = orgProgUser
 }
