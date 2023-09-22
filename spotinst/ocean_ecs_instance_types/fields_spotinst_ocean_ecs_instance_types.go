@@ -397,58 +397,76 @@ func expandFilters(data interface{}, nullify bool) (*aws.ECSFilters, error) {
 		}
 	}
 
-	if v, ok := m[string(MaxGpu)].(int); ok && v >= 1 {
-		filters.SetMaxGpu(spotinst.Int(v))
-	} else {
-		filters.SetMaxGpu(nil)
+	if v, ok := m[string(MaxGpu)].(int); ok {
+		if v == -1 {
+			filters.SetMaxGpu(nil)
+		} else {
+			filters.SetMaxGpu(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MaxMemoryGiB)].(float64); ok && v >= 0 {
-		filters.SetMaxMemoryGiB(spotinst.Float64(v))
-	} else {
-		filters.SetMaxMemoryGiB(nil)
+	if v, ok := m[string(MaxMemoryGiB)].(float64); ok {
+		if v == -1 {
+			filters.SetMaxMemoryGiB(nil)
+		} else {
+			filters.SetMaxMemoryGiB(spotinst.Float64(v))
+		}
 	}
 
-	if v, ok := m[string(MaxNetworkPerformance)].(int); ok && v >= 1 {
-		filters.SetMaxNetworkPerformance(spotinst.Int(v))
-	} else {
-		filters.SetMaxNetworkPerformance(nil)
+	if v, ok := m[string(MaxNetworkPerformance)].(int); ok {
+		if v == -1 {
+			filters.SetMaxNetworkPerformance(nil)
+		} else {
+			filters.SetMaxNetworkPerformance(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MaxVcpu)].(int); ok && v >= 1 {
-		filters.SetMaxVcpu(spotinst.Int(v))
-	} else {
-		filters.SetMaxVcpu(nil)
+	if v, ok := m[string(MaxVcpu)].(int); ok {
+		if v == -1 {
+			filters.SetMaxVcpu(nil)
+		} else {
+			filters.SetMaxVcpu(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MinEnis)].(int); ok && v >= 0 {
-		filters.SetMinEnis(spotinst.Int(v))
-	} else {
-		filters.SetMinEnis(nil)
+	if v, ok := m[string(MinEnis)].(int); ok {
+		if v == -1 {
+			filters.SetMinEnis(nil)
+		} else {
+			filters.SetMinEnis(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MinGpu)].(int); ok && v >= 0 {
-		filters.SetMinGpu(spotinst.Int(v))
-	} else {
-		filters.SetMinGpu(nil)
+	if v, ok := m[string(MinGpu)].(int); ok {
+		if v == -1 {
+			filters.SetMinGpu(nil)
+		} else {
+			filters.SetMinGpu(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MinMemoryGiB)].(float64); ok && v >= 0 {
-		filters.SetMinMemoryGiB(spotinst.Float64(v))
-	} else {
-		filters.SetMinMemoryGiB(nil)
+	if v, ok := m[string(MinMemoryGiB)].(float64); ok {
+		if v == -1 {
+			filters.SetMinMemoryGiB(nil)
+		} else {
+			filters.SetMinMemoryGiB(spotinst.Float64(v))
+		}
 	}
 
-	if v, ok := m[string(MinNetworkPerformance)].(int); ok && v >= 0 {
-		filters.SetMinNetworkPerformance(spotinst.Int(v))
-	} else {
-		filters.SetMinNetworkPerformance(nil)
+	if v, ok := m[string(MinNetworkPerformance)].(int); ok {
+		if v == -1 {
+			filters.SetMinNetworkPerformance(nil)
+		} else {
+			filters.SetMinNetworkPerformance(spotinst.Int(v))
+		}
 	}
 
-	if v, ok := m[string(MinVcpu)].(int); ok && v >= 0 {
-		filters.SetMinVcpu(spotinst.Int(v))
-	} else {
-		filters.SetMinVcpu(nil)
+	if v, ok := m[string(MinVcpu)].(int); ok {
+		if v == -1 {
+			filters.SetMinVcpu(nil)
+		} else {
+			filters.SetMinVcpu(spotinst.Int(v))
+		}
 	}
 
 	if v, ok := m[string(RootDeviceTypes)]; ok {
@@ -511,17 +529,46 @@ func flattenFilters(filters *aws.ECSFilters) []interface{} {
 
 	if filters != nil {
 		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(MaxGpu)] = value
+		result[string(MinGpu)] = value
+		result[string(MaxMemoryGiB)] = value
+		result[string(MinMemoryGiB)] = value
+		result[string(MaxVcpu)] = value
+		result[string(MinVcpu)] = value
+		result[string(MaxNetworkPerformance)] = value
+		result[string(MinNetworkPerformance)] = value
+		result[string(MinEnis)] = value
+
+		if filters.MaxGpu != nil {
+			result[string(MaxGpu)] = spotinst.IntValue(filters.MaxGpu)
+		}
+		if filters.MinGpu != nil {
+			result[string(MinGpu)] = spotinst.IntValue(filters.MinGpu)
+		}
+		if filters.MaxMemoryGiB != nil {
+			result[string(MaxMemoryGiB)] = spotinst.Float64Value(filters.MaxMemoryGiB)
+		}
+		if filters.MinMemoryGiB != nil {
+			result[string(MinMemoryGiB)] = spotinst.Float64Value(filters.MinMemoryGiB)
+		}
+		if filters.MaxVcpu != nil {
+			result[string(MaxVcpu)] = spotinst.IntValue(filters.MaxVcpu)
+		}
+		if filters.MinVcpu != nil {
+			result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)
+		}
+		if filters.MaxNetworkPerformance != nil {
+			result[string(MaxNetworkPerformance)] = spotinst.IntValue(filters.MaxNetworkPerformance)
+		}
+		if filters.MinNetworkPerformance != nil {
+			result[string(MinNetworkPerformance)] = spotinst.IntValue(filters.MinNetworkPerformance)
+		}
+		if filters.MinEnis != nil {
+			result[string(MinEnis)] = spotinst.IntValue(filters.MinEnis)
+		}
 
 		result[string(ExcludeMetal)] = spotinst.BoolValue(filters.ExcludeMetal)
-		result[string(MaxGpu)] = spotinst.IntValue(filters.MaxGpu)
-		result[string(MinGpu)] = spotinst.IntValue(filters.MinGpu)
-		result[string(MaxMemoryGiB)] = spotinst.Float64Value(filters.MaxMemoryGiB)
-		result[string(MinMemoryGiB)] = spotinst.Float64Value(filters.MinMemoryGiB)
-		result[string(MaxVcpu)] = spotinst.IntValue(filters.MaxVcpu)
-		result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)
-		result[string(MaxNetworkPerformance)] = spotinst.IntValue(filters.MaxNetworkPerformance)
-		result[string(MinNetworkPerformance)] = spotinst.IntValue(filters.MinNetworkPerformance)
-		result[string(MinEnis)] = spotinst.IntValue(filters.MinEnis)
 
 		if filters.IsEnaSupported != nil {
 			if *filters.IsEnaSupported == true {
