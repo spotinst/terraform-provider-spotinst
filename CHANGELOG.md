@@ -1,5 +1,14 @@
 ## Unreleased
 
+## 1.140.0 (September, 22 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+* resource/spotinst_ocean_ecs: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+
+## 1.139.0 (September, 15 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `dynamic_iops` object in `ebs`
+
 ## 1.138.0 (September, 13 2023)
 NOTES:
 * resource/spotinst_ocean_aks_np: Added basic cluster creation usage example
