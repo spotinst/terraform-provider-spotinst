@@ -83,9 +83,27 @@ func resourceOrgProgUserCreate(ctx context.Context, resourceData *schema.Resourc
 		return diag.FromErr(err)
 	}
 
+	var userGroupIds = progUser.UserGroupIds
+
+	progUser.UserGroupIds = nil
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	userId, err := createProgUser(progUser, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
+	}
+
+	var updateErr error = nil
+
+	if userGroupIds != nil {
+		updateErr = updateUserGroupMapping(userGroupIds, userId, meta.(*Client))
+	}
+
+	if updateErr != nil {
+		return diag.FromErr(updateErr)
 	}
 
 	resourceData.SetId(spotinst.StringValue(userId))
@@ -106,25 +124,52 @@ func createProgUser(userObj *organization.ProgrammaticUser, spotinstClient *Clie
 func resourceOrgProgUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
-		commons.OrgUserResource.GetName(), id)
+		commons.OrgProgUserResource.GetName(), id)
 
-	shouldUpdate, user, err := commons.OrgUserResource.OnUpdate(resourceData, meta)
+	shouldUpdate, user, err := commons.OrgProgUserResource.OnUpdate(resourceData, meta)
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	//var policies []*organization.UserPolicy = user.Policies
+	var policies []*organization.ProgPolicy = user.Policies
 	var userGroupIds []string = user.UserGroupIds
 
 	if shouldUpdate {
-		user.UserID = spotinst.String(id)
-
-		/*		if policies!=nil {
-				if err := updatePolicyMapping(policies, &id, meta.(*Client)); err != nil {
-					return diag.FromErr(err)
+		user.ProgUserId = spotinst.String(id)
+		var accountIds []string
+		if policies != nil {
+			for _, policy := range policies {
+				for _, actId := range policy.AccountIds {
+					if spotinst.StringValue(policy.PolicyId) != "3" {
+						for i := 0; i < len(policy.AccountIds); i++ {
+							if accountIds != nil {
+								if accountIds[i] == actId {
+									break
+								}
+							}
+							accountIds = append(accountIds, actId)
+						}
+					}
 				}
-			}*/
+			}
+			var accountViewerPolicy organization.ProgPolicy
+			accountViewerPolicy.PolicyId = spotinst.String("3")
+			accountViewerPolicy.AccountIds = accountIds
+			policies = append(policies, &accountViewerPolicy)
+			var policiesToUpdate []*organization.UserPolicy
+			var policyToUpdate *organization.UserPolicy
+			for _, policy := range policies {
+				policyToUpdate = &organization.UserPolicy{
+					PolicyId:   policy.PolicyId,
+					AccountIds: policy.AccountIds,
+				}
+				policiesToUpdate = append(policiesToUpdate, policyToUpdate)
+			}
+			if err := updatePolicyMapping(policiesToUpdate, &id, meta.(*Client)); err != nil {
+				return diag.FromErr(err)
+			}
+		}
 
 		if userGroupIds != nil {
 			if err := updateUserGroupMapping(userGroupIds, &id, meta.(*Client)); err != nil {

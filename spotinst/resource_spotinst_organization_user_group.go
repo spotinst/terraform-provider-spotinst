@@ -113,8 +113,44 @@ func resourceOrgUserGroupUpdate(ctx context.Context, resourceData *schema.Resour
 		return diag.FromErr(err)
 	}
 
+	var policies []*organization.UserGroupPolicy = userGroup.Policies
+	userGroup.UserGroupId = spotinst.String(id)
+
 	if shouldUpdate {
-		userGroup.UserGroupId = spotinst.String(id)
+		var accountIds []string
+		if policies != nil {
+			for _, policy := range policies {
+				for _, actId := range policy.AccountIds {
+					if spotinst.StringValue(policy.PolicyId) != "3" {
+						for i := 0; i < len(policy.AccountIds); i++ {
+							if accountIds != nil {
+								if accountIds[i] == actId {
+									break
+								}
+							}
+							accountIds = append(accountIds, actId)
+						}
+					}
+				}
+			}
+			var accountViewerPolicy organization.UserGroupPolicy
+			accountViewerPolicy.PolicyId = spotinst.String("3")
+			accountViewerPolicy.AccountIds = accountIds
+			policies = append(policies, &accountViewerPolicy)
+			var policiesToUpdate []*organization.UserPolicy
+			var policyToUpdate *organization.UserPolicy
+			for _, policy := range policies {
+				policyToUpdate = &organization.UserPolicy{
+					PolicyId:   policy.PolicyId,
+					AccountIds: policy.AccountIds,
+				}
+				policiesToUpdate = append(policiesToUpdate, policyToUpdate)
+			}
+			if err := updatePolicyMappingOfUserGroup(policiesToUpdate, &id, meta.(*Client)); err != nil {
+				return diag.FromErr(err)
+			}
+		}
+
 		if userGroup.UserIds != nil {
 			userIds := userGroup.UserIds
 			updateUserIdsMapping(userIds, &id, meta.(*Client))
@@ -129,6 +165,17 @@ func resourceOrgUserGroupUpdate(ctx context.Context, resourceData *schema.Resour
 
 	log.Printf("===> User Group updated successfully: %s <===", id)
 	return resourceOrgUserGroupRead(ctx, resourceData, meta)
+}
+
+func updatePolicyMappingOfUserGroup(policies []*organization.UserPolicy, userGroupId *string, spotinstClient *Client) error {
+	err := spotinstClient.organization.UpdatePolicyMappingOfUserGroup(context.Background(), &organization.UpdatePolicyMappingOfUserGroupInput{
+		UserGroupId: userGroupId,
+		Policies:    policies,
+	})
+	if err != nil {
+		return fmt.Errorf("[ERROR] failed to update policy mapping for user: %s", err)
+	}
+	return nil
 }
 
 func updateUserIdsMapping(userIds []string, userGroupId *string, spotinstClient *Client) error {

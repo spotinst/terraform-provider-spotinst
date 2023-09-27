@@ -165,8 +165,26 @@ func resourceOrgUserUpdate(ctx context.Context, resourceData *schema.ResourceDat
 
 	if shouldUpdate {
 		user.UserID = spotinst.String(id)
-
+		var accountIds []string
 		if policies != nil {
+			for _, policy := range policies {
+				for _, actId := range policy.AccountIds {
+					if spotinst.StringValue(policy.PolicyId) != "3" {
+						for i := 0; i < len(policy.AccountIds); i++ {
+							if accountIds != nil {
+								if accountIds[i] == actId {
+									break
+								}
+							}
+							accountIds = append(accountIds, actId)
+						}
+					}
+				}
+			}
+			var accountViewerPolicy organization.UserPolicy
+			accountViewerPolicy.PolicyId = spotinst.String("3")
+			accountViewerPolicy.AccountIds = accountIds
+			policies = append(policies, &accountViewerPolicy)
 			if err := updatePolicyMapping(policies, &id, meta.(*Client)); err != nil {
 				return diag.FromErr(err)
 			}

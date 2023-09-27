@@ -157,6 +157,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
+			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
+			var result []interface{} = nil
+			if orgUserGroup.Policies != nil {
+				policies := orgUserGroup.Policies
+				result = flattenPolicies(policies)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Policies), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Policies), err)
+				}
+			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
