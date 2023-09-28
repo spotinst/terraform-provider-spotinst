@@ -3,13 +3,13 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/account"
 	stdlog "log"
 	"strings"
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
+	"github.com/spotinst/spotinst-sdk-go/service/account"
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
