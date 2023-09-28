@@ -237,6 +237,7 @@ The following arguments are supported:
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
 * `os_type` - (Optional, Enum:`"Linux","Windows"`) The OS type of the OS disk. Can't be modified once set.
+* `os_sku` - (Optional, Enum: `"Ubuntu", "Windows2019", "Windows2022", "AzureLinux", "CBLMariner"`) The OS SKU of the OS type. Must correlate with the os type.
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `spot_percentage` - (Optional,Default: `100`) Percentage of spot VMs to maintain.
