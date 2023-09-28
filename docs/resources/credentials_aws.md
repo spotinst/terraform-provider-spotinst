@@ -1,20 +1,20 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: set_credential_aws"
-subcategory: "Set Credential"
+page_title: "Spotinst: credentials_aws"
+subcategory: "Credentials"
 description: |-
-  Provides a Spotinst set credential AWS resource.
+  Provides a Spotinst credential AWS resource.
 ---
 
-# spotinst\_set\_credential\_aws
+# spotinst\_credentials\_aws
 
-Provides a Spotinst set credential AWS resource.
+Provides a Spotinst credential AWS resource.
 
 ## Example Usage
 
 ```hcl
 # set credential AWS
-resource "spotinst_set_credential_aws" "credential" {
+resource "spotinst_credentials_aws" "credential" {
   iamrole = "arn:aws:iam::1234567890:role/Spot_Iam_Role"
   accountid = "act-123456"
 }

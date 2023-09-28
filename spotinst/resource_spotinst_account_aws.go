@@ -63,15 +63,14 @@ func createAWSAccount(account *aws.Account, spotinstClient *Client) (*string, er
 		log.Printf("===> Account create configuration: %s", json)
 	}
 
-	var resp *aws.CreateAccountOutput = nil
+	var output *aws.CreateAccountOutput = nil
 	input := &aws.CreateAccountInput{Account: account}
-	println(input)
-	resp, err := spotinstClient.account.CloudProviderAWS().CreateAccount(context.Background(), input)
+	output, err := spotinstClient.account.CloudProviderAWS().CreateAccount(context.Background(), input)
 
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create account: %s", err)
 	}
-	return resp.Account.ID, nil
+	return output.Account.ID, nil
 }
 
 const ErrCodeAccountNotFound = "Account_DOESNT_EXIST"
@@ -82,7 +81,7 @@ func resourceSpotinstAccountAWSRead(ctx context.Context, resourceData *schema.Re
 		commons.AccountAWSResource.GetName(), id)
 
 	input := &aws.ReadAccountInput{AccountID: spotinst.String(id)}
-	resp, err := meta.(*Client).account.CloudProviderAWS().ReadAccount(context.Background(), input)
+	output, err := meta.(*Client).account.CloudProviderAWS().ReadAccount(context.Background(), input)
 
 	if err != nil {
 		// If the account was not found, return nil so that we can show
@@ -101,7 +100,7 @@ func resourceSpotinstAccountAWSRead(ctx context.Context, resourceData *schema.Re
 	}
 
 	// if nothing was found, return no state
-	accountResponse := resp.Account
+	accountResponse := output.Account
 	if accountResponse == nil {
 		resourceData.SetId("")
 		return nil

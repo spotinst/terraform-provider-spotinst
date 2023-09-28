@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: account_aws"
-subcategory: "Account"
+subcategory: "Accounts"
 description: |-
   Provides a Spotinst account resource.
 ---

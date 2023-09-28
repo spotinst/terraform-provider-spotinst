@@ -94,7 +94,7 @@ func Provider() *schema.Provider {
 			string(commons.AccountAWSResourceName): resourceSpotinstAccountAWS(),
 
 			// AWS set credential
-			string(commons.SetCredentialAWSResourceName): resourceSpotinstCredentialAWS(),
+			string(commons.CredentialsAWSResourceName): resourceSpotinstCredentialsAWS(),
 		},
 	}
 

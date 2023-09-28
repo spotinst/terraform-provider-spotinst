@@ -1,4 +1,4 @@
-package credential_aws
+package credentials_aws
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 

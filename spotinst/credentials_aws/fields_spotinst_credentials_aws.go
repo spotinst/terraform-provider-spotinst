@@ -1,4 +1,4 @@
-package credential_aws
+package credentials_aws
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[IamRole] = commons.NewGenericField(
-		commons.CredentialAWS,
+		commons.CredentialsAWS,
 		IamRole,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -18,11 +18,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			ForceNew: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			credentialWrapper := resourceObject.(*commons.AWSCredentialWrapper)
-			credential := credentialWrapper.GetCredential()
+			credentialsWrapper := resourceObject.(*commons.AWSCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
 			var value *string = nil
-			if credential.IamRole != nil {
-				value = credential.IamRole
+			if credentials.IamRole != nil {
+				value = credentials.IamRole
 			}
 			if err := resourceData.Set(string(IamRole), value); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IamRole), err)
@@ -30,22 +30,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			credentialWrapper := resourceObject.(*commons.AWSCredentialWrapper)
-			credential := credentialWrapper.GetCredential()
-			credential.SetIamRole(spotinst.String(resourceData.Get(string(IamRole)).(string)))
+			credentialsWrapper := resourceObject.(*commons.AWSCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
+			credentials.SetIamRole(spotinst.String(resourceData.Get(string(IamRole)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			credentialWrapper := resourceObject.(*commons.AWSCredentialWrapper)
-			credential := credentialWrapper.GetCredential()
-			credential.SetIamRole(spotinst.String(resourceData.Get(string(IamRole)).(string)))
+			credentialsWrapper := resourceObject.(*commons.AWSCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
+			credentials.SetIamRole(spotinst.String(resourceData.Get(string(IamRole)).(string)))
 			return nil
 		},
 		nil,
 	)
 
 	fieldsMap[AccountId] = commons.NewGenericField(
-		commons.CredentialAWS,
+		commons.CredentialsAWS,
 		AccountId,
 		&schema.Schema{
 			Type:     schema.TypeString,
@@ -53,11 +53,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			ForceNew: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			credentialWrapper := resourceObject.(*commons.AWSCredentialWrapper)
-			credential := credentialWrapper.GetCredential()
+			credentialsWrapper := resourceObject.(*commons.AWSCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
 			var value *string = nil
-			if credential.AccountId != nil {
-				value = credential.AccountId
+			if credentials.AccountId != nil {
+				value = credentials.AccountId
 			}
 			if err := resourceData.Set(string(AccountId), value); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AccountId), err)
@@ -65,15 +65,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			credentialWrapper := resourceObject.(*commons.AWSCredentialWrapper)
-			credential := credentialWrapper.GetCredential()
-			credential.SetAccountId(spotinst.String(resourceData.Get(string(AccountId)).(string)))
+			credentialsWrapper := resourceObject.(*commons.AWSCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
+			credentials.SetAccountId(spotinst.String(resourceData.Get(string(AccountId)).(string)))
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			credentialWrapper := resourceObject.(*commons.AWSCredentialWrapper)
-			credential := credentialWrapper.GetCredential()
-			credential.SetAccountId(spotinst.String(resourceData.Get(string(AccountId)).(string)))
+			credentialsWrapper := resourceObject.(*commons.AWSCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
+			credentials.SetAccountId(spotinst.String(resourceData.Get(string(AccountId)).(string)))
 			return nil
 		},
 		nil,

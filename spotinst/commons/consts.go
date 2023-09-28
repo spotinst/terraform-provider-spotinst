@@ -188,7 +188,7 @@ const (
 	OceanAKSNPVirtualNodeGroupNodePoolProperties ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Node_Pool_Properties"
 	OceanAKSNPVirtualNodeGroupVmSizes            ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Vm_Sizes"
 	AccountAWS                                   ResourceAffinity = "Account_AWS"
-	CredentialAWS                                ResourceAffinity = "Credential_AWS"
+	CredentialsAWS                               ResourceAffinity = "Credentials_AWS"
 
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
