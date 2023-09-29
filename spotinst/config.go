@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/meta"
+	"github.com/spotinst/spotinst-sdk-go/service/account"
 	"github.com/spotinst/spotinst-sdk-go/service/dataintegration"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup"
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
@@ -49,6 +50,7 @@ type Client struct {
 	managedInstance managedinstance.Service
 	dataIntegration dataintegration.Service
 	statefulNode    stateful.Service
+	account         account.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
@@ -72,6 +74,7 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		managedInstance: managedinstance.New(sess),
 		dataIntegration: dataintegration.New(sess),
 		statefulNode:    stateful.New(sess),
+		account:         account.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")
