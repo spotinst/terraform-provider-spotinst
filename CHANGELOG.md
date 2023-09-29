@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.142.0 (September 29, 2023)
+FEATURES:
+* **New Resource:** `resource/spotinst_account_aws`
+* **New Resource:** `resource/spotinst_credentials_aws`
+
 ## 1.141.0 (September, 29 2023)
 BUG FIXES:
 * resource/spotinst_ocean_aks_np: Fix for `os_sku` and `availability_zones` fields
