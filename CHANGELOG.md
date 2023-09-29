@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.141.0 (September, 29 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fix for `os_sku` and `availability_zones` fields
+
 ## 1.140.0 (September, 22 2023)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
