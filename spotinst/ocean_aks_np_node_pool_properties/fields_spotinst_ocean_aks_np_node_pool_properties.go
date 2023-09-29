@@ -242,6 +242,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetNPCluster()
 			if v, ok := resourceData.GetOk(string(OsSKU)); ok {
 				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetOsSKU(spotinst.String(v.(string)))
+			} else {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetOsSKU(nil)
 			}
 			return nil
 		},
