@@ -3,6 +3,8 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/account/providers/aws"
@@ -10,7 +12,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/account_aws"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-	"log"
 )
 
 func resourceSpotinstAccountAWS() *schema.Resource {
