@@ -259,7 +259,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
 			orgUser := orgUserWrapper.GetOrgUser()
-			if value, ok := resourceData.GetOk(string(UserGroupIds)); ok && value != nil {
+			if value, ok := resourceData.GetOk(string(UserGroupIds)); ok {
 				if userGroupIds, err := expandUserGroupIds(value); err != nil {
 					return err
 				} else {
