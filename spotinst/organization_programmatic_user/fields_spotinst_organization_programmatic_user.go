@@ -18,11 +18,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			var value *string = nil
-			if orgProgUser.Name != nil {
-				value = orgProgUser.Name
+			if orgProgrammaticUser.Name != nil {
+				value = orgProgrammaticUser.Name
 			}
 			if err := resourceData.Set(string(Name), value); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Name), err)
@@ -30,18 +30,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if v, ok := resourceData.GetOk(string(Name)); ok && v != "" {
-				orgProgUser.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+				orgProgrammaticUser.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if v, ok := resourceData.GetOk(string(Name)); ok && v != "" {
-				orgProgUser.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+				orgProgrammaticUser.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
 			}
 			return nil
 		},
@@ -56,11 +56,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			var value *string = nil
-			if orgProgUser.Description != nil {
-				value = orgProgUser.Description
+			if orgProgrammaticUser.Description != nil {
+				value = orgProgrammaticUser.Description
 			}
 			if err := resourceData.Set(string(Description), value); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Description), err)
@@ -68,18 +68,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if v, ok := resourceData.GetOk(string(Description)); ok && v != "" {
-				orgProgUser.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
+				orgProgrammaticUser.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if v, ok := resourceData.GetOk(string(Description)); ok && v != "" {
-				orgProgUser.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
+				orgProgrammaticUser.SetDescription(spotinst.String(resourceData.Get(string(Description)).(string)))
 			}
 			return nil
 		},
@@ -107,11 +107,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			var result []interface{} = nil
-			if orgProgUser.Policies != nil {
-				policies := orgProgUser.Policies
+			if orgProgrammaticUser.Policies != nil {
+				policies := orgProgrammaticUser.Policies
 				result = flattenPolicies(policies)
 			}
 			if result != nil {
@@ -122,20 +122,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if v, ok := resourceData.GetOk(string(Policies)); ok {
 				if policies, err := expandPolicies(v); err != nil {
 					return err
 				} else {
-					orgProgUser.SetPolicies(policies)
+					orgProgrammaticUser.SetPolicies(policies)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			var value []*organization.ProgPolicy = nil
 			if v, ok := resourceData.GetOk(string(Policies)); ok {
 				if policies, err := expandPolicies(v); err != nil {
@@ -144,7 +144,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = policies
 				}
 			}
-			orgProgUser.SetPolicies(value)
+			orgProgrammaticUser.SetPolicies(value)
 			return nil
 		},
 		nil,
@@ -170,11 +170,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			var result []interface{} = nil
-			if orgProgUser.Accounts != nil {
-				accounts := orgProgUser.Accounts
+			if orgProgrammaticUser.Accounts != nil {
+				accounts := orgProgrammaticUser.Accounts
 				result = flattenAccounts(accounts)
 			}
 			if result != nil {
@@ -185,20 +185,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if v, ok := resourceData.GetOk(string(Accounts)); ok {
 				if accounts, err := expandAccounts(v); err != nil {
 					return err
 				} else {
-					orgProgUser.SetAccounts(accounts)
+					orgProgrammaticUser.SetAccounts(accounts)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			var value []*organization.Account = nil
 			if v, ok := resourceData.GetOk(string(Accounts)); ok {
 				if accounts, err := expandAccounts(v); err != nil {
@@ -207,14 +207,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = accounts
 				}
 			}
-			orgProgUser.SetAccounts(value)
+			orgProgrammaticUser.SetAccounts(value)
 			return nil
 		},
 		nil,
 	)
 
 	fieldsMap[UserGroupIds] = commons.NewGenericField(
-		commons.OrganizationUser,
+		commons.OrganizationProgrammaticUser,
 		UserGroupIds,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -222,11 +222,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgUserWrapper.GetOrgProgUser()
+			orgUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgUserWrapper.GetOrgProgrammaticUser()
 			var value []string = nil
-			if orgProgUser.UserGroupIds != nil {
-				value = orgProgUser.UserGroupIds
+			if orgProgrammaticUser.UserGroupIds != nil {
+				value = orgProgrammaticUser.UserGroupIds
 			}
 			if value != nil {
 				if err := resourceData.Set(string(UserGroupIds), value); err != nil {
@@ -236,25 +236,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if value, ok := resourceData.GetOk(string(UserGroupIds)); ok && value != nil {
 				if userGroupIds, err := expandUserGroupIds(value); err != nil {
 					return err
 				} else {
-					orgProgUser.SetProgUserGroupIds(userGroupIds)
+					orgProgrammaticUser.SetProgUserGroupIds(userGroupIds)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			orgProgUserWrapper := resourceObject.(*commons.OrgProgUserWrapper)
-			orgProgUser := orgProgUserWrapper.GetOrgProgUser()
+			orgProgrammaticUserWrapper := resourceObject.(*commons.OrgProgrammaticUserWrapper)
+			orgProgrammaticUser := orgProgrammaticUserWrapper.GetOrgProgrammaticUser()
 			if value, ok := resourceData.GetOk(string(UserGroupIds)); ok && value != nil {
 				if userGroupIds, err := expandUserGroupIds(value); err != nil {
 					return err
 				} else {
-					orgProgUser.SetProgUserGroupIds(userGroupIds)
+					orgProgrammaticUser.SetProgUserGroupIds(userGroupIds)
 				}
 			}
 			return nil

@@ -8,53 +8,29 @@ import (
 )
 
 const (
-	OrgProgUserResourceName ResourceName = "spotinst_organization_programmatic_user"
+	OrgProgrammaticUserResourceName ResourceName = "spotinst_organization_programmatic_user"
 )
 
-var OrgProgUserResource *OrgProgUserTerraformResource
+var OrgProgrammaticUserResource *OrgProgrammaticUserTerraformResource
 
-type OrgProgUserTerraformResource struct {
+type OrgProgrammaticUserTerraformResource struct {
 	GenericResource
 }
 
-type OrgProgUserWrapper struct {
-	orgProgUser *organization.ProgrammaticUser
+type OrgProgrammaticUserWrapper struct {
+	orgProgrammaticUser *organization.ProgrammaticUser
 }
 
-func NewOrgProgUserResource(fieldsMap map[FieldName]*GenericField) *OrgProgUserTerraformResource {
-	return &OrgProgUserTerraformResource{
+func NewOrgProgrammaticUserResource(fieldsMap map[FieldName]*GenericField) *OrgProgrammaticUserTerraformResource {
+	return &OrgProgrammaticUserTerraformResource{
 		GenericResource: GenericResource{
-			resourceName: OrgProgUserResourceName,
+			resourceName: OrgProgrammaticUserResourceName,
 			fields:       NewGenericFields(fieldsMap),
 		},
 	}
 }
 
-func (res *OrgProgUserTerraformResource) OnRead(
-	orgProgUser *organization.ProgrammaticUser,
-	resourceData *schema.ResourceData,
-	meta interface{}) error {
-
-	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return fmt.Errorf("resource fields are nil or empty, cannot read")
-	}
-
-	orgProgUserWrapper := NewOrgProgUserWrapper()
-	orgProgUserWrapper.SetOrgProgUser(orgProgUser)
-
-	for _, field := range res.fields.fieldsMap {
-		if field.onRead == nil {
-			continue
-		}
-		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onRead(orgProgUserWrapper, resourceData, meta); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (res *OrgProgUserTerraformResource) OnCreate(
+func (res *OrgProgrammaticUserTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
 	meta interface{}) (*organization.ProgrammaticUser, error) {
 
@@ -62,21 +38,45 @@ func (res *OrgProgUserTerraformResource) OnCreate(
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	orgProgUserWrapper := NewOrgProgUserWrapper()
+	orgProgrammaticUserWrapper := NewOrgProgrammaticUserWrapper()
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(orgProgUserWrapper, resourceData, meta); err != nil {
+		if err := field.onCreate(orgProgrammaticUserWrapper, resourceData, meta); err != nil {
 			return nil, err
 		}
 	}
-	return orgProgUserWrapper.GetOrgProgUser(), nil
+	return orgProgrammaticUserWrapper.GetOrgProgrammaticUser(), nil
 }
 
-func (res *OrgProgUserTerraformResource) OnUpdate(
+func (res *OrgProgrammaticUserTerraformResource) OnRead(
+	orgProgrammaticUser *organization.ProgrammaticUser,
+	resourceData *schema.ResourceData,
+	meta interface{}) error {
+
+	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
+		return fmt.Errorf("resource fields are nil or empty, cannot read")
+	}
+
+	orgProgrammaticUserWrapper := NewOrgProgrammaticUserWrapper()
+	orgProgrammaticUserWrapper.SetOrgProgrammaticUser(orgProgrammaticUser)
+
+	for _, field := range res.fields.fieldsMap {
+		if field.onRead == nil {
+			continue
+		}
+		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
+		if err := field.onRead(orgProgrammaticUserWrapper, resourceData, meta); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (res *OrgProgrammaticUserTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
 	meta interface{}) (bool, *organization.ProgrammaticUser, error) {
 
@@ -84,7 +84,7 @@ func (res *OrgProgUserTerraformResource) OnUpdate(
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	orgProgUserWrapper := NewOrgProgUserWrapper()
+	orgProgrammaticUserWrapper := NewOrgProgrammaticUserWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -92,26 +92,26 @@ func (res *OrgProgUserTerraformResource) OnUpdate(
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
-			if err := field.onUpdate(orgProgUserWrapper, resourceData, meta); err != nil {
+			if err := field.onUpdate(orgProgrammaticUserWrapper, resourceData, meta); err != nil {
 				return false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, orgProgUserWrapper.GetOrgProgUser(), nil
+	return hasChanged, orgProgrammaticUserWrapper.GetOrgProgrammaticUser(), nil
 }
 
-func NewOrgProgUserWrapper() *OrgProgUserWrapper {
-	return &OrgProgUserWrapper{
-		orgProgUser: &organization.ProgrammaticUser{},
+func NewOrgProgrammaticUserWrapper() *OrgProgrammaticUserWrapper {
+	return &OrgProgrammaticUserWrapper{
+		orgProgrammaticUser: &organization.ProgrammaticUser{},
 	}
 }
 
-func (orgProgUserWrapper *OrgProgUserWrapper) GetOrgProgUser() *organization.ProgrammaticUser {
-	return orgProgUserWrapper.orgProgUser
+func (orgProgrammaticUserWrapper *OrgProgrammaticUserWrapper) GetOrgProgrammaticUser() *organization.ProgrammaticUser {
+	return orgProgrammaticUserWrapper.orgProgrammaticUser
 }
 
-func (orgProgUserWrapper *OrgProgUserWrapper) SetOrgProgUser(orgProgUser *organization.ProgrammaticUser) {
-	orgProgUserWrapper.orgProgUser = orgProgUser
+func (orgProgrammaticUserWrapper *OrgProgrammaticUserWrapper) SetOrgProgrammaticUser(orgProgrammaticUser *organization.ProgrammaticUser) {
+	orgProgrammaticUserWrapper.orgProgrammaticUser = orgProgrammaticUser
 }

@@ -30,6 +30,28 @@ func NewOrgPolicyResource(fieldsMap map[FieldName]*GenericField) *OrgPolicyTerra
 	}
 }
 
+func (res *OrgPolicyTerraformResource) OnCreate(
+	resourceData *schema.ResourceData,
+	meta interface{}) (*organization.Policy, error) {
+
+	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
+		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
+	}
+
+	OrgPolicyWrapper := NewOrgPolicyWrapper()
+
+	for _, field := range res.fields.fieldsMap {
+		if field.onCreate == nil {
+			continue
+		}
+		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
+		if err := field.onCreate(OrgPolicyWrapper, resourceData, meta); err != nil {
+			return nil, err
+		}
+	}
+	return OrgPolicyWrapper.GetOrgPolicy(), nil
+}
+
 func (res *OrgPolicyTerraformResource) OnRead(
 	OrgPolicy *organization.Policy,
 	resourceData *schema.ResourceData,
@@ -52,28 +74,6 @@ func (res *OrgPolicyTerraformResource) OnRead(
 		}
 	}
 	return nil
-}
-
-func (res *OrgPolicyTerraformResource) OnCreate(
-	resourceData *schema.ResourceData,
-	meta interface{}) (*organization.Policy, error) {
-
-	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
-	}
-
-	OrgPolicyWrapper := NewOrgPolicyWrapper()
-
-	for _, field := range res.fields.fieldsMap {
-		if field.onCreate == nil {
-			continue
-		}
-		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(OrgPolicyWrapper, resourceData, meta); err != nil {
-			return nil, err
-		}
-	}
-	return OrgPolicyWrapper.GetOrgPolicy(), nil
 }
 
 func (res *OrgPolicyTerraformResource) OnUpdate(

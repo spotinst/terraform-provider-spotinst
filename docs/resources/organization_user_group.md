@@ -29,14 +29,14 @@ resource "spotinst_organization_user_group" "terraform_user_group" {
 The following arguments are supported:
 
 * `name` - (Required) User group name.
-* `description` - User group description.
-* `user_ids` - The users to register under the created group
+* `description` - (Optional) User group description.
+* `user_ids` - (Optional) The users to register under the created group
    (should be existing users only).
-* `policies` - The policies to register under the given group
+* `policies` - (Optional) The policies to register under the given group
    (should be existing policies only).
-  * `account_ids` - A list of accounts to register with the assigned under the
+  * `account_ids` - (Required) A list of accounts to register with the assigned under the
      given group (should be existing accounts only).
-  * `policy_id` - A policy to register under the given group
+  * `policy_id` - (Required) A policy to register under the given group
      (should be existing policy only).
 
 ## Attributes Reference

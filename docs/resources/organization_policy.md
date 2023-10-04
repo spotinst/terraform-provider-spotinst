@@ -19,13 +19,13 @@ resource "spotinst_organization_policy" "terraform_policy" {
   policy_content {
     statements {
       actions = ["ocean:deleteCluster"]
-      effect = "ALLOW"
-      resources = ["*"]
+      effect = "DENY"
+      resources = ["o-abcd1234","o-defg6789"]
     }
     statements {
-      actions = ["ocean:updateCluster"]
+      actions = ["ocean:createCluster"]
       effect = "DENY"
-      resources = ["*"]
+      resources = ["o-fhau4752","o-761owf4r3"]
     }
   }
 }

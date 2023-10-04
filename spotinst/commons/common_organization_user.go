@@ -30,6 +30,28 @@ func NewOrgUserResource(fieldsMap map[FieldName]*GenericField) *OrgUserTerraform
 	}
 }
 
+func (res *OrgUserTerraformResource) OnCreate(
+	resourceData *schema.ResourceData,
+	meta interface{}) (*organization.User, error) {
+
+	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
+		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
+	}
+
+	orgUserWrapper := NewOrgUserWrapper()
+
+	for _, field := range res.fields.fieldsMap {
+		if field.onCreate == nil {
+			continue
+		}
+		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
+		if err := field.onCreate(orgUserWrapper, resourceData, meta); err != nil {
+			return nil, err
+		}
+	}
+	return orgUserWrapper.GetOrgUser(), nil
+}
+
 func (res *OrgUserTerraformResource) OnRead(
 	orgUser *organization.User,
 	resourceData *schema.ResourceData,
@@ -52,28 +74,6 @@ func (res *OrgUserTerraformResource) OnRead(
 		}
 	}
 	return nil
-}
-
-func (res *OrgUserTerraformResource) OnCreate(
-	resourceData *schema.ResourceData,
-	meta interface{}) (*organization.User, error) {
-
-	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
-		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
-	}
-
-	orgUserWrapper := NewOrgUserWrapper()
-
-	for _, field := range res.fields.fieldsMap {
-		if field.onCreate == nil {
-			continue
-		}
-		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(orgUserWrapper, resourceData, meta); err != nil {
-			return nil, err
-		}
-	}
-	return orgUserWrapper.GetOrgUser(), nil
 }
 
 func (res *OrgUserTerraformResource) OnUpdate(

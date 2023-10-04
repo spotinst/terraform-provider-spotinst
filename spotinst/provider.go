@@ -97,7 +97,7 @@ func Provider() *schema.Provider {
 			string(commons.OrgPolicyResourceName): resourceOrgPolicy(),
 
 			// Organization Programmatic User
-			string(commons.OrgProgUserResourceName): resourceOrgProgUser(),
+			string(commons.OrgProgrammaticUserResourceName): resourceOrgProgrammaticUser(),
 
 			// Organization User Group
 			string(commons.OrgUserGroupResourceName): resourceOrgUserGroup(),

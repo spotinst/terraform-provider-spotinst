@@ -14,30 +14,30 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-func resourceOrgProgUser() *schema.Resource {
-	setupOrgProgUser()
+func resourceOrgProgrammaticUser() *schema.Resource {
+	setupOrgProgrammaticUser()
 	return &schema.Resource{
-		CreateContext: resourceOrgProgUserCreate,
-		UpdateContext: resourceOrgProgUserUpdate,
-		ReadContext:   resourceOrgProgUserRead,
-		DeleteContext: resourceOrgProgUserDelete,
+		CreateContext: resourceOrgProgrammaticUserCreate,
+		UpdateContext: resourceOrgProgrammaticUserUpdate,
+		ReadContext:   resourceOrgProgrammaticUserRead,
+		DeleteContext: resourceOrgProgrammaticUserDelete,
 
-		Schema: commons.OrgProgUserResource.GetSchemaMap(),
+		Schema: commons.OrgProgrammaticUserResource.GetSchemaMap(),
 	}
 }
 
-func setupOrgProgUser() {
+func setupOrgProgrammaticUser() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
 	organizationPackage.Setup(fieldsMap)
 
-	commons.OrgProgUserResource = commons.NewOrgProgUserResource(fieldsMap)
+	commons.OrgProgrammaticUserResource = commons.NewOrgProgrammaticUserResource(fieldsMap)
 }
 
-func resourceOrgProgUserDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceOrgProgrammaticUserDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete),
-		commons.OrgProgUserResource.GetName(), id)
+		commons.OrgProgrammaticUserResource.GetName(), id)
 
 	input := &organization.DeleteUserInput{UserID: spotinst.String(id)}
 	if _, err := meta.(*Client).organization.DeleteUser(context.Background(), input); err != nil {
@@ -48,50 +48,50 @@ func resourceOrgProgUserDelete(ctx context.Context, resourceData *schema.Resourc
 	return nil
 }
 
-func resourceOrgProgUserRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceOrgProgrammaticUserRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
-		commons.OrgProgUserResource.GetName(), id)
+		commons.OrgProgrammaticUserResource.GetName(), id)
 
 	client := meta.(*Client)
 	input := &organization.ReadUserInput{UserID: spotinst.String(resourceData.Id())}
-	userResponse, err := client.organization.ReadProgUser(context.Background(), input)
+	userResponse, err := client.organization.ReadProgrammaticUser(context.Background(), input)
 	if err != nil {
 		return diag.Errorf("[ERROR] Failed to read user: %s", err)
 	}
 
 	// If nothing was found, then return no state.
-	progUser := userResponse.ProgUser
-	if progUser == nil {
+	programmaticUser := userResponse.ProgrammaticUser
+	if programmaticUser == nil {
 		resourceData.SetId("")
 		return nil
 	}
 
-	if err := commons.OrgProgUserResource.OnRead(progUser, resourceData, meta); err != nil {
+	if err := commons.OrgProgrammaticUserResource.OnRead(programmaticUser, resourceData, meta); err != nil {
 		return diag.FromErr(err)
 	}
 	log.Printf("===> User read successfully: %s <===", id)
 	return nil
 }
 
-func resourceOrgProgUserCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceOrgProgrammaticUserCreate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	log.Printf(string(commons.ResourceOnCreate),
-		commons.OrgProgUserResource.GetName())
+		commons.OrgProgrammaticUserResource.GetName())
 
-	progUser, err := commons.OrgProgUserResource.OnCreate(resourceData, meta)
+	programmaticUser, err := commons.OrgProgrammaticUserResource.OnCreate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	var userGroupIds = progUser.UserGroupIds
+	var userGroupIds = programmaticUser.UserGroupIds
 
-	progUser.UserGroupIds = nil
+	programmaticUser.UserGroupIds = nil
 
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	userId, err := createProgUser(progUser, meta.(*Client))
+	userId, err := createProgrammaticUser(programmaticUser, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -109,24 +109,24 @@ func resourceOrgProgUserCreate(ctx context.Context, resourceData *schema.Resourc
 	resourceData.SetId(spotinst.StringValue(userId))
 	log.Printf("===> User created successfully: %s <===", resourceData.Id())
 
-	return resourceOrgProgUserRead(ctx, resourceData, meta)
+	return resourceOrgProgrammaticUserRead(ctx, resourceData, meta)
 }
 
-func createProgUser(userObj *organization.ProgrammaticUser, spotinstClient *Client) (*string, error) {
+func createProgrammaticUser(userObj *organization.ProgrammaticUser, spotinstClient *Client) (*string, error) {
 	input := userObj
-	resp, err := spotinstClient.organization.CreateProgUser(context.Background(), input)
+	resp, err := spotinstClient.organization.CreateProgrammaticUser(context.Background(), input)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create user: %s", err)
 	}
-	return resp.ProgrammaticUser.ProgUserId, nil
+	return resp.ProgrammaticUser.ProgrammaticUserId, nil
 }
 
-func resourceOrgProgUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceOrgProgrammaticUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
-		commons.OrgProgUserResource.GetName(), id)
+		commons.OrgProgrammaticUserResource.GetName(), id)
 
-	shouldUpdate, user, err := commons.OrgProgUserResource.OnUpdate(resourceData, meta)
+	shouldUpdate, user, err := commons.OrgProgrammaticUserResource.OnUpdate(resourceData, meta)
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -136,7 +136,7 @@ func resourceOrgProgUserUpdate(ctx context.Context, resourceData *schema.Resourc
 	var userGroupIds []string = user.UserGroupIds
 
 	if shouldUpdate {
-		user.ProgUserId = spotinst.String(id)
+		user.ProgrammaticUserId = spotinst.String(id)
 		var accountIds []string
 		if policies != nil {
 			for _, policy := range policies {
@@ -179,5 +179,5 @@ func resourceOrgProgUserUpdate(ctx context.Context, resourceData *schema.Resourc
 	}
 
 	log.Printf("===> User mapping updated successfully: %s <===", id)
-	return resourceOrgProgUserRead(ctx, resourceData, meta)
+	return resourceOrgProgrammaticUserRead(ctx, resourceData, meta)
 }

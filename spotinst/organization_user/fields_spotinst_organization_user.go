@@ -157,7 +157,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 
 	fieldsMap[Policies] = commons.NewGenericField(
-		commons.OrganizationProgrammaticUser,
+		commons.OrganizationUser,
 		Policies,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -213,8 +213,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					value = policies
 				}
+				orgUser.SetUserPolicies(value)
+			} else {
+				orgUser.SetUserPolicies(nil)
 			}
-			orgUser.SetUserPolicies(value)
 			return nil
 		},
 		nil,

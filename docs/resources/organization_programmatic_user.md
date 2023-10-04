@@ -34,16 +34,16 @@ resource "spotinst_organization_programmatic_user" "terraform_prog_user" {
 The following arguments are supported:
 
 * `name` - (Required) Name of the programmatic user.
-* `description` - Brief description of the user.
-* `policies` - All the policies the programmatic user will have access to.
+* `description` - (Optional) Brief description of the user.
+* `policies` - (Optional) All the policies the programmatic user will have access to.
    If used - Cannot be empty.
-  * `policy_account_ids` - A list of the accounts that the policy should be
+  * `policy_account_ids` - (Required) A list of the accounts that the policy should be
   enforced for the user.
-  * `policy_id` - Policy ID the programmatic user will have access to.
-* `accounts` - All the accounts the programmatic user will have access to.
+  * `policy_id` - (Required) Policy ID the programmatic user will have access to.
+* `accounts` - (Optional) All the accounts the programmatic user will have access to.
    If used - Cannot be empty.
-  * `account_id` - Account ID the programmatic user will have access to.
-  * `account_role` - (Enum: `"viewer", "editor") Role to be associated with the
+  * `account_id` - (Optional) Account ID the programmatic user will have access to.
+  * `account_role` - (Optional) (Enum: `"viewer", "editor") Role to be associated with the
      programmatic user for this account.
 
 ## Attributes Reference

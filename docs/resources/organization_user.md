@@ -25,7 +25,6 @@ resource "spotinst_organization_user" "terraform_user" {
     policy_account_ids = ["act-abcf4245"]
   }
 }
-// Update is not supported for this resource.
 ```
 
 ## Argument Reference
@@ -35,7 +34,7 @@ The following arguments are supported:
 * `email` - (Required) Email.
 * `first_name` - (Required) The first name of the user.
 * `last_name` - (Required) The last name of the user.
-* `password` - (Required) Password.
+* `password` - (Optional) Password.
 * `role` - (Optional) User's role.
 
 ## Attributes Reference
