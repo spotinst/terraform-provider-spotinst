@@ -55,13 +55,13 @@ func resourceOrgProgrammaticUserRead(ctx context.Context, resourceData *schema.R
 
 	client := meta.(*Client)
 	input := &organization.ReadUserInput{UserID: spotinst.String(resourceData.Id())}
-	userResponse, err := client.organization.ReadProgrammaticUser(context.Background(), input)
+	userResponse, err := client.organization.ReadProgUser(context.Background(), input)
 	if err != nil {
 		return diag.Errorf("[ERROR] Failed to read user: %s", err)
 	}
 
 	// If nothing was found, then return no state.
-	programmaticUser := userResponse.ProgrammaticUser
+	programmaticUser := userResponse.ProgUser
 	if programmaticUser == nil {
 		resourceData.SetId("")
 		return nil
@@ -114,11 +114,11 @@ func resourceOrgProgrammaticUserCreate(ctx context.Context, resourceData *schema
 
 func createProgrammaticUser(userObj *organization.ProgrammaticUser, spotinstClient *Client) (*string, error) {
 	input := userObj
-	resp, err := spotinstClient.organization.CreateProgrammaticUser(context.Background(), input)
+	resp, err := spotinstClient.organization.CreateProgUser(context.Background(), input)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create user: %s", err)
 	}
-	return resp.ProgrammaticUser.ProgrammaticUserId, nil
+	return resp.ProgrammaticUser.ProgUserId, nil
 }
 
 func resourceOrgProgrammaticUserUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -136,7 +136,7 @@ func resourceOrgProgrammaticUserUpdate(ctx context.Context, resourceData *schema
 	var userGroupIds []string = user.UserGroupIds
 
 	if shouldUpdate {
-		user.ProgrammaticUserId = spotinst.String(id)
+		user.ProgUserId = spotinst.String(id)
 		var accountIds []string
 		if policies != nil {
 			for _, policy := range policies {
