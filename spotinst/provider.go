@@ -90,6 +90,18 @@ func Provider() *schema.Provider {
 			// Ocean Spark Virtual Node Group
 			string(commons.OceanSparkVirtualNodeGroupResourceName): resourceSpotinstOceanSparkVirtualNodeGroup(),
 
+			// Organization User
+			string(commons.OrgUserResourceName): resourceOrgUser(),
+
+			// Organization Policy
+			string(commons.OrgPolicyResourceName): resourceOrgPolicy(),
+
+			// Organization Programmatic User
+			string(commons.OrgProgrammaticUserResourceName): resourceOrgProgrammaticUser(),
+
+			// Organization User Group
+			string(commons.OrgUserGroupResourceName): resourceOrgUserGroup(),
+
 			// AWS Account Creation
 			string(commons.AccountAWSResourceName): resourceSpotinstAccountAWS(),
 

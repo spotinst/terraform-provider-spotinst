@@ -3,6 +3,7 @@ package spotinst
 import (
 	"errors"
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	stdlog "log"
 	"strings"
 
@@ -50,6 +51,7 @@ type Client struct {
 	managedInstance managedinstance.Service
 	dataIntegration dataintegration.Service
 	statefulNode    stateful.Service
+	organization    organization.Service
 	account         account.Service
 }
 
@@ -74,6 +76,7 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		managedInstance: managedinstance.New(sess),
 		dataIntegration: dataintegration.New(sess),
 		statefulNode:    stateful.New(sess),
+		organization:    organization.New(sess),
 		account:         account.New(sess),
 	}
 
