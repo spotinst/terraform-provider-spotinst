@@ -24,9 +24,9 @@ resource "spotinst_organization_programmatic_user" "terraform_prog_user" {
     account_id = "act-a1b2c3d4"
     account_role = "viewer"
   }*/  
+  user_group_ids=["ugr-abcd1234","ugr-defg8763"]
   // account and policies are exclusive
 }
-// Update is not supported for this resource.
 ```
 
 ## Argument Reference
@@ -45,6 +45,7 @@ The following arguments are supported:
   * `account_id` - (Optional) Account ID the programmatic user will have access to.
   * `account_role` - (Optional) (Enum: `"viewer", "editor") Role to be associated with the
      programmatic user for this account.
+* `user_group_ids` - (Optional) A list of the user groups to register the given user to (should be existing user groups only)
 
 ## Attributes Reference
 

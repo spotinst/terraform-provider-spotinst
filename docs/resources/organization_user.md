@@ -19,11 +19,11 @@ resource "spotinst_organization_user" "terraform_user" {
   last_name = "user"
   password = "testUser@123"
   role = "viewer"
-  user_group_ids=["ugr-abcd1234","ugr-defg8763"]
   policies{
     policy_id = "pol-abcd1236"
     policy_account_ids = ["act-abcf4245"]
   }
+  user_group_ids=["ugr-abcd1234","ugr-defg8763"]
 }
 ```
 
@@ -36,6 +36,13 @@ The following arguments are supported:
 * `last_name` - (Required) The last name of the user.
 * `password` - (Optional) Password.
 * `role` - (Optional) User's role.
+* `policies` - (Optional) The policies to register under the given group
+  (should be existing policies only).
+    * `account_ids` - (Required) A list of accounts to register with the assigned under the
+      given group (should be existing accounts only).
+    * `policy_id` - (Required) A policy to register under the given group
+      (should be existing policy only).
+* `user_group_ids` - (Optional) A list of the user groups to register the given user to (should be existing user groups only)
 
 ## Attributes Reference
 

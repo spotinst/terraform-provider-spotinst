@@ -155,6 +155,7 @@ func resourceOrgUserGroupUpdate(ctx context.Context, resourceData *schema.Resour
 			userIds := userGroup.UserIds
 			updateUserIdsMapping(userIds, &id, meta.(*Client))
 		}
+
 		userGroup.UserIds = nil
 		if userGroup.Name != nil || userGroup.Description != nil {
 			if err := updateUserGroup(userGroup, resourceData, meta); err != nil {

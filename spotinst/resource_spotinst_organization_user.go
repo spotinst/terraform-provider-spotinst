@@ -4,14 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/spotinst/spotinst-sdk-go/service/organization"
-	organizationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_user"
-	"log"
-	"os"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	organizationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_user"
+	"log"
 )
 
 func resourceOrgUser() *schema.Resource {
@@ -184,16 +182,6 @@ func resourceOrgUserUpdate(ctx context.Context, resourceData *schema.ResourceDat
 			var accountViewerPolicy organization.UserPolicy
 			accountViewerPolicy.PolicyId = spotinst.String("3")
 			accountViewerPolicy.AccountIds = accountIds
-			policies = append(policies, &accountViewerPolicy)
-			if err := updatePolicyMapping(policies, &id, meta.(*Client)); err != nil {
-				return diag.FromErr(err)
-			}
-		}
-
-		if policies == nil {
-			var accountViewerPolicy organization.UserPolicy
-			accountViewerPolicy.PolicyId = spotinst.String("3")
-			accountViewerPolicy.AccountIds = append(accountIds, os.Getenv("SPOTINST_ACCOUNT_AWS"))
 			policies = append(policies, &accountViewerPolicy)
 			if err := updatePolicyMapping(policies, &id, meta.(*Client)); err != nil {
 				return diag.FromErr(err)
