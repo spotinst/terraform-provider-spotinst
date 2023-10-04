@@ -16,10 +16,10 @@ Provides a Spotinst user-group of your Spot organization.
 resource "spotinst_organization_user_group" "terraform_user_group" {
   name = "test_user_group"
   description = "user group by terraform"
-  user_ids = ["u-372ef6ae"]
+  user_ids = ["u-372gf6ae"]
   policies {
     account_ids = ["act-a1b2c3d4"]
-    policy_id = "pol-v75d8c06"
+    policy_id = "pol-vv7d8c06"
   }
 }
 ```
