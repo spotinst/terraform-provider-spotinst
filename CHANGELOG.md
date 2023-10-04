@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.143.0 (October 05, 2023)
+FEATURES: added new resources
+* **New Resource:** `resource/spotinst_organization_user`
+* **New Resource:** `resource/spotinst_organization_policy`
+* **New Resource:** `resource/spotinst_organization_programmatic_user`
+* **New Resource:** `resource/spotinst_organization_user_group`
+
 ## 1.142.0 (September 29, 2023)
 FEATURES:
 * **New Resource:** `resource/spotinst_account_aws`
