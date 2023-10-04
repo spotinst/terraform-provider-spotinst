@@ -101,6 +101,12 @@ func Provider() *schema.Provider {
 
 			// Organization User Group
 			string(commons.OrgUserGroupResourceName): resourceOrgUserGroup(),
+      
+			// AWS Account Creation
+			string(commons.AccountAWSResourceName): resourceSpotinstAccountAWS(),
+
+			// AWS set credential
+			string(commons.CredentialsAWSResourceName): resourceSpotinstCredentialsAWS(),
 		},
 	}
 
