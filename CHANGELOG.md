@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.144.0 (October, 09 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added `instancetypes_filters` object under `launchSpec`
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fix for `autoscale_is_enabled` field update under filters.
+NOTES:
+* documentation: resource/spotinst_credentials_aws: Moved credentials document under Accounts hierarchy.
+
 ## 1.143.0 (October 05, 2023)
 FEATURES: added new resources
 * **New Resource:** `resource/spotinst_organization_user`

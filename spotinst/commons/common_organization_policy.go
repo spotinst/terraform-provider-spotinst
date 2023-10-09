@@ -2,9 +2,10 @@ package commons
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/organization"
-	"log"
 )
 
 const (

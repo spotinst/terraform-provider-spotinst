@@ -1,7 +1,7 @@
 ---
 layout: "spotinst"
 page_title: "Spotinst: credentials_aws"
-subcategory: "Credentials"
+subcategory: "Accounts"
 description: |-
   Provides a Spotinst credential AWS resource.
 ---
