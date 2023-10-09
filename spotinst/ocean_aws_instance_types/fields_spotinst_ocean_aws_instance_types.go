@@ -388,11 +388,13 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 		}
 	}
 
-	if v, ok := m[string(IsEnaSupported)].(string); ok && v != "" {
+	if v, ok := m[string(IsEnaSupported)].(string); ok {
 		if v == "true" {
 			filters.SetIsEnaSupported(spotinst.Bool(true))
 		} else if v == "false" {
 			filters.SetIsEnaSupported(spotinst.Bool(false))
+		} else {
+			filters.SetIsEnaSupported(nil)
 		}
 	}
 
