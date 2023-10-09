@@ -131,7 +131,7 @@ const (
 	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
 )
 const (
-	InstanceTypesFilters  commons.FieldName = "instancetypes_filters"
+	InstanceTypesFilters  commons.FieldName = "instance_types_filters"
 	Categories            commons.FieldName = "categories"
 	DiskTypes             commons.FieldName = "disk_types"
 	ExcludeFamilies       commons.FieldName = "exclude_families"
