@@ -1845,9 +1845,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					value = instanceTypesFilters
 				}
 			}
-			/*if cluster.Compute.InstanceTypes == nil {
-				cluster.Compute.InstanceTypes = &aws.InstanceTypes{}
-			}*/
 			if launchSpec.InstanceTypesFilters == nil {
 				launchSpec.InstanceTypesFilters = &aws.InstanceTypesFilters{}
 			}
