@@ -3,9 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	organizationPackage "github.com/spotinst/terraform-provider-spotinst/spotinst/organization_user_group"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 

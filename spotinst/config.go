@@ -3,9 +3,10 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	stdlog "log"
 	"strings"
+
+	"github.com/spotinst/spotinst-sdk-go/service/organization"
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
