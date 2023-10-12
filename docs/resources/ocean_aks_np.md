@@ -153,6 +153,8 @@ resource "spotinst_ocean_aks_np" "example" {
   os_type               = "Windows"
   os_sku                = "Windows2022"
   kubernetes_version    = "1.26"
+  pod_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
+  vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
 
   // ----------------------------------------------------------------------
 
@@ -238,6 +240,8 @@ The following arguments are supported:
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
 * `os_type` - (Optional, Enum:`"Linux","Windows"`) The OS type of the OS disk. Can't be modified once set.
 * `os_sku` - (Optional, Enum: `"Ubuntu", "Windows2019", "Windows2022", "AzureLinux", "CBLMariner"`) The OS SKU of the OS type. Must correlate with the os type.
+* `pod_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign pods in the cluster (requires azure network-plugin).
+* `vnet_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign nodes in the cluster (requires azure network-plugin).
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `spot_percentage` - (Optional,Default: `100`) Percentage of spot VMs to maintain.
