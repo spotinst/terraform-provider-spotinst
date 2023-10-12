@@ -10,4 +10,6 @@ const (
 	OsType             commons.FieldName = "os_type"
 	OsSKU              commons.FieldName = "os_sku"
 	KubernetesVersion  commons.FieldName = "kubernetes_version"
+	PodSubnetIDs       commons.FieldName = "pod_subnet_ids"
+	VnetSubnetIDs      commons.FieldName = "vnet_subnet_ids"
 )

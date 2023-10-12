@@ -283,4 +283,116 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[PodSubnetIDs] = commons.NewGenericField(
+		commons.OceanAKSNP,
+		PodSubnetIDs,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value []string = nil
+			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil {
+				value = cluster.VirtualNodeGroupTemplate.NodePoolProperties.PodSubnetIDs
+			}
+			if err := resourceData.Set(string(PodSubnetIDs), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PodSubnetIDs), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if value, ok := resourceData.GetOk(string(PodSubnetIDs)); ok {
+				if PodSubnetIds, err := expandSubnetList(value); err != nil {
+					return err
+				} else {
+					cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetPodSubnetIDs(PodSubnetIds)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if value, ok := resourceData.GetOk(string(PodSubnetIDs)); ok {
+				if PodSubnetIds, err := expandSubnetList(value); err != nil {
+					return err
+				} else {
+					cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetPodSubnetIDs(PodSubnetIds)
+				}
+			} else {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetPodSubnetIDs(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[VnetSubnetIDs] = commons.NewGenericField(
+		commons.OceanAKSNP,
+		VnetSubnetIDs,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value []string = nil
+			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil {
+				value = cluster.VirtualNodeGroupTemplate.NodePoolProperties.VnetSubnetIDs
+			}
+			if err := resourceData.Set(string(VnetSubnetIDs), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VnetSubnetIDs), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if value, ok := resourceData.GetOk(string(VnetSubnetIDs)); ok {
+				if vnetSubnetIds, err := expandSubnetList(value); err != nil {
+					return err
+				} else {
+					cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetVnetSubnetIDs(vnetSubnetIds)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if value, ok := resourceData.GetOk(string(VnetSubnetIDs)); ok {
+				if vnetSubnetIds, err := expandSubnetList(value); err != nil {
+					return err
+				} else {
+					cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetVnetSubnetIDs(vnetSubnetIds)
+				}
+			} else {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetVnetSubnetIDs(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+}
+
+func expandSubnetList(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if subnetIds, ok := v.(string); ok && subnetIds != "" {
+			result = append(result, subnetIds)
+		}
+	}
+	return result, nil
 }
