@@ -87,6 +87,13 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
     architectures = ["X86_64"]
     series = ["D v3", "F", "E v4"]
     exclude_series = ["Bs", "Da v4"]
+    accelerated_networking = "Enabled"
+    disk_performance = "Premium"
+    min_gpu = 1
+    max_gpu = 2
+    min_nics = 1
+    vm_types = ["generalPurpose", "GPU"]
+    min_data = 1
   }
   
   // ----------------------------------------------------------------------------
@@ -142,3 +149,10 @@ The following arguments are supported:
     * `min_vcpu` - (Optional) Minimum number of vcpus available.
     * `series` - (Optional) Vm sizes belonging to a series from the list will be available for scaling.
     * `exclude_series` - (Optional) Vm sizes belonging to a series from the list will not be available for scaling.
+    * `accelerated_networking` - (Optional, Enum `"Enabled", "Disabled"`) In case acceleratedNetworking is set to Enabled, accelerated networking applies only to the VM that enables it.
+    * `disk_performance` - (Optional, Enum `"Standard", "Premium"`) The filtered vm sizes will support at least one of the classes from this list.
+    * `min_gpu` - (Optional) Minimum number of GPUs available.
+    * `max_gpu` - (Optional) Maximum number of GPUs available.
+    * `min_nics` - (Optional) Minimum number of network interfaces.
+    * `min_data` - (Optional) Minimum number of data disks available.
+    * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.

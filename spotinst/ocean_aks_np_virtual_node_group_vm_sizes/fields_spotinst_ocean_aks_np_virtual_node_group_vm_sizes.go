@@ -60,6 +60,46 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
+
+					string(AcceleratedNetworking): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(DiskPerformance): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(MinGpu): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MaxGpu): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinNICs): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinData): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(VmTypes): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
 				},
 			},
 		},
@@ -197,6 +237,60 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 		}
 	}
 
+	if v, ok := m[string(MinGpu)].(float64); ok {
+		if v == -1 {
+			filters.SetMinGpu(nil)
+		} else {
+			filters.SetMinGpu(spotinst.Float64(v))
+		}
+	}
+
+	if v, ok := m[string(MaxGpu)].(float64); ok {
+		if v == -1 {
+			filters.SetMaxGpu(nil)
+		} else {
+			filters.SetMaxGpu(spotinst.Float64(v))
+		}
+	}
+
+	if v, ok := m[string(MinNICs)].(int); ok {
+		if v == -1 {
+			filters.SetMinNICs(nil)
+		} else {
+			filters.SetMinNICs(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MinData)].(int); ok {
+		if v == -1 {
+			filters.SetMinData(nil)
+		} else {
+			filters.SetMinData(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(AcceleratedNetworking)].(string); ok {
+		filters.SetAcceleratedNetworking(spotinst.String(v))
+	}
+
+	if v, ok := m[string(DiskPerformance)].(string); ok {
+		filters.SetDiskPerformance(spotinst.String(v))
+	}
+
+	if v, ok := m[string(VmTypes)]; ok {
+		vmTypes, err := expandVmSizesFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if vmTypes != nil && len(vmTypes) > 0 {
+			filters.SetVmTypes(vmTypes)
+		} else {
+			if nullify {
+				filters.SetVmTypes(nil)
+			}
+		}
+	}
+
 	return filters, nil
 }
 
@@ -235,6 +329,24 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 		if filters.MaxMemoryGiB != nil {
 			result[string(MaxMemoryGiB)] = spotinst.Float64Value(filters.MaxMemoryGiB)
 		}
+		if filters.MinGpu != nil {
+			result[string(MinGpu)] = spotinst.Float64Value(filters.MinGpu)
+		}
+		if filters.MaxGpu != nil {
+			result[string(MaxGpu)] = spotinst.Float64Value(filters.MaxGpu)
+		}
+		if filters.MinNICs != nil {
+			result[string(MinNICs)] = spotinst.IntValue(filters.MinNICs)
+		}
+		if filters.MinData != nil {
+			result[string(MinData)] = spotinst.IntValue(filters.MinData)
+		}
+		if filters.AcceleratedNetworking != nil {
+			result[string(AcceleratedNetworking)] = spotinst.StringValue(filters.AcceleratedNetworking)
+		}
+		if filters.DiskPerformance != nil {
+			result[string(DiskPerformance)] = spotinst.StringValue(filters.DiskPerformance)
+		}
 
 		if filters.Architectures != nil {
 			result[string(Architectures)] = filters.Architectures
@@ -246,6 +358,10 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 
 		if filters.ExcludeSeries != nil {
 			result[string(ExcludeSeries)] = filters.ExcludeSeries
+		}
+
+		if filters.VmTypes != nil {
+			result[string(VmTypes)] = filters.VmTypes
 		}
 
 		if len(result) > 0 {
