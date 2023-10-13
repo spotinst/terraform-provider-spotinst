@@ -1,8 +1,61 @@
 ## Unreleased
 
-## 1.135.0 (August 25, 2023)
+## 1.145.0 (October, 12 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `pod_subnet_ids` and `vnet_subnet_ids` fields in `node_pool_properties` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added `pod_subnet_ids` and `vnet_subnet_ids` fields in `node_pool_properties` object
+
+## 1.144.0 (October, 09 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added `instancetypes_filters` object under `launchSpec`
 BUG FIXES:
-* resource/spotinst_stateful_node_azure: Fix for `load_balancer_config` block in `launch_specification` object
+* resource/spotinst_ocean_aws: Fix for `autoscale_is_enabled` field update under filters.
+NOTES:
+* documentation: resource/spotinst_credentials_aws: Moved credentials document under Accounts hierarchy.
+
+## 1.143.0 (October 05, 2023)
+FEATURES: added new resources
+* **New Resource:** `resource/spotinst_organization_user`
+* **New Resource:** `resource/spotinst_organization_policy`
+* **New Resource:** `resource/spotinst_organization_programmatic_user`
+* **New Resource:** `resource/spotinst_organization_user_group`
+
+## 1.142.0 (September 29, 2023)
+FEATURES:
+* **New Resource:** `resource/spotinst_account_aws`
+* **New Resource:** `resource/spotinst_credentials_aws`
+
+## 1.141.0 (September, 29 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fix for `os_sku` and `availability_zones` fields
+
+## 1.140.0 (September, 22 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+* resource/spotinst_ocean_ecs: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+
+## 1.139.0 (September, 15 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `dynamic_iops` object in `ebs`
+
+## 1.138.0 (September, 13 2023)
+NOTES:
+* resource/spotinst_ocean_aks_np: Added basic cluster creation usage example
+
+## 1.137.0 (September, 13 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `kubernetes_version` attribute support in cluster and vng
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fixed default values in virtual_node_groups_template object
+
+## 1.136.0 (September 07, 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `max_scale_down_percentage` field in `kubernetes_integrations` object
+
+## 1.135.0 (September, 06 2023)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Fix for ignoring the unnecessary changes shown during terraform plan for the attributes inside `filters` object
 
 ## 1.134.0 (August 18, 2023)
 ENHANCEMENTS:

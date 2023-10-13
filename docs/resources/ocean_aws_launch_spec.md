@@ -138,6 +138,27 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     time_windows = ["Sat:08:00-Sat:08:30", "Sun:08:00-Sun:08:30"]
   }
 }
+
+  instancetypes_filters {
+    categories                =   ["Accelerated_computing", "Compute_optimized"]
+    disk_types                =   ["NVMe", "EBS"]
+    exclude_families          =   ["t2","R4*"]
+    exclude_metal             =   true
+    hypervisor                =   ["nitro"]
+    include_families          =   ["c5*", "g5"]
+    is_ena_supported          =   true
+    max_gpu                   =   4
+    min_gpu                   =   0
+    max_memory_gib            =   16
+    max_network_performance   =   20
+    max_vcpu                  =   16
+    min_enis                  =   2
+    min_memory_gib            =   8
+    min_network_performance   =   2
+    min_vcpu                  =   2
+    root_device_types         =   ["ebs"]
+    virtualization_types      =   ["hvm"]
+  }
 ```
 ```
 output "ocean_launchspec_id" {
@@ -226,6 +247,27 @@ The following arguments are supported:
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
+* `instance_types_filters` - The instance types that match with all filters compose the Virtual Node Group's instanceTypes parameter.
+The architectures that come from the Virtual Node Group's images will be taken into account when using this parameter. Cannot be configured together with Virtual Node Group's instanceTypes and with the Cluster's whitelist/blacklist/filters.
+    * `categories` - (Optional) The filtered instance types will belong to one of the categories types from this list. Valid values: `Accelerated_computing`, `Compute_optimized`, `General_purpose`, `Memory_optimized`, `Storage_optimized`.
+    * `disk_types` - (Optional) The filtered instance types will have one of the disk type from this list. Valid values: `NVMe`, `EBS`, `SSD`, `HDD`.
+    * `exclude_families` - (Optional) Types belonging to a family from the ExcludeFamilies will not be available for scaling (asterisk wildcard is also supported). For example, C* will exclude instance types from these families: c5, c4, c4a, etc.
+    * `exclude_metal` - (Optional, Default: `false`) In case excludeMetal is set to true, metal types will not be available for scaling.
+    * `hypervisor` - (Optional) The filtered instance types will have a hypervisor type from this list. Valid values: `nitro`, `xen`.
+    * `include_families` - (Optional) Types belonging to a family from the IncludeFamilies will be available for scaling (asterisk wildcard is also supported). For example, C* will include instance types from these families: c5, c4, c4a, etc.
+    * `is_ena_supported` - (Optional) Ena is supported or not.
+    * `max_gpu` - (Optional, >=1) Maximum total number of GPUs.
+    * `max_memory_gib` - (Optional, >=0) Maximum amount of Memory (GiB).
+    * `max_network_performance` - (Optional, >=1) Maximum Bandwidth in Gib/s of network performance.
+    * `max_vcpu` - (Optional, >=1) Maximum number of vcpus available.
+    * `min_enis` - (Optional, >=0) Minimum number of network interfaces (ENIs).
+    * `min_gpu` - (Optional, >=0) Minimum total number of GPUs.
+    * `min_memory_gib` - (Optional, >=0) Minimum amount of Memory (GiB).
+    * `min_network_performance` - (Optional, >=0) Minimum Bandwidth in Gib/s of network performance.
+    * `min_vcpu` - (Optional, >=0) Minimum number of vcpus available.
+    * `root_device_types` - (Optional) The filtered instance types will have a root device types from this list. Valid values: `ebs`, or `instance-store`.
+    * `virtualization_types` - (Optional) The filtered instance types will support at least one of the virtualization types from this list. Valid values: `hvm`, `paravirtual`.
+
 
 <a id="update-policy"></a>
 ## Update Policy

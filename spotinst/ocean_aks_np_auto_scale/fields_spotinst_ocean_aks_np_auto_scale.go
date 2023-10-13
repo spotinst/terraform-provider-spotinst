@@ -21,21 +21,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(CpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(MemoryPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(GpuPerUnit): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 
 					string(NumOfUnits): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 				},
 			},
@@ -91,16 +95,42 @@ func expandHeadrooms(headroom interface{}) ([]*azure_np.Headrooms, error) {
 	headrooms := make([]*azure_np.Headrooms, 0, len(list))
 
 	for _, v := range list {
-		m, ok := v.(map[string]interface{})
-		if !ok {
-			continue
+		m := v.(map[string]interface{})
+		headroom := &azure_np.Headrooms{}
+
+		if v, ok := m[string(CpuPerUnit)].(int); ok {
+			if v == -1 {
+				headroom.SetCpuPerUnit(nil)
+			} else {
+				headroom.SetCpuPerUnit(spotinst.Int(v))
+			}
 		}
-		headrooms = append(headrooms, &azure_np.Headrooms{
-			CpuPerUnit:    spotinst.Int(m[string(CpuPerUnit)].(int)),
-			GpuPerUnit:    spotinst.Int(m[string(GpuPerUnit)].(int)),
-			NumberOfUnits: spotinst.Int(m[string(NumOfUnits)].(int)),
-			MemoryPerUnit: spotinst.Int(m[string(MemoryPerUnit)].(int)),
-		})
+
+		if v, ok := m[string(GpuPerUnit)].(int); ok {
+			if v == -1 {
+				headroom.SetGpuPerUnit(nil)
+			} else {
+				headroom.SetGpuPerUnit(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(NumOfUnits)].(int); ok {
+			if v == -1 {
+				headroom.SetNumOfUnits(nil)
+			} else {
+				headroom.SetNumOfUnits(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(MemoryPerUnit)].(int); ok {
+			if v == -1 {
+				headroom.SetMemoryPerUnit(nil)
+			} else {
+				headroom.SetMemoryPerUnit(spotinst.Int(v))
+			}
+		}
+
+		headrooms = append(headrooms, headroom)
 	}
 	return headrooms, nil
 }
@@ -110,10 +140,25 @@ func flattenHeadrooms(autoScaleHeadrooms []*azure_np.Headrooms) []interface{} {
 
 	for _, headroom := range autoScaleHeadrooms {
 		m := make(map[string]interface{})
-		m[string(CpuPerUnit)] = spotinst.IntValue(headroom.CpuPerUnit)
-		m[string(GpuPerUnit)] = spotinst.IntValue(headroom.GpuPerUnit)
-		m[string(MemoryPerUnit)] = spotinst.IntValue(headroom.MemoryPerUnit)
-		m[string(NumOfUnits)] = spotinst.IntValue(headroom.NumberOfUnits)
+		value := spotinst.Int(-1)
+		m[string(CpuPerUnit)] = value
+		m[string(GpuPerUnit)] = value
+		m[string(MemoryPerUnit)] = value
+		m[string(NumOfUnits)] = value
+
+		if headroom.CpuPerUnit != nil {
+			m[string(CpuPerUnit)] = spotinst.IntValue(headroom.CpuPerUnit)
+		}
+		if headroom.GpuPerUnit != nil {
+			m[string(GpuPerUnit)] = spotinst.IntValue(headroom.GpuPerUnit)
+		}
+		if headroom.MemoryPerUnit != nil {
+			m[string(MemoryPerUnit)] = spotinst.IntValue(headroom.MemoryPerUnit)
+		}
+		if headroom.NumberOfUnits != nil {
+			m[string(NumOfUnits)] = spotinst.IntValue(headroom.NumberOfUnits)
+		}
+
 		result = append(result, m)
 	}
 	return result

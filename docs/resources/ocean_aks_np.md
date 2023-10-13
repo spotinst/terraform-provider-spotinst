@@ -29,28 +29,58 @@ module "ocean-controller" {
 
 ~> You must configure the same `cluster_identifier` for the Ocean controller and for the `spotinst_ocean_aks_np` resource.
 
-## Example Usage
+## Basic Ocean Cluster Creation Usage Example - using minimum configuration with only required parameters
 
 ```hcl
 resource "spotinst_ocean_aks_np" "example" {
   
-  name                                   = "test"
+  name = "test"
   
-  // --- AKS -----------------------------------------------------------
+  // --- AKS ------------------------------------------------------------------------
   
   aks_region                             = "eastus"
   aks_cluster_name                       = "test-cluster"
   aks_infrastructure_resource_group_name = "MC_TestResourceGroup_test-cluster_eastus"
   aks_resource_group_name                = "TestResourceGroup"
   
+  // --------------------------------------------------------------------------------
+
+  controller_cluster_id = "test-123124"
+  
+  // --- virtualNodeGroupTemplate --------------------------------------
+  
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+  
   // -------------------------------------------------------------------
+}
+```  
+  
+## Detailed Ocean Cluster Creation Usage Example - using all available parameters with sample values
 
-  controller_cluster_id                  = "test-123124"
+```hcl  
+resource "spotinst_ocean_aks_np" "example" {
+  
+  name = "test"
+  
+  // --- AKS -------------------------------------------------------------------------
+  
+  aks_region                             = "eastus"
+  aks_cluster_name                       = "test-cluster"
+  aks_infrastructure_resource_group_name = "MC_TestResourceGroup_test-cluster_eastus"
+  aks_resource_group_name                = "TestResourceGroup"
+  
+  // ---------------------------------------------------------------------------------
 
-  // --- Auto Scaler -----------------------------------------------------
+  controller_cluster_id = "test-123124"
+
+  // --- Auto Scaler ---------------------------------------------------
   
   autoscaler {
-    autoscale_is_enabled      = true
+    autoscale_is_enabled = true
     resource_limits {
       max_vcpu       = 750
       max_memory_gib = 1500
@@ -77,10 +107,10 @@ resource "spotinst_ocean_aks_np" "example" {
 
   // --- Scheduling -------------------------------------------------------
   
-  scheduling{
+  scheduling {
     shutdown_hours{
-      is_enabled=true
-      time_windows=["Sat:08:00-Sun:08:00"]
+      is_enabled   = true
+      time_windows = ["Sat:08:00-Sun:08:00"]
     }
   }
   
@@ -88,73 +118,76 @@ resource "spotinst_ocean_aks_np" "example" {
 
   // --- virtualNodeGroupTemplate -----------------------------------------
 
-  // --- autoscale ----------------------------------------------------------------
+  // --- autoscale --------------------------------------------------------
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512
     gpu_per_unit    = 0
     num_of_units    = 2
   }
-  // ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
   
-  availability_zones =  [
+  availability_zones = [
     "1",
     "2",
     "3"
-  ],
-  labels ={
+  ]
+  labels = {
     key   = "env"
     value = "test"
   }
   
-  // --- nodeCountLimits ----------------------------------------------------
+  // --- nodeCountLimits --------------------------------------------------
   
   min_count = 1
   max_count = 100
   
-  // -------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 
-  // --- nodePoolProperties --------------------------------------------------
+  // --- nodePoolProperties -----------------------------------------------
   
   max_pods_per_node     = 30
   enable_node_public_ip = true
   os_disk_size_gb       = 30
-  os_disk_type         = "Managed"
-  os_type             = "Windows"
-  os_sku              = "Windows2022"
+  os_disk_type          = "Managed"
+  os_type               = "Windows"
+  os_sku                = "Windows2022"
+  kubernetes_version    = "1.26"
+  pod_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
+  vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
 
-  // --------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 
-  // --- strategy -------------------------------------------------------------
+  // --- strategy ---------------------------------------------------------
   
   spot_percentage      = 50
   fallback_to_ondemand = true
 
-  // ---------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 
   taints {
     key    = "taintKey"
     value  = "taintValue"
     effect = "NoSchedule"
-    }
-
-  tags ={
-    tagKey   = "env"
-    tagValue   = "staging"
   }
-  // --- vmSizes ---------------------------------------------------------------
+
+  tags = {
+    tagKey   = "env"
+    tagValue = "staging"
+  }
+  // --- vmSizes ----------------------------------------------------------
   
   filters {
-    min_vcpu = 2
-    max_vcpu = 16
-    min_memory_gib = 10
-    max_memory_gib = 18
-    architectures = ["X86_64"]
-    series = ["D v3", "Dds_v4", "Dsv2"]
-    exclude_series = ["Bs", "Da v4"]
+    min_vcpu       = 2
+    max_vcpu       = 16
+    min_memory_gib = 8
+    max_memory_gib = 128
+    architectures  = ["x86_64", "arm64"]
+    series         = ["D v3", "Dds_v4", "Dsv2"]
+    exclude_series = ["Av2",  "A", "Bs", "D", "E"]
   }
   
-  // ----------------------------------------------------------------------------
+  // ----------------------------------------------------------------------
 }
 ```
 
@@ -195,7 +228,7 @@ The following arguments are supported:
   * `memory_per_unit` - (Optional) Configure the amount of memory (MiB) to allocate the headroom.
   * `gpu_per_unit` - (Optional) Amount of GPU to allocate for headroom unit.
   * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
-* `availability_zones` - (Optional) An Array holding Availability Zones, this configures the availability zones the Ocean may launch instances in per VNG.
+* `availability_zones` - (Required) An Array holding Availability Zones, this configures the availability zones the Ocean may launch instances in per VNG.
 * `labels` - (Optional) An array of labels to add to the virtual node group. Only custom user labels are allowed, and not [Kubernetes well-known labels](https://kubernetes.io/docs/reference/labels-annotations-taints/) or [ Azure AKS labels](https://learn.microsoft.com/en-us/azure/aks/use-labels) or [Spot labels](https://docs.spot.io/ocean/features/labels-and-taints?id=spot-labels).
     * `key` - (Required) Set label key [spot labels](https://docs.spot.io/ocean/features/labels-and-taints?id=spotinstionode-lifecycle) and [Azure labels](https://learn.microsoft.com/en-us/azure/aks/use-labels). The following are not allowed: ["kubernetes.azure.com/agentpool","kubernetes.io/arch","kubernetes.io/os","node.kubernetes.io/instance-type", "topology.kubernetes.io/region", "topology.kubernetes.io/zone", "kubernetes.azure.com/cluster", "kubernetes.azure.com/mode", "kubernetes.azure.com/role", "kubernetes.azure.com/scalesetpriority", "kubernetes.io/hostname", "kubernetes.azure.com/storageprofile", "kubernetes.azure.com/storagetier", "kubernetes.azure.com/instance-sku", "kubernetes.azure.com/node-image-version", "kubernetes.azure.com/subnet", "kubernetes.azure.com/vnet", "kubernetes.azure.com/ppg", "kubernetes.azure.com/encrypted-set", "kubernetes.azure.com/accelerator", "kubernetes.azure.com/fips_enabled", "kubernetes.azure.com/os-sku"]
     * `value` - (Required) Set label value.
@@ -205,7 +238,11 @@ The following arguments are supported:
 * `max_pods_per_node` - (Optional) The maximum number of pods per node in the node pools.
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
-* `os_type` - (Optional, Enum:`"Linux","Windows"`) The OS type of the OS disk.
+* `os_type` - (Optional, Enum:`"Linux","Windows"`) The OS type of the OS disk. Can't be modified once set.
+* `os_sku` - (Optional, Enum: `"Ubuntu", "Windows2019", "Windows2022", "AzureLinux", "CBLMariner"`) The OS SKU of the OS type. Must correlate with the os type.
+* `pod_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign pods in the cluster (requires azure network-plugin).
+* `vnet_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign nodes in the cluster (requires azure network-plugin).
+* `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `spot_percentage` - (Optional,Default: `100`) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.

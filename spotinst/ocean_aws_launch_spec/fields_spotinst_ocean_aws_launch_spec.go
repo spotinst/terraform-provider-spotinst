@@ -1685,6 +1685,174 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[InstanceTypesFilters] = commons.NewGenericField(
+		commons.OceanAWSInstanceTypes,
+		InstanceTypesFilters,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(Categories): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(DiskTypes): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(ExcludeFamilies): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(ExcludeMetal): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+
+					string(Hypervisor): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(IncludeFamilies): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(IsEnaSupported): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(MaxGpu): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MaxMemoryGiB): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MaxNetworkPerformance): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MaxVcpu): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinEnis): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinGpu): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinMemoryGiB): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinNetworkPerformance): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinVcpu): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(RootDeviceTypes): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(VirtualizationTypes): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+
+			if launchSpec != nil && launchSpec.InstanceTypesFilters != nil {
+				result = flattenInstanceTypesFilters(launchSpec.InstanceTypesFilters)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(InstanceTypesFilters), result); err != nil {
+					return fmt.Errorf(commons.FailureFieldReadPattern, string(InstanceTypesFilters), err)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceTypesFilters)); ok {
+				if instanceTypesFilters, err := expandInstanceTypesFilters(v, false); err != nil {
+					return err
+				} else {
+					launchSpec.SetInstanceTypesFilters(instanceTypesFilters)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.InstanceTypesFilters = nil
+
+			if v, ok := resourceData.GetOk(string(InstanceTypesFilters)); ok {
+				if instanceTypesFilters, err := expandInstanceTypesFilters(v, true); err != nil {
+					return err
+				} else {
+					value = instanceTypesFilters
+				}
+			}
+			if launchSpec.InstanceTypesFilters == nil {
+				launchSpec.InstanceTypesFilters = &aws.InstanceTypesFilters{}
+			}
+			launchSpec.SetInstanceTypesFilters(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -2503,4 +2671,301 @@ func expandImages(data interface{}) ([]*aws.Images, error) {
 		images = append(images, image)
 	}
 	return images, nil
+}
+func flattenInstanceTypesFilters(instanceTypesFilters *aws.InstanceTypesFilters) []interface{} {
+	var out []interface{}
+
+	if instanceTypesFilters != nil {
+		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(MaxGpu)] = value
+		result[string(MinGpu)] = value
+		result[string(MaxMemoryGiB)] = value
+		result[string(MinMemoryGiB)] = value
+		result[string(MaxVcpu)] = value
+		result[string(MinVcpu)] = value
+		result[string(MaxNetworkPerformance)] = value
+		result[string(MinNetworkPerformance)] = value
+		result[string(MinEnis)] = value
+
+		if instanceTypesFilters.MaxGpu != nil {
+			result[string(MaxGpu)] = spotinst.IntValue(instanceTypesFilters.MaxGpu)
+		}
+		if instanceTypesFilters.MinGpu != nil {
+			result[string(MinGpu)] = spotinst.IntValue(instanceTypesFilters.MinGpu)
+		}
+		if instanceTypesFilters.MaxMemoryGiB != nil {
+			result[string(MaxMemoryGiB)] = spotinst.Float64Value(instanceTypesFilters.MaxMemoryGiB)
+		}
+		if instanceTypesFilters.MinMemoryGiB != nil {
+			result[string(MinMemoryGiB)] = spotinst.Float64Value(instanceTypesFilters.MinMemoryGiB)
+		}
+		if instanceTypesFilters.MaxVcpu != nil {
+			result[string(MaxVcpu)] = spotinst.IntValue(instanceTypesFilters.MaxVcpu)
+		}
+		if instanceTypesFilters.MinVcpu != nil {
+			result[string(MinVcpu)] = spotinst.IntValue(instanceTypesFilters.MinVcpu)
+		}
+		if instanceTypesFilters.MaxNetworkPerformance != nil {
+			result[string(MaxNetworkPerformance)] = spotinst.IntValue(instanceTypesFilters.MaxNetworkPerformance)
+		}
+		if instanceTypesFilters.MinNetworkPerformance != nil {
+			result[string(MinNetworkPerformance)] = spotinst.IntValue(instanceTypesFilters.MinNetworkPerformance)
+		}
+		if instanceTypesFilters.MinEnis != nil {
+			result[string(MinEnis)] = spotinst.IntValue(instanceTypesFilters.MinEnis)
+		}
+
+		result[string(ExcludeMetal)] = spotinst.BoolValue(instanceTypesFilters.ExcludeMetal)
+
+		if instanceTypesFilters.IsEnaSupported != nil {
+			if *instanceTypesFilters.IsEnaSupported == true {
+				b := "true"
+				result[string(IsEnaSupported)] = b
+			} else {
+				b := "false"
+				result[string(IsEnaSupported)] = b
+			}
+		}
+
+		if instanceTypesFilters.Categories != nil {
+			result[string(Categories)] = instanceTypesFilters.Categories
+		}
+
+		if instanceTypesFilters.DiskTypes != nil {
+			result[string(DiskTypes)] = instanceTypesFilters.DiskTypes
+		}
+
+		if instanceTypesFilters.ExcludeFamilies != nil {
+			result[string(ExcludeFamilies)] = instanceTypesFilters.ExcludeFamilies
+		}
+		if instanceTypesFilters.Hypervisor != nil {
+			result[string(Hypervisor)] = instanceTypesFilters.Hypervisor
+		}
+
+		if instanceTypesFilters.IncludeFamilies != nil {
+			result[string(IncludeFamilies)] = instanceTypesFilters.IncludeFamilies
+		}
+
+		if instanceTypesFilters.RootDeviceTypes != nil {
+			result[string(RootDeviceTypes)] = instanceTypesFilters.RootDeviceTypes
+		}
+
+		if instanceTypesFilters.VirtualizationTypes != nil {
+			result[string(VirtualizationTypes)] = instanceTypesFilters.VirtualizationTypes
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
+}
+
+func expandInstanceTypesFilters(data interface{}, nullify bool) (*aws.InstanceTypesFilters, error) {
+	instanceTypesFilters := &aws.InstanceTypesFilters{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return instanceTypesFilters, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(Categories)]; ok {
+		categories, err := expandInstanceTypeFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if categories != nil && len(categories) > 0 {
+			instanceTypesFilters.SetCategories(categories)
+		} else {
+			if nullify {
+				instanceTypesFilters.SetCategories(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(DiskTypes)]; ok {
+		diskTypes, err := expandInstanceTypeFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if diskTypes != nil && len(diskTypes) > 0 {
+			instanceTypesFilters.SetDiskTypes(diskTypes)
+		} else {
+			if nullify {
+				instanceTypesFilters.SetDiskTypes(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(ExcludeFamilies)]; ok {
+		excludeFamilies, err := expandInstanceTypeFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if excludeFamilies != nil && len(excludeFamilies) > 0 {
+			instanceTypesFilters.SetExcludeFamilies(excludeFamilies)
+		} else {
+			if nullify {
+				instanceTypesFilters.SetExcludeFamilies(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(Hypervisor)]; ok {
+		hypervisor, err := expandInstanceTypeFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if hypervisor != nil && len(hypervisor) > 0 {
+			instanceTypesFilters.SetHypervisor(hypervisor)
+		} else {
+			if nullify {
+				instanceTypesFilters.SetHypervisor(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(ExcludeMetal)].(bool); ok {
+		instanceTypesFilters.SetExcludeMetal(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(IncludeFamilies)]; ok {
+		includeFamilies, err := expandInstanceTypeFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if includeFamilies != nil && len(includeFamilies) > 0 {
+			instanceTypesFilters.SetIncludeFamilies(includeFamilies)
+		} else {
+			if nullify {
+				instanceTypesFilters.SetIncludeFamilies(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(IsEnaSupported)].(string); ok {
+		if v == "true" {
+			instanceTypesFilters.SetIsEnaSupported(spotinst.Bool(true))
+		} else if v == "false" {
+			instanceTypesFilters.SetIsEnaSupported(spotinst.Bool(false))
+		} else {
+			instanceTypesFilters.SetIsEnaSupported(nil)
+		}
+	}
+
+	if v, ok := m[string(MaxGpu)].(int); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMaxGpu(nil)
+		} else {
+			instanceTypesFilters.SetMaxGpu(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MaxMemoryGiB)].(float64); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMaxMemoryGiB(nil)
+		} else {
+			instanceTypesFilters.SetMaxMemoryGiB(spotinst.Float64(v))
+		}
+	}
+
+	if v, ok := m[string(MaxNetworkPerformance)].(int); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMaxNetworkPerformance(nil)
+		} else {
+			instanceTypesFilters.SetMaxNetworkPerformance(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MaxVcpu)].(int); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMaxVcpu(nil)
+		} else {
+			instanceTypesFilters.SetMaxVcpu(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MinEnis)].(int); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMinEnis(nil)
+		} else {
+			instanceTypesFilters.SetMinEnis(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MinGpu)].(int); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMinGpu(nil)
+		} else {
+			instanceTypesFilters.SetMinGpu(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MinMemoryGiB)].(float64); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMinMemoryGiB(nil)
+		} else {
+			instanceTypesFilters.SetMinMemoryGiB(spotinst.Float64(v))
+		}
+	}
+
+	if v, ok := m[string(MinNetworkPerformance)].(int); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMinNetworkPerformance(nil)
+		} else {
+			instanceTypesFilters.SetMinNetworkPerformance(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MinVcpu)].(int); ok {
+		if v == -1 {
+			instanceTypesFilters.SetMinVcpu(nil)
+		} else {
+			instanceTypesFilters.SetMinVcpu(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(RootDeviceTypes)]; ok {
+		rootDevicetypes, err := expandInstanceTypeFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if rootDevicetypes != nil && len(rootDevicetypes) > 0 {
+			instanceTypesFilters.SetRootDeviceTypes(rootDevicetypes)
+		} else {
+			if nullify {
+				instanceTypesFilters.SetRootDeviceTypes(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(VirtualizationTypes)]; ok {
+		virtualizationtypes, err := expandInstanceTypeFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if virtualizationtypes != nil && len(virtualizationtypes) > 0 {
+			instanceTypesFilters.SetVirtualizationTypes(virtualizationtypes)
+		} else {
+			if nullify {
+				instanceTypesFilters.SetVirtualizationTypes(nil)
+			}
+		}
+	}
+
+	return instanceTypesFilters, nil
+}
+
+func expandInstanceTypeFiltersList(data interface{}) ([]string, error) {
+	list := data.(*schema.Set).List()
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if instanceTypeList, ok := v.(string); ok && instanceTypeList != "" {
+			result = append(result, instanceTypeList)
+		}
+	}
+	return result, nil
 }

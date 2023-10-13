@@ -98,6 +98,11 @@ const (
 	ManagedInstanceAWSScheduling          ResourceAffinity = "Managed_Instance_AWS_Scheduling"
 	ManagedInstanceAWSComputeInstanceType ResourceAffinity = "Managed_Instance_AWS_Compute_Instance_Type"
 
+	OrganizationUser             ResourceAffinity = "Organization_User"
+	OrganizationPolicy           ResourceAffinity = "Organization_Policy"
+	OrganizationProgrammaticUser ResourceAffinity = "Organization_Progammatic_User"
+	OrganizationUserGroup        ResourceAffinity = "Organization_User_Group"
+
 	ElastigroupGCP                    ResourceAffinity = "Elastigroup_GCP"
 	ElastigroupGCPDisk                ResourceAffinity = "Elastigroup_GCP_Disk"
 	ElastigroupGCPGPU                 ResourceAffinity = "Elastigroup_GPC_GPU"
@@ -187,6 +192,8 @@ const (
 	OceanAKSNPVirtualNodeGroupNodeCountLimits    ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Node_Count_Limits"
 	OceanAKSNPVirtualNodeGroupNodePoolProperties ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Node_Pool_Properties"
 	OceanAKSNPVirtualNodeGroupVmSizes            ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Vm_Sizes"
+	AccountAWS                                   ResourceAffinity = "Account_AWS"
+	CredentialsAWS                               ResourceAffinity = "Credentials_AWS"
 
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
