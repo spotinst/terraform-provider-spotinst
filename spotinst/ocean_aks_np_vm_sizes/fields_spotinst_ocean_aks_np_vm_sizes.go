@@ -253,14 +253,6 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 		}
 	}
 
-	if v, ok := m[string(MinVcpu)].(int); ok {
-		if v == -1 {
-			filters.SetMinVcpu(nil)
-		} else {
-			filters.SetMinVcpu(spotinst.Int(v))
-		}
-	}
-
 	if v, ok := m[string(MinNICs)].(int); ok {
 		if v == -1 {
 			filters.SetMinNICs(nil)
@@ -324,6 +316,10 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 		result[string(MaxVcpu)] = value
 		result[string(MinMemoryGiB)] = value
 		result[string(MaxMemoryGiB)] = value
+		result[string(MinGpu)] = value
+		result[string(MaxGpu)] = value
+		result[string(MinNICs)] = value
+		result[string(MinData)] = value
 
 		if filters.MinVcpu != nil {
 			result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)

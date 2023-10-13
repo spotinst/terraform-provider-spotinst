@@ -316,6 +316,10 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 		result[string(MaxVcpu)] = value
 		result[string(MinMemoryGiB)] = value
 		result[string(MaxMemoryGiB)] = value
+		result[string(MinGpu)] = value
+		result[string(MaxGpu)] = value
+		result[string(MinNICs)] = value
+		result[string(MinData)] = value
 
 		if filters.MinVcpu != nil {
 			result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)

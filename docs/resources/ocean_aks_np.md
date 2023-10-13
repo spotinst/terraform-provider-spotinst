@@ -178,20 +178,20 @@ resource "spotinst_ocean_aks_np" "example" {
   // --- vmSizes ----------------------------------------------------------
   
   filters {
-    min_vcpu       = 2
-    max_vcpu       = 16
-    min_memory_gib = 8
-    max_memory_gib = 128
-    architectures  = ["x86_64", "arm64"]
-    series         = ["D v3", "Dds_v4", "Dsv2"]
-    exclude_series = ["Av2",  "A", "Bs", "D", "E"]
+    min_vcpu               = 2
+    max_vcpu               = 16
+    min_memory_gib         = 8
+    max_memory_gib         = 128
+    architectures          = ["x86_64", "arm64"]
+    series                 = ["D v3", "Dds_v4", "Dsv2"]
+    exclude_series         = ["Av2", "A", "Bs", "D", "E"]
     accelerated_networking = "Enabled"
-    disk_performance = "Premium"
-    min_gpu = 1
-    max_gpu = 2
-    min_nics = 1
-    vm_types = ["generalPurpose", "GPU"]
-    min_data = 1
+    disk_performance       = "Premium"
+    min_gpu                = 1
+    max_gpu                = 2
+    min_nics               = 1
+    vm_types               = ["generalPurpose", "GPU"]
+    min_data               = 1
   }
   
   // ----------------------------------------------------------------------
