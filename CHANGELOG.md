@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.146.0 (October, 14 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `accelerated_networking`, `disk_performance`, `min_gpu`, `max_gpu`, `min_nics`, `min_data` and `vm_types` fields in `filters` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added `accelerated_networking`, `disk_performance`, `min_gpu`, `max_gpu`, `min_nics`, `min_data` and `vm_types` fields in `filters` object
+
 ## 1.145.0 (October, 12 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added `pod_subnet_ids` and `vnet_subnet_ids` fields in `node_pool_properties` object
