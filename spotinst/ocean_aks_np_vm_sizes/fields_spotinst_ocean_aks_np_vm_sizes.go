@@ -269,12 +269,16 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 		}
 	}
 
-	if v, ok := m[string(AcceleratedNetworking)].(string); ok {
+	if v, ok := m[string(AcceleratedNetworking)].(string); ok && v != "" {
 		filters.SetAcceleratedNetworking(spotinst.String(v))
+	} else {
+		filters.SetAcceleratedNetworking(nil)
 	}
 
-	if v, ok := m[string(DiskPerformance)].(string); ok {
+	if v, ok := m[string(DiskPerformance)].(string); ok && v != "" {
 		filters.SetDiskPerformance(spotinst.String(v))
+	} else {
+		filters.SetDiskPerformance(nil)
 	}
 
 	if v, ok := m[string(VmTypes)]; ok {
