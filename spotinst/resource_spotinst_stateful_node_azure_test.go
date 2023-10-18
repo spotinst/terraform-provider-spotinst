@@ -361,7 +361,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Login(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName,
+					login: testAzureV3LoginStatefulNodeConfig_Create}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
@@ -416,7 +417,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName,
+					persistence: testPersistenceStatefulNodeAzureV3Config_Create}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
