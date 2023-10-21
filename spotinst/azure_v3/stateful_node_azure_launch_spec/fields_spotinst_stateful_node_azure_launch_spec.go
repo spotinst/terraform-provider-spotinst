@@ -288,6 +288,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(OSDiskSizeGB): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
 					},
 					string(OSDiskType): {
 						Type:     schema.TypeString,
@@ -315,25 +316,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			//var value *azure.OSDisk = nil
-
 			if v, ok := resourceData.GetOk(string(OSDisk)); ok {
 				if osDisk, err := expandOSDisk(v); err != nil {
 					return err
 				} else {
-					//value = osDisk
 					st.Compute.LaunchSpecification.SetOSDisk(osDisk)
 				}
 			}
-			//st.Compute.LaunchSpecification.SetOSDisk(value)
-
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 			var value *azure.OSDisk = nil
-
 			if v, ok := resourceData.GetOk(string(OSDisk)); ok {
 				if osDisk, err := expandOSDisk(v); err != nil {
 					return err
@@ -677,28 +672,25 @@ func flattenOSDisk(osd *azure.OSDisk) []interface{} {
 }
 
 func expandOSDisk(data interface{}) (*azure.OSDisk, error) {
-	/*if list := data.([]interface{}); len(list) > 0 {
-	osDisk := &azure.OSDisk{}*/
 	osDisk := &azure.OSDisk{}
 	list := data.(*schema.Set).List()
 	if len(list) > 0 {
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
-			/*var sizeGB *int = nil
-			var osType *string = nil*/
 
-			if v, ok := m[string(OSDiskSizeGB)].(int); ok && v > 0 {
-				//sizeGB = spotinst.Int(v)
-				osDisk.SetSizeGB(spotinst.Int(v))
+			if v, ok := m[string(OSDiskSizeGB)].(int); ok {
+				if v == -1 {
+					osDisk.SetSizeGB(nil)
+				} else {
+					osDisk.SetSizeGB(spotinst.Int(v))
+				}
 			}
-			//osDisk.SetSizeGB(sizeGB)
 
 			if v, ok := m[string(OSDiskType)].(string); ok && v != "" {
-				//osType = spotinst.String(v)
 				osDisk.SetType(spotinst.String(v))
+			} else {
+				osDisk.SetType(nil)
 			}
-			//osDisk.SetType(osType)
-
 		}
 		return osDisk, nil
 	}

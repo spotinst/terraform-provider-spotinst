@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.148.0 (October 20, 2023)
+## 1.148.0 (October 21, 2023)
 BUG FIXES:
 * resource/spotinst_stateful_node_azure: Fixed `load_balancer_config`, `login` and `os_disk` blocks in `launch_specification` object
 
