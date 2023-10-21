@@ -98,20 +98,14 @@ func expandLogin(data interface{}) (*azure.Login, error) {
 
 			if v, ok := m[string(UserName)].(string); ok && v != "" {
 				login.SetUserName(spotinst.String(v))
-			} else {
-				login.SetUserName(nil)
 			}
 
 			if v, ok := m[string(SSHPublicKey)].(string); ok && v != "" {
 				login.SetSSHPublicKey(spotinst.String(v))
-			} else {
-				login.SetSSHPublicKey(nil)
 			}
 
 			if v, ok := m[string(Password)].(string); ok && v != "" {
 				login.SetPassword(spotinst.String(v))
-			} else {
-				login.SetPassword(nil)
 			}
 		}
 		return login, nil
