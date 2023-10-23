@@ -179,6 +179,9 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "true"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "true"),
 					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "true"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "60"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "PREEMPTIBLE"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.preemptible_percentage", "30"),
 				),
 			},
 			{
@@ -195,6 +198,10 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_integrity_monitoring", "false"),
 					resource.TestCheckResourceAttr(resourceName, "shielded_instance_config.0.enable_secure_boot", "false"),
 					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "120"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "SPOT"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.preemptible_percentage", "60"),
 				),
 			},
 		},
@@ -218,6 +225,11 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
     enable_integrity_monitoring = true
  }
 use_as_template_only = true
+strategy {
+    draining_timeout = 60
+    provisioning_model = "PREEMPTIBLE"
+	preemptible_percentage = 30
+  }
  %v
 }
 
@@ -237,6 +249,11 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
     enable_integrity_monitoring = false
  }
 use_as_template_only = false
+strategy {
+    draining_timeout = 120
+    provisioning_model = "SPOT"
+	preemptible_percentage = 60
+  }
  %v
 }
 
