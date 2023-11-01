@@ -118,10 +118,12 @@ func expandStrategy(data interface{}) (*gcp.Strategy, error) {
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(DrainingTimeout)].(int); ok && v > 0 {
-				strategy.SetDrainingTimeout(spotinst.Int(v))
-			} else {
-				strategy.SetDrainingTimeout(nil)
+			if v, ok := m[string(DrainingTimeout)].(int); ok {
+				if v == -1 {
+					strategy.SetDrainingTimeout(nil)
+				} else {
+					strategy.SetDrainingTimeout(spotinst.Int(v))
+				}
 			}
 
 			if v, ok := m[string(ProvisioningModel)].(string); ok && v != "" {
@@ -130,10 +132,12 @@ func expandStrategy(data interface{}) (*gcp.Strategy, error) {
 				strategy.SetProvisioningModel(nil)
 			}
 
-			if v, ok := m[string(PreemptiblePercentage)].(int); ok && v >= 0 {
-				strategy.SetPreemptiblePercentage(spotinst.Int(v))
-			} else {
-				strategy.SetPreemptiblePercentage(nil)
+			if v, ok := m[string(PreemptiblePercentage)].(int); ok {
+				if v == -1 {
+					strategy.SetPreemptiblePercentage(nil)
+				} else {
+					strategy.SetPreemptiblePercentage(spotinst.Int(v))
+				}
 			}
 		}
 

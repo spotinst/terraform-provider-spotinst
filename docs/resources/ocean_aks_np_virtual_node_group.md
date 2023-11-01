@@ -55,6 +55,8 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   os_type               = "Linux"
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.26"
+  pod_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
+  vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
 
   // --------------------------------------------------------------------------
 
@@ -78,13 +80,20 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   // --- vmSizes ---------------------------------------------------------------
   
   filters {
-    min_vcpu = 2
-    max_vcpu = 16
-    min_memory_gib = 8
-    max_memory_gib = 16
-    architectures = ["X86_64"]
-    series = ["D v3", "F", "E v4"]
-    exclude_series = ["Bs", "Da v4"]
+    min_vcpu               = 2
+    max_vcpu               = 16
+    min_memory_gib         = 8
+    max_memory_gib         = 128
+    architectures          = ["x86_64", "arm64"]
+    series                 = ["D v3", "Dds_v4", "Dsv2"]
+    exclude_series         = ["Av2", "A", "Bs", "D", "E"]
+    accelerated_networking = "Enabled"
+    disk_performance       = "Premium"
+    min_gpu                = 1
+    max_gpu                = 2
+    min_nics               = 1
+    vm_types               = ["generalPurpose", "GPU"]
+    min_data               = 1
   }
   
   // ----------------------------------------------------------------------------
@@ -121,6 +130,8 @@ The following arguments are supported:
 * `os_type` - (Optional) The OS type of the OS disk. Can't be modified once set.
 * `os_sku` - (Optional, Enum: `"Ubuntu", "Windows2019", "Windows2022", "AzureLinux", "CBLMariner"`) The OS SKU of the OS type. Must correlate with the os type.
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
+* `pod_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign pods in the cluster (requires azure network-plugin).
+* `vnet_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign nodes in the cluster (requires azure network-plugin).
 * `fallback_to_ondemand` - (Optional, Default: `true`) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
 * `spot_percentage` - (Optional, Default: `100`) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
@@ -138,3 +149,10 @@ The following arguments are supported:
     * `min_vcpu` - (Optional) Minimum number of vcpus available.
     * `series` - (Optional) Vm sizes belonging to a series from the list will be available for scaling.
     * `exclude_series` - (Optional) Vm sizes belonging to a series from the list will not be available for scaling.
+    * `accelerated_networking` - (Optional, Enum `"Enabled", "Disabled"`) In case acceleratedNetworking is set to Enabled, accelerated networking applies only to the VM that enables it.
+    * `disk_performance` - (Optional, Enum `"Standard", "Premium"`) The filtered vm sizes will support at least one of the classes from this list.
+    * `min_gpu` - (Optional) Minimum number of GPUs available.
+    * `max_gpu` - (Optional) Maximum number of GPUs available.
+    * `min_nics` - (Optional) Minimum number of network interfaces.
+    * `min_data` - (Optional) Minimum number of data disks available.
+    * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.

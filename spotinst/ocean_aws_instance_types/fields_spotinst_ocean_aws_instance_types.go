@@ -2,6 +2,7 @@ package ocean_aws_instance_types
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -388,11 +389,13 @@ func expandFilters(data interface{}, nullify bool) (*aws.Filters, error) {
 		}
 	}
 
-	if v, ok := m[string(IsEnaSupported)].(string); ok && v != "" {
+	if v, ok := m[string(IsEnaSupported)].(string); ok {
 		if v == "true" {
 			filters.SetIsEnaSupported(spotinst.Bool(true))
 		} else if v == "false" {
 			filters.SetIsEnaSupported(spotinst.Bool(false))
+		} else {
+			filters.SetIsEnaSupported(nil)
 		}
 	}
 

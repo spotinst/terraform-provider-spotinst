@@ -1,5 +1,44 @@
 ## Unreleased
 
+## 1.148.0 (October 23, 2023)
+BUG FIXES:
+* resource/spotinst_stateful_node_azure: Fixed `load_balancer_config`, `login` and `os_disk` blocks in `launch_specification` object
+
+## 1.147.0 (October, 18 2023)
+BUG FIXES::
+* resource/spotinst_ocean_aks_np: Fixed `accelerated_networking` and `disk_performance` fields in `filters` object to accept null
+* resource/spotinst_ocean_aks_np_virtual_node_group: Fixed `accelerated_networking` and `disk_performance` fields in `filters` object to accept null
+
+## 1.146.0 (October, 14 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `accelerated_networking`, `disk_performance`, `min_gpu`, `max_gpu`, `min_nics`, `min_data` and `vm_types` fields in `filters` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added `accelerated_networking`, `disk_performance`, `min_gpu`, `max_gpu`, `min_nics`, `min_data` and `vm_types` fields in `filters` object
+
+## 1.145.0 (October, 12 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `pod_subnet_ids` and `vnet_subnet_ids` fields in `node_pool_properties` object
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added `pod_subnet_ids` and `vnet_subnet_ids` fields in `node_pool_properties` object
+
+## 1.144.0 (October, 09 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added `instancetypes_filters` object under `launchSpec`
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fix for `autoscale_is_enabled` field update under filters.
+NOTES:
+* documentation: resource/spotinst_credentials_aws: Moved credentials document under Accounts hierarchy.
+
+## 1.143.0 (October 05, 2023)
+FEATURES: added new resources
+* **New Resource:** `resource/spotinst_organization_user`
+* **New Resource:** `resource/spotinst_organization_policy`
+* **New Resource:** `resource/spotinst_organization_programmatic_user`
+* **New Resource:** `resource/spotinst_organization_user_group`
+
+## 1.142.0 (September 29, 2023)
+FEATURES:
+* **New Resource:** `resource/spotinst_account_aws`
+* **New Resource:** `resource/spotinst_credentials_aws`
+
 ## 1.141.0 (September, 29 2023)
 BUG FIXES:
 * resource/spotinst_ocean_aks_np: Fix for `os_sku` and `availability_zones` fields

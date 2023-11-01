@@ -15,7 +15,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.StatefulNodeAzureLogin,
 		Login,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
@@ -42,21 +42,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if statefulNode.Compute != nil && statefulNode.Compute.LaunchSpecification != nil && statefulNode.Compute.LaunchSpecification.Login != nil {
 				result = flattenLogin(statefulNode.Compute.LaunchSpecification.Login)
 			}
-
-			if err := resourceData.Set(string(Login), result); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Login), err)
-			}
-
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(Login)); ok {
-				if login, err := expandLogin(v); err != nil {
-					return err
-				} else {
-					statefulNode.Compute.LaunchSpecification.SetLogin(login)
+			if result != nil {
+				if err := resourceData.Set(string(Login), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Login), err)
 				}
 			}
 			return nil
@@ -70,6 +58,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					statefulNode.Compute.LaunchSpecification.SetLogin(login)
 				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			statefulNode := snWrapper.GetStatefulNode()
+			var value *azure.Login = nil
+			if v, ok := resourceData.GetOk(string(Login)); ok {
+				if login, err := expandLogin(v); err != nil {
+					return err
+				} else {
+					value = login
+				}
+				statefulNode.Compute.LaunchSpecification.SetLogin(value)
 			} else {
 				statefulNode.Compute.LaunchSpecification.SetLogin(nil)
 			}
@@ -89,21 +91,24 @@ func flattenLogin(login *azure.Login) []interface{} {
 
 func expandLogin(data interface{}) (*azure.Login, error) {
 	login := &azure.Login{}
-	list := data.([]interface{})
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
+	list := data.(*schema.Set).List()
+	if len(list) > 0 {
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(UserName)].(string); ok && v != "" {
-			login.SetUserName(spotinst.String(v))
-		}
+			if v, ok := m[string(UserName)].(string); ok && v != "" {
+				login.SetUserName(spotinst.String(v))
+			}
 
-		if v, ok := m[string(SSHPublicKey)].(string); ok && v != "" {
-			login.SetSSHPublicKey(spotinst.String(v))
-		}
+			if v, ok := m[string(SSHPublicKey)].(string); ok && v != "" {
+				login.SetSSHPublicKey(spotinst.String(v))
+			}
 
-		if v, ok := m[string(Password)].(string); ok && v != "" {
-			login.SetPassword(spotinst.String(v))
+			if v, ok := m[string(Password)].(string); ok && v != "" {
+				login.SetPassword(spotinst.String(v))
+			}
 		}
+		return login, nil
 	}
-	return login, nil
+	return nil, nil
 }
