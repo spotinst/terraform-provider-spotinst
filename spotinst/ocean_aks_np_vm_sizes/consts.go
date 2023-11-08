@@ -16,6 +16,6 @@ const (
 	MinGpu                commons.FieldName = "min_gpu"
 	MaxGpu                commons.FieldName = "max_gpu"
 	MinNICs               commons.FieldName = "min_nics"
-	MinData               commons.FieldName = "min_data"
+	MinDisk               commons.FieldName = "min_disk"
 	VmTypes               commons.FieldName = "vm_types"
 )

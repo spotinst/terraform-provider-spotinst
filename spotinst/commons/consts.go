@@ -141,13 +141,6 @@ const (
 	MRScalerAWSScheduledTask       ResourceAffinity = "MRScaler_AWS_Scheduled_Task"
 	MRScalerAWSTerminationPolicies ResourceAffinity = "MRScaler_AWS_Termination_Policies"
 
-	MultaiBalancer    ResourceAffinity = "Multai_Balancer"
-	MultaiDeployment  ResourceAffinity = "Multai_Deployment"
-	MultaiListener    ResourceAffinity = "Multai_Listener"
-	MultaiRoutingRule ResourceAffinity = "Multai_Routing_Rule"
-	MultaiTarget      ResourceAffinity = "Multai_Target"
-	MultaiTargetSet   ResourceAffinity = "Multai_Target_Set"
-
 	DataIntegration ResourceAffinity = "Data_Integration"
 
 	HealthCheck ResourceAffinity = "Health_Check"

@@ -16,7 +16,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
-			Default:  100,
+			Default:  -1,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
@@ -24,6 +24,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value *int = nil
 			if cluster != nil && cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.Strategy != nil && cluster.VirtualNodeGroupTemplate.Strategy.SpotPercentage != nil {
 				value = cluster.VirtualNodeGroupTemplate.Strategy.SpotPercentage
+			} else {
+				value = spotinst.Int(-1)
 			}
 			if err := resourceData.Set(string(SpotPercentage), spotinst.IntValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotPercentage), err)
@@ -33,7 +35,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v >= 0 {
 				cluster.VirtualNodeGroupTemplate.Strategy.SetSpotPercentage(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.Strategy.SetSpotPercentage(nil)
@@ -43,7 +45,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
 			cluster := clusterWrapper.GetNPCluster()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v >= 0 {
 				cluster.VirtualNodeGroupTemplate.Strategy.SetSpotPercentage(spotinst.Int(v))
 			} else {
 				cluster.VirtualNodeGroupTemplate.Strategy.SetSpotPercentage(nil)
@@ -59,7 +61,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
-			Default:  true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)

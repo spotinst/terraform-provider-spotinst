@@ -17,7 +17,6 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
 	"github.com/spotinst/spotinst-sdk-go/service/managedinstance"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
-	"github.com/spotinst/spotinst-sdk-go/service/multai"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean"
 	"github.com/spotinst/spotinst-sdk-go/service/stateful"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
@@ -46,7 +45,6 @@ type Client struct {
 	elastigroup     elastigroup.Service
 	healthCheck     healthcheck.Service
 	subscription    subscription.Service
-	multai          multai.Service
 	mrscaler        mrscaler.Service
 	ocean           ocean.Service
 	managedInstance managedinstance.Service
@@ -71,7 +69,6 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		elastigroup:     elastigroup.New(sess),
 		healthCheck:     healthcheck.New(sess),
 		subscription:    subscription.New(sess),
-		multai:          multai.New(sess),
 		mrscaler:        mrscaler.New(sess),
 		ocean:           ocean.New(sess),
 		managedInstance: managedinstance.New(sess),

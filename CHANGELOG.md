@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.149.0 (November, 08 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: removed `isEnabled` and default values
+* resource/spotinst_multai_target: removed the support
+
 ## 1.148.0 (October 23, 2023)
 BUG FIXES:
 * resource/spotinst_stateful_node_azure: Fixed `load_balancer_config`, `login` and `os_disk` blocks in `launch_specification` object

@@ -602,7 +602,7 @@ func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string
 			spec.DeallocationConfig.SnapshotDeallocationConfig.ShouldDeallocate = spotinst.Bool(v)
 		}
 
-		if v, ok := m[string(stateful_node_azure.ShouldDeallocateSnapshot)].(int); ok && v >= 0 {
+		if v, ok := m[string(stateful_node_azure.SnapshotTTLInHours)].(int); ok && v >= 0 {
 			spec.DeallocationConfig.SnapshotDeallocationConfig.TTLInHours = spotinst.Int(v)
 		}
 

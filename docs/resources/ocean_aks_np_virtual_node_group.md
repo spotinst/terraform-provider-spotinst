@@ -93,7 +93,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
     max_gpu                = 2
     min_nics               = 1
     vm_types               = ["generalPurpose", "GPU"]
-    min_data               = 1
+    min_disk               = 1
   }
   
   // ----------------------------------------------------------------------------
@@ -121,8 +121,8 @@ The following arguments are supported:
 * `labels` - (Optional) An array of labels to add to the virtual node group.Only custom user labels are allowed, and not Kubernetes built-in labels or Spot internal labels.
   * `key` - (Required) Set label key. The following are not allowed: ["kubernetes.azure.com/agentpool", "kubernetes.io/arch", "kubernetes.io/os", "node.kubernetes.io/instance-type", "topology.kubernetes.io/region", "topology.kubernetes.io/zone", "kubernetes.azure.com/cluster", "kubernetes.azure.com/mode", "kubernetes.azure.com/role", "kubernetes.azure.com/scalesetpriority", "kubernetes.io/hostname", "kubernetes.azure.com/storageprofile", "kubernetes.azure.com/storagetier", "kubernetes.azure.com/instance-sku", "kubernetes.azure.com/node-image-version", "kubernetes.azure.com/subnet", "kubernetes.azure.com/vnet", "kubernetes.azure.com/ppg", "kubernetes.azure.com/encrypted-set", "kubernetes.azure.com/accelerator", "kubernetes.azure.com/fips_enabled", "kubernetes.azure.com/os-sku"]
   * `value` - (Required) Set label value.
-* `max_count` - (Optional) Maximum node count limit.
-* `min_count` - (Optional) Minimum node count limit.
+* `max_count` - (Optional, Default: 1000) Maximum node count limit.
+* `min_count` - (Optional, Default: 0) Minimum node count limit.
 * `enable_node_public_ip` - (Optional) Enable node public IP.
 * `max_pods_per_node` - (Optional) The maximum number of pods per node in the node pools.
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
@@ -132,8 +132,8 @@ The following arguments are supported:
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `pod_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign pods in the cluster (requires azure network-plugin).
 * `vnet_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign nodes in the cluster (requires azure network-plugin).
-* `fallback_to_ondemand` - (Optional, Default: `true`) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
-* `spot_percentage` - (Optional, Default: `100`) Percentage of spot VMs to maintain.
+* `fallback_to_ondemand` - (Optional) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
+* `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
     * `key` - (Optional) Tag key for VMs in the cluster.
     * `value` - (Optional) Tag value for VMs in the cluster.
@@ -154,5 +154,5 @@ The following arguments are supported:
     * `min_gpu` - (Optional) Minimum number of GPUs available.
     * `max_gpu` - (Optional) Maximum number of GPUs available.
     * `min_nics` - (Optional) Minimum number of network interfaces.
-    * `min_data` - (Optional) Minimum number of data disks available.
+    * `min_disk` - (Optional) Minimum number of data disks available.
     * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.

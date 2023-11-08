@@ -19,8 +19,7 @@ const (
 )
 
 const (
-	Headroom  commons.FieldName = "autoscale_headroom"
-	Automatic commons.FieldName = "automatic"
-	//IsEnabled  commons.FieldName = "is_enabled"
+	Headroom   commons.FieldName = "autoscale_headroom"
+	Automatic  commons.FieldName = "automatic"
 	Percentage commons.FieldName = "percentage"
 )

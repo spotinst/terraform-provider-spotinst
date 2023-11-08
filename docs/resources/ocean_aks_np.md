@@ -191,7 +191,7 @@ resource "spotinst_ocean_aks_np" "example" {
     max_gpu                = 2
     min_nics               = 1
     vm_types               = ["generalPurpose", "GPU"]
-    min_data               = 1
+    min_disk               = 1
   }
   
   // ----------------------------------------------------------------------
@@ -213,7 +213,7 @@ The following arguments are supported:
   * `aks_region` - (Required) The cluster's region.
   * `aks_resource_group_name` - (Required) The name of the cluster's resource group.
 * `autoscaler` - (Optional) The Ocean Kubernetes Autoscaler object.
-    * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Autoscaler.
+    * `autoscale_is_enabled` - (Optional) Enable the Ocean Kubernetes Autoscaler.
     * `autoscale_down` - (Optional) Auto Scaling scale down operations.
         * `max_scale_down_percentage` - (Optional) The maximum percentage allowed to scale down in a single scaling action.
     * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
@@ -239,8 +239,8 @@ The following arguments are supported:
 * `labels` - (Optional) An array of labels to add to the virtual node group. Only custom user labels are allowed, and not [Kubernetes well-known labels](https://kubernetes.io/docs/reference/labels-annotations-taints/) or [ Azure AKS labels](https://learn.microsoft.com/en-us/azure/aks/use-labels) or [Spot labels](https://docs.spot.io/ocean/features/labels-and-taints?id=spot-labels).
     * `key` - (Required) Set label key [spot labels](https://docs.spot.io/ocean/features/labels-and-taints?id=spotinstionode-lifecycle) and [Azure labels](https://learn.microsoft.com/en-us/azure/aks/use-labels). The following are not allowed: ["kubernetes.azure.com/agentpool","kubernetes.io/arch","kubernetes.io/os","node.kubernetes.io/instance-type", "topology.kubernetes.io/region", "topology.kubernetes.io/zone", "kubernetes.azure.com/cluster", "kubernetes.azure.com/mode", "kubernetes.azure.com/role", "kubernetes.azure.com/scalesetpriority", "kubernetes.io/hostname", "kubernetes.azure.com/storageprofile", "kubernetes.azure.com/storagetier", "kubernetes.azure.com/instance-sku", "kubernetes.azure.com/node-image-version", "kubernetes.azure.com/subnet", "kubernetes.azure.com/vnet", "kubernetes.azure.com/ppg", "kubernetes.azure.com/encrypted-set", "kubernetes.azure.com/accelerator", "kubernetes.azure.com/fips_enabled", "kubernetes.azure.com/os-sku"]
     * `value` - (Required) Set label value.
-* `max_count` - (Optional) Maximum node count limit.
-* `min_count` - (Optional) Minimum node count limit.
+* `max_count` - (Optional, Default: 1000) Maximum node count limit.
+* `min_count` - (Optional, Default: 0) Minimum node count limit.
 * `enable_node_public_ip` - (Optional) Enable node public IP.
 * `max_pods_per_node` - (Optional) The maximum number of pods per node in the node pools.
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
@@ -250,8 +250,8 @@ The following arguments are supported:
 * `pod_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign pods in the cluster (requires azure network-plugin).
 * `vnet_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign nodes in the cluster (requires azure network-plugin).
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
-* `fallback_to_ondemand` - (Optional, Default: `true`) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
-* `spot_percentage` - (Optional,Default: `100`) Percentage of spot VMs to maintain.
+* `fallback_to_ondemand` - (Optional) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
+* `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
     * `key` - (Optional) Tag key for VMs in the cluster.
     * `value` - (Optional) Tag value for VMs in the cluster.
@@ -272,5 +272,5 @@ The following arguments are supported:
     * `min_gpu` - (Optional) Minimum number of GPUs available.
     * `max_gpu` - (Optional) Maximum number of GPUs available.
     * `min_nics` - (Optional) Minimum number of network interfaces.
-    * `min_data` - (Optional) Minimum number of data disks available.
+    * `min_disk` - (Optional) Minimum number of data disks available.
     * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.
