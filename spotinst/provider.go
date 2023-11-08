@@ -58,14 +58,6 @@ func Provider() *schema.Provider {
 			string(commons.OceanAKSNPResourceName):                 resourceSpotinstOceanAKSNP(),
 			string(commons.OceanAKSNPVirtualNodeGroupResourceName): resourceSpotinstOceanAKSNPVirtualNodeGroup(),
 
-			// Multai.
-			string(commons.MultaiBalancerResourceName):    resourceSpotinstMultaiBalancer(),
-			string(commons.MultaiDeploymentResourceName):  resourceSpotinstMultaiDeployment(),
-			string(commons.MultaiListenerResourceName):    resourceSpotinstMultaiListener(),
-			string(commons.MultaiRoutingRuleResourceName): resourceSpotinstMultaiRoutingRule(),
-			string(commons.MultaiTargetResourceName):      resourceSpotinstMultaiTarget(),
-			string(commons.MultaiTargetSetResourceName):   resourceSpotinstMultaiTargetSet(),
-
 			// Managed Instance.
 			string(commons.ManagedInstanceAWSResourceName): resourceSpotinstMangedInstanceAWS(),
 

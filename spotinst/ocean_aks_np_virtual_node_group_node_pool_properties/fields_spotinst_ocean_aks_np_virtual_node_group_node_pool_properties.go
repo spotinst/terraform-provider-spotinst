@@ -61,7 +61,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
-			Default:  false,
+			//Default:  false,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)

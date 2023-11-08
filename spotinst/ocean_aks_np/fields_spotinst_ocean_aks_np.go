@@ -49,8 +49,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ControllerClusterID,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
-			Computed: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)

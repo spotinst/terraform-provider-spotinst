@@ -89,7 +89,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Default:  -1,
 					},
 
-					string(MinData): {
+					string(MinDisk): {
 						Type:     schema.TypeInt,
 						Optional: true,
 						Default:  -1,
@@ -261,11 +261,11 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 		}
 	}
 
-	if v, ok := m[string(MinData)].(int); ok {
+	if v, ok := m[string(MinDisk)].(int); ok {
 		if v == -1 {
-			filters.SetMinData(nil)
+			filters.SetMinDisk(nil)
 		} else {
-			filters.SetMinData(spotinst.Int(v))
+			filters.SetMinDisk(spotinst.Int(v))
 		}
 	}
 
@@ -323,7 +323,7 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 		result[string(MinGpu)] = value
 		result[string(MaxGpu)] = value
 		result[string(MinNICs)] = value
-		result[string(MinData)] = value
+		result[string(MinDisk)] = value
 
 		if filters.MinVcpu != nil {
 			result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)
@@ -346,8 +346,8 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 		if filters.MinNICs != nil {
 			result[string(MinNICs)] = spotinst.IntValue(filters.MinNICs)
 		}
-		if filters.MinData != nil {
-			result[string(MinData)] = spotinst.IntValue(filters.MinData)
+		if filters.MinDisk != nil {
+			result[string(MinDisk)] = spotinst.IntValue(filters.MinDisk)
 		}
 		if filters.AcceleratedNetworking != nil {
 			result[string(AcceleratedNetworking)] = spotinst.StringValue(filters.AcceleratedNetworking)

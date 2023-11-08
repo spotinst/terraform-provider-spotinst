@@ -16,7 +16,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeInt,
 			Optional: true,
-			Default:  100,
+			Default:  -1,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
@@ -24,6 +24,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			var value *int = nil
 			if virtualNodeGroup != nil && virtualNodeGroup.Strategy != nil {
 				value = virtualNodeGroup.Strategy.SpotPercentage
+			} else {
+				value = spotinst.Int(-1)
 			}
 			if value != nil {
 				if err := resourceData.Set(string(SpotPercentage), spotinst.IntValue(value)); err != nil {
@@ -35,7 +37,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
 			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
-			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v > 0 {
+			if v, ok := resourceData.Get(string(SpotPercentage)).(int); ok && v >= 0 {
 				virtualNodeGroup.Strategy.SetSpotPercentage(spotinst.Int(v))
 			} else {
 				virtualNodeGroup.Strategy.SetSpotPercentage(nil)
@@ -61,7 +63,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeBool,
 			Optional: true,
-			Default:  true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)

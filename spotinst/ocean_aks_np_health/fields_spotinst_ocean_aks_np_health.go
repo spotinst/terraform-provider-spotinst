@@ -23,7 +23,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(GracePeriod): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  600,
+						Default:  -1,
 					},
 				},
 			},
