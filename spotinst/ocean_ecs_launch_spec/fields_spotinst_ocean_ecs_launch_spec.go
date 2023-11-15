@@ -158,7 +158,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if images, err := expandECSImages(value); err != nil {
 					return err
 				} else {
-					launchSpec.SetImages(images)
+					launchSpec.SetECSImages(images)
 				}
 			}
 			return nil
@@ -174,7 +174,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					imagesToAdd = images
 				}
 			}
-			launchSpec.SetImages(imagesToAdd)
+			launchSpec.SetECSImages(imagesToAdd)
 			return nil
 		},
 		nil,

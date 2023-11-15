@@ -30,6 +30,7 @@ const (
 	SubnetIDs          commons.FieldName = "subnet_ids"
 	SchedulingTask     commons.FieldName = "scheduling_task"
 	Strategy           commons.FieldName = "strategy"
+	Images             commons.FieldName = "images"
 )
 
 const (
@@ -77,4 +78,8 @@ const (
 	InstanceMetadataOptions commons.FieldName = "instance_metadata_options"
 	HTTPTokens              commons.FieldName = "http_tokens"
 	HTTPPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
+)
+
+const (
+	ImageId commons.FieldName = "image_id"
 )

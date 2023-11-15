@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.150.0 (November, 16 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs_launch_spec: added `images` object to support multi ami
+
 ## 1.149.0 (November, 08 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: removed `isEnabled` and default values
