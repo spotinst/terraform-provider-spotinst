@@ -121,6 +121,64 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[Images] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		Images,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ImageId): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.Images != nil {
+				images := launchSpec.Images
+				result = flattenECSImages(images)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(Images), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Images), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(Images)); ok {
+				if images, err := expandECSImages(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetECSImages(images)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.ECSLaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var imagesToAdd []*aws.ECSImages = nil
+			if value, ok := resourceData.GetOk(string(Images)); ok {
+				if images, err := expandECSImages(value); err != nil {
+					return err
+				} else {
+					imagesToAdd = images
+				}
+			}
+			launchSpec.SetECSImages(imagesToAdd)
+			return nil
+		},
+		nil,
+	)
 
 	fieldsMap[UserData] = commons.NewGenericField(
 		commons.OceanECSLaunchSpec,
@@ -1550,4 +1608,32 @@ func expandInstanceMetadataOptions(data interface{}) (*aws.ECSLaunchspecInstance
 	}
 
 	return instanceMetadataOptions, nil
+}
+func flattenECSImages(images []*aws.ECSImages) []interface{} {
+	result := make([]interface{}, 0, len(images))
+	for _, image := range images {
+		m := make(map[string]interface{})
+		m[string(ImageId)] = spotinst.StringValue(image.ImageId)
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandECSImages(data interface{}) ([]*aws.ECSImages, error) {
+	list := data.([]interface{})
+	images := make([]*aws.ECSImages, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := attr[string(ImageId)]; !ok {
+			return nil, errors.New("invalid tag attributes: value missing")
+		}
+		image := &aws.ECSImages{
+			ImageId: spotinst.String(attr[string(ImageId)].(string)),
+		}
+		images = append(images, image)
+	}
+	return images, nil
 }

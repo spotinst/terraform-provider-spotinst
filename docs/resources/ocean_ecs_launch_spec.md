@@ -68,6 +68,14 @@ resource "spotinst_ocean_ecs_launch_spec" "example" {
      value = "production"
   }
   
+  //images object to support multi ami
+  images {
+    image_id = "ami-12345"
+  }
+  images {
+    image_id = "ami-67890"
+  }
+  
     scheduling_task {
     is_enabled = true
     cron_expression = "0 1 * * *"
@@ -94,6 +102,8 @@ The following arguments are supported:
 * `name`      - (Required) The Ocean Launch Specification name. 
 * `user_data` - (Optional) Base64-encoded MIME user data to make available to the instances.
 * `image_id`  - (Optional) ID of the image used to launch the instances.
+* `images`    - (Optional) You can configure VNG with either the imageId or images objects, but not both simultaneously. For each architecture type (amd64, arm64) only one AMI is allowed. Valid values: null, or an array with at least one element
+    * `image_id` - Identifier of the image in AWS. Valid values: any string which is not empty or null.
 * `iam_instance_profile` - (Optional) The ARN or name of an IAM instance profile to associate with launched instances.
 * `security_group_ids` - (Optional) One or more security group ids.
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
