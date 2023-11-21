@@ -1,4 +1,7 @@
 ## Unreleased
+## 1.150.1 (November, 21 2023)
+BUG FIXES:
+* resource/spotinst_ocean_ecs_launch_spec: Fixed deletion of `images` object.
 
 ## 1.150.0 (November, 16 2023)
 ENHANCEMENTS:
