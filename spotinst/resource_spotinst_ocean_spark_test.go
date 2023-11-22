@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	testOceanClusterID = "o-6cf35461"
+	testOceanClusterID = "o-7cb5c0b8"
 )
 
 var oceanClusterID = getOceanClusterID() // NOTE: This needs to be an existing ocean cluster
