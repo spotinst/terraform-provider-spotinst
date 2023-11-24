@@ -183,9 +183,9 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-0a8e7b3cd1cfd3d6f"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 				),
 			},
@@ -198,8 +198,8 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0faad0b6bb7e99d9f"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-8ab89cc1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-987654"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
@@ -221,8 +221,8 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids         = ["subnet-0bd585d2c2177c7ee"]
-  security_group_ids = ["sg-0a8e7b3cd1cfd3d6f"]
+  subnet_ids         = ["subnet-4333093a"]
+  security_group_ids = ["sg-a22000e8"]
   utilize_reserved_instances = false
 
 
@@ -245,7 +245,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   //min_size = 0
   //desired_capacity = 0
 
-  subnet_ids = ["subnet-0bd585d2c2177c7ee", "subnet-0faad0b6bb7e99d9f"]
+  subnet_ids = ["subnet-4333093a", "subnet-8ab89cc1"]
   security_group_ids = ["sg-987654"]
   utilize_reserved_instances = true
 

@@ -228,11 +228,11 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.type", "loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Terraform-statefulNode-loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Automation-Lb"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.sku", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Terraform-backend-pool"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Automation-Lb-BackendPool"),
 				),
 			},
 			{
@@ -248,11 +248,11 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.type", "loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Terraform-statefulNode-loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Automation-Lb"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.sku", "Basic"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Terraform-backend-pool"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Automation-Lb-BackendPool"),
 				),
 			},
 		},
@@ -266,14 +266,14 @@ name = "%v"
 os = "Linux"
 region = "eastus"
 description = "terraform-stateful-node-azure"
-resource_group_name = "CoreReliabilityResourceGroup"
+resource_group_name = "AutomationResourceGroup"
 user_data = "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="
 load_balancer {
-	name =  "Terraform-statefulNode-loadBalancer"
+	name =  "Automation-Lb"
 	type = "loadBalancer"
-	resource_group_name = "CoreReliabilityResourceGroup"
+	resource_group_name = "AutomationResourceGroup"
 	sku =  "Standard"
-	backend_pool_names = ["Terraform-backend-pool"]
+	backend_pool_names = ["Automation-Lb-BackendPool"]
 }
 %v
 %v
@@ -309,14 +309,14 @@ provider = "%v"
 name = "%v"
 os = "Linux"
 region = "eastus"
-resource_group_name = "CoreReliabilityResourceGroup"
+resource_group_name = "AutomationResourceGroup"
 user_data = "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"
 load_balancer {
-	name =  "Terraform-statefulNode-loadBalancer"
+	name =  "Automation-Lb"
 	type = "loadBalancer"
-	resource_group_name = "CoreReliabilityResourceGroup"
+	resource_group_name = "AutomationResourceGroup"
 	sku =  "Basic"
-	backend_pool_names = ["Terraform-backend-pool"]
+	backend_pool_names = ["Automation-Lb-BackendPool"]
 }
 %v
 %v
@@ -806,16 +806,16 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "Automation-PrivateSubnet"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.assign_public_ip", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.is_primary", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.public_ip_sku", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "Automation-NSG-PrivateSubnet"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "Automation-VirtualNetwork"),
 				),
 			},
 			{
@@ -828,16 +828,16 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "Automation-PrivateSubnet"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.assign_public_ip", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.is_primary", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.public_ip_sku", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "Automation-NSG-PrivateSubnet"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "Automation-VirtualNetwork"),
 				),
 			},
 		},
@@ -846,16 +846,16 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 
 const testNetworkStatefulNodeAzureV3Config_Create = `
 network {
-	network_resource_group_name = "CoreReliabilityResourceGroup"
-	virtual_network_name = "CoreReliabilityVN"
+	network_resource_group_name = "AutomationResourceGroup"
+	virtual_network_name = "Automation-VirtualNetwork"
 	network_interface {
-		subnet_name = "default"
+		subnet_name = "Automation-PrivateSubnet"
 		assign_public_ip = true
 		is_primary = true
 		public_ip_sku = "Standard"
 		network_security_group {
-			name = "core-reliability-network-security-group"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
+			name = "Automation-NSG-PrivateSubnet"
+			network_resource_group_name = "AutomationResourceGroup"
 		}
 		enable_ip_forwarding = true
 	}
@@ -864,16 +864,16 @@ network {
 
 const testNetworkStatefulNodeAzureV3Config_Update = `
 network {
-	network_resource_group_name = "CoreReliabilityResourceGroup"
-	virtual_network_name = "CoreReliabilityVN"
+	network_resource_group_name = "AutomationResourceGroup"
+	virtual_network_name = "Automation-VirtualNetwork"
 	network_interface {
-		subnet_name = "default"
+		subnet_name = "Automation-PrivateSubnet"
 		assign_public_ip = true
 		is_primary = true
 		public_ip_sku = "Standard"
 		network_security_group {
-			name = "core-reliability-network-security-group"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
+			name = "Automation-NSG-PrivateSubnet"
+			network_resource_group_name = "AutomationResourceGroup"
 		}
 		enable_ip_forwarding = true
 	}

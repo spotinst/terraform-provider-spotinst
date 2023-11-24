@@ -213,7 +213,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
  cluster_name = "terraform-tests-do-not-delete"
- location     = "us-central1-a"
+ location     = "us-east1-b"
 
  whitelist = ["n1-standard-1", "n1-standard-2"]
  min_size = 0
@@ -240,7 +240,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
  cluster_name = "terraform-tests-do-not-delete"
- location     = "us-central1-a"
+ location     = "us-east1-b"
 
  whitelist = ["n1-standard-1"]
  root_volume_type = "pd-standard"

@@ -147,7 +147,7 @@ func createOceanGKELaunchSpecTerraform(lscm *GKELaunchSpecConfigMetadata, format
 
 // region OceanGKELaunchSpec: Baseline
 func TestAccSpotinstOceanGKELaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-f27b341c"
+	oceanID := "o-6419f8ac"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -356,7 +356,7 @@ tags = ["a","gke-terraform-tests-do-not-delete-f0fbf73b-node"]
 
 // region OceanGKELaunchSpec: Labels
 func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
-	oceanID := "o-f27b341c"
+	oceanID := "o-6419f8ac"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -446,7 +446,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Taints
 func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
-	oceanID := "o-f27b341c"
+	oceanID := "o-6419f8ac"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -542,7 +542,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: AutoScale
 func TestAccSpotinstOceanGKELaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-f27b341c"
+	oceanID := "o-6419f8ac"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -690,7 +690,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Strategy
 func TestAccSpotinstOceanGKELaunchSpec_Strategy(t *testing.T) {
-	oceanID := "o-f27b341c"
+	oceanID := "o-6419f8ac"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec
@@ -837,7 +837,7 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 // region OceanGKELaunchSpec: Scheduling
 func TestAccSpotinstOceanGKELaunchSpec_Scheduling(t *testing.T) {
-	oceanID := "o-f27b341c"
+	oceanID := "o-6419f8ac"
 	resourceName := createOceanGKELaunchSpecResource(oceanID)
 
 	var launchSpec gcp.LaunchSpec

@@ -172,7 +172,7 @@ func TestAccSpotinstHealthCheckBaseline(t *testing.T) {
 const testBaselineHealthCheckConfig_Create = `
 resource "` + string(commons.HealthCheckResourceName) + `" "%v" {
   provider = "%v"
-    resource_id = "sig-9f6d7870"
+    resource_id = "sig-93207c25"
     name = "test-acc-health_check_terraform_test"
     proxy_address = "http://proxy.com"
     proxy_port = "6"
@@ -192,7 +192,7 @@ resource "` + string(commons.HealthCheckResourceName) + `" "%v" {
 const testBaselineHealthCheckConfig_Update = `
 resource "` + string(commons.HealthCheckResourceName) + `" "%v" {
   provider = "%v"
-  resource_id = "sig-9f6d7870"
+  resource_id = "sig-93207c25"
   name = "test-acc-health_check_terraform_test"
   proxy_address = "http://proxy.com"
   proxy_port = "7"
