@@ -1,4 +1,8 @@
 ## Unreleased
+## 1.151.0 (November, 27 2023)
+NOTES:
+* documentation: resource/spotinst_subscription: Added ocean specific events in document for event_type field.
+
 ## 1.150.1 (November, 21 2023)
 BUG FIXES:
 * resource/spotinst_ocean_ecs_launch_spec: Fixed deletion of `images` object.
