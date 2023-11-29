@@ -373,6 +373,13 @@ The following arguments are supported:
   * `name` - (Required) name of the managed identity.
   * `resource_group_name` - (Required) The Resource Group that the user-assigned managed identity resides in.
 
+<a id="proximity_placement_groups"></a>
+## Proximity Placement Groups
+
+* `proximity_placement_groups` - (Optional) Defines the proximity placement group in which the VM will be launched.
+  * `name` - (Required) name of the proximity placement group.
+  * `resource_group_name` - (Required) The Resource Group name of the proximity placement group.
+
 <a id="network"></a>
 ## Network
 
