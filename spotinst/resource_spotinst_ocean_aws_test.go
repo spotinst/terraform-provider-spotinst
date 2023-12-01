@@ -1092,7 +1092,7 @@ func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-5fae075b"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-a7fdf3dc"),
 				),
 			},
 			{
@@ -1117,7 +1117,7 @@ const testLoggingAWSConfig_Create = `
   logging {
     export {
       s3 { 
-		id = "di-5fae075b"
+		id = "di-a7fdf3dc"
       }
     }
   }
