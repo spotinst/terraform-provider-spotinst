@@ -276,6 +276,70 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ProximityPlacementGroups] = commons.NewGenericField(
+		commons.StatefulNodeAzureLaunchSpecification,
+		ProximityPlacementGroups,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Computed: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(PPGName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(PPGResourceGroupName): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value []interface{}
+			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.ProximityPlacementGroups != nil {
+				value = flattenProximityPlacementGroups(st.Compute.LaunchSpecification.ProximityPlacementGroups)
+			}
+			if err := resourceData.Set(string(ProximityPlacementGroups), value); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(ProximityPlacementGroups), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			if v, ok := resourceData.GetOk(string(ProximityPlacementGroups)); ok {
+				if ppgs, err := expandProximityPlacementGroups(v); err != nil {
+					return err
+				} else {
+					st.Compute.LaunchSpecification.SetProximityPlacementGroups(ppgs)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value []*azure.ProximityPlacementGroups = nil
+
+			if v, ok := resourceData.GetOk(string(ProximityPlacementGroups)); ok {
+				if ppgs, err := expandProximityPlacementGroups(v); err != nil {
+					return err
+				} else {
+					value = ppgs
+				}
+				st.Compute.LaunchSpecification.SetProximityPlacementGroups(value)
+			} else {
+				st.Compute.LaunchSpecification.SetProximityPlacementGroups(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[OSDisk] = commons.NewGenericField(
 		commons.StatefulNodeAzureLaunchSpecification,
 		OSDisk,
@@ -659,6 +723,39 @@ func flattenManagedServiceIdentities(msis []*azure.ManagedServiceIdentity) []int
 		m := make(map[string]interface{})
 		m[string(ResourceGroupName)] = spotinst.StringValue(msi.ResourceGroupName)
 		m[string(Name)] = spotinst.StringValue(msi.Name)
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandProximityPlacementGroups(data interface{}) ([]*azure.ProximityPlacementGroups, error) {
+	list := data.(*schema.Set).List()
+	ppgs := make([]*azure.ProximityPlacementGroups, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		ProximityPlacementGroup := &azure.ProximityPlacementGroups{}
+		if v, ok := attr[string(PPGName)].(string); ok && v != "" {
+			ProximityPlacementGroup.SetName(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(PPGResourceGroupName)].(string); ok && v != "" {
+			ProximityPlacementGroup.SetResourceGroupName(spotinst.String(v))
+		}
+		ppgs = append(ppgs, ProximityPlacementGroup)
+	}
+	return ppgs, nil
+}
+
+func flattenProximityPlacementGroups(ppgs []*azure.ProximityPlacementGroups) []interface{} {
+	result := make([]interface{}, 0, len(ppgs))
+	for _, ppg := range ppgs {
+		m := make(map[string]interface{})
+		m[string(PPGResourceGroupName)] = spotinst.StringValue(ppg.ResourceGroupName)
+		m[string(PPGName)] = spotinst.StringValue(ppg.Name)
 		result = append(result, m)
 	}
 	return result
