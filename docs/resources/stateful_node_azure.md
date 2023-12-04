@@ -143,12 +143,12 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
         private_ip_address_version = "IPv4"
       }
       public_ips {
-        resource_group_name = "resourceGroup"
-        name                = "test"
+        network_resource_group_name = "resourceGroup"
+        name                        = "test"
       }
       application_security_groups {
-        resource_group_name = "AsgResourceGroup"
-        name                = "AsgName"
+        network_resource_group_name = "AsgResourceGroup"
+        name                        = "AsgName"
       } 
     }
   }
@@ -239,7 +239,13 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     type    = "vmReady"
     timeout = 40
   }
-}
+  // -------------------------------------------------------------------
+  
+  // --- PROMXIMITY PLACEMENTS GROUPS -----------------------------------
+  proximity_placement_groups {
+    name                = "TestPPG"
+    resource_group_name = "TestResourceGroup"
+  }
   // -------------------------------------------------------------------
   
   // ---DELETE----------------------------------------------------------
@@ -253,6 +259,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     snapshot_ttl_in_hours = 0
     public_ip_should_deallocate = true
     public_ip_ttl_in_hours = 0
+  }
   }
   // -------------------------------------------------------------------
 
@@ -372,6 +379,13 @@ The following arguments are supported:
 * `managed_service_identities` - (Optional) Add a user-assigned managed identity to the Stateful Node's VM.
   * `name` - (Required) name of the managed identity.
   * `resource_group_name` - (Required) The Resource Group that the user-assigned managed identity resides in.
+
+<a id="proximity_placement_groups"></a>
+## Proximity Placement Groups
+
+* `proximity_placement_groups` - (Optional) Defines the proximity placement group in which the VM will be launched.
+  * `name` - (Required) name of the proximity placement group.
+  * `resource_group_name` - (Required) The Resource Group name of the proximity placement group.
 
 <a id="network"></a>
 ## Network
