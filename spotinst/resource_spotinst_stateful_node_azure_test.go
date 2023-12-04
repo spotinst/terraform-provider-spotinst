@@ -65,26 +65,27 @@ func testCheckStatefulNodeAzureV3Exists(statefulNode *azure.StatefulNode, resour
 }
 
 type AzureV3StatefulNodeConfigMetadata struct {
-	statefulNodeName     string
-	acdIdentifier        string
-	controllerClusterID  string
-	provider             string
-	strategy             string
-	autoScaler           string
-	health               string
-	vmSizes              string
-	osDisk               string
-	dataDisk             string
-	image                string
-	network              string
-	login                string
-	persistence          string
-	signal               string
-	extensions           string
-	scheduling           string
-	tag                  string
-	variables            string
-	updateBaselineFields bool
+	statefulNodeName         string
+	acdIdentifier            string
+	controllerClusterID      string
+	provider                 string
+	strategy                 string
+	autoScaler               string
+	health                   string
+	vmSizes                  string
+	osDisk                   string
+	dataDisk                 string
+	proximityPlacementGroups string
+	image                    string
+	network                  string
+	login                    string
+	persistence              string
+	signal                   string
+	extensions               string
+	scheduling               string
+	tag                      string
+	variables                string
+	updateBaselineFields     bool
 }
 
 func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeConfigMetadata) string {
@@ -122,6 +123,10 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 
 	if StatefulNodeMeta.dataDisk == "" {
 		StatefulNodeMeta.dataDisk = testDataDiskStatefulNodeAzureV3Config_Create
+	}
+
+	if StatefulNodeMeta.proximityPlacementGroups == "" {
+		StatefulNodeMeta.proximityPlacementGroups = testProximityPlacementGroupsStatefulNodeAzureV3Config_Create
 	}
 
 	if StatefulNodeMeta.login == "" {
@@ -166,6 +171,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.network,
 			StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.dataDisk,
+			StatefulNodeMeta.proximityPlacementGroups,
 			StatefulNodeMeta.health,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
@@ -186,6 +192,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.network,
 			StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.dataDisk,
+			StatefulNodeMeta.proximityPlacementGroups,
 			StatefulNodeMeta.health,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
@@ -288,6 +295,7 @@ load_balancer {
 %v
 %v
 %v
+%v
 
 delete {
 	should_terminate_vm = true
@@ -318,6 +326,7 @@ load_balancer {
 	sku =  "Basic"
 	backend_pool_names = ["Automation-Lb-BackendPool"]
 }
+%v
 %v
 %v
 %v
@@ -1015,6 +1024,73 @@ data_disk {
 `
 
 const testDataDiskStatefulNodeAzureV3Config_EmptyFields = ``
+
+// region Stateful Node Azure : ProximityPlacementGroups
+func TestAccSpotinstStatefulNodeAzureV3_ProximityPlacementGroups(t *testing.T) {
+	statefulNodeName := "terraform-tests-do-not-delete"
+	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+
+	var node azure.StatefulNode
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testStatefulNodeAzureV3Destroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.name", "TestProximityPlacementGroup"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.resource_group_name", "AutomationResourceGroup"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:         statefulNodeName,
+					proximityPlacementGroups: testProximityPlacementGroupsStatefulNodeAzureV3Config_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.name", "TestTerraformProximityPlacementGroup"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.resource_group_name", "AutomationResourceGroup"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:         statefulNodeName,
+					proximityPlacementGroups: testProximityPlacementGroupsStatefulNodeAzureV3Config_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+				),
+			},
+		},
+	})
+}
+
+const testProximityPlacementGroupsStatefulNodeAzureV3Config_Create = `
+proximity_placement_groups {
+    name                = "TestProximityPlacementGroup"
+    resource_group_name = "AutomationResourceGroup"
+}
+`
+
+const testProximityPlacementGroupsStatefulNodeAzureV3Config_Update = `
+proximity_placement_groups {
+    name                = "TestTerraformProximityPlacementGroup"
+    resource_group_name = "AutomationResourceGroup"
+}
+`
+
+const testProximityPlacementGroupsStatefulNodeAzureV3Config_EmptyFields = ``
+
+// endregion
 
 // region Stateful Node Azure : Signal
 func TestAccSpotinstStatefulNodeAzureV3_Signal(t *testing.T) {

@@ -208,8 +208,8 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-081752f115fb96c9a"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0113e831bd9bea85b"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-8ab89cc1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-4333093a"),
 					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-022249bb368a88318v"),
 				),
 			},
@@ -252,7 +252,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "false"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-081752f115fb96c9a","subnet-0113e831bd9bea85b"]  
+  subnet_ids = ["subnet-8ab89cc1","subnet-4333093a"]  
   instance_types = [
     "t3.xlarge",
     "t3.medium",]
