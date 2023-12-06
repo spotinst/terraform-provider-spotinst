@@ -10,14 +10,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 func init() {
 	resource.AddTestSweepers("resource_spotinst_ocean_aks_np_import", &resource.Sweeper{
-		Name: "resource_spotinst_ocean_aks",
+		Name: "resource_spotinst_ocean_aks_np",
 		F:    testSweepOceanAKSNPCluster,
 	})
 }
@@ -28,7 +27,7 @@ func testSweepOceanAKSNPCluster(region string) error {
 		return fmt.Errorf("error getting client: %v", err)
 	}
 
-	conn := client.(*Client).ocean.CloudProviderAzure()
+	conn := client.(*Client).ocean.CloudProviderAzureNP()
 
 	if resp, err := conn.ListClusters(context.Background()); err != nil {
 		return fmt.Errorf("error getting list of clusters to sweep")
@@ -37,8 +36,8 @@ func testSweepOceanAKSNPCluster(region string) error {
 			log.Printf("[INFO] No clusters to sweep")
 		}
 		for _, cluster := range resp.Clusters {
-			if strings.Contains(spotinst.StringValue(cluster.Name), "terraform-acc-tests-") {
-				if _, err := conn.DeleteCluster(context.Background(), &azure.DeleteClusterInput{ClusterID: cluster.ID}); err != nil {
+			if strings.Contains(spotinst.StringValue(cluster.Name), "Terraform-Test-AKS-2-0-Cluster") {
+				if _, err := conn.DeleteCluster(context.Background(), &azure_np.DeleteClusterInput{ClusterID: cluster.ID}); err != nil {
 					return fmt.Errorf("unable to delete group %v in sweep", spotinst.StringValue(cluster.ID))
 				} else {
 					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(cluster.ID))
@@ -59,8 +58,8 @@ func testOceanAKSNPDestroy(s *terraform.State) error {
 		if rs.Type != string(commons.OceanAKSNPResourceName) {
 			continue
 		}
-		input := &azure.ReadClusterInput{ClusterID: spotinst.String(rs.Primary.ID)}
-		resp, err := client.ocean.CloudProviderAzure().ReadCluster(context.Background(), input)
+		input := &azure_np.ReadClusterInput{ClusterID: spotinst.String(rs.Primary.ID)}
+		resp, err := client.ocean.CloudProviderAzureNP().ReadCluster(context.Background(), input)
 		if err == nil && resp != nil && resp.Cluster != nil {
 			return fmt.Errorf("cluster still exists")
 		}
@@ -101,16 +100,11 @@ type OceanAKSNPMetadata struct {
 	clusterName          string
 	controllerClusterID  string
 	provider             string
-	launchSpecification  string
-	scheduling           string
 	autoScaler           string
 	health               string
-	vmSizes              string
-	osDisk               string
-	image                string
+	scheduling           string
 	taints               string
 	headrooms            string
-	extensions           string
 	filters              string
 	variables            string
 	updateBaselineFields bool
@@ -122,11 +116,7 @@ func createOceanAKSNPTerraform(clusterMeta *OceanAKSNPMetadata) string {
 	}
 
 	if clusterMeta.provider == "" {
-		clusterMeta.provider = "azure_np"
-	}
-
-	if clusterMeta.scheduling == "" {
-		clusterMeta.scheduling = testSchedulingOceanAKSNPConfig_Create
+		clusterMeta.provider = "azure"
 	}
 
 	if clusterMeta.autoScaler == "" {
@@ -137,12 +127,16 @@ func createOceanAKSNPTerraform(clusterMeta *OceanAKSNPMetadata) string {
 		clusterMeta.health = testHealthOceanAKSNPConfig_Create
 	}
 
-	if clusterMeta.headrooms == "" {
-		clusterMeta.headrooms = testHeadroomsOceanAKSNPConfig_Create
+	if clusterMeta.scheduling == "" {
+		clusterMeta.scheduling = testSchedulingOceanAKSNPConfig_Create
 	}
 
 	if clusterMeta.taints == "" {
 		clusterMeta.taints = testTaintsOceanAKSNPConfig_Create
+	}
+
+	if clusterMeta.headrooms == "" {
+		clusterMeta.headrooms = testHeadroomsOceanAKSNPConfig_Create
 	}
 
 	if clusterMeta.filters == "" {
@@ -161,16 +155,12 @@ func createOceanAKSNPTerraform(clusterMeta *OceanAKSNPMetadata) string {
 			clusterMeta.clusterName,
 			clusterMeta.provider,
 			clusterMeta.controllerClusterID,
-			clusterMeta.launchSpecification,
-			clusterMeta.osDisk,
-			clusterMeta.scheduling,
-			clusterMeta.image,
 			clusterMeta.autoScaler,
-			clusterMeta.filters,
-			clusterMeta.headrooms,
 			clusterMeta.health,
+			clusterMeta.scheduling,
 			clusterMeta.taints,
-			clusterMeta.vmSizes,
+			clusterMeta.headrooms,
+			clusterMeta.filters,
 		)
 	} else {
 		format := testBaselineOceanAKSNPConfig_Create
@@ -178,16 +168,12 @@ func createOceanAKSNPTerraform(clusterMeta *OceanAKSNPMetadata) string {
 			clusterMeta.clusterName,
 			clusterMeta.provider,
 			clusterMeta.controllerClusterID,
-			clusterMeta.launchSpecification,
-			clusterMeta.osDisk,
-			clusterMeta.scheduling,
-			clusterMeta.image,
 			clusterMeta.autoScaler,
-			clusterMeta.filters,
-			clusterMeta.headrooms,
 			clusterMeta.health,
+			clusterMeta.scheduling,
 			clusterMeta.taints,
-			clusterMeta.vmSizes,
+			clusterMeta.headrooms,
+			clusterMeta.filters,
 		)
 
 	}
@@ -208,7 +194,7 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 
 	var cluster azure_np.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure_np") },
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAKSNPDestroy,
 
@@ -218,16 +204,31 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					clusterName:         clusterName,
 					controllerClusterID: controllerClusterID,
 				}),
-				ExpectNonEmptyPlan: true,
+				//ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPExists(&cluster, resourceName),
 					testCheckOceanAKSNPAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "name", "Terraform-Test-AKS-2-0-Do-Not-Delete"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Terraform-Test-AKS-2-0-Cluster"),
 					resource.TestCheckResourceAttr(resourceName, "controller_cluster_id", "terraform-aks-2-0-cluster"),
-					resource.TestCheckResourceAttr(resourceName, "aks_name", "Terraform-Test-AKS-2-0-Do-Not-Delete"),
+					resource.TestCheckResourceAttr(resourceName, "aks_cluster_name", "Terraform-Test-AKS-2-0-Do-Not-Delete"),
 					resource.TestCheckResourceAttr(resourceName, "aks_region", "eastus"),
 					resource.TestCheckResourceAttr(resourceName, "aks_resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "aks_infrastructure_resource_group_name", "MC_AutomationResourceGroup_Terraform-Test-AKS-2-0-Do-Not-Delete_eastus"),
+					resource.TestCheckResourceAttr(resourceName, "min_count", "1"),
+					resource.TestCheckResourceAttr(resourceName, "max_count", "100"),
+					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "30"),
+					resource.TestCheckResourceAttr(resourceName, "enable_node_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk_size_gb", "32"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk_type", "Managed"),
+					resource.TestCheckResourceAttr(resourceName, "os_type", "Linux"),
+					resource.TestCheckResourceAttr(resourceName, "os_sku", "Ubuntu"),
+					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.26"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
+					//resource.TestCheckResourceAttr(resourceName, "pod_subnet_ids.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "pod_subnet_ids.0", "/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"),
+					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
@@ -239,9 +240,17 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					controllerClusterID:  controllerClusterID,
 					updateBaselineFields: true,
 				}),
-				ExpectNonEmptyPlan: true,
+				//ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "name", "Terraform-Test-AKS-2-0-Do-Not-Delete-Updated"),
+					resource.TestCheckResourceAttr(resourceName, "name", "Terraform-Test-AKS-2-0-Cluster-Updated"),
+					resource.TestCheckResourceAttr(resourceName, "min_count", "2"),
+					resource.TestCheckResourceAttr(resourceName, "max_count", "150"),
+					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "50"),
+					resource.TestCheckResourceAttr(resourceName, "enable_node_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk_size_gb", "64"),
+					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.27"),
+					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
@@ -253,22 +262,18 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 }
 
 const testBaselineOceanAKSNPConfig_Create = `
-resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
+resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   provider = "%v"
-  name                  = "Terraform-Test-AKS-2-0-Do-Not-Delete"
+  name                  = "Terraform-Test-AKS-2-0-Cluster"
   controller_cluster_id = "%v"
 
   // --- AKS -----------------------------------------------------------
-  aks_name                = "Terraform-Test-AKS-2-0-Do-Not-Delete"
+  
+  aks_cluster_name                = "Terraform-Test-AKS-2-0-Do-Not-Delete"
   aks_resource_group_name = "AutomationResourceGroup"
-  aks_region                = "Terraform-Test-AKS-2-0-Do-Not-Delete"
+  aks_region                = "eastus"
   aks_infrastructure_resource_group_name = "MC_AutomationResourceGroup_Terraform-Test-AKS-2-0-Do-Not-Delete_eastus"
   // -------------------------------------------------------------------
-
-  availability_zones = [
-    "1",
-    "2"
-  ]
 
   // --- nodeCountLimits --------------------------------------------------
 
@@ -293,14 +298,15 @@ resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
   // --- strategy ---------------------------------------------------------
 
   spot_percentage      = 50
-  fallback_to_ondemand = true
+  fallback_to_ondemand = false
 
   // ----------------------------------------------------------------------
 
-%v
-%v
-%v
-%v
+  availability_zones = [
+    "1",
+    "2"
+  ]
+
 %v
 %v
 %v
@@ -311,17 +317,45 @@ resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
 `
 
 const testBaselineOceanAKSNPConfig_Update = `
-resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
+resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   
   provider = "%v"
-  name                  = "Terraform-Test-AKS-2-0-Do-Not-Delete-Updated"
+  name                  = "Terraform-Test-AKS-2-0-Cluster-Updated"
   controller_cluster_id = "%v"
   // --- AKS -----------------------------------------------------------
-  aks_name                = "Terraform-Test-AKS-2-0-Do-Not-Delete"
+  
+  aks_cluster_name                = "Terraform-Test-AKS-2-0-Do-Not-Delete"
   aks_resource_group_name = "AutomationResourceGroup"
-  aks_region                = "Terraform-Test-AKS-2-0-Do-Not-Delete"
+  aks_region                = "eastus"
   aks_infrastructure_resource_group_name = "MC_AutomationResourceGroup_Terraform-Test-AKS-2-0-Do-Not-Delete_eastus"
   // -------------------------------------------------------------------
+
+  // --- nodeCountLimits --------------------------------------------------
+
+  min_count = 2
+  max_count = 150
+
+  // ----------------------------------------------------------------------
+
+  // --- nodePoolProperties -----------------------------------------------
+
+  max_pods_per_node     = 50
+  enable_node_public_ip = true
+  os_disk_size_gb       = 64
+  os_disk_type          = "Managed"
+  os_type               = "Linux"
+  os_sku                = "Ubuntu"
+  kubernetes_version    = "1.27"
+  //pod_subnet_ids      = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
+  vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
+  // ----------------------------------------------------------------------
+
+  // --- strategy ---------------------------------------------------------
+
+  spot_percentage      = 100
+  fallback_to_ondemand = true
+
+  // ----------------------------------------------------------------------
 
   availability_zones = [
     "1",
@@ -329,10 +363,6 @@ resource "` + string(commons.OceanAKSResourceName) + `" "%v" {
 	"3"
   ]
 
-%v
-%v
-%v
-%v
 %v
 %v
 %v
@@ -352,7 +382,7 @@ func TestAccSpotinstOceanAKSNP_AutoScaler(t *testing.T) {
 
 	var cluster azure_np.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure_np") },
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAKSNPDestroy,
 
@@ -459,7 +489,7 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 
 	var cluster azure_np.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure_np") },
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAKSNPDestroy,
 
@@ -503,6 +533,7 @@ const testSchedulingOceanAKSNPConfig_Create = `
   scheduling {
     shutdown_hours{
       is_enabled   = false
+      time_windows = ["Sat:08:00-Sun:08:00"]
     }
   }
   // -------------------------------------------------------------------
@@ -529,7 +560,7 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 
 	var cluster azure_np.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure_np") },
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAKSNPDestroy,
 
@@ -590,7 +621,7 @@ func TestAccSpotinstOceanAKSNP_Headrooms(t *testing.T) {
 
 	var cluster azure_np.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure_np") },
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAKSNPDestroy,
 
@@ -675,7 +706,7 @@ func TestAccSpotinstOceanAKSNP_Taints(t *testing.T) {
 
 	var cluster azure_np.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure_np") },
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAKSNPDestroy,
 
@@ -751,7 +782,7 @@ func TestAccSpotinstOceanAKSNP_Filters(t *testing.T) {
 
 	var cluster azure_np.Cluster
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "azure_np") },
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
 		CheckDestroy: testOceanAKSNPDestroy,
 
@@ -840,7 +871,7 @@ const testFiltersOceanAKSNPConfig_Create = `
     max_vcpu               = 16
     min_memory_gib         = 8
     max_memory_gib         = 16
-    architectures          = ["x86_64"]
+    architectures          = ["X86_64"]
     series                 = ["D v3", "Dds_v4", "Dsv2", "A", "A v2"]
     exclude_series         = ["E v3", "Esv3", "Eas_v5"]
     accelerated_networking = "Disabled"
@@ -863,7 +894,7 @@ const testFiltersOceanAKSNPConfig_Update = `
     max_vcpu               = 16
     min_memory_gib         = 8
     max_memory_gib         = 16
-    architectures          = ["x86_64"]
+    architectures          = ["X86_64"]
     series                 = ["D v3", "Dds_v4", "Dsv2", "A", "A v2"]
     exclude_series         = ["E v3", "Esv3", "Eas_v5"]
     accelerated_networking = "Disabled"
