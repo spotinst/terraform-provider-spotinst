@@ -1,7 +1,13 @@
 ## Unreleased
-## 1.151.0 (November, 27 2023)
+
+## 1.151.1 (December, 06 2023)
 NOTES:
 * documentation: resource/spotinst_subscription: Added ocean specific events in document for event_type fields.
+
+## 1.151.0 (December, 02 2023)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `proximity_placement_groups` object support.
+* 
 
 ## 1.150.1 (November, 21 2023)
 BUG FIXES:
