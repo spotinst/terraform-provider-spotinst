@@ -126,7 +126,7 @@ func TestAccSpotinstDataIntegration_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "foo"),
 					resource.TestCheckResourceAttr(resourceName, "status", "enabled"),
 					resource.TestCheckResourceAttr(resourceName, "s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "s3.0.bucket_name", "terraform-test-do-not-delete"),
+					resource.TestCheckResourceAttr(resourceName, "s3.0.bucket_name", "terraform-test-bucket-do-not-delete"),
 					resource.TestCheckResourceAttr(resourceName, "s3.0.subdir", "terraform-test-data-integration"),
 				),
 			},
@@ -140,7 +140,7 @@ func TestAccSpotinstDataIntegration_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "name", "foo"),
 					resource.TestCheckResourceAttr(resourceName, "status", "disabled"),
 					resource.TestCheckResourceAttr(resourceName, "s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "s3.0.bucket_name", "terraform-test-do-not-delete-2"),
+					resource.TestCheckResourceAttr(resourceName, "s3.0.bucket_name", "terraform-test-bucket-do-not-delete-2"),
 					resource.TestCheckResourceAttr(resourceName, "s3.0.subdir", "terraform-test-data-integration"),
 				),
 			},
@@ -154,7 +154,7 @@ resource "` + string(commons.DataIntegrationResourceName) + `" "%v" {
   name  = "foo"
   status = "enabled"
   s3 {
-  	bucket_name = "terraform-test-do-not-delete"
+  	bucket_name = "terraform-test-bucket-do-not-delete"
     subdir      = "terraform-test-data-integration"
   }
 }
@@ -166,7 +166,7 @@ resource "` + string(commons.DataIntegrationResourceName) + `" "%v" {
   name  = "foo"
   status = "disabled"
   s3 {
-    bucket_name = "terraform-test-do-not-delete-2"
+    bucket_name = "terraform-test-bucket-do-not-delete-2"
     subdir      = "terraform-test-data-integration"
   }
 }

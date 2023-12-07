@@ -46,7 +46,8 @@ The following arguments are supported:
                             `"AWS_EC2_MANAGED_INSTANCE_PAUSING"`,
                             `"AWS_EC2_MANAGED_INSTANCE_RESUMING"`,
                             `"AWS_EC2_MANAGED_INSTANCE_RECYCLING"`,`"AWS_EC2_MANAGED_INSTANCE_DELETING"`.
-                            Ocean Events:`"CLUSTER_ROLL_FINISHED"`,`"GROUP_ROLL_FAILED"`. 
+                            Ocean Events:`"CLUSTER_ROLL_FINISHED"`,`"GROUP_ROLL_FAILED"`,`"OCEAN_CANT_SCALE_UP_MAX_RESOURCES"` 
+                                          `"OCEAN_LAUNCH_SPEC_CANT_SCALE_UP_MAX_INSTANCES"`,`"OCEAN_K8S_NODE_REMOVED"`. 
 * `protocol` - (Required) The protocol to send the notification. Valid values: `"email"`, `"email-json"`, `"aws-sns"`, `"web"`. 
                           The following values are deprecated: `"http"` , `"https"`
                           You can use the generic `"web"` protocol instead.

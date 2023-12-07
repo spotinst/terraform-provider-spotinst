@@ -149,7 +149,7 @@ func createOceanECSLaunchSpecTerraform(lscm *ECSLaunchSpecConfigMetadata, format
 
 // region OceanECSLaunchSpec: Baseline
 func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-c357c1ea"
+	oceanID := "o-19711548"
 	launchSpecName := "test-acc-ocean-ecs-launch-spec"
 	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
 
@@ -179,11 +179,11 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_size", "50"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0e92f5873da29c633"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
 					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"),
+					resource.TestCheckResourceAttr(resourceName, "security_group_ids.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "t3.medium"),
@@ -191,7 +191,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.0", "t3.medium"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "50"),
 				),
@@ -206,7 +206,7 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					testCheckOceanECSLaunchSpecAttributes(&launchSpec, launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "name", launchSpecName),
 					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_ecs_launch_specification.Base64StateFunc("hello world updated")),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0e92f5873da29c633"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "ecsInstanceRole"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
@@ -232,8 +232,8 @@ func TestAccSpotinstOceanECSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.0", "m4.xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0a290e2be0c309b30"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-02b14c961d7eeba50"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-8ab89cc1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "100"),
 				),
@@ -249,8 +249,8 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
 
   user_data = "hello world"
-  image_id = "ami-0e92f5873da29c633"
-  security_group_ids = ["EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"]
+  image_id = "ami-05a68f290aa68e8f0"
+  security_group_ids = ["sg-a22000e8"]
   iam_instance_profile = "ecsInstanceRole"
   instance_types = ["t3.medium"]
   preferred_spot_types = ["t3.medium"]
@@ -276,7 +276,7 @@ block_device_mappings {
     }
   }
 
-subnet_ids = ["subnet-0a290e2be0c309b30"]
+subnet_ids = ["subnet-4333093a"]
  %v
 }
 `
@@ -288,7 +288,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
   
   user_data = "hello world updated"
-  image_id = "ami-0e92f5873da29c633"
+  image_id = "ami-05a68f290aa68e8f0"
   iam_instance_profile = "ecsInstanceRole"
   instance_types = ["m4.xlarge","m4.2xlarge"]
   preferred_spot_types = ["m4.xlarge"]
@@ -323,7 +323,7 @@ strategy {
           }
         }
       }
-  subnet_ids = ["subnet-0a290e2be0c309b30", "subnet-02b14c961d7eeba50"]
+  subnet_ids = ["subnet-4333093a", "subnet-8ab89cc1"]
 
 %v
 }
@@ -333,7 +333,7 @@ strategy {
 
 // region OceanECSLaunchSpec: AutoScale
 func TestAccSpotinstOceanECSLaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-c357c1ea"
+	oceanID := "o-19711548"
 	launchSpecName := "test-acc-ocean-ecs-launch-spec"
 	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
 
@@ -404,8 +404,8 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
 
   user_data = "hello world"
-  image_id = "ami-0e92f5873da29c633"
-  security_group_ids = ["EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"]
+  image_id = "ami-05a68f290aa68e8f0"
+  security_group_ids = ["sg-a22000e8"]
   iam_instance_profile = "ecsInstanceRole"
 
   tags {
@@ -436,8 +436,8 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
   
   user_data = "hello world"
-  image_id = "ami-0e92f5873da29c633"
-  security_group_ids = ["EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"]
+  image_id = "ami-05a68f290aa68e8f0"
+  security_group_ids = ["sg-a22000e8"]
   iam_instance_profile = "ecsInstanceRole"
  
   tags {
@@ -463,8 +463,8 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"  
   
   user_data = "hello world"
-  image_id = "ami-0e92f5873da29c633"
-  security_group_ids = ["EC2ContainerService-terraform-cluster-ecs-EcsSecurityGroup-D87HZQZFFF21"]
+  image_id = "ami-05a68f290aa68e8f0"
+  security_group_ids = ["sg-a22000e8"]
   iam_instance_profile = "ecsInstanceRole"
 %v
 
@@ -476,7 +476,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: Scheduling
 func TestAccSpotinstOceanECSLaunchSpec_Scheduling(t *testing.T) {
-	oceanID := "o-c357c1ea"
+	oceanID := "o-19711548"
 	launchSpecName := "test-acc-ocean-ecs-launch-spec"
 	resourceName := createOceanECSLaunchSpecResourceOceanName(launchSpecName)
 
@@ -532,7 +532,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
 
   user_data = "hello world"
-  image_id = "ami-0e92f5873da29c633"
+  image_id = "ami-05a68f290aa68e8f0"
   security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
   iam_instance_profile = "ecsInstanceRole"
 
@@ -557,7 +557,7 @@ resource "` + string(commons.OceanECSLaunchSpecResourceName) + `" "%v" {
   ocean_id = "%v"
   
   user_data = "hello world"
-  image_id = "ami-0e92f5873da29c633"
+  image_id = "ami-05a68f290aa68e8f0"
   security_group_ids = ["awseb-e-sznmxim22e-stack-AWSEBSecurityGroup-10FZKNGB09G1W"]
   iam_instance_profile = "ecsInstanceRole"
 

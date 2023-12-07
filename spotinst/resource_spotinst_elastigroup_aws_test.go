@@ -281,7 +281,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	
 	// --- SUBNET IDS -------------------
 	region      = "us-west-2"
-	subnet_ids  = ["subnet-0faad0b6bb7e99d9f", "subnet-0bd585d2c2177c7ee"]
+	subnet_ids  = ["subnet-4333093a", "subnet-8ab89cc1"]
 	// ----------------------------------
 	
 	// --- CAPACITY ------------
@@ -309,7 +309,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	
 	// --- SUBNET IDS -------------------
 	region      = "us-west-2"
-	subnet_ids  = ["subnet-0b40f863ba34956ba"]
+	subnet_ids  = ["subnet-42f1e418"]
 	// ----------------------------------
 	
 	// --- CAPACITY ------------
@@ -951,8 +951,8 @@ func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0faad0b6bb7e99d9f"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-8ab89cc1"),
 				),
 			},
 			{
@@ -967,7 +967,7 @@ func TestAccSpotinstElastigroupAWS_SubnetIDs(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "region", "us-west-2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0b40f863ba34956ba"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-42f1e418"),
 				),
 			},
 		},
