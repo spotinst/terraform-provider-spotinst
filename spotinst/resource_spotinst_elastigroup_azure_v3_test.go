@@ -207,8 +207,8 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "custom_data", "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "CoreReliabilityResourceIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "AutomationResourceIdentity"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "key1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "value1"),
@@ -228,10 +228,10 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "CoreReliabilityResourceIdentity"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.name", "CoreReliabilityResourceIdentity2"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "AutomationResourceIdentity"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.1.name", "AutomationResourceIdentity2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "key1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "value1"),
@@ -252,7 +252,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  name 				 = "%v"
  os 			     = "Linux"
  region              = "eastus"
- resource_group_name = "CoreReliabilityResourceGroup"
+ resource_group_name = "AutomationResourceGroup"
 
  // --- CAPACITY ------------
  max_size 		  = 0
@@ -265,8 +265,8 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  custom_data = "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
 
  managed_service_identity {
-    resource_group_name = "CoreReliabilityResourceGroup"
-    name                = "CoreReliabilityResourceIdentity"
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity"
   }
 
  tags {
@@ -297,7 +297,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  name 				 = "%v"
  os 			     = "Linux"
  region              = "eastus"
- resource_group_name = "CoreReliabilityResourceGroup"
+ resource_group_name = "AutomationResourceGroup"
 
  // --- CAPACITY ------------
  max_size 		  = 5
@@ -306,13 +306,13 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  // -------------------------
 
  managed_service_identity {
-    resource_group_name = "CoreReliabilityResourceGroup"
-    name                = "CoreReliabilityResourceIdentity"
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity"
   }
 
  managed_service_identity {
-    resource_group_name = "CoreReliabilityResourceGroup"
-    name                = "CoreReliabilityResourceIdentity2"
+    resource_group_name = "AutomationResourceGroup"
+    name                = "AutomationResourceIdentity2"
   }
 
  tags {
@@ -414,17 +414,17 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "Automation-VirtualNetwork"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.assign_public_ip", "false"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.subnet_name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.subnet_name", "Automation-PrivateSubnet"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.is_primary", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.additional_ip_configs.0.name", "terraformTestSecondaryIpConfig"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.0.resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.0.name", "terraform-application-security-group-DO-NOT-DELETE"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.0.resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interfaces.0.application_security_group.0.name", "Terraform-Testing-ASG"),
 				),
 			},
 		},
@@ -434,10 +434,10 @@ func TestAccSpotinstElastigroupAzureV3_Network(t *testing.T) {
 const testAzureV3NetworkGroupConfig_Create = `
 // --- NETWORK ---------------------------------
   network {
-    virtual_network_name = "CoreReliabilityVN"
-    resource_group_name = "CoreReliabilityResourceGroup"         
+    virtual_network_name = "Automation-VirtualNetwork"
+    resource_group_name = "AutomationResourceGroup"         
     network_interfaces {
-      subnet_name = "default"
+      subnet_name = "Automation-PrivateSubnet"
       assign_public_ip = false
       is_primary = true
 
@@ -446,8 +446,8 @@ const testAzureV3NetworkGroupConfig_Create = `
       }
 
       application_security_group {
-        name = "terraform-application-security-group-DO-NOT-DELETE"
-        resource_group_name = "CoreReliabilityResourceGroup"
+        name = "Terraform-Testing-ASG"
+        resource_group_name = "AutomationResourceGroup"
       }
 
   	}

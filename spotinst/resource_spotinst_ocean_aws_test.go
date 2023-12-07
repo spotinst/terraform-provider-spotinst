@@ -221,7 +221,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   min_size         = 0
   desired_capacity = 1
 
-  subnet_ids      = ["subnet-0faad0b6bb7e99d9f"]
+  subnet_ids      = ["subnet-4333093a"]
 
  %v
  %v
@@ -242,7 +242,7 @@ resource "` + string(commons.OceanAWSResourceName) + `" "%v" {
   min_size         = 0
   desired_capacity = 1
 
-  subnet_ids      = ["subnet-0bd585d2c2177c7ee"]
+  subnet_ids      = ["subnet-8ab89cc1"]
 
  %v
  %v
@@ -384,9 +384,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
 					resource.TestCheckResourceAttr(resourceName, "associate_ipv6_address", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
@@ -419,9 +419,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
 					resource.TestCheckResourceAttr(resourceName, "associate_ipv6_address", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
@@ -455,9 +455,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-065c82e9ff8b192a1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
 				),
 			},
@@ -467,8 +467,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 
 const testLaunchConfigAWSConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id                    = "ami-05f840082fe2dcac2"
-  security_groups             = ["sg-065c82e9ff8b192a1"]
+  image_id                    = "ami-05a68f290aa68e8f0"
+  security_groups             = ["sg-a22000e8"]
   //key_name                  = "my-key.ssh"
   user_data                   = "echo hello world"
   //iam_instance_profile      = "iam-profile"
@@ -506,8 +506,8 @@ const testLaunchConfigAWSConfig_Create = `
 
 const testLaunchConfigAWSConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id                    = "ami-05f840082fe2dcac2"
-  security_groups             = ["sg-065c82e9ff8b192a1"]
+  image_id                    = "ami-05a68f290aa68e8f0"
+  security_groups             = ["sg-a22000e8"]
   //key_name                  = "my-key-updated.ssh"
   user_data                   = "echo hello world updated"
   //iam_instance_profile      = "iam-profile updated"
@@ -544,8 +544,8 @@ const testLaunchConfigAWSConfig_Update = `
 
 const testLaunchConfigAWSConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id        = "ami-05f840082fe2dcac2"
-  security_groups = ["sg-065c82e9ff8b192a1"]
+  image_id        = "ami-05a68f290aa68e8f0"
+  security_groups = ["sg-a22000e8"]
  // ---------------------------------------
 `
 
@@ -794,7 +794,7 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "20"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-cb74ca43"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-3276587f"),
 				),
 			},
 			{
@@ -825,8 +825,8 @@ func TestAccSpotinstOceanAWS_Autoscaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "30"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "512"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-cb74ca43"),
-					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.1", "erd-ced684ab"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.0", "erd-3276587f"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.extended_resource_definitions.1", "erd-1779e1c6"),
 				),
 			},
 			{
@@ -887,7 +887,7 @@ const testScalingConfig_Create = `
       max_memory_gib = 20
     }
 
-	extended_resource_definitions = ["erd-cb74ca43"]
+	extended_resource_definitions = ["erd-3276587f"]
  }
  // --------------------------------
 
@@ -920,7 +920,7 @@ const testScalingConfig_Update = `
       max_memory_gib = 30
     }
 
-	extended_resource_definitions = ["erd-cb74ca43", "erd-ced684ab"]
+	extended_resource_definitions = ["erd-3276587f", "erd-1779e1c6"]
  }
  // --------------------------------
 `
@@ -1092,7 +1092,7 @@ func TestAccSpotinstOceanAWS_Logging(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-5fae075b"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-a7fdf3dc"),
 				),
 			},
 			{
@@ -1117,7 +1117,7 @@ const testLoggingAWSConfig_Create = `
   logging {
     export {
       s3 { 
-		id = "di-5fae075b"
+		id = "di-a7fdf3dc"
       }
     }
   }

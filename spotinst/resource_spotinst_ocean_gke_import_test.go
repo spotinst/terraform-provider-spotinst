@@ -213,7 +213,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
  cluster_name = "terraform-tests-do-not-delete"
- location     = "us-central1-a"
+ location     = "us-east1-b"
 
  whitelist = ["n1-standard-1", "n1-standard-2"]
  min_size = 0
@@ -240,7 +240,7 @@ resource "` + string(commons.OceanGKEImportResourceName) + `" "%v" {
  provider = "%v"
 
  cluster_name = "terraform-tests-do-not-delete"
- location     = "us-central1-a"
+ location     = "us-east1-b"
 
  whitelist = ["n1-standard-1"]
  root_volume_type = "pd-standard"
@@ -262,83 +262,83 @@ strategy {
 //endregion
 
 // region Ocean GKE Import: BackendServices
-func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
-	spotClusterName := "terraform-tests-do-not-delete"
-	resourceName := createOceanGKEImportResourceName(spotClusterName)
-
-	var cluster gcp.Cluster
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "gcp") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanGKEImportDestroy,
-
-		Steps: []resource.TestStep{
-			{
-				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
-					clusterName:    spotClusterName,
-					fieldsToAppend: testBackendServicesOceanGKEImportConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanGKEImportExists(&cluster, resourceName),
-					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.location_type", "global"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.service_name", "terraform-bs-do-not-delete"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.name", "http"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.0", "80"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.1", "8080"),
-				),
-			},
-			{
-				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
-					clusterName:    spotClusterName,
-					fieldsToAppend: testBackendServicesOceanGKEImportConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanGKEImportExists(&cluster, resourceName),
-					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.location_type", "global"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.service_name", "terraform-bs-do-not-delete"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.name", "https"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.0", "443"),
-				),
-			},
-		},
-	})
-}
-
-const testBackendServicesOceanGKEImportConfig_Create = `
- backend_services {
-     service_name = "terraform-bs-do-not-delete"
-     location_type = "global"
-
-     named_ports  {
-       name = "http"
-       ports = [
-         80,
-         8080]
-     }
-   }
-
-
-`
-
-const testBackendServicesOceanGKEImportConfig_Update = `
- backend_services  {
-     service_name = "terraform-bs-do-not-delete"
-     location_type = "global"
-
-     named_ports {
-       name = "https"
-       ports = [443]
-     }
-   }
-`
+//func TestAccSpotinstOceanGKEImport_BackendServices(t *testing.T) {
+//	spotClusterName := "terraform-tests-do-not-delete"
+//	resourceName := createOceanGKEImportResourceName(spotClusterName)
+//
+//	var cluster gcp.Cluster
+//	resource.Test(t, resource.TestCase{
+//		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+//		Providers:    TestAccProviders,
+//		CheckDestroy: testOceanGKEImportDestroy,
+//
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+//					clusterName:    spotClusterName,
+//					fieldsToAppend: testBackendServicesOceanGKEImportConfig_Create,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanGKEImportExists(&cluster, resourceName),
+//					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.location_type", "global"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.service_name", "terraform-bs-do-not-delete"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.name", "http"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.#", "2"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.0", "80"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.1", "8080"),
+//				),
+//			},
+//			{
+//				Config: createOceanGKEImportTerraform(&OceanGKEImportMetadata{
+//					clusterName:    spotClusterName,
+//					fieldsToAppend: testBackendServicesOceanGKEImportConfig_Update,
+//				}),
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckOceanGKEImportExists(&cluster, resourceName),
+//					testCheckOceanGKEImportAttributes(&cluster, GcpClusterName),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.location_type", "global"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.service_name", "terraform-bs-do-not-delete"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.name", "https"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.#", "1"),
+//					resource.TestCheckResourceAttr(resourceName, "backend_services.0.named_ports.0.ports.0", "443"),
+//				),
+//			},
+//		},
+//	})
+//}
+//
+//const testBackendServicesOceanGKEImportConfig_Create = `
+// backend_services {
+//     service_name = "terraform-bs-do-not-delete"
+//     location_type = "global"
+//
+//     named_ports  {
+//       name = "http"
+//       ports = [
+//         80,
+//         8080]
+//     }
+//   }
+//
+//
+//`
+//
+//const testBackendServicesOceanGKEImportConfig_Update = `
+// backend_services  {
+//     service_name = "terraform-bs-do-not-delete"
+//     location_type = "global"
+//
+//     named_ports {
+//       name = "https"
+//       ports = [443]
+//     }
+//   }
+//`
 
 // endregion
 

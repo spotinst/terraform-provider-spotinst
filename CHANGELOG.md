@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.152.0 (December, 07 2023)
+NOTES:
+* Migration of all unit tests to run on new test account.
+
 ## 1.151.1 (December, 06 2023)
 NOTES:
 * documentation: resource/spotinst_subscription: Added ocean specific events in document for event_type fields.
