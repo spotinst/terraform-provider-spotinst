@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_aws_logging"
 	"log"
 	"strings"
 	"time"
@@ -58,6 +59,7 @@ func setupElastigroupResource() {
 	elastigroup_aws_scheduled_task.Setup(fieldsMap)
 	elastigroup_aws_stateful.Setup(fieldsMap)
 	elastigroup_aws_strategy.Setup(fieldsMap)
+	elastigroup_aws_logging.Setup(fieldsMap)
 
 	commons.ElastigroupResource = commons.NewElastigroupResource(fieldsMap)
 }
