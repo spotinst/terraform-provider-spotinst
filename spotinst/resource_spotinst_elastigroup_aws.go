@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_aws_logging"
 	"log"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/elastigroup_aws_logging"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
