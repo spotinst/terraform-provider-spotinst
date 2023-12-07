@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.152.0 (December, 06 2023)
+## 1.152.0 (December, 07 2023)
 NOTES:
 * Migration of all unit tests to run on new test account.
 
