@@ -24,6 +24,13 @@ const (
 	ResourceGroupName        commons.FieldName = "resource_group_name"
 )
 
+// Proximity Placement Groups
+const (
+	ProximityPlacementGroups commons.FieldName = "proximity_placement_groups"
+	PPGName                  commons.FieldName = "name"
+	PPGResourceGroupName     commons.FieldName = "resource_group_name"
+)
+
 // OS disk
 const (
 	OSDisk       commons.FieldName = "os_disk"

@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	testOceanSparkClusterID = "osc-cc4b42b4"
-	testOceanDedicatedVngID = "ols-d04cb833"
+	testOceanSparkClusterID = "osc-3dda7ea4"
+	testOceanDedicatedVngID = "ols-24b985c5"
 )
 
 var oceanSparkClusterID = getOceanSparkClusterID() // NOTE: This needs to be an existing ocean cluster
