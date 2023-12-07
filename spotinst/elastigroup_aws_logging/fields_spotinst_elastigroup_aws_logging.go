@@ -130,8 +130,8 @@ func flattenS3(s3 *aws.S3) []interface{} {
 	if s3 != nil {
 		result := make(map[string]interface{})
 
-		if s3.ID != nil {
-			result[string(Id)] = s3.ID
+		if s3.Id != nil {
+			result[string(Id)] = s3.Id
 		}
 
 		if len(result) > 0 {

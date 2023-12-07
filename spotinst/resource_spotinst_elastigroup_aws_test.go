@@ -4724,3 +4724,64 @@ const testAwaitCapacity_EmptyFields = `
 `
 
 // endregion
+// region OceanAWS: Baseline
+func TestAccSpotinstElastigroupAWS_Logging(t *testing.T) {
+	groupName := "test_logging_group"
+	resourceName := createElastigroupResourceName(groupName)
+
+	var group aws.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testElastigroupDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName: groupName,
+					/*launchConfig: testElastigroupLoggingAWSConfig_Create,*/
+					fieldsToAppend: testElastigroupLoggingAWSConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-5fae075b"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName: groupName,
+					/*launchConfig: testElastigroupLoggingAWSConfig_EmptyFields,*/
+					fieldsToAppend: testElastigroupLoggingAWSConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testElastigroupLoggingAWSConfig_Create = `
+ // --- LOGGING -----------------
+  logging {
+    export {
+      s3 { 
+		id = "di-5fae075b"
+      }
+    }
+  }
+`
+
+const testElastigroupLoggingAWSConfig_EmptyFields = `
+
+`
+
+// endregion
