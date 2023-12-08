@@ -1,4 +1,7 @@
 ## Unreleased
+## 1.153.0 (December, 08 2023)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `logging` object support.
 
 ## 1.152.0 (December, 07 2023)
 NOTES:
