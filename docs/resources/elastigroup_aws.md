@@ -136,9 +136,9 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
 
   logging {
       export {
-        s3      {
-          id = "di-123456"
-         }
+          s3 {
+           id = "di-123456"
+          }
       }
   }
 

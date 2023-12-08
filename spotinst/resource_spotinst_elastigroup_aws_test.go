@@ -4724,7 +4724,7 @@ const testAwaitCapacity_EmptyFields = `
 `
 
 // endregion
-// region OceanAWS: Baseline
+// region Elastigroup: Logging
 func TestAccSpotinstElastigroupAWS_Logging(t *testing.T) {
 	groupName := "test_logging_group"
 	resourceName := createElastigroupResourceName(groupName)
@@ -4739,8 +4739,7 @@ func TestAccSpotinstElastigroupAWS_Logging(t *testing.T) {
 			{
 				ResourceName: resourceName,
 				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName: groupName,
-					/*launchConfig: testElastigroupLoggingAWSConfig_Create,*/
+					groupName:      groupName,
 					fieldsToAppend: testElastigroupLoggingAWSConfig_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
@@ -4749,14 +4748,28 @@ func TestAccSpotinstElastigroupAWS_Logging(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-5fae075b"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-a7fdf3dc"),
 				),
 			},
 			{
 				ResourceName: resourceName,
 				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName: groupName,
-					/*launchConfig: testElastigroupLoggingAWSConfig_EmptyFields,*/
+					groupName:      groupName,
+					fieldsToAppend: testElastigroupLoggingAWSConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupExists(&group, resourceName),
+					testCheckElastigroupAttributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.0.id", "di-1f5d9ff1"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createElastigroupTerraform(&GroupConfigMetadata{
+					groupName:      groupName,
 					fieldsToAppend: testElastigroupLoggingAWSConfig_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
@@ -4774,7 +4787,17 @@ const testElastigroupLoggingAWSConfig_Create = `
   logging {
     export {
       s3 { 
-		id = "di-5fae075b"
+		id = "di-a7fdf3dc"
+      }
+    }
+  }
+`
+const testElastigroupLoggingAWSConfig_Update = `
+ // --- LOGGING -----------------
+  logging {
+    export {
+      s3 { 
+		id = "di-1f5d9ff1"
       }
     }
   }
