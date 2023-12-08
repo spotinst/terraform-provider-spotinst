@@ -134,6 +134,14 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
     should_tag_amis      = true
   }
 
+  logging {
+      export {
+          s3 {
+           id = "di-123456"
+          }
+      }
+  }
+
 
   lifecycle {
     ignore_changes = [
@@ -237,6 +245,11 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
     * `should_tag_volumes`   - (Optional) Tag specification for Volume resources.
     * `should_tag_snapshots` - (Optional) Tag specification for Snapshot resources.
     * `should_tag_amis`      - (Optional) Tag specification for AMI resources.
+
+* `logging` - (Optional) Logging configuration.
+    * `export` - (Optional) Logging Export configuration.
+        * `s3` - (Optional) Exports your cluster's logs to the S3 bucket and subdir configured on the S3 data integration given.
+            * `id` - (Required) The identifier of The S3 data integration to export the logs to.
     
 <a id="load-balancers"></a>
 ## Load Balancers

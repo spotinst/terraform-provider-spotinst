@@ -146,7 +146,7 @@ func createOceanAWSLaunchSpecTerraform(lscm *LaunchSpecConfigMetadata, formatToU
 
 // region OceanAWSLaunchSpec: Baseline
 func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
-	oceanID := "o-323b5842"
+	oceanID := "o-8b34732f"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -182,7 +182,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taint value"),
 					resource.TestCheckResourceAttr(resourceName, "taints.0.effect", "NoSchedule"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
@@ -195,7 +195,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05f840082fe2dcac2"),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
 					resource.TestCheckResourceAttr(resourceName, "name", "launch spec name test update"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.#", "5"),
 					resource.TestCheckResourceAttr(resourceName, "instance_types.0", "m3.2xlarge"),
@@ -219,8 +219,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taint value updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.0.effect", "NoExecute"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0faad0b6bb7e99d9f"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-8ab89cc1"),
 					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "30"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
@@ -239,7 +239,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   security_groups = ["sg-0041bd3fd6aa2ee3c"]
   user_data = "hello world"
   iam_instance_profile = "test"
-  subnet_ids = ["subnet-0bd585d2c2177c7ee"]
+  subnet_ids = ["subnet-4333093a"]
   instance_types = ["m3.xlarge", "m4.2xlarge", "m5.2xlarge"]
   preferred_spot_types = ["m3.xlarge"]
   root_volume_size = 20 
@@ -266,10 +266,10 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   provider = "%v"
 
   ocean_id = "%v"
-  image_id = "ami-05f840082fe2dcac2"
+  image_id = "ami-05a68f290aa68e8f0"
   user_data = "hello world updated"
   iam_instance_profile = "updated"
-  subnet_ids = ["subnet-0bd585d2c2177c7ee", "subnet-0faad0b6bb7e99d9f"]
+  subnet_ids = ["subnet-4333093a", "subnet-8ab89cc1"]
   instance_types = ["m3.2xlarge", "m4.xlarge", "m4.2xlarge", "m5.xlarge", "m5.2xlarge"]
   preferred_spot_types = ["m3.2xlarge","m4.xlarge"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
@@ -297,7 +297,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: AutoScale
 func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
-	oceanID := "o-323b5842"
+	oceanID := "o-8b34732f"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -370,7 +370,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -408,7 +408,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -440,7 +440,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  name = "launch spec name test"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -453,7 +453,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: ElasticIpPool
 func TestAccSpotinstOceanAWSLaunchSpec_ElasticIpPool(t *testing.T) {
-	oceanID := "o-323b5842"
+	oceanID := "o-8b34732f"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -502,7 +502,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -525,7 +525,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -549,7 +549,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  name = "launch spec name test"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -562,7 +562,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: Block Devices
 func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
-	oceanID := "o-323b5842"
+	oceanID := "o-8b34732f"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -633,7 +633,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
-image_id = "ami-05f840082fe2dcac2"
+image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -663,7 +663,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
-image_id = "ami-05f840082fe2dcac2"
+image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -694,7 +694,7 @@ provider = "%v"
 ocean_id = "%v"
 name = "launch spec name test"
 
-image_id = "ami-05f840082fe2dcac2"
+image_id = "ami-05a68f290aa68e8f0"
 security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
 user_data = "hello world updated"
 iam_instance_profile = "updated"
@@ -706,7 +706,7 @@ iam_instance_profile = "updated"
 
 // region OceanAWSLaunchSpec: ResourceLimits
 func TestAccSpotinstOceanAWSLaunchSpec_ResourceLimits(t *testing.T) {
-	oceanID := "o-323b5842"
+	oceanID := "o-8b34732f"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -759,7 +759,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -780,7 +780,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -802,7 +802,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  ocean_id = "%v"
  name = "launch spec name test"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -815,7 +815,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: Strategy
 func TestAccSpotinstOceanAWSLaunchSpec_Strategy(t *testing.T) {
-	oceanID := "o-323b5842"
+	oceanID := "o-8b34732f"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -856,7 +856,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -876,7 +876,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -894,7 +894,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 
 // region OceanAWSLaunchSpec: Scheduling
 func TestAccSpotinstOceanAWSLaunchSpec_Scheduling(t *testing.T) {
-	oceanID := "o-323b5842"
+	oceanID := "o-8b34732f"
 	resourceName := createOceanAWSLaunchSpecResourceOceanID(oceanID)
 
 	var launchSpec aws.LaunchSpec
@@ -954,7 +954,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
 
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"
@@ -984,7 +984,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  provider = "%v"  
  ocean_id = "%v"
  
- image_id = "ami-05f840082fe2dcac2"
+ image_id = "ami-05a68f290aa68e8f0"
  security_groups = ["sg-0041bd3fd6aa2ee3c", "sg-0195f2ac3a6014a15"]
  user_data = "hello world updated"
  iam_instance_profile = "updated"

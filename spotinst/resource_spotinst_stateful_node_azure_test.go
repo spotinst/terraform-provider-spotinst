@@ -65,26 +65,27 @@ func testCheckStatefulNodeAzureV3Exists(statefulNode *azure.StatefulNode, resour
 }
 
 type AzureV3StatefulNodeConfigMetadata struct {
-	statefulNodeName     string
-	acdIdentifier        string
-	controllerClusterID  string
-	provider             string
-	strategy             string
-	autoScaler           string
-	health               string
-	vmSizes              string
-	osDisk               string
-	dataDisk             string
-	image                string
-	network              string
-	login                string
-	persistence          string
-	signal               string
-	extensions           string
-	scheduling           string
-	tag                  string
-	variables            string
-	updateBaselineFields bool
+	statefulNodeName         string
+	acdIdentifier            string
+	controllerClusterID      string
+	provider                 string
+	strategy                 string
+	autoScaler               string
+	health                   string
+	vmSizes                  string
+	osDisk                   string
+	dataDisk                 string
+	proximityPlacementGroups string
+	image                    string
+	network                  string
+	login                    string
+	persistence              string
+	signal                   string
+	extensions               string
+	scheduling               string
+	tag                      string
+	variables                string
+	updateBaselineFields     bool
 }
 
 func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeConfigMetadata) string {
@@ -122,6 +123,10 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 
 	if StatefulNodeMeta.dataDisk == "" {
 		StatefulNodeMeta.dataDisk = testDataDiskStatefulNodeAzureV3Config_Create
+	}
+
+	if StatefulNodeMeta.proximityPlacementGroups == "" {
+		StatefulNodeMeta.proximityPlacementGroups = testProximityPlacementGroupsStatefulNodeAzureV3Config_Create
 	}
 
 	if StatefulNodeMeta.login == "" {
@@ -166,6 +171,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.network,
 			StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.dataDisk,
+			StatefulNodeMeta.proximityPlacementGroups,
 			StatefulNodeMeta.health,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
@@ -186,6 +192,7 @@ func createStatefulNodeAzureV3Terraform(StatefulNodeMeta *AzureV3StatefulNodeCon
 			StatefulNodeMeta.network,
 			StatefulNodeMeta.osDisk,
 			StatefulNodeMeta.dataDisk,
+			StatefulNodeMeta.proximityPlacementGroups,
 			StatefulNodeMeta.health,
 			StatefulNodeMeta.vmSizes,
 			StatefulNodeMeta.persistence,
@@ -228,11 +235,11 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.type", "loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Terraform-statefulNode-loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Automation-Lb"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.sku", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Terraform-backend-pool"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Automation-Lb-BackendPool"),
 				),
 			},
 			{
@@ -248,11 +255,11 @@ func TestAccSpotinstStatefulNodeAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.type", "loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Terraform-statefulNode-loadBalancer"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.name", "Automation-Lb"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.sku", "Basic"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Terraform-backend-pool"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancer.0.backend_pool_names.0", "Automation-Lb-BackendPool"),
 				),
 			},
 		},
@@ -266,15 +273,16 @@ name = "%v"
 os = "Linux"
 region = "eastus"
 description = "terraform-stateful-node-azure"
-resource_group_name = "CoreReliabilityResourceGroup"
+resource_group_name = "AutomationResourceGroup"
 user_data = "dGhpcyBpcyBtb2RpZmllZCBzaHV0ZG93biBzY3JpcHQ="
 load_balancer {
-	name =  "Terraform-statefulNode-loadBalancer"
+	name =  "Automation-Lb"
 	type = "loadBalancer"
-	resource_group_name = "CoreReliabilityResourceGroup"
+	resource_group_name = "AutomationResourceGroup"
 	sku =  "Standard"
-	backend_pool_names = ["Terraform-backend-pool"]
+	backend_pool_names = ["Automation-Lb-BackendPool"]
 }
+%v
 %v
 %v
 %v
@@ -309,15 +317,16 @@ provider = "%v"
 name = "%v"
 os = "Linux"
 region = "eastus"
-resource_group_name = "CoreReliabilityResourceGroup"
+resource_group_name = "AutomationResourceGroup"
 user_data = "dGhpcyBpcyBtb2RpZmllZCB1c2VyIGRhdGEgc2NyaXB0"
 load_balancer {
-	name =  "Terraform-statefulNode-loadBalancer"
+	name =  "Automation-Lb"
 	type = "loadBalancer"
-	resource_group_name = "CoreReliabilityResourceGroup"
+	resource_group_name = "AutomationResourceGroup"
 	sku =  "Basic"
-	backend_pool_names = ["Terraform-backend-pool"]
+	backend_pool_names = ["Automation-Lb-BackendPool"]
 }
+%v
 %v
 %v
 %v
@@ -806,16 +815,16 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "Automation-PrivateSubnet"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.assign_public_ip", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.is_primary", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.public_ip_sku", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "Automation-NSG-PrivateSubnet"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "Automation-VirtualNetwork"),
 				),
 			},
 			{
@@ -828,16 +837,16 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "network.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "default"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.subnet_name", "Automation-PrivateSubnet"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.assign_public_ip", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.is_primary", "true"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.public_ip_sku", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "core-reliability-network-security-group"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.name", "Automation-NSG-PrivateSubnet"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.network_security_group.0.network_resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "network.0.network_interface.0.enable_ip_forwarding", "true"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "CoreReliabilityResourceGroup"),
-					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "CoreReliabilityVN"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.network_resource_group_name", "AutomationResourceGroup"),
+					resource.TestCheckResourceAttr(resourceName, "network.0.virtual_network_name", "Automation-VirtualNetwork"),
 				),
 			},
 		},
@@ -846,16 +855,16 @@ func TestAccSpotinstStatefulNodeAzureV3_Network(t *testing.T) {
 
 const testNetworkStatefulNodeAzureV3Config_Create = `
 network {
-	network_resource_group_name = "CoreReliabilityResourceGroup"
-	virtual_network_name = "CoreReliabilityVN"
+	network_resource_group_name = "AutomationResourceGroup"
+	virtual_network_name = "Automation-VirtualNetwork"
 	network_interface {
-		subnet_name = "default"
+		subnet_name = "Automation-PrivateSubnet"
 		assign_public_ip = true
 		is_primary = true
 		public_ip_sku = "Standard"
 		network_security_group {
-			name = "core-reliability-network-security-group"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
+			name = "Automation-NSG-PrivateSubnet"
+			network_resource_group_name = "AutomationResourceGroup"
 		}
 		enable_ip_forwarding = true
 	}
@@ -864,16 +873,16 @@ network {
 
 const testNetworkStatefulNodeAzureV3Config_Update = `
 network {
-	network_resource_group_name = "CoreReliabilityResourceGroup"
-	virtual_network_name = "CoreReliabilityVN"
+	network_resource_group_name = "AutomationResourceGroup"
+	virtual_network_name = "Automation-VirtualNetwork"
 	network_interface {
-		subnet_name = "default"
+		subnet_name = "Automation-PrivateSubnet"
 		assign_public_ip = true
 		is_primary = true
 		public_ip_sku = "Standard"
 		network_security_group {
-			name = "core-reliability-network-security-group"
-			network_resource_group_name = "CoreReliabilityResourceGroup"
+			name = "Automation-NSG-PrivateSubnet"
+			network_resource_group_name = "AutomationResourceGroup"
 		}
 		enable_ip_forwarding = true
 	}
@@ -1015,6 +1024,73 @@ data_disk {
 `
 
 const testDataDiskStatefulNodeAzureV3Config_EmptyFields = ``
+
+// region Stateful Node Azure : ProximityPlacementGroups
+func TestAccSpotinstStatefulNodeAzureV3_ProximityPlacementGroups(t *testing.T) {
+	statefulNodeName := "terraform-tests-do-not-delete"
+	resourceName := createStatefulNodeAzureV3ResourceName(statefulNodeName)
+
+	var node azure.StatefulNode
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testStatefulNodeAzureV3Destroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{statefulNodeName: statefulNodeName}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.name", "TestProximityPlacementGroup"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.resource_group_name", "AutomationResourceGroup"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:         statefulNodeName,
+					proximityPlacementGroups: testProximityPlacementGroupsStatefulNodeAzureV3Config_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.name", "TestTerraformProximityPlacementGroup"),
+					resource.TestCheckResourceAttr(resourceName, "proximity_placement_groups.0.resource_group_name", "AutomationResourceGroup"),
+				),
+			},
+			{
+				Config: createStatefulNodeAzureV3Terraform(&AzureV3StatefulNodeConfigMetadata{
+					statefulNodeName:         statefulNodeName,
+					proximityPlacementGroups: testProximityPlacementGroupsStatefulNodeAzureV3Config_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
+					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
+				),
+			},
+		},
+	})
+}
+
+const testProximityPlacementGroupsStatefulNodeAzureV3Config_Create = `
+proximity_placement_groups {
+    name                = "TestProximityPlacementGroup"
+    resource_group_name = "AutomationResourceGroup"
+}
+`
+
+const testProximityPlacementGroupsStatefulNodeAzureV3Config_Update = `
+proximity_placement_groups {
+    name                = "TestTerraformProximityPlacementGroup"
+    resource_group_name = "AutomationResourceGroup"
+}
+`
+
+const testProximityPlacementGroupsStatefulNodeAzureV3Config_EmptyFields = ``
+
+// endregion
 
 // region Stateful Node Azure : Signal
 func TestAccSpotinstStatefulNodeAzureV3_Signal(t *testing.T) {

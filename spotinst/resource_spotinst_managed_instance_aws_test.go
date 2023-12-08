@@ -182,10 +182,10 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "3"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0faad0b6bb7e99d9f"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0bd585d2c2177c7ee"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-0b40f863ba34956ba"),
-					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-9dee6bfa"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-8ab89cc1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.2", "subnet-42f1e418"),
+					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-b6923bce"),
 				),
 			},
 			{
@@ -208,9 +208,9 @@ func TestAccSpotinstManagedInstanceBaseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-e251209a"),
 					resource.TestCheckResourceAttr(resourceName, "product", "Linux/UNIX"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-0bd585d2c2177c7ee"),
-					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-0faad0b6bb7e99d9f"),
-					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-0821b8599e5ea9d3c"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-8ab89cc1"),
+					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-4333093a"),
+					resource.TestCheckResourceAttr(resourceName, "vpc_id", "vpc-022249bb368a88318v"),
 				),
 			},
 		},
@@ -228,7 +228,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "true"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-0faad0b6bb7e99d9f", "subnet-0bd585d2c2177c7ee", "subnet-0b40f863ba34956ba"]
+  subnet_ids = ["subnet-4333093a", "subnet-8ab89cc1", "subnet-42f1e418"]
   instance_types = ["t3.xlarge"]
   preferred_type = "t3.xlarge"
   image_id = "ami-082b5a644766e0e6f"
@@ -236,7 +236,7 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
     key = "creator"
     value = "terraform-automation"
   }
-  vpc_id = "vpc-9dee6bfa"
+  vpc_id = "vpc-b6923bce"
  %v
 }
 `
@@ -252,13 +252,13 @@ resource "` + string(commons.ManagedInstanceAWSResourceName) + `" "%v" {
   persist_block_devices = "true"
   persist_root_device = "false"
   block_devices_mode = "reattach"
-  subnet_ids = ["subnet-0bd585d2c2177c7ee","subnet-0faad0b6bb7e99d9f"]  
+  subnet_ids = ["subnet-8ab89cc1","subnet-4333093a"]  
   instance_types = [
     "t3.xlarge",
     "t3.medium",]
   preferred_type = "t3.medium"
   image_id = "ami-e251209a"
-  vpc_id = "vpc-0821b8599e5ea9d3c"
+  vpc_id = "vpc-022249bb368a88318v"
   %v
 }
 `
