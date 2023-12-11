@@ -214,7 +214,8 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   availability_zones = [
     "1",
-    "2"
+    "2",
+    "3"
   ]
 
   // --- nodeCountLimits ----------------------------------------------------
@@ -282,6 +283,311 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   fallback_to_ondemand = true
 
   // ---------------------------------------------------------------------------
+
+}
+
+`
+
+// endregion
+
+// region OceanAKSNPVirtualNodeGroup: Headrooms
+func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Headrooms(t *testing.T) {
+	vngResourceName := "test-aks-vng"
+	resourceName := createOceanAKSNPVirtualNodeGroupResource(vngResourceName)
+
+	var virtualNodeGroup azure_np.VirtualNodeGroup
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSNPVirtualNodeGroupDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.gpu_per_unit", "0"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.num_of_units", "2"),
+				),
+			},
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.cpu_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.memory_per_unit", "512"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.gpu_per_unit", "0"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.0.num_of_units", "2"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.1.cpu_per_unit", "2048"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.1.memory_per_unit", "1024"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.1.gpu_per_unit", "2"),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.1.num_of_units", "4"),
+				),
+			},
+		},
+	})
+}
+
+const testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Create = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVng"
+
+  ocean_id = "o-751eaa33"
+
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+
+  headrooms {
+    cpu_per_unit    = 1024
+    memory_per_unit = 512
+    gpu_per_unit    = 0
+    num_of_units    = 2
+  }
+
+}
+
+`
+
+const testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Update = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVngUpdated"
+
+  ocean_id = "o-751eaa33"
+
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+
+  headrooms {
+    cpu_per_unit    = 1024
+    memory_per_unit = 512
+    gpu_per_unit    = 0
+    num_of_units    = 2
+  }
+
+  headrooms {
+    cpu_per_unit    = 2048
+    memory_per_unit = 1024
+    gpu_per_unit    = 2
+    num_of_units    = 4
+  }
+
+}
+
+`
+
+// endregion
+
+// region OceanAKSNPVirtualNodeGroup: Taints
+func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Taints(t *testing.T) {
+	vngResourceName := "test-aks-vng"
+	resourceName := createOceanAKSNPVirtualNodeGroupResource(vngResourceName)
+
+	var virtualNodeGroup azure_np.VirtualNodeGroup
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSNPVirtualNodeGroupDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupTaints_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.key", "taintKey1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taintValue1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.effect", "NoExecute"),
+				),
+			},
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupTaints_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.key", "taintKey1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taintValue1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.effect", "NoExecute"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1.key", "taintKey2"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1.value", "taintValue2"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1.effect", "NoSchedule"),
+				),
+			},
+		},
+	})
+}
+
+const testBaselineOceanAKSNPVirtualNodeGroupTaints_Create = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVng"
+
+  ocean_id = "o-751eaa33"
+
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+
+  taints {
+    key    = "taintKey1"
+    value  = "taintValue1"
+    effect = "NoExecute"
+  }
+
+}
+
+`
+
+const testBaselineOceanAKSNPVirtualNodeGroupTaints_Update = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVngUpdated"
+
+  ocean_id = "o-751eaa33"
+
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+
+  taints {
+    key    = "taintKey1"
+    value  = "taintValue1"
+    effect = "NoExecute"
+  }
+
+  taints {
+    key    = "taintKey2"
+    value  = "taintValue2"
+    effect = "NoSchedule"
+  }
+
+}
+
+`
+
+// endregion
+
+// region OceanAKSNPVirtualNodeGroup: Filters
+func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Filters(t *testing.T) {
+	vngResourceName := "test-aks-vng"
+	resourceName := createOceanAKSNPVirtualNodeGroupResource(vngResourceName)
+
+	var virtualNodeGroup azure_np.VirtualNodeGroup
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "azure") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAKSNPVirtualNodeGroupDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupFilters_Create),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.key", "taintKey1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taintValue1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.effect", "NoExecute"),
+				),
+			},
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupFilters_Update),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.key", "taintKey1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taintValue1"),
+					resource.TestCheckResourceAttr(resourceName, "taints.0.effect", "NoExecute"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1.key", "taintKey2"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1.value", "taintValue2"),
+					resource.TestCheckResourceAttr(resourceName, "taints.1.effect", "NoSchedule"),
+				),
+			},
+		},
+	})
+}
+
+const testBaselineOceanAKSNPVirtualNodeGroupFilters_Create = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVng"
+
+  ocean_id = "o-751eaa33"
+
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+
+  filters {
+    min_vcpu               = 2
+    max_vcpu               = 16
+    min_memory_gib         = 8
+    max_memory_gib         = 16
+    architectures          = ["X86_64"]
+    series                 = ["D v3", "Dds_v4", "Dsv2", "A", "A v2"]
+    exclude_series         = ["E v3", "Esv3", "Eas_v5"]
+    accelerated_networking = "Disabled"
+    disk_performance       = "Standard"
+    //min_gpu                = 1
+    //max_gpu                = 2
+    min_nics               = 1
+    vm_types               = ["generalPurpose"]
+    min_disk               = 1
+  }
+
+}
+
+`
+
+const testBaselineOceanAKSNPVirtualNodeGroupFilters_Update = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVngUpdated"
+
+  ocean_id = "o-751eaa33"
+
+  availability_zones = [
+    "1",
+    "2",
+    "3"
+  ]
+
+  filters {
+    min_vcpu               = 4
+    max_vcpu               = 32
+    min_memory_gib         = 4
+    max_memory_gib         = 32
+    architectures          = ["X86_64","AMD64"]
+    accelerated_networking = "Enabled"
+    disk_performance       = "Premium"
+    //min_gpu                = 1
+    //max_gpu                = 2
+    min_nics               = 2
+    vm_types               = ["generalPurpose","computeOptimized"]
+    min_disk               = 2
+  }
 
 }
 
