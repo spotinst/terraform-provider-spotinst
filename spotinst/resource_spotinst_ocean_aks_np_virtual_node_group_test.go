@@ -214,8 +214,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   availability_zones = [
     "1",
-    "2",
-    "3"
+    "2"
   ]
 
   // --- nodeCountLimits ----------------------------------------------------
