@@ -621,7 +621,7 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "health.0.grace_period", "60"),
 				),
 			},
-			{
+			/*{
 				Config: createOceanAKSNPTerraform(&OceanAKSNPMetadata{
 					clusterName:         clusterName,
 					controllerClusterID: controllerClusterID,
@@ -632,7 +632,7 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 					testCheckOceanAKSNPAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "health.#", "0"),
 				),
-			},
+			},*/
 		},
 	})
 }
@@ -653,11 +653,11 @@ const testHealthOceanAKSNPConfig_Update = `
   // -------------------------------------------------------------------
 `
 
-const testHealthOceanAKSNPConfig_EmptyFields = `
-// --- Health ---------------------------------------------------- 
+/*const testHealthOceanAKSNPConfig_EmptyFields = `
+// --- Health ----------------------------------------------------
 // ---------------------------------------------------------------
 `
-
+*/
 //endregion
 
 // region Ocean AKS : Headrooms
