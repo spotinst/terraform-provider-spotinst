@@ -1,5 +1,5 @@
 ## Unreleased
-## 1.154.0 (December, 12 2023)
+## 1.153.1 (December, 12 2023)
 NOTES:
 * documentation: resource/spotinst_elastigroup_aws: Added 2 params `period` and `evaluation_periods` as part of scaling_target_policy.
 
