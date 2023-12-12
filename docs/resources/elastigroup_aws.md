@@ -431,6 +431,8 @@ When using `updateCapacity`       – set the fields `minimum`, `maximum`, and `
 * `statistic` - (Optional, Default: `"average"`) String, the metric statistics to return. For information about specific statistics go to [Statistics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?CHAP_TerminologyandKeyConcepts.html#Statistic) in the Amazon CloudWatch Developer Guide.
 * `unit` - (Required) String, tThe unit for the alarm's associated metric. Valid values: `"percent`, `"seconds"`, `"microseconds"`, `"milliseconds"`, `"bytes"`, `"kilobytes"`, `"megabytes"`, `"gigabytes"`, `"terabytes"`, `"bits"`, `"kilobits"`, `"megabits"`, `"gigabits"`, `"terabits"`, `"count"`, `"bytes/second"`, `"kilobytes/second"`, `"megabytes/second"`, `"gigabytes/second"`, `"terabytes/second"`, `"bits/second"`, `"kilobits/second"`, `"megabits/second"`, `"gigabits/second"`, `"terabits/second"`, `"count/second"`, `"none"`.  
 * `namespace` - (Required) String, the namespace for the alarm's associated metric.
+* `period` - (Optional, Default: `300`) The granularity, in seconds, of the returned datapoints. Period must be at least 60 seconds and must be a multiple of 60.
+* `evaluation_periods` - (Optional, Default: `1`) The number of periods over which data is compared to the specified threshold.
 * `cooldown` - (Optional, Default: `300`) Integer the amount of time, in seconds, after a scaling activity completes and before the next scaling activity can start. If this parameter is not specified, the default cooldown period for the group applies.
 * `source` - (Optional) String, the source of the metric. Valid values: `"cloudWatch"`, `"spectrum"`.
 * `dimensions` - (Optional) A list of dimensions describing qualities of the metric.
@@ -496,15 +498,17 @@ Usage:
 
 ```hcl
   scaling_target_policy {
-      policy_name     = "policy-name"
-      metric_name     = "CPUUtilization"
-      namespace       = "AWS/EC2"
-      source          = "spectrum"
-      statistic       = "average"
-      unit            = "bytes"
-      cooldown        = 120
-      target          = 2
-      predictive_mode = "FORCAST_AND_SCALE"
+      policy_name            = "policy-name"
+      metric_name            = "CPUUtilization"
+      namespace              = "AWS/EC2"
+      source                 = "spectrum"
+      statistic              = "average"
+      unit                   = "bytes"
+      evaluation_periods     = 10
+      period                 = 60
+      cooldown               = 120
+      target                 = 2
+      predictive_mode        = "FORCAST_AND_SCALE"
       max_capacity_per_scale = "10"
       dimensions {
         name  = "name-1"
