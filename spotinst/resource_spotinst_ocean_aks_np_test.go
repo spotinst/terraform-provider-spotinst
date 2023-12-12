@@ -225,8 +225,6 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.26"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
-					//resource.TestCheckResourceAttr(resourceName, "pod_subnet_ids.#", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "pod_subnet_ids.0", "/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
@@ -291,7 +289,6 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   os_type               = "Linux"
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.26"
-  //pod_subnet_ids      = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
   vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
 
@@ -346,7 +343,6 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   os_type               = "Linux"
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.27"
-  //pod_subnet_ids      = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
   vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
 
@@ -429,6 +425,18 @@ func TestAccSpotinstOceanAKSNP_AutoScaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_vcpu", "2048"),
 				),
 			},
+			{
+				Config: createOceanAKSNPTerraform(&OceanAKSNPMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					autoScaler:          testAutoScalerOceanAKSNPConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPExists(&cluster, resourceName),
+					testCheckOceanAKSNPAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -479,6 +487,11 @@ const testAutoScalerOceanAKSNPConfig_Update = `
     // -------------------------------------------------------------------
 `
 
+const testAutoScalerOceanAKSNPConfig_EmptyFields = `
+// --- AutoScaler ---------------------------------------------------- 
+// -------------------------------------------------------------------
+`
+
 //endregion
 
 // region Ocean AKS : Scheduling
@@ -524,6 +537,18 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.0", "Sat:08:00-Sun:08:00"),
 				),
 			},
+			{
+				Config: createOceanAKSNPTerraform(&OceanAKSNPMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					scheduling:          testSchedulingOceanAKSNPConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPExists(&cluster, resourceName),
+					testCheckOceanAKSNPAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -548,6 +573,11 @@ const testSchedulingOceanAKSNPConfig_Update = `
     }
   }
   // -------------------------------------------------------------------
+`
+
+const testSchedulingOceanAKSNPConfig_EmptyFields = `
+// --- Scheduling ---------------------------------------------------- 
+// -------------------------------------------------------------------
 `
 
 //endregion
@@ -591,6 +621,18 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "health.0.grace_period", "60"),
 				),
 			},
+			{
+				Config: createOceanAKSNPTerraform(&OceanAKSNPMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					health:              testHealthOceanAKSNPConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPExists(&cluster, resourceName),
+					testCheckOceanAKSNPAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "health.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -609,6 +651,11 @@ const testHealthOceanAKSNPConfig_Update = `
     grace_period = 60
   }
   // -------------------------------------------------------------------
+`
+
+const testHealthOceanAKSNPConfig_EmptyFields = `
+// --- Health ---------------------------------------------------- 
+// ---------------------------------------------------------------
 `
 
 //endregion
@@ -662,6 +709,17 @@ func TestAccSpotinstOceanAKSNP_Headrooms(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "headrooms.1.num_of_units", "4"),
 				),
 			},
+			{
+				Config: createOceanAKSNPTerraform(&OceanAKSNPMetadata{
+					clusterName:          clusterName,
+					controllerClusterID:  controllerClusterID,
+					headrooms:            testHeadroomsOceanAKSNPConfig_EmptyFields,
+					updateBaselineFields: true,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -694,6 +752,12 @@ const testHeadroomsOceanAKSNPConfig_Update = `
   }
 // ----------------------------------------------------------------------
 
+`
+
+const testHeadroomsOceanAKSNPConfig_EmptyFields = `
+
+// --- autoscale --------------------------------------------------------
+//-----------------------------------------------------------------------
 `
 
 //endregion
@@ -744,6 +808,18 @@ func TestAccSpotinstOceanAKSNP_Taints(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.1.effect", "NoSchedule"),
 				),
 			},
+			{
+				Config: createOceanAKSNPTerraform(&OceanAKSNPMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					taints:              testTaintsOceanAKSNPConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPExists(&cluster, resourceName),
+					testCheckOceanAKSNPAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -770,6 +846,11 @@ const testTaintsOceanAKSNPConfig_Update = `
     effect = "NoSchedule"
   }
 
+`
+
+const testTaintsOceanAKSNPConfig_EmptyFields = `
+// --- Taints --------------------------------------------------------
+//-----------------------------------------------------------------------
 `
 
 //endregion
@@ -851,6 +932,18 @@ func TestAccSpotinstOceanAKSNP_Filters(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "filters.0.min_disk", "2"),
 				),
 			},
+			{
+				Config: createOceanAKSNPTerraform(&OceanAKSNPMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					filters:             testFiltersOceanAKSNPConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPExists(&cluster, resourceName),
+					testCheckOceanAKSNPAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "filters.#", "0"),
+				),
+			},
 		},
 	})
 }
@@ -897,6 +990,11 @@ const testFiltersOceanAKSNPConfig_Update = `
   }
 
   // ----------------------------------------------------------------------
+`
+
+const testFiltersOceanAKSNPConfig_EmptyFields = `
+// --- vmSizes --------------------------------------------------------
+//-----------------------------------------------------------------------
 `
 
 //endregion

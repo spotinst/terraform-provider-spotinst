@@ -13,40 +13,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
-//func init() {
-//	resource.AddTestSweepers("spotinst_ocean_gke_launch_spec", &resource.Sweeper{
-//		Name: "spotinst_ocean_gke_launch_spec",
-//		F:    testSweepOceanGKELaunchSpec,
-//	})
-//}
-//
-//func testSweepOceanGKELaunchSpec(region string) error {
-//	client, err := getProviderClient("gcp")
-//	if err != nil {
-//		return fmt.Errorf("error getting client: %v", err)
-//	}
-//
-//	conn := client.(*Client).ocean.CloudProviderGCP()
-//	input := &gcp.ListLaunchSpecsInput{}
-//	if resp, err := conn.ListLaunchSpecs(context.Background(), input); err != nil {
-//		return fmt.Errorf("error getting list of launch specs to sweep")
-//	} else {
-//		if len(resp.LaunchSpecs) == 0 {
-//			log.Printf("[INFO] No launch specs to sweep")
-//		}
-//		for _, launchSpec := range resp.LaunchSpecs {
-//			if strings.Contains(spotinst.StringValue(launchSpec.<WHAT>), "test-acc-") {
-//				if _, err := conn.DeleteLaunchSpec(context.Background(), &gcp.DeleteLaunchSpecInput{LaunchSpecID: launchSpec.ID}); err != nil {
-//					return fmt.Errorf("unable to delete launch spec %v in sweep", spotinst.StringValue(launchSpec.ID))
-//				} else {
-//					log.Printf("Sweeper deleted %v\n", spotinst.StringValue(launchSpec.ID))
-//				}
-//			}
-//		}
-//	}
-//	return nil
-//}
-
 func createOceanAKSNPVirtualNodeGroupResource(oceanID string) string {
 	return fmt.Sprintf("%v.%v", string(commons.OceanAKSNPVirtualNodeGroupResourceName), oceanID)
 }
@@ -172,8 +138,6 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.26"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
-					//resource.TestCheckResourceAttr(resourceName, "pod_subnet_ids.#", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "pod_subnet_ids.0", "/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
@@ -231,7 +195,6 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   os_type               = "Linux"
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.26"
-  //pod_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
   vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
 
   // --- strategy -------------------------------------------------------------
@@ -273,7 +236,6 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   os_type               = "Linux"
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.27"
-  //pod_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
   vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
 
   // --- strategy -------------------------------------------------------------
@@ -302,7 +264,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Headrooms(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Create),
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testHeadroomsOceanAKSNPVirtualNodeGroup_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "1"),
@@ -313,7 +275,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Headrooms(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Update),
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testHeadroomsOceanAKSNPVirtualNodeGroup_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "2"),
@@ -327,23 +289,27 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Headrooms(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "headrooms.1.num_of_units", "4"),
 				),
 			},
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{
+					vngResourceName:      vngResourceName,
+					updateBaselineFields: true,
+				}, testHeadroomsOceanAKSNPVirtualNodeGroup_EmptyFields),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "0"),
+				),
+			},
 		},
 	})
 }
 
-const testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Create = `
+const testHeadroomsOceanAKSNPVirtualNodeGroup_Create = `
 resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   provider = "%v"  
 
   name  = "testVng"
 
   ocean_id = "o-751eaa33"
-
-  availability_zones = [
-    "1",
-    "2",
-    "3"
-  ]
 
   headrooms {
     cpu_per_unit    = 1024
@@ -356,19 +322,13 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
 `
 
-const testBaselineOceanAKSNPVirtualNodeGroupHeadrooms_Update = `
+const testHeadroomsOceanAKSNPVirtualNodeGroup_Update = `
 resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   provider = "%v"  
 
-  name  = "testVngUpdated"
+  name  = "testVng"
 
   ocean_id = "o-751eaa33"
-
-  availability_zones = [
-    "1",
-    "2",
-    "3"
-  ]
 
   headrooms {
     cpu_per_unit    = 1024
@@ -388,6 +348,17 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
 `
 
+const testHeadroomsOceanAKSNPVirtualNodeGroup_EmptyFields = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVng"
+
+  ocean_id = "o-751eaa33"
+
+}
+`
+
 // endregion
 
 // region OceanAKSNPVirtualNodeGroup: Taints
@@ -403,7 +374,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Taints(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupTaints_Create),
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testTaintsOceanAKSNPVirtualNodeGroup_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
@@ -413,7 +384,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Taints(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupTaints_Update),
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testTaintsOceanAKSNPVirtualNodeGroup_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "taints.#", "2"),
@@ -425,23 +396,27 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Taints(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "taints.1.effect", "NoSchedule"),
 				),
 			},
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{
+					vngResourceName:      vngResourceName,
+					updateBaselineFields: true,
+				}, testTaintsOceanAKSNPVirtualNodeGroup_EmptyFields),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "taints.#", "0"),
+				),
+			},
 		},
 	})
 }
 
-const testBaselineOceanAKSNPVirtualNodeGroupTaints_Create = `
+const testTaintsOceanAKSNPVirtualNodeGroup_Create = `
 resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   provider = "%v"  
 
   name  = "testVng"
 
   ocean_id = "o-751eaa33"
-
-  availability_zones = [
-    "1",
-    "2",
-    "3"
-  ]
 
   taints {
     key    = "taintKey1"
@@ -453,19 +428,13 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
 `
 
-const testBaselineOceanAKSNPVirtualNodeGroupTaints_Update = `
+const testTaintsOceanAKSNPVirtualNodeGroup_Update = `
 resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   provider = "%v"  
 
-  name  = "testVngUpdated"
+  name  = "testVng"
 
   ocean_id = "o-751eaa33"
-
-  availability_zones = [
-    "1",
-    "2",
-    "3"
-  ]
 
   taints {
     key    = "taintKey1"
@@ -483,6 +452,17 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
 `
 
+const testTaintsOceanAKSNPVirtualNodeGroup_EmptyFields = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVng"
+
+  ocean_id = "o-751eaa33"
+
+}
+`
+
 // endregion
 
 // region OceanAKSNPVirtualNodeGroup: Filters
@@ -498,7 +478,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Filters(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupFilters_Create),
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testFiltersOceanAKSNPVirtualNodeGroup_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "filters.#", "1"),
@@ -529,7 +509,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Filters(t *testing.T) {
 				),
 			},
 			{
-				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testBaselineOceanAKSNPVirtualNodeGroupFilters_Update),
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testFiltersOceanAKSNPVirtualNodeGroup_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "filters.#", "1"),
@@ -551,23 +531,27 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Filters(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "filters.0.min_disk", "2"),
 				),
 			},
+			{
+				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{
+					vngResourceName:      vngResourceName,
+					updateBaselineFields: true,
+				}, testFiltersOceanAKSNPVirtualNodeGroup_EmptyFields),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "filters.#", "0"),
+				),
+			},
 		},
 	})
 }
 
-const testBaselineOceanAKSNPVirtualNodeGroupFilters_Create = `
+const testFiltersOceanAKSNPVirtualNodeGroup_Create = `
 resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   provider = "%v"  
 
   name  = "testVng"
 
   ocean_id = "o-751eaa33"
-
-  availability_zones = [
-    "1",
-    "2",
-    "3"
-  ]
 
   filters {
     min_vcpu               = 2
@@ -590,19 +574,13 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
 `
 
-const testBaselineOceanAKSNPVirtualNodeGroupFilters_Update = `
+const testFiltersOceanAKSNPVirtualNodeGroup_Update = `
 resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   provider = "%v"  
 
-  name  = "testVngUpdated"
+  name  = "testVng"
 
   ocean_id = "o-751eaa33"
-
-  availability_zones = [
-    "1",
-    "2",
-    "3"
-  ]
 
   filters {
     min_vcpu               = 4
@@ -621,6 +599,17 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
 }
 
+`
+
+const testFiltersOceanAKSNPVirtualNodeGroup_EmptyFields = `
+resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
+  provider = "%v"  
+
+  name  = "testVng"
+
+  ocean_id = "o-751eaa33"
+
+}
 `
 
 // endregion

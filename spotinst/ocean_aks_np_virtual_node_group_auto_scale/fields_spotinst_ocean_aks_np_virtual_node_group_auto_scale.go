@@ -86,7 +86,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				}
 			}
 
-			virtualNodeGroup.AutoScale.SetHeadrooms(result)
+			if len(result) == 0 {
+				virtualNodeGroup.AutoScale.SetHeadrooms(nil)
+			} else {
+				virtualNodeGroup.AutoScale.SetHeadrooms(result)
+			}
+
 			return nil
 		},
 		nil,
