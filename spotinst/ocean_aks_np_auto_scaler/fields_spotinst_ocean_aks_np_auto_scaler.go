@@ -2,8 +2,6 @@ package ocean_aks_np_auto_scaler
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -75,6 +73,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
+											string(IsEnabled): {
+												Type:     schema.TypeBool,
+												Optional: true,
+											},
 											string(Percentage): {
 												Type:     schema.TypeInt,
 												Optional: true,
@@ -158,8 +160,7 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 				if resLimits != nil {
 					autoScaler.SetResourceLimits(resLimits)
 				} else {
-					log.Printf("resLimits == nil")
-					autoScaler.ResourceLimits = nil
+					autoScaler.SetResourceLimits(nil)
 				}
 			}
 
@@ -171,7 +172,7 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 				if down != nil {
 					autoScaler.SetDown(down)
 				} else {
-					autoScaler.Down = nil
+					autoScaler.SetDown(nil)
 				}
 			}
 
@@ -183,7 +184,7 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 				if headroom != nil {
 					autoScaler.SetHeadroom(headroom)
 				} else {
-					autoScaler.Headroom = nil
+					autoScaler.SetHeadroom(nil)
 				}
 			}
 		}
@@ -263,7 +264,7 @@ func expandHeadroom(data interface{}) (*azure_np.Headroom, error) {
 			if automatic != nil {
 				headroom.SetAutomatic(automatic)
 			} else {
-				headroom.Automatic = nil
+				headroom.SetAutomatic(nil)
 			}
 		}
 	}
@@ -287,6 +288,9 @@ func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {
 		} else {
 			automatic.SetPercentage((spotinst.Int(v)))
 		}
+	}
+	if v, ok := m[string(IsEnabled)].(bool); ok {
+		automatic.SetIsEnabled(spotinst.Bool(v))
 	}
 
 	return automatic, nil
@@ -356,6 +360,7 @@ func flattenAutomatic(autoScaleAutomatic *azure_np.Automatic) []interface{} {
 	if autoScaleAutomatic != nil {
 		value := spotinst.Int(-1)
 		automatic[string(Percentage)] = value
+		automatic[string(IsEnabled)] = spotinst.BoolValue(autoScaleAutomatic.IsEnabled)
 		if autoScaleAutomatic.Percentage != nil {
 			automatic[string(Percentage)] = spotinst.IntValue(autoScaleAutomatic.Percentage)
 		}
