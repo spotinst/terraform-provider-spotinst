@@ -83,7 +83,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					result = headrooms
 				}
 			}
-			cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(result)
+
+			if len(result) == 0 {
+				cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(nil)
+			} else {
+				cluster.VirtualNodeGroupTemplate.AutoScale.SetHeadrooms(result)
+			}
+
 			return nil
 		},
 		nil,
