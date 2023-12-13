@@ -90,6 +90,7 @@ resource "spotinst_ocean_aks_np" "example" {
     }
     autoscale_headroom {
       automatic {
+        is_enabled = true
         percentage = 5
       }
     }
@@ -221,6 +222,7 @@ The following arguments are supported:
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
     * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of pods without waiting for new resources to launch.
         * `automatic` - (Optional) [Automatic headroom](https://docs.spot.io/ocean/features/headroom?id=automatic-headroom) configuration.
+            * `is_enabled` - (Optional, Default - false) Enable automatic headroom. When set to True, Ocean configures and optimizes headroom automatically.
             * `percentage` - (Optional) Optionally set a number between 0-100 to control the percentage of total cluster resources dedicated to headroom.
 * `controller_cluster_id` - (Required) Enter a unique Ocean cluster identifier. Cannot be updated. This needs to match with string that was used to install the controller in the cluster, typically clusterName + 8 digit string.
 * `health` - (Optional) The Ocean AKS Health object.

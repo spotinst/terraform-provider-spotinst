@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.155.0 (December, 11 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `is_enabled` field support for `automatic` object inside `auto_scaler`
+
 ## 1.154.0 (December, 13 2023)
 NOTES:
 * Added unit tests for `spotinst_ocean_aks_np` and `spotinst_ocean_aks_np_virtual_node_group` resources
