@@ -2,8 +2,6 @@ package ocean_aks_np_auto_scaler
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -162,8 +160,7 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 				if resLimits != nil {
 					autoScaler.SetResourceLimits(resLimits)
 				} else {
-					log.Printf("resLimits == nil")
-					autoScaler.ResourceLimits = nil
+					autoScaler.SetResourceLimits(nil)
 				}
 			}
 
@@ -175,7 +172,7 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 				if down != nil {
 					autoScaler.SetDown(down)
 				} else {
-					autoScaler.Down = nil
+					autoScaler.SetDown(nil)
 				}
 			}
 
@@ -187,7 +184,7 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 				if headroom != nil {
 					autoScaler.SetHeadroom(headroom)
 				} else {
-					autoScaler.Headroom = nil
+					autoScaler.SetHeadroom(nil)
 				}
 			}
 		}
@@ -267,7 +264,7 @@ func expandHeadroom(data interface{}) (*azure_np.Headroom, error) {
 			if automatic != nil {
 				headroom.SetAutomatic(automatic)
 			} else {
-				headroom.Automatic = nil
+				headroom.SetAutomatic(nil)
 			}
 		}
 	}
