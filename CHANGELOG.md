@@ -1,4 +1,9 @@
 ## Unreleased
+
+## 1.154.0 (December, 13 2023)
+NOTES:
+* Added unit tests for `spotinst_ocean_aks_np` and `spotinst_ocean_aks_np_virtual_node_group` resources
+
 ## 1.153.1 (December, 12 2023)
 NOTES:
 * documentation: resource/spotinst_elastigroup_aws: updated document to add `period` and `evaluation_periods` attributes in `target_scaling_policy`.
