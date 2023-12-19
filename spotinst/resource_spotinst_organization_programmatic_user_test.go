@@ -81,7 +81,6 @@ func TestAccSpotinstOrganization_ProgrammaticUser_WithAccounts(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOrganizationProgrammaticUserExists(&progUser, progUserResourceName),
-					//resource.TestCheckResourceAttr(progUserResourceName, "name", "terraform_programmatic_user"),
 					resource.TestCheckResourceAttr(progUserResourceName, "description", "for terraform unit testing"),
 					resource.TestCheckResourceAttr(progUserResourceName, "accounts.#", "2"),
 					resource.TestCheckResourceAttr(progUserResourceName, "accounts.0.account_id", "act-75eb3ba3"),
