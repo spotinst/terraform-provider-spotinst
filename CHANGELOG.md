@@ -4,7 +4,6 @@
 NOTES:
 * Added unit tests for `spotinst_organization_policy`, `spotinst_organization_user`, `spotinst_organization_user_group` and `spotinst_organization_programmatic_user` resources
 
-
 ## 1.155.0 (December, 11 2023)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added `is_enabled` field support for `automatic` object inside `auto_scaler`
