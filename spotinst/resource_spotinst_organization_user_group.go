@@ -158,6 +158,8 @@ func resourceOrgUserGroupUpdate(ctx context.Context, resourceData *schema.Resour
 		}
 
 		userGroup.UserIds = nil
+		userGroup.Policies = nil
+
 		if userGroup.Name != nil || userGroup.Description != nil {
 			if err := updateUserGroup(userGroup, resourceData, meta); err != nil {
 				return diag.FromErr(err)
