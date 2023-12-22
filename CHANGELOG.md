@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.157.0 (January, 01 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
+
 ## 1.156.0 (December, 19 2023)
 NOTES:
 * Added unit tests for `spotinst_organization_policy`, `spotinst_organization_user`, `spotinst_organization_user_group` and `spotinst_organization_programmatic_user` resources

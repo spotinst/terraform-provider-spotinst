@@ -304,6 +304,8 @@ autoscaler {
 * `update_policy` - (Optional)
     * `should_roll` - (Required) Enables the roll.
     * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
+    * `conditioned_roll_params` - (Optional) List of string which gives the user, privilege to input a customized list of attributes upon modification of which in the configuration will trigger the cluster roll. (Valid values: `"subnet_ids"`, `"whitelist"`, `"blacklist"`, `"user_data"`, `"image_id"`, `"security_groups"`,
+      `"key_name"`, `"iam_instance_profile"`, `"associate_public_ip_address"`, `"load_balancers"`, `"instance_metadata_options"`,`"ebs_optimized"`, `"root_volume_size"`) 
     * `auto_apply_tags` - (Optional, Default: false) will update instance tags on the fly without rolling the cluster.
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
@@ -315,6 +317,7 @@ update_policy {
   should_roll = false
   conditioned_roll = true
   auto_apply_tags = true
+  conditioned_roll_params = ["whitelist", "image_id"]
 
   roll_config {
     batch_size_percentage = 33

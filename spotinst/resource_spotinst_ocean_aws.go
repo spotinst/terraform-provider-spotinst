@@ -157,8 +157,20 @@ func resourceSpotinstClusterAWSUpdate(ctx context.Context, resourceData *schema.
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate),
 		commons.OceanAWSResource.GetName(), id)
+	var conditionedRollParams []interface{}
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if roll, ok := m[string(ocean_aws.ConditionedRollParams)].([]interface{}); ok {
+				if len(roll) > 0 {
+					conditionedRollParams = roll
+				}
+			}
+		}
+	}
 
-	shouldUpdate, changesRequiredRoll, tagsChanged, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta)
+	shouldUpdate, changesRequiredRoll, tagsChanged, cluster, err := commons.OceanAWSResource.OnUpdate(resourceData, meta, conditionedRollParams)
 	if err != nil {
 		return diag.FromErr(err)
 	}
