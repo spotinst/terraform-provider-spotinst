@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.157.0 (January, 01 2024)
+## 1.157.0 (January, 02 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
 
