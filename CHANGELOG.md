@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.158.0 (January, 05 2024)
+BUG FIXES:
+* resource/spotinst_managed_instance_aws: Fixed `fallback_to_ondemand` field variable name in `strategy` object.
+
 ## 1.157.0 (January, 02 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
