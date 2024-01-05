@@ -6,7 +6,7 @@ const (
 	LifeCycle                commons.FieldName = "life_cycle"
 	Orientation              commons.FieldName = "orientation"
 	DrainingTimeout          commons.FieldName = "draining_timeout"
-	FallbackToOd             commons.FieldName = "fall_back_to_od"
+	FallbackToOd             commons.FieldName = "fallback_to_ondemand"
 	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
 	OptimizationWindows      commons.FieldName = "optimization_windows"
 	RevertToSpot             commons.FieldName = "revert_to_spot"

@@ -288,7 +288,7 @@ func TestAccSpotinstManagedInstanceStrategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "life_cycle", "on_demand"),
 					resource.TestCheckResourceAttr(resourceName, "orientation", "balanced"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
-					resource.TestCheckResourceAttr(resourceName, "fall_back_to_od", "false"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0", "Mon:03:00-Wed:02:20"),
@@ -308,7 +308,7 @@ func TestAccSpotinstManagedInstanceStrategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "life_cycle", "spot"),
 					resource.TestCheckResourceAttr(resourceName, "orientation", "cheapest"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
-					resource.TestCheckResourceAttr(resourceName, "fall_back_to_od", "true"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0", "Mon:03:30-Wed:02:30"),
@@ -325,7 +325,7 @@ const managedInstanceStrategy_Create = `
  life_cycle = "on_demand"
  orientation = "balanced"
  draining_timeout = 120
- fall_back_to_od = "false"
+ fallback_to_ondemand = "false"
  utilize_reserved_instances = "false"
  optimization_windows = ["Mon:03:00-Wed:02:20"]
  revert_to_spot {   
@@ -338,7 +338,7 @@ const managedInstanceStrategy_Update = `
  life_cycle = "spot"
  orientation = "cheapest"
  draining_timeout = 240
- fall_back_to_od = "true"
+ fallback_to_ondemand = "true"
  utilize_reserved_instances = "true"
  optimization_windows = ["Mon:03:30-Wed:02:30", "Mon:00:30-Wed:01:30"]
  revert_to_spot { 
