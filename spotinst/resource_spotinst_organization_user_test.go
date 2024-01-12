@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/sethvargo/go-password/password"
 	"github.com/spotinst/spotinst-sdk-go/service/organization"
 	"log"
 	"testing"
@@ -55,10 +56,18 @@ func testCheckOrganizationUserExists(user *organization.User, resourceName strin
 	}
 }
 
-func createOrganizationUserTerraform(tfResource string, resourceName string) string {
+func generateRandomPassword() string {
+	res, err := password.Generate(32, 10, 0, false, false)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return res
+}
+
+func createOrganizationUserTerraform(tfResource string, resourceName string, userPassword string) string {
 	template := ""
 
-	template += fmt.Sprintf(tfResource, resourceName)
+	template += fmt.Sprintf(tfResource, resourceName, userPassword)
 
 	log.Printf("Terraform [%v] template:\n%v", resourceName, template)
 	return template
@@ -68,6 +77,7 @@ func createOrganizationUserTerraform(tfResource string, resourceName string) str
 func TestAccSpotinstOrganization_User(t *testing.T) {
 	userName := "terraform-user"
 	userResourceName := createOrganizationUserResourceName(userName)
+	userPassword := generateRandomPassword()
 
 	var user organization.User
 	resource.Test(t, resource.TestCase{
@@ -77,7 +87,7 @@ func TestAccSpotinstOrganization_User(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				Config:             createOrganizationUserTerraform(testOrganization_User_Create, userName),
+				Config:             createOrganizationUserTerraform(testOrganization_User_Create, userName, userPassword),
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOrganizationUserExists(&user, userResourceName),
@@ -92,7 +102,7 @@ func TestAccSpotinstOrganization_User(t *testing.T) {
 				),
 			},
 			{
-				Config:             createOrganizationUserTerraform(testOrganization_User_Update_Policy, userName),
+				Config:             createOrganizationUserTerraform(testOrganization_User_Update_Policy, userName, userPassword),
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(userResourceName, "email", "terraformUpdatedUser3@netapp.com"),
@@ -109,7 +119,7 @@ func TestAccSpotinstOrganization_User(t *testing.T) {
 				),
 			},
 			{
-				Config:             createOrganizationUserTerraform(testOrganization_User_Update_Policy, userName),
+				Config:             createOrganizationUserTerraform(testOrganization_User_Update_Policy, userName, userPassword),
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(userResourceName, "email", "terraformUpdatedUser3@netapp.com"),
@@ -126,7 +136,7 @@ func TestAccSpotinstOrganization_User(t *testing.T) {
 				),
 			},
 			{
-				Config:             createOrganizationUserTerraform(testOrganization_User_Update_User_Group, userName),
+				Config:             createOrganizationUserTerraform(testOrganization_User_Update_User_Group, userName, userPassword),
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(userResourceName, "user_group_ids.#", "1"),
@@ -143,7 +153,7 @@ resource "` + string(commons.OrgUserResourceName) + `" "%v" {
   email = "terraformUser3@netapp.com"
   first_name = "terraform"
   last_name = "user"
-  password = "terraformPwd@108"
+  password = "%v"
   role = "viewer"
   
   policies{
@@ -159,7 +169,7 @@ resource "` + string(commons.OrgUserResourceName) + `" "%v" {
   email = "terraformUpdatedUser3@netapp.com"
   first_name = "terraform_updated_with_second_policy"
   last_name = "user_updated_with_second_policy"
-  password = "terraformPwd@108"
+  password = "%v"
   role = "viewer"
   
   policies{
@@ -181,7 +191,7 @@ resource "` + string(commons.OrgUserResourceName) + `" "%v" {
   email = "terraformUpdatedUser3@netapp.com"
   first_name = "terraform_updated_with_second_policy"
   last_name = "user_updated_with_second_policy"
-  password = "terraformPwd@108"
+  password = "%v"
   role = "viewer"
 
   user_group_ids = ["ugr-ef8935dd"]
