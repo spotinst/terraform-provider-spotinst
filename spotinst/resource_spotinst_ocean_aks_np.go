@@ -3,6 +3,8 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws"
 	"log"
 
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
@@ -162,14 +164,27 @@ func resourceSpotinstClusterAKSNPUpdate(ctx context.Context, resourceData *schem
 	clusterID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSNPResource.GetName(), clusterID)
 
-	shouldUpdate, cluster, err := commons.OceanAKSNPResource.OnUpdate(resourceData, meta)
+	var conditionedRollParams []interface{}
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if roll, ok := m[string(ocean_aws.ConditionedRollParams)].([]interface{}); ok {
+				if len(roll) > 0 {
+					conditionedRollParams = roll
+				}
+			}
+		}
+	}
+
+	shouldUpdate, changesRequiredRoll, cluster, err := commons.OceanAKSNPResource.OnUpdate(resourceData, meta, conditionedRollParams)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		cluster.SetId(spotinst.String(clusterID))
-		if err := updateAKSNPCluster(cluster, meta.(*Client)); err != nil {
+		if err := updateAKSNPCluster(cluster, resourceData, meta.(*Client), changesRequiredRoll); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -178,9 +193,22 @@ func resourceSpotinstClusterAKSNPUpdate(ctx context.Context, resourceData *schem
 	return resourceSpotinstClusterAKSNPRead(ctx, resourceData, meta)
 }
 
-func updateAKSNPCluster(cluster *azure_np.Cluster, spotinstClient *Client) error {
+func updateAKSNPCluster(cluster *azure_np.Cluster, resourceData *schema.ResourceData, spotinstClient *Client, changesRequiredRoll bool) error {
 	input := &azure_np.UpdateClusterInput{
 		Cluster: cluster,
+	}
+
+	var shouldRoll = false
+	clusterID := resourceData.Id()
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if roll, ok := m[string(ocean_aws.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
+		}
 	}
 
 	if json, err := commons.ToJson(cluster); err != nil {
@@ -191,9 +219,115 @@ func updateAKSNPCluster(cluster *azure_np.Cluster, spotinstClient *Client) error
 
 	if _, err := spotinstClient.ocean.CloudProviderAzureNP().UpdateCluster(context.TODO(), input); err != nil {
 		return fmt.Errorf("ocean/aks: failed to update cluster: %v", err)
+	} else if shouldRoll {
+		if changesRequiredRoll {
+			if err := rollOceanAKSCluster(resourceData, spotinstClient); err != nil {
+				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
+				return err
+			}
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws.ShouldRoll))
 	}
 
 	return nil
+}
+
+func rollOceanAKSCluster(resourceData *schema.ResourceData, meta interface{}) error {
+	clusterID := resourceData.Id()
+
+	updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy))
+	if !exists {
+		return fmt.Errorf("ocean/aws: missing update policy for cluster %q", clusterID)
+	}
+
+	list := updatePolicy.([]interface{})
+	if len(list) > 0 && list[0] != nil {
+		updateClusterSchema := list[0].(map[string]interface{})
+
+		rollConfig, ok := updateClusterSchema[string(ocean_aws.RollConfig)]
+		if !ok || rollConfig == nil {
+			return fmt.Errorf("ocean/aws: missing roll configuration, "+
+				"skipping roll for cluster %q", clusterID)
+		}
+
+		rollSpec, err := expandOceanAKSClusterRollConfig(rollConfig, clusterID)
+		if err != nil {
+			return fmt.Errorf("ocean/aks: failed expanding roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		rollJSON, err := commons.ToJson(rollConfig)
+		if err != nil {
+			return fmt.Errorf("ocean/aks: failed marshaling roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, rollJSON)
+		rollInput := &azure.CreateRollInput{Roll: rollSpec}
+		if _, err = meta.(*Client).ocean.CloudProviderAzure().CreateRoll(context.TODO(), rollInput); err != nil {
+			return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
+		}
+		log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
+	}
+
+	return nil
+}
+func expandOceanAKSClusterRollConfig(data interface{}, clusterID string) (*azure.RollSpec, error) {
+	list := data.([]interface{})
+	spec := &azure.RollSpec{
+		ClusterID: spotinst.String(clusterID),
+	}
+
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ocean_aks_np.BatchSizePercentage)].(int); ok {
+			spec.BatchSizePercentage = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np.VngIDs)].([]string); ok {
+			spec.VngIds = expandList(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np.BatchMinHealthyPercentage)].(int); ok && v > 0 {
+			spec.BatchMinHealthyPercentage = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np.RespectPDB)].(bool); ok {
+			spec.RespectPDB = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np.Comment)].(string); ok {
+			spec.Comment = spotinst.String(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np.DisableLaunchSpecAutoScaling)].(bool); ok {
+			spec.DisableLaunchSpecAutoScaling = spotinst.Bool(v)
+		}
+		if v, ok := m[string(ocean_aks_np.RespectRestrictScaleDown)].(bool); ok {
+			spec.RespectRestrictScaleDown = spotinst.Bool(v)
+		}
+		if v, ok := m[string(ocean_aks_np.NodeNames)].([]string); ok {
+			spec.NodeNames = expandList(v)
+		}
+
+	}
+
+	return spec, nil
+}
+
+func expandList(data interface{}) []string {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if ls, ok := v.(string); ok && ls != "" {
+			result = append(result, ls)
+		}
+	}
+
+	return result
 }
 
 // endregion

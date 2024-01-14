@@ -1,4 +1,7 @@
 ## Unreleased
+## 1.159.0 (January, 15 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support to trigger cluster roll on attribute updation and introduced `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
 
 ## 1.158.0 (January, 05 2024)
 BUG FIXES:
