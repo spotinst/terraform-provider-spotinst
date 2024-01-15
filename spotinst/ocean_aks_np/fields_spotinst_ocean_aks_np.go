@@ -304,9 +304,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeString,
 									Optional: true,
 								},
-								string(DisableLaunchSpecAutoScaling): {
-									Type:     schema.TypeBool,
+								string(NodePoolNames): {
+									Type:     schema.TypeList,
 									Optional: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
 								},
 								string(RespectRestrictScaleDown): {
 									Type:     schema.TypeBool,

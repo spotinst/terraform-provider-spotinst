@@ -302,8 +302,8 @@ func expandOceanAKSClusterRollConfig(data interface{}, clusterID string) (*azure
 			spec.Comment = spotinst.String(v)
 		}
 
-		if v, ok := m[string(ocean_aks_np.DisableLaunchSpecAutoScaling)].(bool); ok {
-			spec.DisableLaunchSpecAutoScaling = spotinst.Bool(v)
+		if v, ok := m[string(ocean_aks_np.NodePoolNames)].(bool); ok {
+			spec.NodePoolNames = expandList(v)
 		}
 		if v, ok := m[string(ocean_aks_np.RespectRestrictScaleDown)].(bool); ok {
 			spec.RespectRestrictScaleDown = spotinst.Bool(v)
