@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.159.0 (January, 17 2024)
+NOTES:
+* Added random password generation logic for unit test `resource_spotinst_organization_user_test`
+
 ## 1.158.0 (January, 05 2024)
 BUG FIXES:
 * resource/spotinst_managed_instance_aws: Fixed `fallback_to_ondemand` field variable name in `strategy` object.
