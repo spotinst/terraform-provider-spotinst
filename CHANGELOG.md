@@ -1,4 +1,10 @@
 ## Unreleased
+# 1.154.0 (January, 19 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `parameters` object under `tasks`
+NOTES:
+* documentation: resource/spotinst_ocean_aws: Added `parameter` object under `tasks` and added `amiAutoUpdate` and `clusterRoll` object under `parameters`
+
 ## 1.153.1 (December, 12 2023)
 NOTES:
 * documentation: resource/spotinst_elastigroup_aws: updated document to add `period` and `evaluation_periods` attributes in `target_scaling_policy`.

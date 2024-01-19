@@ -335,7 +335,23 @@ update_policy {
         * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for `cluster.scheduling.tasks` object.
         * `cron_expression` - (Required) A valid cron expression. The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of `frequency` or `cronExpression` should be used at a time. Required for `cluster.scheduling.tasks` object. (Example: `0 1 * * *`).
         * `task_type` - (Required) Valid values: `clusterRoll`. Required for `cluster.scheduling.tasks` object. (Example: `clusterRoll`).
-             
+        * `parameters` - (Required) This filed will be compatible to the `task_type` field. If `task_type` is defined as `clusterRoll`, user cluster roll object in parameters.
+            * `amiAutoUpdate` - (Optional) Set amiAutoUpdate object
+                * `applyRoll` - (Optional) When the AMI is updated according to the configuration set, a cluster roll can be triggered
+                * `clusterRoll` - (Optional) Set clusterRoll object
+                    * `batchMinHealthyPercentage` - (Optional) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the cluster roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch.
+                    * `batchSizePercentage` - (Optional) Value as a percent to set the size of a batch in a roll. Valid values are 0-100.
+                    * `comment` - (Optional) Add a `comment` description for the roll. The `comment` is limited to 256 chars
+                    * `respectPdb` - (Optional) During the roll, if the parameter is set to true we honor PDB during the instance replacement.
+                * `minorVersion` - (Optional) When set to 'true', the auto-update process will update the VNGs’ AMI with the AMI to match the Kubernetes control plane version. either "patch" or "minorVersion" must be true.
+                * `patch` - (Optional) When set to 'true', the auto-update process will update the VNGs’ images with the latest security patches. either "patch" or "minorVersion" must be true.
+            * 
+            * `clusterRoll` - (Optional) Set clusterRoll object
+                * `batchMinHealthyPercentage` - (Optional) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the cluster roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch.
+                * `batchSizePercentage` - (Optional) Value as a percent to set the size of a batch in a roll. Valid values are 0-100.
+                * `comment` - (Optional) Add a `comment` description for the roll. The `comment` is limited to 256 chars
+                * `respectPdb` - (Optional) During the roll, if the parameter is set to true we honor PDB during the instance replacement.
+
 ```hcl
 scheduled_task {
   shutdown_hours {
@@ -348,7 +364,20 @@ scheduled_task {
   tasks {
     is_enabled      = false
     cron_expression = "* * * * *"
-    task_type       = "clusterRoll"
+    task_type       = "amiAutoUpdate"
+     parameters  {
+        ami_auto_update  {
+            apply_roll = false
+            ami_auto_update_cluster_roll  {
+                batch_min_healthy_percentage = 100
+                batch_size_percentage = 20
+                comment = "test comment"
+                respect_pdb = true
+            }
+            minor_version = true
+            patch = false
+        }
+     }
   }
 }
 ```
