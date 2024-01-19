@@ -156,9 +156,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			miWrapper := resourceObject.(*commons.MangedInstanceAWSWrapper)
 			managedInstance := miWrapper.GetManagedInstance()
-			if v, ok := resourceData.GetOk(string(FallbackToOd)); ok {
-				managedInstance.Strategy.SetFallbackToOnDemand(spotinst.Bool(v.(bool)))
+			var fallback *bool = nil
+			if v, ok := resourceData.GetOkExists(string(FallbackToOd)); ok && v != nil {
+				ftod := v.(bool)
+				fallback = spotinst.Bool(ftod)
 			}
+			managedInstance.Strategy.SetFallbackToOnDemand(fallback)
 			return nil
 		},
 		nil,

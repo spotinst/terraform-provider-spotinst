@@ -1,9 +1,33 @@
 ## Unreleased
-# 1.154.0 (January, 19 2024)
+# 1.160.0 (January, 19 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added `parameters` object under `tasks`
 NOTES:
 * documentation: resource/spotinst_ocean_aws: Added `parameter` object under `tasks` and added `amiAutoUpdate` and `clusterRoll` object under `parameters`
+
+## 1.159.0 (January, 17 2024)
+NOTES:
+* Added random password generation logic for unit test `resource_spotinst_organization_user_test`
+
+## 1.158.0 (January, 05 2024)
+BUG FIXES:
+* resource/spotinst_managed_instance_aws: Fixed `fallback_to_ondemand` field variable name in `strategy` object.
+
+## 1.157.0 (January, 02 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
+
+## 1.156.0 (December, 19 2023)
+NOTES:
+* Added unit tests for `spotinst_organization_policy`, `spotinst_organization_user`, `spotinst_organization_user_group` and `spotinst_organization_programmatic_user` resources
+
+## 1.155.0 (December, 11 2023)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `is_enabled` field support for `automatic` object inside `auto_scaler`
+
+## 1.154.0 (December, 13 2023)
+NOTES:
+* Added unit tests for `spotinst_ocean_aks_np` and `spotinst_ocean_aks_np_virtual_node_group` resources
 
 ## 1.153.1 (December, 12 2023)
 NOTES:

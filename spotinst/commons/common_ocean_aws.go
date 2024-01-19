@@ -81,7 +81,7 @@ func (res *OceanAWSTerraformResource) OnRead(
 
 func (res *OceanAWSTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, bool, bool, *aws.Cluster, error) {
+	meta interface{}, conditionParam []interface{}) (bool, bool, bool, *aws.Cluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, false, false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -91,6 +91,14 @@ func (res *OceanAWSTerraformResource) OnUpdate(
 	hasChanged := false
 	changesRequiredRoll := false
 	tagsChanged := false
+
+	if len(conditionParam) > 0 {
+		conditionedRollParams := make([]string, len(conditionParam))
+		for i, v := range conditionParam {
+			conditionedRollParams[i] = fmt.Sprint(v)
+		}
+		conditionedRollFieldsAWS = conditionedRollParams
+	}
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
