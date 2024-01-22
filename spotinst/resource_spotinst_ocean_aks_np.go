@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws"
 	"log"
 
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
@@ -165,11 +164,11 @@ func resourceSpotinstClusterAKSNPUpdate(ctx context.Context, resourceData *schem
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSNPResource.GetName(), clusterID)
 
 	var conditionedRollParams []interface{}
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
-			if roll, ok := m[string(ocean_aws.ConditionedRollParams)].([]interface{}); ok {
+			if roll, ok := m[string(ocean_aks_np.ConditionedRollParams)].([]interface{}); ok {
 				if len(roll) > 0 {
 					conditionedRollParams = roll
 				}
@@ -200,12 +199,12 @@ func updateAKSNPCluster(cluster *azure_np.Cluster, resourceData *schema.Resource
 
 	var shouldRoll = false
 	clusterID := resourceData.Id()
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
 		if len(list) > 0 && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if roll, ok := m[string(ocean_aws.ShouldRoll)].(bool); ok && roll {
+			if roll, ok := m[string(ocean_aks_np.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
 			}
 		}
@@ -227,7 +226,7 @@ func updateAKSNPCluster(cluster *azure_np.Cluster, resourceData *schema.Resource
 			}
 		}
 	} else {
-		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws.ShouldRoll))
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aks_np.ShouldRoll))
 	}
 
 	return nil
@@ -245,7 +244,7 @@ func rollOceanAKSCluster(resourceData *schema.ResourceData, meta interface{}) er
 	if len(list) > 0 && list[0] != nil {
 		updateClusterSchema := list[0].(map[string]interface{})
 
-		rollConfig, ok := updateClusterSchema[string(ocean_aws.RollConfig)]
+		rollConfig, ok := updateClusterSchema[string(ocean_aks_np.RollConfig)]
 		if !ok || rollConfig == nil {
 			return fmt.Errorf("ocean/aws: missing roll configuration, "+
 				"skipping roll for cluster %q", clusterID)
