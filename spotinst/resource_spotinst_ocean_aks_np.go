@@ -237,7 +237,7 @@ func rollOceanAKSCluster(resourceData *schema.ResourceData, meta interface{}) er
 
 	updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy))
 	if !exists {
-		return fmt.Errorf("ocean/aws: missing update policy for cluster %q", clusterID)
+		return fmt.Errorf("ocean/aksnp: missing update policy for cluster %q", clusterID)
 	}
 
 	list := updatePolicy.([]interface{})
@@ -246,7 +246,7 @@ func rollOceanAKSCluster(resourceData *schema.ResourceData, meta interface{}) er
 
 		rollConfig, ok := updateClusterSchema[string(ocean_aks_np.RollConfig)]
 		if !ok || rollConfig == nil {
-			return fmt.Errorf("ocean/aws: missing roll configuration, "+
+			return fmt.Errorf("ocean/aksnp: missing roll configuration, "+
 				"skipping roll for cluster %q", clusterID)
 		}
 

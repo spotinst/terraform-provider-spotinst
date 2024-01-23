@@ -3,6 +3,8 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np"
 	"log"
 
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_vm_sizes"
@@ -151,14 +153,26 @@ func resourceSpotinstOceanAKSNPVirtualNodeGroupUpdate(ctx context.Context, resou
 	virtualNodeGroupID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSNPVirtualNodeGroupResource.GetName(), virtualNodeGroupID)
 
-	shouldUpdate, virtualNodeGroup, err := commons.OceanAKSNPVirtualNodeGroupResource.OnUpdate(resourceData, meta)
+	var conditionedRollParams []interface{}
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if roll, ok := m[string(ocean_aks_np.ConditionedRollParams)].([]interface{}); ok {
+				if len(roll) > 0 {
+					conditionedRollParams = roll
+				}
+			}
+		}
+	}
+	shouldUpdate, changesRequiredRoll, virtualNodeGroup, err := commons.OceanAKSNPVirtualNodeGroupResource.OnUpdate(resourceData, meta, conditionedRollParams)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	if shouldUpdate {
 		virtualNodeGroup.SetId(spotinst.String(virtualNodeGroupID))
-		if err = updateAKSNPVirtualNodeGroup(context.TODO(), virtualNodeGroup, meta.(*Client)); err != nil {
+		if err = updateAKSNPVirtualNodeGroup(context.TODO(), resourceData, virtualNodeGroup, meta.(*Client), changesRequiredRoll); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -167,22 +181,140 @@ func resourceSpotinstOceanAKSNPVirtualNodeGroupUpdate(ctx context.Context, resou
 	return resourceSpotinstOceanAKSNPVirtualNodeGroupRead(ctx, resourceData, meta)
 }
 
-func updateAKSNPVirtualNodeGroup(ctx context.Context, virtualNodeGroup *azure_np.VirtualNodeGroup, spotinstClient *Client) error {
+func updateAKSNPVirtualNodeGroup(ctx context.Context, resourceData *schema.ResourceData, virtualNodeGroup *azure_np.VirtualNodeGroup, spotinstClient *Client, changesRequiredRoll bool) error {
 	input := &azure_np.UpdateVirtualNodeGroupInput{
 		VirtualNodeGroup: virtualNodeGroup,
+	}
+
+	var shouldRoll = false
+	oceanID := resourceData.Get(string(ocean_aks_np_virtual_node_group.OceanID))
+	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np_virtual_node_group.UpdatePolicy)); exists {
+		list := updatePolicy.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if roll, ok := m[string(ocean_aks_np_virtual_node_group.ShouldRoll)].(bool); ok && roll {
+				shouldRoll = roll
+			}
+		}
 	}
 
 	if json, err := commons.ToJson(virtualNodeGroup); err != nil {
 		return err
 	} else {
-		log.Printf("ocean/aks-np: virtual node group update configuration: %s", json)
+		log.Printf("ocean/aks-np-vng: virtual node group update configuration: %s", json)
 	}
 
 	if _, err := spotinstClient.ocean.CloudProviderAzureNP().UpdateVirtualNodeGroup(ctx, input); err != nil {
-		return fmt.Errorf("ocean/aks-np: failed to update virtual node group: %v", err)
+		return fmt.Errorf("ocean/aks-np-vng: failed to update virtual node group: %v", err)
+	} else if shouldRoll {
+		if changesRequiredRoll {
+			if err := rollOceanAKSVNG(resourceData, spotinstClient); err != nil {
+				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", oceanID, err)
+				return err
+			}
+		}
+	} else {
+		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aks_np.ShouldRoll))
 	}
 
 	return nil
+}
+func rollOceanAKSVNG(resourceData *schema.ResourceData, meta interface{}) error {
+	clusterID := resourceData.Get(string(ocean_aks_np_virtual_node_group.OceanID)).(string)
+
+	updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np_virtual_node_group.UpdatePolicy))
+	if !exists {
+		return fmt.Errorf("ocean/aksnp: missing update policy for cluster %q", clusterID)
+	}
+
+	list := updatePolicy.([]interface{})
+	if len(list) > 0 && list[0] != nil {
+		updateClusterSchema := list[0].(map[string]interface{})
+
+		rollConfig, ok := updateClusterSchema[string(ocean_aks_np_virtual_node_group.RollConfig)]
+		if !ok || rollConfig == nil {
+			return fmt.Errorf("ocean/aksnp: missing roll configuration, "+
+				"skipping roll for cluster %q", clusterID)
+		}
+
+		rollSpec, err := expandOceanAKSVirtualNodeGroupRollConfig(rollConfig, clusterID)
+		if err != nil {
+			return fmt.Errorf("ocean/aks: failed expanding roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		rollJSON, err := commons.ToJson(rollConfig)
+		if err != nil {
+			return fmt.Errorf("ocean/aks: failed marshaling roll "+
+				"configuration for cluster %q, error: %v", clusterID, err)
+		}
+
+		log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, rollJSON)
+		rollInput := &azure.CreateRollInput{Roll: rollSpec}
+		if _, err = meta.(*Client).ocean.CloudProviderAzure().CreateRoll(context.TODO(), rollInput); err != nil {
+			return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
+		}
+		log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
+	}
+
+	return nil
+}
+
+func expandOceanAKSVirtualNodeGroupRollConfig(data interface{}, clusterID string) (*azure.RollSpec, error) {
+	list := data.([]interface{})
+	spec := &azure.RollSpec{
+		ClusterID: spotinst.String(clusterID),
+	}
+
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.BatchSizePercentage)].(int); ok {
+			spec.BatchSizePercentage = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.VngIDs)].([]string); ok {
+			spec.VngIds = expandListVNG(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.BatchMinHealthyPercentage)].(int); ok && v > 0 {
+			spec.BatchMinHealthyPercentage = spotinst.Int(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.RespectPDB)].(bool); ok {
+			spec.RespectPDB = spotinst.Bool(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.Comment)].(string); ok {
+			spec.Comment = spotinst.String(v)
+		}
+
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.NodePoolNames)].(bool); ok {
+			spec.NodePoolNames = expandListVNG(v)
+		}
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.RespectRestrictScaleDown)].(bool); ok {
+			spec.RespectRestrictScaleDown = spotinst.Bool(v)
+		}
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.NodeNames)].([]string); ok {
+			spec.NodeNames = expandList(v)
+		}
+
+	}
+
+	return spec, nil
+}
+func expandListVNG(data interface{}) []string {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if ls, ok := v.(string); ok && ls != "" {
+			result = append(result, ls)
+		}
+	}
+
+	return result
 }
 
 // endregion

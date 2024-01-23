@@ -302,6 +302,78 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[UpdatePolicy] = commons.NewGenericField(
+		commons.OceanAKSNPVirtualNodeGroup,
+		UpdatePolicy,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ShouldRoll): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(ConditionedRoll): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ConditionedRollParams): {
+						Type:     schema.TypeList,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+						Optional: true,
+					},
+					string(RollConfig): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(BatchSizePercentage): {
+									Type:     schema.TypeInt,
+									Required: true,
+								},
+								string(VngIDs): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+								string(BatchMinHealthyPercentage): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(RespectPDB): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+								string(Comment): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(NodePoolNames): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+								string(RespectRestrictScaleDown): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+								string(NodeNames): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
 }
 
 func expandAvailaiblityZones(data interface{}) ([]string, error) {
