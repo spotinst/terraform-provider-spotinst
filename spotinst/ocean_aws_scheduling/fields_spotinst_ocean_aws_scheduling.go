@@ -54,7 +54,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(ApplyRoll): {
 															Type:     schema.TypeBool,
 															Optional: true,
-															Default:  false,
 														},
 														string(AmiAutoUpdateClusterRoll): {
 															Type:     schema.TypeList,
@@ -79,7 +78,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 																	string(RespectPdb): {
 																		Type:     schema.TypeBool,
 																		Optional: true,
-																		Default:  false,
 																	},
 																},
 															},
@@ -87,12 +85,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(MinorVersion): {
 															Type:     schema.TypeBool,
 															Optional: true,
-															Default:  false,
 														},
 														string(Patch): {
 															Type:     schema.TypeBool,
 															Optional: true,
-															Default:  false,
 														},
 													},
 												},
