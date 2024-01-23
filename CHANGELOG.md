@@ -2,8 +2,6 @@
 # 1.160.0 (January, 19 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added `parameters` object under `tasks`
-NOTES:
-* documentation: resource/spotinst_ocean_aws: Added `parameter` object under `tasks` and added `amiAutoUpdate` and `clusterRoll` object under `parameters`
 
 ## 1.159.0 (January, 17 2024)
 NOTES:

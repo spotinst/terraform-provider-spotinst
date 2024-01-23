@@ -54,6 +54,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(ApplyRoll): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Default:  false,
 														},
 														string(AmiAutoUpdateClusterRoll): {
 															Type:     schema.TypeList,
@@ -64,10 +65,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 																	string(BatchMinHealthyPercentage): {
 																		Type:     schema.TypeInt,
 																		Optional: true,
+																		Default:  -1,
 																	},
 																	string(BatchSizePercentage): {
 																		Type:     schema.TypeInt,
 																		Optional: true,
+																		Default:  -1,
 																	},
 																	string(Comment): {
 																		Type:     schema.TypeString,
@@ -76,6 +79,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 																	string(RespectPdb): {
 																		Type:     schema.TypeBool,
 																		Optional: true,
+																		Default:  false,
 																	},
 																},
 															},
@@ -83,10 +87,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(MinorVersion): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Default:  false,
 														},
 														string(Patch): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Default:  false,
 														},
 													},
 												},
@@ -466,17 +472,22 @@ func expandAmiAutoUpdateClusterRoll(data interface{}) (*aws.AmiAutoUpdateCluster
 		runner := &aws.AmiAutoUpdateClusterRoll{}
 		m := list[0].(map[string]interface{})
 
-		var isBatchMinHealthyPercentage = spotinst.Int(50)
 		if v, ok := m[string(BatchMinHealthyPercentage)].(int); ok {
-			isBatchMinHealthyPercentage = spotinst.Int(v)
+			if v == -1 {
+				runner.SetBatchMinHealthyPercentage(nil)
+			} else {
+				runner.SetBatchMinHealthyPercentage(spotinst.Int(v))
+			}
 		}
-		runner.SetBatchMinHealthyPercentage(isBatchMinHealthyPercentage)
 
-		var isBatchSizePercentage = spotinst.Int(1)
 		if v, ok := m[string(BatchSizePercentage)].(int); ok {
-			isBatchSizePercentage = spotinst.Int(v)
+
+			if v == -1 {
+				runner.SetBatchSizePercentage(nil)
+			} else {
+				runner.SetBatchSizePercentage(spotinst.Int(v))
+			}
 		}
-		runner.SetBatchSizePercentage(isBatchSizePercentage)
 
 		var isComment = spotinst.String("")
 		if v, ok := m[string(Comment)].(string); ok {

@@ -675,7 +675,17 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "testcron2"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "amiAutoUpdate"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.apply_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.batch_min_healthy_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.batch_size_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.comment", "test comment"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.respect_pdb", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.minor_version", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.patch", "false"),
 				),
 			},
 			{
@@ -696,6 +706,12 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "testcron"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_min_healthy_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_size_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "test comment"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "false"),
 				),
 			},
 			{
@@ -724,9 +740,22 @@ const testSchedulingConfig_Create = `
     tasks {
       is_enabled = false
       cron_expression = "testcron2"
-      task_type = "clusterRoll"
+       task_type       = "amiAutoUpdate"
+      parameters  {
+        ami_auto_update  {
+            apply_roll = false
+            ami_auto_update_cluster_roll  {
+                batch_min_healthy_percentage = 100
+                batch_size_percentage = 20
+                comment = "test comment"
+                respect_pdb = true
+            }
+            minor_version = true
+            patch = false
+        }
+      }
     }
-  }
+ }
  // ---------------------------------
 `
 
@@ -741,6 +770,11 @@ const testSchedulingConfig_Update = `
       is_enabled = true
       cron_expression = "testcron"
       task_type = "clusterRoll"
+	  parameters_cluster_roll  {
+          batch_min_healthy_percentage = 50
+          batch_size_percentage = 1
+          comment = "test"
+          respect_pdb = false
     }
   }
  // ---------------------------------
@@ -1128,3 +1162,150 @@ const testLoggingAWSConfig_EmptyFields = `
 `
 
 // endregion
+
+func TestAccSpotinstOceanAWS_SchedulingTaskAmiAutoUpdate(t *testing.T) {
+	clusterName := "test-acc-luster-launch-configuration"
+	controllerClusterID := "launch-config-cluster-id"
+	resourceName := createOceanAWSResourceName(clusterName)
+
+	var cluster aws.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					launchConfig:        testLaunchConfigAWSConfig_Create,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
+					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
+					resource.TestCheckResourceAttr(resourceName, "associate_ipv6_address", "false"),
+					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key.ssh"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world")),
+					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "creator"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "terraform-automation"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "20"),
+					resource.TestCheckResourceAttr(resourceName, "monitoring", "true"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "true"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "10"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "required"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "true"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					launchConfig:        testLaunchConfigAWSConfig_Update,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
+					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
+					resource.TestCheckResourceAttr(resourceName, "associate_ipv6_address", "true"),
+					//resource.TestCheckResourceAttr(resourceName, "key_name", "my-key-updated.ssh"),
+					resource.TestCheckResourceAttr(resourceName, "user_data", ocean_aws_launch_configuration.Base64StateFunc("echo hello world updated")),
+					//resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "iam-profile updated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKeyUpdated"),
+					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeValueUpdated"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
+					resource.TestCheckResourceAttr(resourceName, "root_volume_size", "24"),
+					resource.TestCheckResourceAttr(resourceName, "monitoring", "false"),
+					resource.TestCheckResourceAttr(resourceName, "ebs_optimized", "false"),
+					resource.TestCheckResourceAttr(resourceName, "use_as_template_only", "false"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
+					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "optional"),
+					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "false"),
+				),
+			},
+			{
+				ResourceName: resourceName,
+				Config: createOceanAWSTerraform(&ClusterConfigMetadata{
+					clusterName:         clusterName,
+					controllerClusterID: controllerClusterID,
+					launchConfig:        testLaunchConfigAWSConfig_EmptyFields,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanAWSExists(&cluster, resourceName),
+					testCheckOceanAWSAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
+					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testSchedulingTaskAmiAutoUpdate_Create = `
+ // --- SCHEDULI --------------
+  
+ // ---------------------------------------
+`
+
+const testSchedulingTaskAmiAutoUpdate_Update = `
+ // --- LAUNCH CONFIGURATION --------------
+  image_id                    = "ami-05a68f290aa68e8f0"
+  security_groups             = ["sg-a22000e8"]
+  //key_name                  = "my-key-updated.ssh"
+  user_data                   = "echo hello world updated"
+  //iam_instance_profile      = "iam-profile updated"
+  associate_public_ip_address = true
+  associate_ipv6_address 	  = true
+  root_volume_size            = 24
+  monitoring                  = false
+  ebs_optimized               = false
+  use_as_template_only        = false
+  instance_metadata_options {
+	  http_tokens = "optional"
+      http_put_response_hop_limit = 20
+  }
+
+  load_balancers {
+      arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
+      type = "TARGET_GROUP"
+    }
+	load_balancers {
+		name = "AntonK"
+		type = "CLASSIC"
+	}
+
+  tags {
+    key   = "fakeKeyUpdated"
+    value = "fakeValueUpdated"
+  }
+
+  resource_tag_specification {
+    should_tag_volumes = false
+  }
+ // ---------------------------------------
+`
