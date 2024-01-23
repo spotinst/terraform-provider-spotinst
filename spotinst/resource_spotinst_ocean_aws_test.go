@@ -708,9 +708,9 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_min_healthy_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_min_healthy_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_size_percentage", "20"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "test comment"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "false"),
 				),
 			},
@@ -766,15 +766,18 @@ const testSchedulingConfig_Update = `
       is_enabled = false
       time_windows = ["Fri:15:30-Sat:13:30","Sun:15:30-Mon:13:30"]
     }
-    tasks  {
+    tasks {
       is_enabled = true
       cron_expression = "0 1 * * *"
       task_type = "clusterRoll"
-	  parameters_cluster_roll  {
-          batch_min_healthy_percentage = 50
-          batch_size_percentage = 1
-          comment = "test"
-          respect_pdb = false
+      parameters  {
+		  parameters_cluster_roll {
+			  batch_min_healthy_percentage = 50
+			  batch_size_percentage = 20
+			  comment = "test"
+			  respect_pdb = false
+		  }
+      }
     }
   }
  // ---------------------------------
