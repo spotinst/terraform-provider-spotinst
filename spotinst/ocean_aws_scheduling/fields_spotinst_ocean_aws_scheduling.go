@@ -233,7 +233,9 @@ func flattenTasks(tasks []*aws.Task) []interface{} {
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
 		m[string(TaskType)] = spotinst.StringValue(task.Type)
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
-		m[string(Parameters)] = flattenParameters(task.Parameter)
+		if task.Parameter != nil {
+			m[string(Parameters)] = flattenParameters(task.Parameter)
+		}
 		result = append(result, m)
 	}
 
