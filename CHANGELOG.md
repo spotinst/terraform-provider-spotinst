@@ -1,4 +1,7 @@
 ## Unreleased
+# 1.160.0 (January, 24 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added support for `parameters` object under `scheduling_tasks` block
 
 ## 1.159.0 (January, 17 2024)
 NOTES:

@@ -38,6 +38,89 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeString,
 									Required: true,
 								},
+
+								string(Parameters): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(AmiAutoUpdate): {
+												Type:     schema.TypeList,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(ApplyRoll): {
+															Type:     schema.TypeBool,
+															Optional: true,
+														},
+														string(AmiAutoUpdateClusterRoll): {
+															Type:     schema.TypeList,
+															Optional: true,
+															MaxItems: 1,
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	string(BatchMinHealthyPercentage): {
+																		Type:     schema.TypeInt,
+																		Optional: true,
+																		Default:  -1,
+																	},
+																	string(BatchSizePercentage): {
+																		Type:     schema.TypeInt,
+																		Optional: true,
+																		Default:  -1,
+																	},
+																	string(Comment): {
+																		Type:     schema.TypeString,
+																		Optional: true,
+																	},
+																	string(RespectPdb): {
+																		Type:     schema.TypeBool,
+																		Optional: true,
+																	},
+																},
+															},
+														},
+														string(MinorVersion): {
+															Type:     schema.TypeBool,
+															Optional: true,
+														},
+														string(Patch): {
+															Type:     schema.TypeBool,
+															Optional: true,
+														},
+													},
+												},
+											},
+											string(ParametersClusterRoll): {
+												Type:     schema.TypeList,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(BatchMinHealthyPercentage): {
+															Type:     schema.TypeInt,
+															Optional: true,
+														},
+														string(BatchSizePercentage): {
+															Type:     schema.TypeInt,
+															Optional: true,
+														},
+														string(Comment): {
+															Type:     schema.TypeString,
+															Optional: true,
+														},
+														string(RespectPdb): {
+															Type:     schema.TypeBool,
+															Optional: true,
+														},
+													},
+												},
+											},
+										},
+									},
+								},
 							},
 						},
 					},
@@ -150,10 +233,58 @@ func flattenTasks(tasks []*aws.Task) []interface{} {
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
 		m[string(TaskType)] = spotinst.StringValue(task.Type)
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
+		m[string(Parameters)] = flattenParameters(task.Parameter)
 		result = append(result, m)
 	}
 
 	return result
+}
+
+func flattenParameters(parameters *aws.Parameter) []interface{} {
+	result := make(map[string]interface{})
+
+	if parameters.AmiAutoUpdate != nil {
+		result[string(AmiAutoUpdate)] = flattenParametersAmiAutoUpdate(parameters.AmiAutoUpdate)
+	}
+
+	if parameters.ClusterRoll != nil {
+		result[string(ParametersClusterRoll)] = flattenParameterClusterRoll(parameters.ClusterRoll)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenParametersAmiAutoUpdate(amiAutoUpdate *aws.AmiAutoUpdate) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(ApplyRoll)] = spotinst.BoolValue(amiAutoUpdate.ApplyRoll)
+	result[string(AmiAutoUpdateClusterRoll)] = flattenAmiUpdateClusterRoll(amiAutoUpdate.AmiAutoUpdateClusterRoll)
+	result[string(MinorVersion)] = spotinst.BoolValue(amiAutoUpdate.MinorVersion)
+	result[string(Patch)] = spotinst.BoolValue(amiAutoUpdate.Patch)
+
+	return []interface{}{result}
+}
+
+func flattenAmiUpdateClusterRoll(clusterRoll *aws.AmiAutoUpdateClusterRoll) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
+	result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	result[string(Comment)] = spotinst.StringValue(clusterRoll.Comment)
+	result[string(RespectPdb)] = spotinst.BoolValue(clusterRoll.RespectPdb)
+
+	return []interface{}{result}
+}
+
+func flattenParameterClusterRoll(clusterRoll *aws.ParameterClusterRoll) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
+	result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	result[string(Comment)] = spotinst.StringValue(clusterRoll.Comment)
+	result[string(RespectPdb)] = spotinst.BoolValue(clusterRoll.RespectPdb)
+
+	return []interface{}{result}
 }
 
 func expandScheduledTasks(data interface{}) (*aws.Scheduling, error) {
@@ -218,6 +349,160 @@ func expandShutdownHours(data interface{}) (*aws.ShutdownHours, error) {
 	return nil, nil
 }
 
+func expandParameters(data interface{}) (*aws.Parameter, error) {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+		runner := &aws.Parameter{}
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(AmiAutoUpdate)]; ok {
+			amiAutoUpdate, err := expandAmiAutoUpdate(v)
+			if err != nil {
+				return nil, err
+			}
+			if amiAutoUpdate != nil {
+				if runner.AmiAutoUpdate == nil {
+					runner.SetAmiAutoUpdate(&aws.AmiAutoUpdate{})
+				}
+				runner.SetAmiAutoUpdate(amiAutoUpdate)
+			}
+		}
+
+		if v, ok := m[string(ParametersClusterRoll)]; ok {
+			expandClusRoll, err := expandParameterClusterRoll(v)
+			if err != nil {
+				return nil, err
+			}
+			if expandClusRoll != nil {
+				if runner.ClusterRoll == nil {
+					runner.SetClusterRoll(&aws.ParameterClusterRoll{})
+				}
+				runner.SetClusterRoll(expandClusRoll)
+			}
+		}
+
+		return runner, nil
+	}
+
+	return nil, nil
+}
+
+func expandAmiAutoUpdate(data interface{}) (*aws.AmiAutoUpdate, error) {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+		runner := &aws.AmiAutoUpdate{}
+		m := list[0].(map[string]interface{})
+
+		var isApplyRoll = spotinst.Bool(false)
+		if v, ok := m[string(ApplyRoll)].(bool); ok {
+			isApplyRoll = spotinst.Bool(v)
+		}
+		runner.SetApplyRoll(isApplyRoll)
+
+		if v, ok := m[string(AmiAutoUpdateClusterRoll)]; ok {
+			expandClusRoll, err := expandAmiAutoUpdateClusterRoll(v)
+			if err != nil {
+				return nil, err
+			}
+			if expandClusRoll != nil {
+				if runner.AmiAutoUpdateClusterRoll == nil {
+					runner.SetClusterRoll(&aws.AmiAutoUpdateClusterRoll{})
+				}
+				runner.SetClusterRoll(expandClusRoll)
+			}
+		}
+
+		var isMinorVersion = spotinst.Bool(false)
+		if v, ok := m[string(MinorVersion)].(bool); ok {
+			isMinorVersion = spotinst.Bool(v)
+		}
+		runner.SetMinorVersion(isMinorVersion)
+
+		var isPatch = spotinst.Bool(false)
+		if v, ok := m[string(Patch)].(bool); ok {
+			isPatch = spotinst.Bool(v)
+		}
+		runner.SetPatch(isPatch)
+
+		return runner, nil
+	}
+
+	return nil, nil
+}
+
+func expandParameterClusterRoll(data interface{}) (*aws.ParameterClusterRoll, error) {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+		runner := &aws.ParameterClusterRoll{}
+		m := list[0].(map[string]interface{})
+
+		var isBatchMinHealthyPercentage = spotinst.Int(50)
+		if v, ok := m[string(BatchMinHealthyPercentage)].(int); ok {
+			isBatchMinHealthyPercentage = spotinst.Int(v)
+		}
+		runner.SetBatchMinHealthyPercentage(isBatchMinHealthyPercentage)
+
+		var isBatchSizePercentage = spotinst.Int(1)
+		if v, ok := m[string(BatchSizePercentage)].(int); ok {
+			isBatchSizePercentage = spotinst.Int(v)
+		}
+		runner.SetBatchSizePercentage(isBatchSizePercentage)
+
+		var isComment = spotinst.String("")
+		if v, ok := m[string(Comment)].(string); ok {
+			isComment = spotinst.String(v)
+		}
+		runner.SetComment(isComment)
+
+		var isRespectPdb = spotinst.Bool(false)
+		if v, ok := m[string(RespectPdb)].(bool); ok {
+			isRespectPdb = spotinst.Bool(v)
+		}
+		runner.SetRespectPdb(isRespectPdb)
+
+		return runner, nil
+	}
+
+	return nil, nil
+}
+
+func expandAmiAutoUpdateClusterRoll(data interface{}) (*aws.AmiAutoUpdateClusterRoll, error) {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+		runner := &aws.AmiAutoUpdateClusterRoll{}
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(BatchMinHealthyPercentage)].(int); ok {
+			if v == -1 {
+				runner.SetBatchMinHealthyPercentage(nil)
+			} else {
+				runner.SetBatchMinHealthyPercentage(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(BatchSizePercentage)].(int); ok {
+
+			if v == -1 {
+				runner.SetBatchSizePercentage(nil)
+			} else {
+				runner.SetBatchSizePercentage(spotinst.Int(v))
+			}
+		}
+
+		var isComment = spotinst.String("")
+		if v, ok := m[string(Comment)].(string); ok {
+			isComment = spotinst.String(v)
+		}
+		runner.SetComment(isComment)
+
+		var isRespectPdb = spotinst.Bool(false)
+		if v, ok := m[string(RespectPdb)].(bool); ok {
+			isRespectPdb = spotinst.Bool(v)
+		}
+		runner.SetRespectPdb(isRespectPdb)
+
+		return runner, nil
+	}
+
+	return nil, nil
+}
+
 func expandtasks(data interface{}) ([]*aws.Task, error) {
 	list := data.([]interface{})
 	tasks := make([]*aws.Task, 0, len(list))
@@ -235,6 +520,19 @@ func expandtasks(data interface{}) ([]*aws.Task, error) {
 
 		if v, ok := m[string(CronExpression)].(string); ok && v != "" {
 			task.SetCronExpression(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Parameters)]; ok {
+			parameters, err := expandParameters(v)
+			if err != nil {
+				return nil, err
+			}
+			if parameters != nil {
+				if task.Parameter == nil {
+					task.SetParameter(&aws.Parameter{})
+				}
+				task.SetParameter(parameters)
+			}
 		}
 
 		tasks = append(tasks, task)
