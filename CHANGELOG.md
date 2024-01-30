@@ -1,4 +1,9 @@
 ## Unreleased
+
+# 1.160.1 (January, 31 2024)
+BUG FIX:
+* resource/spotinst_ocean_aws: Updated default value for `batch_min_healthy_percentage` and `batch_size_percentage` and fixed issue to ignore the unchanged difference in `parameters` block
+
 # 1.160.0 (January, 24 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added support for `parameters` object under `scheduling_tasks` block
