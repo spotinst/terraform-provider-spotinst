@@ -15,13 +15,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSScheduling,
 		ScheduledTask,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Tasks): {
 						Type:     schema.TypeList,
 						Optional: true,
+						Computed: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(TasksIsEnabled): {
@@ -42,6 +44,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(Parameters): {
 									Type:     schema.TypeList,
 									Optional: true,
+									Computed: true,
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
@@ -49,15 +52,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 												Type:     schema.TypeList,
 												Optional: true,
 												MaxItems: 1,
+												Computed: true,
 												Elem: &schema.Resource{
 													Schema: map[string]*schema.Schema{
 														string(ApplyRoll): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Computed: true,
 														},
 														string(AmiAutoUpdateClusterRoll): {
 															Type:     schema.TypeList,
 															Optional: true,
+															Computed: true,
 															MaxItems: 1,
 															Elem: &schema.Resource{
 																Schema: map[string]*schema.Schema{
@@ -74,10 +80,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 																	string(Comment): {
 																		Type:     schema.TypeString,
 																		Optional: true,
+																		Computed: true,
 																	},
 																	string(RespectPdb): {
 																		Type:     schema.TypeBool,
 																		Optional: true,
+																		Computed: true,
 																	},
 																},
 															},
@@ -85,10 +93,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(MinorVersion): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Computed: true,
 														},
 														string(Patch): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Computed: true,
 														},
 													},
 												},
@@ -112,10 +122,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(Comment): {
 															Type:     schema.TypeString,
 															Optional: true,
+															Computed: true,
 														},
 														string(RespectPdb): {
 															Type:     schema.TypeBool,
 															Optional: true,
+															Computed: true,
 														},
 													},
 												},
@@ -235,7 +247,9 @@ func flattenTasks(tasks []*aws.Task) []interface{} {
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
 		m[string(TaskType)] = spotinst.StringValue(task.Type)
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
-		m[string(Parameters)] = flattenParameters(task.Parameter)
+		if task.Parameter != nil {
+			m[string(Parameters)] = flattenParameters(task.Parameter)
+		}
 		result = append(result, m)
 	}
 
@@ -260,7 +274,9 @@ func flattenParametersAmiAutoUpdate(amiAutoUpdate *aws.AmiAutoUpdate) []interfac
 	result := make(map[string]interface{})
 
 	result[string(ApplyRoll)] = spotinst.BoolValue(amiAutoUpdate.ApplyRoll)
-	result[string(AmiAutoUpdateClusterRoll)] = flattenAmiUpdateClusterRoll(amiAutoUpdate.AmiAutoUpdateClusterRoll)
+	if amiAutoUpdate.AmiAutoUpdateClusterRoll != nil {
+		result[string(AmiAutoUpdateClusterRoll)] = flattenAmiUpdateClusterRoll(amiAutoUpdate.AmiAutoUpdateClusterRoll)
+	}
 	result[string(MinorVersion)] = spotinst.BoolValue(amiAutoUpdate.MinorVersion)
 	result[string(Patch)] = spotinst.BoolValue(amiAutoUpdate.Patch)
 
@@ -269,9 +285,16 @@ func flattenParametersAmiAutoUpdate(amiAutoUpdate *aws.AmiAutoUpdate) []interfac
 
 func flattenAmiUpdateClusterRoll(clusterRoll *aws.AmiAutoUpdateClusterRoll) []interface{} {
 	result := make(map[string]interface{})
+	value := spotinst.Int(-1)
+	result[string(BatchMinHealthyPercentage)] = value
+	result[string(BatchSizePercentage)] = value
 
-	result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
-	result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	if clusterRoll.BatchMinHealthyPercentage != nil {
+		result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
+	}
+	if clusterRoll.BatchSizePercentage != nil {
+		result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	}
 	result[string(Comment)] = spotinst.StringValue(clusterRoll.Comment)
 	result[string(RespectPdb)] = spotinst.BoolValue(clusterRoll.RespectPdb)
 
@@ -280,9 +303,16 @@ func flattenAmiUpdateClusterRoll(clusterRoll *aws.AmiAutoUpdateClusterRoll) []in
 
 func flattenParameterClusterRoll(clusterRoll *aws.ParameterClusterRoll) []interface{} {
 	result := make(map[string]interface{})
+	value := spotinst.Int(-1)
+	result[string(BatchMinHealthyPercentage)] = value
+	result[string(BatchSizePercentage)] = value
 
-	result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
-	result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	if clusterRoll.BatchMinHealthyPercentage != nil {
+		result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
+	}
+	if clusterRoll.BatchSizePercentage != nil {
+		result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	}
 	result[string(Comment)] = spotinst.StringValue(clusterRoll.Comment)
 	result[string(RespectPdb)] = spotinst.BoolValue(clusterRoll.RespectPdb)
 
@@ -290,11 +320,10 @@ func flattenParameterClusterRoll(clusterRoll *aws.ParameterClusterRoll) []interf
 }
 
 func expandScheduledTasks(data interface{}) (*aws.Scheduling, error) {
-	scheduling := &aws.Scheduling{}
-	list := data.(*schema.Set).List()
-	if list != nil && list[0] != nil {
+	list := data.([]interface{})
+	if (list != nil) || (len(list) > 0 && list[0] != nil) {
 		m := list[0].(map[string]interface{})
-
+		scheduling := &aws.Scheduling{}
 		if v, ok := m[string(Tasks)]; ok {
 			tasks, err := expandtasks(v)
 			if err != nil {
@@ -302,6 +331,8 @@ func expandScheduledTasks(data interface{}) (*aws.Scheduling, error) {
 			}
 			if tasks != nil {
 				scheduling.SetTasks(tasks)
+			} else {
+				scheduling.Tasks = nil
 			}
 		}
 
@@ -311,15 +342,14 @@ func expandScheduledTasks(data interface{}) (*aws.Scheduling, error) {
 				return nil, err
 			}
 			if shutdownHours != nil {
-				if scheduling.ShutdownHours == nil {
-					scheduling.SetShutdownHours(&aws.ShutdownHours{})
-				}
 				scheduling.SetShutdownHours(shutdownHours)
+			} else {
+				scheduling.ShutdownHours = nil
 			}
 		}
+		return scheduling, nil
 	}
-
-	return scheduling, nil
+	return nil, nil
 }
 
 func expandShutdownHours(data interface{}) (*aws.ShutdownHours, error) {
@@ -352,7 +382,7 @@ func expandShutdownHours(data interface{}) (*aws.ShutdownHours, error) {
 }
 
 func expandParameters(data interface{}) (*aws.Parameter, error) {
-	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+	if list := data.([]interface{}); (list != nil) || (len(list) > 0 && list[0] != nil) {
 		runner := &aws.Parameter{}
 		m := list[0].(map[string]interface{})
 
@@ -362,10 +392,9 @@ func expandParameters(data interface{}) (*aws.Parameter, error) {
 				return nil, err
 			}
 			if amiAutoUpdate != nil {
-				if runner.AmiAutoUpdate == nil {
-					runner.SetAmiAutoUpdate(&aws.AmiAutoUpdate{})
-				}
 				runner.SetAmiAutoUpdate(amiAutoUpdate)
+			} else {
+				runner.AmiAutoUpdate = nil
 			}
 		}
 
@@ -375,10 +404,9 @@ func expandParameters(data interface{}) (*aws.Parameter, error) {
 				return nil, err
 			}
 			if expandClusRoll != nil {
-				if runner.ClusterRoll == nil {
-					runner.SetClusterRoll(&aws.ParameterClusterRoll{})
-				}
 				runner.SetClusterRoll(expandClusRoll)
+			} else {
+				runner.ClusterRoll = nil
 			}
 		}
 
@@ -405,10 +433,9 @@ func expandAmiAutoUpdate(data interface{}) (*aws.AmiAutoUpdate, error) {
 				return nil, err
 			}
 			if expandClusRoll != nil {
-				if runner.AmiAutoUpdateClusterRoll == nil {
-					runner.SetClusterRoll(&aws.AmiAutoUpdateClusterRoll{})
-				}
 				runner.SetClusterRoll(expandClusRoll)
+			} else {
+				runner.AmiAutoUpdateClusterRoll = nil
 			}
 		}
 
@@ -510,39 +537,40 @@ func expandAmiAutoUpdateClusterRoll(data interface{}) (*aws.AmiAutoUpdateCluster
 }
 
 func expandtasks(data interface{}) ([]*aws.Task, error) {
-	list := data.([]interface{})
-	tasks := make([]*aws.Task, 0, len(list))
-	for _, item := range list {
-		m := item.(map[string]interface{})
-		task := &aws.Task{}
+	if list := data.([]interface{}); list != nil || len(list) > 0 {
+		tasks := make([]*aws.Task, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			task := &aws.Task{}
 
-		if v, ok := m[string(TasksIsEnabled)].(bool); ok {
-			task.SetIsEnabled(spotinst.Bool(v))
-		}
-
-		if v, ok := m[string(TaskType)].(string); ok && v != "" {
-			task.SetType(spotinst.String(v))
-		}
-
-		if v, ok := m[string(CronExpression)].(string); ok && v != "" {
-			task.SetCronExpression(spotinst.String(v))
-		}
-
-		if v, ok := m[string(Parameters)]; ok {
-			parameters, err := expandParameters(v)
-			if err != nil {
-				return nil, err
+			if v, ok := m[string(TasksIsEnabled)].(bool); ok {
+				task.SetIsEnabled(spotinst.Bool(v))
 			}
-			if parameters != nil {
-				if task.Parameter == nil {
-					task.SetParameter(&aws.Parameter{})
+
+			if v, ok := m[string(TaskType)].(string); ok && v != "" {
+				task.SetType(spotinst.String(v))
+			}
+
+			if v, ok := m[string(CronExpression)].(string); ok && v != "" {
+				task.SetCronExpression(spotinst.String(v))
+			}
+
+			if v, ok := m[string(Parameters)]; ok {
+				parameters, err := expandParameters(v)
+				if err != nil {
+					return nil, err
 				}
-				task.SetParameter(parameters)
+				if parameters != nil {
+					task.SetParameter(parameters)
+				} else {
+					task.Parameter = nil
+				}
 			}
+
+			tasks = append(tasks, task)
 		}
 
-		tasks = append(tasks, task)
+		return tasks, nil
 	}
-
-	return tasks, nil
+	return nil, nil
 }
