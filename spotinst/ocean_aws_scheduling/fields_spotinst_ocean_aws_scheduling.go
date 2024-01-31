@@ -22,7 +22,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(Tasks): {
 						Type:     schema.TypeList,
 						Optional: true,
-						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(TasksIsEnabled): {
