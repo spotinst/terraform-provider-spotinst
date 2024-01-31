@@ -44,7 +44,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(Parameters): {
 									Type:     schema.TypeList,
 									Optional: true,
-									Computed: true,
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
@@ -52,18 +51,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 												Type:     schema.TypeList,
 												Optional: true,
 												MaxItems: 1,
-												Computed: true,
 												Elem: &schema.Resource{
 													Schema: map[string]*schema.Schema{
 														string(ApplyRoll): {
 															Type:     schema.TypeBool,
 															Optional: true,
-															Computed: true,
 														},
 														string(AmiAutoUpdateClusterRoll): {
 															Type:     schema.TypeList,
 															Optional: true,
-															Computed: true,
 															MaxItems: 1,
 															Elem: &schema.Resource{
 																Schema: map[string]*schema.Schema{
@@ -497,7 +493,7 @@ func expandParameterClusterRoll(data interface{}) (*aws.ParameterClusterRoll, er
 }
 
 func expandAmiAutoUpdateClusterRoll(data interface{}) (*aws.AmiAutoUpdateClusterRoll, error) {
-	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+	if list := data.([]interface{}); list != nil || len(list) > 0 {
 		runner := &aws.AmiAutoUpdateClusterRoll{}
 		m := list[0].(map[string]interface{})
 
