@@ -127,6 +127,7 @@ func createOceanAWSTerraform(ccm *ClusterConfigMetadata) string {
 
 	template :=
 		`provider "aws" {
+	 enabled = "fake"
 	 token   = "fake"
 	 account = "fake"
 	}

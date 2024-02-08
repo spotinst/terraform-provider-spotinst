@@ -34,6 +34,7 @@ var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
 	"credentials for Spotinst Provider.")
 
 type Config struct {
+	Enabled      string
 	Token        string
 	Account      string
 	FeatureFlags string
@@ -59,6 +60,9 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 	stdlog.Println("[INFO] Configuring a new Spotinst client")
 
 	// Create a new session.
+	if c.Enabled == "false" {
+		return nil, diag.FromErr(errors.New("parameter 'enabled' is set to false, resource creation cancelled"))
+	}
 	sess, err := c.getSession()
 	if err != nil {
 		return nil, diag.FromErr(err)

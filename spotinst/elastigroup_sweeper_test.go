@@ -15,13 +15,15 @@ func TestMain(m *testing.M) {
 
 // getProviderClient returns a spotinst client setup with the correct cloud provider configs
 func getProviderClient(provider string) (interface{}, error) {
+	enabled := "SPOTINST_ENABLED"
 	token := "SPOTINST_TOKEN_" + strings.ToUpper(provider)
 	account := "SPOTINST_ACCOUNT_" + strings.ToUpper(provider)
-	if os.Getenv(token) == "" && (os.Getenv(account) == "") {
+	if os.Getenv(enabled) == "true" && os.Getenv(token) == "" && (os.Getenv(account) == "") {
 		return nil, fmt.Errorf("must provide environment variables SPOTINST_TOKEN_AWS and SPOTINST_ACCOUNT_AWS")
 	}
 
 	conf := &Config{
+		Enabled: os.Getenv(enabled),
 		Token:   os.Getenv(token),
 		Account: os.Getenv(account),
 	}

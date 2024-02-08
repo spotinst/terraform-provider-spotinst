@@ -48,18 +48,19 @@ func TestProvider_impl(t *testing.T) {
 
 func testAccPreCheck(t *testing.T, provider string) {
 	tokens := map[string]string{
-		"gcp":   os.Getenv("SPOTINST_TOKEN_GCP"),
-		"aws":   os.Getenv("SPOTINST_TOKEN_AWS"),
-		"azure": os.Getenv("SPOTINST_TOKEN_AZURE"),
+		"enabled": os.Getenv("SPOTINST_ENABLED"),
+		"gcp":     os.Getenv("SPOTINST_TOKEN_GCP"),
+		"aws":     os.Getenv("SPOTINST_TOKEN_AWS"),
+		"azure":   os.Getenv("SPOTINST_TOKEN_AZURE"),
 	}
-
-	if tokens[provider] == "" {
+	if tokens["enabled"] == "true" && tokens[provider] == "" {
 		t.Fatal(ErrNoValidCredentials.Error())
 	}
 }
 
 func providerConfigureGCP(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
+		Enabled: os.Getenv("SPOTINST_ENABLED"),
 		Token:   os.Getenv("SPOTINST_TOKEN_GCP"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_GCP"),
 	}
@@ -69,6 +70,7 @@ func providerConfigureGCP(context.Context, *schema.ResourceData) (interface{}, d
 
 func providerConfigureAWS(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
+		Enabled: os.Getenv("SPOTINST_ENABLED"),
 		Token:   os.Getenv("SPOTINST_TOKEN_AWS"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_AWS"),
 	}
@@ -78,6 +80,7 @@ func providerConfigureAWS(context.Context, *schema.ResourceData) (interface{}, d
 
 func providerConfigureAzure(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
+		Enabled: os.Getenv("SPOTINST_ENABLED"),
 		Token:   os.Getenv("SPOTINST_TOKEN_AZURE"),
 		Account: os.Getenv("SPOTINST_ACCOUNT_AZURE"),
 	}

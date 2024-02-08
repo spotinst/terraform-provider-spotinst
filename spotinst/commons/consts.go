@@ -13,9 +13,10 @@ const (
 	FieldUpdateNotAllowedPattern = "field [%v] is immutable, cannot be changed post creation"
 	FieldCreateNotAllowedPattern = "field [%v] can only be changed post creation"
 
-	ProviderToken        FieldName = "token"
-	ProviderAccount      FieldName = "account"
-	ProviderFeatureFlags FieldName = "feature_flags"
+	ProviderToken             FieldName = "token"
+	ProviderAccount           FieldName = "account"
+	ProviderFeatureFlags      FieldName = "feature_flags"
+	ProviderCredentialEnabled FieldName = "enabled"
 
 	Subscription                         ResourceAffinity = "Subscription"
 	ElastigroupAWSBeanstalk              ResourceAffinity = "ElastigroupAWSBeanstalk"

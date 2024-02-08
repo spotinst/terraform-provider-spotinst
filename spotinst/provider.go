@@ -10,8 +10,13 @@ import (
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() *schema.Provider {
-	p := &schema.Provider{
+	var p = &schema.Provider{
 		Schema: map[string]*schema.Schema{
+			string(commons.ProviderCredentialEnabled): {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Spotinst credential enabled true or false need to be set",
+			},
 			string(commons.ProviderToken): {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -101,7 +106,6 @@ func Provider() *schema.Provider {
 			string(commons.CredentialsAWSResourceName): resourceSpotinstCredentialsAWS(),
 		},
 	}
-
 	p.ConfigureContextFunc = func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		terraformVersion := p.TerraformVersion
 		if terraformVersion == "" {
@@ -117,6 +121,7 @@ func Provider() *schema.Provider {
 
 func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, diag.Diagnostics) {
 	config := Config{
+		Enabled:          d.Get(string(commons.ProviderCredentialEnabled)).(string),
 		Token:            d.Get(string(commons.ProviderToken)).(string),
 		Account:          d.Get(string(commons.ProviderAccount)).(string),
 		FeatureFlags:     d.Get(string(commons.ProviderFeatureFlags)).(string),
