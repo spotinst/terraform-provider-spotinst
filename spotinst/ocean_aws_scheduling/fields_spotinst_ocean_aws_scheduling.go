@@ -17,6 +17,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
+			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Tasks): {
@@ -310,33 +311,34 @@ func flattenParameterClusterRoll(clusterRoll *aws.ParameterClusterRoll) []interf
 }
 
 func expandScheduledTasks(data interface{}) (*aws.Scheduling, error) {
-	if list := data.([]interface{}); (list != nil) || (len(list) > 0 && list[0] != nil) {
+	if list := data.([]interface{}); len(list) > 0 {
 		scheduling := &aws.Scheduling{}
-		m := list[0].(map[string]interface{})
-		if v, ok := m[string(Tasks)]; ok {
-			tasks, err := expandtasks(v)
-			if err != nil {
-				return nil, err
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(Tasks)]; ok {
+				tasks, err := expandtasks(v)
+				if err != nil {
+					return nil, err
+				}
+				if tasks != nil {
+					scheduling.SetTasks(tasks)
+				} else {
+					scheduling.SetTasks(nil)
+				}
 			}
-			if tasks != nil {
-				scheduling.SetTasks(tasks)
-			} else {
-				scheduling.SetTasks(nil)
+
+			if v, ok := m[string(ShutdownHours)]; ok {
+				shutdownHours, err := expandShutdownHours(v)
+				if err != nil {
+					return nil, err
+				}
+				if shutdownHours != nil {
+					scheduling.SetShutdownHours(shutdownHours)
+				} else {
+					scheduling.SetShutdownHours(nil)
+				}
 			}
 		}
-
-		if v, ok := m[string(ShutdownHours)]; ok {
-			shutdownHours, err := expandShutdownHours(v)
-			if err != nil {
-				return nil, err
-			}
-			if shutdownHours != nil {
-				scheduling.SetShutdownHours(shutdownHours)
-			} else {
-				scheduling.SetShutdownHours(nil)
-			}
-		}
-
 		return scheduling, nil
 	}
 	return nil, nil
