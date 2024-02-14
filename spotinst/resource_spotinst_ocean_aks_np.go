@@ -3,8 +3,9 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 	"log"
+
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
 
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_vm_sizes"

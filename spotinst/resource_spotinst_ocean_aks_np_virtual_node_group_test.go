@@ -3,9 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"log"
 	"testing"
+
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"

@@ -2,6 +2,7 @@ package ocean_aks_np_auto_scaler
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
