@@ -111,7 +111,7 @@ func TestAccSpotinstOrganization_UserGroup(t *testing.T) {
 				),
 			},
 			{
-				Config:             createOrganizationUserTerraform(testOrganization_User_Group_Update_User, userGroupName),
+				Config:             createOrganizationUserGroupTerraform(testOrganization_User_Group_Update_User, userGroupName),
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(userGroupResourceName, "user_ids.#", "1"),

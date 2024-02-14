@@ -649,7 +649,7 @@ const testStrategyConfig_EmptyFields = `
 // region OceanAWS: Scheduling
 func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 	clusterName := "test-acc-cluster-scheduling"
-	controllerClusterID := "scheduling-controller-id"
+	controllerClusterID := "scheduling-controller-id1"
 	resourceName := createOceanAWSResourceName(clusterName)
 
 	var cluster aws.Cluster
@@ -673,9 +673,19 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:15:30"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "testcron2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "0 1 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "amiAutoUpdate"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.apply_roll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.batch_min_healthy_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.batch_size_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.comment", "test comment"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.respect_pdb", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.minor_version", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.patch", "false"),
 				),
 			},
 			{
@@ -693,9 +703,15 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:13:30"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:13:30"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "testcron"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.cron_expression", "0 1 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_min_healthy_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_size_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "test"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "false"),
 				),
 			},
 			{
@@ -723,10 +739,23 @@ const testSchedulingConfig_Create = `
     }
     tasks {
       is_enabled = false
-      cron_expression = "testcron2"
-      task_type = "clusterRoll"
+      cron_expression = "0 1 * * *"
+       task_type       = "amiAutoUpdate"
+      parameters  {
+        ami_auto_update  {
+            apply_roll = false
+            ami_auto_update_cluster_roll  {
+                batch_min_healthy_percentage = 100
+                batch_size_percentage = 20
+                comment = "test comment"
+                respect_pdb = false
+            }
+            minor_version = true
+            patch = false
+        }
+      }
     }
-  }
+ }
  // ---------------------------------
 `
 
@@ -737,10 +766,18 @@ const testSchedulingConfig_Update = `
       is_enabled = false
       time_windows = ["Fri:15:30-Sat:13:30","Sun:15:30-Mon:13:30"]
     }
-    tasks  {
+    tasks {
       is_enabled = true
-      cron_expression = "testcron"
+      cron_expression = "0 1 * * *"
       task_type = "clusterRoll"
+      parameters  {
+		  parameters_cluster_roll {
+			  batch_min_healthy_percentage = 50
+			  batch_size_percentage = 20
+			  comment = "test"
+			  respect_pdb = false
+		  }
+      }
     }
   }
  // ---------------------------------

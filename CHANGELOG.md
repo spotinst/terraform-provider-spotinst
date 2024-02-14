@@ -3,6 +3,22 @@
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support to trigger cluster roll on attribute updation and introduced `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
 
+# 1.160.2 (February, 08 2024)
+BUG FIX:
+* resource/spotinst_ocean_aws: Fixed `scheduled_task` block to accept null
+
+# 1.160.1 (January, 31 2024)
+BUG FIX:
+* resource/spotinst_ocean_aws: Updated default value for `batch_min_healthy_percentage` and `batch_size_percentage` and fixed issue to ignore the unchanged difference in `parameters` block
+
+# 1.160.0 (January, 24 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added support for `parameters` object under `scheduling_tasks` block
+
+## 1.159.0 (January, 17 2024)
+NOTES:
+* Added random password generation logic for unit test `resource_spotinst_organization_user_test`
+
 ## 1.158.0 (January, 05 2024)
 BUG FIXES:
 * resource/spotinst_managed_instance_aws: Fixed `fallback_to_ondemand` field variable name in `strategy` object.
