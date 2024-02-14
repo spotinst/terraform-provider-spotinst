@@ -10,7 +10,7 @@ var conditionedRollFieldsECS = []string{"subnet_ids", "whitelist", "blacklist", 
 
 var conditionedRollFieldsGKE = []string{"backend_services", "root_volume_type", "whitelist"}
 
-var conditionedRollFieldsAKS = []string{"availability_zones", "max_pods_per_node", "enable_node_public_ip", "os_disk_size_gb", "os_disk_type", "os_sku", "kubernetes_version", "vnet_subnet_ids", "pod_subnet_ids", "labels", "taints", "tags", "filters"}
+var conditionedRollFieldsAKS = []string{"availability_zones", "max_pods_per_node", "enable_node_public_ip", "os_disk_size_gb", "os_disk_type", "os_sku", "kubernetes_version", "vnet_subnet_ids", "pod_subnet_ids", "labels", "taints", "tags"}
 
 func contains(s []string, str string) bool {
 	for _, v := range s {

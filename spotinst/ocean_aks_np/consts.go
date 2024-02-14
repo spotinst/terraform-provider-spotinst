@@ -11,10 +11,9 @@ const (
 	AKSRegion                          commons.FieldName = "aks_region"
 	AKSInfrastructureResourceGroupName commons.FieldName = "aks_infrastructure_resource_group_name"
 
-	UpdatePolicy          commons.FieldName = "update_policy"
-	ShouldRoll            commons.FieldName = "should_roll"
-	ConditionedRoll       commons.FieldName = "conditioned_roll"
-	ConditionedRollParams commons.FieldName = "conditioned_roll_params"
+	UpdatePolicy    commons.FieldName = "update_policy"
+	ShouldRoll      commons.FieldName = "should_roll"
+	ConditionedRoll commons.FieldName = "conditioned_roll"
 
 	RollConfig                commons.FieldName = "roll_config"
 	BatchSizePercentage       commons.FieldName = "batch_size_percentage"

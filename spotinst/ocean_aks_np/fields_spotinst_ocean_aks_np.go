@@ -272,11 +272,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
-					string(ConditionedRollParams): {
-						Type:     schema.TypeList,
-						Elem:     &schema.Schema{Type: schema.TypeString},
-						Optional: true,
-					},
 					string(RollConfig): {
 						Type:     schema.TypeList,
 						Optional: true,

@@ -16,10 +16,9 @@ const (
 	TaintValue  commons.FieldName = "value"
 	TaintEffect commons.FieldName = "effect"
 
-	UpdatePolicy          commons.FieldName = "update_policy"
-	ShouldRoll            commons.FieldName = "should_roll"
-	ConditionedRoll       commons.FieldName = "conditioned_roll"
-	ConditionedRollParams commons.FieldName = "conditioned_roll_params"
+	UpdatePolicy    commons.FieldName = "update_policy"
+	ShouldRoll      commons.FieldName = "should_roll"
+	ConditionedRoll commons.FieldName = "conditioned_roll"
 
 	RollConfig                commons.FieldName = "roll_config"
 	BatchSizePercentage       commons.FieldName = "batch_size_percentage"

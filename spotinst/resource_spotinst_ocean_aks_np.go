@@ -163,20 +163,7 @@ func resourceSpotinstClusterAKSNPUpdate(ctx context.Context, resourceData *schem
 	clusterID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSNPResource.GetName(), clusterID)
 
-	var conditionedRollParams []interface{}
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy)); exists {
-		list := updatePolicy.([]interface{})
-		if len(list) > 0 && list[0] != nil {
-			m := list[0].(map[string]interface{})
-			if roll, ok := m[string(ocean_aks_np.ConditionedRollParams)].([]interface{}); ok {
-				if len(roll) > 0 {
-					conditionedRollParams = roll
-				}
-			}
-		}
-	}
-
-	shouldUpdate, changesRequiredRoll, cluster, err := commons.OceanAKSNPResource.OnUpdate(resourceData, meta, conditionedRollParams)
+	shouldUpdate, changesRequiredRoll, cluster, err := commons.OceanAKSNPResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -198,6 +185,7 @@ func updateAKSNPCluster(cluster *azure_np.Cluster, resourceData *schema.Resource
 	}
 
 	var shouldRoll = false
+	var conditionedRoll = false
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -206,6 +194,9 @@ func updateAKSNPCluster(cluster *azure_np.Cluster, resourceData *schema.Resource
 
 			if roll, ok := m[string(ocean_aks_np.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
+			}
+			if condRoll, ok := m[string(ocean_aks_np.ConditionedRoll)].(bool); ok && condRoll {
+				conditionedRoll = condRoll
 			}
 		}
 	}
@@ -219,7 +210,7 @@ func updateAKSNPCluster(cluster *azure_np.Cluster, resourceData *schema.Resource
 	if _, err := spotinstClient.ocean.CloudProviderAzureNP().UpdateCluster(context.TODO(), input); err != nil {
 		return fmt.Errorf("ocean/aks: failed to update cluster: %v", err)
 	} else if shouldRoll {
-		if changesRequiredRoll {
+		if !conditionedRoll || changesRequiredRoll {
 			if err := rollOceanAKSCluster(resourceData, spotinstClient); err != nil {
 				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", clusterID, err)
 				return err

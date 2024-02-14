@@ -153,19 +153,7 @@ func resourceSpotinstOceanAKSNPVirtualNodeGroupUpdate(ctx context.Context, resou
 	virtualNodeGroupID := resourceData.Id()
 	log.Printf(string(commons.ResourceOnUpdate), commons.OceanAKSNPVirtualNodeGroupResource.GetName(), virtualNodeGroupID)
 
-	var conditionedRollParams []interface{}
-	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np.UpdatePolicy)); exists {
-		list := updatePolicy.([]interface{})
-		if len(list) > 0 && list[0] != nil {
-			m := list[0].(map[string]interface{})
-			if roll, ok := m[string(ocean_aks_np.ConditionedRollParams)].([]interface{}); ok {
-				if len(roll) > 0 {
-					conditionedRollParams = roll
-				}
-			}
-		}
-	}
-	shouldUpdate, changesRequiredRoll, virtualNodeGroup, err := commons.OceanAKSNPVirtualNodeGroupResource.OnUpdate(resourceData, meta, conditionedRollParams)
+	shouldUpdate, changesRequiredRoll, virtualNodeGroup, err := commons.OceanAKSNPVirtualNodeGroupResource.OnUpdate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -187,6 +175,7 @@ func updateAKSNPVirtualNodeGroup(ctx context.Context, resourceData *schema.Resou
 	}
 
 	var shouldRoll = false
+	var conditionedRoll = false
 	oceanID := resourceData.Get(string(ocean_aks_np_virtual_node_group.OceanID))
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aks_np_virtual_node_group.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -195,6 +184,9 @@ func updateAKSNPVirtualNodeGroup(ctx context.Context, resourceData *schema.Resou
 
 			if roll, ok := m[string(ocean_aks_np_virtual_node_group.ShouldRoll)].(bool); ok && roll {
 				shouldRoll = roll
+			}
+			if condRoll, ok := m[string(ocean_aks_np_virtual_node_group.ConditionedRoll)].(bool); ok && condRoll {
+				conditionedRoll = condRoll
 			}
 		}
 	}
@@ -208,7 +200,7 @@ func updateAKSNPVirtualNodeGroup(ctx context.Context, resourceData *schema.Resou
 	if _, err := spotinstClient.ocean.CloudProviderAzureNP().UpdateVirtualNodeGroup(ctx, input); err != nil {
 		return fmt.Errorf("ocean/aks-np-vng: failed to update virtual node group: %v", err)
 	} else if shouldRoll {
-		if changesRequiredRoll {
+		if !conditionedRoll || changesRequiredRoll {
 			if err := rollOceanAKSVNG(resourceData, spotinstClient); err != nil {
 				log.Printf("[ERROR] Cluster [%v] roll failed, error: %v", oceanID, err)
 				return err

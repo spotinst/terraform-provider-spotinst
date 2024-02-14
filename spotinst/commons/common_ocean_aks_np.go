@@ -77,7 +77,7 @@ func (res *OceanAKSNPTerraformResource) OnRead(
 
 func (res *OceanAKSNPTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}, conditionParam []interface{}) (bool, bool, *azure_np.Cluster, error) {
+	meta interface{}) (bool, bool, *azure_np.Cluster, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
@@ -86,14 +86,6 @@ func (res *OceanAKSNPTerraformResource) OnUpdate(
 	clusterWrapper := NewAKSNPClusterWrapper()
 	hasChanged := false
 	changesRequiredRoll := false
-
-	if len(conditionParam) > 0 {
-		conditionedRollParams := make([]string, len(conditionParam))
-		for i, v := range conditionParam {
-			conditionedRollParams[i] = fmt.Sprint(v)
-		}
-		conditionedRollFieldsAKS = conditionedRollParams
-	}
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
