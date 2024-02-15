@@ -3,6 +3,10 @@
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support to trigger cluster roll on attribute updation and introduced `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
 
+# 1.161.0 (February, 15 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added support for `is_aggressive_scale_down_enabled` attribute under `autoscale_down` block
+
 # 1.160.2 (February, 08 2024)
 BUG FIX:
 * resource/spotinst_ocean_aws: Fixed `scheduled_task` block to accept null
