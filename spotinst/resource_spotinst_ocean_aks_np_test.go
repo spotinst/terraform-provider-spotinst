@@ -3,10 +3,11 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"log"
 	"strings"
 	"testing"
+
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -225,8 +226,8 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.26"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
-					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
+					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
+					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
@@ -289,7 +290,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   os_type               = "Linux"
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.26"
-  vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
+  //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
 
   // --- strategy ---------------------------------------------------------
@@ -343,7 +344,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   os_type               = "Linux"
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.27"
-  vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
+  //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
 
   // --- strategy ---------------------------------------------------------

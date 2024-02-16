@@ -15,4 +15,18 @@ const (
 	TaintKey    commons.FieldName = "key"
 	TaintValue  commons.FieldName = "value"
 	TaintEffect commons.FieldName = "effect"
+
+	UpdatePolicy    commons.FieldName = "update_policy"
+	ShouldRoll      commons.FieldName = "should_roll"
+	ConditionedRoll commons.FieldName = "conditioned_roll"
+
+	RollConfig                commons.FieldName = "roll_config"
+	BatchSizePercentage       commons.FieldName = "batch_size_percentage"
+	VngIDs                    commons.FieldName = "vng_ids"
+	BatchMinHealthyPercentage commons.FieldName = "batch_min_healthy_percentage"
+	RespectPDB                commons.FieldName = "respect_pdb"
+	Comment                   commons.FieldName = "comment"
+	NodePoolNames             commons.FieldName = "node_pool_names"
+	RespectRestrictScaleDown  commons.FieldName = "respect_restrict_scale_down"
+	NodeNames                 commons.FieldName = "node_names"
 )
