@@ -267,7 +267,7 @@ func expandOceanAKSVirtualNodeGroupRollConfig(data interface{}, clusterID string
 			spec.BatchSizePercentage = spotinst.Int(v)
 		}
 
-		if v, ok := m[string(ocean_aks_np_virtual_node_group.VngIDs)].([]string); ok {
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.VngIDs)]; ok {
 			spec.VngIds = expandListVNG(v)
 		}
 
@@ -283,13 +283,13 @@ func expandOceanAKSVirtualNodeGroupRollConfig(data interface{}, clusterID string
 			spec.Comment = spotinst.String(v)
 		}
 
-		if v, ok := m[string(ocean_aks_np_virtual_node_group.NodePoolNames)].(bool); ok {
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.NodePoolNames)]; ok {
 			spec.NodePoolNames = expandListVNG(v)
 		}
 		if v, ok := m[string(ocean_aks_np_virtual_node_group.RespectRestrictScaleDown)].(bool); ok {
 			spec.RespectRestrictScaleDown = spotinst.Bool(v)
 		}
-		if v, ok := m[string(ocean_aks_np_virtual_node_group.NodeNames)].([]string); ok {
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.NodeNames)]; ok {
 			spec.NodeNames = expandList(v)
 		}
 

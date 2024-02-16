@@ -1,7 +1,8 @@
 ## Unreleased
-## 1.159.0 (January, 15 2024)
+## 1.162.0 (February, 16 2024)
 ENHANCEMENTS:
-* resource/spotinst_ocean_aks_np: Added support to trigger cluster roll on attribute updation and introduced `conditioned_roll_params` field to customized attribute modification to trigger cluster roll.
+* resource/spotinst_ocean_aks_np: Added support to trigger cluster roll on attribute update.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support to trigger vng roll on attribute update.
 
 # 1.160.2 (February, 08 2024)
 BUG FIX:

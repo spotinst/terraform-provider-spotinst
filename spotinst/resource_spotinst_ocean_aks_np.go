@@ -277,7 +277,7 @@ func expandOceanAKSClusterRollConfig(data interface{}, clusterID string) (*azure
 			spec.BatchSizePercentage = spotinst.Int(v)
 		}
 
-		if v, ok := m[string(ocean_aks_np.VngIDs)].([]string); ok {
+		if v, ok := m[string(ocean_aks_np.VngIDs)]; ok {
 			spec.VngIds = expandList(v)
 		}
 
@@ -293,13 +293,15 @@ func expandOceanAKSClusterRollConfig(data interface{}, clusterID string) (*azure
 			spec.Comment = spotinst.String(v)
 		}
 
-		if v, ok := m[string(ocean_aks_np.NodePoolNames)].(bool); ok {
+		if v, ok := m[string(ocean_aks_np.NodePoolNames)]; ok {
 			spec.NodePoolNames = expandList(v)
 		}
+
 		if v, ok := m[string(ocean_aks_np.RespectRestrictScaleDown)].(bool); ok {
 			spec.RespectRestrictScaleDown = spotinst.Bool(v)
 		}
-		if v, ok := m[string(ocean_aks_np.NodeNames)].([]string); ok {
+
+		if v, ok := m[string(ocean_aks_np.NodeNames)]; ok {
 			spec.NodeNames = expandList(v)
 		}
 

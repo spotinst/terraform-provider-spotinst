@@ -281,30 +281,27 @@ The following arguments are supported:
 ## Update Policy
 
 * `update_policy` - (Optional)
-  * `should_roll` - (Required) Enables the roll.
-  * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as AMI, Key Pair, user data, instance types, load balancers, etc).
-  * `conditioned_roll_params` - (Optional) A custom list of attributes will trigger the cluster roll operation (overrides the predefined list of parameters). Valid only when the `conditioned_roll` parameter is set to true. (Valid values: `"availability_zones"`, `"max_pods_per_node"`, `"enable_node_public_ip"`, `"os_disk_size_gb"`, `"os_disk_type"`, `"os_sku"`, `"kubernetes_version"`, `"vnet_subnet_ids"`, `"pod_subnet_ids"`, `"labels"`, `"taints"`, `"tags"`, `"filters"`)
+  * `should_roll` - (Required) If set to true along with the cluster update, roll will be triggered.
+  * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as availability_zones, max_pods_per_node, enable_node_public_ip, os_disk_size_gb, os_disk_type, os_sku, kubernetes_version, vnet_subnet_ids, pod_subnet_ids, labels, taints and tags).
   * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
-    * `batch_size_percentage` - (Required) Value as a percent to set the size of a batch in a roll. Valid values are 0-100. In case of null as value, the default value in the backend will be 20%.
-    * `vng_ids` - (Optional) List of virtual node group identifiers to be rolled. Each identifier is a string. vngIds can be null, and cannot be used together with nodeNames and nodePoolNames.
     * `batch_min_healthy_percentage` - (Optional, Default: 50) Indicates the threshold of minimum healthy instances in single batch. If the amount of healthy instances in single batch is under the threshold, the cluster roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch.
-    * `respect_pdb` - (Optional, Default: true) During the roll, if the parameter is set to True we honor PDB during the instance replacement.
+    * `batch_size_percentage` - (Required) Value as a percent to set the size of a batch in a roll. Valid values are 0-100. In case of null as value, the default value in the backend will be 20%.
     * `comment` - (Optional) Add a comment description for the roll. The comment is limited to 256 chars and optional.
-    * `node_pool_names` - (Optional) List of node pools to be rolled. Each node pool name is a string. nodePoolNames can be null, and cannot be used together with nodeNames and vngIds. 
+    * `respect_pdb` - (Optional, Default: true) During the roll, if the parameter is set to True we honor PDB during the instance replacement.
     * `respect_restrict_scale_down` - (Optional, Default: false) During the roll, if the parameter is set to true we honor Restrict Scale Down label during the nodes replacement.
+    * `node_pool_names` - (Optional) List of node pools to be rolled. Each node pool name is a string. nodePoolNames can be null, and cannot be used together with nodeNames and vngIds. 
     * `node_names` - (Optional) List of node names to be rolled. Each identifier is a string. nodeNames can be null, and cannot be used together with nodePoolNames and vngIds.
+    * `vng_ids` - (Optional) List of virtual node group identifiers to be rolled. Each identifier is a string. vngIds can be null, and cannot be used together with nodeNames and nodePoolNames.
 ```hcl
 update_policy {
   should_roll = false
   conditioned_roll = true
-  conditioned_roll_params = ["os_disk_type", "availability_zones"]
 
   roll_config {
-    batch_size_percentage = 33
-    vng_ids = ["ols-1a2b3c4d"]
-    batch_min_healthy_percentage = 20
+    batch_size_percentage = 25
+    batch_min_healthy_percentage = 100
     respect_pdb = true
-    node_names = ["aks-omnp1234ad56-987654-vmss000001"]
+    node_names = ["aks-omnp123456-7890-vmss000001"]
   }
 }
 ```
