@@ -280,7 +280,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							Schema: map[string]*schema.Schema{
 								string(BatchSizePercentage): {
 									Type:     schema.TypeInt,
-									Required: true,
+									Optional: true,
+									Default:  -1,
 								},
 								string(VngIDs): {
 									Type:     schema.TypeList,

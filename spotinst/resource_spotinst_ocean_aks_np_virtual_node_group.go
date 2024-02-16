@@ -263,8 +263,10 @@ func expandOceanAKSVirtualNodeGroupRollConfig(data interface{}, clusterID string
 	if list != nil && list[0] != nil {
 		m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(ocean_aks_np_virtual_node_group.BatchSizePercentage)].(int); ok {
+		if v, ok := m[string(ocean_aks_np_virtual_node_group.BatchSizePercentage)].(int); ok && v >= 0 {
 			spec.BatchSizePercentage = spotinst.Int(v)
+		} else {
+			spec.BatchSizePercentage = nil
 		}
 
 		if v, ok := m[string(ocean_aks_np_virtual_node_group.VngIDs)]; ok {
