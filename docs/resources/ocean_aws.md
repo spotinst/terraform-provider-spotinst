@@ -265,6 +265,7 @@ The following arguments are supported:
         * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
     * `autoscale_down` - (Optional) Auto Scaling scale down operations.
         * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
+        * `is_aggressive_scale_down_enabled` - (Optional, Default: `false`) When set to 'true', the Aggressive Scale Down feature is enabled.
     * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
         * `max_vcpu` - (Optional) The maximum cpu in vCPU units that can be allocated to the cluster.
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
@@ -287,6 +288,7 @@ autoscaler {
 
   autoscale_down {
     max_scale_down_percentage = 60
+    is_aggressive_scale_down_enabled = true
   }
 
   resource_limits {
