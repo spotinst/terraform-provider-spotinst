@@ -450,13 +450,17 @@ func expandResourceRequirements(data interface{}, nullify bool) (*aws.ResourceRe
 	if v, ok := m[string(RequiredGpuMinimum)].(int); ok && v >= 1 {
 		requirements.RequiredGpu.SetMinimum(spotinst.Int(v))
 	} else {
-		requirements.RequiredGpu.SetMinimum(nil)
+		if nullify {
+			requirements.RequiredGpu.SetMinimum(nil)
+		}
 	}
 
 	if v, ok := m[string(RequiredGpuMaximum)].(int); ok && v >= 1 {
 		requirements.RequiredGpu.SetMaximum(spotinst.Int(v))
 	} else {
-		requirements.RequiredGpu.SetMaximum(nil)
+		if nullify {
+			requirements.RequiredGpu.SetMaximum(nil)
+		}
 	}
 
 	requiredVCpu := &aws.RequiredVCpu{}
