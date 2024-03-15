@@ -509,12 +509,16 @@ func rollGroup(resourceData *schema.ResourceData, meta interface{}) error {
 			// Some other error, report it.
 			return resource.NonRetryableError(err)
 		}
+		pctTimeout := spotinst.IntValue(getRollTimeout(rollConfig))
+		pctComplete := spotinst.Float64Value(getRollMinPct(rollConfig))
 
-		// Wait for the roll completion.
-		err = awaitReadyRoll(ctx, groupID, rollConfig, rollECS, rollOut, meta.(*Client))
-		if err != nil {
-			err = fmt.Errorf("[ERROR] Timed out when waiting for minimum roll percentage: %v", err)
-			return resource.NonRetryableError(err)
+		if pctTimeout > 0 && pctComplete > 0 {
+			// Wait for the roll completion.
+			err = awaitReadyRoll(ctx, groupID, rollConfig, rollECS, rollOut, meta.(*Client))
+			if err != nil {
+				err = fmt.Errorf("[ERROR] Timed out when waiting for minimum roll percentage: %v", err)
+				return resource.NonRetryableError(err)
+			}
 		}
 
 		log.Printf("onRoll() -> Successfully rolled group [%v]", groupID)
