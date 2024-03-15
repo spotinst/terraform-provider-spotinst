@@ -13,6 +13,7 @@ const (
 	FieldUpdateNotAllowedPattern = "field [%v] is immutable, cannot be changed post creation"
 	FieldCreateNotAllowedPattern = "field [%v] can only be changed post creation"
 
+	ProviderEnabled      FieldName = "enabled"
 	ProviderToken        FieldName = "token"
 	ProviderAccount      FieldName = "account"
 	ProviderFeatureFlags FieldName = "feature_flags"

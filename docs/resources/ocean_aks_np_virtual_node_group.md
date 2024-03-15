@@ -156,3 +156,31 @@ The following arguments are supported:
     * `min_nics` - (Optional) Minimum number of network interfaces.
     * `min_disk` - (Optional) Minimum number of data disks available.
     * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.
+      <a id="update-policy"></a>
+## Update Policy
+
+* `update_policy` - (Optional)
+  * `should_roll` - (Required) If set to true along with the vng update, roll will be triggered.
+  * `conditioned_roll` - (Optional, Default: false) Spot will perform a cluster Roll in accordance with a relevant modification of the cluster’s settings. When set to true , only specific changes in the cluster’s configuration will trigger a cluster roll (such as availability_zones, max_pods_per_node, enable_node_public_ip, os_disk_size_gb, os_disk_type, os_sku, kubernetes_version, vnet_subnet_ids, pod_subnet_ids, labels, taints and tags).
+  * `roll_config` - (Optional) While used, you can control whether the group should perform a deployment after an update to the configuration.
+    * `batch_min_healthy_percentage` - (Optional, Default: 50) Indicates the threshold of minimum healthy nodes in single batch. If the amount of healthy nodes in single batch is under the threshold, the roll will fail. If exists, the parameter value will be in range of 1-100. In case of null as value, the default value in the backend will be 50%. Value of param should represent the number in percentage (%) of the batch.
+    * `batch_size_percentage` - (Optional) Value as a percent to set the size of a batch in a roll. Valid values are 0-100. In case of null as value, the default value in the backend will be 20%.
+    * `comment` - (Optional) Add a comment description for the roll. The comment is limited to 256 chars and optional.
+    * `respect_pdb` - (Optional, Default: true) During the roll, if the parameter is set to true we honor PDB during the nodes replacement.
+    * `respect_restrict_scale_down` - (Optional, Default: false) During the roll, if the parameter is set to true we honor Restrict Scale Down label during the nodes replacement.
+    * `node_pool_names` - (Optional) List of node pools to be rolled. Each node pool name is a string. nodePoolNames can be null, and cannot be used together with nodeNames and vngIds.
+    * `node_names` - (Optional) List of node names to be rolled. Each identifier is a string. nodeNames can be null, and cannot be used together with nodePoolNames and vngIds.
+    * `vng_ids` - (Optional) List of virtual node group identifiers to be rolled. Each identifier is a string. vngIds can be null, and cannot be used together with nodeNames and nodePoolNames.
+```hcl
+update_policy {
+  should_roll = false
+  conditioned_roll = true
+
+  roll_config {
+    vng_ids = ["ols-12345"]
+    batch_size_percentage = 25
+    batch_min_healthy_percentage = 100
+    respect_pdb = true
+  }
+}
+```

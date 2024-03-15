@@ -5,6 +5,19 @@ ENHANCEMENTS:
 * resource/spotinst_managed_instance_aws: Added support for `snapshot_id`, `encrypted` and `kms_key_id` attributes in `block_device_mappings` block.
 * config: added `enabled` field in provider config as an optional parameter. 
 
+## 1.163.0 (March, 15 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Modified `wait_for_roll_timeout` and `wait_for_roll_percentage` fields as optional.
+
+## 1.162.0 (February, 16 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support to trigger cluster roll on attribute update.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support to trigger vng roll on attribute update.
+
+# 1.161.0 (February, 15 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added support for `is_aggressive_scale_down_enabled` attribute under `autoscale_down` block
+
 # 1.160.2 (February, 08 2024)
 BUG FIX:
 * resource/spotinst_ocean_aws: Fixed `scheduled_task` block to accept null
