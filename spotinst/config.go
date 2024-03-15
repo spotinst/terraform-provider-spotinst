@@ -34,6 +34,7 @@ var ErrNoValidCredentials = errors.New("\n\nNo valid credentials found " +
 	"credentials for Spotinst Provider.")
 
 type Config struct {
+	Enabled      bool
 	Token        string
 	Account      string
 	FeatureFlags string
