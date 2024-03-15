@@ -1,4 +1,10 @@
 ## Unreleased
+
+## Unreleased
+## 1.163.0 (March, 15 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Modified `wait_for_roll_timeout` and `wait_for_roll_percentage` fields as optional.
+
 ## 1.162.0 (February, 16 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support to trigger cluster roll on attribute update.
