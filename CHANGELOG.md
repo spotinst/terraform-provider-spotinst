@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.164.0 (March, 15 2024)
+ENHANCEMENTS:
+* resource/spotinst_managed_instance_aws: Added support for `snapshot_id`, `encrypted` and `kms_key_id` attributes in `block_device_mappings` block.
+* config: added `enabled` field in provider config as an optional parameter. 
+
 # 1.160.2 (February, 08 2024)
 BUG FIX:
 * resource/spotinst_ocean_aws: Fixed `scheduled_task` block to accept null
