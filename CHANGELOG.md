@@ -1,6 +1,10 @@
 ## Unreleased
 
-## Unreleased
+## 1.164.0 (March, 15 2024)
+ENHANCEMENTS:
+* resource/spotinst_managed_instance_aws: Added support for `snapshot_id`, `encrypted` and `kms_key_id` attributes in `block_device_mappings` block.
+* config: added `enabled` field in provider config as an optional parameter. 
+
 ## 1.163.0 (March, 15 2024)
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: Modified `wait_for_roll_timeout` and `wait_for_roll_percentage` fields as optional.

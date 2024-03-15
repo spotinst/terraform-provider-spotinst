@@ -40,4 +40,7 @@ const (
 	VolumeSize          commons.FieldName = "volume_size"
 	VolumeType          commons.FieldName = "volume_type"
 	Throughput          commons.FieldName = "throughput"
+	SnapshotId          commons.FieldName = "snapshot_id"
+	Encrypted           commons.FieldName = "encrypted"
+	KmsKeyId            commons.FieldName = "kms_key_id"
 )
