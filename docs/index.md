@@ -32,6 +32,7 @@ resource "spotinst_elastigroup_aws" "foo" {
 
 The following arguments are supported:
 
+* `enabled` - (Optional) Boolean value to enable or disable the provider. Default is `true`.
 * `token` - (Required) A Personal API Access Token issued by Spotinst. It can be sourced from the `SPOTINST_TOKEN` environment variable.
 * `account` - (Optional) A valid Spotinst account ID. It can be sourced from the `SPOTINST_ACCOUNT` environment variable.
 * `feature_flags` - (Optional) Spotinst SDK feature flags. They can be sourced from the `SPOTINST_FEATURE_FLAGS` environment variable.
