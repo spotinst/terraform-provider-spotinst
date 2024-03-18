@@ -75,17 +75,18 @@ resource "spotinst_ocean_aws" "example" {
   
 
   // region LAUNCH CONFIGURATION
-  image_id                    = "ami-123456"
-  security_groups             = ["sg-987654321"]
-  key_name                    = "fake key"
-  user_data                   = "echo hello world"
-  iam_instance_profile        = "iam-profile"
-  root_volume_size            = 20
-  monitoring                  = true
-  ebs_optimized               = true
-  associate_public_ip_address = true
-  associate_ipv6_address      = true
-  use_as_template_only        = true
+  image_id                                           = "ami-123456"
+  security_groups                                    = ["sg-987654321"]
+  key_name                                           = "fake key"
+  user_data                                          = "echo hello world"
+  iam_instance_profile                               = "iam-profile"
+  root_volume_size                                   = 20
+  monitoring                                         = true
+  ebs_optimized                                      = true
+  associate_public_ip_address                        = true
+  associate_ipv6_address                             = true
+  use_as_template_only                               = true
+  health_check_unhealthy_duration_before_replacement = 60
 
   load_balancers {
     arn  = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
@@ -206,6 +207,7 @@ The following arguments are supported:
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
 * `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
   When set to true, on Ocean resource creation please make sure your custom VNG has an initial_nodes parameter to create nodes for your VNG.
+* `health_check_unhealthy_duration_before_replacement` - (Optional, Default: `120`) The amount of time, in seconds, an existing instance should remain active after becoming unhealthy. After the set time out the instance will be replaced. The minimum value allowed is 60, and it must be a multiple of 60.
 * `load_balancers` - (Optional) - Array of load balancer objects to add to ocean cluster
     * `arn` - (Optional) Required if type is set to `TARGET_GROUP`
     * `name` - (Optional) Required if type is set to `CLASSIC`

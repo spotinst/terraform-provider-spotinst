@@ -898,6 +898,46 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[HealthCheckUnhealthyDurationBeforeReplacement] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		HealthCheckUnhealthyDurationBeforeReplacement,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.HealthCheckUnhealthyDurationBeforeReplacement != nil {
+				value = cluster.Compute.LaunchSpecification.HealthCheckUnhealthyDurationBeforeReplacement
+			}
+			if err := resourceData.Set(string(HealthCheckUnhealthyDurationBeforeReplacement), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(HealthCheckUnhealthyDurationBeforeReplacement), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.Get(string(HealthCheckUnhealthyDurationBeforeReplacement)).(int); ok && v > 0 {
+				cluster.Compute.LaunchSpecification.SetHealthCheckUnhealthyDurationBeforeReplacement(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *int = nil
+			if v, ok := resourceData.Get(string(HealthCheckUnhealthyDurationBeforeReplacement)).(int); ok && v > 0 {
+				value = spotinst.Int(v)
+			}
+			cluster.Compute.LaunchSpecification.SetHealthCheckUnhealthyDurationBeforeReplacement(value)
+			return nil
+		},
+		nil,
+	)
 
 }
 
