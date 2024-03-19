@@ -139,7 +139,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   }
 }
 
-  instancetypes_filters {
+  instance_types_filters {
     categories                =   ["Accelerated_computing", "Compute_optimized"]
     disk_types                =   ["NVMe", "EBS"]
     exclude_families          =   ["t2","R4*"]
