@@ -385,7 +385,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
-					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement ", "60"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement", "60"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
@@ -421,7 +421,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
-					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement ", "120"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement", "120"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
@@ -458,6 +458,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement", "120"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "0"),
@@ -471,15 +472,15 @@ const testLaunchConfigAWSConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
   image_id                    						  = "ami-05a68f290aa68e8f0"
   health_check_unhealthy_duration_before_replacement  = 60
-  security_groups             						= ["sg-a22000e8"]
-  //key_name                  = "my-key.ssh"
-  user_data                   = "echo hello world"
-  //iam_instance_profile      = "iam-profile"
-  associate_public_ip_address = false
-  associate_ipv6_address 	  = false
-  root_volume_size            = 20
-  monitoring                  = true
-  ebs_optimized               = true
+  security_groups             						  = ["sg-a22000e8"]
+  //key_name                  						  = "my-key.ssh"
+  user_data                   						  = "echo hello world"
+  //iam_instance_profile      						  = "iam-profile"
+  associate_public_ip_address 						  = false
+  associate_ipv6_address 	  						  = false
+  root_volume_size            						  = 20
+  monitoring                  					  	  = true
+  ebs_optimized               						  = true
 
   instance_metadata_options {
     http_tokens                 = "required"
@@ -509,21 +510,21 @@ const testLaunchConfigAWSConfig_Create = `
 
 const testLaunchConfigAWSConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id                    = "ami-05a68f290aa68e8f0"
+  image_id                    						  = "ami-05a68f290aa68e8f0"
   health_check_unhealthy_duration_before_replacement  = 120
-  security_groups             = ["sg-a22000e8"]
-  //key_name                  = "my-key-updated.ssh"
-  user_data                   = "echo hello world updated"
-  //iam_instance_profile      = "iam-profile updated"
-  associate_public_ip_address = true
-  associate_ipv6_address 	  = true
-  root_volume_size            = 24
-  monitoring                  = false
-  ebs_optimized               = false
-  use_as_template_only        = false
+  security_groups                                     = ["sg-a22000e8"]
+  //key_name                  						  = "my-key-updated.ssh"
+  user_data                                           = "echo hello world updated"
+  //iam_instance_profile                              = "iam-profile updated"
+  associate_public_ip_address                         = true
+  associate_ipv6_address 	                          = true
+  root_volume_size                                    = 24
+  monitoring                                          = false
+  ebs_optimized                                       = false
+  use_as_template_only                                = false
   instance_metadata_options {
-	  http_tokens = "optional"
-      http_put_response_hop_limit = 20
+	  http_tokens                                     = "optional"
+      http_put_response_hop_limit                     = 20
   }
 
   load_balancers {
@@ -550,6 +551,7 @@ const testLaunchConfigAWSConfig_EmptyFields = `
  // --- LAUNCH CONFIGURATION --------------
   image_id        = "ami-05a68f290aa68e8f0"
   security_groups = ["sg-a22000e8"]
+  health_check_unhealthy_duration_before_replacement  = 120
  // ---------------------------------------
 `
 
