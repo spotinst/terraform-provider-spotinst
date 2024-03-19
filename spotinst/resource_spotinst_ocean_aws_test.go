@@ -385,6 +385,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement ", "60"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "false"),
@@ -420,6 +421,7 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					testCheckOceanAWSExists(&cluster, resourceName),
 					testCheckOceanAWSAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-05a68f290aa68e8f0"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_unhealthy_duration_before_replacement ", "120"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-a22000e8"),
 					resource.TestCheckResourceAttr(resourceName, "associate_public_ip_address", "true"),
@@ -467,8 +469,9 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 
 const testLaunchConfigAWSConfig_Create = `
  // --- LAUNCH CONFIGURATION --------------
-  image_id                    = "ami-05a68f290aa68e8f0"
-  security_groups             = ["sg-a22000e8"]
+  image_id                    						  = "ami-05a68f290aa68e8f0"
+  health_check_unhealthy_duration_before_replacement  = 60
+  security_groups             						= ["sg-a22000e8"]
   //key_name                  = "my-key.ssh"
   user_data                   = "echo hello world"
   //iam_instance_profile      = "iam-profile"
@@ -507,6 +510,7 @@ const testLaunchConfigAWSConfig_Create = `
 const testLaunchConfigAWSConfig_Update = `
  // --- LAUNCH CONFIGURATION --------------
   image_id                    = "ami-05a68f290aa68e8f0"
+  health_check_unhealthy_duration_before_replacement  = 120
   security_groups             = ["sg-a22000e8"]
   //key_name                  = "my-key-updated.ssh"
   user_data                   = "echo hello world updated"
