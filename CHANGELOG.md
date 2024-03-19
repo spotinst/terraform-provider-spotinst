@@ -1,4 +1,7 @@
 ## Unreleased
+# 1.165.0 (March, 19 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added support for `health_check_unhealthy_duration_before_replacement` attribute under launchSpecification.
 
 ## 1.164.0 (March, 15 2024)
 ENHANCEMENTS:
