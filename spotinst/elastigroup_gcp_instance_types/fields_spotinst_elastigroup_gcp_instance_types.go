@@ -2,7 +2,6 @@ package elastigroup_gcp_instance_types
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -151,13 +150,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var value []*gcp.CustomInstance = nil
 			if v, ok := resourceData.GetOk(string(Custom)); ok {
 				if customInstances, err := expandCustom(v); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.InstanceTypes.SetCustom(customInstances)
+					value = customInstances
 				}
 			}
+			elastigroup.Compute.InstanceTypes.SetCustom(value)
 			return nil
 		},
 		nil,
@@ -174,7 +175,7 @@ func flattenCustom(customInstances []*gcp.CustomInstance) []interface{} {
 		result = append(result, m)
 	}
 
-	return []interface{}{result}
+	return result
 }
 
 func expandCustom(data interface{}) ([]*gcp.CustomInstance, error) {
@@ -185,7 +186,7 @@ func expandCustom(data interface{}) ([]*gcp.CustomInstance, error) {
 			m := item.(map[string]interface{})
 			instance := &gcp.CustomInstance{}
 
-			if v, ok := m[string(MemoryGiB)].(int); ok && v >= 10 {
+			if v, ok := m[string(MemoryGiB)].(int); ok && v > 0 {
 				instance.SetMemoryGiB(spotinst.Int(v))
 			}
 
