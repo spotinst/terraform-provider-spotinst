@@ -1,4 +1,8 @@
 ## Unreleased
+## 1.165.1 (March, 27 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_gcp: Fixed `instance_types_custom` object, as it was throwing error while creating the EG.
+
 # 1.165.0 (March, 19 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added support for `health_check_unhealthy_duration_before_replacement` attribute under launchSpecification.
