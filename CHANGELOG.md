@@ -1,4 +1,8 @@
 ## Unreleased
+## 1.166.0 (March, 28 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added support for `caching`, `license_type`, `availability_vs_cost`, `vm_name_prefix`, `od_windows` fields.
+
 ## 1.165.1 (March, 27 2024)
 BUG FIXES:
 * resource/spotinst_elastigroup_gcp: Fixed `instance_types_custom` object, as it was throwing error while creating the EG.
