@@ -502,6 +502,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.availability_vs_cost", "50"),
 				),
 			},
 			{
@@ -518,6 +519,7 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.availability_vs_cost", "100"),
 				),
 			},
 			{
@@ -544,6 +546,7 @@ strategy {
 		perform_at =  "always"
 	}
 	preferred_life_cycle = "spot"
+    availability_vs_cost = "50"
 }
 `
 
@@ -555,6 +558,7 @@ strategy {
 		perform_at =  "always"
 	}
 	preferred_life_cycle = "spot"
+    availability_vs_cost = "100"
 }
 `
 
@@ -911,6 +915,7 @@ func TestAccSpotinstStatefulNodeAzureV3_OSDisk(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os_disk.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk.0.size_gb", "30"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk.0.type", "Standard_LRS"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk.0.caching", "ReadOnly"),
 				),
 			},
 			{
@@ -924,6 +929,7 @@ func TestAccSpotinstStatefulNodeAzureV3_OSDisk(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os_disk.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk.0.size_gb", "40"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk.0.type", "Standard_LRS"),
+					resource.TestCheckResourceAttr(resourceName, "os_disk.0.caching", "ReadWrite"),
 				),
 			},
 			{
@@ -944,6 +950,7 @@ const testOSDiskStatefulNodeAzureV3Config_Create = `
 os_disk {
 	size_gb = 30
 	type = "Standard_LRS"
+    caching = "ReadOnly"
 }
 `
 
@@ -951,6 +958,7 @@ const testOSDiskStatefulNodeAzureV3Config_Update = `
 os_disk {
 	size_gb = 40
 	type = "Standard_LRS"
+	caching = "ReadWrite"
 }
 `
 
