@@ -358,6 +358,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeString,
 						Required: true,
 					},
+					string(OSCaching): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -558,8 +562,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.StatefulNodeAzureLaunchSpecification,
 		VMName,
 		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:          schema.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{string(VMNamePrefix)},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
@@ -591,6 +596,91 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				value = vmName
 			}
 			st.Compute.LaunchSpecification.SetVMName(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[VMNamePrefix] = commons.NewGenericField(
+		commons.StatefulNodeAzureLaunchSpecification,
+		VMNamePrefix,
+		&schema.Schema{
+			Type:          schema.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{string(VMName)},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.VMNamePrefix != nil {
+				value = st.Compute.LaunchSpecification.VMNamePrefix
+			}
+			if err := resourceData.Set(string(VMNamePrefix), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VMNamePrefix), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			if v, ok := resourceData.Get(string(VMNamePrefix)).(string); ok && v != "" {
+				vmNamePrefix := spotinst.String(v)
+				st.Compute.LaunchSpecification.SetVMNamePrefix(vmNamePrefix)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if v, ok := resourceData.Get(string(VMNamePrefix)).(string); ok && v != "" {
+				vmNamePrefix := spotinst.String(v)
+				value = vmNamePrefix
+			}
+			st.Compute.LaunchSpecification.SetVMNamePrefix(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[LicenseType] = commons.NewGenericField(
+		commons.StatefulNodeAzureLaunchSpecification,
+		LicenseType,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if st != nil && st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.LicenseType != nil {
+				value = st.Compute.LaunchSpecification.LicenseType
+			}
+			if err := resourceData.Set(string(LicenseType), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LicenseType), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			if v, ok := resourceData.Get(string(LicenseType)).(string); ok && v != "" {
+				licenseType := spotinst.String(v)
+				st.Compute.LaunchSpecification.SetLicenseType(licenseType)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
+			st := stWrapper.GetStatefulNode()
+			var value *string = nil
+			if v, ok := resourceData.Get(string(LicenseType)).(string); ok && v != "" {
+				licenseType := spotinst.String(v)
+				value = licenseType
+			}
+			st.Compute.LaunchSpecification.SetLicenseType(value)
 			return nil
 		},
 		nil,
@@ -765,6 +855,7 @@ func flattenOSDisk(osd *azure.OSDisk) []interface{} {
 	osDisk := make(map[string]interface{})
 	osDisk[string(OSDiskSizeGB)] = spotinst.IntValue(osd.SizeGB)
 	osDisk[string(OSDiskType)] = spotinst.StringValue(osd.Type)
+	osDisk[string(OSCaching)] = spotinst.StringValue(osd.Caching)
 	return []interface{}{osDisk}
 }
 
@@ -787,6 +878,12 @@ func expandOSDisk(data interface{}) (*azure.OSDisk, error) {
 				osDisk.SetType(spotinst.String(v))
 			} else {
 				osDisk.SetType(nil)
+			}
+
+			if v, ok := m[string(OSCaching)].(string); ok && v != "" {
+				osDisk.SetCaching(spotinst.String(v))
+			} else {
+				osDisk.SetCaching(nil)
 			}
 		}
 		return osDisk, nil
