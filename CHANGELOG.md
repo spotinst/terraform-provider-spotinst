@@ -1,5 +1,5 @@
 ## Unreleased
-## 1.166.0 (March, 29 2024)
+## 1.167.0 (March, 29 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added support for `ephemeral_storage`.
 
