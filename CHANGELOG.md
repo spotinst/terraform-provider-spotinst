@@ -1,4 +1,8 @@
 ## Unreleased
+## 1.166.0 (March, 29 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added support for `ephemeral_storage`.
+
 ## 1.165.1 (March, 27 2024)
 BUG FIXES:
 * resource/spotinst_elastigroup_gcp: Fixed `instance_types_custom` object, as it was throwing error while creating the EG.

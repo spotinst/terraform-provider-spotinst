@@ -151,3 +151,7 @@ const (
 	RootDeviceTypes       commons.FieldName = "root_device_types"
 	VirtualizationTypes   commons.FieldName = "virtualization_types"
 )
+const (
+	EphemeralStorage           commons.FieldName = "ephemeral_storage"
+	EphemeralStorageDeviceName commons.FieldName = "ephemeral_storage_device_name"
+)
