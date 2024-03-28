@@ -10,6 +10,8 @@ const (
 	RevertToSpot        commons.FieldName = "revert_to_spot"
 	PerformAt           commons.FieldName = "perform_at"
 	OptimizationWindows commons.FieldName = "optimization_windows"
+	OdWindows           commons.FieldName = "od_windows"
+	AvailabilityVsCost  commons.FieldName = "availability_vs_cost"
 )
 
 const (

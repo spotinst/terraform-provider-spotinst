@@ -8,6 +8,8 @@ const (
 	UserData       commons.FieldName = "user_data"
 	ShutdownScript commons.FieldName = "shutdown_script"
 	VMName         commons.FieldName = "vm_name"
+	VMNamePrefix   commons.FieldName = "vm_name_prefix"
+	LicenseType    commons.FieldName = "license_type"
 )
 
 // Tags
@@ -36,6 +38,7 @@ const (
 	OSDisk       commons.FieldName = "os_disk"
 	OSDiskSizeGB commons.FieldName = "size_gb"
 	OSDiskType   commons.FieldName = "type"
+	OSCaching    commons.FieldName = "caching"
 )
 
 // Data disk

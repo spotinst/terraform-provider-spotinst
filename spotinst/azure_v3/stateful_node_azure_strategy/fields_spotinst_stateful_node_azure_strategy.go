@@ -89,6 +89,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
+					string(OdWindows): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+					string(AvailabilityVsCost): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -120,13 +129,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
+			var value *azure.Strategy = nil
 			if v, ok := resourceData.GetOk(string(Strategy)); ok {
 				if strategy, err := expandStatefulNodeAzureStrategy(v); err != nil {
 					return err
 				} else {
-					statefulNode.SetStrategy(strategy)
+					value = strategy
 				}
+				statefulNode.SetStrategy(value)
+			} else {
+				statefulNode.SetStrategy(nil)
 			}
+
 			return nil
 		},
 		nil,
@@ -241,6 +255,10 @@ func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 		result[string(DrainingTimeout)] = spotinst.IntValue(strategy.DrainingTimeout)
 	}
 
+	if strategy.AvailabilityVsCost != nil {
+		result[string(AvailabilityVsCost)] = spotinst.IntValue(strategy.AvailabilityVsCost)
+	}
+
 	if strategy.RevertToSpot != nil {
 		result[string(RevertToSpot)] = flattenRevertToSpot(strategy.RevertToSpot)
 	}
@@ -251,6 +269,10 @@ func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 
 	if strategy.OptimizationWindows != nil {
 		result[string(OptimizationWindows)] = spotinst.StringSlice(strategy.OptimizationWindows)
+	}
+
+	if strategy.OdWindows != nil {
+		result[string(OdWindows)] = spotinst.StringSlice(strategy.OdWindows)
 	}
 
 	return []interface{}{result}
@@ -268,6 +290,12 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 
 		if v, ok := m[string(DrainingTimeout)].(int); ok && v > 0 {
 			strategy.SetDrainingTimeout(spotinst.Int(v))
+		}
+
+		if v, ok := m[string(AvailabilityVsCost)].(int); ok && v > 0 {
+			strategy.SetAvailabilityVsCost(spotinst.Int(v))
+		} else {
+			strategy.SetAvailabilityVsCost(nil)
 		}
 
 		if v, ok := m[string(FallbackToOnDemand)].(bool); ok {
@@ -296,13 +324,28 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 		}
 
 		if v, ok := m[string(OptimizationWindows)]; ok {
-			optimizationWindows, err := expandStatefulNodeAzureStrategyOptimizationWindows(v)
+			optimizationWindows, err := expandStatefulNodeAzureStrategyList(v)
 			if err != nil {
 				return nil, err
 			}
 
-			if optimizationWindows != nil {
+			if optimizationWindows != nil && len(optimizationWindows) > 0 {
 				strategy.SetOptimizationWindows(optimizationWindows)
+			} else {
+				strategy.SetOptimizationWindows(nil)
+			}
+		}
+
+		if v, ok := m[string(OdWindows)]; ok {
+			odWindows, err := expandStatefulNodeAzureStrategyList(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if odWindows != nil && len(odWindows) > 0 {
+				strategy.SetOdWindows(odWindows)
+			} else {
+				strategy.SetOdWindows(nil)
 			}
 		}
 
@@ -340,14 +383,14 @@ func expandStatefulNodeAzureStrategySignals(data interface{}) ([]*azure.Signal, 
 	return nil, nil
 }
 
-func expandStatefulNodeAzureStrategyOptimizationWindows(data interface{}) ([]string, error) {
+func expandStatefulNodeAzureStrategyList(data interface{}) ([]string, error) {
 	list := data.([]interface{})
 	if list != nil && len(list) > 0 {
 		result := make([]string, 0, len(list))
 
 		for _, v := range list {
-			if optimizationWindow, ok := v.(string); ok && optimizationWindow != "" {
-				result = append(result, optimizationWindow)
+			if value, ok := v.(string); ok && len(value) > 0 {
+				result = append(result, value)
 			}
 		}
 
