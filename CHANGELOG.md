@@ -1,4 +1,8 @@
 ## Unreleased
+## 1.168.0 (March, 29 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws_launch_spec: `ephemeral_storage_device_name` under `ephemeral_storage`, defaults to correct values when undefined.
+
 ## 1.167.0 (March, 29 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added support for `ephemeral_storage`.

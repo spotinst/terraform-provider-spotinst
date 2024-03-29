@@ -3052,8 +3052,10 @@ func expandEphemeralStorage(data interface{}) (*aws.EphemeralStorage, error) {
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(EphemeralStorageDeviceName)].(string); ok {
+			if v, ok := m[string(EphemeralStorageDeviceName)].(string); ok && v != "" {
 				ephemeralStorage.SetDeviceName(spotinst.String(v))
+			} else {
+				ephemeralStorage.SetDeviceName(nil)
 			}
 		}
 		return ephemeralStorage, nil
