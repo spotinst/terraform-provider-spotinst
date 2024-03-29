@@ -92,6 +92,10 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
       }
     }
   }
+  
+  ephemeral_storage{
+    ephemeral_storage_device_name = "/dev/xvda"
+  }
 
   resource_limits {
     max_instance_count = 4
@@ -267,6 +271,8 @@ The architectures that come from the Virtual Node Group's images will be taken i
     * `min_vcpu` - (Optional, >=0) Minimum number of vcpus available.
     * `root_device_types` - (Optional) The filtered instance types will have a root device types from this list. Valid values: `ebs`, or `instance-store`.
     * `virtualization_types` - (Optional) The filtered instance types will support at least one of the virtualization types from this list. Valid values: `hvm`, `paravirtual`.
+* `ephemeral_storage` - (Optional)
+    * `ephemeral_storage_device_name` - (Optional) Specify an alternative device name from which ephemeral storage calculations should be derived. This parameter is used when the ephemeral storage should not utilize the root device. Provide the device name configured in the VNG's BDM or AMI's BDM that differs from the default root device.
 
 
 <a id="update-policy"></a>
