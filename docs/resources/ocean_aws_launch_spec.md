@@ -94,7 +94,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   }
   
   ephemeral_storage{
-    ephemeral_storage_device_name = "/dev/xvdb"
+    ephemeral_storage_device_name = "/dev/xvda"
   }
 
   resource_limits {
