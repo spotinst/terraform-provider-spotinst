@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.168.1 (April, 02 2024)
+BUG FIXES:
+* Fix the release Github Actions failure caused by Go version upgrade.
+
 ## 1.168.0 (April, 02 2024)
 ENHANCEMENTS:
 * Upgraded Go version to 1.20 and tfproviderlint package to v0.29.0
