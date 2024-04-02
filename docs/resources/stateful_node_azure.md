@@ -53,7 +53,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   shutdown_script      = ""
   user_data            = ""
   vm_name              = "VMName"
-  vm_name_prefix       = "VMNamePrefix
+  vm_name_prefix       = "VMNamePrefix"
   license_type         = "SLES_BYOS"
   // -------------------------------------------------------------------
 

@@ -1,4 +1,9 @@
 ## Unreleased
+
+## 1.168.0 (April, 02 2024)
+ENHANCEMENTS:
+* Upgraded Go version to 1.20 and tfproviderlint package to v0.29.0
+
 ## 1.167.1 (March, 29 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws_launch_spec: Fixed `ephemeral_storage_device_name` under `ephemeral_storage`, defaults to correct values when not configured.
