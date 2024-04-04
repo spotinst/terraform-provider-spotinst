@@ -182,6 +182,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
 					resource.TestCheckResourceAttr(resourceName, "security_group_ids.#", "1"),
@@ -197,6 +198,7 @@ func TestAccSpotinstOceanECS_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.0", "subnet-4333093a"),
 					resource.TestCheckResourceAttr(resourceName, "subnet_ids.1", "subnet-8ab89cc1"),
@@ -216,6 +218,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   cluster_name = "%v"
   name = "%v"
   region = "us-west-2"
+  image_id = "ami-0744209f3658b0412"
 
   //max_size = 1
   //min_size = 0
@@ -240,6 +243,7 @@ resource "` + string(commons.OceanECSResourceName) + `" "%v" {
   cluster_name = "%v"
   name = "%v"
   region = "us-west-2"
+  image_id = "ami-0744209f3658b0412"
 
   //max_size = 1
   //min_size = 0

@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.168.2 (April, 04 2024)
+NOTES:
+* Added `image_id` in config for unit tests of `resource_spotinst_ocean_ecs_test`.
+
 ## 1.168.1 (April, 02 2024)
 BUG FIXES:
 * Fix the release Github Actions failure caused by Go version upgrade.
