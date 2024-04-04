@@ -284,6 +284,7 @@ func TestAccSpotinstOceanECS_InstanceTypesWhitelist(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "t1.micro"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.1", "m1.small"),
@@ -298,6 +299,7 @@ func TestAccSpotinstOceanECS_InstanceTypesWhitelist(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.0", "t1.micro"),
 				),
@@ -311,6 +313,7 @@ func TestAccSpotinstOceanECS_InstanceTypesWhitelist(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "whitelist.#", "0"),
 				),
 			},
@@ -320,13 +323,16 @@ func TestAccSpotinstOceanECS_InstanceTypesWhitelist(t *testing.T) {
 
 const testInstanceTypesWhitelistECSConfig_Create = `
  whitelist = ["t1.micro","m1.small"]
+ image_id = "ami-0744209f3658b0412"
 `
 
 const testInstanceTypesWhitelistECSConfig_Update = `
  whitelist = ["t1.micro"]
+ image_id = "ami-0744209f3658b0412"
 `
 
 const testInstanceTypesWhitelistECSConfig_EmptyFields = `
+ image_id = "ami-0744209f3658b0412"
 `
 
 // endregion
@@ -496,6 +502,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.cooldown", "180"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "1"),
@@ -525,6 +532,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.cooldown", "240"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.down.#", "1"),
@@ -548,6 +556,7 @@ func TestAccSpotinstOceanECS_Autoscaler(t *testing.T) {
 
 const testScalerConfig_Create = `
 // --- AUTOSCALER -----------------
+image_id = "ami-0744209f3658b0412"
 autoscaler {
  cooldown = 180
  headroom {
@@ -573,6 +582,7 @@ autoscaler {
 
 const testScalerConfig_Update = `
 // --- AUTOSCALER -----------------
+image_id = "ami-0744209f3658b0412"
 autoscaler {
  cooldown = 240
  headroom {
@@ -621,6 +631,7 @@ func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 				),
@@ -635,6 +646,7 @@ func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 				),
@@ -649,6 +661,7 @@ func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "-1"),
 				),
@@ -658,6 +671,7 @@ func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 }
 
 const testStrategy_Create = `
+ image_id = "ami-0744209f3658b0412"
 // --- STRATEGY -----------------
 	draining_timeout = 120
 	spot_percentage  = 100
@@ -665,6 +679,7 @@ const testStrategy_Create = `
 `
 
 const testStrategy_Update = `
+ image_id = "ami-0744209f3658b0412"
 // --- STRATEGY -----------------
 	draining_timeout = 240
 	spot_percentage  = 50
@@ -672,6 +687,7 @@ const testStrategy_Update = `
 `
 
 const testStrategy_EmptyFields = `
+ image_id = "ami-0744209f3658b0412"
 // --- STRATEGY -----------------
 	spot_percentage  = null
 // --------------------------------
@@ -702,6 +718,7 @@ func TestAccSpotinstOceanECS_Scheduling(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.#", "1"),
@@ -722,6 +739,7 @@ func TestAccSpotinstOceanECS_Scheduling(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.shutdown_hours.0.time_windows.#", "2"),
@@ -741,6 +759,7 @@ func TestAccSpotinstOceanECS_Scheduling(t *testing.T) {
 					fieldsToAppend: testScheduling_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.#", "0"),
@@ -751,6 +770,7 @@ func TestAccSpotinstOceanECS_Scheduling(t *testing.T) {
 }
 
 const testScheduling_Create = `
+ image_id = "ami-0744209f3658b0412"
  // --- Scheduling --------------------
  scheduled_task {
     shutdown_hours {
@@ -767,6 +787,7 @@ const testScheduling_Create = `
 `
 
 const testScheduling_Update = `
+ image_id = "ami-0744209f3658b0412"
  // --- Scheduling --------------------
   scheduled_task   {
     shutdown_hours  {
@@ -783,6 +804,7 @@ const testScheduling_Update = `
 `
 
 const testScheduling_EmptyFields = `
+ image_id = "ami-0744209f3658b0412"
  // --- Scheduling --------------------
  // ---------------------------------
 `
@@ -812,6 +834,7 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "false"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "true"),
@@ -830,6 +853,7 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.should_roll", "true"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.0.conditioned_roll", "false"),
@@ -848,6 +872,7 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "update_policy.#", "0"),
 				),
 			},
@@ -856,6 +881,7 @@ func TestAccSpotinstOceanECS_UpdatePolicy(t *testing.T) {
 }
 
 const testUpdatePolicyECSClusterConfig_Create = `
+ image_id = "ami-0744209f3658b0412"
 // --- UPDATE POLICY ----------------
 update_policy {
  should_roll = false
@@ -869,6 +895,7 @@ update_policy {
 `
 
 const testUpdatePolicyECSClusterConfig_Update = `
+ image_id = "ami-0744209f3658b0412"
 // --- UPDATE POLICY ----------------
 update_policy {
  should_roll = true
@@ -882,6 +909,7 @@ update_policy {
 `
 
 const testUpdatePolicyECSClusterConfig_EmptyFields = `
+ image_id = "ami-0744209f3658b0412"
 // --- UPDATE POLICY ----------------
 // ----------------------------------
 `
@@ -910,6 +938,7 @@ func TestAccSpotinstOceanECS_OptimizeImages(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "optimize_images.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.perform_at", "timeWindow"),
 					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.time_windows.#", "2"),
@@ -927,6 +956,7 @@ func TestAccSpotinstOceanECS_OptimizeImages(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "optimize_images.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.perform_at", "never"),
 					resource.TestCheckResourceAttr(resourceName, "optimize_images.0.should_optimize_ecs_ami", "false"),
@@ -937,6 +967,7 @@ func TestAccSpotinstOceanECS_OptimizeImages(t *testing.T) {
 }
 
 const testOptimizeImagesECSConfig_Create = `
+ image_id = "ami-0744209f3658b0412"
 // --- OPTIMIZE IMAGES ----------------
   optimize_images {
    perform_at = "timeWindow"
@@ -947,6 +978,7 @@ const testOptimizeImagesECSConfig_Create = `
 `
 
 const testOptimizeImagesECSConfig_Update = `
+ image_id = "ami-0744209f3658b0412"
 // --- OPTIMIZE IMAGES ----------------
   optimize_images {
    perform_at = "never"
@@ -978,6 +1010,7 @@ func TestAccSpotinstOceanECS_Logging(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "logging.0.export.0.s3.#", "1"),
@@ -994,6 +1027,7 @@ func TestAccSpotinstOceanECS_Logging(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
+					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0744209f3658b0412"),
 					resource.TestCheckResourceAttr(resourceName, "logging.#", "0"),
 				),
 			},
@@ -1002,6 +1036,7 @@ func TestAccSpotinstOceanECS_Logging(t *testing.T) {
 }
 
 const testLogging_Create = `
+ image_id = "ami-0744209f3658b0412"
  // --- LOGGING -----------------
   logging {
     export {
@@ -1012,6 +1047,8 @@ const testLogging_Create = `
   }
 `
 
-const testLogging_EmptyFields = ``
+const testLogging_EmptyFields = `
+ image_id = "ami-0744209f3658b0412"
+`
 
 // endregion
