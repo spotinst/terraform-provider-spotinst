@@ -354,7 +354,6 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-082b5a644766e0e6f"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"),
 					resource.TestCheckResourceAttr(resourceName, "key_pair", "spotinst-labs-oregon"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
@@ -383,7 +382,6 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanECSExists(&cluster, resourceName),
 					testCheckOceanECSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "image_id", "ami-0f2176987ee50226e"),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"),
 					resource.TestCheckResourceAttr(resourceName, "key_pair", ""),
 					resource.TestCheckResourceAttr(resourceName, "user_data", "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="),
@@ -413,7 +411,6 @@ func TestAccSpotinstOceanECS_LaunchSpecification(t *testing.T) {
 const testLaunchSpecECSConfig_Create = `
 // --- LAUNCH SPECIFICATION --------------
 
- image_id 					 = "ami-082b5a644766e0e6f"
  iam_instance_profile 		 = "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"
  key_pair 					 = "spotinst-labs-oregon"
  user_data 					 = "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
@@ -441,7 +438,6 @@ block_device_mappings {
 const testLaunchSpecECSConfig_Update = `
 // --- LAUNCH SPECIFICATION --------------
 
- image_id 					 = "ami-0f2176987ee50226e"
  iam_instance_profile 		 = "arn:aws:iam::842422002533:instance-profile/ecsInstanceRole"
  key_pair 					 = ""
  user_data					 = "IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1vcmZyb21FbnZpcm9ubWVudF9CYXRjaF84NTJhNjcwYS1hYTczLTNkNWQtOTU3Ni0xNDdhMjZkNDM0MDEgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZw=="
