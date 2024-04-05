@@ -2,7 +2,7 @@
 
 ## 1.168.3 (April, 05 2024)
 NOTES:
-* Removed redundant declaration of `image_id` in testcases.
+* Removed redundant declaration of `image_id` in testcases of `resource_spotinst_ocean_ecs_test`.
 
 ## 1.168.2 (April, 04 2024)
 NOTES:
