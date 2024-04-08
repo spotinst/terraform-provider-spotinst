@@ -920,21 +920,24 @@ func TestAccSpotinstOceanAKSNP_Filters(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "filters.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "filters.0.min_vcpu", "4"),
-					resource.TestCheckResourceAttr(resourceName, "filters.0.max_vcpu", "32"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.max_vcpu", "128"),
 					resource.TestCheckResourceAttr(resourceName, "filters.0.min_memory_gib", "4"),
-					resource.TestCheckResourceAttr(resourceName, "filters.0.max_memory_gib", "32"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.max_memory_gib", "128"),
 					resource.TestCheckResourceAttr(resourceName, "filters.0.architectures.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "filters.0.architectures.0", "AMD64"),
 					resource.TestCheckResourceAttr(resourceName, "filters.0.architectures.1", "X86_64"),
 					resource.TestCheckResourceAttr(resourceName, "filters.0.accelerated_networking", "Enabled"),
 					resource.TestCheckResourceAttr(resourceName, "filters.0.disk_performance", "Premium"),
-					//resource.TestCheckResourceAttr(resourceName, "filters.0.min_gpu", "1"),
-					//resource.TestCheckResourceAttr(resourceName, "filters.0.max_gpu", "2"),
-					resource.TestCheckResourceAttr(resourceName, "filters.0.min_nics", "2"),
-					resource.TestCheckResourceAttr(resourceName, "filters.0.vm_types.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "filters.0.vm_types.0", "computeOptimized"),
-					resource.TestCheckResourceAttr(resourceName, "filters.0.vm_types.1", "generalPurpose"),
-					resource.TestCheckResourceAttr(resourceName, "filters.0.min_disk", "2"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.min_gpu", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.max_gpu", "8"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.min_nics", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.vm_types.#", "3"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.vm_types.0", "GPU"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.vm_types.1", "computeOptimized"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.vm_types.2", "generalPurpose"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.min_disk", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.gpu_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "filters.0.gpu_types.0", "nvidia-tesla-v100"),
 				),
 			},
 			{
@@ -981,17 +984,18 @@ const testFiltersOceanAKSNPConfig_Update = `
 
   filters {
     min_vcpu               = 4
-    max_vcpu               = 32
+    max_vcpu               = 128
     min_memory_gib         = 4
-    max_memory_gib         = 32
+    max_memory_gib         = 128
     architectures          = ["X86_64","AMD64"]
     accelerated_networking = "Enabled"
     disk_performance       = "Premium"
-    //min_gpu                = 1
-    //max_gpu                = 2
-    min_nics               = 2
-    vm_types               = ["generalPurpose","computeOptimized"]
-    min_disk               = 2
+    min_gpu                = 1
+    max_gpu                = 8
+    min_nics               = 1
+    vm_types               = ["generalPurpose","computeOptimized","GPU"]
+    min_disk               = 1
+	gpu_types 			   = ["nvidia-tesla-v100"]
   }
 
   // ----------------------------------------------------------------------
