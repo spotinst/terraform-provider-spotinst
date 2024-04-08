@@ -302,7 +302,7 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 	}
 
 	if v, ok := m[string(GpuTypes)]; ok {
-		gpuTypes, err := expandGpuTypesFiltersList(v)
+		gpuTypes, err := expandVmSizesFiltersList(v)
 		if err != nil {
 			return nil, err
 		}
@@ -325,18 +325,6 @@ func expandVmSizesFiltersList(data interface{}) ([]string, error) {
 	for _, v := range list {
 		if vmSizeList, ok := v.(string); ok && vmSizeList != "" {
 			result = append(result, vmSizeList)
-		}
-	}
-	return result, nil
-}
-
-func expandGpuTypesFiltersList(data interface{}) ([]string, error) {
-	list := data.(*schema.Set).List()
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if gpuTypesList, ok := v.(string); ok && gpuTypesList != "" {
-			result = append(result, gpuTypesList)
 		}
 	}
 	return result, nil
