@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.169.0 (April, 08 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support for `gpu_types` field in `filters` block.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `gpu_types` field in `filters` block.
+
 ## 1.168.3 (April, 05 2024)
 NOTES:
 * Removed redundant declaration of `image_id` in testcases of `resource_spotinst_ocean_ecs_test`.
