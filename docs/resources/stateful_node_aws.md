@@ -85,6 +85,9 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
       volume_size           = 50
       iops                  = 100
       throughput            = 125
+      encrypted             = true
+      kms_key_id            = "kms-key-01"
+      snapshot_id           = "snapshot_id"
     }
   }
 
@@ -156,6 +159,9 @@ Default: default
         * `iops` - (Optional) The amount of provisioned [IOPS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-io-characteristics.html). This must be set with a `volume_type` of `"io1"`.
         * `delete_on_termination` - (Optional) Whether the volume should be destroyed on instance termination.
         * `throughput`- (Optional) The throughput that the volume supports, in MiB/s. Minimum value of 125. Maximum value of 1000. Valid only if `volume_type` is set to `"gp3"`.
+        * `encrypted` - (Optional) Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
+        * `kms_key_id` - (Optional) ID for a user managed CMK under which the EBS Volume is encrypted.
+        * `snapshot_id` - (Optional) The Snapshot ID to mount.
 
 Usage:
 
@@ -168,6 +174,9 @@ block_device_mappings {
     volume_type               = "gp3"
     volume_size               = 100
     throughput                = 1000
+    encrypted                 = false
+    kms_key_id                = "kms-key-01"
+    snapshot_id               = "snapshot_id"
   }
 }
 ```      

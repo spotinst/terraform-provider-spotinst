@@ -598,6 +598,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
+
+								string(Encrypted): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+
+								string(KmsKeyId): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(SnapshotId): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
 							},
 						},
 					},
@@ -846,6 +861,20 @@ func expandEBS(data interface{}) (*aws.EBS, error) {
 		ebs.SetThroughput(spotinst.Int(v))
 	}
 
+	var encrypted = spotinst.Bool(false)
+	if v, ok := m[string(Encrypted)].(bool); ok {
+		encrypted = spotinst.Bool(v)
+	}
+	ebs.SetEncrypted(encrypted)
+
+	if v, ok := m[string(KmsKeyId)].(string); ok && v != "" {
+		ebs.SetKmsKeyId(spotinst.String(v))
+	}
+
+	if v, ok := m[string(SnapshotId)].(string); ok && v != "" {
+		ebs.SetSnapshotId(spotinst.String(v))
+	}
+
 	return ebs, nil
 }
 
@@ -906,6 +935,9 @@ func flattenEBS(ebs *aws.EBS) []interface{} {
 	e[string(VolumeType)] = spotinst.StringValue(ebs.VolumeType)
 	e[string(VolumeSize)] = spotinst.IntValue(ebs.VolumeSize)
 	e[string(Throughput)] = spotinst.IntValue(ebs.Throughput)
+	e[string(Encrypted)] = spotinst.BoolValue(ebs.Encrypted)
+	e[string(KmsKeyId)] = spotinst.StringValue(ebs.KmsKeyId)
+	e[string(SnapshotId)] = spotinst.StringValue(ebs.SnapshotID)
 	return []interface{}{e}
 }
 

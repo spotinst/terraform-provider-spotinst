@@ -12,6 +12,13 @@ import (
 func Provider() *schema.Provider {
 	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
+			string(commons.ProviderEnabled): {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Enable or disable the Spotinst provider",
+			},
+
 			string(commons.ProviderToken): {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -117,10 +124,21 @@ func Provider() *schema.Provider {
 
 func providerConfigure(d *schema.ResourceData, terraformVersion string) (interface{}, diag.Diagnostics) {
 	config := Config{
+		Enabled:          d.Get(string(commons.ProviderEnabled)).(bool),
 		Token:            d.Get(string(commons.ProviderToken)).(string),
 		Account:          d.Get(string(commons.ProviderAccount)).(string),
 		FeatureFlags:     d.Get(string(commons.ProviderFeatureFlags)).(string),
 		terraformVersion: terraformVersion,
+	}
+
+	if config.Enabled == false {
+		return nil, diag.Diagnostics{
+			{
+				Severity: diag.Warning,
+				Summary:  "Provider is disabled",
+				Detail:   "The Spotinst provider is currently disabled.",
+			},
+		}
 	}
 
 	return config.Client()
