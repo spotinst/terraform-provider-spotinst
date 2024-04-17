@@ -100,6 +100,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
+
+					string(GpuTypes): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
 				},
 			},
 		},
@@ -295,6 +301,20 @@ func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
 		}
 	}
 
+	if v, ok := m[string(GpuTypes)]; ok {
+		gpuTypes, err := expandVmSizesFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if gpuTypes != nil && len(gpuTypes) > 0 {
+			filters.SetGpuTypes(gpuTypes)
+		} else {
+			if nullify {
+				filters.SetGpuTypes(nil)
+			}
+		}
+	}
+
 	return filters, nil
 }
 
@@ -370,6 +390,10 @@ func flattenFilters(filters *azure_np.Filters) []interface{} {
 
 		if filters.VmTypes != nil {
 			result[string(VmTypes)] = filters.VmTypes
+		}
+
+		if filters.GpuTypes != nil {
+			result[string(GpuTypes)] = filters.GpuTypes
 		}
 
 		if len(result) > 0 {

@@ -18,4 +18,5 @@ const (
 	MinNICs               commons.FieldName = "min_nics"
 	MinDisk               commons.FieldName = "min_disk"
 	VmTypes               commons.FieldName = "vm_types"
+	GpuTypes              commons.FieldName = "gpu_types"
 )

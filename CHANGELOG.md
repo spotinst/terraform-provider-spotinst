@@ -1,5 +1,23 @@
 ## Unreleased
 
+## 1.169.1 (April, 10 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np_virtual_node_group: Fixed `labels` failing to update.
+* resource/spotinst_ocean_aws: Fixed drift by adding default value for `health_check_unhealthy_duration_before_replacement`.
+
+## 1.169.0 (April, 08 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support for `gpu_types` field in `filters` block.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `gpu_types` field in `filters` block.
+
+## 1.168.3 (April, 05 2024)
+NOTES:
+* Removed redundant declaration of `image_id` in testcases of `resource_spotinst_ocean_ecs_test`.
+
+## 1.168.2 (April, 04 2024)
+NOTES:
+* Added `image_id` in config for unit tests of `resource_spotinst_ocean_ecs_test`.
+
 ## 1.168.1 (April, 02 2024)
 BUG FIXES:
 * Fix the release Github Actions failure caused by Go version upgrade.
