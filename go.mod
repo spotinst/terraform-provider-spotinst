@@ -1,6 +1,6 @@
 module github.com/spotinst/terraform-provider-spotinst
 
-go 1.20
+go 1.18
 
 require (
 	github.com/bflad/tfproviderlint v0.29.0
@@ -13,7 +13,9 @@ require (
 	github.com/spotinst/spotinst-sdk-go v1.340.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 )
-replace github.com/spotinst/spotinst-sdk-go  v1.339.0  => /home/ubuntu/spotinst-sdk-go
+
+replace github.com/spotinst/spotinst-sdk-go v1.340.0 => /home/ubuntu/spotinst-sdk-go
+
 require (
 	cloud.google.com/go v0.65.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
@@ -85,3 +87,5 @@ require (
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
+
+replace github.com/spotinst/spotinst-sdk-go v1.339.0 => /home/ubuntu/spotinst-sdk-go
