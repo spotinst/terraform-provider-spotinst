@@ -3,6 +3,7 @@ package spotinst
 import (
 	"errors"
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 	stdlog "log"
 	"strings"
 
@@ -53,6 +54,7 @@ type Client struct {
 	statefulNode    stateful.Service
 	organization    organization.Service
 	account         account.Service
+	oceancd         oceancd.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
