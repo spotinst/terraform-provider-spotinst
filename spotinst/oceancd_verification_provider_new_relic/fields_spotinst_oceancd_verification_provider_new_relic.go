@@ -99,52 +99,69 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 func expandNewRelic(data interface{}) (*oceancd.NewRelic, error) {
 	newRelic := &oceancd.NewRelic{}
-	list := data.(*schema.Set).List()
-	if len(list) > 0 {
-		if list != nil && list[0] != nil {
-			result := list[0].(map[string]interface{})
-
-			if v, ok := result[string(AccountId)].(string); ok && v != "" {
-				newRelic.SetAccountId(spotinst.String(v))
-			} else {
-				newRelic.SetAccountId(nil)
-			}
-
-			if v, ok := result[string(BaseUrlNerdGraph)].(string); ok && v != "" {
-				newRelic.SetBaseUrlNerdGraph(spotinst.String(v))
-			} else {
-				newRelic.SetBaseUrlNerdGraph(nil)
-			}
-
-			if v, ok := result[string(BaseUrlRest)].(string); ok && v != "" {
-				newRelic.SetBaseUrlRest(spotinst.String(v))
-			} else {
-				newRelic.SetBaseUrlRest(nil)
-			}
-
-			if v, ok := result[string(PersonalApiKey)].(string); ok && v != "" {
-				newRelic.SetPersonalApiKey(spotinst.String(v))
-			} else {
-				newRelic.SetPersonalApiKey(nil)
-			}
-
-			if v, ok := result[string(Region)].(string); ok && v != "" {
-				newRelic.SetRegion(spotinst.String(v))
-			} else {
-				newRelic.SetRegion(nil)
-			}
-		}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
 		return newRelic, nil
 	}
-	return nil, nil
+	result := list[0].(map[string]interface{})
+
+	if v, ok := result[string(AccountId)].(string); ok && v != "" {
+		newRelic.SetAccountId(spotinst.String(v))
+	} else {
+		newRelic.SetAccountId(nil)
+	}
+
+	if v, ok := result[string(BaseUrlNerdGraph)].(string); ok && v != "" {
+		newRelic.SetBaseUrlNerdGraph(spotinst.String(v))
+	} else {
+		newRelic.SetBaseUrlNerdGraph(nil)
+	}
+
+	if v, ok := result[string(BaseUrlRest)].(string); ok && v != "" {
+		newRelic.SetBaseUrlRest(spotinst.String(v))
+	} else {
+		newRelic.SetBaseUrlRest(nil)
+	}
+
+	if v, ok := result[string(PersonalApiKey)].(string); ok && v != "" {
+		newRelic.SetPersonalApiKey(spotinst.String(v))
+	} else {
+		newRelic.SetPersonalApiKey(nil)
+	}
+
+	if v, ok := result[string(Region)].(string); ok && v != "" {
+		newRelic.SetRegion(spotinst.String(v))
+	} else {
+		newRelic.SetRegion(nil)
+	}
+
+	return newRelic, nil
 }
 
-func flattenNewRelic(newRelic_vp *oceancd.NewRelic) []interface{} {
-	newRelic := make(map[string]interface{})
-	newRelic[string(AccountId)] = spotinst.StringValue(newRelic_vp.AccountId)
-	newRelic[string(BaseUrlNerdGraph)] = spotinst.StringValue(newRelic_vp.BaseUrlNerdGraph)
-	newRelic[string(BaseUrlRest)] = spotinst.StringValue(newRelic_vp.BaseUrlRest)
-	newRelic[string(PersonalApiKey)] = spotinst.StringValue(newRelic_vp.PersonalApiKey)
-	newRelic[string(Region)] = spotinst.StringValue(newRelic_vp.Region)
-	return []interface{}{newRelic}
+func flattenNewRelic(newRelic *oceancd.NewRelic) []interface{} {
+	var out []interface{}
+
+	if newRelic != nil {
+		result := make(map[string]interface{})
+
+		if newRelic.AccountId != nil {
+			result[string(AccountId)] = spotinst.StringValue(newRelic.AccountId)
+		}
+		if newRelic.BaseUrlNerdGraph != nil {
+			result[string(BaseUrlNerdGraph)] = spotinst.StringValue(newRelic.BaseUrlNerdGraph)
+		}
+		if newRelic.BaseUrlRest != nil {
+			result[string(BaseUrlRest)] = spotinst.StringValue(newRelic.BaseUrlRest)
+		}
+		if newRelic.PersonalApiKey != nil {
+			result[string(PersonalApiKey)] = spotinst.StringValue(newRelic.PersonalApiKey)
+		}
+		if newRelic.Region != nil {
+			result[string(Region)] = spotinst.StringValue(newRelic.Region)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }

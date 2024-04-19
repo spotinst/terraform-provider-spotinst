@@ -76,21 +76,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 }
 
 func expandPrometheus(data interface{}) (*oceancd.Prometheus, error) {
-	if list := data.([]interface{}); len(list) > 0 {
-		prometheus := &oceancd.Prometheus{}
 
-		if list[0] != nil {
-			m := list[0].(map[string]interface{})
-
-			if v, ok := m[string(Address)].(string); ok && v != "" {
-				prometheus.SetAddress(spotinst.String(v))
-			} else {
-				prometheus.SetAddress(nil)
-			}
-		}
+	prometheus := &oceancd.Prometheus{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
 		return prometheus, nil
 	}
-	return nil, nil
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(Address)].(string); ok && v != "" {
+		prometheus.SetAddress(spotinst.String(v))
+	} else {
+		prometheus.SetAddress(nil)
+	}
+
+	return prometheus, nil
 }
 
 func flattenPrometheus(prometheus *oceancd.Prometheus) []interface{} {

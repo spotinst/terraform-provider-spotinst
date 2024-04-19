@@ -89,38 +89,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 func expandJenkins(data interface{}) (*oceancd.Jenkins, error) {
 	jenkins := &oceancd.Jenkins{}
-	list := data.(*schema.Set).List()
-	if len(list) > 0 {
-		if list != nil && list[0] != nil {
-			result := list[0].(map[string]interface{})
-
-			if v, ok := result[string(ApiToken)].(string); ok && v != "" {
-				jenkins.SetApiToken(spotinst.String(v))
-			} else {
-				jenkins.SetApiToken(nil)
-			}
-
-			if v, ok := result[string(BaseUrl)].(string); ok && v != "" {
-				jenkins.SetBaseUrl(spotinst.String(v))
-			} else {
-				jenkins.SetBaseUrl(nil)
-			}
-
-			if v, ok := result[string(UserName)].(string); ok && v != "" {
-				jenkins.SetUserName(spotinst.String(v))
-			} else {
-				jenkins.SetUserName(nil)
-			}
-		}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
 		return jenkins, nil
 	}
-	return nil, nil
+	result := list[0].(map[string]interface{})
+
+	if v, ok := result[string(ApiToken)].(string); ok && v != "" {
+		jenkins.SetApiToken(spotinst.String(v))
+	} else {
+		jenkins.SetApiToken(nil)
+	}
+
+	if v, ok := result[string(BaseUrl)].(string); ok && v != "" {
+		jenkins.SetBaseUrl(spotinst.String(v))
+	} else {
+		jenkins.SetBaseUrl(nil)
+	}
+
+	if v, ok := result[string(UserName)].(string); ok && v != "" {
+		jenkins.SetUserName(spotinst.String(v))
+	} else {
+		jenkins.SetUserName(nil)
+	}
+
+	return jenkins, nil
 }
 
-func flattenJenkins(jenkins_vp *oceancd.Jenkins) []interface{} {
-	jenkins := make(map[string]interface{})
-	jenkins[string(ApiToken)] = spotinst.StringValue(jenkins_vp.ApiToken)
-	jenkins[string(BaseUrl)] = spotinst.StringValue(jenkins_vp.BaseUrl)
-	jenkins[string(UserName)] = spotinst.StringValue(jenkins_vp.UserName)
-	return []interface{}{jenkins}
+func flattenJenkins(jenkins *oceancd.Jenkins) []interface{} {
+	var out []interface{}
+
+	if jenkins != nil {
+		result := make(map[string]interface{})
+
+		if jenkins.ApiToken != nil {
+			result[string(ApiToken)] = spotinst.StringValue(jenkins.ApiToken)
+		}
+		if jenkins.BaseUrl != nil {
+			result[string(BaseUrl)] = spotinst.StringValue(jenkins.BaseUrl)
+		}
+		if jenkins.UserName != nil {
+			result[string(UserName)] = spotinst.StringValue(jenkins.UserName)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }

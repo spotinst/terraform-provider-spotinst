@@ -89,38 +89,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 func expandDataDog(data interface{}) (*oceancd.DataDog, error) {
 	datadog := &oceancd.DataDog{}
-	list := data.(*schema.Set).List()
-	if len(list) > 0 {
-		if list != nil && list[0] != nil {
-			result := list[0].(map[string]interface{})
-
-			if v, ok := result[string(Address)].(string); ok && v != "" {
-				datadog.SetAddress(spotinst.String(v))
-			} else {
-				datadog.SetAddress(nil)
-			}
-
-			if v, ok := result[string(ApiKey)].(string); ok && v != "" {
-				datadog.SetApiKey(spotinst.String(v))
-			} else {
-				datadog.SetApiKey(nil)
-			}
-
-			if v, ok := result[string(AppKey)].(string); ok && v != "" {
-				datadog.SetAppKey(spotinst.String(v))
-			} else {
-				datadog.SetAppKey(nil)
-			}
-		}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
 		return datadog, nil
 	}
-	return nil, nil
+	result := list[0].(map[string]interface{})
+
+	if v, ok := result[string(Address)].(string); ok && v != "" {
+		datadog.SetAddress(spotinst.String(v))
+	} else {
+		datadog.SetAddress(nil)
+	}
+
+	if v, ok := result[string(ApiKey)].(string); ok && v != "" {
+		datadog.SetApiKey(spotinst.String(v))
+	} else {
+		datadog.SetApiKey(nil)
+	}
+
+	if v, ok := result[string(AppKey)].(string); ok && v != "" {
+		datadog.SetAppKey(spotinst.String(v))
+	} else {
+		datadog.SetAppKey(nil)
+	}
+
+	return datadog, nil
 }
 
 func flattenDataDog(datadogvp *oceancd.DataDog) []interface{} {
-	datadog := make(map[string]interface{})
-	datadog[string(Address)] = spotinst.StringValue(datadogvp.Address)
-	datadog[string(ApiKey)] = spotinst.StringValue(datadogvp.ApiKey)
-	datadog[string(AppKey)] = spotinst.StringValue(datadogvp.AppKey)
-	return []interface{}{datadog}
+	var out []interface{}
+
+	if datadogvp != nil {
+		result := make(map[string]interface{})
+
+		if datadogvp.Address != nil {
+			result[string(Address)] = spotinst.StringValue(datadogvp.Address)
+		}
+		if datadogvp.ApiKey != nil {
+			result[string(ApiKey)] = spotinst.StringValue(datadogvp.ApiKey)
+		}
+		if datadogvp.AppKey != nil {
+			result[string(AppKey)] = spotinst.StringValue(datadogvp.AppKey)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }

@@ -76,21 +76,21 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 }
 
 func expandCloudWatch(data interface{}) (*oceancd.CloudWatch, error) {
-	if list := data.([]interface{}); len(list) > 0 {
-		cloudwatch := &oceancd.CloudWatch{}
 
-		if list[0] != nil {
-			m := list[0].(map[string]interface{})
-
-			if v, ok := m[string(IAmArn)].(string); ok && v != "" {
-				cloudwatch.SetIAmArn(spotinst.String(v))
-			} else {
-				cloudwatch.SetIAmArn(nil)
-			}
-		}
+	cloudwatch := &oceancd.CloudWatch{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
 		return cloudwatch, nil
 	}
-	return nil, nil
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(IAmArn)].(string); ok && v != "" {
+		cloudwatch.SetIAmArn(spotinst.String(v))
+	} else {
+		cloudwatch.SetIAmArn(nil)
+	}
+
+	return cloudwatch, nil
 }
 
 func flattenCloudWatch(cloudwatch *oceancd.CloudWatch) []interface{} {

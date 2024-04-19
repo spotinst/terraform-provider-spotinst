@@ -108,7 +108,7 @@ func Provider() *schema.Provider {
 			string(commons.CredentialsAWSResourceName): resourceSpotinstCredentialsAWS(),
 
 			//OceanCD Verification Provider
-			string(commons.OceanCDVerificationProvider): resourceSpotinstOceanCDVerificationProvider(),
+			string(commons.OceanCDVerificationProviderResourceName): resourceSpotinstOceanCDVerificationProvider(),
 		},
 	}
 
