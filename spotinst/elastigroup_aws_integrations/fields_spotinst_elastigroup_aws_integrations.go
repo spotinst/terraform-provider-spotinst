@@ -14,7 +14,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	SetupKubernetes(fieldsMap)
 	SetupMesosphere(fieldsMap)
 	SetupCodeDeploy(fieldsMap)
-	SetupMultaiRuntime(fieldsMap)
 	SetupRoute53(fieldsMap)
 	SetupDockerSwarm(fieldsMap)
 	SetupElasticBeanstalk(fieldsMap)

@@ -120,7 +120,7 @@ The following arguments are supported:
 * `persist_block_devices` - (Optional) Should the instance maintain its Data volumes. 
 * `persist_root_device` - (Optional) Should the instance maintain its root device volumes.
 * `block_devices_mode` - (Optional) Determine the way we attach the data volumes to the data devices. Valid values: `"reattach"`, `"onLaunch"`. Default: `"onLaunch"`.
-* `health_check_type` - (Optional) The service to use for the health check. Valid values: `"EC2"`, `"ELB"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`. Default: `"EC2"`. 
+* `health_check_type` - (Optional) The service to use for the health check. Valid values: `"EC2"`, `"ELB"`, `"TARGET_GROUP"`. Default: `"EC2"`. 
 * `auto_healing` - (Optional) Enable the auto healing which auto replaces the instance in case the health check fails, default: `"true"`. 
 * `grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health, default `"120"`.
 * `unhealthy_duration` - (Optional) The amount of time, in seconds, an existing instance should remain active after becoming unhealthy. After the set time out the instance will be replaced, default `"120"`.
@@ -249,22 +249,15 @@ scheduled_task {
 * `load_balancers` - (Optional) List of load balancers configs.
     * `name` - The AWS resource name. Required for Classic Load Balancer. Optional for Application Load Balancer.
     * `arn` - The AWS resource ARN (Required only for ALB target groups).
-    * `balancer_id` - The Multai load balancer ID. Example: lb-123456
-    * `target_set_id` - The Multai load target set ID. Example: ts-123456
-    * `auto_weight` - "Auto Weight" will automatically provide a higher weight for instances that are larger as appropriate. For example, if you have configured your Elastigroup with m4.large and m4.xlarge instances the m4.large will have half the weight of an m4.xlarge. This ensures that larger instances receive a higher number of MLB requests.
-    * `az_awareness` - "AZ Awareness" will ensure that instances within the same AZ are using the corresponding MLB runtime instance in the same AZ. This feature reduces multi-zone data transfer fees.
-    * `type` - The resource type. Valid Values: `"CLASSIC"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`.
+    * `type` - The resource type. Valid Values: `"CLASSIC"`, `"TARGET_GROUP"`.
 
 Usage:
 
 ```hcl
 load_balancers {
+    name          = "name"
     arn           = "arn"
     type          = "CLASSIC"
-    balancer_id   = "lb-123"
-    target_set_id = "ts-123"
-    auto_weight   = "true"
-    az_awareness  = "true"
 }
 ```
 

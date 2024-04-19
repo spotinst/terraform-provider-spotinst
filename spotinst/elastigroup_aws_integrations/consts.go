@@ -63,11 +63,6 @@ const (
 	IntegrationMesosphere commons.FieldName = "integration_mesosphere"
 	// -----------------------------------
 
-	// - MULTAI-RUNTIME ------------------
-	IntegrationMultaiRuntime commons.FieldName = "integration_multai_runtime"
-	DeploymentId             commons.FieldName = "deployment_id"
-	// -----------------------------------
-
 	// - CODE-DEPLOY ---------------------
 	IntegrationCodeDeploy      commons.FieldName = "integration_codedeploy"
 	CleanupOnFailure           commons.FieldName = "cleanup_on_failure"

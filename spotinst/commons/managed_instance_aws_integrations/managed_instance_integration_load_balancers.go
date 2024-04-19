@@ -29,26 +29,6 @@ func SetupLoadBalancers(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 
-					string(BalancerID): {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-
-					string(TargetSetID): {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
-
-					string(AzAwareness): {
-						Type:     schema.TypeBool,
-						Optional: true,
-					},
-
-					string(AutoWeight): {
-						Type:     schema.TypeBool,
-						Optional: true,
-					},
-
 					string(Type): {
 						Type:     schema.TypeString,
 						Required: true,
@@ -104,22 +84,6 @@ func expandLoadBalancers(data interface{}) (*aws.LoadBalancersConfig, error) {
 
 		if v, ok := m[string(Arn)].(string); ok && v != "" {
 			loadBalancer.SetArn(spotinst.String(v))
-		}
-
-		if v, ok := m[string(BalancerID)].(string); ok && v != "" {
-			loadBalancer.SetBalancerId(spotinst.String(v))
-		}
-
-		if v, ok := m[string(TargetSetID)].(string); ok && v != "" {
-			loadBalancer.SetTargetSetId(spotinst.String(v))
-		}
-
-		if v, ok := m[string(AzAwareness)].(bool); ok && v {
-			loadBalancer.SetZoneAwareness(spotinst.Bool(v))
-		}
-
-		if v, ok := m[string(AutoWeight)].(bool); ok && v {
-			loadBalancer.SetAutoWeight(spotinst.Bool(v))
 		}
 
 		if v, ok := m[string(Type)].(string); ok && v != "" {

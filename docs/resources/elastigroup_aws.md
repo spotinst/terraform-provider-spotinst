@@ -229,7 +229,7 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
     * `terminate_at_end_of_billing_hour` - (Optional) Specify whether to terminate instances at the end of each billing hour.
     * `termination_policy` - (Optional) - Determines whether to terminate the newest instances when performing a scaling action. Valid values: `"default"`, `"newestInstance"`.
 
-* `health_check_type` - (Optional) The service that will perform health checks for the instance. Valid values: `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
+* `health_check_type` - (Optional) The service that will perform health checks for the instance. Valid values: `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"EC2"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health.
 * `health_check_unhealthy_duration_before_replacement` - (Optional) The amount of time, in seconds, that we will wait before replacing an instance that is running and became unhealthy (this is only applicable for instances that were once healthy).
 
@@ -256,25 +256,12 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
     
 * `elastic_load_balancers` - (Optional) List of Elastic Load Balancers names (ELB).
 * `target_group_arns` - (Optional) List of Target Group ARNs to register the instances to.
-* `multai_target_sets` - (Optional) Set of targets to register. 
-    * `target_set_id` - (Required) ID of Multai target set.
-    * `balancer_id` - (Required) ID of Multai Load Balancer.
     
 Usage:
 
 ```hcl
   elastic_load_balancers = ["bal5", "bal2"]
   target_group_arns      = ["tg-arn"]
-  
-  multai_target_sets {
-    target_set_id = "ts-123",
-    balancer_id   = "bal-123"
-  }
-  
-  multai_target_sets {
-    target_set_id = "ts-234",
-    balancer_id   = "bal-234"
-  }
 ```
 
 <a id="signal"></a>
@@ -709,7 +696,7 @@ Usage:
 <a id="health-check"></a>
 ## Health Check
 
-* `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`, `"MLB"`, `"EC2"`, `"MULTAI_TARGET_SET"`, `"MLB_RUNTIME"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
+* `health_check_type` - (Optional) The service that will perform health checks for the instance. Supported values : `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"CUSTOM"`, `"K8S_NODE"`, `"EC2"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health
 * `health_check_unhealthy_duration_before_replacement` - (Optional) The amount of time, in seconds, that we will wait before replacing an instance that is running and became unhealthy (this is only applicable for instances that were once healthy)
 
@@ -999,18 +986,6 @@ Usage:
     api_server = ""
   }
 ```
-
-* `integration_multai_runtime` - (Optional) Describes the [Multai Runtime](https://spotinst.com/) integration.
- 
-    * `deployment_id` - (Optional) The deployment id you want to get
-
-Usage:
-
-```hcl
-  integration_multai_runtime {
-    deployment_id = ""
-  }
-```
      
 * `integration_gitlab` - (Optional) Describes the [Gitlab](https://api.spotinst.com/integration-docs/gitlab/) integration.
  
@@ -1079,7 +1054,7 @@ Usage:
     * `should_roll` - (Required) Sets the enablement of the roll option.
     * `roll_config` - (Required) While used, you can control whether the group should perform a deployment after an update to the configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
-        * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"MLB"`, `"TARGET_GROUP"`, `"MULTAI_TARGET_SET"`, `"NONE"`.
+        * `health_check_type` - (Optional) Sets the health check type to use. Valid values: `"EC2"`, `"ECS_CLUSTER_INSTANCE"`, `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"NONE"`.
         * `grace_period` - (Optional) Sets the grace period for new instances to become healthy.
         * `wait_for_roll_percentage` - (Optional) For use with `should_roll`. Sets minimum % of roll required to complete before continuing the plan. Required if `wait_for_roll_timeout` is set.
         * `wait_for_roll_timeout` - (Optional) For use with `should_roll`. Sets how long to wait for the deployed % of a roll to exceed `wait_for_roll_percentage` before continuing the plan. Required if `wait_for_roll_percentage` is set.

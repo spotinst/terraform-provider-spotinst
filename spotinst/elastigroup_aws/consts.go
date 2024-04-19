@@ -5,9 +5,8 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 type BalancerType string
 
 const (
-	BalancerTypeClassic         BalancerType = "CLASSIC"
-	BalancerTypeTargetGroup     BalancerType = "TARGET_GROUP"
-	BalancerTypeMultaiTargetSet BalancerType = "MULTAI_TARGET_SET"
+	BalancerTypeClassic     BalancerType = "CLASSIC"
+	BalancerTypeTargetGroup BalancerType = "TARGET_GROUP"
 )
 
 type TagField string
@@ -41,9 +40,6 @@ const (
 	PreferredAvailabilityZones commons.FieldName = "preferred_availability_zones"
 	ElasticLoadBalancers       commons.FieldName = "elastic_load_balancers"
 	TargetGroupArns            commons.FieldName = "target_group_arns"
-	MultaiTargetSets           commons.FieldName = "multai_target_sets"
-	MultaiTargetSetID          commons.FieldName = "target_set_id"
-	MultaiBalancerID           commons.FieldName = "balancer_id"
 	Tags                       commons.FieldName = "tags"
 
 	RevertToSpot commons.FieldName = "revert_to_spot"

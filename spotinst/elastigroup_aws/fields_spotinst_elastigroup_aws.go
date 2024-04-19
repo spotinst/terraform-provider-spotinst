@@ -697,65 +697,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[MultaiTargetSets] = commons.NewGenericField(
-		commons.ElastigroupAWS,
-		MultaiTargetSets,
-		&schema.Schema{
-			Type:     schema.TypeSet,
-			Optional: true,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(MultaiTargetSetID): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-
-					string(MultaiBalancerID): {
-						Type:     schema.TypeString,
-						Required: true,
-					},
-				},
-			},
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			var targetSets []interface{} = nil
-			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
-				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig != nil &&
-				elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers != nil {
-
-				balancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-				targetSets = flattenAWSGroupMultaiTargetSets(balancers)
-			}
-			return resourceData.Set(string(MultaiTargetSets), targetSets)
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			if multaiTs, ok := resourceData.GetOk(string(MultaiTargetSets)); ok {
-				if multaiBals, err := expandAWSGroupMultaiTargetSets(multaiTs); err != nil {
-					return err
-				} else {
-					existing := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-					if len(existing) > 0 {
-						multaiBals = append(multaiBals, existing...)
-					}
-					elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(multaiBals)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
-			if err := onBalancersUpdate(egWrapper, resourceData); err != nil {
-				return err
-			}
-			return nil
-		},
-		nil,
-	)
-
 	fieldsMap[Tags] = commons.NewGenericField(
 		commons.ElastigroupAWS,
 		Tags,
@@ -1264,7 +1205,6 @@ func extractBalancers(
 
 	var elbBalancers []*aws.LoadBalancer = nil
 	var tgBalancers []*aws.LoadBalancer = nil
-	var mlbBalancers []*aws.LoadBalancer = nil
 
 	if len(existingBalancers) > 0 {
 		for _, balancer := range existingBalancers {
@@ -1279,11 +1219,6 @@ func extractBalancers(
 			case string(BalancerTypeTargetGroup):
 				{
 					tgBalancers = append(tgBalancers, balancer)
-					break
-				}
-			case string(BalancerTypeMultaiTargetSet):
-				{
-					mlbBalancers = append(mlbBalancers, balancer)
 					break
 				}
 			}
@@ -1324,21 +1259,11 @@ func extractBalancers(
 		}
 	}
 
-	if mlbTargetSets, ok := resourceData.GetOk(string(MultaiTargetSets)); ok && balancerType == BalancerTypeMultaiTargetSet {
-		if tfMlbBalancers, err := expandAWSGroupMultaiTargetSets(mlbTargetSets); err != nil {
-			return nil, err
-		} else {
-			mlbBalancers = append(tfMlbBalancers, mlbBalancers...)
-		}
-	}
-
 	var result []*aws.LoadBalancer = nil
 	if balancerType == BalancerTypeClassic {
 		result = elbBalancers
 	} else if balancerType == BalancerTypeTargetGroup {
 		result = tgBalancers
-	} else if balancerType == BalancerTypeMultaiTargetSet {
-		result = mlbBalancers
 	}
 	return result, nil
 }
@@ -1346,7 +1271,6 @@ func extractBalancers(
 func onBalancersUpdate(egWrapper *commons.ElastigroupWrapper, resourceData *schema.ResourceData) error {
 	var elbNullify = false
 	var tgNullify = false
-	var mlbNullify = false
 
 	elastigroup := egWrapper.GetElastigroup()
 
@@ -1378,24 +1302,10 @@ func onBalancersUpdate(egWrapper *commons.ElastigroupWrapper, resourceData *sche
 		}
 		egWrapper.StatusTgUpdated = true
 	}
-	if !egWrapper.StatusMlbUpdated {
-		if mlbBalancers, err := extractBalancers(BalancerTypeMultaiTargetSet, elastigroup, resourceData); err != nil {
-			return err
-		} else if len(mlbBalancers) > 0 {
-			existingBalancers := elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.LoadBalancers
-			if len(existingBalancers) > 0 {
-				mlbBalancers = append(mlbBalancers, existingBalancers...)
-			}
-			elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(mlbBalancers)
-		} else {
-			mlbNullify = true
-		}
-		egWrapper.StatusMlbUpdated = true
-	}
 
 	// All fields share the same object structure, we need to nullify if and only if there are no items
 	// from all types
-	if elbNullify && tgNullify && mlbNullify {
+	if elbNullify && tgNullify {
 		elastigroup.Compute.LaunchSpecification.LoadBalancersConfig.SetLoadBalancers(nil)
 	}
 	return nil
@@ -1433,25 +1343,6 @@ func expandSubnetIDs(data interface{}) ([]string, error) {
 	return result, nil
 }
 
-func expandAWSGroupMultaiTargetSets(data interface{}) ([]*aws.LoadBalancer, error) {
-	list := data.(*schema.Set).List()
-	balancers := make([]*aws.LoadBalancer, 0, len(list))
-	for _, item := range list {
-		m := item.(map[string]interface{})
-		multaiBalancer := &aws.LoadBalancer{
-			Type: spotinst.String(strings.ToUpper(string(BalancerTypeMultaiTargetSet))),
-		}
-		if v, ok := m[string(MultaiTargetSetID)].(string); ok && v != "" {
-			multaiBalancer.SetTargetSetId(spotinst.String(v))
-		}
-		if v, ok := m[string(MultaiBalancerID)].(string); ok && v != "" {
-			multaiBalancer.SetBalancerId(spotinst.String(v))
-		}
-		balancers = append(balancers, multaiBalancer)
-	}
-	return balancers, nil
-}
-
 func expandAWSGroupRevertToSpot(data interface{}) (*aws.RevertToSpot, error) {
 	revertToSpot := &aws.RevertToSpot{}
 	list := data.([]interface{})
@@ -1478,20 +1369,6 @@ func expandAWSGroupRevertToSpot(data interface{}) (*aws.RevertToSpot, error) {
 	}
 	//log.Printf("[DEBUG] Group revert to spot configuration: %s", stringutil.Stringify(revertToSpot))
 	return revertToSpot, nil
-}
-
-func flattenAWSGroupMultaiTargetSets(balancers []*aws.LoadBalancer) []interface{} {
-	result := make([]interface{}, 0, len(balancers))
-	for _, balancer := range balancers {
-		balType := spotinst.StringValue(balancer.Type)
-		if balType == string(BalancerTypeMultaiTargetSet) {
-			m := make(map[string]interface{})
-			m[string(MultaiTargetSetID)] = spotinst.StringValue(balancer.TargetSetID)
-			m[string(MultaiBalancerID)] = spotinst.StringValue(balancer.BalancerID)
-			result = append(result, m)
-		}
-	}
-	return result
 }
 
 func extractTargetGroupFromArn(arn string) (string, error) {

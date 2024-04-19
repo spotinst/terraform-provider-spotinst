@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.170.0 (April, 19 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: removed support for `MLB`, `MLB_RUNTIME`, `MULTAI_TARGET_SET` from `health_check_type` and `integrations`.
+* resource/spotinst_managed_instance_aws: removed support for `MULTAI_TARGET_SET` from `health_check_type` and `integrations`.
+
 ## 1.169.1 (April, 10 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aks_np_virtual_node_group: Fixed `labels` failing to update.
