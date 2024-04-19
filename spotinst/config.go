@@ -79,6 +79,7 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		statefulNode:    stateful.New(sess),
 		organization:    organization.New(sess),
 		account:         account.New(sess),
+		oceancd:         oceancd.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")

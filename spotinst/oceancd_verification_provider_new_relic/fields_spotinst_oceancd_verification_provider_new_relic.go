@@ -11,7 +11,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[NewRelic] = commons.NewGenericField(
-		commons.OceanCDVerificationProviderJenkins,
+		commons.OceanCDVerificationProviderNewRelic,
 		NewRelic,
 		&schema.Schema{
 			Type:     schema.TypeList,
