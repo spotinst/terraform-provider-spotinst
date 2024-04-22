@@ -136,7 +136,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os_disk_type", "Managed"),
 					resource.TestCheckResourceAttr(resourceName, "os_type", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "os_sku", "Ubuntu"),
-					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.26"),
+					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.27"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
@@ -195,7 +195,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   os_disk_type          = "Managed"
   os_type               = "Linux"
   os_sku                = "Ubuntu"
-  kubernetes_version    = "1.26"
+  kubernetes_version    = "1.27"
   //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
 
   // --- strategy -------------------------------------------------------------
