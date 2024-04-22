@@ -351,7 +351,7 @@ func TestAccSpotinstElastigroupAzureV3_Image(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureDestroy,
+		CheckDestroy: testElastigroupAzureV3Destroy,
 
 		Steps: []resource.TestStep{
 			{
@@ -588,7 +588,7 @@ func TestAccSpotinstElastigroupAzureV3_Login(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t, "azure") },
 		Providers:    TestAccProviders,
-		CheckDestroy: testElastigroupAzureDestroy,
+		CheckDestroy: testElastigroupAzureV3Destroy,
 
 		Steps: []resource.TestStep{
 			{

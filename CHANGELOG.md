@@ -1,5 +1,10 @@
 ## Unreleased
 
+
+## 1.171.0 (April, 22 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure: removed support for Elastigroup azure v2 resource.
+
 ## 1.170.1 (April, 22 2024)
 BUG FIXES:
 * Corrected `kubernetes_version` field in test files `resource_spotinst_ocean_aks_np_test` and `resource_spotinst_ocean_aks_np_virtual_node_group_test`
