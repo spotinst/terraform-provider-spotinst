@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.171.0 (April, 22 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure: removed support for Elastigroup azure v2 resource.
+
 ## 1.170.0 (April, 19 2024)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: removed support for `MLB`, `MLB_RUNTIME`, `MULTAI_TARGET_SET` from `health_check_type` and `integrations`.
