@@ -44,11 +44,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
-			var value *string = nil
 			if v, ok := resourceData.Get(string(ImageID)).(string); ok && v != "" {
-				value = spotinst.String(v)
+				cluster.Compute.LaunchSpecification.SetImageId(spotinst.String(v))
 			}
-			cluster.Compute.LaunchSpecification.SetImageId(value)
 			return nil
 		},
 		nil,
