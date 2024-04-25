@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aws_right_sizing_rule"
 	"log"
 	"time"
 
