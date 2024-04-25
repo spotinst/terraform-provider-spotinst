@@ -2,15 +2,13 @@ package version
 
 import (
 	"strings"
-
-	"github.com/hashicorp/go-version"
 )
 
 var (
 	// Version represents the main version number.
 	//
 	// Read-only.
-	Version = "1.171.0"
+	Version = "1.171.1"
 
 	// Prerelease represents an optional pre-release label for the version.
 	// If this is "" (empty string) then it means that it is a final release.

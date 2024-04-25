@@ -6,7 +6,6 @@ require (
 	github.com/bflad/tfproviderlint v0.29.0
 	github.com/client9/misspell v0.3.4
 	github.com/hashicorp/go-cleanhttp v0.5.2
-	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/sethvargo/go-password v0.2.0
@@ -44,6 +43,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.0 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.1 // indirect
+	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.8.2 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/terraform-exec v0.15.0 // indirect
