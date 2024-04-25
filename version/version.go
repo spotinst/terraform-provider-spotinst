@@ -1,6 +1,7 @@
 package version
 
 import (
+	"github.com/hashicorp/go-version"
 	"strings"
 )
 
