@@ -14,6 +14,8 @@ require (
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 )
 
+replace github.com/spotinst/spotinst-sdk-go v1.342.0 => /home/pritish/Documents/GitHub/spotinst-sdk-go
+
 require (
 	cloud.google.com/go v0.65.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect

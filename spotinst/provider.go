@@ -105,6 +105,9 @@ func Provider() *schema.Provider {
 
 			// AWS set credential
 			string(commons.CredentialsAWSResourceName): resourceSpotinstCredentialsAWS(),
+
+			// AWS set credential
+			string(commons.OceanAWSRightSizingRuleResourceName): resourceSpotinstOceanAWSRightSizingRule(),
 		},
 	}
 
