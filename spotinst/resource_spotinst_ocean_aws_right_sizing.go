@@ -42,8 +42,12 @@ func setupOceanAWSRrightSizingRuleResource() {
 func resourceSpotinstOceanAWSRightSizingRuleRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanAWSRightSizingRuleResource.GetName(), resourceId)
+	rightSizingRule, err := commons.OceanAWSRightSizingRuleResource.OnCreate(resourceData, meta)
 
-	input := &aws.ReadRightSizingRuleInput{RuleName: spotinst.String(resourceId)}
+	input := &aws.ReadRightSizingRuleInput{
+		RuleName:        spotinst.String(resourceId),
+		RightSizingRule: rightSizingRule,
+	}
 	resp, err := meta.(*Client).ocean.CloudProviderAWS().ReadRightSizingRule(context.Background(), input)
 	if err != nil {
 		return diag.FromErr(err)
@@ -119,7 +123,6 @@ func resourceSpotinstOceanAWSRightSizingRuleUpdate(ctx context.Context, resource
 	}
 
 	if shouldUpdate {
-		rsr.SetName(spotinst.String(resourceId))
 		if err := updateOceanAWSRightSizingRule(rsr, resourceData, meta); err != nil {
 			return diag.FromErr(err)
 		}
@@ -129,40 +132,41 @@ func resourceSpotinstOceanAWSRightSizingRuleUpdate(ctx context.Context, resource
 }
 
 func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schema.ResourceData, meta interface{}) error {
+	resourceId := resourceData.Id()
 	var input = &aws.UpdateRightSizingRuleInput{
+		RuleName:        spotinst.String(resourceId),
 		RightSizingRule: rsr,
 	}
-	erdId := resourceData.Id()
 
-	if json, err := commons.ToJson(erd); err != nil {
+	if json, err := commons.ToJson(rsr); err != nil {
 		return err
 	} else {
 		log.Printf("===> ExtendedResourceDefinition update configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateExtendedResourceDefinition(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] Failed to update ExtendedResourceDefinition [%v]: %v", erdId, err)
+	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateRightSizingRule(context.Background(), input); err != nil {
+		return fmt.Errorf("[ERROR] Failed to update Right Sizing Rule [%v]: %v", resourceId, err)
 	}
 	return nil
 }
 
-func resourceSpotinstOceanAWSExtendedResourceDefinitionDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceSpotinstOceanAWSRightSizingRuleDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
 	log.Printf(string(commons.ResourceOnDelete), commons.OceanAWSExtendedResourceDefinitionResource.GetName(), resourceId)
 
-	if err := deleteOceanAWSExtendedResourceDefinition(resourceData, meta); err != nil {
+	if err := deleteOceanAWSRightSizingRule(resourceData, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
-	log.Printf("===> ExtendedResourceDefinition deleted successfully: %s <===", resourceData.Id())
+	log.Printf("===> RightSizingRule deleted successfully: %s <===", resourceData.Id())
 	resourceData.SetId("")
 	return nil
 }
 
-func deleteOceanAWSExtendedResourceDefinition(resourceData *schema.ResourceData, meta interface{}) error {
-	erdId := resourceData.Id()
-	input := &aws.DeleteExtendedResourceDefinitionInput{
-		ExtendedResourceDefinitionID: spotinst.String(erdId),
+func deleteOceanAWSRightSizingRule(resourceData *schema.ResourceData, meta interface{}) error {
+	ruleName := resourceData.Id()
+	input := &aws.DeleteRightSizingRuleInput{
+		RuleNames: spotinst.StringSlice([]string{ruleName}),
 	}
 	if json, err := commons.ToJson(input); err != nil {
 		return err
@@ -170,7 +174,7 @@ func deleteOceanAWSExtendedResourceDefinition(resourceData *schema.ResourceData,
 		log.Printf("===> ExtendedResourceDefinition delete configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).ocean.CloudProviderAWS().DeleteExtendedResourceDefinition(context.Background(), input); err != nil {
+	if _, err := meta.(*Client).ocean.CloudProviderAWS().DeleteRightSizingRules(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete ExtendedResourceDefinition: %s", err)
 	}
 	return nil
