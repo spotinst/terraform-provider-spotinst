@@ -385,7 +385,7 @@ func TestAccSpotinstManagedInstanceHealthCheck(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckManagedInstanceAWSExists(&cluster, resourceName),
 					testCheckManagedInstanceAWSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "health_check_type", "MULTAI_TARGET_SET"),
+					resource.TestCheckResourceAttr(resourceName, "health_check_type", "TARGET_GROUP"),
 					resource.TestCheckResourceAttr(resourceName, "auto_healing", "false"),
 					resource.TestCheckResourceAttr(resourceName, "grace_period", "100"),
 					resource.TestCheckResourceAttr(resourceName, "unhealthy_duration", "120"),
@@ -403,7 +403,7 @@ unhealthy_duration = "60"
 `
 
 const managedInstanceHealthCheck_Update = `
-health_check_type = "MULTAI_TARGET_SET"
+health_check_type = "TARGET_GROUP"
 auto_healing = "false"
 grace_period = "100"
 unhealthy_duration = "120"
@@ -875,27 +875,8 @@ func TestAccSpotinstManagedInstanceIntegrationsLoadBalancers(t *testing.T) {
 					testCheckManagedInstanceAWSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.balancer_id", "lb-1ee2e3q"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.target_set_id", "ts-3eq"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "MULTAI_TARGET_SET"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createManagedInstanceTerraform(&ManagedInstanceConfigMetadata{
-					name:           name,
-					fieldsToAppend: managedInstanceIntegrations_Load_Balancers_Update2,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckManagedInstanceAWSExists(&cluster, resourceName),
-					testCheckManagedInstanceAWSAttributes(&cluster, name),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.balancer_id", "lb-1ee2e3q"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.target_set_id", "ts-3eq"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "MULTAI_TARGET_SET"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.auto_weight", "true"),
-					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.az_awareness", "true"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.name", "test_name"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "CLASSIC"),
 				),
 			},
 			{
@@ -928,22 +909,8 @@ const managedInstanceIntegrations_Load_Balancers_Update = `
 // --- INTEGRATION: load_balancers ----------
   load_balancers {
       arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
-      type = "MULTAI_TARGET_SET"
-      balancer_id   = "lb-1ee2e3q"
-      target_set_id = "ts-3eq"
-    }
-// ------------------------------------
-`
-
-const managedInstanceIntegrations_Load_Balancers_Update2 = `
-// --- INTEGRATION: load_balancers ----------
-  load_balancers {
-      arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
-      type = "MULTAI_TARGET_SET"
-      balancer_id   = "lb-1ee2e3q"
-      target_set_id = "ts-3eq"
-      auto_weight   = "true"
-      az_awareness = "true"
+      name = "test_name"
+      type = "CLASSIC"
     }
 // ------------------------------------
 `

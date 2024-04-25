@@ -1,4 +1,61 @@
 ## Unreleased
+
+
+## 1.171.0 (April, 22 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure: removed support for Elastigroup azure v2 resource.
+
+## 1.170.1 (April, 22 2024)
+BUG FIXES:
+* Corrected `kubernetes_version` field in test files `resource_spotinst_ocean_aks_np_test` and `resource_spotinst_ocean_aks_np_virtual_node_group_test`
+
+## 1.170.0 (April, 19 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: removed support for `MLB`, `MLB_RUNTIME`, `MULTAI_TARGET_SET` from `health_check_type` and `integrations`.
+* resource/spotinst_managed_instance_aws: removed support for `MULTAI_TARGET_SET` from `health_check_type` and `integrations`.
+
+## 1.169.1 (April, 10 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aks_np_virtual_node_group: Fixed `labels` failing to update.
+* resource/spotinst_ocean_aws: Fixed drift by adding default value for `health_check_unhealthy_duration_before_replacement`.
+
+## 1.169.0 (April, 08 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support for `gpu_types` field in `filters` block.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `gpu_types` field in `filters` block.
+
+## 1.168.3 (April, 05 2024)
+NOTES:
+* Removed redundant declaration of `image_id` in testcases of `resource_spotinst_ocean_ecs_test`.
+
+## 1.168.2 (April, 04 2024)
+NOTES:
+* Added `image_id` in config for unit tests of `resource_spotinst_ocean_ecs_test`.
+
+## 1.168.1 (April, 02 2024)
+BUG FIXES:
+* Fix the release Github Actions failure caused by Go version upgrade.
+
+## 1.168.0 (April, 02 2024)
+ENHANCEMENTS:
+* Upgraded Go version to 1.20 and tfproviderlint package to v0.29.0
+
+## 1.167.1 (March, 29 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws_launch_spec: Fixed `ephemeral_storage_device_name` under `ephemeral_storage`, defaults to correct values when not configured.
+
+## 1.167.0 (March, 29 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added support for `ephemeral_storage`.
+
+## 1.166.0 (March, 28 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added support for `caching`, `license_type`, `availability_vs_cost`, `vm_name_prefix`, `od_windows` fields.
+
+## 1.165.1 (March, 27 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_gcp: Fixed `instance_types_custom` object, as it was throwing error while creating the EG.
+
 # 1.165.0 (March, 19 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added support for `health_check_unhealthy_duration_before_replacement` attribute under launchSpecification.

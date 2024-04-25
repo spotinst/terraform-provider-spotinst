@@ -590,6 +590,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.encrypted", "false"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp2"),
+					resource.TestCheckResourceAttr(resourceName, "ephemeral_storage.0.ephemeral_storage_device_name", "/dev/xvda1"),
 				),
 			},
 			{
@@ -600,7 +601,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
 					testCheckOceanAWSLaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanAWSLaunchSpecAttributes(&launchSpec, oceanID),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/xvda1"),
+					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.device_name", "/dev/sda1"),
 					//resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.delete_on_termination", "true"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.dynamic_volume_size.#", "1"),
@@ -611,6 +612,7 @@ func TestAccSpotinstOceanAWSLaunchSpec_BlockDeviceMappings(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.kms_key_id", "kms-key"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.volume_type", "gp3"),
 					resource.TestCheckResourceAttr(resourceName, "block_device_mappings.0.ebs.0.throughput", "500"),
+					resource.TestCheckResourceAttr(resourceName, "ephemeral_storage.0.ephemeral_storage_device_name", "/dev/sda1"),
 				),
 			},
 			{
@@ -653,6 +655,9 @@ image_id = "ami-05a68f290aa68e8f0"
           }
         }
 }
+  ephemeral_storage{
+    ephemeral_storage_device_name = "/dev/xvda1"
+  }
 %v
       }
 
@@ -670,7 +675,7 @@ image_id = "ami-05a68f290aa68e8f0"
  name = "launch spec name test"
 
 	block_device_mappings {
-        device_name = "/dev/xvda1"
+        device_name = "/dev/sda1"
         ebs {
           delete_on_termination = "true"
           kms_key_id = "kms-key"
@@ -684,6 +689,10 @@ image_id = "ami-05a68f290aa68e8f0"
           }
         }
 }
+
+  ephemeral_storage{
+    ephemeral_storage_device_name = "/dev/sda1"
+  }
 %v
       }
 `

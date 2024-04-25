@@ -24,6 +24,8 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     draining_timeout        = 30
     fallback_to_on_demand   = true
     optimization_windows    = ["Tue:19:46-Tue:20:46"]
+    od_windows              = ["Wed:19:46-Wed:21:46"]
+    availability_vs_cost    = 100
     revert_to_spot {
       perform_at            = "timeWindow"
     }
@@ -51,6 +53,8 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   shutdown_script      = ""
   user_data            = ""
   vm_name              = "VMName"
+  vm_name_prefix       = "VMNamePrefix"
+  license_type         = "SLES_BYOS"
   // -------------------------------------------------------------------
 
   // --- BOOT DIAGNOSTICS ----------------------------------------------
@@ -85,6 +89,11 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     protected_settings         = {
       "script" : "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob29uaXIudHh0Cg=="
     }
+    publicSettings = {
+      "fileUris": [
+          "https://testspot/Azuretest.sh"
+      ]
+    }
   }
   // -------------------------------------------------------------------
   
@@ -95,6 +104,18 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
       offer     = "UbuntuServer"
       sku       = "16.04-LTS"
       version   = "latest"
+    }
+    
+    custom_image {
+      custom_image_resource_group_name = "resourceGroupName"
+      name                             = "imageName"
+    }
+    
+    gallery {
+      gallery_resource_group_name = "resourceGroupName"
+      gallery_name                = "galleryName"
+      image_name                  = "imageName"
+      version_name                = "1.1.0"
     }
   }
   // -------------------------------------------------------------------
@@ -158,6 +179,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
   os_disk {
     size_gb = 30
     type    = "Standard_LRS"
+    caching = "ReadOnly"
   }
   // -------------------------------------------------------------------
   
@@ -279,8 +301,11 @@ The following arguments are supported:
 
 * `strategy` - (Required) Strategy for stateful node.
   * `draining_timeout` - (Optional, Default `120`) Time (in seconds) to allow the VM be drained from incoming TCP connections and detached from MLB before terminating it during a scale down operation.
+  * `availability_vs_cost` - (Optional) Set the desired preference for the Spot market VM selection. (100- Availability, 0- cost).
   * `fallback_to_on_demand` - (Required) In case of no spots available, Stateful Node will launch an On-demand instance instead.
   * `optimization_windows` - (Optional) Valid format: "ddd:hh:mm-ddd:hh:mm (day:hour(0-23):minute(0-59))", not empty if revertToSpot.performAt = timeWindow.
+  * `od_windows` - (Optional) Define the time windows in which the underlying VM will be set as an on-demand lifecycle type. During the entire time window, the rest of the strategy processes will be paused.
+    Switching between on-demand and Spot VM types at the enter/exit of the time window will trigger the recycling of the stateful node. Valid format: "ddd:hh:mm-ddd:hh:mm (day:hour(0-23):minute(0-59))".
   * `preferred_life_cycle` - (Optional, Enum `"od", "spot"`, Default `"spot"`) The desired type of VM.
   * `revert_to_spot` - (Optional) Hold settings for strategy correction - replacing On-Demand for Spot VMs.
     * `perform_at` - (Required, Enum `"timeWindow", "never", "always"`, Default `"always"`) Settings for maintenance strategy.
@@ -304,7 +329,9 @@ The following arguments are supported:
 * `custom_data` - (Optional) This value will hold the YAML in base64 and will be executed upon VM launch.
 * `shutdown_script` - (Optional) Shutdown script for the stateful node. Value should be passed as a string encoded at Base64 only.
 * `user_data` - (Optional) Define a set of scripts or other metadata that's inserted to an Azure virtual machine at provision time. (Base64 encoded)
-* `vm_name` - (Optional) Set a VM name that will be persisted throughout the entire node lifecycle.
+* `vm_name` - (Optional) Set a VM name that will be persisted throughout the entire node lifecycle. This can't be set if `vm_name_prefix` is set.
+* `vm_name_prefix` - (Optional) Set a VM name prefix to be used for all launched VMs and the VM resources. This can't be set if `vm_name` is set.
+* `license_type` - (Optional) Specify an existing Azure license type to use when launching new VMs. Valid values for Windows OS: "Windows_Server", "Windows_Client", Valid values for Linux OS: "RHEL_BYOS", "SLES_BYOS"
 
 <a id="boot_diagnostics"></a>
 ## Boot Diagnostics
@@ -343,7 +370,7 @@ The following arguments are supported:
     * `offer` - (Required) Image offer.
     * `sku` - (Required) Image Stock Keeping Unit, which is the specific version of the image.
     * `version` - (Required, Default `"latest"`) Image's version. if version not provided we use "latest".
-  * `gallery_image` - (Optional) Gallery image definitions. Required if custom image or marketplace image are not specified.
+  * `gallery` - (Optional) Gallery image definitions. Required if custom image or marketplace image are not specified.
     * `gallery_resource_group_name` - (Required) The resource group name for gallery image.
     * `gallery_name` - (Required) Name of the gallery.
     * `image_name` - (Required) Name of the gallery image.
@@ -419,6 +446,7 @@ The following arguments are supported:
 * `os_disk` - (Optional) Specify OS disk specification other than default.
   * `size_gb` - (Optional, Default `"30"`) The size of the data disk in GB.
   * `type` - (Required, Enum `"Standard_LRS", "Premium_LRS", "StandardSSD_LRS"`) The type of the OS disk.
+  * `caching` - (Optional, Enum `"None", "ReadOnly", "ReadWrite"`) Specifies the host caching requirements. With disk caching enabled, VMs can achieve higher levels of performance. If not specified, the Azure default behavior will be applied.
 
 <a id="secret"></a>
 ## Secret

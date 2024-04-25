@@ -1853,6 +1853,67 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[EphemeralStorage] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		EphemeralStorage,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+
+					string(EphemeralStorageDeviceName): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.EphemeralStorage != nil {
+				ephemeralStorage := launchSpec.EphemeralStorage
+				result = flattenEphemeralStorage(ephemeralStorage)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(EphemeralStorage), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EphemeralStorage), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(EphemeralStorage)); ok {
+				if ephemeralStorage, err := expandEphemeralStorage(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetEphemeralStorage(ephemeralStorage)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.EphemeralStorage = nil
+
+			if v, ok := resourceData.GetOk(string(EphemeralStorage)); ok {
+				if ephemeralStorage, err := expandEphemeralStorage(v); err != nil {
+					return err
+				} else {
+					value = ephemeralStorage
+				}
+			}
+			launchSpec.SetEphemeralStorage(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -2968,4 +3029,37 @@ func expandInstanceTypeFiltersList(data interface{}) ([]string, error) {
 		}
 	}
 	return result, nil
+}
+func flattenEphemeralStorage(ephemeralStorage *aws.EphemeralStorage) []interface{} {
+	var out []interface{}
+
+	if ephemeralStorage != nil {
+		result := make(map[string]interface{})
+
+		if ephemeralStorage.DeviceName != nil {
+			result[string(EphemeralStorageDeviceName)] = spotinst.StringValue(ephemeralStorage.DeviceName)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
+}
+func expandEphemeralStorage(data interface{}) (*aws.EphemeralStorage, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		ephemeralStorage := &aws.EphemeralStorage{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(EphemeralStorageDeviceName)].(string); ok && v != "" {
+				ephemeralStorage.SetDeviceName(spotinst.String(v))
+			} else {
+				ephemeralStorage.SetDeviceName(nil)
+			}
+		}
+		return ephemeralStorage, nil
+	}
+
+	return nil, nil
 }

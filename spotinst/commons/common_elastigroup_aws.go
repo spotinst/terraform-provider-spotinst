@@ -24,7 +24,6 @@ type ElastigroupWrapper struct {
 	// Load balancer states
 	StatusElbUpdated bool
 	StatusTgUpdated  bool
-	StatusMlbUpdated bool
 
 	// Block devices states
 	StatusEphemeralBlockDeviceUpdated bool

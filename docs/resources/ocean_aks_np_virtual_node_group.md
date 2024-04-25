@@ -94,6 +94,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
     min_nics               = 1
     vm_types               = ["generalPurpose", "GPU"]
     min_disk               = 1
+    gpu_types              = ["nvidia-tesla-t4"]
   }
   
   // ----------------------------------------------------------------------------
@@ -156,7 +157,8 @@ The following arguments are supported:
     * `min_nics` - (Optional) Minimum number of network interfaces.
     * `min_disk` - (Optional) Minimum number of data disks available.
     * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.
-      <a id="update-policy"></a>
+    * `gpu_types` - (Optional, Enum `"nvidia-tesla-v100", "amd-radeon-instinct-mi25", "nvidia-a10", "nvidia-tesla-a100", "nvidia-tesla-k80", "nvidia-tesla-m60", "nvidia-tesla-p100", "nvidia-tesla-p40", "nvidia-tesla-t4", "nvidia-tesla-h100"`) The filtered gpu types will belong to one of the gpu types from this list.
+    <a id="update-policy"></a>
 ## Update Policy
 
 * `update_policy` - (Optional)

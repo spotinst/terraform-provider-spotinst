@@ -263,7 +263,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
 			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
 			result := make(map[string]string)
-			if virtualNodeGroup.Tags != nil {
+			if virtualNodeGroup.Labels != nil {
 				result = flattenLabels(*virtualNodeGroup.Labels)
 			}
 			if err := resourceData.Set(string(Labels), result); err != nil {
