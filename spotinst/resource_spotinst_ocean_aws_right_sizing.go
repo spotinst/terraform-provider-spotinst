@@ -167,7 +167,7 @@ func resourceSpotinstOceanAWSRightSizingRuleDelete(ctx context.Context, resource
 func deleteOceanAWSRightSizingRule(resourceData *schema.ResourceData, meta interface{}) error {
 	ruleName := resourceData.Id()
 	input := &aws.DeleteRightSizingRuleInput{
-		RuleNames: spotinst.StringSlice([]string{ruleName}),
+		RuleNames: []string{ruleName},
 	}
 	if json, err := commons.ToJson(input); err != nil {
 		return err

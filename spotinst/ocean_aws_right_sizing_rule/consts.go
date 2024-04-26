@@ -20,13 +20,13 @@ const (
 	MonthlyWeeklyIntervalHoursStartTime commons.FieldName = "interval_hours_start_time"
 	MonthlyWeeklyIntervalHoursEndTime   commons.FieldName = "interval_hours_end_time"
 
-	RecommendationApplicationMinThreshold commons.FieldName = "recommendation_application_min_threshold"
-	CpuMin                                commons.FieldName = "cpu_min"
-	CpuMax                                commons.FieldName = "cpu_max"
-	MemoryMin                             commons.FieldName = "memory_min"
-	MemoryMax                             commons.FieldName = "memory_max"
-
 	RecommendationApplicationBoundaries commons.FieldName = "RecommendationApplicationBoundaries"
-	CpuPercentage                       commons.FieldName = "cpu_percentage"
-	MemoryPercentage                    commons.FieldName = "memory_percentage"
+	CpuMin                              commons.FieldName = "cpu_min"
+	CpuMax                              commons.FieldName = "cpu_max"
+	MemoryMin                           commons.FieldName = "memory_min"
+	MemoryMax                           commons.FieldName = "memory_max"
+
+	RecommendationApplicationMinThreshold commons.FieldName = "recommendation_application_min_threshold"
+	CpuPercentage                         commons.FieldName = "cpu_percentage"
+	MemoryPercentage                      commons.FieldName = "memory_percentage"
 )

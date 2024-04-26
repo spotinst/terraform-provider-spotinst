@@ -106,7 +106,7 @@ func (res *OceanAWSRightSizingRuleTerraformResource) OnUpdate(
 	return hasChanged, rsrWrapper.GetOceanAWSRightSizingRule(), nil
 }
 
-// Spotinst RightSizingRule must have a wrapper struct.
+// NewOceanAWSRightSizingRuleWrapper Spotinst RightSizingRule must have a wrapper struct.
 // the wrapper struct is intended to help reflect the field states into the RightSizingRule object properly.
 func NewOceanAWSRightSizingRuleWrapper() *RightSizingRuleWrapper {
 	return &RightSizingRuleWrapper{
@@ -119,7 +119,7 @@ func (rsrWrapper *RightSizingRuleWrapper) GetOceanAWSRightSizingRule() *aws.Righ
 	return rsrWrapper.rightSizingRule
 }
 
-// SetOceanAWSExtendedResourceDefinition applies extendedResourceDefinition fields to the extendedResourceDefinition wrapper.
+// SetOceanAWSRightSizingRule  applies rightSizingRule fields to the rightSizingRule wrapper.
 func (rsrWrapper *RightSizingRuleWrapper) SetOceanAWSRightSizingRule(rsr *aws.RightSizingRule) {
 	rsrWrapper.rightSizingRule = rsr
 }

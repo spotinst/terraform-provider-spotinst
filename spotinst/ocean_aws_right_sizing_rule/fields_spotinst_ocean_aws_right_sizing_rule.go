@@ -2,17 +2,16 @@ package ocean_aws_right_sizing_rule
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
-	"github.com/spotinst/spotinst-sdk-go/service/organization"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
+
 	fieldsMap[RecommendationApplicationIntervals] = commons.NewGenericField(
-		commons.OceanGKELaunchSpec,
+		commons.OceanAWSRightSizingRule,
 		RecommendationApplicationIntervals,
 		&schema.Schema{
 			Type:     schema.TypeSet,
@@ -104,29 +103,169 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.GetOk(string(NetworkInterfaces)); ok {
-				if networks, err := expandLaunchSpecNetworkInterfaces(v); err != nil {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationIntervals)); ok {
+				if recommendationApplicationIntervals, err := expandRecommendationApplicationIntervals(v); err != nil {
 					return err
 				} else {
-					launchSpec.SetLaunchSpecNetworkInterfaces(networks)
+					rightSizingRule.SetRecommendationApplicationIntervals(recommendationApplicationIntervals)
 				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
-			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			var value []*gcp.LaunchSpecNetworkInterfaces = nil
-			if v, ok := resourceData.GetOk(string(NetworkInterfaces)); ok {
-				if networks, err := expandLaunchSpecNetworkInterfaces(v); err != nil {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var value []*aws.RecommendationApplicationInterval = nil
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationIntervals)); ok {
+				if recommendationApplicationIntervals, err := expandRecommendationApplicationIntervals(v); err != nil {
 					return err
 				} else {
-					value = networks
+					value = recommendationApplicationIntervals
 				}
 			}
-			launchSpec.SetLaunchSpecNetworkInterfaces(value)
+			rightSizingRule.SetRecommendationApplicationIntervals(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[RecommendationApplicationMinThreshold] = commons.NewGenericField(
+		commons.OceanAWSRightSizingRule,
+		RecommendationApplicationMinThreshold,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Required: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(CpuPercentage): {
+						Type:     schema.TypeFloat,
+						Required: true,
+						Default:  -1,
+					},
+					string(MemoryPercentage): {
+						Type:     schema.TypeFloat,
+						Required: true,
+						Default:  -1,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var result []interface{} = nil
+			if rightSizingRule.RecommendationApplicationMinThreshold != nil {
+				recommendationApplicationMinThreshold := rightSizingRule.RecommendationApplicationMinThreshold
+				result = flattenRecommendationApplicationMinThreshold(recommendationApplicationMinThreshold)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(RecommendationApplicationMinThreshold), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RecommendationApplicationMinThreshold), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationMinThreshold)); ok {
+				if recommendationApplicationMinThreshold, err := expandRecommendationApplicationMinThreshold(v); err != nil {
+					return err
+				} else {
+					rightSizingRule.SetRecommendationApplicationMinThreshold(recommendationApplicationMinThreshold)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var value *aws.RecommendationApplicationMinThreshold = nil
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationMinThreshold)); ok {
+				if recommendationApplicationMinThreshold, err := expandRecommendationApplicationMinThreshold(v); err != nil {
+					return err
+				} else {
+					value = recommendationApplicationMinThreshold
+				}
+			}
+			rightSizingRule.SetRecommendationApplicationMinThreshold(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[RecommendationApplicationBoundaries] = commons.NewGenericField(
+		commons.OceanAWSRightSizingRule,
+		RecommendationApplicationBoundaries,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Required: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(CpuMin): {
+						Type:     schema.TypeInt,
+						Required: true,
+						Default:  -1,
+					},
+					string(CpuMax): {
+						Type:     schema.TypeInt,
+						Required: true,
+						Default:  -1,
+					},
+					string(MemoryMin): {
+						Type:     schema.TypeInt,
+						Required: true,
+						Default:  -1,
+					},
+					string(MemoryMax): {
+						Type:     schema.TypeInt,
+						Required: true,
+						Default:  -1,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var result []interface{} = nil
+			if rightSizingRule.RecommendationApplicationBoundaries != nil {
+				recommendationApplicationBoundaries := rightSizingRule.RecommendationApplicationBoundaries
+				result = flattenRecommendationApplicationBoundaries(recommendationApplicationBoundaries)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(RecommendationApplicationBoundaries), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RecommendationApplicationBoundaries), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationBoundaries)); ok {
+				if recommendationApplicationBoundaries, err := expandRecommendationApplicationBoundaries(v); err != nil {
+					return err
+				} else {
+					rightSizingRule.SetRecommendationApplicationBoundaries(recommendationApplicationBoundaries)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var value *aws.RecommendationApplicationBoundaries = nil
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationBoundaries)); ok {
+				if recommendationApplicationBoundaries, err := expandRecommendationApplicationBoundaries(v); err != nil {
+					return err
+				} else {
+					value = recommendationApplicationBoundaries
+				}
+			}
+			rightSizingRule.SetRecommendationApplicationBoundaries(value)
 			return nil
 		},
 		nil,
@@ -134,28 +273,361 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 }
 
-func flattenRecommendationApplicationIntervals(policyContent *organization.PolicyContent) []interface{} {
-	result := make(map[string]interface{})
-	result[string(Statements)] = flattenStatements(policyContent.Statements)
-	return []interface{}{result}
-}
+func flattenRecommendationApplicationIntervals(recommendationApplicationIntervals []*aws.RecommendationApplicationInterval) []interface{} {
+	result := make([]interface{}, 0, len(recommendationApplicationIntervals))
 
-func flattenStatements(statements []*organization.Statement) []interface{} {
-	result := make([]interface{}, 0, len(statements))
-
-	for _, statement := range statements {
+	for _, recommendationApplicationInterval := range recommendationApplicationIntervals {
 		m := make(map[string]interface{})
-		if statement.Actions != nil {
-			m[string(Actions)] = statement.Actions
+
+		m[string(RepetitionBasis)] = spotinst.StringValue(recommendationApplicationInterval.RepetitionBasis)
+
+		if recommendationApplicationInterval.WeeklyRepetitionBasis != nil {
+			m[string(WeeklyRepetitionBasis)] = flattenWeeklyRepetitionBasis(recommendationApplicationInterval.WeeklyRepetitionBasis)
 		}
 
-		m[string(Effect)] = spotinst.StringValue(statement.Effect)
-
-		if statement.Resources != nil {
-			m[string(Resources)] = statement.Resources
+		if recommendationApplicationInterval.WeeklyRepetitionBasis != nil {
+			m[string(MonthlyRepetitionBasis)] = flattenMonthlyRepetitionBasis(recommendationApplicationInterval.MonthlyRepetitionBasis)
 		}
+
 		result = append(result, m)
 	}
 
 	return result
+}
+
+func flattenWeeklyRepetitionBasis(weeklyRepetitionBasis *aws.WeeklyRepetitionBasis) []interface{} {
+	result := make(map[string]interface{})
+	if weeklyRepetitionBasis.IntervalDays != nil {
+		result[string(IntervalDays)] = weeklyRepetitionBasis.IntervalDays
+	}
+	if weeklyRepetitionBasis.IntervalHours.StartTime != nil {
+		result[string(IntervalHoursStartTime)] = spotinst.StringValue(weeklyRepetitionBasis.IntervalHours.StartTime)
+	}
+	if weeklyRepetitionBasis.IntervalHours.EndTime != nil {
+		result[string(IntervalHoursEndTime)] = spotinst.StringValue(weeklyRepetitionBasis.IntervalHours.EndTime)
+	}
+	return []interface{}{result}
+}
+
+func flattenMonthlyRepetitionBasis(monthlyRepetitionBasis *aws.MonthlyRepetitionBasis) []interface{} {
+	result := make(map[string]interface{})
+	if monthlyRepetitionBasis.IntervalMonths != nil {
+		result[string(IntervalMonths)] = monthlyRepetitionBasis.IntervalMonths
+	}
+	if monthlyRepetitionBasis.WeekOfTheMonth != nil {
+		result[string(WeekOfTheMonth)] = monthlyRepetitionBasis.WeekOfTheMonth
+	}
+	if monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalDays != nil {
+		result[string(MonthlyWeeklyIntervalDays)] = monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalDays
+	}
+	if monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.StartTime != nil {
+		result[string(MonthlyWeeklyIntervalHoursStartTime)] = spotinst.StringValue(monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.StartTime)
+	}
+	if monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.EndTime != nil {
+		result[string(MonthlyWeeklyIntervalHoursEndTime)] = spotinst.StringValue(monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.EndTime)
+	}
+	return []interface{}{result}
+}
+
+// expandVNGNetworkInterface sets the values from the plan as objects
+func expandRecommendationApplicationIntervals(data interface{}) ([]*aws.RecommendationApplicationInterval, error) {
+	list := data.(*schema.Set).List()
+
+	if list != nil && list[0] != nil {
+		ifaces := make([]*aws.RecommendationApplicationInterval, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			iface := &aws.RecommendationApplicationInterval{}
+
+			if v, ok := m[string(RepetitionBasis)].(string); ok && v != "" {
+				iface.SetRepetitionBasis(spotinst.String(v))
+			}
+
+			if v, ok := m[string(WeeklyRepetitionBasis)]; ok {
+				weeklyRepetitionBasis, err := expandWeeklyRepetitionBasis(v)
+				if err != nil {
+					return nil, err
+				}
+
+				if weeklyRepetitionBasis != nil {
+					iface.SetWeeklyRepetitionBasis(weeklyRepetitionBasis)
+				}
+			} else {
+				iface.WeeklyRepetitionBasis = nil
+			}
+
+			if v, ok := m[string(MonthlyRepetitionBasis)]; ok {
+				monthlyRepetitionBasis, err := expandMonthlyRepetitionBasis(v)
+				if err != nil {
+					return nil, err
+				}
+
+				if monthlyRepetitionBasis != nil {
+					iface.SetMonthlyRepetitionBasis(monthlyRepetitionBasis)
+				}
+			} else {
+				iface.MonthlyRepetitionBasis = nil
+			}
+
+			ifaces = append(ifaces, iface)
+		}
+		return ifaces, nil
+	}
+	return nil, nil
+}
+
+func expandWeeklyRepetitionBasis(data interface{}) (*aws.WeeklyRepetitionBasis, error) {
+	list := data.(*schema.Set).List()
+	weeklyRepetitionBasis := &aws.WeeklyRepetitionBasis{}
+
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+
+		if v, ok := m[string(IntervalHoursStartTime)].(string); ok && v != "" {
+			weeklyRepetitionBasis.IntervalHours.SetStartTime(spotinst.String(v))
+		} else {
+			weeklyRepetitionBasis.IntervalHours.SetStartTime(nil)
+		}
+
+		if v, ok := m[string(IntervalHoursEndTime)].(string); ok && v != "" {
+			weeklyRepetitionBasis.IntervalHours.SetEndTime(spotinst.String(v))
+		} else {
+			weeklyRepetitionBasis.IntervalHours.SetEndTime(nil)
+		}
+
+		if v, ok := m[string(IntervalDays)]; ok {
+			intervalDays, err := expandIntervalDaysList(v)
+			if err != nil {
+				return nil, err
+			}
+			if intervalDays != nil && len(intervalDays) > 0 {
+				weeklyRepetitionBasis.SetIntervalDays(intervalDays)
+			} else {
+				weeklyRepetitionBasis.SetIntervalDays(nil)
+			}
+		}
+
+		return weeklyRepetitionBasis, nil
+
+	}
+	return nil, nil
+}
+
+func expandMonthlyRepetitionBasis(data interface{}) (*aws.MonthlyRepetitionBasis, error) {
+	list := data.(*schema.Set).List()
+	monthlyRepetitionBasis := &aws.MonthlyRepetitionBasis{}
+
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+
+		if v, ok := m[string(WeekOfTheMonth)]; ok {
+			weekOfTheMonth, err := expandIntervalDaysList(v)
+			if err != nil {
+				return nil, err
+			}
+			if weekOfTheMonth != nil && len(weekOfTheMonth) > 0 {
+				monthlyRepetitionBasis.SetWeekOfTheMonth(weekOfTheMonth)
+			} else {
+				monthlyRepetitionBasis.SetWeekOfTheMonth(nil)
+			}
+		}
+
+		if v, ok := m[string(IntervalMonths)]; ok {
+			intervalMonths, err := expandIntervalMonthsList(v)
+			if err != nil {
+				return nil, err
+			}
+			if intervalMonths != nil && len(intervalMonths) > 0 {
+				monthlyRepetitionBasis.SetIntervalMonths(intervalMonths)
+			} else {
+				monthlyRepetitionBasis.SetIntervalMonths(intervalMonths)
+			}
+		}
+
+		if v, ok := m[string(MonthlyWeeklyRepetitionBasis)]; ok {
+			monthlyWeeklyRepetitionBasis, err := expandMonthlyWeeklyRepetitionBasis(v)
+			if err != nil {
+				return nil, err
+			}
+			if monthlyWeeklyRepetitionBasis != nil {
+				monthlyRepetitionBasis.SetMonthlyWeeklyRepetitionBasis(monthlyWeeklyRepetitionBasis)
+			}
+		} else {
+			monthlyRepetitionBasis.SetMonthlyWeeklyRepetitionBasis(nil)
+		}
+
+		return monthlyRepetitionBasis, nil
+
+	}
+	return nil, nil
+}
+
+func expandMonthlyWeeklyRepetitionBasis(data interface{}) (*aws.WeeklyRepetitionBasis, error) {
+	list := data.(*schema.Set).List()
+	weeklyRepetitionBasis := &aws.WeeklyRepetitionBasis{}
+
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+
+		if v, ok := m[string(MonthlyWeeklyIntervalHoursStartTime)].(string); ok && v != "" {
+			weeklyRepetitionBasis.IntervalHours.SetStartTime(spotinst.String(v))
+		} else {
+			weeklyRepetitionBasis.IntervalHours.SetStartTime(nil)
+		}
+
+		if v, ok := m[string(MonthlyWeeklyIntervalHoursEndTime)].(string); ok && v != "" {
+			weeklyRepetitionBasis.IntervalHours.SetEndTime(spotinst.String(v))
+		} else {
+			weeklyRepetitionBasis.IntervalHours.SetEndTime(nil)
+		}
+
+		if v, ok := m[string(MonthlyWeeklyIntervalDays)]; ok {
+			intervalDays, err := expandIntervalDaysList(v)
+			if err != nil {
+				return nil, err
+			}
+			if intervalDays != nil && len(intervalDays) > 0 {
+				weeklyRepetitionBasis.SetIntervalDays(intervalDays)
+			} else {
+				weeklyRepetitionBasis.SetIntervalDays(nil)
+			}
+		}
+
+		return weeklyRepetitionBasis, nil
+
+	}
+	return nil, nil
+}
+
+func expandIntervalDaysList(data interface{}) ([]string, error) {
+	list := data.(*schema.Set).List()
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if intervalDays, ok := v.(string); ok && intervalDays != "" {
+			result = append(result, intervalDays)
+		}
+	}
+	return result, nil
+}
+
+func expandIntervalMonthsList(data interface{}) ([]int, error) {
+	list := data.(*schema.Set).List()
+	result := make([]int, 0, len(list))
+
+	for _, v := range list {
+		if intervalMonths, ok := v.(int); ok && intervalMonths != 0 {
+			result = append(result, intervalMonths)
+		}
+	}
+	return result, nil
+}
+
+func flattenRecommendationApplicationMinThreshold(recommendationApplicationMinThreshold *aws.RecommendationApplicationMinThreshold) []interface{} {
+	result := make(map[string]interface{})
+
+	if recommendationApplicationMinThreshold.CpuPercentage != nil {
+		result[string(CpuPercentage)] = spotinst.Float64Value(recommendationApplicationMinThreshold.CpuPercentage)
+	}
+	if recommendationApplicationMinThreshold.MemoryPercentage != nil {
+		result[string(MemoryPercentage)] = spotinst.Float64Value(recommendationApplicationMinThreshold.CpuPercentage)
+	}
+	return []interface{}{result}
+}
+
+func expandRecommendationApplicationMinThreshold(data interface{}) (*aws.RecommendationApplicationMinThreshold, error) {
+	list := data.(*schema.Set).List()
+	recommendationApplicationMinThreshold := &aws.RecommendationApplicationMinThreshold{}
+
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+
+		if v, ok := m[string(CpuPercentage)].(float64); ok {
+			if v == -1 {
+				recommendationApplicationMinThreshold.SetCpuPercentage(nil)
+			} else {
+				recommendationApplicationMinThreshold.SetCpuPercentage(spotinst.Float64(v))
+			}
+		}
+
+		if v, ok := m[string(MemoryPercentage)].(float64); ok {
+			if v == -1 {
+				recommendationApplicationMinThreshold.SetMemoryPercentage(nil)
+			} else {
+				recommendationApplicationMinThreshold.SetMemoryPercentage(spotinst.Float64(v))
+			}
+		}
+
+		return recommendationApplicationMinThreshold, nil
+
+	}
+	return nil, nil
+}
+
+func flattenRecommendationApplicationBoundaries(recommendationApplicationBoundaries *aws.RecommendationApplicationBoundaries) []interface{} {
+	result := make(map[string]interface{})
+
+	if recommendationApplicationBoundaries.Cpu.Min != nil {
+		result[string(CpuMin)] = spotinst.IntValue(recommendationApplicationBoundaries.Cpu.Min)
+	}
+	if recommendationApplicationBoundaries.Cpu.Max != nil {
+		result[string(CpuMax)] = spotinst.IntValue(recommendationApplicationBoundaries.Cpu.Max)
+	}
+	if recommendationApplicationBoundaries.Memory.Min != nil {
+		result[string(MemoryMin)] = spotinst.IntValue(recommendationApplicationBoundaries.Memory.Min)
+	}
+	if recommendationApplicationBoundaries.Memory.Max != nil {
+		result[string(MemoryMax)] = spotinst.IntValue(recommendationApplicationBoundaries.Memory.Max)
+	}
+	return []interface{}{result}
+}
+
+func expandRecommendationApplicationBoundaries(data interface{}) (*aws.RecommendationApplicationBoundaries, error) {
+	list := data.(*schema.Set).List()
+	recommendationApplicationBoundaries := &aws.RecommendationApplicationBoundaries{}
+
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+
+		if v, ok := m[string(CpuMin)].(int); ok {
+			if v == -1 {
+				recommendationApplicationBoundaries.Cpu.SetMin(nil)
+			} else {
+				recommendationApplicationBoundaries.Cpu.SetMin(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(CpuMax)].(int); ok {
+			if v == -1 {
+				recommendationApplicationBoundaries.Cpu.SetMax(nil)
+			} else {
+				recommendationApplicationBoundaries.Cpu.SetMax(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(MemoryMin)].(int); ok {
+			if v == -1 {
+				recommendationApplicationBoundaries.Memory.SetMin(nil)
+			} else {
+				recommendationApplicationBoundaries.Memory.SetMin(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(MemoryMax)].(int); ok {
+			if v == -1 {
+				recommendationApplicationBoundaries.Memory.SetMax(nil)
+			} else {
+				recommendationApplicationBoundaries.Memory.SetMax(spotinst.Int(v))
+			}
+		}
+
+		return recommendationApplicationBoundaries, nil
+
+	}
+	return nil, nil
 }
