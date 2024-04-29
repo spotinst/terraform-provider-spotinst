@@ -56,15 +56,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
-			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
-			var value *string = nil
-			if rightSizingRule.OceanId != nil {
-				value = rightSizingRule.OceanId
-			}
-			if err := resourceData.Set(string(OceanId), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OceanId), err)
-			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
@@ -76,11 +67,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
-			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
-			if v, ok := resourceData.GetOk(string(OceanId)); ok && v != "" {
-				rightSizingRule.SetOceanId(spotinst.String(resourceData.Get(string(OceanId)).(string)))
-			}
 			return nil
 		},
 		nil,
@@ -361,7 +347,7 @@ func flattenRecommendationApplicationIntervals(recommendationApplicationInterval
 			m[string(WeeklyRepetitionBasis)] = flattenWeeklyRepetitionBasis(recommendationApplicationInterval.WeeklyRepetitionBasis)
 		}
 
-		if recommendationApplicationInterval.WeeklyRepetitionBasis != nil {
+		if recommendationApplicationInterval.MonthlyRepetitionBasis != nil {
 			m[string(MonthlyRepetitionBasis)] = flattenMonthlyRepetitionBasis(recommendationApplicationInterval.MonthlyRepetitionBasis)
 		}
 
@@ -393,14 +379,22 @@ func flattenMonthlyRepetitionBasis(monthlyRepetitionBasis *aws.MonthlyRepetition
 	if monthlyRepetitionBasis.WeekOfTheMonth != nil {
 		result[string(WeekOfTheMonth)] = monthlyRepetitionBasis.WeekOfTheMonth
 	}
-	if monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalDays != nil {
-		result[string(MonthlyWeeklyIntervalDays)] = monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalDays
+	if monthlyRepetitionBasis.WeeklyRepetitionBasis != nil {
+		result[string(MonthlyWeeklyRepetitionBasis)] = flattenMonthlyWeeklyRepetitionBasis(monthlyRepetitionBasis.WeeklyRepetitionBasis)
 	}
-	if monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.StartTime != nil {
-		result[string(MonthlyWeeklyIntervalHoursStartTime)] = spotinst.StringValue(monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.StartTime)
+	return []interface{}{result}
+}
+
+func flattenMonthlyWeeklyRepetitionBasis(weeklyRepetitionBasis *aws.WeeklyRepetitionBasis) []interface{} {
+	result := make(map[string]interface{})
+	if weeklyRepetitionBasis.IntervalDays != nil {
+		result[string(MonthlyWeeklyIntervalDays)] = weeklyRepetitionBasis.IntervalDays
 	}
-	if monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.EndTime != nil {
-		result[string(MonthlyWeeklyIntervalHoursEndTime)] = spotinst.StringValue(monthlyRepetitionBasis.WeeklyRepetitionBasis.IntervalHours.EndTime)
+	if weeklyRepetitionBasis.IntervalHours.StartTime != nil {
+		result[string(MonthlyWeeklyIntervalHoursStartTime)] = spotinst.StringValue(weeklyRepetitionBasis.IntervalHours.StartTime)
+	}
+	if weeklyRepetitionBasis.IntervalHours.EndTime != nil {
+		result[string(MonthlyWeeklyIntervalHoursEndTime)] = spotinst.StringValue(weeklyRepetitionBasis.IntervalHours.EndTime)
 	}
 	return []interface{}{result}
 }

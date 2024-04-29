@@ -95,22 +95,21 @@ func createOceanAWSRightSizingRule(resourceData *schema.ResourceData, rsr *aws.R
 	} else {
 		log.Printf("===> RightSizing Rule create configuration: %s", json)
 	}
-	var resp *aws.CreateRightSizingRuleOutput = nil
+
 	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
 		input := &aws.CreateRightSizingRuleInput{RightSizingRule: rsr}
-		rsr, err := spotinstClient.ocean.CloudProviderAWS().CreateRightSizingRule(context.Background(), input)
+		_, err := spotinstClient.ocean.CloudProviderAWS().CreateRightSizingRule(context.Background(), input)
 		if err != nil {
 
 			// Some other error, report it.
 			return resource.NonRetryableError(err)
 		}
-		resp = rsr
 		return nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create RightSizing Rule: %s", err)
 	}
-	return resp.RightSizingRule.Name, nil
+	return rsr.Name, nil
 
 }
 
@@ -128,8 +127,8 @@ func resourceSpotinstOceanAWSRightSizingRuleUpdate(ctx context.Context, resource
 			return diag.FromErr(err)
 		}
 	}
-	log.Printf("===> ExtendedResourceDefinition updated successfully: %s <===", resourceId)
-	return resourceSpotinstOceanAWSExtendedResourceDefinitionRead(ctx, resourceData, meta)
+	log.Printf("===> RightSizing Rule updated successfully: %s <===", resourceId)
+	return resourceSpotinstOceanAWSRightSizingRuleRead(ctx, resourceData, meta)
 }
 
 func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schema.ResourceData, meta interface{}) error {
@@ -142,7 +141,7 @@ func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schem
 	if json, err := commons.ToJson(rsr); err != nil {
 		return err
 	} else {
-		log.Printf("===> ExtendedResourceDefinition update configuration: %s", json)
+		log.Printf("===> RightSizingRule update configuration: %s", json)
 	}
 
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().UpdateRightSizingRule(context.Background(), input); err != nil {
@@ -153,9 +152,10 @@ func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schem
 
 func resourceSpotinstOceanAWSRightSizingRuleDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	resourceId := resourceData.Id()
-	log.Printf(string(commons.ResourceOnDelete), commons.OceanAWSExtendedResourceDefinitionResource.GetName(), resourceId)
+	log.Printf(string(commons.ResourceOnDelete), commons.OceanAWSRightSizingRuleResource.GetName(), resourceId)
 
-	if err := deleteOceanAWSRightSizingRule(resourceData, meta); err != nil {
+	rightSizingRule, _ := commons.OceanAWSRightSizingRuleResource.OnCreate(resourceData, meta)
+	if err := deleteOceanAWSRightSizingRule(resourceData, rightSizingRule, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -164,19 +164,20 @@ func resourceSpotinstOceanAWSRightSizingRuleDelete(ctx context.Context, resource
 	return nil
 }
 
-func deleteOceanAWSRightSizingRule(resourceData *schema.ResourceData, meta interface{}) error {
+func deleteOceanAWSRightSizingRule(resourceData *schema.ResourceData, rsr *aws.RightSizingRule, meta interface{}) error {
 	ruleName := resourceData.Id()
 	input := &aws.DeleteRightSizingRuleInput{
-		RuleNames: []string{ruleName},
+		RuleNames:       []string{ruleName},
+		RightSizingRule: rsr,
 	}
 	if json, err := commons.ToJson(input); err != nil {
 		return err
 	} else {
-		log.Printf("===> ExtendedResourceDefinition delete configuration: %s", json)
+		log.Printf("===> RightSizingRule delete configuration: %s", json)
 	}
 
 	if _, err := meta.(*Client).ocean.CloudProviderAWS().DeleteRightSizingRules(context.Background(), input); err != nil {
-		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete ExtendedResourceDefinition: %s", err)
+		return fmt.Errorf("[ERROR] onDelete() -> Failed to delete RightSizingRule: %s", err)
 	}
 	return nil
 }
