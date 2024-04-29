@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.171.1 (April, 25 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: modified `image_id` field from optional to required according to api changes
+* resource/spotinst_ocean_ecs: modified `image_id` field from optional to required according to api changes
 
 ## 1.171.0 (April, 22 2024)
 ENHANCEMENTS:
