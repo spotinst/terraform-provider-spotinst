@@ -20,7 +20,7 @@ const (
 	MonthlyWeeklyIntervalHoursStartTime commons.FieldName = "interval_hours_start_time"
 	MonthlyWeeklyIntervalHoursEndTime   commons.FieldName = "interval_hours_end_time"
 
-	RecommendationApplicationBoundaries commons.FieldName = "RecommendationApplicationBoundaries"
+	RecommendationApplicationBoundaries commons.FieldName = "recommendation_application_boundaries"
 	CpuMin                              commons.FieldName = "cpu_min"
 	CpuMax                              commons.FieldName = "cpu_max"
 	MemoryMin                           commons.FieldName = "memory_min"

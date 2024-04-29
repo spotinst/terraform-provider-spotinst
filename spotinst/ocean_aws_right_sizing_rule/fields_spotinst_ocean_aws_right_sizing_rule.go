@@ -10,6 +10,82 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
+	fieldsMap[Name] = commons.NewGenericField(
+		commons.OceanAWSRightSizingRule,
+		Name,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var value *string = nil
+			if rightSizingRule.Name != nil {
+				value = rightSizingRule.Name
+			}
+			if err := resourceData.Set(string(Name), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Name), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(Name)); ok && v != "" {
+				rightSizingRule.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(Name)); ok && v != "" {
+				rightSizingRule.SetName(spotinst.String(resourceData.Get(string(Name)).(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[OceanId] = commons.NewGenericField(
+		commons.OrganizationPolicy,
+		OceanId,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var value *string = nil
+			if rightSizingRule.OceanId != nil {
+				value = rightSizingRule.OceanId
+			}
+			if err := resourceData.Set(string(OceanId), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OceanId), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(OceanId)); ok && v != "" {
+				rightSizingRule.SetOceanId(spotinst.String(resourceData.Get(string(OceanId)).(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(OceanId)); ok && v != "" {
+				rightSizingRule.SetOceanId(spotinst.String(resourceData.Get(string(OceanId)).(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[RecommendationApplicationIntervals] = commons.NewGenericField(
 		commons.OceanAWSRightSizingRule,
 		RecommendationApplicationIntervals,
@@ -136,17 +212,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		RecommendationApplicationMinThreshold,
 		&schema.Schema{
 			Type:     schema.TypeSet,
-			Required: true,
+			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(CpuPercentage): {
 						Type:     schema.TypeFloat,
-						Required: true,
+						Optional: true,
 						Default:  -1,
 					},
 					string(MemoryPercentage): {
 						Type:     schema.TypeFloat,
-						Required: true,
+						Optional: true,
 						Default:  -1,
 					},
 				},
@@ -201,27 +277,27 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		RecommendationApplicationBoundaries,
 		&schema.Schema{
 			Type:     schema.TypeSet,
-			Required: true,
+			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(CpuMin): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
 						Default:  -1,
 					},
 					string(CpuMax): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
 						Default:  -1,
 					},
 					string(MemoryMin): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
 						Default:  -1,
 					},
 					string(MemoryMax): {
 						Type:     schema.TypeInt,
-						Required: true,
+						Optional: true,
 						Default:  -1,
 					},
 				},
@@ -379,22 +455,25 @@ func expandRecommendationApplicationIntervals(data interface{}) ([]*aws.Recommen
 func expandWeeklyRepetitionBasis(data interface{}) (*aws.WeeklyRepetitionBasis, error) {
 	list := data.(*schema.Set).List()
 	weeklyRepetitionBasis := &aws.WeeklyRepetitionBasis{}
+	intervalHours := &aws.IntervalHours{}
 
 	if len(list) > 0 {
 		item := list[0]
 		m := item.(map[string]interface{})
 
 		if v, ok := m[string(IntervalHoursStartTime)].(string); ok && v != "" {
-			weeklyRepetitionBasis.IntervalHours.SetStartTime(spotinst.String(v))
+			intervalHours.SetStartTime(spotinst.String(v))
 		} else {
-			weeklyRepetitionBasis.IntervalHours.SetStartTime(nil)
+			intervalHours.SetStartTime(nil)
 		}
 
 		if v, ok := m[string(IntervalHoursEndTime)].(string); ok && v != "" {
-			weeklyRepetitionBasis.IntervalHours.SetEndTime(spotinst.String(v))
+			intervalHours.SetEndTime(spotinst.String(v))
 		} else {
-			weeklyRepetitionBasis.IntervalHours.SetEndTime(nil)
+			intervalHours.SetEndTime(nil)
 		}
+
+		weeklyRepetitionBasis.SetIntervalHours(intervalHours)
 
 		if v, ok := m[string(IntervalDays)]; ok {
 			intervalDays, err := expandIntervalDaysList(v)
@@ -467,22 +546,25 @@ func expandMonthlyRepetitionBasis(data interface{}) (*aws.MonthlyRepetitionBasis
 func expandMonthlyWeeklyRepetitionBasis(data interface{}) (*aws.WeeklyRepetitionBasis, error) {
 	list := data.(*schema.Set).List()
 	weeklyRepetitionBasis := &aws.WeeklyRepetitionBasis{}
+	intervalHours := &aws.IntervalHours{}
 
 	if len(list) > 0 {
 		item := list[0]
 		m := item.(map[string]interface{})
 
 		if v, ok := m[string(MonthlyWeeklyIntervalHoursStartTime)].(string); ok && v != "" {
-			weeklyRepetitionBasis.IntervalHours.SetStartTime(spotinst.String(v))
+			intervalHours.SetStartTime(spotinst.String(v))
 		} else {
-			weeklyRepetitionBasis.IntervalHours.SetStartTime(nil)
+			intervalHours.SetStartTime(nil)
 		}
 
 		if v, ok := m[string(MonthlyWeeklyIntervalHoursEndTime)].(string); ok && v != "" {
-			weeklyRepetitionBasis.IntervalHours.SetEndTime(spotinst.String(v))
+			intervalHours.SetEndTime(spotinst.String(v))
 		} else {
-			weeklyRepetitionBasis.IntervalHours.SetEndTime(nil)
+			intervalHours.SetEndTime(nil)
 		}
+
+		weeklyRepetitionBasis.SetIntervalHours(intervalHours)
 
 		if v, ok := m[string(MonthlyWeeklyIntervalDays)]; ok {
 			intervalDays, err := expandIntervalDaysList(v)
@@ -503,7 +585,7 @@ func expandMonthlyWeeklyRepetitionBasis(data interface{}) (*aws.WeeklyRepetition
 }
 
 func expandIntervalDaysList(data interface{}) ([]string, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
@@ -515,7 +597,7 @@ func expandIntervalDaysList(data interface{}) ([]string, error) {
 }
 
 func expandIntervalMonthsList(data interface{}) ([]int, error) {
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	result := make([]int, 0, len(list))
 
 	for _, v := range list {
@@ -589,6 +671,8 @@ func flattenRecommendationApplicationBoundaries(recommendationApplicationBoundar
 func expandRecommendationApplicationBoundaries(data interface{}) (*aws.RecommendationApplicationBoundaries, error) {
 	list := data.(*schema.Set).List()
 	recommendationApplicationBoundaries := &aws.RecommendationApplicationBoundaries{}
+	cpu := &aws.Cpu{}
+	memory := &aws.Memory{}
 
 	if len(list) > 0 {
 		item := list[0]
@@ -596,35 +680,39 @@ func expandRecommendationApplicationBoundaries(data interface{}) (*aws.Recommend
 
 		if v, ok := m[string(CpuMin)].(int); ok {
 			if v == -1 {
-				recommendationApplicationBoundaries.Cpu.SetMin(nil)
+				cpu.SetMin(nil)
 			} else {
-				recommendationApplicationBoundaries.Cpu.SetMin(spotinst.Int(v))
+				cpu.SetMin(spotinst.Int(v))
 			}
 		}
 
 		if v, ok := m[string(CpuMax)].(int); ok {
 			if v == -1 {
-				recommendationApplicationBoundaries.Cpu.SetMax(nil)
+				cpu.SetMax(nil)
 			} else {
-				recommendationApplicationBoundaries.Cpu.SetMax(spotinst.Int(v))
+				cpu.SetMax(spotinst.Int(v))
 			}
 		}
 
+		recommendationApplicationBoundaries.SetCpu(cpu)
+
 		if v, ok := m[string(MemoryMin)].(int); ok {
 			if v == -1 {
-				recommendationApplicationBoundaries.Memory.SetMin(nil)
+				memory.SetMin(nil)
 			} else {
-				recommendationApplicationBoundaries.Memory.SetMin(spotinst.Int(v))
+				memory.SetMin(spotinst.Int(v))
 			}
 		}
 
 		if v, ok := m[string(MemoryMax)].(int); ok {
 			if v == -1 {
-				recommendationApplicationBoundaries.Memory.SetMax(nil)
+				memory.SetMax(nil)
 			} else {
-				recommendationApplicationBoundaries.Memory.SetMax(spotinst.Int(v))
+				memory.SetMax(spotinst.Int(v))
 			}
 		}
+
+		recommendationApplicationBoundaries.SetMemory(memory)
 
 		return recommendationApplicationBoundaries, nil
 
