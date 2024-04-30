@@ -128,11 +128,20 @@ func resourceSpotinstOceanAWSRightSizingRuleUpdate(ctx context.Context, resource
 		}
 	}
 	log.Printf("===> RightSizing Rule updated successfully: %s <===", resourceId)
+
+	if rsr.Name != nil {
+		resourceData.SetId(spotinst.StringValue(rsr.Name))
+	}
+
 	return resourceSpotinstOceanAWSRightSizingRuleRead(ctx, resourceData, meta)
 }
 
 func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schema.ResourceData, meta interface{}) error {
 	resourceId := resourceData.Id()
+	rsrOnCreate, _ := commons.OceanAWSRightSizingRuleResource.OnCreate(resourceData, meta)
+
+	rsr.OceanId = rsrOnCreate.OceanId
+
 	var input = &aws.UpdateRightSizingRuleInput{
 		RuleName:        spotinst.String(resourceId),
 		RightSizingRule: rsr,
