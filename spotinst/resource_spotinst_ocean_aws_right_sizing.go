@@ -46,8 +46,8 @@ func resourceSpotinstOceanAWSRightSizingRuleRead(ctx context.Context, resourceDa
 	rightSizingRule, err := commons.OceanAWSRightSizingRuleResource.OnCreate(resourceData, meta)
 
 	input := &aws.ReadRightSizingRuleInput{
-		RuleName:        spotinst.String(resourceId),
-		RightSizingRule: rightSizingRule,
+		RuleName: spotinst.String(resourceId),
+		OceanId:  rightSizingRule.OceanId,
 	}
 	resp, err := meta.(*Client).ocean.CloudProviderAWS().ReadRightSizingRule(context.Background(), input)
 	if err != nil {
@@ -176,8 +176,8 @@ func resourceSpotinstOceanAWSRightSizingRuleDelete(ctx context.Context, resource
 func deleteOceanAWSRightSizingRule(resourceData *schema.ResourceData, rsr *aws.RightSizingRule, meta interface{}) error {
 	ruleName := resourceData.Id()
 	input := &aws.DeleteRightSizingRuleInput{
-		RuleNames:       []string{ruleName},
-		RightSizingRule: rsr,
+		RuleNames: []string{ruleName},
+		OceanId:   rsr.OceanId,
 	}
 	if json, err := commons.ToJson(input); err != nil {
 		return err
