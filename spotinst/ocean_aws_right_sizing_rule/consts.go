@@ -29,4 +29,15 @@ const (
 	RecommendationApplicationMinThreshold commons.FieldName = "recommendation_application_min_threshold"
 	CpuPercentage                         commons.FieldName = "cpu_percentage"
 	MemoryPercentage                      commons.FieldName = "memory_percentage"
+
+	AttachWorkloads commons.FieldName = "attach_workloads"
+	Namespaces      commons.FieldName = "namespaces"
+	NamespaceName   commons.FieldName = "namespace_name"
+	Workloads       commons.FieldName = "workloads"
+	WorkloadName    commons.FieldName = "workload_name"
+	WorkloadType    commons.FieldName = "workload_type"
+	RegexName       commons.FieldName = "regex_name"
+	Labels          commons.FieldName = "labels"
+	Key             commons.FieldName = "key"
+	Value           commons.FieldName = "value"
 )

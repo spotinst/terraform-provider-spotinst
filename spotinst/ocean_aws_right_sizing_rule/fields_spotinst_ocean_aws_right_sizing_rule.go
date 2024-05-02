@@ -333,6 +333,77 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[AttachWorkloads] = commons.NewGenericField(
+		commons.OceanAWSRightSizingRule,
+		AttachWorkloads,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Namespaces): {
+						Type:     schema.TypeSet,
+						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(NamespaceName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Workloads): {
+									Type:     schema.TypeSet,
+									Required: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(WorkloadName): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(WorkloadType): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(RegexName): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+										},
+									},
+								},
+								string(Labels): {
+									Type:     schema.TypeSet,
+									Required: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Key): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(Value): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func flattenRecommendationApplicationIntervals(recommendationApplicationIntervals []*aws.RecommendationApplicationInterval) []interface{} {
