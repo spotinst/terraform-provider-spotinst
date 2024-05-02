@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.171.2 (May, 02 2024)
+BUG FIXES:
+* Changed `policy_account_ids` field to Optional in `resource_spotinst_programmatic_user`
+
 ## 1.171.1 (April, 25 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: modified `image_id` field from optional to required according to api changes

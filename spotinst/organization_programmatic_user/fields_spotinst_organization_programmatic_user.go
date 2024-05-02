@@ -97,7 +97,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(PolicyAccountIds): {
 						Type:     schema.TypeList,
-						Required: true,
+						Optional: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
 					string(PolicyId): {
