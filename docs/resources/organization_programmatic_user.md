@@ -37,13 +37,13 @@ The following arguments are supported:
 * `description` - (Optional) Brief description of the user.
 * `policies` - (Optional) All the policies the programmatic user will have access to.
    If used - Cannot be empty.
-  * `policy_account_ids` - (Required) A list of the accounts that the policy should be
+  * `policy_account_ids` - (Optional) A list of the accounts that the policy should be
   enforced for the user.
   * `policy_id` - (Required) Policy ID the programmatic user will have access to.
 * `accounts` - (Optional) All the accounts the programmatic user will have access to.
    If used - Cannot be empty.
-  * `account_id` - (Optional) Account ID the programmatic user will have access to.
-  * `account_role` - (Optional) (Enum: `"viewer", "editor") Role to be associated with the
+  * `account_id` - (Required) Account ID the programmatic user will have access to.
+  * `account_role` - (Required) (Enum: `"viewer", "editor") Role to be associated with the
      programmatic user for this account.
 * `user_group_ids` - (Optional) A list of the user groups to register the given user to (should be existing user groups only)
 
