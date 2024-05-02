@@ -201,27 +201,24 @@ func attachWorkloadsToRule(resourceData *schema.ResourceData, meta interface{}, 
 				"configuration for right sizing rule %q, error: %v", ruleName, err)
 		}
 
-		updateStateJSON, err := commons.ToJson(attachDataDiskStatefulNodeSchema)
+		updateStateJSON, err := commons.ToJson(attachWorkloadsSchema)
 		if err != nil {
-			return fmt.Errorf("stateful node/azure: failed marshaling attach data disk "+
-				"configuration for stateful node %q, error: %v", ruleName, err)
+			return fmt.Errorf("failed marshaling attach workloads "+
+				"configuration for right sizing rule %q, error: %v", ruleName, err)
 		}
 
-		log.Printf("onUpdate() -> Updating stateful node [%v] with configuration %s", ruleName, updateStateJSON)
-		attachDataDiskInput := &aws.RightSizingAttachDetachInput{
-			ID:                        attachDataDiskSpec.ID,
-			DataDiskName:              attachDataDiskSpec.DataDiskName,
-			DataDiskResourceGroupName: attachDataDiskSpec.DataDiskResourceGroupName,
-			StorageAccountType:        attachDataDiskSpec.StorageAccountType,
-			SizeGB:                    attachDataDiskSpec.SizeGB,
-			LUN:                       attachDataDiskSpec.LUN,
-			Zone:                      attachDataDiskSpec.Zone}
-		if _, err = meta.(*Client).statefulNode.CloudProviderAzure().AttachDataDisk(context.TODO(),
-			attachDataDiskInput); err != nil {
-			return fmt.Errorf("onUpdate() -> Attach data disk failed for stateful node [%v], error: %v",
+		log.Printf("onUpdate() -> Updating right sizing rule [%v] with configuration %s", ruleName, updateStateJSON)
+		attachWorkloadsInput := &aws.RightSizingAttachDetachInput{
+			RuleName:   attachWorkloadsSpec.RuleName,
+			OceanId:    attachWorkloadsSpec.OceanId,
+			Namespaces: attachWorkloadsSpec.Namespaces,
+		}
+		if _, err = meta.(*Client).ocean.CloudProviderAWS().AttachWorkloadsToRule(context.TODO(),
+			attachWorkloadsInput); err != nil {
+			return fmt.Errorf("onUpdate() -> Attach workloads failed for right sizing rule [%v], error: %v",
 				ruleName, err)
 		}
-		log.Printf("onUpdate() -> Successfully attached data disk for stateful node [%v]", ruleName)
+		log.Printf("onUpdate() -> Successfully attached workloads for right sizing rule [%v]", ruleName)
 	}
 
 	return nil
