@@ -144,6 +144,8 @@ func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schem
 
 	var shouldAttachWorkloads = false
 
+	var oceanId = spotinst.StringValue(rsr.OceanId)
+
 	if attachWorkloads, ok := resourceData.GetOk(string(ocean_aws_right_sizing_rule.AttachWorkloads)); ok {
 		list := attachWorkloads.(*schema.Set).List()
 		if len(list) > 0 && list[0] != nil {
@@ -167,7 +169,7 @@ func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schem
 	}
 
 	if shouldAttachWorkloads {
-		if err := attachWorkloadsToRule(resourceData, meta, input.RightSizingRule.OceanId); err != nil {
+		if err := attachWorkloadsToRule(resourceData, meta, &oceanId); err != nil {
 			log.Printf("[ERROR] Attach Workloads for Right Sizing Rule [%v] failed, error: %v", resourceData, err)
 			return err
 		}
@@ -201,7 +203,7 @@ func attachWorkloadsToRule(resourceData *schema.ResourceData, meta interface{}, 
 				"configuration for right sizing rule %q, error: %v", ruleName, err)
 		}
 
-		updateStateJSON, err := commons.ToJson(attachWorkloadsSchema)
+		updateStateJSON, err := commons.ToJson(attachWorkloadsSpec)
 		if err != nil {
 			return fmt.Errorf("failed marshaling attach workloads "+
 				"configuration for right sizing rule %q, error: %v", ruleName, err)
@@ -334,7 +336,7 @@ func expandLabels(data interface{}) ([]*aws.Label, error) {
 			label.Key = spotinst.String(v)
 		}
 
-		if v, ok := attr[string(ocean_aws_right_sizing_rule.Key)].(string); ok && v != "" {
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.Value)].(string); ok && v != "" {
 			label.Value = spotinst.String(v)
 		}
 

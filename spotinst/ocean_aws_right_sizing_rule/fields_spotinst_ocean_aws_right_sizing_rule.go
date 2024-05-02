@@ -352,7 +352,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 								string(Workloads): {
 									Type:     schema.TypeSet,
-									Required: true,
+									Optional: true,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(WorkloadName): {
@@ -372,12 +372,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 								string(Labels): {
 									Type:     schema.TypeSet,
-									Required: true,
+									Optional: true,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(Key): {
 												Type:     schema.TypeString,
-												Optional: true,
+												Required: true,
 											},
 											string(Value): {
 												Type:     schema.TypeString,
@@ -680,7 +680,7 @@ func flattenRecommendationApplicationMinThreshold(recommendationApplicationMinTh
 		result[string(CpuPercentage)] = spotinst.Float64Value(recommendationApplicationMinThreshold.CpuPercentage)
 	}
 	if recommendationApplicationMinThreshold.MemoryPercentage != nil {
-		result[string(MemoryPercentage)] = spotinst.Float64Value(recommendationApplicationMinThreshold.CpuPercentage)
+		result[string(MemoryPercentage)] = spotinst.Float64Value(recommendationApplicationMinThreshold.MemoryPercentage)
 	}
 	return []interface{}{result}
 }
