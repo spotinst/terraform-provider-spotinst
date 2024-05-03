@@ -2,7 +2,7 @@
 
 ## 1.171.3 (May, 03 2024)
 BUG FIXES:
-* resource/spotinst_ocean_gke_import: Fixed disabling `tasks` and `shutdownHours` from cluster config under `scheduling`.
+* resource/spotinst_ocean_gke_import: Fixed disabling `tasks` and `shutdown_hours` from cluster config under `scheduled_task`.
 
 ## 1.171.2 (May, 02 2024)
 BUG FIXES:
