@@ -113,7 +113,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
 			orgUser := orgUserWrapper.GetOrgUser()
 			if v, ok := resourceData.GetOk(string(Password)); ok && v != "" {
-				orgUser.SetFirstName(spotinst.String(resourceData.Get(string(Password)).(string)))
+				orgUser.SetPassword(spotinst.String(resourceData.Get(string(Password)).(string)))
 			}
 			return nil
 		},
@@ -121,7 +121,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
 			orgUser := orgUserWrapper.GetOrgUser()
 			if v, ok := resourceData.GetOk(string(Password)); ok && v != "" {
-				orgUser.SetFirstName(spotinst.String(resourceData.Get(string(Password)).(string)))
+				orgUser.SetPassword(spotinst.String(resourceData.Get(string(Password)).(string)))
 			}
 			return nil
 		},
@@ -142,7 +142,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
 			orgUser := orgUserWrapper.GetOrgUser()
 			if v, ok := resourceData.GetOk(string(Role)); ok && v != "" {
-				orgUser.SetFirstName(spotinst.String(resourceData.Get(string(Role)).(string)))
+				orgUser.SetRole(spotinst.String(resourceData.Get(string(Role)).(string)))
 			}
 			return nil
 		},
@@ -150,7 +150,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			orgUserWrapper := resourceObject.(*commons.OrgUserWrapper)
 			orgUser := orgUserWrapper.GetOrgUser()
 			if v, ok := resourceData.GetOk(string(Role)); ok && v != "" {
-				orgUser.SetFirstName(spotinst.String(resourceData.Get(string(Role)).(string)))
+				orgUser.SetRole(spotinst.String(resourceData.Get(string(Role)).(string)))
 			}
 			return nil
 		},
