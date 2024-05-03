@@ -404,6 +404,77 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[DetachWorkloads] = commons.NewGenericField(
+		commons.OceanAWSRightSizingRule,
+		DetachWorkloads,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(NamespacesForDetach): {
+						Type:     schema.TypeSet,
+						Required: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(NamespaceNameForDetach): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(WorkloadsForDetach): {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(WorkloadNameForDetach): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(WorkloadTypeForDetach): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(RegexNameForDetach): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+										},
+									},
+								},
+								string(LabelsForDetach): {
+									Type:     schema.TypeSet,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(KeyForDetach): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(ValueForDetach): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func flattenRecommendationApplicationIntervals(recommendationApplicationIntervals []*aws.RecommendationApplicationInterval) []interface{} {

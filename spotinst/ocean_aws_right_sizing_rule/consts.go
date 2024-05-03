@@ -40,4 +40,15 @@ const (
 	Labels          commons.FieldName = "labels"
 	Key             commons.FieldName = "key"
 	Value           commons.FieldName = "value"
+
+	DetachWorkloads        commons.FieldName = "detach_workloads"
+	NamespacesForDetach    commons.FieldName = "namespaces"
+	NamespaceNameForDetach commons.FieldName = "namespace_name"
+	WorkloadsForDetach     commons.FieldName = "workloads"
+	WorkloadNameForDetach  commons.FieldName = "workload_name"
+	WorkloadTypeForDetach  commons.FieldName = "workload_type"
+	RegexNameForDetach     commons.FieldName = "regex_name"
+	LabelsForDetach        commons.FieldName = "labels"
+	KeyForDetach           commons.FieldName = "key"
+	ValueForDetach         commons.FieldName = "value"
 )

@@ -143,6 +143,7 @@ func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schem
 	rsr.OceanId = rsrOnCreate.OceanId
 
 	var shouldAttachWorkloads = false
+	var shouldDetachWorkloads = false
 
 	var oceanId = spotinst.StringValue(rsr.OceanId)
 
@@ -150,6 +151,13 @@ func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schem
 		list := attachWorkloads.(*schema.Set).List()
 		if len(list) > 0 && list[0] != nil {
 			shouldAttachWorkloads = true
+		}
+	}
+
+	if detachWorkloads, ok := resourceData.GetOk(string(ocean_aws_right_sizing_rule.DetachWorkloads)); ok {
+		list := detachWorkloads.(*schema.Set).List()
+		if len(list) > 0 && list[0] != nil {
+			shouldDetachWorkloads = true
 		}
 	}
 
@@ -176,6 +184,16 @@ func updateOceanAWSRightSizingRule(rsr *aws.RightSizingRule, resourceData *schem
 	} else {
 		log.Printf("onUpdate() -> Field [%v] is missing, skipping attach workloads for right sizing rule",
 			string(ocean_aws_right_sizing_rule.AttachWorkloads))
+	}
+
+	if shouldDetachWorkloads {
+		if err := detachWorkloadsFromRule(resourceData, meta, &oceanId); err != nil {
+			log.Printf("[ERROR] Attach Workloads for Right Sizing Rule [%v] failed, error: %v", resourceData, err)
+			return err
+		}
+	} else {
+		log.Printf("onUpdate() -> Field [%v] is missing, skipping detach workloads for right sizing rule",
+			string(ocean_aws_right_sizing_rule.DetachWorkloads))
 	}
 
 	return nil
@@ -221,6 +239,51 @@ func attachWorkloadsToRule(resourceData *schema.ResourceData, meta interface{}, 
 				ruleName, err)
 		}
 		log.Printf("onUpdate() -> Successfully attached workloads for right sizing rule [%v]", ruleName)
+	}
+
+	return nil
+}
+
+func detachWorkloadsFromRule(resourceData *schema.ResourceData, meta interface{}, oceanId *string) error {
+	ruleName := resourceData.Id()
+
+	detachWorkloads, ok := resourceData.GetOk(string(ocean_aws_right_sizing_rule.DetachWorkloads))
+	if !ok {
+		return fmt.Errorf("missing detach_workloads for ocean aws right sizing rule %q", ruleName)
+	}
+
+	list := detachWorkloads.(*schema.Set).List()
+	if len(list) > 0 && list[0] != nil {
+		detachWorkloadsSchema := list[0].(map[string]interface{})
+		if detachWorkloadsSchema == nil {
+			return fmt.Errorf("missing detach workloads configuration, "+
+				"skipping detach workloads for right sizing rule %q", ruleName)
+		}
+
+		detachWorkloadsSpec, err := expandDetachWorkloadsConfig(detachWorkloadsSchema, ruleName, oceanId)
+		if err != nil {
+			return fmt.Errorf("failed expanding attach workloads "+
+				"configuration for right sizing rule %q, error: %v", ruleName, err)
+		}
+
+		updateStateJSON, err := commons.ToJson(detachWorkloadsSpec)
+		if err != nil {
+			return fmt.Errorf("failed marshaling detach workloads "+
+				"configuration for right sizing rule %q, error: %v", ruleName, err)
+		}
+
+		log.Printf("onUpdate() -> Updating right sizing rule [%v] with configuration %s", ruleName, updateStateJSON)
+		detachWorkloadsInput := &aws.RightSizingAttachDetachInput{
+			RuleName:   detachWorkloadsSpec.RuleName,
+			OceanId:    detachWorkloadsSpec.OceanId,
+			Namespaces: detachWorkloadsSpec.Namespaces,
+		}
+		if _, err = meta.(*Client).ocean.CloudProviderAWS().DetachWorkloadsFromRule(context.TODO(),
+			detachWorkloadsInput); err != nil {
+			return fmt.Errorf("onUpdate() -> Detach workloads failed for right sizing rule [%v], error: %v",
+				ruleName, err)
+		}
+		log.Printf("onUpdate() -> Successfully detached workloads for right sizing rule [%v]", ruleName)
 	}
 
 	return nil
@@ -337,6 +400,126 @@ func expandLabels(data interface{}) ([]*aws.Label, error) {
 		}
 
 		if v, ok := attr[string(ocean_aws_right_sizing_rule.Value)].(string); ok && v != "" {
+			label.Value = spotinst.String(v)
+		}
+
+		labels = append(labels, label)
+
+	}
+	return labels, nil
+}
+
+func expandDetachWorkloadsConfig(data interface{},
+	ruleName string, oceanId *string) (*aws.RightSizingAttachDetachInput, error) {
+	spec := &aws.RightSizingAttachDetachInput{
+		OceanId:  oceanId,
+		RuleName: spotinst.String(ruleName),
+	}
+
+	if data != nil {
+		m := data.(map[string]interface{})
+
+		if v, ok := m[string(ocean_aws_right_sizing_rule.NamespacesForDetach)]; ok {
+			namespaces, err := expandNamespacesForDetach(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if namespaces != nil {
+				spec.Namespaces = namespaces
+			}
+		} else {
+			spec.Namespaces = nil
+		}
+	}
+
+	return spec, nil
+}
+
+func expandNamespacesForDetach(data interface{}) ([]*aws.Namespace, error) {
+	list := data.(*schema.Set).List()
+	namespaces := make([]*aws.Namespace, 0, len(list))
+
+	for _, item := range list {
+		attr := item.(map[string]interface{})
+
+		namespace := &aws.Namespace{}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.NamespaceNameForDetach)].(string); ok && v != "" {
+			namespace.NamespaceName = spotinst.String(v)
+		}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.WorkloadsForDetach)]; ok {
+			workloads, err := expandWorkloadsForDetach(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if workloads != nil {
+				namespace.Workloads = workloads
+			}
+		} else {
+			namespace.Workloads = nil
+		}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.LabelsForDetach)]; ok {
+			labels, err := expandLabelsForDetach(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if labels != nil {
+				namespace.Labels = labels
+			}
+		} else {
+			namespace.Labels = nil
+		}
+
+		namespaces = append(namespaces, namespace)
+	}
+	return namespaces, nil
+}
+
+func expandWorkloadsForDetach(data interface{}) ([]*aws.Workload, error) {
+	list := data.(*schema.Set).List()
+	workloads := make([]*aws.Workload, 0, len(list))
+
+	for _, item := range list {
+		attr := item.(map[string]interface{})
+
+		workload := &aws.Workload{}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.WorkloadNameForDetach)].(string); ok && v != "" {
+			workload.Name = spotinst.String(v)
+		}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.WorkloadTypeForDetach)].(string); ok && v != "" {
+			workload.WorkloadType = spotinst.String(v)
+		}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.RegexNameForDetach)].(string); ok && v != "" {
+			workload.RegexName = spotinst.String(v)
+		}
+
+		workloads = append(workloads, workload)
+	}
+	return workloads, nil
+}
+
+func expandLabelsForDetach(data interface{}) ([]*aws.Label, error) {
+	list := data.(*schema.Set).List()
+	labels := make([]*aws.Label, 0, len(list))
+
+	for _, item := range list {
+		attr := item.(map[string]interface{})
+
+		label := &aws.Label{}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.KeyForDetach)].(string); ok && v != "" {
+			label.Key = spotinst.String(v)
+		}
+
+		if v, ok := attr[string(ocean_aws_right_sizing_rule.ValueForDetach)].(string); ok && v != "" {
 			label.Value = spotinst.String(v)
 		}
 
