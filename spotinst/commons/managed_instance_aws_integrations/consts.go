@@ -19,10 +19,6 @@ const (
 
 	LoadBalancers    commons.FieldName = "load_balancers"
 	Arn              commons.FieldName = "arn"
-	AzAwareness      commons.FieldName = "az_awareness"
 	LoadBalancerName commons.FieldName = "name"
 	Type             commons.FieldName = "type"
-	BalancerID       commons.FieldName = "balancer_id"
-	TargetSetID      commons.FieldName = "target_set_id"
-	AutoWeight       commons.FieldName = "auto_weight"
 )

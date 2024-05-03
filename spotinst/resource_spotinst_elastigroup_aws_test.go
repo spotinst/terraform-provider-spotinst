@@ -1078,11 +1078,6 @@ func TestAccSpotinstElastigroupAWS_LoadBalancers(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.1", "bal2"),
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.0", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.0.target_set_id", "ts-123"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.0.balancer_id", "bal-123"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.1.target_set_id", "ts-234"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.1.balancer_id", "bal-234"),
 				),
 			},
 			{
@@ -1100,9 +1095,6 @@ func TestAccSpotinstElastigroupAWS_LoadBalancers(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.0", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.1", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testNewTargetGroup/1234567890123456"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.0.target_set_id", "ts-123"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.0.balancer_id", "bal-123"),
 				),
 			},
 			{
@@ -1116,7 +1108,6 @@ func TestAccSpotinstElastigroupAWS_LoadBalancers(t *testing.T) {
 					testCheckElastigroupAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "elastic_load_balancers.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "target_group_arns.#", "0"),
-					resource.TestCheckResourceAttr(resourceName, "multai_target_sets.#", "0"),
 				),
 			},
 		},
@@ -1128,15 +1119,6 @@ const testLoadBalancersGroupConfig_Create = `
  elastic_load_balancers = ["bal1", "bal2"]
  target_group_arns 					= ["arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"]
 
-	multai_target_sets {
-				target_set_id = "ts-123"
-				balancer_id = "bal-123"
-	}
-
-	multai_target_sets {
-			target_set_id = "ts-234"
-			balancer_id = "bal-234"
-	}
  // ---------------------------------------
 `
 
@@ -1144,11 +1126,6 @@ const testLoadBalancersGroupConfig_Update = `
  // --- LOAD BALANCERS --------------------
  elastic_load_balancers = ["bal1", "bal3"]
  target_group_arns = ["arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testNewTargetGroup/1234567890123456"]
-
-	multai_target_sets {
-		target_set_id = "ts-123"
-		balancer_id = "bal-123"
-	}
 
  // ---------------------------------------
 `
@@ -4356,84 +4333,6 @@ const testIntegrationMesosphereGroupConfig_Update = `
 const testIntegrationMesosphereGroupConfig_EmptyFields = `
  // --- INTEGRATION: MESOSPHERE --------------
  // ------------------------------------------
-`
-
-// endregion
-
-// region Elastigroup: Multai Runtime Integration
-func TestAccSpotinstElastigroupAWS_IntegrationMultaiRuntime(t *testing.T) {
-	groupName := "test-acc-eg-integration-multai-runtime"
-	resourceName := createElastigroupResourceName(groupName)
-
-	var group aws.Group
-	resource.Test(t, resource.TestCase{
-		PreCheck:      func() { testAccPreCheck(t, "aws") },
-		Providers:     TestAccProviders,
-		CheckDestroy:  testElastigroupDestroy,
-		IDRefreshName: resourceName,
-
-		Steps: []resource.TestStep{
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName:      groupName,
-					fieldsToAppend: testIntegrationMultaiRuntimeGroupConfig_Create,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupExists(&group, resourceName),
-					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.0.deployment_id", "multai-deployment-id"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName:      groupName,
-					fieldsToAppend: testIntegrationMultaiRuntimeGroupConfig_Update,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupExists(&group, resourceName),
-					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.0.deployment_id", "multai-deployment-id-update"),
-				),
-			},
-			{
-				ResourceName: resourceName,
-				Config: createElastigroupTerraform(&GroupConfigMetadata{
-					groupName:      groupName,
-					fieldsToAppend: testIntegrationMultaiRuntimeGroupConfig_EmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckElastigroupExists(&group, resourceName),
-					testCheckElastigroupAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "integration_multai_runtime.#", "0"),
-				),
-			},
-		},
-	})
-}
-
-const testIntegrationMultaiRuntimeGroupConfig_Create = `
- // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime {
-    deployment_id = "multai-deployment-id"
-  }
- // --------------------------------------
-`
-
-const testIntegrationMultaiRuntimeGroupConfig_Update = `
- // --- INTEGRATION: MULTAI-RUNTIME ------
- integration_multai_runtime {
-    deployment_id = "multai-deployment-id-update"
-  }
- // --------------------------------------
-`
-
-const testIntegrationMultaiRuntimeGroupConfig_EmptyFields = `
- // --- INTEGRATION: MULTAI-RUNTIME ------
- // --------------------------------------
 `
 
 // endregion

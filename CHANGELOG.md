@@ -1,5 +1,31 @@
 ## Unreleased
 
+## 1.171.3 (May, 03 2024)
+BUG FIXES:
+* resource/spotinst_ocean_gke_import: Fixed disabling `tasks` and `shutdown_hours` from cluster config under `scheduled_task`.
+
+## 1.171.2 (May, 02 2024)
+BUG FIXES:
+* Changed `policy_account_ids` field to Optional in `resource_spotinst_programmatic_user`
+
+## 1.171.1 (April, 25 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: modified `image_id` field from optional to required according to api changes
+* resource/spotinst_ocean_ecs: modified `image_id` field from optional to required according to api changes
+
+## 1.171.0 (April, 22 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure: removed support for Elastigroup azure v2 resource.
+
+## 1.170.1 (April, 22 2024)
+BUG FIXES:
+* Corrected `kubernetes_version` field in test files `resource_spotinst_ocean_aks_np_test` and `resource_spotinst_ocean_aks_np_virtual_node_group_test`
+
+## 1.170.0 (April, 19 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: removed support for `MLB`, `MLB_RUNTIME`, `MULTAI_TARGET_SET` from `health_check_type` and `integrations`.
+* resource/spotinst_managed_instance_aws: removed support for `MULTAI_TARGET_SET` from `health_check_type` and `integrations`.
+
 ## 1.169.1 (April, 10 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aks_np_virtual_node_group: Fixed `labels` failing to update.
