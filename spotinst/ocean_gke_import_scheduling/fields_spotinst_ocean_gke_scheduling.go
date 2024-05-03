@@ -15,7 +15,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKEImportScheduling,
 		ScheduledTask,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -225,69 +225,74 @@ func flattenTasks(tasks []*gcp.Task) []interface{} {
 }
 
 func expandScheduledTasks(data interface{}) (*gcp.Scheduling, error) {
-	scheduling := &gcp.Scheduling{}
-	list := data.(*schema.Set).List()
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
+	if list := data.([]interface{}); len(list) > 0 {
+		scheduling := &gcp.Scheduling{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
 
-		if v, ok := m[string(Tasks)]; ok {
-			tasks, err := expandtasks(v)
-			if err != nil {
-				return nil, err
-			}
-			if tasks != nil {
-				scheduling.SetTasks(tasks)
-			}
-		}
-		if v, ok := m[string(ShutdownHours)]; ok {
-			shutdownHours, err := expandShutdownHours(v)
-			if err != nil {
-				return nil, err
-			}
-			if shutdownHours != nil {
-				if scheduling.ShutdownHours == nil {
-					scheduling.SetShutdownHours(&gcp.ShutdownHours{})
+			if v, ok := m[string(Tasks)]; ok {
+				tasks, err := expandtasks(v)
+				if err != nil {
+					return nil, err
 				}
-				scheduling.SetShutdownHours(shutdownHours)
+				if tasks != nil {
+					scheduling.SetTasks(tasks)
+				} else {
+					scheduling.SetTasks(nil)
+				}
+			}
+			if v, ok := m[string(ShutdownHours)]; ok {
+				shutdownHours, err := expandShutdownHours(v)
+				if err != nil {
+					return nil, err
+				}
+				if shutdownHours != nil {
+					scheduling.SetShutdownHours(shutdownHours)
+				} else {
+					scheduling.SetShutdownHours(nil)
+				}
 			}
 		}
+		return scheduling, nil
 	}
+	return nil, nil
 
-	return scheduling, nil
 }
 
 func expandtasks(data interface{}) ([]*gcp.Task, error) {
-	list := data.([]interface{})
-	tasks := make([]*gcp.Task, 0, len(list))
-	for _, item := range list {
-		m := item.(map[string]interface{})
-		task := &gcp.Task{}
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		tasks := make([]*gcp.Task, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			task := &gcp.Task{}
 
-		if v, ok := m[string(TasksIsEnabled)].(bool); ok {
-			task.SetIsEnabled(spotinst.Bool(v))
-		}
-
-		if v, ok := m[string(TaskType)].(string); ok && v != "" {
-			task.SetType(spotinst.String(v))
-		}
-
-		if v, ok := m[string(CronExpression)].(string); ok && v != "" {
-			task.SetCronExpression(spotinst.String(v))
-		}
-		if v, ok := m[string(TaskParameters)]; ok {
-			parameters, err := expandParameters(v)
-			if err != nil {
-				return nil, err
+			if v, ok := m[string(TasksIsEnabled)].(bool); ok {
+				task.SetIsEnabled(spotinst.Bool(v))
 			}
-			if parameters != nil {
-				task.SetParameters(parameters)
-			} else {
-				task.SetParameters(nil)
+
+			if v, ok := m[string(TaskType)].(string); ok && v != "" {
+				task.SetType(spotinst.String(v))
 			}
+
+			if v, ok := m[string(CronExpression)].(string); ok && v != "" {
+				task.SetCronExpression(spotinst.String(v))
+			}
+			if v, ok := m[string(TaskParameters)]; ok {
+				parameters, err := expandParameters(v)
+				if err != nil {
+					return nil, err
+				}
+				if parameters != nil {
+					task.SetParameters(parameters)
+				} else {
+					task.SetParameters(nil)
+				}
+			}
+			tasks = append(tasks, task)
 		}
-		tasks = append(tasks, task)
+		return tasks, nil
 	}
-	return tasks, nil
+	return nil, nil
 }
 func expandParameters(data interface{}) (*gcp.Parameters, error) {
 	parameters := &gcp.Parameters{}
