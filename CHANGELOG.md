@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.171.4 (May, 06 2024)
+BUG FIXES:
+* resource/spotinst_ocean_gke_import: Fixed disabling `parameters` under `tasks` in cluster config .
+
 ## 1.171.3 (May, 03 2024)
 BUG FIXES:
 * resource/spotinst_ocean_gke_import: Fixed disabling `tasks` and `shutdown_hours` from cluster config under `scheduled_task`.
