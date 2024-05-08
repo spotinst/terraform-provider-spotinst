@@ -193,6 +193,9 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 	var shouldRoll = false
 	var conditionedRoll = false
 	var autoApplyTags = false
+	var shouldAttachLoadBalancer = false
+	var shouldDetachLoadBalancer = false
+
 	clusterID := resourceData.Id()
 	if updatePolicy, exists := resourceData.GetOkExists(string(ocean_aws.UpdatePolicy)); exists {
 		list := updatePolicy.([]interface{})
@@ -213,6 +216,20 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 		}
 	}
 
+	if attachLoadBalancer, ok := resourceData.GetOk(string(ocean_aws.AttachLoadBalancer)); ok {
+		list := attachLoadBalancer.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			shouldAttachLoadBalancer = true
+		}
+	}
+
+	if detachLoadBalancer, ok := resourceData.GetOk(string(ocean_aws.DetachLoadBalancer)); ok {
+		list := detachLoadBalancer.([]interface{})
+		if len(list) > 0 && list[0] != nil {
+			shouldDetachLoadBalancer = true
+		}
+	}
+
 	if json, err := commons.ToJson(cluster); err != nil {
 		return err
 	} else {
@@ -230,6 +247,26 @@ func updateAWSCluster(cluster *aws.Cluster, resourceData *schema.ResourceData, m
 		}
 	} else {
 		log.Printf("onRoll() -> Field [%v] is false, skipping cluster roll", string(ocean_aws.ShouldRoll))
+	}
+
+	if shouldAttachLoadBalancer {
+		if err := attachLoadBalancer(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Ocean AWS [%v] attach load balancer failed, error: %v", clusterID, err)
+			return err
+		}
+	} else {
+		log.Printf("onUpdate() -> Field [%v] is missing, skipping attach load balancer for ocean aws",
+			string(ocean_aws.AttachLoadBalancer))
+	}
+
+	if shouldDetachLoadBalancer {
+		if err := detachLoadBalancer(resourceData, meta); err != nil {
+			log.Printf("[ERROR] Ocean AWS [%v] detach load balancer failed, error: %v", clusterID, err)
+			return err
+		}
+	} else {
+		log.Printf("onUpdate() -> Field [%v] is missing, skipping detach load balancer for ocean aws",
+			string(ocean_aws.DetachLoadBalancer))
 	}
 
 	return nil
@@ -274,6 +311,162 @@ func rollOceanAWSCluster(resourceData *schema.ResourceData, meta interface{}) er
 	}
 
 	return nil
+}
+
+func attachLoadBalancer(resourceData *schema.ResourceData, meta interface{}) error {
+	clusterID := resourceData.Id()
+
+	attachLoadBalancer, ok := resourceData.GetOk(string(ocean_aws.AttachLoadBalancer))
+	if !ok {
+		return fmt.Errorf("ocean/aws: missing attach_load_balancer for ocean aws %q", clusterID)
+	}
+
+	list := attachLoadBalancer.([]interface{})
+	if len(list) > 0 && list != nil {
+		attachLoadBalancerSchema := list
+
+		if attachLoadBalancerSchema == nil {
+			return fmt.Errorf("ocean/aws: missing attach load balancer configuration, "+
+				"skipping attach load balancer for ocean aws %q", clusterID)
+		}
+
+		attachLoadBalancerSpec, err := expandAttachLoadBalancerConfig(attachLoadBalancerSchema, clusterID)
+		if err != nil {
+			return fmt.Errorf("ocean/aws: failed expanding attach load balancer "+
+				"configuration for ocean aws %q, error: %v", clusterID, err)
+		}
+
+		updateStateJSON, err := commons.ToJson(attachLoadBalancerSchema)
+		if err != nil {
+			return fmt.Errorf("ocean/aws: failed marshaling attach load balancer "+
+				"configuration for ocean aws %q, error: %v", clusterID, err)
+		}
+
+		log.Printf("onUpdate() -> Updating ocean aws [%v] with configuration %s", clusterID, updateStateJSON)
+		attachLoadBalancerInput := &aws.AttachLoadbalancerInput{
+			ID:            attachLoadBalancerSpec.ID,
+			LoadBalancers: attachLoadBalancerSpec.LoadBalancers,
+		}
+		if _, err = meta.(*Client).ocean.CloudProviderAWS().AttachLoadBalancer(context.TODO(),
+			attachLoadBalancerInput); err != nil {
+			return fmt.Errorf("onUpdate() -> Attach load balancer failed for ocean aws [%v], error: %v",
+				clusterID, err)
+		}
+		log.Printf("onUpdate() -> Successfully attached load balancer for ocean aws [%v]", clusterID)
+	}
+
+	return nil
+}
+
+func detachLoadBalancer(resourceData *schema.ResourceData, meta interface{}) error {
+	clusterID := resourceData.Id()
+
+	detachLoadBalancer, ok := resourceData.GetOk(string(ocean_aws.DetachLoadBalancer))
+	if !ok {
+		return fmt.Errorf("ocean/aws: missing detach_load_balancer for ocean aws %q", clusterID)
+	}
+
+	list := detachLoadBalancer.([]interface{})
+	if len(list) > 0 && list[0] != nil {
+		detachLoadBalancerSchema := list
+		if detachLoadBalancerSchema == nil {
+			return fmt.Errorf("ocean/aws: missing detach load balancer configuration, "+
+				"skipping detach load balancer for ocean aws %q", clusterID)
+		}
+
+		detachLoadBalancerSpec, err := expandDetachLoadBalancerConfig(detachLoadBalancerSchema, clusterID)
+		if err != nil {
+			return fmt.Errorf("stateful node/azure: failed expanding detach data disk "+
+				"configuration for stateful node %q, error: %v", clusterID, err)
+		}
+
+		updateStateJSON, err := commons.ToJson(detachLoadBalancerSchema)
+		if err != nil {
+			return fmt.Errorf("ocean/aws: failed marshaling detach load balancer "+
+				"configuration for ocean aws %q, error: %v", clusterID, err)
+		}
+
+		log.Printf("onUpdate() -> Updating ocean aws [%v] with configuration %s", clusterID, updateStateJSON)
+		detachLoadBalancerInput := &aws.DetachLoadbalancerInput{
+			ID:            detachLoadBalancerSpec.ID,
+			LoadBalancers: detachLoadBalancerSpec.LoadBalancers,
+		}
+		if _, err = meta.(*Client).ocean.CloudProviderAWS().DetachLoadBalancer(context.TODO(),
+			detachLoadBalancerInput); err != nil {
+			return fmt.Errorf("onUpdate() -> detach load balancer failed for ocean aws cluster [%v], error: %v",
+				clusterID, err)
+		}
+		log.Printf("onUpdate() -> Successfully detached load balancer for ocean aws cluster [%v]", clusterID)
+	}
+
+	return nil
+}
+
+func expandAttachLoadBalancerConfig(data interface{}, clusterID string) (*aws.AttachLoadbalancerInput, error) {
+	list := data.([]interface{})
+
+	lbOutput := make([]*aws.LoadBalancers, 0, len(list))
+	for _, v := range list {
+
+		m, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		singleLb := &aws.LoadBalancers{}
+
+		if v, ok := m[string(ocean_aws.LoadBalancerArn)].(string); ok && v != "" {
+			singleLb.Arn = spotinst.String(v)
+		}
+
+		if v, ok := m[string(ocean_aws.LoadBalancerName)].(string); ok && v != "" {
+			singleLb.Name = spotinst.String(v)
+		}
+
+		if v, ok := m[string(ocean_aws.LoadBalancerType)].(string); ok && v != "" {
+			singleLb.Type = spotinst.String(v)
+		}
+		lbOutput = append(lbOutput, singleLb)
+	}
+
+	spec := &aws.AttachLoadbalancerInput{
+		ID:            spotinst.String(clusterID),
+		LoadBalancers: lbOutput,
+	}
+
+	return spec, nil
+}
+
+func expandDetachLoadBalancerConfig(data interface{}, clusterID string) (*aws.DetachLoadbalancerInput, error) {
+	list := data.([]interface{})
+
+	lbOutput := make([]*aws.LoadBalancers, 0, len(list))
+	for _, v := range list {
+
+		m, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		singleLb := &aws.LoadBalancers{}
+
+		if v, ok := m[string(ocean_aws.LoadBalancerArn)].(string); ok && v != "" {
+			singleLb.Arn = spotinst.String(v)
+		}
+
+		if v, ok := m[string(ocean_aws.LoadBalancerName)].(string); ok && v != "" {
+			singleLb.Name = spotinst.String(v)
+		}
+
+		if v, ok := m[string(ocean_aws.LoadBalancerType)].(string); ok && v != "" {
+			singleLb.Type = spotinst.String(v)
+		}
+		lbOutput = append(lbOutput, singleLb)
+	}
+
+	spec := &aws.DetachLoadbalancerInput{
+		ID:            spotinst.String(clusterID),
+		LoadBalancers: lbOutput,
+	}
+	return spec, nil
 }
 
 func resourceSpotinstClusterAWSDelete(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
