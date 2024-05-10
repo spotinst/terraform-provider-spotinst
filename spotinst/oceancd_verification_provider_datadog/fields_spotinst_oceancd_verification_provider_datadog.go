@@ -97,20 +97,14 @@ func expandDataDog(data interface{}) (*oceancd.DataDog, error) {
 
 	if v, ok := result[string(Address)].(string); ok && v != "" {
 		datadog.SetAddress(spotinst.String(v))
-	} else {
-		datadog.SetAddress(nil)
 	}
 
 	if v, ok := result[string(ApiKey)].(string); ok && v != "" {
 		datadog.SetApiKey(spotinst.String(v))
-	} else {
-		datadog.SetApiKey(nil)
 	}
 
 	if v, ok := result[string(AppKey)].(string); ok && v != "" {
 		datadog.SetAppKey(spotinst.String(v))
-	} else {
-		datadog.SetAppKey(nil)
 	}
 
 	return datadog, nil
