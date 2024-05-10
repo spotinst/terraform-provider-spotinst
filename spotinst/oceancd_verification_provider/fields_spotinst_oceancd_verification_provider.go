@@ -99,8 +99,8 @@ func expandClusterIDs(data interface{}) ([]string, error) {
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
-		if zones, ok := v.(string); ok && zones != "" {
-			result = append(result, zones)
+		if clusterIds, ok := v.(string); ok && clusterIds != "" {
+			result = append(result, clusterIds)
 		}
 	}
 	return result, nil

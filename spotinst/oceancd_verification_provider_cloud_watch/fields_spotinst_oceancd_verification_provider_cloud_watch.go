@@ -19,7 +19,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(IAmArn): {
+					string(IamArn): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -84,10 +84,8 @@ func expandCloudWatch(data interface{}) (*oceancd.CloudWatch, error) {
 	}
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(IAmArn)].(string); ok && v != "" {
+	if v, ok := m[string(IamArn)].(string); ok && v != "" {
 		cloudwatch.SetIAmArn(spotinst.String(v))
-	} else {
-		cloudwatch.SetIAmArn(nil)
 	}
 
 	return cloudwatch, nil
@@ -100,7 +98,7 @@ func flattenCloudWatch(cloudwatch *oceancd.CloudWatch) []interface{} {
 		result := make(map[string]interface{})
 
 		if cloudwatch.IAmArn != nil {
-			result[string(IAmArn)] = spotinst.StringValue(cloudwatch.IAmArn)
+			result[string(IamArn)] = spotinst.StringValue(cloudwatch.IAmArn)
 		}
 		if len(result) > 0 {
 			out = append(out, result)

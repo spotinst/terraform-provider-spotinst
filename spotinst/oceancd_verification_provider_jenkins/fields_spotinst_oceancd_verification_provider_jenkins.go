@@ -29,7 +29,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Required: true,
 					},
 
-					string(UserName): {
+					string(Username): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
@@ -97,20 +97,14 @@ func expandJenkins(data interface{}) (*oceancd.Jenkins, error) {
 
 	if v, ok := result[string(ApiToken)].(string); ok && v != "" {
 		jenkins.SetApiToken(spotinst.String(v))
-	} else {
-		jenkins.SetApiToken(nil)
 	}
 
 	if v, ok := result[string(BaseUrl)].(string); ok && v != "" {
 		jenkins.SetBaseUrl(spotinst.String(v))
-	} else {
-		jenkins.SetBaseUrl(nil)
 	}
 
-	if v, ok := result[string(UserName)].(string); ok && v != "" {
+	if v, ok := result[string(Username)].(string); ok && v != "" {
 		jenkins.SetUserName(spotinst.String(v))
-	} else {
-		jenkins.SetUserName(nil)
 	}
 
 	return jenkins, nil
@@ -129,7 +123,7 @@ func flattenJenkins(jenkins *oceancd.Jenkins) []interface{} {
 			result[string(BaseUrl)] = spotinst.StringValue(jenkins.BaseUrl)
 		}
 		if jenkins.UserName != nil {
-			result[string(UserName)] = spotinst.StringValue(jenkins.UserName)
+			result[string(Username)] = spotinst.StringValue(jenkins.UserName)
 		}
 		if len(result) > 0 {
 			out = append(out, result)

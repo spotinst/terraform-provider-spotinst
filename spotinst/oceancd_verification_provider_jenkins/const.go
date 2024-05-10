@@ -6,5 +6,5 @@ const (
 	Jenkins  commons.FieldName = "jenkins"
 	ApiToken commons.FieldName = "api_token"
 	BaseUrl  commons.FieldName = "base_url"
-	UserName commons.FieldName = "user_name"
+	Username commons.FieldName = "username"
 )

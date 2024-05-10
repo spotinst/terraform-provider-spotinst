@@ -10,9 +10,9 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[DataDog] = commons.NewGenericField(
+	fieldsMap[Datadog] = commons.NewGenericField(
 		commons.OceanCDVerificationProviderDataDog,
-		DataDog,
+		Datadog,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -45,8 +45,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				result = flattenDataDog(verificationProvider.DataDog)
 			}
 			if len(result) > 0 {
-				if err := resourceData.Set(string(DataDog), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DataDog), err)
+				if err := resourceData.Set(string(Datadog), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Datadog), err)
 				}
 			}
 			return nil
@@ -57,7 +57,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			verificationProvider := verificationProviderWrapper.GetVerificationProvider()
 			var value *oceancd.DataDog = nil
 
-			if v, ok := resourceData.GetOk(string(DataDog)); ok {
+			if v, ok := resourceData.GetOk(string(Datadog)); ok {
 				if datadog, err := expandDataDog(v); err != nil {
 					return err
 				} else {
@@ -73,7 +73,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			verificationProvider := verificationProviderWrapper.GetVerificationProvider()
 			var value *oceancd.DataDog = nil
 
-			if v, ok := resourceData.GetOk(string(DataDog)); ok {
+			if v, ok := resourceData.GetOk(string(Datadog)); ok {
 				if datadog, err := expandDataDog(v); err != nil {
 					return err
 				} else {

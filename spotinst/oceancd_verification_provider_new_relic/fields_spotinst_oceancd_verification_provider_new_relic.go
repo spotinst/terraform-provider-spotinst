@@ -107,8 +107,6 @@ func expandNewRelic(data interface{}) (*oceancd.NewRelic, error) {
 
 	if v, ok := result[string(AccountId)].(string); ok && v != "" {
 		newRelic.SetAccountId(spotinst.String(v))
-	} else {
-		newRelic.SetAccountId(nil)
 	}
 
 	if v, ok := result[string(BaseUrlNerdGraph)].(string); ok && v != "" {
@@ -125,8 +123,6 @@ func expandNewRelic(data interface{}) (*oceancd.NewRelic, error) {
 
 	if v, ok := result[string(PersonalApiKey)].(string); ok && v != "" {
 		newRelic.SetPersonalApiKey(spotinst.String(v))
-	} else {
-		newRelic.SetPersonalApiKey(nil)
 	}
 
 	if v, ok := result[string(Region)].(string); ok && v != "" {

@@ -132,7 +132,7 @@ func readOceanCDVerificationProvider(ctx context.Context, name string, spotinstC
 
 	output, err := spotinstClient.oceancd.ReadVerificationProvider(ctx, input)
 	if err != nil {
-		// If the cluster was not found, return nil so that we can show that it
+		// If the Verification Provider was not found, return nil so that we can show that it
 		// does not exist.
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
@@ -143,7 +143,7 @@ func readOceanCDVerificationProvider(ctx context.Context, name string, spotinstC
 		}
 
 		// Some other error, report it.
-		return nil, fmt.Errorf("ocean/aks: failed to read verification provider: %v", err)
+		return nil, fmt.Errorf("oceancd: failed to read verification provider: %v", err)
 	}
 
 	return output.VerificationProvider, nil

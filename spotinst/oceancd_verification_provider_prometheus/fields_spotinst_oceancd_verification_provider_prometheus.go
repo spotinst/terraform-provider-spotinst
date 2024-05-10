@@ -86,8 +86,6 @@ func expandPrometheus(data interface{}) (*oceancd.Prometheus, error) {
 
 	if v, ok := m[string(Address)].(string); ok && v != "" {
 		prometheus.SetAddress(spotinst.String(v))
-	} else {
-		prometheus.SetAddress(nil)
 	}
 
 	return prometheus, nil
