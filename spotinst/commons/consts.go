@@ -190,6 +190,13 @@ const (
 	AccountAWS                                   ResourceAffinity = "Account_AWS"
 	CredentialsAWS                               ResourceAffinity = "Credentials_AWS"
 
+	OceanCDVerificationProvider           ResourceAffinity = "OceanCD_Verification_Provider"
+	OceanCDVerificationProviderCloudWatch ResourceAffinity = "OceanCD_Verification_Provider_Cloud_Watch"
+	OceanCDVerificationProviderPrometheus ResourceAffinity = "OceanCD_Verification_Provider_Prometheus"
+	OceanCDVerificationProviderDataDog    ResourceAffinity = "OceanCD_Verification_Provider_DataDog"
+	OceanCDVerificationProviderJenkins    ResourceAffinity = "OceanCD_Verification_Provider_Jenkins"
+	OceanCDVerificationProviderNewRelic   ResourceAffinity = "OceanCD_Verification_Provider_New_Relic"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"
