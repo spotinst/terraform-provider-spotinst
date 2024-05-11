@@ -387,6 +387,47 @@ scheduled_task {
 }
 ```
 
+<a id="attach_load_balancer"></a>
+## Attach LoadBalancer
+
+* `attach_load_balancer` - (Optional) Attach load balancers to the cluster.
+    * `arn`  - (Optional) If type is "TARGET_GROUP" then an ARN is required. Otherwise is not allowed.
+    * `name` - (Optional) If type is "CLASSIC" then a name is required. Otherwise is not allowed.
+    * `type` - (Required, Enum: `"CLASSIC", "TARGET_GROUP"`) Type of load balancer to use.
+
+```hcl
+attach_load_balancer {
+     type = "CLASSIC"
+     name = "LoadBalancerName"
+}
+   
+attach_load_balancer {
+    type = "TARGET_GROUP"
+    arn = "TargetGroupArn"
+}
+```
+    
+
+<a id="detach_load_balancer"></a>
+## Detach LoadBalancer
+
+* `detach_load_balancer` - (Optional) Detach load balancers from the cluster.
+    * `arn`  - (Optional) If type is "TARGET_GROUP" then an ARN is required. Otherwise is not allowed.
+    * `name` - (Optional) If type is "CLASSIC" then a name is required. Otherwise is not allowed.
+    * `type` - (Required, Enum: `"CLASSIC", "TARGET_GROUP"`) Type of load balancer to use.
+
+```hcl
+detach_load_balancer {
+     type = "CLASSIC"
+     name = "LoadBalancerName"
+}
+   
+detach_load_balancer {
+    type = "TARGET_GROUP"
+    arn = "TargetGroupArn"
+}
+```
+
 <a id="attributes-reference"></a>
 ## Attributes Reference
 

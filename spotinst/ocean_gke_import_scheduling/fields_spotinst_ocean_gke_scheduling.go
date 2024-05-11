@@ -2,7 +2,6 @@ package ocean_gke_import_scheduling
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/gcp"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -15,7 +14,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKEImportScheduling,
 		ScheduledTask,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -53,12 +52,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														string(BatchMinHealthyPercentage): {
 															Type:     schema.TypeInt,
 															Optional: true,
-															Default:  50,
+															Default:  -1,
 														},
 
 														string(BatchSizePercentage): {
 															Type:     schema.TypeInt,
 															Optional: true,
+															Default:  -1,
 														},
 
 														string(Comment): {
@@ -219,116 +219,158 @@ func flattenTasks(tasks []*gcp.Task) []interface{} {
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
 		m[string(TaskType)] = spotinst.StringValue(task.Type)
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
+		if task.Parameters != nil {
+			m[string(TaskParameters)] = flattenParameters(task.Parameters)
+		}
 		result = append(result, m)
 	}
 	return result
 }
+func flattenParameters(parameters *gcp.Parameters) []interface{} {
+	result := make(map[string]interface{})
 
-func expandScheduledTasks(data interface{}) (*gcp.Scheduling, error) {
-	scheduling := &gcp.Scheduling{}
-	list := data.(*schema.Set).List()
-	if list != nil && list[0] != nil {
-		m := list[0].(map[string]interface{})
-
-		if v, ok := m[string(Tasks)]; ok {
-			tasks, err := expandtasks(v)
-			if err != nil {
-				return nil, err
-			}
-			if tasks != nil {
-				scheduling.SetTasks(tasks)
-			}
-		}
-		if v, ok := m[string(ShutdownHours)]; ok {
-			shutdownHours, err := expandShutdownHours(v)
-			if err != nil {
-				return nil, err
-			}
-			if shutdownHours != nil {
-				if scheduling.ShutdownHours == nil {
-					scheduling.SetShutdownHours(&gcp.ShutdownHours{})
-				}
-				scheduling.SetShutdownHours(shutdownHours)
-			}
-		}
+	if parameters.ClusterRoll != nil {
+		result[string(ClusterRoll)] = flattenParameterClusterRoll(parameters.ClusterRoll)
 	}
 
-	return scheduling, nil
+	return []interface{}{result}
+}
+func flattenParameterClusterRoll(clusterRoll *gcp.ClusterRoll) []interface{} {
+	result := make(map[string]interface{})
+	value := spotinst.Int(-1)
+	result[string(BatchMinHealthyPercentage)] = value
+	result[string(BatchSizePercentage)] = value
+
+	if clusterRoll.BatchMinHealthyPercentage != nil {
+		result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
+	}
+	if clusterRoll.BatchSizePercentage != nil {
+		result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	}
+	result[string(Comment)] = spotinst.StringValue(clusterRoll.Comment)
+	result[string(RespectPdb)] = spotinst.BoolValue(clusterRoll.RespectPdb)
+
+	return []interface{}{result}
+}
+
+func expandScheduledTasks(data interface{}) (*gcp.Scheduling, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		scheduling := &gcp.Scheduling{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(Tasks)]; ok {
+				tasks, err := expandtasks(v)
+				if err != nil {
+					return nil, err
+				}
+				if tasks != nil {
+					scheduling.SetTasks(tasks)
+				} else {
+					scheduling.SetTasks(nil)
+				}
+			}
+			if v, ok := m[string(ShutdownHours)]; ok {
+				shutdownHours, err := expandShutdownHours(v)
+				if err != nil {
+					return nil, err
+				}
+				if shutdownHours != nil {
+					scheduling.SetShutdownHours(shutdownHours)
+				} else {
+					scheduling.SetShutdownHours(nil)
+				}
+			}
+		}
+		return scheduling, nil
+	}
+	return nil, nil
+
 }
 
 func expandtasks(data interface{}) ([]*gcp.Task, error) {
-	list := data.([]interface{})
-	tasks := make([]*gcp.Task, 0, len(list))
-	for _, item := range list {
-		m := item.(map[string]interface{})
-		task := &gcp.Task{}
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		tasks := make([]*gcp.Task, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			task := &gcp.Task{}
 
-		if v, ok := m[string(TasksIsEnabled)].(bool); ok {
-			task.SetIsEnabled(spotinst.Bool(v))
-		}
+			if v, ok := m[string(TasksIsEnabled)].(bool); ok {
+				task.SetIsEnabled(spotinst.Bool(v))
+			}
 
-		if v, ok := m[string(TaskType)].(string); ok && v != "" {
-			task.SetType(spotinst.String(v))
-		}
+			if v, ok := m[string(TaskType)].(string); ok && v != "" {
+				task.SetType(spotinst.String(v))
+			}
 
-		if v, ok := m[string(CronExpression)].(string); ok && v != "" {
-			task.SetCronExpression(spotinst.String(v))
+			if v, ok := m[string(CronExpression)].(string); ok && v != "" {
+				task.SetCronExpression(spotinst.String(v))
+			}
+			if v, ok := m[string(TaskParameters)]; ok {
+				parameters, err := expandParameters(v)
+				if err != nil {
+					return nil, err
+				}
+				if parameters != nil {
+					task.SetParameters(parameters)
+				} else {
+					task.SetParameters(nil)
+				}
+			}
+			tasks = append(tasks, task)
 		}
-		if v, ok := m[string(TaskParameters)]; ok {
-			parameters, err := expandParameters(v)
+		return tasks, nil
+	}
+	return nil, nil
+}
+
+func expandParameters(data interface{}) (*gcp.Parameters, error) {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		parameters := &gcp.Parameters{}
+		list := data.([]interface{})
+		m := list[0].(map[string]interface{})
+		if v, ok := m[string(ClusterRoll)]; ok {
+			clusterRoll, err := expandClusterRoll(v)
 			if err != nil {
 				return nil, err
 			}
-			if parameters != nil {
-				task.SetParameters(parameters)
+			if clusterRoll != nil {
+				parameters.SetClusterRoll(clusterRoll)
 			} else {
-				task.SetParameters(nil)
+				parameters.SetClusterRoll(nil)
 			}
 		}
-		tasks = append(tasks, task)
-	}
-	return tasks, nil
-}
-func expandParameters(data interface{}) (*gcp.Parameters, error) {
-	parameters := &gcp.Parameters{}
-	list := data.([]interface{})
-	if list == nil || len(list) == 0 {
 		return parameters, nil
-	}
 
-	m := list[0].(map[string]interface{})
-	if v, ok := m[string(ClusterRoll)]; ok {
-		clusterRoll, err := expandClusterRoll(v)
-		if err != nil {
-			return nil, err
-		}
-		if clusterRoll != nil {
-			parameters.SetClusterRoll(clusterRoll)
-		} else {
-			parameters.SetClusterRoll(nil)
-		}
 	}
-	return parameters, nil
+	return nil, nil
 }
 
 func expandClusterRoll(data interface{}) (*gcp.ClusterRoll, error) {
-	clusterRoll := &gcp.ClusterRoll{}
-	list := data.([]interface{})
-	if list == nil || len(list) == 0 {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		clusterRoll := &gcp.ClusterRoll{}
+		m := list[0].(map[string]interface{})
+		if v, ok := m[string(BatchMinHealthyPercentage)].(int); ok {
+			if v == -1 {
+				clusterRoll.SetBatchMinHealthyPercentage(nil)
+			} else {
+				clusterRoll.SetBatchMinHealthyPercentage(spotinst.Int(v))
+			}
+		}
+		if v, ok := m[string(BatchSizePercentage)].(int); ok {
+			if v == -1 {
+				clusterRoll.SetBatchSizePercentage(nil)
+			} else {
+				clusterRoll.SetBatchSizePercentage(spotinst.Int(v))
+			}
+		}
+		if v, ok := m[string(Comment)].(string); ok && v != "" {
+			clusterRoll.SetComment(spotinst.String(v))
+		}
+		if v, ok := m[string(RespectPdb)].(bool); ok {
+			clusterRoll.SetRespectPdb(spotinst.Bool(v))
+		}
 		return clusterRoll, nil
 	}
-	m := list[0].(map[string]interface{})
-	if v, ok := m[string(BatchMinHealthyPercentage)].(int); ok {
-		clusterRoll.SetBatchMinHealthyPercentage(spotinst.Int(v))
-	}
-	if v, ok := m[string(BatchSizePercentage)].(int); ok {
-		clusterRoll.SetBatchSizePercentage(spotinst.Int(v))
-	}
-	if v, ok := m[string(Comment)].(string); ok && v != "" {
-		clusterRoll.SetComment(spotinst.String(v))
-	}
-	if v, ok := m[string(RespectPdb)].(bool); ok {
-		clusterRoll.SetRespectPdb(spotinst.Bool(v))
-	}
-	return clusterRoll, nil
+	return nil, nil
 }
