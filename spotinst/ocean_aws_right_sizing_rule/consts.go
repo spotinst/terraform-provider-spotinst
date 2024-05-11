@@ -3,8 +3,9 @@ package ocean_aws_right_sizing_rule
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	OceanId commons.FieldName = "ocean_id"
-	Name    commons.FieldName = "name"
+	OceanId     commons.FieldName = "ocean_id"
+	Name        commons.FieldName = "name"
+	RestartPods commons.FieldName = "restart_pods"
 
 	RecommendationApplicationIntervals  commons.FieldName = "recommendation_application_intervals"
 	RepetitionBasis                     commons.FieldName = "repetition_basis"

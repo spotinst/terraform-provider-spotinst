@@ -48,6 +48,44 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RestartPods] = commons.NewGenericField(
+		commons.OceanAWSRightSizingRule,
+		RestartPods,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var value *bool = nil
+			if rightSizingRule.RestartPods != nil {
+				value = rightSizingRule.RestartPods
+			}
+			if err := resourceData.Set(string(RestartPods), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RestartPods), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RestartPods)); ok && v != "" {
+				rightSizingRule.SetRestartPods(spotinst.Bool(resourceData.Get(string(RestartPods)).(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RestartPods)); ok && v != "" {
+				rightSizingRule.SetRestartPods(spotinst.Bool(resourceData.Get(string(RestartPods)).(bool)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[OceanId] = commons.NewGenericField(
 		commons.OrganizationPolicy,
 		OceanId,
