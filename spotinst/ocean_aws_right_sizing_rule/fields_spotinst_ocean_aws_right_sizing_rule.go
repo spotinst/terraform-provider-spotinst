@@ -258,6 +258,71 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RecommendationApplicationOverheadValues] = commons.NewGenericField(
+		commons.OceanAWSRightSizingRule,
+		RecommendationApplicationOverheadValues,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(OverheadCpuPercentage): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+					string(OverheadMemoryPercentage): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var result []interface{} = nil
+			if rightSizingRule.RecommendationApplicationOverheadValues != nil {
+				recommendationApplicationOverheadValues := rightSizingRule.RecommendationApplicationOverheadValues
+				result = flattenRecommendationApplicationOverheadValues(recommendationApplicationOverheadValues)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(RecommendationApplicationOverheadValues), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RecommendationApplicationOverheadValues), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationOverheadValues)); ok {
+				if recommendationApplicationOverheadValues, err := expandRecommendationApplicationOverheadValues(v); err != nil {
+					return err
+				} else {
+					rightSizingRule.SetRecommendationApplicationOverheadValues(recommendationApplicationOverheadValues)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanAWSRightSizingRule()
+			var value *aws.RecommendationApplicationOverheadValues = nil
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationOverheadValues)); ok {
+				if recommendationApplicationOverheadValues, err := expandRecommendationApplicationOverheadValues(v); err != nil {
+					return err
+				} else {
+					value = recommendationApplicationOverheadValues
+				}
+			}
+			rightSizingRule.SetRecommendationApplicationOverheadValues(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[RecommendationApplicationBoundaries] = commons.NewGenericField(
 		commons.OceanAWSRightSizingRule,
 		RecommendationApplicationBoundaries,
@@ -851,6 +916,48 @@ func expandRecommendationApplicationBoundaries(data interface{}) (*aws.Recommend
 		recommendationApplicationBoundaries.SetMemory(memory)
 
 		return recommendationApplicationBoundaries, nil
+
+	}
+	return nil, nil
+}
+
+func flattenRecommendationApplicationOverheadValues(recommendationApplicationOverheadValues *aws.RecommendationApplicationOverheadValues) []interface{} {
+	result := make(map[string]interface{})
+
+	if recommendationApplicationOverheadValues.CpuPercentage != nil {
+		result[string(OverheadCpuPercentage)] = spotinst.Float64Value(recommendationApplicationOverheadValues.CpuPercentage)
+	}
+	if recommendationApplicationOverheadValues.MemoryPercentage != nil {
+		result[string(OverheadMemoryPercentage)] = spotinst.Float64Value(recommendationApplicationOverheadValues.MemoryPercentage)
+	}
+	return []interface{}{result}
+}
+
+func expandRecommendationApplicationOverheadValues(data interface{}) (*aws.RecommendationApplicationOverheadValues, error) {
+	list := data.(*schema.Set).List()
+	recommendationApplicationOverheadValues := &aws.RecommendationApplicationOverheadValues{}
+
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+
+		if v, ok := m[string(OverheadCpuPercentage)].(float64); ok {
+			if v == -1 {
+				recommendationApplicationOverheadValues.SetOverheadCpuPercentage(nil)
+			} else {
+				recommendationApplicationOverheadValues.SetOverheadCpuPercentage(spotinst.Float64(v))
+			}
+		}
+
+		if v, ok := m[string(OverheadMemoryPercentage)].(float64); ok {
+			if v == -1 {
+				recommendationApplicationOverheadValues.SetOverheadMemoryPercentage(nil)
+			} else {
+				recommendationApplicationOverheadValues.SetOverheadMemoryPercentage(spotinst.Float64(v))
+			}
+		}
+
+		return recommendationApplicationOverheadValues, nil
 
 	}
 	return nil, nil

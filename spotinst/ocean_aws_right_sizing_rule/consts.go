@@ -30,6 +30,10 @@ const (
 	CpuPercentage                         commons.FieldName = "cpu_percentage"
 	MemoryPercentage                      commons.FieldName = "memory_percentage"
 
+	RecommendationApplicationOverheadValues commons.FieldName = "recommendation_application_overhead_values"
+	OverheadCpuPercentage                   commons.FieldName = "cpu_percentage"
+	OverheadMemoryPercentage                commons.FieldName = "memory_percentage"
+
 	AttachWorkloads commons.FieldName = "attach_workloads"
 	Namespaces      commons.FieldName = "namespaces"
 	NamespaceName   commons.FieldName = "namespace_name"
