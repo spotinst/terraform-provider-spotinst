@@ -11,7 +11,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Rolling] = commons.NewGenericField(
-		commons.OceanCDStrategyCanary,
+		commons.OceanCDStrategyRolling,
 		Rolling,
 		&schema.Schema{
 			Type:     schema.TypeList,
