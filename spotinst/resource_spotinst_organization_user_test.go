@@ -58,7 +58,7 @@ func testCheckOrganizationUserExists(user *organization.User, resourceName strin
 }
 
 func generateRandomPassword() string {
-	res, err := password.Generate(32, 10, 0, false, false)
+	res, err := password.Generate(32, 10, 1, false, false)
 	if err != nil {
 		log.Fatal(err)
 	}

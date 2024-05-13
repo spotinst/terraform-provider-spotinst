@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.172.0 (May, 08 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: added `attach_load_balancer` and `detach_load_balancer` blocks support for attaching and detaching loadBalancers to ocean aws cluster.
+
+## 1.171.4 (May, 06 2024)
+BUG FIXES:
+* resource/spotinst_ocean_gke_import: Fixed disabling `parameters` under `tasks` in cluster config .
+
 ## 1.171.3 (May, 03 2024)
 BUG FIXES:
 * resource/spotinst_ocean_gke_import: Fixed disabling `tasks` and `shutdown_hours` from cluster config under `scheduled_task`.

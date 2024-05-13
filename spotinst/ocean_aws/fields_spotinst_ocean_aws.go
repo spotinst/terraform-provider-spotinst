@@ -404,6 +404,76 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+
+	fieldsMap[AttachLoadBalancer] = commons.NewGenericField(
+		commons.OceanAWS,
+		AttachLoadBalancer,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(LoadBalancerArn): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(LoadBalancerName): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(LoadBalancerType): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[DetachLoadBalancer] = commons.NewGenericField(
+		commons.OceanAWS,
+		DetachLoadBalancer,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(LoadBalancerArn): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(LoadBalancerName): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(LoadBalancerType): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandSubnetIDs(data interface{}) ([]string, error) {
