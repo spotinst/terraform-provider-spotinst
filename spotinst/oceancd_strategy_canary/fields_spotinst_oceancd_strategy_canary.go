@@ -10,6 +10,38 @@ import (
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
+	fieldsMap[Name] = commons.NewGenericField(
+		commons.OceanCDStrategy,
+		Name,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			strategyWrapper := resourceObject.(*commons.OceanCDStrategyWrapper)
+			strategy := strategyWrapper.GetStrategy()
+			var value *string = nil
+			if strategy.Name != nil {
+				value = strategy.Name
+			}
+			if err := resourceData.Set(string(Name), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Name), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			strategyWrapper := resourceObject.(*commons.OceanCDStrategyWrapper)
+			strategy := strategyWrapper.GetStrategy()
+			if value, ok := resourceData.Get(string(Name)).(string); ok && value != "" {
+				strategy.SetName(spotinst.String(value))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		nil,
+	)
 	fieldsMap[Canary] = commons.NewGenericField(
 		commons.OceanCDStrategyCanary,
 		Canary,
@@ -19,10 +51,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(Name): {
-						Type:     schema.TypeString,
-						Optional: true,
-					},
 					string(BackgroundVerification): {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -38,13 +66,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						},
 					},
 					string(Steps): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Required: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(Name): {
+								string(StepName): {
 									Type:     schema.TypeString,
 									Optional: true,
+								},
+								string(SetWeight): {
+									Type:     schema.TypeInt,
+									Optional: true,
+									Default:  -1,
 								},
 								string(Pause): {
 									Type:     schema.TypeList,
@@ -86,7 +119,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
-											string(Name): {
+											string(HeaderRouteName): {
 												Type:     schema.TypeBool,
 												Required: true,
 											},
@@ -126,10 +159,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											},
 										},
 									},
-								},
-								string(SetWeight): {
-									Type:     schema.TypeInt,
-									Optional: true,
 								},
 								string(Verification): {
 									Type:     schema.TypeList,
@@ -219,16 +248,17 @@ func expandCanary(data interface{}) (*oceancd.Canary, error) {
 				}
 			}
 
-			if v, ok := m[string(Steps)]; ok {
+			if v, ok := m[string(Steps)]; ok && v != nil {
 				steps, err := expandSteps(v)
 				if err != nil {
 					return nil, err
 				}
 				if steps != nil {
 					canary.SetSteps(steps)
-				} else {
-					canary.SetSteps(nil)
 				}
+				//else {
+				//	canary.SetSteps(nil)
+				//}
 			}
 		}
 		return canary, nil
@@ -275,77 +305,76 @@ func expandTemplateNames(data interface{}) ([]string, error) {
 }
 
 func expandSteps(data interface{}) ([]*oceancd.CanarySteps, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		steps := make([]*oceancd.CanarySteps, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			step := &oceancd.CanarySteps{}
+	list := data.(*schema.Set).List()
+	steps := make([]*oceancd.CanarySteps, 0, len(list))
 
-			if v, ok := m[string(Name)].(string); ok && v != "" {
-				step.SetName(spotinst.String(v))
-			}
+	for _, item := range list {
+		m := item.(map[string]interface{})
+		step := &oceancd.CanarySteps{}
 
-			if v, ok := m[string(Pause)]; ok {
-				pause, err := expandPause(v)
-				if err != nil {
-					return nil, err
-				}
-				if pause != nil {
-					step.SetPause(pause)
-				} else {
-					step.SetPause(nil)
-				}
-			}
-
-			if v, ok := m[string(Verification)]; ok {
-				verification, err := expandVerification(v)
-				if err != nil {
-					return nil, err
-				}
-				if verification != nil {
-					step.SetVerification(verification)
-				} else {
-					step.SetVerification(nil)
-				}
-			}
-
-			if v, ok := m[string(SetCanaryScale)]; ok {
-				setCanaryScale, err := expandSetCanaryScale(v)
-				if err != nil {
-					return nil, err
-				}
-				if setCanaryScale != nil {
-					step.SetSetCanaryScale(setCanaryScale)
-				} else {
-					step.SetSetCanaryScale(nil)
-				}
-			}
-
-			if v, ok := m[string(SetHeaderRoute)]; ok {
-				headerRoute, err := expandSetHeaderRoute(v)
-				if err != nil {
-					return nil, err
-				}
-				if headerRoute != nil {
-					step.SetSetHeaderRoute(headerRoute)
-				} else {
-					step.SetSetHeaderRoute(nil)
-				}
-			}
-
-			if v, ok := m[string(SetWeight)].(int); ok {
-				if v == -1 {
-					step.SetSetWeight(nil)
-				} else {
-					step.SetSetWeight(spotinst.Int(v))
-				}
-			}
-
-			steps = append(steps, step)
+		if v, ok := m[string(StepName)].(string); ok && v != "" {
+			step.SetName(spotinst.String(v))
 		}
-		return steps, nil
+
+		if v, ok := m[string(Pause)]; ok {
+			pause, err := expandPause(v)
+			if err != nil {
+				return nil, err
+			}
+			if pause != nil {
+				step.SetPause(pause)
+			} else {
+				step.SetPause(nil)
+			}
+		}
+
+		if v, ok := m[string(Verification)]; ok {
+			verification, err := expandVerification(v)
+			if err != nil {
+				return nil, err
+			}
+			if verification != nil {
+				step.SetVerification(verification)
+			} else {
+				step.SetVerification(nil)
+			}
+		}
+
+		if v, ok := m[string(SetCanaryScale)]; ok {
+			setCanaryScale, err := expandSetCanaryScale(v)
+			if err != nil {
+				return nil, err
+			}
+			if setCanaryScale != nil {
+				step.SetSetCanaryScale(setCanaryScale)
+			} else {
+				step.SetSetCanaryScale(nil)
+			}
+		}
+
+		if v, ok := m[string(SetHeaderRoute)]; ok {
+			headerRoute, err := expandSetHeaderRoute(v)
+			if err != nil {
+				return nil, err
+			}
+			if headerRoute != nil {
+				step.SetSetHeaderRoute(headerRoute)
+			} else {
+				step.SetSetHeaderRoute(nil)
+			}
+		}
+
+		if v, ok := m[string(SetWeight)].(int); ok {
+			if v == -1 {
+				step.SetSetWeight(nil)
+			} else {
+				step.SetSetWeight(spotinst.Int(v))
+			}
+		}
+
+		steps = append(steps, step)
 	}
-	return nil, nil
+	return steps, nil
 }
 
 func expandPause(data interface{}) (*oceancd.Pause, error) {
@@ -428,7 +457,7 @@ func expandSetHeaderRoute(data interface{}) (*oceancd.SetHeaderRoute, error) {
 	}
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(Name)].(string); ok && v != "" {
+	if v, ok := m[string(HeaderRouteName)].(string); ok && v != "" {
 		setHeaderRoute.SetName(spotinst.String(v))
 	} else {
 		setHeaderRoute.SetName(nil)
@@ -538,7 +567,7 @@ func flattenSteps(steps []*oceancd.CanarySteps) []interface{} {
 		if step.SetWeight != nil {
 			result[string(SetWeight)] = spotinst.IntValue(step.SetWeight)
 		}
-		result[string(Name)] = spotinst.StringValue(step.Name)
+		result[string(StepName)] = spotinst.StringValue(step.Name)
 
 		if step.Pause != nil {
 			result[string(Pause)] = flattenPause(step.Pause)
@@ -594,7 +623,7 @@ func flattenVerification(verification *oceancd.Verification) []interface{} {
 func flattenSetHeaderRoute(setHeaderRoute *oceancd.SetHeaderRoute) []interface{} {
 	result := make(map[string]interface{})
 
-	result[string(Name)] = spotinst.StringValue(setHeaderRoute.Name)
+	result[string(HeaderRouteName)] = spotinst.StringValue(setHeaderRoute.Name)
 
 	if setHeaderRoute.Match != nil {
 		result[string(Match)] = flattenMatch(setHeaderRoute.Match)

@@ -4,12 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_cloud_watch"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_datadog"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_jenkins"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_new_relic"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_prometheus"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_strategy_canary"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_strategy_rolling"
 	"log"
 	"time"
 
@@ -42,12 +38,8 @@ func resourceSpotinstOceanCDStrategy() *schema.Resource {
 func setupOceanCDStrategy() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
 
-	oceancd_verification_provider.Setup(fieldsMap)
-	oceancd_verification_provider_cloud_watch.Setup(fieldsMap)
-	oceancd_verification_provider_datadog.Setup(fieldsMap)
-	oceancd_verification_provider_jenkins.Setup(fieldsMap)
-	oceancd_verification_provider_new_relic.Setup(fieldsMap)
-	oceancd_verification_provider_prometheus.Setup(fieldsMap)
+	oceancd_strategy_canary.Setup(fieldsMap)
+	oceancd_strategy_rolling.Setup(fieldsMap)
 
 	commons.OceanCDStrategyResource = commons.NewOceanCDStrategyResource(fieldsMap)
 }

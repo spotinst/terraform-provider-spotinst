@@ -4,6 +4,9 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Canary    commons.FieldName = "canary"
+	Name      commons.FieldName = "name"
+	Steps     commons.FieldName = "steps"
+	StepName  commons.FieldName = "step_name"
 	SetWeight commons.FieldName = "set_weight"
 )
 
@@ -11,10 +14,11 @@ const (
 	BackgroundVerification commons.FieldName = "background_verification"
 )
 
-const (
-	Steps commons.FieldName = "steps"
-	Name  commons.FieldName = "name"
-)
+//const (
+//	Steps     commons.FieldName = "steps"
+//	StepName  commons.FieldName = "step_name"
+//	SetWeight commons.FieldName = "set_weight"
+//)
 
 const (
 	Pause    commons.FieldName = "pause"
@@ -29,16 +33,17 @@ const (
 )
 
 const (
-	SetHeaderRoute commons.FieldName = "set_header_route"
-	Match          commons.FieldName = "match"
-	HeaderName     commons.FieldName = "header_name"
-	HeaderValue    commons.FieldName = "header_value"
-	Exact          commons.FieldName = "exact"
-	Prefix         commons.FieldName = "prefix"
-	Regex          commons.FieldName = "regex"
+	SetHeaderRoute  commons.FieldName = "set_header_route"
+	HeaderRouteName commons.FieldName = "header_route_name"
+	Match           commons.FieldName = "match"
+	HeaderName      commons.FieldName = "header_name"
+	HeaderValue     commons.FieldName = "header_value"
+	Exact           commons.FieldName = "exact"
+	Prefix          commons.FieldName = "prefix"
+	Regex           commons.FieldName = "regex"
 )
 
 const (
-	Verification  commons.FieldName = "regex"
+	Verification  commons.FieldName = "verification"
 	TemplateNames commons.FieldName = "template_names"
 )

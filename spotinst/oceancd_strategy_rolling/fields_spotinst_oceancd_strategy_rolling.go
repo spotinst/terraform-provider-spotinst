@@ -1,4 +1,4 @@
-package oceancd_strategy_canary
+package oceancd_strategy_rolling
 
 import (
 	"fmt"
