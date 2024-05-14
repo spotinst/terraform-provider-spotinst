@@ -1,4 +1,4 @@
-package oceancd_verification_provider
+package oceancd_verification_template
 
 import (
 	"fmt"
