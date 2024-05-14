@@ -337,9 +337,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[Name] = commons.NewGenericField(
+	fieldsMap[MetricsName] = commons.NewGenericField(
 		commons.OceanCDVerificationTemplateMetrics,
-		Name,
+		MetricsName,
 		&schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
@@ -347,15 +347,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
 			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if err := resourceData.Set(string(Name), spotinst.StringValue(verificationTemplate.Metrics[].Name)); err != nil {
-				return fmt.Errorf(commons.FailureFieldReadPattern, string(Name), err)
+			if err := resourceData.Set(string(MetricsName), spotinst.StringValue(verificationTemplate.Metrics[].Name)); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(MetricsName), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
 			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(Name)); ok {
+			if v, ok := resourceData.GetOk(string(MetricsName)); ok {
 				verificationTemplate.Metrics[].SetName(spotinst.String(v.(string)))
 			}
 			return nil
@@ -363,7 +363,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
 			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(Name)); ok {
+			if v, ok := resourceData.GetOk(string(MetricsName)); ok {
 				verificationTemplate.Metrics[].SetName(spotinst.String(v.(string)))
 			}
 			return nil
@@ -688,6 +688,68 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+					string(Job): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Spec): {
+									Type:     schema.TypeList,
+									Required: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(BackoffLimit): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(JobTemplate): {
+												Type:     schema.TypeList,
+												Required: true,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(TemplateSpec): {
+															Type:     schema.TypeList,
+															Required: true,
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	string(RestartPolicy): {
+																		Type:     schema.TypeString,
+																		Required: true,
+																	},
+																	string(Containers): {
+																		Type:     schema.TypeSet,
+																		Required: true,
+																		Elem: &schema.Resource{
+																			Schema: map[string]*schema.Schema{
+																				string(Image): {
+																					Type:     schema.TypeString,
+																					Required: true,
+																				},
+																				string(ContinerName): {
+																					Type:     schema.TypeString,
+																					Required: true,
+																				},
+																				string(Command): {
+																					Type:     schema.TypeList,
+																					Optional: true,
+																					Elem:     &schema.Schema{Type: schema.TypeString},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 					string(Jenkins): {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -919,6 +981,18 @@ func expandBaselineProvider(data interface{}) (*oceancd.Provider, error) {
 			provider.SetPrometheus(prometheus)
 		} else {
 			provider.SetPrometheus(nil)
+		}
+	}
+
+	if v, ok := m[string(Job)]; ok {
+		job, err := expandJob(v)
+		if err != nil {
+			return nil, err
+		}
+		if job != nil {
+			provider.SetJob(job)
+		} else {
+			provider.SetJob(nil)
 		}
 	}
 	return provider, nil
@@ -1359,6 +1433,139 @@ func expandDimensions(data interface{}) ([]*oceancd.Dimensions, error) {
 	return nil, nil
 }
 
+func expandJob(data interface{}) (*oceancd.Job, error) {
+	job := &oceancd.Job{}
+	list := data.([]interface{})
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(Spec)]; ok {
+		spec, err := expandSpec(v)
+		if err != nil {
+			return nil, err
+		}
+		if spec != nil {
+			job.SetSpec(spec)
+		} else {
+			job.SetSpec(nil)
+		}
+	}
+	return job, nil
+}
+
+func expandSpec(data interface{}) (*oceancd.Spec, error) {
+	spec := &oceancd.Spec{}
+	list := data.([]interface{})
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(JobTemplate)]; ok {
+		template, err := expandTemplate(v)
+		if err != nil {
+			return nil, err
+		}
+		if spec != nil {
+			spec.SetTemplate(template)
+		} else {
+			spec.SetTemplate(nil)
+		}
+	}
+
+	if v, ok := m[string(BackoffLimit)].(int); ok {
+		if v == -1 {
+			spec.SetBackoffLimit(nil)
+		} else {
+			spec.SetBackoffLimit(spotinst.Int(v))
+		}
+	}
+	return spec, nil
+}
+
+func expandTemplate(data interface{}) (*oceancd.Template, error) {
+	template := &oceancd.Template{}
+	list := data.([]interface{})
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(JobTemplate)]; ok {
+		templateSpec, err := expandTemplateSpec(v)
+		if err != nil {
+			return nil, err
+		}
+		if template != nil {
+			template.SetSpec(templateSpec)
+		} else {
+			template.SetSpec(nil)
+		}
+	}
+	return template, nil
+}
+
+func expandTemplateSpec(data interface{}) (*oceancd.TemplateSpec, error) {
+	templateSpec := &oceancd.TemplateSpec{}
+	list := data.([]interface{})
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(RestartPolicy)].(string); ok && v != "" {
+		templateSpec.SetRestartPolicy(spotinst.String(v))
+	}
+
+	if v, ok := m[string(JobTemplate)]; ok {
+		containers, err := expandContainers(v)
+		if err != nil {
+			return nil, err
+		}
+		if templateSpec != nil {
+			templateSpec.SetContainers(containers)
+		} else {
+			templateSpec.SetContainers(nil)
+		}
+	}
+	return templateSpec, nil
+}
+
+func expandContainers(data interface{}) ([]*oceancd.Containers, error) {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		containers := make([]*oceancd.Containers, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			container := &oceancd.Containers{}
+
+			if v, ok := m[string(Image)].(string); ok && v != "" {
+				container.SetImage(spotinst.String(v))
+			}
+
+			if v, ok := m[string(ContinerName)].(string); ok && v != "" {
+				container.SetName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(Command)]; ok && v != nil {
+				command, err := expandCommand(v)
+				if err != nil {
+					return nil, err
+				}
+				if command != nil {
+					container.SetCommand(command)
+				} else {
+					container.SetCommand(nil)
+				}
+			}
+
+			containers = append(containers, container)
+		}
+		return containers, nil
+	}
+	return nil, nil
+}
+
+func expandCommand(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if commands, ok := v.(string); ok && commands != "" {
+			result = append(result, commands)
+		}
+	}
+	return result, nil
+}
 func flattenBaseline(baseline *oceancd.Baseline) []interface{} {
 	result := make(map[string]interface{})
 	value := spotinst.Int(-1)
@@ -1407,6 +1614,10 @@ func flattenProvider(provider *oceancd.Provider) []interface{} {
 
 	if provider.Web != nil {
 		result[string(Web)] = flattenWeb(provider.Web)
+	}
+
+	if provider.Job != nil {
+		result[string(Job)] = flattenJob(provider.Job)
 	}
 	return []interface{}{result}
 }
@@ -1579,6 +1790,67 @@ func flattenDimensions(dimensions []*oceancd.Dimensions) []interface{} {
 		result := make(map[string]interface{})
 		result[string(DimensionName)] = spotinst.StringValue(dimension.Name)
 		result[string(DimensionValue)] = spotinst.StringValue(dimension.Value)
+	}
+	return []interface{}{m}
+}
+
+func flattenJob(job *oceancd.Job) []interface{} {
+	result := make(map[string]interface{})
+
+	if job.Spec != nil {
+		result[string(Spec)] = flattenSpec(job.Spec)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenSpec(spec *oceancd.Spec) []interface{} {
+	result := make(map[string]interface{})
+	value := spotinst.Int(-1)
+	result[string(BackoffLimit)] = value
+
+	if spec.Template != nil {
+		result[string(JobTemplate)] = flattenTemplate(spec.Template)
+	}
+
+	if spec.BackoffLimit != nil {
+		result[string(BackoffLimit)] = spotinst.IntValue(spec.BackoffLimit)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenTemplate(template *oceancd.Template) []interface{} {
+	result := make(map[string]interface{})
+
+	if template.Spec != nil {
+		result[string(TemplateSpec)] = flattenTemplateSpec(template.Spec)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenTemplateSpec(templateSpec *oceancd.TemplateSpec) []interface{} {
+	result := make(map[string]interface{})
+
+	if templateSpec.Containers != nil {
+		result[string(Containers)] = flattenContainers(templateSpec.Containers)
+	}
+	result[string(RestartPolicy)] = spotinst.StringValue(templateSpec.RestartPolicy)
+
+	return []interface{}{result}
+}
+
+func flattenContainers(containers []*oceancd.Containers) []interface{} {
+	m := make([]interface{}, 0, len(containers))
+	for _, container := range containers {
+		result := make(map[string]interface{})
+		result[string(Image)] = spotinst.StringValue(container.Image)
+		result[string(ContinerName)] = spotinst.StringValue(container.Name)
+
+		if container.Command != nil {
+			result[string(Command)] = spotinst.StringSlice(container.Command)
+		}
 	}
 	return []interface{}{m}
 }

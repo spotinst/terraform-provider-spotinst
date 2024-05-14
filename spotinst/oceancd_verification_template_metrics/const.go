@@ -31,7 +31,7 @@ const (
 	FailureLimit          commons.FieldName = "failure_limit"
 	InitialDelay          commons.FieldName = "initial_delay"
 	Interval              commons.FieldName = "interval"
-	Name                  commons.FieldName = "name"
+	MetricsName           commons.FieldName = "metrics_name"
 	SuccessCondition      commons.FieldName = "success_condition"
 )
 
@@ -83,4 +83,16 @@ const (
 	Url            commons.FieldName = "url"
 	WebHeaderKey   commons.FieldName = "web_header_key"
 	WebHeaderValue commons.FieldName = "web_header_value"
+)
+
+const (
+	Spec          commons.FieldName = "spec"
+	BackoffLimit  commons.FieldName = "backoff_limit"
+	JobTemplate   commons.FieldName = "job_template"
+	TemplateSpec  commons.FieldName = "template_spce"
+	Containers    commons.FieldName = "containers"
+	Command       commons.FieldName = "command"
+	Image         commons.FieldName = "image"
+	ContinerName  commons.FieldName = "container_name"
+	RestartPolicy commons.FieldName = "restart_policy"
 )
