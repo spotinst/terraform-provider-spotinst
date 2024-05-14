@@ -101,7 +101,7 @@ func createVerificationProvider(verificationProvider *oceancd.VerificationProvid
 
 //end region
 
-//region read
+// region read
 func resourceSpotinstOceanCDVerificationProviderRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	name := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanCDVerificationProviderResource.GetName(), name)
