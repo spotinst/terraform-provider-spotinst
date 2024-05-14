@@ -1,4 +1,4 @@
-package oceancd_verification_template_args
+package oceancd_verification_template_metrics
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
@@ -33,4 +33,54 @@ const (
 	Interval              commons.FieldName = "interval"
 	Name                  commons.FieldName = "name"
 	SuccessCondition      commons.FieldName = "success_condition"
+)
+
+const (
+	Provider   commons.FieldName = "provider"
+	Job        commons.FieldName = "job"
+	Jenkins    commons.FieldName = "jenkins"
+	CloudWatch commons.FieldName = "cloudwatch"
+)
+
+const (
+	CloudWatchDuration commons.FieldName = "cloud_watch_duration"
+	Expression         commons.FieldName = "expression"
+	MetricDataQueries  commons.FieldName = "metric_data_queries"
+	ID                 commons.FieldName = "id"
+	Label              commons.FieldName = "label"
+	MetricStat         commons.FieldName = "metric_stat"
+	Period             commons.FieldName = "period"
+	ReturnData         commons.FieldName = "return_data"
+	Metric             commons.FieldName = "metric"
+	MetricPeriod       commons.FieldName = "metric_period"
+	Stat               commons.FieldName = "stat"
+	Unit               commons.FieldName = "unit"
+	Dimensions         commons.FieldName = "dimensions"
+	MetricName         commons.FieldName = "metric_name"
+	Namespace          commons.FieldName = "namespace"
+	DimensionName      commons.FieldName = "dimension_name"
+	DimensionValue     commons.FieldName = "dimension_value"
+)
+
+const (
+	JenkinsInterval   commons.FieldName = "jenkins_interval"
+	JenkinsParameters commons.FieldName = "jenkins_parameters"
+	ParameterKey      commons.FieldName = "parameter_key"
+	ParameterValue    commons.FieldName = "parameter_value"
+	PipelineName      commons.FieldName = "pipeline_name"
+	Timeout           commons.FieldName = "timeout"
+	TlsVerification   commons.FieldName = "tls_verification"
+)
+
+const (
+	Web            commons.FieldName = "web"
+	Body           commons.FieldName = "body"
+	WebHeader      commons.FieldName = "web_header"
+	Insecure       commons.FieldName = "insecure"
+	JsonPath       commons.FieldName = "json_path"
+	Method         commons.FieldName = "method"
+	TimeoutSeconds commons.FieldName = "timeout_seconds"
+	Url            commons.FieldName = "url"
+	WebHeaderKey   commons.FieldName = "web_header_key"
+	WebHeaderValue commons.FieldName = "web_header_value"
 )
