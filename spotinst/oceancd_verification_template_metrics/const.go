@@ -5,6 +5,7 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 const (
 	BaseLine         commons.FieldName = "baseline"
 	MaxRange         commons.FieldName = "max_range"
+	MinRange         commons.FieldName = "min_range"
 	BaseLineProvider commons.FieldName = "provider"
 	Threshold        commons.FieldName = "threshold"
 )
@@ -15,6 +16,7 @@ const (
 	DatadogQuery commons.FieldName = "datadog_query"
 
 	NewRelic      commons.FieldName = "new_relic"
+	Profile       commons.FieldName = "Profile"
 	NewRelicQuery commons.FieldName = "new_relic_query"
 
 	Prometheus      commons.FieldName = "prometheus"
