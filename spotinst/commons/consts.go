@@ -197,6 +197,10 @@ const (
 	OceanCDVerificationProviderJenkins    ResourceAffinity = "OceanCD_Verification_Provider_Jenkins"
 	OceanCDVerificationProviderNewRelic   ResourceAffinity = "OceanCD_Verification_Provider_New_Relic"
 
+	OceanCDVerificationTemplate           ResourceAffinity = "OceanCD_Verification_Template"
+	OceanCDVerificationTemplateArgs       ResourceAffinity = "OceanCD_Verification_Template_Args"
+	OceanCDVerificationTemplatePrometheus ResourceAffinity = "OceanCD_Verification_Provider_Prometheus"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"
