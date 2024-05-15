@@ -15,7 +15,7 @@ Manages a Spotinst OceanCD Strategy resource.
 ```hcl
 resource "spotinst_oceancd_strategy" "example" {
   
-  name  = "test-strategy"
+  strategy_name  = "test-strategy"
 
   // --- Canary ----------------------------------------------------------------
   
@@ -24,7 +24,7 @@ resource "spotinst_oceancd_strategy" "example" {
       template_names = ["test1","test2"]
     }
     steps {
-       name = "test-step-1"
+       step_name = "test-step-1"
        set_weight = 20
        
        pause {
@@ -62,7 +62,7 @@ resource "spotinst_oceancd_strategy" "example" {
   
   rolling {
      steps {
-        name = "test-step-1"
+        steps_name = "test-step-1"
       
         pause {
            duration = "1s"

@@ -37,7 +37,6 @@ func resourceSpotinstOceanCDStrategy() *schema.Resource {
 
 func setupOceanCDStrategy() {
 	fieldsMap := make(map[commons.FieldName]*commons.GenericField)
-
 	oceancd_strategy_canary.Setup(fieldsMap)
 	oceancd_strategy_rolling.Setup(fieldsMap)
 
@@ -93,7 +92,7 @@ func createStrategy(Strategy *oceancd.Strategy, spotinstClient *Client) (*string
 
 //end region
 
-//region read
+// region read
 func resourceSpotinstOceanCDStrategyRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	name := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead), commons.OceanCDStrategyResource.GetName(), name)
@@ -143,7 +142,7 @@ func readOceanCDStrategy(ctx context.Context, name string, spotinstClient *Clien
 
 // endregion
 
-//region Update
+// region Update
 
 func resourceSpotinstOceanCDStrategyUpdate(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	name := resourceData.Id()

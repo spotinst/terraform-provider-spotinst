@@ -3,8 +3,11 @@ package oceancd_strategy_canary
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	Canary    commons.FieldName = "canary"
-	Name      commons.FieldName = "name"
+	Name   commons.FieldName = "strategy_name"
+	Canary commons.FieldName = "canary"
+)
+
+const (
 	Steps     commons.FieldName = "steps"
 	StepName  commons.FieldName = "step_name"
 	SetWeight commons.FieldName = "set_weight"
@@ -12,13 +15,8 @@ const (
 
 const (
 	BackgroundVerification commons.FieldName = "background_verification"
+	BGTemplateNames        commons.FieldName = "template_names"
 )
-
-//const (
-//	Steps     commons.FieldName = "steps"
-//	StepName  commons.FieldName = "step_name"
-//	SetWeight commons.FieldName = "set_weight"
-//)
 
 const (
 	Pause    commons.FieldName = "pause"

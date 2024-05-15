@@ -40,15 +40,15 @@ func (res *OceanCDStrategyTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	oceancdVPWrapper := NewOceanCDStrategyWrapper()
-	oceancdVPWrapper.SetStrategy(Strategy)
+	oceancdStrategyWrapper := NewOceanCDStrategyWrapper()
+	oceancdStrategyWrapper.SetStrategy(Strategy)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onRead(oceancdVPWrapper, resourceData, meta); err != nil {
+		if err := field.onRead(oceancdStrategyWrapper, resourceData, meta); err != nil {
 			return err
 		}
 	}
@@ -63,18 +63,18 @@ func (res *OceanCDStrategyTerraformResource) OnCreate(
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	oceancdVPWrapper := NewOceanCDStrategyWrapper()
+	oceancdStrategyWrapper := NewOceanCDStrategyWrapper()
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(oceancdVPWrapper, resourceData, meta); err != nil {
+		if err := field.onCreate(oceancdStrategyWrapper, resourceData, meta); err != nil {
 			return nil, err
 		}
 	}
-	return oceancdVPWrapper.GetStrategy(), nil
+	return oceancdStrategyWrapper.GetStrategy(), nil
 }
 
 func (res *OceanCDStrategyTerraformResource) OnUpdate(
@@ -85,7 +85,7 @@ func (res *OceanCDStrategyTerraformResource) OnUpdate(
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	oceancdVPWrapper := NewOceanCDStrategyWrapper()
+	oceancdStrategyWrapper := NewOceanCDStrategyWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -93,22 +93,19 @@ func (res *OceanCDStrategyTerraformResource) OnUpdate(
 		}
 		if field.hasFieldChange(resourceData, meta) {
 			log.Printf(string(ResourceFieldOnUpdate), field.resourceAffinity, field.fieldNameStr)
-			if err := field.onUpdate(oceancdVPWrapper, resourceData, meta); err != nil {
+			if err := field.onUpdate(oceancdStrategyWrapper, resourceData, meta); err != nil {
 				return false, nil, err
 			}
 			hasChanged = true
 		}
 	}
 
-	return hasChanged, oceancdVPWrapper.GetStrategy(), nil
+	return hasChanged, oceancdStrategyWrapper.GetStrategy(), nil
 }
 
 func NewOceanCDStrategyWrapper() *OceanCDStrategyWrapper {
 	return &OceanCDStrategyWrapper{
-		Strategy: &oceancd.Strategy{
-			Canary:  &oceancd.Canary{},
-			Rolling: &oceancd.Rolling{},
-		},
+		Strategy: &oceancd.Strategy{},
 	}
 }
 
