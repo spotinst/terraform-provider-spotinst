@@ -10,425 +10,142 @@ import (
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
-	fieldsMap[ConsecutiveErrorLimit] = commons.NewGenericField(
+	fieldsMap[Metrics] = commons.NewGenericField(
 		commons.OceanCDVerificationTemplateMetrics,
-		ConsecutiveErrorLimit,
+		Metrics,
 		&schema.Schema{
-			Type:     schema.TypeInt,
+			Type:     schema.TypeSet,
 			Optional: true,
-			Default:  4,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *int = nil
-			if verificationTemplate != nil && verificationTemplate.Metrics != nil && verificationTemplate.Metrics[].ConsecutiveErrorLimit != nil {
-				value = verificationTemplate.Metrics[].ConsecutiveErrorLimit
-			} else {
-				value = spotinst.Int(4)
-			}
-			if err := resourceData.Set(string(ConsecutiveErrorLimit), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ConsecutiveErrorLimit), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(ConsecutiveErrorLimit)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetConsecutiveErrorLimit(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetConsecutiveErrorLimit(nil)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(ConsecutiveErrorLimit)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetConsecutiveErrorLimit(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetConsecutiveErrorLimit(nil)
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[Count] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		Count,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  1,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *int = nil
-			if verificationTemplate != nil && verificationTemplate.Metrics != nil && verificationTemplate.Metrics[].Count != nil {
-				value = verificationTemplate.Metrics[].Count
-			} else {
-				value = spotinst.Int(1)
-			}
-			if err := resourceData.Set(string(Count), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Count), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(Count)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetCount(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetCount(nil)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(Count)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetCount(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetCount(nil)
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[DryRun] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		DryRun,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *bool = nil
-			if verificationTemplate.Metrics[] != nil && verificationTemplate.Metrics[].DryRun != nil {
-				value = verificationTemplate.Metrics[].DryRun
-			}
-			if value != nil {
-				if err := resourceData.Set(string(DryRun), spotinst.BoolValue(value)); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DryRun), err)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(DryRun)); ok && v != nil {
-				dryRuns := v.(bool)
-				dryRun := spotinst.Bool(dryRuns)
-				verificationTemplate.Metrics[].SetDryRun(dryRun)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var dryRun *bool = nil
-			if v, ok := resourceData.GetOk(string(DryRun)); ok && v != nil {
-				dryRuns := v.(bool)
-				dryRun = spotinst.Bool(dryRuns)
-			}
-			verificationTemplate.Metrics[].SetDryRun(dryRun)
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[FailureCondition] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		FailureCondition,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if err := resourceData.Set(string(FailureCondition), spotinst.StringValue(verificationTemplate.Metrics[].FailureCondition)); err != nil {
-				return fmt.Errorf(commons.FailureFieldReadPattern, string(FailureCondition), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(FailureCondition)); ok {
-				verificationTemplate.Metrics[].SetFailureCondition(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(FailureCondition)); ok {
-				verificationTemplate.Metrics[].SetFailureCondition(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[FailureLimit] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		FailureLimit,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  0,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *int = nil
-			if verificationTemplate != nil && verificationTemplate.Metrics != nil && verificationTemplate.Metrics[].FailureLimit != nil {
-				value = verificationTemplate.Metrics[].FailureLimit
-			} else {
-				value = spotinst.Int(0)
-			}
-			if err := resourceData.Set(string(FailureLimit), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(FailureLimit), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(FailureLimit)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetFailureLimit(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetFailureLimit(nil)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(FailureLimit)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetFailureLimit(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetFailureLimit(nil)
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[FailureLimit] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		FailureLimit,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  0,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *int = nil
-			if verificationTemplate != nil && verificationTemplate.Metrics != nil && verificationTemplate.Metrics[].FailureLimit != nil {
-				value = verificationTemplate.Metrics[].FailureLimit
-			} else {
-				value = spotinst.Int(0)
-			}
-			if err := resourceData.Set(string(FailureLimit), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(FailureLimit), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(FailureLimit)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetFailureLimit(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetFailureLimit(nil)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.Get(string(FailureLimit)).(int); ok && v >= 0 {
-				verificationTemplate.Metrics[].SetFailureLimit(spotinst.Int(v))
-			} else {
-				verificationTemplate.Metrics[].SetFailureLimit(nil)
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[InitialDelay] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		InitialDelay,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if err := resourceData.Set(string(InitialDelay), spotinst.StringValue(verificationTemplate.Metrics[].InitialDelay)); err != nil {
-				return fmt.Errorf(commons.FailureFieldReadPattern, string(InitialDelay), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(InitialDelay)); ok {
-				verificationTemplate.Metrics[].SetInitialDelay(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(InitialDelay)); ok {
-				verificationTemplate.Metrics[].SetInitialDelay(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[Interval] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		Interval,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if err := resourceData.Set(string(Interval), spotinst.StringValue(verificationTemplate.Metrics[].Interval)); err != nil {
-				return fmt.Errorf(commons.FailureFieldReadPattern, string(Interval), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(Interval)); ok {
-				verificationTemplate.Metrics[].SetInterval(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(Interval)); ok {
-				verificationTemplate.Metrics[].SetInterval(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[MetricsName] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		MetricsName,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if err := resourceData.Set(string(MetricsName), spotinst.StringValue(verificationTemplate.Metrics[].Name)); err != nil {
-				return fmt.Errorf(commons.FailureFieldReadPattern, string(MetricsName), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(MetricsName)); ok {
-				verificationTemplate.Metrics[].SetName(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(MetricsName)); ok {
-				verificationTemplate.Metrics[].SetName(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[SuccessCondition] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		SuccessCondition,
-		&schema.Schema{
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if err := resourceData.Set(string(SuccessCondition), spotinst.StringValue(verificationTemplate.Metrics[].SuccessCondition)); err != nil {
-				return fmt.Errorf(commons.FailureFieldReadPattern, string(SuccessCondition), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(SuccessCondition)); ok {
-				verificationTemplate.Metrics[].SetSuccessCondition(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			if v, ok := resourceData.GetOk(string(SuccessCondition)); ok {
-				verificationTemplate.Metrics[].SetSuccessCondition(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		nil,
-	)
-
-	fieldsMap[BaseLine] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		BaseLine,
-		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(MaxRange): {
+					string(ConsecutiveErrorLimit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
+						Default:  4,
 					},
-					string(MinRange): {
+
+					string(Count): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  -1,
+						Default:  1,
 					},
-					string(Threshold): {
+
+					string(DryRun): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+
+					string(FailureCondition): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(FailureLimit): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  0,
+					},
+
+					string(InitialDelay): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(Interval): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(MetricsName): {
 						Type:     schema.TypeString,
 						Required: true,
 					},
-					string(BaseLineProvider): {
+
+					string(SuccessCondition): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(BaseLine): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(MaxRange): {
+									Type:     schema.TypeInt,
+									Optional: true,
+									Default:  -1,
+								},
+								string(MinRange): {
+									Type:     schema.TypeInt,
+									Optional: true,
+									Default:  -1,
+								},
+								string(Threshold): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(BaseLineProvider): {
+									Type:     schema.TypeList,
+									Required: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Datadog): {
+												Type:     schema.TypeList,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(Duration): {
+															Type:     schema.TypeString,
+															Optional: true,
+														},
+														string(DatadogQuery): {
+															Type:     schema.TypeString,
+															Optional: true,
+														},
+													},
+												},
+											},
+											string(NewRelic): {
+												Type:     schema.TypeList,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(Profile): {
+															Type:     schema.TypeString,
+															Optional: true,
+														},
+														string(NewRelicQuery): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+													},
+												},
+											},
+											string(Prometheus): {
+												Type:     schema.TypeList,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(PrometheusQuery): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+
+					string(Provider): {
 						Type:     schema.TypeList,
 						Required: true,
 						Elem: &schema.Resource{
@@ -486,413 +203,150 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				},
 			},
 		},
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
 			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var result []interface{} = nil
 
-			if verificationTemplate != nil && verificationTemplate.Metrics[].Baseline != nil {
-				result = flattenBaseline(verificationTemplate.Metrics[].Baseline)
+			var metricsResults []interface{} = nil
+			if verificationTemplate != nil && verificationTemplate.Metrics != nil {
+				metrics := verificationTemplate.Metrics
+				metricsResults = flattenMetrics(metrics)
 			}
-			if len(result) > 0 {
-				if err := resourceData.Set(string(BaseLine), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(BaseLine), err)
-				}
+
+			if err := resourceData.Set(string(Metrics), metricsResults); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Metrics), err)
 			}
+
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
 			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *oceancd.Baseline = nil
-
-			if v, ok := resourceData.GetOkExists(string(BaseLine)); ok {
-				if baseline, err := expandBaseline(v); err != nil {
+			if value, ok := resourceData.GetOkExists(string(Metrics)); ok {
+				if metrics, err := expandMetrics(value); err != nil {
 					return err
 				} else {
-					value = baseline
+					verificationTemplate.SetMetrics(metrics)
 				}
 			}
-			verificationTemplate.Metrics[].SetBaseLine(value)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
 			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *oceancd.Baseline = nil
-			if v, ok := resourceData.GetOkExists(string(BaseLine)); ok {
-				if baseline, err := expandBaseline(v); err != nil {
+			var result []*oceancd.Metrics = nil
+			if value, ok := resourceData.GetOkExists(string(Metrics)); ok {
+				if metrics, err := expandMetrics(value); err != nil {
 					return err
 				} else {
-					value = baseline
+					result = metrics
 				}
 			}
-			verificationTemplate.Metrics[].SetBaseLine(value)
+
+			if len(result) == 0 {
+				verificationTemplate.SetMetrics(result)
+			} else {
+				verificationTemplate.SetMetrics(result)
+			}
+
 			return nil
-		},
-		nil,
+		}, nil,
 	)
+}
 
-	fieldsMap[Provider] = commons.NewGenericField(
-		commons.OceanCDVerificationTemplateMetrics,
-		Provider,
-		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					string(Datadog): {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(Duration): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-								string(DatadogQuery): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-							},
-						},
-					},
-					string(NewRelic): {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(Profile): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-								string(NewRelicQuery): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-							},
-						},
-					},
-					string(Prometheus): {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(PrometheusQuery): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-							},
-						},
-					},
-					string(CloudWatch): {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(Duration): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-								string(MetricDataQueries): {
-									Type:     schema.TypeSet,
-									Required: true,
-									Elem: &schema.Resource{
-										Schema: map[string]*schema.Schema{
-											string(Expression): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-											string(ID): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-											string(Label): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-											string(Period): {
-												Type:     schema.TypeInt,
-												Required: true,
-												Default:  -1,
-											},
-											string(ReturnData): {
-												Type:     schema.TypeBool,
-												Required: true,
-											},
-											string(MetricStat): {
-												Type:     schema.TypeList,
-												Optional: true,
-												MaxItems: 1,
-												Elem: &schema.Resource{
-													Schema: map[string]*schema.Schema{
-														string(Stat): {
-															Type:     schema.TypeString,
-															Required: true,
-														},
-														string(Unit): {
-															Type:     schema.TypeString,
-															Required: true,
-														},
-														string(MetricPeriod): {
-															Type:     schema.TypeInt,
-															Required: true,
-															Default:  -1,
-														},
-														string(Metric): {
-															Type:     schema.TypeList,
-															Optional: true,
-															MaxItems: 1,
-															Elem: &schema.Resource{
-																Schema: map[string]*schema.Schema{
-																	string(MetricName): {
-																		Type:     schema.TypeString,
-																		Required: true,
-																	},
-																	string(Namespace): {
-																		Type:     schema.TypeString,
-																		Optional: true,
-																	},
-																	string(Dimensions): {
-																		Type:     schema.TypeList,
-																		Optional: true,
-																		MaxItems: 1,
-																		Elem: &schema.Resource{
-																			Schema: map[string]*schema.Schema{
-																				string(DimensionName): {
-																					Type:     schema.TypeString,
-																					Required: true,
-																				},
-																				string(DimensionValue): {
-																					Type:     schema.TypeString,
-																					Required: true,
-																				},
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					string(Job): {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(Spec): {
-									Type:     schema.TypeList,
-									Required: true,
-									Elem: &schema.Resource{
-										Schema: map[string]*schema.Schema{
-											string(BackoffLimit): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-											string(JobTemplate): {
-												Type:     schema.TypeList,
-												Required: true,
-												Elem: &schema.Resource{
-													Schema: map[string]*schema.Schema{
-														string(TemplateSpec): {
-															Type:     schema.TypeList,
-															Required: true,
-															Elem: &schema.Resource{
-																Schema: map[string]*schema.Schema{
-																	string(RestartPolicy): {
-																		Type:     schema.TypeString,
-																		Required: true,
-																	},
-																	string(Containers): {
-																		Type:     schema.TypeSet,
-																		Required: true,
-																		Elem: &schema.Resource{
-																			Schema: map[string]*schema.Schema{
-																				string(Image): {
-																					Type:     schema.TypeString,
-																					Required: true,
-																				},
-																				string(ContinerName): {
-																					Type:     schema.TypeString,
-																					Required: true,
-																				},
-																				string(Command): {
-																					Type:     schema.TypeList,
-																					Optional: true,
-																					Elem:     &schema.Schema{Type: schema.TypeString},
-																				},
-																			},
-																		},
-																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					string(Jenkins): {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(JenkinsInterval): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(PipelineName): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(Timeout): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(TlsVerification): {
-									Type:     schema.TypeBool,
-									Required: true,
-								},
-								string(JenkinsParameters): {
-									Type:     schema.TypeList,
-									Optional: true,
-									MaxItems: 1,
-									Elem: &schema.Resource{
-										Schema: map[string]*schema.Schema{
-											string(ParameterKey): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-											string(ParameterValue): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					string(Web): {
-						Type:     schema.TypeList,
-						Optional: true,
-						MaxItems: 1,
-						Elem: &schema.Resource{
-							Schema: map[string]*schema.Schema{
-								string(Body): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-								string(Insecure): {
-									Type:     schema.TypeBool,
-									Optional: true,
-								},
-								string(JsonPath): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-								string(Method): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-								string(Url): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(TimeoutSeconds): {
-									Type:     schema.TypeInt,
-									Required: true,
-									Default:  10,
-								},
-								string(WebHeader): {
-									Type:     schema.TypeSet,
-									Optional: true,
-									MaxItems: 1,
-									Elem: &schema.Resource{
-										Schema: map[string]*schema.Schema{
-											string(WebHeaderKey): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-											string(WebHeaderValue): {
-												Type:     schema.TypeString,
-												Required: true,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+func expandMetrics(data interface{}) ([]*oceancd.Metrics, error) {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		metrics := make([]*oceancd.Metrics, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			metric := &oceancd.Metrics{}
 
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var result []interface{} = nil
-
-			if verificationTemplate != nil && verificationTemplate.Metrics[].Provider != nil {
-				result = flattenProvider(verificationTemplate.Metrics[].Provider)
-			}
-			if len(result) > 0 {
-				if err := resourceData.Set(string(Provider), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Provider), err)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *oceancd.Provider = nil
-
-			if v, ok := resourceData.GetOkExists(string(Provider)); ok {
-				if provider, err := expandProvider(v); err != nil {
-					return err
+			if v, ok := m[string(ConsecutiveErrorLimit)].(int); ok {
+				if v == 4 {
+					metric.SetConsecutiveErrorLimit(nil)
 				} else {
-					value = provider
+					metric.SetConsecutiveErrorLimit(spotinst.Int(v))
 				}
 			}
-			verificationTemplate.Metrics[].SetProvider(value)
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var value *oceancd.Provider = nil
-			if v, ok := resourceData.GetOkExists(string(Provider)); ok {
-				if provider, err := expandProvider(v); err != nil {
-					return err
+
+			if v, ok := m[string(Count)].(int); ok {
+				if v == 1 {
+					metric.SetCount(nil)
 				} else {
-					value = provider
+					metric.SetCount(spotinst.Int(v))
 				}
 			}
-			verificationTemplate.Metrics[].SetProvider(value)
-			return nil
-		},
-		nil,
-	)
+
+			if v, ok := m[string(FailureLimit)].(int); ok {
+				if v == 1 {
+					metric.SetCount(nil)
+				} else {
+					metric.SetCount(spotinst.Int(v))
+				}
+			}
+
+			if v, ok := m[string(FailureCondition)].(string); ok && v != "" {
+				metric.SetFailureCondition(spotinst.String(v))
+			} else {
+				metric.SetFailureCondition(nil)
+			}
+
+			if v, ok := m[string(InitialDelay)].(string); ok && v != "" {
+				metric.SetInitialDelay(spotinst.String(v))
+			} else {
+				metric.SetInitialDelay(nil)
+			}
+
+			if v, ok := m[string(Interval)].(string); ok && v != "" {
+				metric.SetInterval(spotinst.String(v))
+			} else {
+				metric.SetInterval(nil)
+			}
+
+			if v, ok := m[string(SuccessCondition)].(string); ok && v != "" {
+				metric.SetSuccessCondition(spotinst.String(v))
+			} else {
+				metric.SetSuccessCondition(nil)
+			}
+
+			if v, ok := m[string(MetricsName)].(string); ok && v != "" {
+				metric.SetName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(DryRun)].(bool); ok {
+				metric.SetDryRun(spotinst.Bool(v))
+			} else {
+				metric.SetDryRun(nil)
+			}
+
+			if v, ok := m[string(BaseLine)]; ok {
+				baseline, err := expandBaseline(v)
+				if err != nil {
+					return nil, err
+				}
+				if baseline != nil {
+					metric.SetBaseLine(baseline)
+				} else {
+					metric.SetBaseLine(nil)
+				}
+			}
+
+			if v, ok := m[string(Provider)]; ok {
+				provider, err := expandProvider(v)
+				if err != nil {
+					return nil, err
+				}
+				if provider != nil {
+					metric.SetProvider(provider)
+				} else {
+					metric.SetProvider(nil)
+				}
+			}
+			metrics = append(metrics, metric)
+		}
+		return metrics, nil
+	}
+	return nil, nil
 }
 
 func expandBaseline(data interface{}) (*oceancd.Baseline, error) {
@@ -1566,6 +1020,52 @@ func expandCommand(data interface{}) ([]string, error) {
 	}
 	return result, nil
 }
+
+func flattenMetrics(metrics []*oceancd.Metrics) []interface{} {
+	m := make([]interface{}, 0, len(metrics))
+	for _, metric := range metrics {
+		result := make(map[string]interface{})
+		failureLimitValue := spotinst.Int(0)
+		result[string(FailureLimit)] = failureLimitValue
+
+		consecutiveErrorLimitValue := spotinst.Int(4)
+		result[string(FailureLimit)] = consecutiveErrorLimitValue
+
+		countValue := spotinst.Int(0)
+		result[string(FailureLimit)] = countValue
+
+		result[string(FailureCondition)] = spotinst.StringValue(metric.FailureCondition)
+		result[string(InitialDelay)] = spotinst.StringValue(metric.InitialDelay)
+		result[string(Interval)] = spotinst.StringValue(metric.Interval)
+		result[string(MetricsName)] = spotinst.StringValue(metric.Name)
+		result[string(SuccessCondition)] = spotinst.StringValue(metric.SuccessCondition)
+
+		result[string(DryRun)] = spotinst.BoolValue(metric.DryRun)
+
+		if metric.Provider != nil {
+			result[string(MetricStat)] = flattenProvider(metric.Provider)
+		}
+
+		if metric.Baseline != nil {
+			result[string(BaseLine)] = flattenBaseline(metric.Baseline)
+		}
+
+		if metric.FailureLimit != nil {
+			result[string(FailureLimit)] = spotinst.IntValue(metric.FailureLimit)
+		}
+
+		if metric.Count != nil {
+			result[string(Count)] = spotinst.IntValue(metric.Count)
+		}
+
+		if metric.ConsecutiveErrorLimit != nil {
+			result[string(ConsecutiveErrorLimit)] = spotinst.IntValue(metric.ConsecutiveErrorLimit)
+		}
+
+	}
+	return []interface{}{m}
+}
+
 func flattenBaseline(baseline *oceancd.Baseline) []interface{} {
 	result := make(map[string]interface{})
 	value := spotinst.Int(-1)

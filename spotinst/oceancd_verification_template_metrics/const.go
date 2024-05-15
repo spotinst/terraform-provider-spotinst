@@ -3,6 +3,7 @@ package oceancd_verification_template_metrics
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
+	Metrics          commons.FieldName = "metrics"
 	BaseLine         commons.FieldName = "baseline"
 	MaxRange         commons.FieldName = "max_range"
 	MinRange         commons.FieldName = "min_range"
