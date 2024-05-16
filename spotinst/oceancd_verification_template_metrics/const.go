@@ -17,7 +17,7 @@ const (
 	DatadogQuery commons.FieldName = "datadog_query"
 
 	NewRelic      commons.FieldName = "new_relic"
-	Profile       commons.FieldName = "Profile"
+	Profile       commons.FieldName = "profile"
 	NewRelicQuery commons.FieldName = "new_relic_query"
 
 	Prometheus      commons.FieldName = "prometheus"
