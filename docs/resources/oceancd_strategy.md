@@ -38,13 +38,13 @@ resource "spotinst_oceancd_strategy" "example" {
        }   
        
        set_header_route {
-          name = "test"
+          header_route_name = "test"
           match {
              header_name = "Test"
              header_value {
                 exact  = "Test"
                 prefix = "Test-"
-                regex  = "Test(.*)"
+                regex  = "Test*"
              }
           }
        }

@@ -106,10 +106,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											string(Replicas): {
 												Type:     schema.TypeInt,
 												Optional: true,
+												Default:  -1,
 											},
 											string(Weight): {
 												Type:     schema.TypeInt,
 												Optional: true,
+												Default:  -1,
 											},
 										},
 									},
