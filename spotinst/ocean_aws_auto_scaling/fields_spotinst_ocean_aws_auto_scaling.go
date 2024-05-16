@@ -68,20 +68,24 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(CPUPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
+									Default:  -1,
 								},
 
 								string(GPUPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
+									Default:  -1,
 								},
 								string(MemoryPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
+									Default:  -1,
 								},
 
 								string(NumOfUnits): {
 									Type:     schema.TypeInt,
 									Optional: true,
+									Default:  -1,
 								},
 							},
 						},
@@ -209,7 +213,7 @@ func expandAutoscaler(data interface{}, nullify bool) (*aws.AutoScaler, error) {
 		if headroom != nil {
 			autoscaler.SetHeadroom(headroom)
 		} else {
-			autoscaler.Headroom = nil
+			autoscaler.SetHeadroom(nil)
 		}
 	}
 
@@ -280,18 +284,26 @@ func expandOceanAWSAutoScalerHeadroom(data interface{}) (*aws.AutoScalerHeadroom
 
 			if v, ok := m[string(CPUPerUnit)].(int); ok && v >= 0 {
 				headroom.SetCPUPerUnit(spotinst.Int(v))
+			} else {
+				headroom.SetCPUPerUnit(nil)
 			}
 
 			if v, ok := m[string(MemoryPerUnit)].(int); ok && v >= 0 {
 				headroom.SetMemoryPerUnit(spotinst.Int(v))
+			} else {
+				headroom.SetMemoryPerUnit(nil)
 			}
 
 			if v, ok := m[string(NumOfUnits)].(int); ok && v >= 0 {
 				headroom.SetNumOfUnits(spotinst.Int(v))
+			} else {
+				headroom.SetNumOfUnits(nil)
 			}
 
 			if v, ok := m[string(GPUPerUnit)].(int); ok && v >= 0 {
 				headroom.SetGPUPerUnit(spotinst.Int(v))
+			} else {
+				headroom.SetGPUPerUnit(nil)
 			}
 		}
 		return headroom, nil
