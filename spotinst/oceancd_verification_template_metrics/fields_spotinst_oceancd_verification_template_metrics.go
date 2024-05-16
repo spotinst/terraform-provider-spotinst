@@ -426,7 +426,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											},
 											string(TimeoutSeconds): {
 												Type:     schema.TypeInt,
-												Required: true,
+												Optional: true,
 												Default:  10,
 											},
 											string(WebHeader): {
