@@ -50,12 +50,12 @@ func resourceSpotinstOceanCDVerificationTemplateCreate(ctx context.Context, reso
 	log.Printf(string(commons.ResourceOnCreate),
 		commons.OceanCDVerificationTemplateResource.GetName())
 
-	VerificationTemplate, err := commons.OceanCDVerificationTemplateResource.OnCreate(resourceData, meta)
+	verificationTemplate, err := commons.OceanCDVerificationTemplateResource.OnCreate(resourceData, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	vtname, err := createVerificationTemplate(VerificationTemplate, meta.(*Client))
+	vtname, err := createVerificationTemplate(verificationTemplate, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -115,7 +115,7 @@ func resourceSpotinstOceanCDVerificationTemplateRead(ctx context.Context, resour
 		return diag.FromErr(err)
 	}
 
-	log.Printf("ocean/aks: verification template read successfully: %s", name)
+	log.Printf("oceancd: verification template read successfully: %s", name)
 	return nil
 }
 
