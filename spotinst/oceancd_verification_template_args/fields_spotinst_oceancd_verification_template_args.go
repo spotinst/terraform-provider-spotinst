@@ -34,7 +34,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(SetKeyRef): {
+								string(SecretKeyRef): {
 									Type:     schema.TypeList,
 									Optional: true,
 									MaxItems: 1,
@@ -111,36 +111,35 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 }
 
 func expandArgs(data interface{}) ([]*oceancd.Args, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		args := make([]*oceancd.Args, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			arg := &oceancd.Args{}
+	list := data.(*schema.Set).List()
+	args := make([]*oceancd.Args, 0, len(list))
 
-			if v, ok := m[string(ArgName)].(string); ok && v != "" {
-				arg.SetName(spotinst.String(v))
-			}
-			if v, ok := m[string(Value)].(string); ok && v != "" {
-				arg.SetValue(spotinst.String(v))
-			}
+	for _, v := range list {
+		m := v.(map[string]interface{})
+		arg := &oceancd.Args{}
 
-			if v, ok := m[string(ValueFrom)]; ok && v != nil {
-				valueFrom, err := expandValueFrom(v)
-				if err != nil {
-					return nil, err
-				}
-				if valueFrom != nil {
-					arg.SetValueFrom(valueFrom)
-				} else {
-					arg.SetValueFrom(nil)
-				}
-			}
-
-			args = append(args, arg)
+		if v, ok := m[string(ArgName)].(string); ok && v != "" {
+			arg.SetName(spotinst.String(v))
 		}
-		return args, nil
+		if v, ok := m[string(Value)].(string); ok && v != "" {
+			arg.SetValue(spotinst.String(v))
+		}
+
+		if v, ok := m[string(ValueFrom)]; ok && v != nil {
+			valueFrom, err := expandValueFrom(v)
+			if err != nil {
+				return nil, err
+			}
+			if valueFrom != nil {
+				arg.SetValueFrom(valueFrom)
+			} else {
+				arg.SetValueFrom(nil)
+			}
+		}
+
+		args = append(args, arg)
 	}
-	return nil, nil
+	return args, nil
 }
 
 func expandValueFrom(data interface{}) (*oceancd.ValueFrom, error) {
@@ -151,7 +150,7 @@ func expandValueFrom(data interface{}) (*oceancd.ValueFrom, error) {
 	}
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(SetKeyRef)]; ok && v != nil {
+	if v, ok := m[string(SecretKeyRef)]; ok && v != nil {
 		secretKeyRef, err := expandSecretKeyRef(v)
 		if err != nil {
 			return nil, err
@@ -179,7 +178,7 @@ func expandSecretKeyRef(data interface{}) (*oceancd.SecretKeyRef, error) {
 	}
 
 	if v, ok := m[string(KeyName)].(string); ok && v != "" {
-		secretKeyRef.SetKey(spotinst.String(v))
+		secretKeyRef.SetName(spotinst.String(v))
 	}
 	return secretKeyRef, nil
 }
@@ -196,22 +195,24 @@ func flattenValueFrom(valueFrom *oceancd.ValueFrom) []interface{} {
 	result := make(map[string]interface{})
 
 	if valueFrom.SecretKeyRef != nil {
-		result[string(SetKeyRef)] = flattenSecretKeyRef(valueFrom.SecretKeyRef)
+		result[string(SecretKeyRef)] = flattenSecretKeyRef(valueFrom.SecretKeyRef)
 	}
 	return []interface{}{result}
 }
 
 func flattenArgs(args []*oceancd.Args) []interface{} {
-	m := make([]interface{}, 0, len(args))
-	for _, arg := range args {
-		result := make(map[string]interface{})
+	result := make([]interface{}, 0, len(args))
 
-		result[string(ArgName)] = spotinst.StringValue(arg.Name)
-		result[string(Value)] = spotinst.StringValue(arg.Value)
+	for _, arg := range args {
+		m := make(map[string]interface{})
+
+		m[string(ArgName)] = spotinst.StringValue(arg.Name)
+		m[string(Value)] = spotinst.StringValue(arg.Value)
 
 		if arg.ValueFrom != nil {
-			result[string(ValueFrom)] = flattenValueFrom(arg.ValueFrom)
+			m[string(ValueFrom)] = flattenValueFrom(arg.ValueFrom)
 		}
+		result = append(result, m)
 	}
-	return []interface{}{m}
+	return result
 }

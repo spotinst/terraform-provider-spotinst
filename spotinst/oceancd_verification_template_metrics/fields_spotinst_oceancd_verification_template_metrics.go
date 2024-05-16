@@ -255,98 +255,97 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 }
 
 func expandMetrics(data interface{}) ([]*oceancd.Metrics, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		metrics := make([]*oceancd.Metrics, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			metric := &oceancd.Metrics{}
+	list := data.(*schema.Set).List()
+	metrics := make([]*oceancd.Metrics, 0, len(list))
 
-			if v, ok := m[string(ConsecutiveErrorLimit)].(int); ok {
-				if v == 4 {
-					metric.SetConsecutiveErrorLimit(nil)
-				} else {
-					metric.SetConsecutiveErrorLimit(spotinst.Int(v))
-				}
-			}
+	for _, v := range list {
+		m := v.(map[string]interface{})
+		metric := &oceancd.Metrics{}
 
-			if v, ok := m[string(Count)].(int); ok {
-				if v == 1 {
-					metric.SetCount(nil)
-				} else {
-					metric.SetCount(spotinst.Int(v))
-				}
-			}
-
-			if v, ok := m[string(FailureLimit)].(int); ok {
-				if v == 1 {
-					metric.SetCount(nil)
-				} else {
-					metric.SetCount(spotinst.Int(v))
-				}
-			}
-
-			if v, ok := m[string(FailureCondition)].(string); ok && v != "" {
-				metric.SetFailureCondition(spotinst.String(v))
+		if v, ok := m[string(ConsecutiveErrorLimit)].(int); ok {
+			if v == 4 {
+				metric.SetConsecutiveErrorLimit(nil)
 			} else {
-				metric.SetFailureCondition(nil)
+				metric.SetConsecutiveErrorLimit(spotinst.Int(v))
 			}
-
-			if v, ok := m[string(InitialDelay)].(string); ok && v != "" {
-				metric.SetInitialDelay(spotinst.String(v))
-			} else {
-				metric.SetInitialDelay(nil)
-			}
-
-			if v, ok := m[string(Interval)].(string); ok && v != "" {
-				metric.SetInterval(spotinst.String(v))
-			} else {
-				metric.SetInterval(nil)
-			}
-
-			if v, ok := m[string(SuccessCondition)].(string); ok && v != "" {
-				metric.SetSuccessCondition(spotinst.String(v))
-			} else {
-				metric.SetSuccessCondition(nil)
-			}
-
-			if v, ok := m[string(MetricsName)].(string); ok && v != "" {
-				metric.SetName(spotinst.String(v))
-			}
-
-			if v, ok := m[string(DryRun)].(bool); ok {
-				metric.SetDryRun(spotinst.Bool(v))
-			} else {
-				metric.SetDryRun(nil)
-			}
-
-			if v, ok := m[string(BaseLine)]; ok {
-				baseline, err := expandBaseline(v)
-				if err != nil {
-					return nil, err
-				}
-				if baseline != nil {
-					metric.SetBaseLine(baseline)
-				} else {
-					metric.SetBaseLine(nil)
-				}
-			}
-
-			if v, ok := m[string(Provider)]; ok {
-				provider, err := expandProvider(v)
-				if err != nil {
-					return nil, err
-				}
-				if provider != nil {
-					metric.SetProvider(provider)
-				} else {
-					metric.SetProvider(nil)
-				}
-			}
-			metrics = append(metrics, metric)
 		}
-		return metrics, nil
+
+		if v, ok := m[string(Count)].(int); ok {
+			if v == 1 {
+				metric.SetCount(nil)
+			} else {
+				metric.SetCount(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(FailureLimit)].(int); ok {
+			if v == 1 {
+				metric.SetCount(nil)
+			} else {
+				metric.SetCount(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(FailureCondition)].(string); ok && v != "" {
+			metric.SetFailureCondition(spotinst.String(v))
+		} else {
+			metric.SetFailureCondition(nil)
+		}
+
+		if v, ok := m[string(InitialDelay)].(string); ok && v != "" {
+			metric.SetInitialDelay(spotinst.String(v))
+		} else {
+			metric.SetInitialDelay(nil)
+		}
+
+		if v, ok := m[string(Interval)].(string); ok && v != "" {
+			metric.SetInterval(spotinst.String(v))
+		} else {
+			metric.SetInterval(nil)
+		}
+
+		if v, ok := m[string(SuccessCondition)].(string); ok && v != "" {
+			metric.SetSuccessCondition(spotinst.String(v))
+		} else {
+			metric.SetSuccessCondition(nil)
+		}
+
+		if v, ok := m[string(MetricsName)].(string); ok && v != "" {
+			metric.SetName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(DryRun)].(bool); ok {
+			metric.SetDryRun(spotinst.Bool(v))
+		} else {
+			metric.SetDryRun(nil)
+		}
+
+		if v, ok := m[string(BaseLine)]; ok {
+			baseline, err := expandBaseline(v)
+			if err != nil {
+				return nil, err
+			}
+			if baseline != nil {
+				metric.SetBaseLine(baseline)
+			} else {
+				metric.SetBaseLine(nil)
+			}
+		}
+
+		if v, ok := m[string(Provider)]; ok {
+			provider, err := expandProvider(v)
+			if err != nil {
+				return nil, err
+			}
+			if provider != nil {
+				metric.SetProvider(provider)
+			} else {
+				metric.SetProvider(nil)
+			}
+		}
+		metrics = append(metrics, metric)
 	}
-	return nil, nil
+	return metrics, nil
 }
 
 func expandBaseline(data interface{}) (*oceancd.Baseline, error) {
