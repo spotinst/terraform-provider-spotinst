@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.172.1 (May, 16 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed disabling of `autoscale_headroom` object and its attributes in cluster config under `autoscaler`.
+
 ## 1.172.0 (May, 08 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: added `attach_load_balancer` and `detach_load_balancer` blocks support for attaching and detaching loadBalancers to ocean aws cluster.

@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/sethvargo/go-password v0.2.0
-	github.com/spotinst/spotinst-sdk-go v1.349.0
+	github.com/spotinst/spotinst-sdk-go v1.348.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 )
 
@@ -85,3 +85,5 @@ require (
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
+
+replace github.com/spotinst/spotinst-sdk-go v1.339.0 => /home/ubuntu/spotinst-sdk-go

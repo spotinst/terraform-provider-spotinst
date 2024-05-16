@@ -109,8 +109,8 @@ func Provider() *schema.Provider {
 			//OceanCD Verification Provider
 			string(commons.OceanCDVerificationProviderResourceName): resourceSpotinstOceanCDVerificationProvider(),
 
-			//OceanCD Verification Template
-			string(commons.OceanCDVerificationTemplateResourceName): resourceSpotinstOceanCDVerificationTemplate(),
+			//OceanCD Strategy
+			string(commons.OceanCDStrategyResourceName): resourceSpotinstOceanCDStrategy(),
 		},
 	}
 
