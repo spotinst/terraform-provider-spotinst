@@ -78,35 +78,140 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(Mappings): {
 									Type:     schema.TypeList,
 									Required: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
 								},
-								string(AlbIngress): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(AlbRootService): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(ServicePort): {
-									Type:     schema.TypeString,
-									Required: true,
-								},
-								string(StickinessConfig): {
+							},
+						},
+					},
+					string(Istio): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(DestinationRule): {
 									Type:     schema.TypeList,
 									Optional: true,
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
-											string(StickinessDuration): {
+											string(CanarySubsetRule): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(DestinationRuleName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(StableSubsetName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+										},
+									},
+								},
+								string(VirtualServices): {
+									Type:     schema.TypeSet,
+									Required: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(VirtualServiceName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(VirtualServiceRoutes): {
+												Type:     schema.TypeList,
+												Optional: true,
+												Elem:     &schema.Schema{Type: schema.TypeString},
+											},
+											string(TlsRoutes): {
+												Type:     schema.TypeSet,
+												Optional: true,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(Port): {
+															Type:     schema.TypeInt,
+															Optional: true,
+															Default:  -1,
+														},
+														string(SniHosts): {
+															Type:     schema.TypeInt,
+															Optional: true,
+															Elem:     &schema.Schema{Type: schema.TypeString},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+					string(Nginx): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(NginxAnnotationPrefix): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(StableIngress): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(AdditionalIngressAnnotation): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(CanaryByHeader): {
 												Type:     schema.TypeString,
 												Optional: true,
 											},
-											string(StickinessEnabled): {
+											string(Key1): {
 												Type:     schema.TypeString,
 												Optional: true,
 											},
 										},
 									},
+								},
+							},
+						},
+					},
+					string(PingPong): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(PingService): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(PongService): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+							},
+						},
+					},
+					string(Smi): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(SmiRootService): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(TrafficSplitName): {
+									Type:     schema.TypeString,
+									Required: true,
 								},
 							},
 						},
@@ -124,8 +229,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				result = flattenStrategy(rolloutSpec.Strategy)
 			}
 			if len(result) > 0 {
-				if err := resourceData.Set(string(Strategy), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Strategy), err)
+				if err := resourceData.Set(string(Traffic), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Traffic), err)
 				}
 			}
 			return nil
@@ -133,63 +238,220 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			rolloutSpecWrapper := resourceObject.(*commons.OceanCDRolloutSpecWrapper)
 			rolloutSpec := rolloutSpecWrapper.GetRolloutSpec()
-			var value *oceancd.RolloutSpecStrategy = nil
+			var value *oceancd.Traffic = nil
 
-			if v, ok := resourceData.GetOkExists(string(Strategy)); ok {
-				if strategy, err := expandStrategy(v); err != nil {
+			if v, ok := resourceData.GetOkExists(string(Traffic)); ok {
+				if traffic, err := expandTraffic(v); err != nil {
 					return err
 				} else {
-					value = strategy
+					value = traffic
 				}
 			}
-			rolloutSpec.SetStrategy(value)
+			rolloutSpec.SetTraffic(value)
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			rolloutSpecWrapper := resourceObject.(*commons.OceanCDRolloutSpecWrapper)
 			rolloutSpec := rolloutSpecWrapper.GetRolloutSpec()
-			var value *oceancd.RolloutSpecStrategy = nil
-			if v, ok := resourceData.GetOkExists(string(Strategy)); ok {
-				if strategy, err := expandStrategy(v); err != nil {
+			var value *oceancd.Traffic = nil
+			if v, ok := resourceData.GetOkExists(string(Traffic)); ok {
+				if traffic, err := expandTraffic(v); err != nil {
 					return err
 				} else {
-					value = strategy
+					value = traffic
 				}
 			}
-			rolloutSpec.SetStrategy(value)
+			rolloutSpec.SetTraffic(value)
 			return nil
 		},
 		nil,
 	)
 }
 
-func expandStrategy(data interface{}) (*oceancd.RolloutSpecStrategy, error) {
+func expandTraffic(data interface{}) (*oceancd.Traffic, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		strategy := &oceancd.RolloutSpecStrategy{}
+		traffic := &oceancd.Traffic{}
 
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(Name)].(string); ok && v != "" {
-				strategy.SetName(spotinst.String(v))
+			if v, ok := m[string(StableService)].(string); ok && v != "" {
+				traffic.SetStableService(spotinst.String(v))
 			} else {
-				strategy.SetName(nil)
+				traffic.SetStableService(nil)
 			}
 
-			if v, ok := m[string(Args)]; ok && v != nil {
+			if v, ok := m[string(CanaryService)].(string); ok && v != "" {
+				traffic.SetCanaryService(spotinst.String(v))
+			} else {
+				traffic.SetCanaryService(nil)
+			}
 
-				args, err := expandArgs(v)
+			if v, ok := m[string(Alb)]; ok && v != nil {
+
+				alb, err := expandAlb(v)
+				if err != nil {
+					return nil, err
+				}
+				if alb != nil {
+					traffic.SetAlb(alb)
+				} else {
+					traffic.SetAlb(nil)
+				}
+			}
+
+			if v, ok := m[string(Ambassador)]; ok && v != nil {
+
+				args, err := expandAmbassador(v)
 				if err != nil {
 					return nil, err
 				}
 				if args != nil {
-					strategy.SetArgs(args)
+					traffic.SetAmbassador(args)
 				} else {
-					strategy.SetArgs(nil)
+					traffic.SetAmbassador(nil)
+				}
+			}
+
+			if v, ok := m[string(Istio)]; ok && v != nil {
+
+				args, err := expandIstio(v)
+				if err != nil {
+					return nil, err
+				}
+				if args != nil {
+					traffic.SetIstio(args)
+				} else {
+					traffic.SetIstio(nil)
+				}
+			}
+
+			if v, ok := m[string(Nginx)]; ok && v != nil {
+
+				args, err := expandNginx(v)
+				if err != nil {
+					return nil, err
+				}
+				if args != nil {
+					traffic.SetNginx(args)
+				} else {
+					traffic.SetNginx(nil)
+				}
+			}
+
+			if v, ok := m[string(PingPong)]; ok && v != nil {
+
+				args, err := expandPingPong(v)
+				if err != nil {
+					return nil, err
+				}
+				if args != nil {
+					traffic.SetPingPong(args)
+				} else {
+					traffic.SetPingPong(nil)
+				}
+			}
+
+			if v, ok := m[string(Smi)]; ok && v != nil {
+
+				args, err := expandSmi(v)
+				if err != nil {
+					return nil, err
+				}
+				if args != nil {
+					traffic.SetSmi(args)
+				} else {
+					traffic.SetSmi(nil)
+				}
+			}
+
+		}
+		return traffic, nil
+	}
+	return nil, nil
+}
+
+func expandAlb(data interface{}) (*oceancd.Alb, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		traffic := &oceancd.Alb{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(AlbAnnotationPrefix)].(string); ok && v != "" {
+				traffic.SetAnnotationPrefix(spotinst.String(v))
+			} else {
+				traffic.SetAnnotationPrefix(nil)
+			}
+
+			if v, ok := m[string(AlbIngress)].(string); ok && v != "" {
+				traffic.SetIngress(spotinst.String(v))
+			}
+
+			if v, ok := m[string(AlbRootService)].(string); ok && v != "" {
+				traffic.SetRootService(spotinst.String(v))
+			}
+
+			if v, ok := m[string(ServicePort)].(int); ok {
+				if v == -1 {
+					traffic.SetServicePort(nil)
+				} else {
+					traffic.SetServicePort(spotinst.Int(v))
+				}
+			}
+
+			if v, ok := m[string(StickinessConfig)]; ok && v != nil {
+
+				stickinessConfig, err := expandStickinessConfig(v)
+				if err != nil {
+					return nil, err
+				}
+				if stickinessConfig != nil {
+					traffic.SetStickinessConfig(stickinessConfig)
+				} else {
+					traffic.SetStickinessConfig(nil)
 				}
 			}
 		}
-		return strategy, nil
+		return traffic, nil
+	}
+	return nil, nil
+}
+
+func expandAmbassador(data interface{}) (*oceancd.Ambassador, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		ambassador := &oceancd.Ambassador{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+		}
+		return ambassador, nil
+	}
+	return nil, nil
+}
+
+func expandStickinessConfig(data interface{}) (*oceancd.StickinessConfig, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		stickiness := &oceancd.StickinessConfig{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(StickinessDuration)].(int); ok {
+				if v == -1 {
+					stickiness.SetDurationSeconds(nil)
+				} else {
+					stickiness.SetDurationSeconds(spotinst.Int(v))
+				}
+			}
+
+			if v, ok := m[string(StickinessEnabled)].(bool); ok {
+				stickiness.SetEnabled(spotinst.Bool(v))
+			}
+
+		}
+		return stickiness, nil
 	}
 	return nil, nil
 }

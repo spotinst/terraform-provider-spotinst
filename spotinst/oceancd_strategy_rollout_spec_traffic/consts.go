@@ -27,11 +27,14 @@ const (
 const (
 	Istio                commons.FieldName = "istio"
 	DestinationRule      commons.FieldName = "destination_rule"
+	CanarySubsetRule     commons.FieldName = "canary_subset_rule"
+	DestinationRuleName  commons.FieldName = "destination_rule_name"
+	StableSubsetName     commons.FieldName = "stable_subset_name"
 	VirtualServices      commons.FieldName = "virtual_services"
 	VirtualServiceName   commons.FieldName = "virtual_service_name"
 	VirtualServiceRoutes commons.FieldName = "virtual_service_routes"
 	TlsRoutes            commons.FieldName = "tls_routes"
-	Ports                commons.FieldName = "ports"
+	Port                 commons.FieldName = "port"
 	SniHosts             commons.FieldName = "sni_hosts"
 )
 
@@ -39,8 +42,8 @@ const (
 	Nginx                       commons.FieldName = "nginx"
 	AdditionalIngressAnnotation commons.FieldName = "additional_ingress_annotation"
 	CanaryByHeader              commons.FieldName = "canary_by_header"
-	Key1                        commons.FieldName = "canary_by_header"
-	NginxAnnotation_Prefix      commons.FieldName = "nginx_annotation_prefix"
+	Key1                        commons.FieldName = "key1"
+	NginxAnnotationPrefix       commons.FieldName = "nginx_annotation_prefix"
 	StableIngress               commons.FieldName = "stable_ingress"
 )
 

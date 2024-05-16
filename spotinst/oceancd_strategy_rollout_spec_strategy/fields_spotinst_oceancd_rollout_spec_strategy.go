@@ -124,8 +124,6 @@ func expandStrategy(data interface{}) (*oceancd.RolloutSpecStrategy, error) {
 
 			if v, ok := m[string(Name)].(string); ok && v != "" {
 				strategy.SetName(spotinst.String(v))
-			} else {
-				strategy.SetName(nil)
 			}
 
 			if v, ok := m[string(Args)]; ok && v != nil {
