@@ -21,13 +21,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ConsecutiveErrorLimit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  4,
+						Default:  -1,
 					},
 
 					string(Count): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  1,
+						Default:  -1,
 					},
 
 					string(DryRun): {
@@ -43,7 +43,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(FailureLimit): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Default:  0,
+						Default:  -1,
 					},
 
 					string(InitialDelay): {
@@ -515,7 +515,7 @@ func expandMetrics(data interface{}) ([]*oceancd.Metrics, error) {
 		metric := &oceancd.Metrics{}
 
 		if v, ok := m[string(ConsecutiveErrorLimit)].(int); ok {
-			if v == 4 {
+			if v == -1 {
 				metric.SetConsecutiveErrorLimit(nil)
 			} else {
 				metric.SetConsecutiveErrorLimit(spotinst.Int(v))
@@ -523,7 +523,7 @@ func expandMetrics(data interface{}) ([]*oceancd.Metrics, error) {
 		}
 
 		if v, ok := m[string(Count)].(int); ok {
-			if v == 1 {
+			if v == -1 {
 				metric.SetCount(nil)
 			} else {
 				metric.SetCount(spotinst.Int(v))
@@ -531,10 +531,10 @@ func expandMetrics(data interface{}) ([]*oceancd.Metrics, error) {
 		}
 
 		if v, ok := m[string(FailureLimit)].(int); ok {
-			if v == 1 {
-				metric.SetCount(nil)
+			if v == -1 {
+				metric.SetFailureLimit(nil)
 			} else {
-				metric.SetCount(spotinst.Int(v))
+				metric.SetFailureLimit(spotinst.Int(v))
 			}
 		}
 
@@ -922,6 +922,10 @@ func expandWeb(data interface{}) (*oceancd.Web, error) {
 		web.SetMethod(spotinst.String(v))
 	}
 
+	if v, ok := m[string(Url)].(string); ok && v != "" {
+		web.SetUrl(spotinst.String(v))
+	}
+
 	if v, ok := m[string(Insecure)].(bool); ok {
 		web.SetInsecure(spotinst.Bool(v))
 	}
@@ -1061,7 +1065,7 @@ func expandMetricStats(data interface{}) (*oceancd.MetricStat, error) {
 		metricStat.SetUnit(nil)
 	}
 
-	if v, ok := m[string(Period)].(int); ok {
+	if v, ok := m[string(MetricPeriod)].(int); ok {
 		if v == -1 {
 			metricStat.SetPeriod(nil)
 		} else {
@@ -1195,7 +1199,7 @@ func expandTemplate(data interface{}) (*oceancd.Template, error) {
 	}
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(JobTemplate)]; ok {
+	if v, ok := m[string(TemplateSpec)]; ok {
 		templateSpec, err := expandTemplateSpec(v)
 		if err != nil {
 			return nil, err
@@ -1221,7 +1225,7 @@ func expandTemplateSpec(data interface{}) (*oceancd.TemplateSpec, error) {
 		templateSpec.SetRestartPolicy(spotinst.String(v))
 	}
 
-	if v, ok := m[string(JobTemplate)]; ok {
+	if v, ok := m[string(Containers)]; ok {
 		containers, err := expandContainers(v)
 		if err != nil {
 			return nil, err
@@ -1286,14 +1290,10 @@ func flattenMetrics(metrics []*oceancd.Metrics) []interface{} {
 
 	for _, metric := range metrics {
 		result := make(map[string]interface{})
-		failureLimitValue := spotinst.Int(0)
-		result[string(FailureLimit)] = failureLimitValue
-
-		consecutiveErrorLimitValue := spotinst.Int(4)
-		result[string(FailureLimit)] = consecutiveErrorLimitValue
-
-		countValue := spotinst.Int(0)
-		result[string(FailureLimit)] = countValue
+		value := spotinst.Int(-1)
+		result[string(FailureLimit)] = value
+		result[string(ConsecutiveErrorLimit)] = value
+		result[string(Count)] = value
 
 		result[string(FailureCondition)] = spotinst.StringValue(metric.FailureCondition)
 		result[string(InitialDelay)] = spotinst.StringValue(metric.InitialDelay)
@@ -1431,7 +1431,7 @@ func flattenJenkins(jenkins *oceancd.JenkinsProvider) []interface{} {
 	result[string(TlsVerification)] = spotinst.BoolValue(jenkins.TLSVerification)
 
 	if jenkins.Parameters != nil {
-		result[string(Prometheus)] = flattenParameters(jenkins.Parameters)
+		result[string(JenkinsParameters)] = flattenParameters(jenkins.Parameters)
 	}
 
 	return []interface{}{result}
@@ -1458,11 +1458,12 @@ func flattenWeb(web *oceancd.Web) []interface{} {
 	result[string(Body)] = spotinst.StringValue(web.Body)
 	result[string(JsonPath)] = spotinst.StringValue(web.JsonPath)
 	result[string(Method)] = spotinst.StringValue(web.Method)
+	result[string(Url)] = spotinst.StringValue(web.Method)
 
 	result[string(Insecure)] = spotinst.BoolValue(web.Insecure)
 
 	if web.Headers != nil {
-		result[string(Prometheus)] = flattenHeaders(web.Headers)
+		result[string(WebHeader)] = flattenHeaders(web.Headers)
 	}
 
 	if web.TimeoutSeconds != nil {
@@ -1525,7 +1526,7 @@ func flattenMetricDataQueries(metricDataQueries []*oceancd.MetricDataQueries) []
 func flattenMetricStat(metricStat *oceancd.MetricStat) []interface{} {
 	result := make(map[string]interface{})
 	value := spotinst.Int(-1)
-	result[string(Period)] = value
+	result[string(MetricPeriod)] = value
 
 	result[string(Stat)] = spotinst.StringValue(metricStat.Stat)
 	result[string(Unit)] = spotinst.StringValue(metricStat.Unit)
@@ -1535,7 +1536,7 @@ func flattenMetricStat(metricStat *oceancd.MetricStat) []interface{} {
 	}
 
 	if metricStat.Period != nil {
-		result[string(Period)] = spotinst.IntValue(metricStat.Period)
+		result[string(MetricPeriod)] = spotinst.IntValue(metricStat.Period)
 	}
 
 	return []interface{}{result}

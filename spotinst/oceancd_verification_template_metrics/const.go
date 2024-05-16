@@ -40,7 +40,7 @@ const (
 	Provider   commons.FieldName = "template_provider"
 	Job        commons.FieldName = "job"
 	Jenkins    commons.FieldName = "jenkins"
-	CloudWatch commons.FieldName = "cloudwatch"
+	CloudWatch commons.FieldName = "cloud_watch"
 )
 
 const (
@@ -90,7 +90,7 @@ const (
 	Spec          commons.FieldName = "spec"
 	BackoffLimit  commons.FieldName = "backoff_limit"
 	JobTemplate   commons.FieldName = "job_template"
-	TemplateSpec  commons.FieldName = "template_spce"
+	TemplateSpec  commons.FieldName = "template_spec"
 	Containers    commons.FieldName = "containers"
 	Command       commons.FieldName = "command"
 	Image         commons.FieldName = "image"
