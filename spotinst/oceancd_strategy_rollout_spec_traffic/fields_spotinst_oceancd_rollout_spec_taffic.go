@@ -95,7 +95,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									MaxItems: 1,
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
-											string(CanarySubsetRule): {
+											string(CanarySubsetName): {
 												Type:     schema.TypeString,
 												Required: true,
 											},
@@ -373,30 +373,30 @@ func expandTraffic(data interface{}) (*oceancd.Traffic, error) {
 
 func expandAlb(data interface{}) (*oceancd.Alb, error) {
 	if list := data.([]interface{}); len(list) > 0 {
-		traffic := &oceancd.Alb{}
+		alb := &oceancd.Alb{}
 
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
 			if v, ok := m[string(AlbAnnotationPrefix)].(string); ok && v != "" {
-				traffic.SetAnnotationPrefix(spotinst.String(v))
+				alb.SetAnnotationPrefix(spotinst.String(v))
 			} else {
-				traffic.SetAnnotationPrefix(nil)
+				alb.SetAnnotationPrefix(nil)
 			}
 
 			if v, ok := m[string(AlbIngress)].(string); ok && v != "" {
-				traffic.SetIngress(spotinst.String(v))
+				alb.SetIngress(spotinst.String(v))
 			}
 
 			if v, ok := m[string(AlbRootService)].(string); ok && v != "" {
-				traffic.SetRootService(spotinst.String(v))
+				alb.SetRootService(spotinst.String(v))
 			}
 
 			if v, ok := m[string(ServicePort)].(int); ok {
 				if v == -1 {
-					traffic.SetServicePort(nil)
+					alb.SetServicePort(nil)
 				} else {
-					traffic.SetServicePort(spotinst.Int(v))
+					alb.SetServicePort(spotinst.Int(v))
 				}
 			}
 
@@ -407,26 +407,13 @@ func expandAlb(data interface{}) (*oceancd.Alb, error) {
 					return nil, err
 				}
 				if stickinessConfig != nil {
-					traffic.SetStickinessConfig(stickinessConfig)
+					alb.SetStickinessConfig(stickinessConfig)
 				} else {
-					traffic.SetStickinessConfig(nil)
+					alb.SetStickinessConfig(nil)
 				}
 			}
 		}
-		return traffic, nil
-	}
-	return nil, nil
-}
-
-func expandAmbassador(data interface{}) (*oceancd.Ambassador, error) {
-	if list := data.([]interface{}); len(list) > 0 {
-		ambassador := &oceancd.Ambassador{}
-
-		if list[0] != nil {
-			m := list[0].(map[string]interface{})
-
-		}
-		return ambassador, nil
+		return alb, nil
 	}
 	return nil, nil
 }
@@ -456,6 +443,316 @@ func expandStickinessConfig(data interface{}) (*oceancd.StickinessConfig, error)
 	return nil, nil
 }
 
+func expandAmbassador(data interface{}) (*oceancd.Ambassador, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		ambassador := &oceancd.Ambassador{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(Mappings)]; ok && v != nil {
+				mapping, err := expandMappings(v)
+				if err != nil {
+					return nil, err
+				}
+				if mapping != nil {
+					ambassador.SetMappings(mapping)
+				} else {
+					ambassador.SetMappings(nil)
+				}
+			}
+
+		}
+		return ambassador, nil
+	}
+	return nil, nil
+}
+
+func expandMappings(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if mappings, ok := v.(string); ok && mappings != "" {
+			result = append(result, mappings)
+		}
+	}
+	return result, nil
+}
+
+func expandIstio(data interface{}) (*oceancd.Istio, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		istio := &oceancd.Istio{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(DestinationRule)]; ok && v != nil {
+
+				destinationRule, err := expandDestinationRule(v)
+				if err != nil {
+					return nil, err
+				}
+				if destinationRule != nil {
+					istio.SetDestinationRule(destinationRule)
+				} else {
+					istio.SetDestinationRule(nil)
+				}
+			}
+
+			if v, ok := m[string(VirtualServices)]; ok && v != nil {
+
+				virtualServices, err := expandVirtualServices(v)
+				if err != nil {
+					return nil, err
+				}
+				if virtualServices != nil {
+					istio.SetVirtualServices(virtualServices)
+				} else {
+					istio.SetVirtualServices(nil)
+				}
+			}
+		}
+		return istio, nil
+	}
+	return nil, nil
+}
+
+func expandDestinationRule(data interface{}) (*oceancd.DestinationRule, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		destinationRule := &oceancd.DestinationRule{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(CanarySubsetName)].(string); ok && v != "" {
+				destinationRule.SetCanarySubsetName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(DestinationRuleName)].(string); ok && v != "" {
+				destinationRule.SetName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(StableSubsetName)].(string); ok && v != "" {
+				destinationRule.SetStableSubsetName(spotinst.String(v))
+			}
+		}
+		return destinationRule, nil
+	}
+	return nil, nil
+}
+
+func expandVirtualServices(data interface{}) ([]*oceancd.VirtualServices, error) {
+
+	list := data.(*schema.Set).List()
+
+	virtualServices := make([]*oceancd.VirtualServices, 0, len(list))
+
+	for _, v := range list {
+
+		m := v.(map[string]interface{})
+
+		virtualService := &oceancd.VirtualServices{}
+
+		if v, ok := m[string(VirtualServiceName)].(string); ok && v != "" {
+			virtualService.SetName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(VirtualServiceRoutes)]; ok && v != nil {
+			routes, err := expandRoutes(v)
+			if err != nil {
+				return nil, err
+			}
+			if routes != nil {
+				virtualService.SetRoutes(routes)
+			} else {
+				virtualService.SetRoutes(nil)
+			}
+		}
+
+		if v, ok := m[string(TlsRoutes)]; ok && v != nil {
+
+			tlsRoutes, err := expandTlsRoutes(v)
+			if err != nil {
+				return nil, err
+			}
+			if tlsRoutes != nil {
+				virtualService.SetTlsRoutes(tlsRoutes)
+			} else {
+				virtualService.SetTlsRoutes(nil)
+			}
+		}
+
+		virtualServices = append(virtualServices, virtualService)
+
+	}
+	return virtualServices, nil
+}
+
+func expandRoutes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if mappings, ok := v.(string); ok && mappings != "" {
+			result = append(result, mappings)
+		}
+	}
+	return result, nil
+}
+
+func expandTlsRoutes(data interface{}) ([]*oceancd.TlsRoutes, error) {
+
+	list := data.(*schema.Set).List()
+
+	tlsRoutes := make([]*oceancd.TlsRoutes, 0, len(list))
+
+	for _, v := range list {
+
+		m := v.(map[string]interface{})
+
+		tlsRoute := &oceancd.TlsRoutes{}
+
+		if v, ok := m[string(Port)].(int); ok {
+			if v == -1 {
+				tlsRoute.SetPort(nil)
+			} else {
+				tlsRoute.SetPort(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(SniHosts)]; ok && v != nil {
+			routes, err := expandSniHosts(v)
+			if err != nil {
+				return nil, err
+			}
+			if routes != nil {
+				tlsRoute.SetSniHosts(routes)
+			} else {
+				tlsRoute.SetSniHosts(nil)
+			}
+		}
+		tlsRoutes = append(tlsRoutes, tlsRoute)
+
+	}
+	return tlsRoutes, nil
+}
+
+func expandSniHosts(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if mappings, ok := v.(string); ok && mappings != "" {
+			result = append(result, mappings)
+		}
+	}
+	return result, nil
+}
+
+func expandNginx(data interface{}) (*oceancd.Nginx, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		nginx := &oceancd.Nginx{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(AlbAnnotationPrefix)].(string); ok && v != "" {
+				nginx.SetAnnotationPreffix(spotinst.String(v))
+			} else {
+				nginx.SetAnnotationPreffix(nil)
+			}
+
+			if v, ok := m[string(StableIngress)].(string); ok && v != "" {
+				nginx.SetStableIngress(spotinst.String(v))
+			}
+
+			if v, ok := m[string(AdditionalIngressAnnotation)]; ok && v != nil {
+
+				additionalIngressAnnotation, err := expandAdditionalIngressAnnotation(v)
+				if err != nil {
+					return nil, err
+				}
+				if additionalIngressAnnotation != nil {
+					nginx.SetAdditionalIngressAnnotation(additionalIngressAnnotation)
+				} else {
+					nginx.SetAdditionalIngressAnnotation(nil)
+				}
+			}
+		}
+		return nginx, nil
+	}
+	return nil, nil
+}
+
+func expandAdditionalIngressAnnotation(data interface{}) (*oceancd.AdditionalIngressAnnotations, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		additionalIngressAnnotation := &oceancd.AdditionalIngressAnnotations{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(CanaryByHeader)].(string); ok && v != "" {
+				additionalIngressAnnotation.SetCanaryByHeader(spotinst.String(v))
+			} else {
+				additionalIngressAnnotation.SetCanaryByHeader(nil)
+			}
+
+			if v, ok := m[string(Key1)].(string); ok && v != "" {
+				additionalIngressAnnotation.SetKey1(spotinst.String(v))
+			} else {
+				additionalIngressAnnotation.SetKey1(nil)
+			}
+		}
+		return additionalIngressAnnotation, nil
+	}
+	return nil, nil
+}
+
+func expandPingPong(data interface{}) (*oceancd.PingPong, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		pingPong := &oceancd.PingPong{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(PingService)].(string); ok && v != "" {
+				pingPong.SetPingService(spotinst.String(v))
+			}
+
+			if v, ok := m[string(PongService)].(string); ok && v != "" {
+				pingPong.SetPongService(spotinst.String(v))
+			}
+		}
+		return pingPong, nil
+	}
+	return nil, nil
+}
+
+func expandSmi(data interface{}) (*oceancd.Smi, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		smi := &oceancd.Smi{}
+
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(SmiRootService)].(string); ok && v != "" {
+				smi.SetRootService(spotinst.String(v))
+			} else {
+				smi.SetRootService(nil)
+			}
+
+			if v, ok := m[string(TrafficSplitName)].(string); ok && v != "" {
+				smi.SetTrafficSplitName(spotinst.String(v))
+			} else {
+				smi.SetTrafficSplitName(nil)
+			}
+		}
+		return smi, nil
+	}
+	return nil, nil
+}
+
 func flattenStrategy(strategy *oceancd.RolloutSpecStrategy) []interface{} {
 	var response []interface{}
 
@@ -473,76 +770,6 @@ func flattenStrategy(strategy *oceancd.RolloutSpecStrategy) []interface{} {
 		}
 	}
 	return response
-}
-
-func expandArgs(data interface{}) ([]*oceancd.RolloutSpecArgs, error) {
-	list := data.(*schema.Set).List()
-	args := make([]*oceancd.RolloutSpecArgs, 0, len(list))
-
-	for _, v := range list {
-		m := v.(map[string]interface{})
-		arg := &oceancd.RolloutSpecArgs{}
-
-		if v, ok := m[string(ArgName)].(string); ok && v != "" {
-			arg.SetName(spotinst.String(v))
-		}
-		if v, ok := m[string(ArgValue)].(string); ok && v != "" {
-			arg.SetValue(spotinst.String(v))
-		}
-
-		if v, ok := m[string(ValueFrom)]; ok && v != nil {
-			valueFrom, err := expandValueFrom(v)
-			if err != nil {
-				return nil, err
-			}
-			if valueFrom != nil {
-				arg.SetValueFrom(valueFrom)
-			} else {
-				arg.SetValueFrom(nil)
-			}
-		}
-
-		args = append(args, arg)
-	}
-	return args, nil
-}
-
-func expandValueFrom(data interface{}) (*oceancd.RolloutSpecValueFrom, error) {
-	valueFrom := &oceancd.RolloutSpecValueFrom{}
-	list := data.([]interface{})
-	if list == nil || len(list) == 0 {
-		return nil, nil
-	}
-	m := list[0].(map[string]interface{})
-
-	if v, ok := m[string(FieldRef)]; ok && v != nil {
-		fieldRef, err := expandFieldRef(v)
-		if err != nil {
-			return nil, err
-		}
-		if fieldRef != nil {
-			valueFrom.SetFieldRef(fieldRef)
-		} else {
-			valueFrom.SetFieldRef(nil)
-		}
-	}
-	return valueFrom, nil
-}
-
-func expandFieldRef(data interface{}) (*oceancd.FieldRef, error) {
-
-	fieldRef := &oceancd.FieldRef{}
-	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return fieldRef, nil
-	}
-	m := list[0].(map[string]interface{})
-
-	if v, ok := m[string(FieldPath)].(string); ok && v != "" {
-		fieldRef.SetFieldPath(spotinst.String(v))
-	}
-
-	return fieldRef, nil
 }
 
 func flattenFieldRef(fieldRef *oceancd.FieldRef) []interface{} {

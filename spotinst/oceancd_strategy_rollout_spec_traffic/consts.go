@@ -27,7 +27,7 @@ const (
 const (
 	Istio                commons.FieldName = "istio"
 	DestinationRule      commons.FieldName = "destination_rule"
-	CanarySubsetRule     commons.FieldName = "canary_subset_rule"
+	CanarySubsetName     commons.FieldName = "canary_subset_name"
 	DestinationRuleName  commons.FieldName = "destination_rule_name"
 	StableSubsetName     commons.FieldName = "stable_subset_name"
 	VirtualServices      commons.FieldName = "virtual_services"
