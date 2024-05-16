@@ -754,9 +754,10 @@ func expandPrometheus(data interface{}) (*oceancd.PrometheusProvider, error) {
 	}
 	m := list[0].(map[string]interface{})
 
-	if v, ok := m[string(Duration)].(string); ok && v != "" {
+	if v, ok := m[string(PrometheusQuery)].(string); ok && v != "" {
 		prometheus.SetQuery(spotinst.String(v))
 	}
+
 	return prometheus, nil
 }
 
@@ -1303,7 +1304,7 @@ func flattenMetrics(metrics []*oceancd.Metrics) []interface{} {
 		result[string(DryRun)] = spotinst.BoolValue(metric.DryRun)
 
 		if metric.Provider != nil {
-			result[string(MetricStat)] = flattenProvider(metric.Provider)
+			result[string(Provider)] = flattenProvider(metric.Provider)
 		}
 
 		if metric.Baseline != nil {
