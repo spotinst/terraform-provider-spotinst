@@ -85,5 +85,3 @@ require (
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
-
-replace github.com/spotinst/spotinst-sdk-go v1.339.0 => /home/ubuntu/spotinst-sdk-go
