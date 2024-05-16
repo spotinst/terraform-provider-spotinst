@@ -197,6 +197,258 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 										},
 									},
 								},
+								string(CloudWatch): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Duration): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(MetricDataQueries): {
+												Type:     schema.TypeSet,
+												Required: true,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(Expression): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+														string(ID): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+														string(Label): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+														string(Period): {
+															Type:     schema.TypeInt,
+															Required: true,
+															Default:  -1,
+														},
+														string(ReturnData): {
+															Type:     schema.TypeBool,
+															Required: true,
+														},
+														string(MetricStat): {
+															Type:     schema.TypeList,
+															Optional: true,
+															MaxItems: 1,
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	string(Stat): {
+																		Type:     schema.TypeString,
+																		Required: true,
+																	},
+																	string(Unit): {
+																		Type:     schema.TypeString,
+																		Required: true,
+																	},
+																	string(MetricPeriod): {
+																		Type:     schema.TypeInt,
+																		Required: true,
+																		Default:  -1,
+																	},
+																	string(Metric): {
+																		Type:     schema.TypeList,
+																		Optional: true,
+																		MaxItems: 1,
+																		Elem: &schema.Resource{
+																			Schema: map[string]*schema.Schema{
+																				string(MetricName): {
+																					Type:     schema.TypeString,
+																					Required: true,
+																				},
+																				string(Namespace): {
+																					Type:     schema.TypeString,
+																					Optional: true,
+																				},
+																				string(Dimensions): {
+																					Type:     schema.TypeSet,
+																					Optional: true,
+																					Elem: &schema.Resource{
+																						Schema: map[string]*schema.Schema{
+																							string(DimensionName): {
+																								Type:     schema.TypeString,
+																								Required: true,
+																							},
+																							string(DimensionValue): {
+																								Type:     schema.TypeString,
+																								Required: true,
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+								string(Job): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Spec): {
+												Type:     schema.TypeList,
+												Required: true,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(BackoffLimit): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+														string(JobTemplate): {
+															Type:     schema.TypeList,
+															Required: true,
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	string(TemplateSpec): {
+																		Type:     schema.TypeList,
+																		Required: true,
+																		Elem: &schema.Resource{
+																			Schema: map[string]*schema.Schema{
+																				string(RestartPolicy): {
+																					Type:     schema.TypeString,
+																					Required: true,
+																				},
+																				string(Containers): {
+																					Type:     schema.TypeSet,
+																					Required: true,
+																					Elem: &schema.Resource{
+																						Schema: map[string]*schema.Schema{
+																							string(Image): {
+																								Type:     schema.TypeString,
+																								Required: true,
+																							},
+																							string(ContinerName): {
+																								Type:     schema.TypeString,
+																								Required: true,
+																							},
+																							string(Command): {
+																								Type:     schema.TypeList,
+																								Optional: true,
+																								Elem:     &schema.Schema{Type: schema.TypeString},
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+								string(Jenkins): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(JenkinsInterval): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(PipelineName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(Timeout): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(TlsVerification): {
+												Type:     schema.TypeBool,
+												Required: true,
+											},
+											string(JenkinsParameters): {
+												Type:     schema.TypeSet,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(ParameterKey): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+														string(ParameterValue): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+								string(Web): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Body): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(Insecure): {
+												Type:     schema.TypeBool,
+												Optional: true,
+											},
+											string(JsonPath): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(Method): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(Url): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(TimeoutSeconds): {
+												Type:     schema.TypeInt,
+												Required: true,
+												Default:  10,
+											},
+											string(WebHeader): {
+												Type:     schema.TypeSet,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(WebHeaderKey): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+														string(WebHeaderValue): {
+															Type:     schema.TypeString,
+															Required: true,
+														},
+													},
+												},
+											},
+										},
+									},
+								},
 							},
 						},
 					},
@@ -630,24 +882,23 @@ func expandJenkins(data interface{}) (*oceancd.JenkinsProvider, error) {
 }
 
 func expandParameters(data interface{}) ([]*oceancd.Parameters, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		parameters := make([]*oceancd.Parameters, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			parameter := &oceancd.Parameters{}
+	list := data.(*schema.Set).List()
+	parameters := make([]*oceancd.Parameters, 0, len(list))
 
-			if v, ok := m[string(ParameterKey)].(string); ok && v != "" {
-				parameter.SetKey(spotinst.String(v))
-			}
-			if v, ok := m[string(ParameterValue)].(string); ok && v != "" {
-				parameter.SetValue(spotinst.String(v))
-			}
+	for _, v := range list {
+		m := v.(map[string]interface{})
+		parameter := &oceancd.Parameters{}
 
-			parameters = append(parameters, parameter)
+		if v, ok := m[string(ParameterKey)].(string); ok && v != "" {
+			parameter.SetKey(spotinst.String(v))
 		}
-		return parameters, nil
+		if v, ok := m[string(ParameterValue)].(string); ok && v != "" {
+			parameter.SetValue(spotinst.String(v))
+		}
+
+		parameters = append(parameters, parameter)
 	}
-	return nil, nil
+	return parameters, nil
 }
 
 func expandWeb(data interface{}) (*oceancd.Web, error) {
@@ -697,24 +948,23 @@ func expandWeb(data interface{}) (*oceancd.Web, error) {
 }
 
 func expandHeaders(data interface{}) ([]*oceancd.Headers, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		headers := make([]*oceancd.Headers, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			header := &oceancd.Headers{}
+	list := data.(*schema.Set).List()
+	headers := make([]*oceancd.Headers, 0, len(list))
 
-			if v, ok := m[string(WebHeaderKey)].(string); ok && v != "" {
-				header.SetKey(spotinst.String(v))
-			}
-			if v, ok := m[string(WebHeaderValue)].(string); ok && v != "" {
-				header.SetValue(spotinst.String(v))
-			}
+	for _, v := range list {
+		m := v.(map[string]interface{})
+		header := &oceancd.Headers{}
 
-			headers = append(headers, header)
+		if v, ok := m[string(WebHeaderKey)].(string); ok && v != "" {
+			header.SetKey(spotinst.String(v))
 		}
-		return headers, nil
+		if v, ok := m[string(WebHeaderValue)].(string); ok && v != "" {
+			header.SetValue(spotinst.String(v))
+		}
+
+		headers = append(headers, header)
 	}
-	return nil, nil
+	return headers, nil
 }
 
 func expandCloudWatch(data interface{}) (*oceancd.CloudWatchProvider, error) {
@@ -744,51 +994,50 @@ func expandCloudWatch(data interface{}) (*oceancd.CloudWatchProvider, error) {
 }
 
 func expandMetricDataQueries(data interface{}) ([]*oceancd.MetricDataQueries, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		metricDataQueries := make([]*oceancd.MetricDataQueries, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			metricDataQuery := &oceancd.MetricDataQueries{}
+	list := data.(*schema.Set).List()
+	metricDataQueries := make([]*oceancd.MetricDataQueries, 0, len(list))
 
-			if v, ok := m[string(ID)].(string); ok && v != "" {
-				metricDataQuery.SetID(spotinst.String(v))
-			}
-			if v, ok := m[string(Label)].(string); ok && v != "" {
-				metricDataQuery.SetLabel(spotinst.String(v))
-			}
-			if v, ok := m[string(Expression)].(string); ok && v != "" {
-				metricDataQuery.SetExpression(spotinst.String(v))
-			}
+	for _, v := range list {
+		m := v.(map[string]interface{})
+		metricDataQuery := &oceancd.MetricDataQueries{}
 
-			if v, ok := m[string(ReturnData)].(bool); ok {
-				metricDataQuery.SetReturnData(spotinst.Bool(v))
-			}
-
-			if v, ok := m[string(Period)].(int); ok {
-				if v == -1 {
-					metricDataQuery.SetPeriod(nil)
-				} else {
-					metricDataQuery.SetPeriod(spotinst.Int(v))
-				}
-			}
-
-			if v, ok := m[string(MetricStat)]; ok {
-				metricStats, err := expandMetricStats(v)
-				if err != nil {
-					return nil, err
-				}
-				if metricStats != nil {
-					metricDataQuery.SetMetricStat(metricStats)
-				} else {
-					metricDataQuery.SetMetricStat(nil)
-				}
-			}
-
-			metricDataQueries = append(metricDataQueries, metricDataQuery)
+		if v, ok := m[string(ID)].(string); ok && v != "" {
+			metricDataQuery.SetID(spotinst.String(v))
 		}
-		return metricDataQueries, nil
+		if v, ok := m[string(Label)].(string); ok && v != "" {
+			metricDataQuery.SetLabel(spotinst.String(v))
+		}
+		if v, ok := m[string(Expression)].(string); ok && v != "" {
+			metricDataQuery.SetExpression(spotinst.String(v))
+		}
+
+		if v, ok := m[string(ReturnData)].(bool); ok {
+			metricDataQuery.SetReturnData(spotinst.Bool(v))
+		}
+
+		if v, ok := m[string(Period)].(int); ok {
+			if v == -1 {
+				metricDataQuery.SetPeriod(nil)
+			} else {
+				metricDataQuery.SetPeriod(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(MetricStat)]; ok {
+			metricStats, err := expandMetricStats(v)
+			if err != nil {
+				return nil, err
+			}
+			if metricStats != nil {
+				metricDataQuery.SetMetricStat(metricStats)
+			} else {
+				metricDataQuery.SetMetricStat(nil)
+			}
+		}
+
+		metricDataQueries = append(metricDataQueries, metricDataQuery)
 	}
-	return nil, nil
+	return metricDataQueries, nil
 }
 
 func expandMetricStats(data interface{}) (*oceancd.MetricStat, error) {
@@ -866,24 +1115,23 @@ func expandMetric(data interface{}) (*oceancd.Metric, error) {
 }
 
 func expandDimensions(data interface{}) ([]*oceancd.Dimensions, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		dimensions := make([]*oceancd.Dimensions, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			dimension := &oceancd.Dimensions{}
+	list := data.(*schema.Set).List()
+	dimensions := make([]*oceancd.Dimensions, 0, len(list))
 
-			if v, ok := m[string(DimensionName)].(string); ok && v != "" {
-				dimension.SetName(spotinst.String(v))
-			}
-			if v, ok := m[string(DimensionValue)].(string); ok && v != "" {
-				dimension.SetValue(spotinst.String(v))
-			}
+	for _, v := range list {
+		m := v.(map[string]interface{})
+		dimension := &oceancd.Dimensions{}
 
-			dimensions = append(dimensions, dimension)
+		if v, ok := m[string(DimensionName)].(string); ok && v != "" {
+			dimension.SetName(spotinst.String(v))
 		}
-		return dimensions, nil
+		if v, ok := m[string(DimensionValue)].(string); ok && v != "" {
+			dimension.SetValue(spotinst.String(v))
+		}
+
+		dimensions = append(dimensions, dimension)
 	}
-	return nil, nil
+	return dimensions, nil
 }
 
 func expandJob(data interface{}) (*oceancd.Job, error) {
@@ -975,37 +1223,37 @@ func expandTemplateSpec(data interface{}) (*oceancd.TemplateSpec, error) {
 }
 
 func expandContainers(data interface{}) ([]*oceancd.Containers, error) {
-	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		containers := make([]*oceancd.Containers, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			container := &oceancd.Containers{}
+	list := data.(*schema.Set).List()
+	containers := make([]*oceancd.Containers, 0, len(list))
 
-			if v, ok := m[string(Image)].(string); ok && v != "" {
-				container.SetImage(spotinst.String(v))
-			}
+	for _, v := range list {
+		m := v.(map[string]interface{})
+		container := &oceancd.Containers{}
 
-			if v, ok := m[string(ContinerName)].(string); ok && v != "" {
-				container.SetName(spotinst.String(v))
-			}
-
-			if v, ok := m[string(Command)]; ok && v != nil {
-				command, err := expandCommand(v)
-				if err != nil {
-					return nil, err
-				}
-				if command != nil {
-					container.SetCommand(command)
-				} else {
-					container.SetCommand(nil)
-				}
-			}
-
-			containers = append(containers, container)
+		if v, ok := m[string(Image)].(string); ok && v != "" {
+			container.SetImage(spotinst.String(v))
 		}
-		return containers, nil
+
+		if v, ok := m[string(ContinerName)].(string); ok && v != "" {
+			container.SetName(spotinst.String(v))
+		}
+
+		if v, ok := m[string(Command)]; ok && v != nil {
+			command, err := expandCommand(v)
+			if err != nil {
+				return nil, err
+			}
+			if command != nil {
+				container.SetCommand(command)
+			} else {
+				container.SetCommand(nil)
+			}
+		}
+
+		containers = append(containers, container)
 	}
-	return nil, nil
+	return containers, nil
+
 }
 
 func expandCommand(data interface{}) ([]string, error) {
@@ -1022,6 +1270,7 @@ func expandCommand(data interface{}) ([]string, error) {
 
 func flattenMetrics(metrics []*oceancd.Metrics) []interface{} {
 	m := make([]interface{}, 0, len(metrics))
+
 	for _, metric := range metrics {
 		result := make(map[string]interface{})
 		failureLimitValue := spotinst.Int(0)
@@ -1061,8 +1310,10 @@ func flattenMetrics(metrics []*oceancd.Metrics) []interface{} {
 			result[string(ConsecutiveErrorLimit)] = spotinst.IntValue(metric.ConsecutiveErrorLimit)
 		}
 
+		m = append(m, result)
+
 	}
-	return []interface{}{m}
+	return m
 }
 
 func flattenBaseline(baseline *oceancd.Baseline) []interface{} {
@@ -1175,12 +1426,15 @@ func flattenJenkins(jenkins *oceancd.JenkinsProvider) []interface{} {
 
 func flattenParameters(parameters []*oceancd.Parameters) []interface{} {
 	m := make([]interface{}, 0, len(parameters))
+
 	for _, parameter := range parameters {
 		result := make(map[string]interface{})
 		result[string(ParameterValue)] = spotinst.StringValue(parameter.Value)
 		result[string(ParameterKey)] = spotinst.StringValue(parameter.Key)
+
+		m = append(m, result)
 	}
-	return []interface{}{m}
+	return m
 }
 
 func flattenWeb(web *oceancd.Web) []interface{} {
@@ -1207,12 +1461,15 @@ func flattenWeb(web *oceancd.Web) []interface{} {
 
 func flattenHeaders(headers []*oceancd.Headers) []interface{} {
 	m := make([]interface{}, 0, len(headers))
+
 	for _, header := range headers {
 		result := make(map[string]interface{})
 		result[string(WebHeaderKey)] = spotinst.StringValue(header.Key)
 		result[string(WebHeaderValue)] = spotinst.StringValue(header.Value)
+
+		m = append(m, result)
 	}
-	return []interface{}{m}
+	return m
 }
 
 func flattenCloudWatch(cloudWatch *oceancd.CloudWatchProvider) []interface{} {
@@ -1228,6 +1485,7 @@ func flattenCloudWatch(cloudWatch *oceancd.CloudWatchProvider) []interface{} {
 
 func flattenMetricDataQueries(metricDataQueries []*oceancd.MetricDataQueries) []interface{} {
 	m := make([]interface{}, 0, len(metricDataQueries))
+
 	for _, metricDataQuery := range metricDataQueries {
 		result := make(map[string]interface{})
 		value := spotinst.Int(-1)
@@ -1246,9 +1504,9 @@ func flattenMetricDataQueries(metricDataQueries []*oceancd.MetricDataQueries) []
 		if metricDataQuery.Period != nil {
 			result[string(Period)] = spotinst.IntValue(metricDataQuery.Period)
 		}
-
+		m = append(m, result)
 	}
-	return []interface{}{m}
+	return m
 }
 
 func flattenMetricStat(metricStat *oceancd.MetricStat) []interface{} {
@@ -1285,12 +1543,15 @@ func flattenMetric(metric *oceancd.Metric) []interface{} {
 
 func flattenDimensions(dimensions []*oceancd.Dimensions) []interface{} {
 	m := make([]interface{}, 0, len(dimensions))
+
 	for _, dimension := range dimensions {
 		result := make(map[string]interface{})
 		result[string(DimensionName)] = spotinst.StringValue(dimension.Name)
 		result[string(DimensionValue)] = spotinst.StringValue(dimension.Value)
+
+		m = append(m, result)
 	}
-	return []interface{}{m}
+	return m
 }
 
 func flattenJob(job *oceancd.Job) []interface{} {
@@ -1342,6 +1603,7 @@ func flattenTemplateSpec(templateSpec *oceancd.TemplateSpec) []interface{} {
 
 func flattenContainers(containers []*oceancd.Containers) []interface{} {
 	m := make([]interface{}, 0, len(containers))
+
 	for _, container := range containers {
 		result := make(map[string]interface{})
 		result[string(Image)] = spotinst.StringValue(container.Image)
@@ -1350,6 +1612,8 @@ func flattenContainers(containers []*oceancd.Containers) []interface{} {
 		if container.Command != nil {
 			result[string(Command)] = spotinst.StringSlice(container.Command)
 		}
+
+		m = append(m, result)
 	}
-	return []interface{}{m}
+	return m
 }

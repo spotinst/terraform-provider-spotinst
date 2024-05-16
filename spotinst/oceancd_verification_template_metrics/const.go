@@ -55,6 +55,7 @@ const (
 	Metric             commons.FieldName = "metric"
 	Stat               commons.FieldName = "stat"
 	Unit               commons.FieldName = "unit"
+	MetricPeriod       commons.FieldName = "metric_period"
 	Dimensions         commons.FieldName = "dimensions"
 	MetricName         commons.FieldName = "metric_name"
 	Namespace          commons.FieldName = "namespace"
