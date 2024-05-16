@@ -106,7 +106,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											string(Replicas): {
 												Type:     schema.TypeInt,
 												Optional: true,
-												Default:  1,
+												Default:  -1,
 											},
 											string(Weight): {
 												Type:     schema.TypeInt,
@@ -413,7 +413,7 @@ func expandSetCanaryScale(data interface{}) (*oceancd.SetCanaryScale, error) {
 	}
 
 	if v, ok := m[string(Replicas)].(int); ok {
-		if v == 1 {
+		if v == -1 {
 			setCanaryScale.SetReplicas(nil)
 		} else {
 			setCanaryScale.SetReplicas(spotinst.Int(v))
@@ -609,9 +609,7 @@ func flattenPause(pause *oceancd.Pause) []interface{} {
 func flattenSetCanaryScale(scale *oceancd.SetCanaryScale) []interface{} {
 	result := make(map[string]interface{})
 	value := spotinst.Int(-1)
-	replica_value := spotinst.Int(1)
-
-	result[string(Replicas)] = replica_value
+	result[string(Replicas)] = value
 	result[string(Weight)] = value
 
 	result[string(MatchTrafficWeight)] = spotinst.BoolValue(scale.MatchTrafficWeight)

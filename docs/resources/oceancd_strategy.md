@@ -89,7 +89,7 @@ output "name" {
 The following arguments are supported:
 
 * `name` - (Required) Identifier name for Ocean CD Strategy. Must be unique
-* `canary` - (Optional) Represents Canary strategy.
+* `canary` - (Optional) Represents Canary strategy. Cannot be defined when Rolling object is defined.
     * `background_verification` - (Optional) A list of background verifications.
         * `template_names` - (Required) List of Verification Template names.
     * `steps` - (Required) A set of separate conditions of rollout processing.
@@ -104,14 +104,14 @@ The following arguments are supported:
             * `header_route_name` - (Required) The name of the HeaderRoute group.
             * `match` - (Required) The matching rules for the header route.
               * `header_name` - (Required) The name of the header.
-              * `header_value` - (Required) Defines a single header to add to the Rollout.
+              * `header_value` - (Required) Defines a single header to add to the Rollout. Must be only one initialized from the following (exact, prefix, regex). 
                   * `exact` - (Optional)  The exact header value.
                   * `prefix` - (Optional) The prefix of the value.
                   * `regex` - (Optional)  The value in a regex format.
         * `set_weight` - (Optional) Defines the percentage that the new version should receive.
         * `verification`  - (Optional) Represents the list of verifications to run in a step.
             * `template_names`  - (Required) List of Verification Template names.
-* `rolling` - (Optional) Represents Rolling Update strategy.
+* `rolling` - (Optional) Represents Rolling Update strategy. Cannot be defined when Canary object is defined.
     * `steps` - (Required) A set of separate conditions of rollout processing.
         * `name` - (Optional) The name of a step.
         * `pause` - (Optional) Defines the duration of time to freeze the rollout.
