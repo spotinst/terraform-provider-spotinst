@@ -740,7 +740,7 @@ func expandNewRelic(data interface{}) (*oceancd.NewRelicProvider, error) {
 	}
 
 	if v, ok := m[string(NewRelicQuery)].(string); ok && v != "" {
-		newRelic.SetProfile(spotinst.String(v))
+		newRelic.SetQuery(spotinst.String(v))
 	}
 	return newRelic, nil
 }
