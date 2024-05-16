@@ -19,7 +19,7 @@ type OceanCDVerificationTemplateTerraformResource struct {
 }
 
 type OceanCDVerificationTemplateWrapper struct {
-	VerificationTemplate *oceancd.VerificationTemplate
+	verificationTemplate *oceancd.VerificationTemplate
 }
 
 func NewOceanCDVerificationTemplateResource(fieldsMap map[FieldName]*GenericField) *OceanCDVerificationTemplateTerraformResource {
@@ -32,7 +32,7 @@ func NewOceanCDVerificationTemplateResource(fieldsMap map[FieldName]*GenericFiel
 }
 
 func (res *OceanCDVerificationTemplateTerraformResource) OnRead(
-	VerificationTemplate *oceancd.VerificationTemplate,
+	verificationTemplate *oceancd.VerificationTemplate,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -40,15 +40,15 @@ func (res *OceanCDVerificationTemplateTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	oceancdVPWrapper := NewOceanCDVerificationTemplateWrapper()
-	oceancdVPWrapper.SetVerificationTemplate(VerificationTemplate)
+	oceancdVTWrapper := NewOceanCDVerificationTemplateWrapper()
+	oceancdVTWrapper.SetVerificationTemplate(verificationTemplate)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onRead(oceancdVPWrapper, resourceData, meta); err != nil {
+		if err := field.onRead(oceancdVTWrapper, resourceData, meta); err != nil {
 			return err
 		}
 	}
@@ -63,18 +63,18 @@ func (res *OceanCDVerificationTemplateTerraformResource) OnCreate(
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	oceancdVPWrapper := NewOceanCDVerificationTemplateWrapper()
+	oceancdVTWrapper := NewOceanCDVerificationTemplateWrapper()
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnCreate), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onCreate(oceancdVPWrapper, resourceData, meta); err != nil {
+		if err := field.onCreate(oceancdVTWrapper, resourceData, meta); err != nil {
 			return nil, err
 		}
 	}
-	return oceancdVPWrapper.GetVerificationTemplate(), nil
+	return oceancdVTWrapper.GetVerificationTemplate(), nil
 }
 
 func (res *OceanCDVerificationTemplateTerraformResource) OnUpdate(
@@ -105,17 +105,14 @@ func (res *OceanCDVerificationTemplateTerraformResource) OnUpdate(
 
 func NewOceanCDVerificationTemplateWrapper() *OceanCDVerificationTemplateWrapper {
 	return &OceanCDVerificationTemplateWrapper{
-		VerificationTemplate: &oceancd.VerificationTemplate{
-			Args:    []*oceancd.Args{},
-			Metrics: []*oceancd.Metrics{},
-		},
+		verificationTemplate: &oceancd.VerificationTemplate{},
 	}
 }
 
 func (oceancdVTWrapper *OceanCDVerificationTemplateWrapper) GetVerificationTemplate() *oceancd.VerificationTemplate {
-	return oceancdVTWrapper.VerificationTemplate
+	return oceancdVTWrapper.verificationTemplate
 }
 
-func (oceancdVTWrapper *OceanCDVerificationTemplateWrapper) SetVerificationTemplate(VerificationTemplate *oceancd.VerificationTemplate) {
-	oceancdVTWrapper.VerificationTemplate = VerificationTemplate
+func (oceancdVTWrapper *OceanCDVerificationTemplateWrapper) SetVerificationTemplate(verificationTemplate *oceancd.VerificationTemplate) {
+	oceancdVTWrapper.verificationTemplate = verificationTemplate
 }

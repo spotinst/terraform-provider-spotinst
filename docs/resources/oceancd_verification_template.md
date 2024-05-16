@@ -13,7 +13,7 @@ Manages a Spotinst OceanCD Verfification Template resource.
 ## Example Usage
 
 ```hcl
-resource "spotinst_oceancd_verification_template "example" {
+resource "spotinst_oceancd_verification_template" "example" {
   
   name  = "test-verification-template"
 

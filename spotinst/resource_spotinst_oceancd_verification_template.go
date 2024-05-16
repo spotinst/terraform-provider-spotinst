@@ -55,12 +55,12 @@ func resourceSpotinstOceanCDVerificationTemplateCreate(ctx context.Context, reso
 		return diag.FromErr(err)
 	}
 
-	vpname, err := createVerificationTemplate(VerificationTemplate, meta.(*Client))
+	vtname, err := createVerificationTemplate(VerificationTemplate, meta.(*Client))
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	resourceData.SetId(spotinst.StringValue(vpname))
+	resourceData.SetId(spotinst.StringValue(vtname))
 
 	log.Printf("===> Verification Template created successfully: %s <===", resourceData.Id())
 

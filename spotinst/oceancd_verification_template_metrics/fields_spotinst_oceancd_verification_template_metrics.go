@@ -608,7 +608,7 @@ func expandJenkins(data interface{}) (*oceancd.JenkinsProvider, error) {
 		jenkins.SetTimeout(spotinst.String(v))
 	}
 
-	if v, ok := m[string(Interval)].(string); ok && v != "" {
+	if v, ok := m[string(JenkinsInterval)].(string); ok && v != "" {
 		jenkins.SetInterval(spotinst.String(v))
 	}
 
@@ -1161,7 +1161,7 @@ func flattenPrometheus(prometheus *oceancd.PrometheusProvider) []interface{} {
 
 func flattenJenkins(jenkins *oceancd.JenkinsProvider) []interface{} {
 	result := make(map[string]interface{})
-	result[string(Interval)] = spotinst.StringValue(jenkins.Interval)
+	result[string(JenkinsInterval)] = spotinst.StringValue(jenkins.Interval)
 	result[string(PipelineName)] = spotinst.StringValue(jenkins.PipelineName)
 	result[string(Timeout)] = spotinst.StringValue(jenkins.Timeout)
 

@@ -7,7 +7,7 @@ const (
 	BaseLine         commons.FieldName = "baseline"
 	MaxRange         commons.FieldName = "max_range"
 	MinRange         commons.FieldName = "min_range"
-	BaseLineProvider commons.FieldName = "provider"
+	BaseLineProvider commons.FieldName = "baseline_provider"
 	Threshold        commons.FieldName = "threshold"
 )
 
@@ -37,7 +37,7 @@ const (
 )
 
 const (
-	Provider   commons.FieldName = "provider"
+	Provider   commons.FieldName = "template_provider"
 	Job        commons.FieldName = "job"
 	Jenkins    commons.FieldName = "jenkins"
 	CloudWatch commons.FieldName = "cloudwatch"
@@ -53,7 +53,6 @@ const (
 	Period             commons.FieldName = "period"
 	ReturnData         commons.FieldName = "return_data"
 	Metric             commons.FieldName = "metric"
-	MetricPeriod       commons.FieldName = "metric_period"
 	Stat               commons.FieldName = "stat"
 	Unit               commons.FieldName = "unit"
 	Dimensions         commons.FieldName = "dimensions"
