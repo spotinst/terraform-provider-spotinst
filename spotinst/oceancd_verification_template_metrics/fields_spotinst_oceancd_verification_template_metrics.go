@@ -214,7 +214,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 													Schema: map[string]*schema.Schema{
 														string(Expression): {
 															Type:     schema.TypeString,
-															Required: true,
+															Optional: true,
 														},
 														string(ID): {
 															Type:     schema.TypeString,
@@ -222,16 +222,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														},
 														string(Label): {
 															Type:     schema.TypeString,
-															Required: true,
+															Optional: true,
 														},
 														string(Period): {
 															Type:     schema.TypeInt,
-															Required: true,
+															Optional: true,
 															Default:  -1,
 														},
 														string(ReturnData): {
 															Type:     schema.TypeBool,
-															Required: true,
+															Optional: true,
 														},
 														string(MetricStat): {
 															Type:     schema.TypeList,
@@ -241,15 +241,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 																Schema: map[string]*schema.Schema{
 																	string(Stat): {
 																		Type:     schema.TypeString,
-																		Required: true,
+																		Optional: true,
 																	},
 																	string(Unit): {
 																		Type:     schema.TypeString,
-																		Required: true,
+																		Optional: true,
 																	},
 																	string(MetricPeriod): {
 																		Type:     schema.TypeInt,
-																		Required: true,
+																		Optional: true,
 																		Default:  -1,
 																	},
 																	string(Metric): {
@@ -307,7 +307,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 													Schema: map[string]*schema.Schema{
 														string(BackoffLimit): {
 															Type:     schema.TypeString,
-															Required: true,
+															Optional: true,
 														},
 														string(JobTemplate): {
 															Type:     schema.TypeList,
@@ -338,7 +338,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 																							},
 																							string(Command): {
 																								Type:     schema.TypeList,
-																								Optional: true,
+																								Required: true,
 																								Elem:     &schema.Schema{Type: schema.TypeString},
 																							},
 																						},
@@ -376,7 +376,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											},
 											string(TlsVerification): {
 												Type:     schema.TypeBool,
-												Required: true,
+												Optional: true,
 											},
 											string(JenkinsParameters): {
 												Type:     schema.TypeSet,
@@ -648,8 +648,8 @@ func expandBaselineProvider(data interface{}) (*oceancd.Provider, error) {
 
 	provider := &oceancd.Provider{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return provider, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -707,8 +707,8 @@ func expandDatadog(data interface{}) (*oceancd.DataDogProvider, error) {
 
 	datadog := &oceancd.DataDogProvider{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return datadog, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -728,8 +728,8 @@ func expandDatadog(data interface{}) (*oceancd.DataDogProvider, error) {
 func expandNewRelic(data interface{}) (*oceancd.NewRelicProvider, error) {
 	newRelic := &oceancd.NewRelicProvider{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return newRelic, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -749,8 +749,8 @@ func expandPrometheus(data interface{}) (*oceancd.PrometheusProvider, error) {
 
 	prometheus := &oceancd.PrometheusProvider{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return prometheus, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -764,8 +764,8 @@ func expandProvider(data interface{}) (*oceancd.Provider, error) {
 
 	provider := &oceancd.Provider{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return provider, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -846,8 +846,8 @@ func expandProvider(data interface{}) (*oceancd.Provider, error) {
 func expandJenkins(data interface{}) (*oceancd.JenkinsProvider, error) {
 	jenkins := &oceancd.JenkinsProvider{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return jenkins, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -904,8 +904,8 @@ func expandParameters(data interface{}) ([]*oceancd.Parameters, error) {
 func expandWeb(data interface{}) (*oceancd.Web, error) {
 	web := &oceancd.Web{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return web, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -970,8 +970,8 @@ func expandHeaders(data interface{}) ([]*oceancd.Headers, error) {
 func expandCloudWatch(data interface{}) (*oceancd.CloudWatchProvider, error) {
 	cloudWatch := &oceancd.CloudWatchProvider{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return cloudWatch, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -1043,8 +1043,8 @@ func expandMetricDataQueries(data interface{}) ([]*oceancd.MetricDataQueries, er
 func expandMetricStats(data interface{}) (*oceancd.MetricStat, error) {
 	metricStat := &oceancd.MetricStat{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return metricStat, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -1085,8 +1085,8 @@ func expandMetricStats(data interface{}) (*oceancd.MetricStat, error) {
 func expandMetric(data interface{}) (*oceancd.Metric, error) {
 	metric := &oceancd.Metric{}
 	list := data.([]interface{})
-	if list == nil || list[0] == nil {
-		return metric, nil
+	if list == nil || len(list) == 0 {
+		return nil, nil
 	}
 	m := list[0].(map[string]interface{})
 
@@ -1137,6 +1137,9 @@ func expandDimensions(data interface{}) ([]*oceancd.Dimensions, error) {
 func expandJob(data interface{}) (*oceancd.Job, error) {
 	job := &oceancd.Job{}
 	list := data.([]interface{})
+	if list == nil || len(list) == 0 {
+		return nil, nil
+	}
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(Spec)]; ok {
@@ -1156,6 +1159,9 @@ func expandJob(data interface{}) (*oceancd.Job, error) {
 func expandSpec(data interface{}) (*oceancd.Spec, error) {
 	spec := &oceancd.Spec{}
 	list := data.([]interface{})
+	if list == nil || len(list) == 0 {
+		return nil, nil
+	}
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(JobTemplate)]; ok {
@@ -1183,6 +1189,9 @@ func expandSpec(data interface{}) (*oceancd.Spec, error) {
 func expandTemplate(data interface{}) (*oceancd.Template, error) {
 	template := &oceancd.Template{}
 	list := data.([]interface{})
+	if list == nil || len(list) == 0 {
+		return nil, nil
+	}
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(JobTemplate)]; ok {
@@ -1202,6 +1211,9 @@ func expandTemplate(data interface{}) (*oceancd.Template, error) {
 func expandTemplateSpec(data interface{}) (*oceancd.TemplateSpec, error) {
 	templateSpec := &oceancd.TemplateSpec{}
 	list := data.([]interface{})
+	if list == nil || len(list) == 0 {
+		return nil, nil
+	}
 	m := list[0].(map[string]interface{})
 
 	if v, ok := m[string(RestartPolicy)].(string); ok && v != "" {
