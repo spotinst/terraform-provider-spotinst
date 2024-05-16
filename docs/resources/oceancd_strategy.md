@@ -1,9 +1,9 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: oceancd_verification_provider"
+page_title: "Spotinst: oceancd_strategy"
 subcategory: "OceanCD"
 description: |-
-  Provides a Spotinst OceanCD Verification Provider resource.
+  Provides a Spotinst OceanCD Strategy resource.
 ---
 
 # spotinst\_oceancd\_startegy
@@ -17,8 +17,8 @@ resource "spotinst_oceancd_strategy" "example" {
   
   strategy_name  = "test-strategy"
 
-  // --- Canary ----------------------------------------------------------------
-  
+ // --- Canary ----------------------------------------------------------------
+ 
   canary {
     background_verification {
       template_names = ["test1","test2"]
@@ -58,7 +58,7 @@ resource "spotinst_oceancd_strategy" "example" {
 // ----------------------------------------------------------------------------
  
  
- // --- Rolling ----------------------------------------------------------------
+// --- Rolling ----------------------------------------------------------------
   
   rolling {
      steps {
@@ -74,9 +74,8 @@ resource "spotinst_oceancd_strategy" "example" {
      }    
   }
   
-  // ----------------------------------------------------------------------------
- 
- 
+// ----------------------------------------------------------------------------
+
 }
 ```
 
@@ -103,12 +102,20 @@ The following arguments are supported:
             * `replicas` - (Optional) Sets the number of replicas the new version should have.
             * `weight` - (Optional) Sets the percentage of replicas the new version should have.
         * `set_header_route` - (Optional) Defines the list of HeaderRoutes to add to the Rollout.
+            * `header_route_name` - (Required) The name of the HeaderRoute group.
             * `match` - (Required) The matching rules for the header route.
-                * `header_name` - (Required) The name of the header.
-                * `header_value` - (Required) Defines a single header to add to the Rollout.
-                    * `exact` - (Optional)  The exact header value.
-                    * `prefix` - (Optional) The prefix of the value.
-                    * `regex` - (Optional)  The value in a regex format.
+              * `header_name` - (Required) The name of the header.
+              * `header_value` - (Required) Defines a single header to add to the Rollout.
+                  * `exact` - (Optional)  The exact header value.
+                  * `prefix` - (Optional) The prefix of the value.
+                  * `regex` - (Optional)  The value in a regex format.
         * `set_weight` - (Optional) Defines the percentage that the new version should receive.
+        * `verification`  - (Optional) Represents the list of verifications to run in a step.
+            * `template_names`  - (Required) List of Verification Template names.
+* `rolling` - (Optional) Represents Rolling Update strategy.
+    * `steps` - (Required) A set of separate conditions of rollout processing.
+        * `name` - (Optional) The name of a step.
+        * `pause` - (Optional) Defines the duration of time to freeze the rollout.
+            * `duration` - (Optional) The amount of time to wait before moving to the next step.
         * `verification`  - (Optional) Represents the list of verifications to run in a step.
             * `template_names`  - (Required) List of Verification Template names.
