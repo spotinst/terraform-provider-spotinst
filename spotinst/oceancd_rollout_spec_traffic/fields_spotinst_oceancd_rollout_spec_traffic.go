@@ -46,7 +46,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Required: true,
 								},
 								string(ServicePort): {
-									Type:     schema.TypeString,
+									Type:     schema.TypeInt,
 									Required: true,
 								},
 								string(StickinessConfig): {
@@ -56,11 +56,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Elem: &schema.Resource{
 										Schema: map[string]*schema.Schema{
 											string(StickinessDuration): {
-												Type:     schema.TypeString,
+												Type:     schema.TypeInt,
 												Optional: true,
+												Default:  -1,
 											},
 											string(StickinessEnabled): {
-												Type:     schema.TypeString,
+												Type:     schema.TypeBool,
 												Optional: true,
 											},
 										},
@@ -135,7 +136,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 															Default:  -1,
 														},
 														string(SniHosts): {
-															Type:     schema.TypeInt,
+															Type:     schema.TypeList,
 															Optional: true,
 															Elem:     &schema.Schema{Type: schema.TypeString},
 														},
@@ -799,6 +800,8 @@ func flattenAlb(alb *oceancd.Alb) []interface{} {
 
 	if alb != nil {
 		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(ServicePort)] = value
 
 		result[string(AlbAnnotationPrefix)] = spotinst.StringValue(alb.AnnotationPrefix)
 
@@ -807,7 +810,11 @@ func flattenAlb(alb *oceancd.Alb) []interface{} {
 		result[string(AlbRootService)] = spotinst.StringValue(alb.RootService)
 
 		if alb.StickinessConfig != nil {
-			result[string(Alb)] = flattenStickinessConfig(alb.StickinessConfig)
+			result[string(StickinessConfig)] = flattenStickinessConfig(alb.StickinessConfig)
+		}
+
+		if alb.ServicePort != nil {
+			result[string(ServicePort)] = spotinst.IntValue(alb.ServicePort)
 		}
 
 		if len(result) > 0 {

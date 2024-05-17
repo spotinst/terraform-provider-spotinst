@@ -23,11 +23,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
-					string(Namespace): {
+					string(SpotDeploymentNamespace): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
-					string(ClusterId): {
+					string(SpotDeploymentClusterId): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
@@ -83,22 +83,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 	fieldsMap[SpotDeployments] = commons.NewGenericField(
 		commons.OceanCDRolloutSpecSpotDeployment,
-		SpotDeployment,
+		SpotDeployments,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(SpotDeploymentName): {
+					string(SpotDeploymentsName): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
-					string(Namespace): {
+					string(SpotDeploymentsNamespace): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
-					string(ClusterId): {
+					string(SpotDeploymentsClusterId): {
 						Type:     schema.TypeString,
 						Optional: true,
 					},
@@ -142,13 +142,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if spotDeployments, err := expandSpotDeployments(value); err != nil {
 					return err
 				} else {
-					result = spotDeployments
+					value = spotDeployments
 				}
-			}
-
-			if len(result) == 0 {
-				rolloutSpec.SetSpotDeployments(nil)
-			} else {
 				rolloutSpec.SetSpotDeployments(result)
 			}
 
@@ -165,13 +160,13 @@ func expandSpotDeployment(data interface{}) (*oceancd.SpotDeployment, error) {
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(ClusterId)].(string); ok && v != "" {
+			if v, ok := m[string(SpotDeploymentClusterId)].(string); ok && v != "" {
 				spotDeployment.SetClusterId(spotinst.String(v))
 			} else {
 				spotDeployment.SetClusterId(nil)
 			}
 
-			if v, ok := m[string(Namespace)].(string); ok && v != "" {
+			if v, ok := m[string(SpotDeploymentNamespace)].(string); ok && v != "" {
 				spotDeployment.SetNamespace(spotinst.String(v))
 			} else {
 				spotDeployment.SetNamespace(nil)
@@ -200,19 +195,19 @@ func expandSpotDeployments(data interface{}) ([]*oceancd.SpotDeployment, error) 
 
 		spotDeployment := &oceancd.SpotDeployment{}
 
-		if v, ok := m[string(SpotDeploymentName)].(string); ok && v != "" {
+		if v, ok := m[string(SpotDeploymentsName)].(string); ok && v != "" {
 			spotDeployment.SetName(spotinst.String(v))
 		} else {
 			spotDeployment.SetName(nil)
 		}
 
-		if v, ok := m[string(Namespace)].(string); ok && v != "" {
+		if v, ok := m[string(SpotDeploymentsNamespace)].(string); ok && v != "" {
 			spotDeployment.SetNamespace(spotinst.String(v))
 		} else {
 			spotDeployment.SetNamespace(nil)
 		}
 
-		if v, ok := m[string(ClusterId)].(string); ok && v != "" {
+		if v, ok := m[string(SpotDeploymentsClusterId)].(string); ok && v != "" {
 			spotDeployment.SetClusterId(spotinst.String(v))
 		} else {
 			spotDeployment.SetClusterId(nil)
@@ -232,11 +227,11 @@ func flattenSpotDeployments(spotDeployments []*oceancd.SpotDeployment) []interfa
 
 		result := make(map[string]interface{})
 
-		result[string(SpotDeploymentName)] = spotinst.StringValue(spotDeployment.Name)
+		result[string(SpotDeploymentsName)] = spotinst.StringValue(spotDeployment.Name)
 
-		result[string(Namespace)] = spotinst.StringValue(spotDeployment.Namespace)
+		result[string(SpotDeploymentsNamespace)] = spotinst.StringValue(spotDeployment.Namespace)
 
-		result[string(ClusterId)] = spotinst.StringValue(spotDeployment.ClusterId)
+		result[string(SpotDeploymentsClusterId)] = spotinst.StringValue(spotDeployment.ClusterId)
 
 		m = append(m, result)
 	}
@@ -251,9 +246,9 @@ func flattenSpotDeployment(spotDeployment *oceancd.SpotDeployment) []interface{}
 
 		result[string(SpotDeploymentName)] = spotinst.StringValue(spotDeployment.Name)
 
-		result[string(Namespace)] = spotinst.StringValue(spotDeployment.Namespace)
+		result[string(SpotDeploymentNamespace)] = spotinst.StringValue(spotDeployment.Namespace)
 
-		result[string(ClusterId)] = spotinst.StringValue(spotDeployment.ClusterId)
+		result[string(SpotDeploymentClusterId)] = spotinst.StringValue(spotDeployment.ClusterId)
 
 		if len(result) > 0 {
 			response = append(response, result)
