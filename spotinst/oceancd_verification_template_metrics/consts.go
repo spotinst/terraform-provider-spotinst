@@ -3,15 +3,17 @@ package oceancd_verification_template_metrics
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	Metrics          commons.FieldName = "metrics"
-	BaseLine         commons.FieldName = "baseline"
-	MaxRange         commons.FieldName = "max_range"
-	MinRange         commons.FieldName = "min_range"
-	BaseLineProvider commons.FieldName = "baseline_provider"
-	Threshold        commons.FieldName = "threshold"
+	Metrics commons.FieldName = "metrics"
+
+	MaxRange commons.FieldName = "max_range"
+	MinRange commons.FieldName = "min_range"
 )
 
 const (
+	BaseLine         commons.FieldName = "baseline"
+	BaseLineProvider commons.FieldName = "baseline_provider"
+	Threshold        commons.FieldName = "threshold"
+
 	Datadog      commons.FieldName = "datadog"
 	Duration     commons.FieldName = "duration"
 	DatadogQuery commons.FieldName = "datadog_query"
@@ -37,7 +39,7 @@ const (
 )
 
 const (
-	Provider   commons.FieldName = "template_provider"
+	Provider   commons.FieldName = "provider"
 	Job        commons.FieldName = "job"
 	Jenkins    commons.FieldName = "jenkins"
 	CloudWatch commons.FieldName = "cloud_watch"
@@ -45,8 +47,8 @@ const (
 
 const (
 	CloudWatchDuration commons.FieldName = "cloud_watch_duration"
-	Expression         commons.FieldName = "expression"
 	MetricDataQueries  commons.FieldName = "metric_data_queries"
+	Expression         commons.FieldName = "expression"
 	ID                 commons.FieldName = "id"
 	Label              commons.FieldName = "label"
 	MetricStat         commons.FieldName = "metric_stat"
@@ -94,6 +96,6 @@ const (
 	Containers    commons.FieldName = "containers"
 	Command       commons.FieldName = "command"
 	Image         commons.FieldName = "image"
-	ContinerName  commons.FieldName = "container_name"
+	ContainerName commons.FieldName = "container_name"
 	RestartPolicy commons.FieldName = "restart_policy"
 )

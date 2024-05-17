@@ -22,7 +22,7 @@ resource "spotinst_oceancd_verification_template" "test" {
      value = "test"
      value_from {
         secret_key_ref {
-           key_name = "test_key"
+           name     = "test_key"
            key      = "key-value-test"
         }
     }
@@ -41,7 +41,7 @@ resource "spotinst_oceancd_verification_template" "test" {
       failure_limit           = 2
       consecutive_error_limit = 1
 
-      template_provider {
+      provider {
         prometheus {
            prometheus_query = "http_requests_new"
         }
@@ -85,7 +85,7 @@ resource "spotinst_oceancd_verification_template" "test" {
         web {
           method  = "GET"
           url     = "https://oceancd.com/api/v1/metrics?clusterId= args.clusterId"
-          headers {
+          web_header {
             web_header_key   = "Autorization"
             web_header_value = "Bearer=args.token"
           }
@@ -164,7 +164,7 @@ The following arguments are supported:
     * `value` - (Optional) String representation of data.
     * `value_from` - (Optional) Value representation of from data.
         * `secret_key_ref` - (Optional) Secret key to use.
-            * `key_name` - (Required) The name of the secret.
+            * `name` - (Required) The name of the secret.
             * `key` - (Optional) The name of the field inside the secret.
 * `metrics` - (Required) List of verification metrics.
     * `baseline` - (Optional) Baseline Object.
@@ -189,7 +189,7 @@ The following arguments are supported:
     * `interval` - (Optional) Defines an interval string (30s, 5m, 1h) between each verification measurements. If omitted, will perform a single measurement.When choosing Jenkins as the provider, there is no need to send this variable.
     * `metrics_name` - (Required) The name of the verification metric.
     * `success_condition` - (Optional) An expression which determines if a measurement is considered successful.The keyword result is a variable reference to the value of measurement. Results can be both structured data or primitive. If successCondition is set, then failureCondition is not allowed.
-    * `template_provider` - (Required) The name of the monitoring tool chosen for the metric.
+    * `provider` - (Required) The name of the monitoring tool chosen for the metric.
         * `datadog`    - (Optional) The datadog provider.
             * `duration` - (Optional) The window of time we are looking at in DataDog.
             * `datadog_query` - (Required) A request for information retrieved from Datadog.
@@ -223,7 +223,7 @@ The following arguments are supported:
             * `method`     - (Optional) The method of the web metric.  Enum: "GET" "POST" "PUT"
             * `timeout_seconds` - (Optional) The timeout for the request in seconds. Default is 10.
             * `url`   - (Required) The address of the web metric.
-            * `headers`   - (Optional) Optional HTTP headers to use in the request.
+            * `web_header`   - (Optional) Optional HTTP headers to use in the request.
                 * `web_header_key`   - (Required) The name of a header
                 * `web_header_value`   - (Required) The value of a header
         * `jenkins`  - (Optional) The Jenkins provider.

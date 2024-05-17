@@ -103,7 +103,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 														},
 														string(DatadogQuery): {
 															Type:     schema.TypeString,
-															Optional: true,
+															Required: true,
 														},
 													},
 												},
@@ -306,7 +306,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 												Elem: &schema.Resource{
 													Schema: map[string]*schema.Schema{
 														string(BackoffLimit): {
-															Type:     schema.TypeString,
+															Type:     schema.TypeInt,
 															Optional: true,
 														},
 														string(JobTemplate): {
@@ -332,7 +332,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 																								Type:     schema.TypeString,
 																								Required: true,
 																							},
-																							string(ContinerName): {
+																							string(ContainerName): {
 																								Type:     schema.TypeString,
 																								Required: true,
 																							},
@@ -427,12 +427,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											string(TimeoutSeconds): {
 												Type:     schema.TypeInt,
 												Optional: true,
-												Default:  10,
+												Default:  -1,
 											},
 											string(WebHeader): {
 												Type:     schema.TypeSet,
 												Optional: true,
-												MaxItems: 1,
 												Elem: &schema.Resource{
 													Schema: map[string]*schema.Schema{
 														string(WebHeaderKey): {
@@ -1251,7 +1250,7 @@ func expandContainers(data interface{}) ([]*oceancd.Containers, error) {
 			container.SetImage(spotinst.String(v))
 		}
 
-		if v, ok := m[string(ContinerName)].(string); ok && v != "" {
+		if v, ok := m[string(ContainerName)].(string); ok && v != "" {
 			container.SetName(spotinst.String(v))
 		}
 
@@ -1621,7 +1620,7 @@ func flattenContainers(containers []*oceancd.Containers) []interface{} {
 	for _, container := range containers {
 		result := make(map[string]interface{})
 		result[string(Image)] = spotinst.StringValue(container.Image)
-		result[string(ContinerName)] = spotinst.StringValue(container.Name)
+		result[string(ContainerName)] = spotinst.StringValue(container.Name)
 
 		if container.Command != nil {
 			result[string(Command)] = spotinst.StringSlice(container.Command)
