@@ -43,15 +43,3 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 }
-
-func expandClusterIDs(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if clusterIds, ok := v.(string); ok && clusterIds != "" {
-			result = append(result, clusterIds)
-		}
-	}
-	return result, nil
-}

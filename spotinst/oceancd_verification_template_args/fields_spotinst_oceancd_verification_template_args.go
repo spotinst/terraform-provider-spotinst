@@ -87,23 +87,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			verificationTemplateWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
-			verificationTemplate := verificationTemplateWrapper.GetVerificationTemplate()
-			var result []*oceancd.Args = nil
-			if value, ok := resourceData.GetOkExists(string(Args)); ok {
+			virtualNodeGroupWrapper := resourceObject.(*commons.OceanCDVerificationTemplateWrapper)
+			virtualNodeGroup := virtualNodeGroupWrapper.GetVerificationTemplate()
+			var argList []*oceancd.Args = nil
+			if value, ok := resourceData.GetOk(string(Args)); ok {
 				if args, err := expandArgs(value); err != nil {
 					return err
 				} else {
-					result = args
+					argList = args
 				}
 			}
-
-			if len(result) == 0 {
-				verificationTemplate.SetArgs(result)
-			} else {
-				verificationTemplate.SetArgs(result)
-			}
-
+			virtualNodeGroup.SetArgs(argList)
 			return nil
 		},
 		nil,
