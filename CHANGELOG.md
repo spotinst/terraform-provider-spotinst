@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.172.3 (May, 17 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed `autoscale_headroom` block to set to null when underlying attributes are not passed in config.
+
 ## 1.172.2 (May, 17 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws: reverting th fix done for `autoscale_headroom` block.
