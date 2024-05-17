@@ -1,4 +1,4 @@
-package oceancd_strategy_canary_spot_deployment
+package oceancd_rollout_spec_spot_deployment
 
 import (
 	"fmt"

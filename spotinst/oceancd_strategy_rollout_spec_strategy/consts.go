@@ -1,4 +1,4 @@
-package oceancd_strategy_canary_strategy
+package oceancd_rollout_spec_strategy
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 

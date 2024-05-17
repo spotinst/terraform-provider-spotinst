@@ -1,4 +1,4 @@
-package oceancd_strategy_canary_traffic
+package oceancd_rollout_spec_traffic
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	fieldsMap[Traffic] = commons.NewGenericField(
-		commons.OceanCDRolloutSpecTraffio,
+		commons.OceanCDRolloutSpecTraffic,
 		Traffic,
 		&schema.Schema{
 			Type:     schema.TypeList,
@@ -225,8 +225,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			rolloutSpec := rolloutSpecWrapper.GetRolloutSpec()
 			var result []interface{} = nil
 
-			if rolloutSpec != nil && rolloutSpec.Strategy != nil {
-				result = flattenStrategy(rolloutSpec.Strategy)
+			if rolloutSpec != nil && rolloutSpec.Traffic != nil {
+				result = flattenTraffic(rolloutSpec.Traffic)
 			}
 			if len(result) > 0 {
 				if err := resourceData.Set(string(Traffic), result); err != nil {
@@ -753,16 +753,38 @@ func expandSmi(data interface{}) (*oceancd.Smi, error) {
 	return nil, nil
 }
 
-func flattenStrategy(strategy *oceancd.RolloutSpecStrategy) []interface{} {
+func flattenTraffic(traffic *oceancd.Traffic) []interface{} {
 	var response []interface{}
 
-	if strategy != nil {
+	if traffic != nil {
 		result := make(map[string]interface{})
 
-		result[string(Name)] = spotinst.StringValue(strategy.Name)
+		result[string(StableService)] = spotinst.StringValue(traffic.StableService)
 
-		if strategy.Args != nil {
-			result[string(Args)] = flattenArgs(strategy.Args)
+		result[string(CanaryService)] = spotinst.StringValue(traffic.CanaryService)
+
+		if traffic.Alb != nil {
+			result[string(Alb)] = flattenAlb(traffic.Alb)
+		}
+
+		if traffic.Ambassador != nil {
+			result[string(Ambassador)] = flattenAmbassador(traffic.Ambassador)
+		}
+
+		if traffic.Istio != nil {
+			result[string(Istio)] = flattenIstio(traffic.Istio)
+		}
+
+		if traffic.Nginx != nil {
+			result[string(Nginx)] = flattenNginx(traffic.Nginx)
+		}
+
+		if traffic.PingPong != nil {
+			result[string(PingPong)] = flattenPingPong(traffic.PingPong)
+		}
+
+		if traffic.Smi != nil {
+			result[string(Smi)] = flattenSmi(traffic.Smi)
 		}
 
 		if len(result) > 0 {
@@ -772,35 +794,216 @@ func flattenStrategy(strategy *oceancd.RolloutSpecStrategy) []interface{} {
 	return response
 }
 
-func flattenFieldRef(fieldRef *oceancd.FieldRef) []interface{} {
-	result := make(map[string]interface{})
-	result[string(FieldPath)] = spotinst.StringValue(fieldRef.FieldPath)
+func flattenAlb(alb *oceancd.Alb) []interface{} {
+	var response []interface{}
 
-	return []interface{}{result}
-}
+	if alb != nil {
+		result := make(map[string]interface{})
 
-func flattenValueFrom(valueFrom *oceancd.RolloutSpecValueFrom) []interface{} {
-	result := make(map[string]interface{})
+		result[string(AlbAnnotationPrefix)] = spotinst.StringValue(alb.AnnotationPrefix)
 
-	if valueFrom.FieldRef != nil {
-		result[string(FieldRef)] = flattenFieldRef(valueFrom.FieldRef)
+		result[string(AlbIngress)] = spotinst.StringValue(alb.Ingress)
+
+		result[string(AlbRootService)] = spotinst.StringValue(alb.RootService)
+
+		if alb.StickinessConfig != nil {
+			result[string(Alb)] = flattenStickinessConfig(alb.StickinessConfig)
+		}
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
 	}
-	return []interface{}{result}
+	return response
 }
 
-func flattenArgs(args []*oceancd.RolloutSpecArgs) []interface{} {
-	result := make([]interface{}, 0, len(args))
+func flattenStickinessConfig(stickiness *oceancd.StickinessConfig) []interface{} {
+	var response []interface{}
 
-	for _, arg := range args {
+	if stickiness != nil {
+		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(StickinessDuration)] = value
+
+		if stickiness.DurationSeconds != nil {
+			result[string(StickinessDuration)] = spotinst.IntValue(stickiness.DurationSeconds)
+		}
+
+		result[string(StickinessEnabled)] = spotinst.BoolValue(stickiness.Enabled)
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
+}
+
+func flattenAmbassador(ambassador *oceancd.Ambassador) []interface{} {
+	var response []interface{}
+
+	if ambassador != nil {
+		result := make(map[string]interface{})
+
+		if ambassador.Mappings != nil {
+			result[string(Mappings)] = spotinst.StringSlice(ambassador.Mappings)
+		}
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
+}
+
+func flattenIstio(istio *oceancd.Istio) []interface{} {
+	var response []interface{}
+
+	if istio != nil {
+		result := make(map[string]interface{})
+
+		if istio.DestinationRule != nil {
+			result[string(DestinationRule)] = flattenDestinationRule(istio.DestinationRule)
+		}
+
+		if istio.VirtualServices != nil {
+			result[string(VirtualServices)] = flattenVirtualServices(istio.VirtualServices)
+		}
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
+}
+
+func flattenDestinationRule(destinationRule *oceancd.DestinationRule) []interface{} {
+	var response []interface{}
+
+	if destinationRule != nil {
+		result := make(map[string]interface{})
+
+		result[string(CanarySubsetName)] = spotinst.StringValue(destinationRule.CanarySubsetName)
+
+		result[string(DestinationRuleName)] = spotinst.StringValue(destinationRule.Name)
+
+		result[string(StableSubsetName)] = spotinst.StringValue(destinationRule.StableSubsetName)
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
+}
+
+func flattenVirtualServices(virtualServices []*oceancd.VirtualServices) []interface{} {
+	result := make([]interface{}, 0, len(virtualServices))
+
+	for _, virtualService := range virtualServices {
 		m := make(map[string]interface{})
 
-		m[string(ArgName)] = spotinst.StringValue(arg.Name)
-		m[string(ArgValue)] = spotinst.StringValue(arg.Value)
+		m[string(VirtualServiceName)] = spotinst.StringValue(virtualService.Name)
 
-		if arg.ValueFrom != nil {
-			m[string(ValueFrom)] = flattenValueFrom(arg.ValueFrom)
+		if virtualService.Routes != nil {
+			m[string(VirtualServiceRoutes)] = spotinst.StringSlice(virtualService.Routes)
+		}
+
+		if virtualService.TlsRoutes != nil {
+			m[string(TlsRoutes)] = flattenTlsRoutes(virtualService.TlsRoutes)
 		}
 		result = append(result, m)
 	}
 	return result
+}
+
+func flattenTlsRoutes(tlsRoutes []*oceancd.TlsRoutes) []interface{} {
+	result := make([]interface{}, 0, len(tlsRoutes))
+
+	for _, tlsRoute := range tlsRoutes {
+		m := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		m[string(Port)] = value
+
+		if tlsRoute.Port != nil {
+			m[string(Port)] = spotinst.IntValue(tlsRoute.Port)
+		}
+
+		if tlsRoute.SniHosts != nil {
+			m[string(SniHosts)] = spotinst.StringSlice(tlsRoute.SniHosts)
+		}
+
+		result = append(result, m)
+	}
+	return result
+}
+
+func flattenNginx(nginx *oceancd.Nginx) []interface{} {
+	var response []interface{}
+
+	if nginx != nil {
+		result := make(map[string]interface{})
+
+		result[string(NginxAnnotationPrefix)] = spotinst.StringValue(nginx.AnnotationPrefix)
+
+		result[string(StableIngress)] = spotinst.StringValue(nginx.StableIngress)
+
+		if nginx.AdditionalIngressAnnotations != nil {
+			result[string(AdditionalIngressAnnotation)] = flattenAdditionalIngressAnnotations(nginx.AdditionalIngressAnnotations)
+		}
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
+}
+
+func flattenAdditionalIngressAnnotations(additionalIngressAnnotation *oceancd.AdditionalIngressAnnotations) []interface{} {
+	var response []interface{}
+
+	if additionalIngressAnnotation != nil {
+		result := make(map[string]interface{})
+
+		result[string(CanaryByHeader)] = spotinst.StringValue(additionalIngressAnnotation.CanaryByHeader)
+
+		result[string(Key1)] = spotinst.StringValue(additionalIngressAnnotation.Key1)
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
+}
+
+func flattenPingPong(pingPong *oceancd.PingPong) []interface{} {
+	var response []interface{}
+
+	if pingPong != nil {
+		result := make(map[string]interface{})
+
+		result[string(PingService)] = spotinst.StringValue(pingPong.PingService)
+
+		result[string(PongService)] = spotinst.StringValue(pingPong.PongService)
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
+}
+
+func flattenSmi(smi *oceancd.Smi) []interface{} {
+	var response []interface{}
+
+	if smi != nil {
+		result := make(map[string]interface{})
+
+		result[string(SmiRootService)] = spotinst.StringValue(smi.RootService)
+
+		result[string(TrafficSplitName)] = spotinst.StringValue(smi.TrafficSplitName)
+
+		if len(result) > 0 {
+			response = append(response, result)
+		}
+	}
+	return response
 }

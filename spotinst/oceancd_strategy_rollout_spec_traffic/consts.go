@@ -1,4 +1,4 @@
-package oceancd_strategy_canary_traffic
+package oceancd_rollout_spec_traffic
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
