@@ -209,7 +209,7 @@ The following arguments are supported:
                 * `metric_stat` - (Optional) The metric to be returned, along with statistics, period, and units. Use this parameter only if this object is retrieving a metric and not performing a math expression on returned data.Within one metricdataquery object, you must specify either expression or metricstat but not both.
                     * `metric_period` - (Optional) The granularity, in seconds, of the returned data points.
                     * `stat` - (Optional) The statistic to return. It can include any CloudWatch statistic or extended statistic.
-                    * `unit` - (Optional) This defines what unit you want to use when storing the metric.  Enum: "Seconds" "Microseconds" "Milliseconds" "Bytes" "Kilobytes" "Megabytes" "Gigabytes" "Terabytes" "Bits" "Kilobits" "Megabits" "Gigabits" "Terabits" "Percent" "Count" "Bytes/Second" "Kilobytes/Second" "Megabytes/Second" "Gigabytes/Second" "Terabytes/Second" "Bits/Second" "Kilobits/Second" "Megabits/Second" "Gigabits/Second" "Terabits/Second" "Count/Second" "None"
+                    * `unit` - (Optional) This defines what unit you want to use when storing the metric.  Enum: `"Seconds" "Microseconds" "Milliseconds" "Bytes" "Kilobytes" "Megabytes" "Gigabytes" "Terabytes" "Bits" "Kilobits" "Megabits" "Gigabits" "Terabits" "Percent" "Count" "Bytes/Second" "Kilobytes/Second" "Megabytes/Second" "Gigabytes/Second" "Terabytes/Second" "Bits/Second" "Kilobits/Second" "Megabits/Second" "Gigabits/Second" "Terabits/Second" "Count/Second" "None"`
                     * `metric` - (Optional) The metric to return, including the metric name, namespace, and dimensions.
                         * `metric_name` - (Required) The name of the metric.
                         * `namespace` - (Optional) The namespace of the metric.
@@ -219,7 +219,7 @@ The following arguments are supported:
         * `web`  - (Optional) The Web provider.
             * `body`   - (Optional) The body of the web metric.
             * `insecure`   - (Optional) Skips host TLS verification.
-            * `json_path`  - (Optional) A JSON Path to use as the result variable.
+            * `json_path`  - (Optional) A JSON Path to use as the result variable. Default is "{$}"
             * `method`     - (Optional) The method of the web metric.  Enum: "GET" "POST" "PUT"
             * `timeout_seconds` - (Optional) The timeout for the request in seconds. Default is 10.
             * `url`   - (Required) The address of the web metric.
@@ -239,7 +239,7 @@ The following arguments are supported:
                 * `backoff_limit`   - (Optional) Specifies the number of retries before marking this job failed.
                 * `job_template`  - (Required) Describes the pod that will be created when executing a job.
                     * `template_spec`     - (Required) Specification of the desired behavior of the pod.
-                      * `restart_policy` - (Required) Restart policy for all containers within the pod. Enum: "Never" "OnFailure"
+                      * `restart_policy` - (Required) Restart policy for all containers within the pod. Enum: `"Never" "OnFailure"`
                       * `containers` - (Required) A list of containers belonging to the pod.
                         * `container_name` - (Required) The name of a container.
                         * `command` - (Required) The entry point of a container.
