@@ -9,5 +9,5 @@ const (
 	ValueFrom    commons.FieldName = "value_from"
 	SecretKeyRef commons.FieldName = "secret_key_ref"
 	Key          commons.FieldName = "key"
-	KeyName      commons.FieldName = "key_name"
+	Name         commons.FieldName = "name"
 )

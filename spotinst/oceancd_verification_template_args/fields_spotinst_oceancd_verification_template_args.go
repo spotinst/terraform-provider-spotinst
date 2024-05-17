@@ -45,7 +45,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 												Required: true,
 											},
 
-											string(KeyName): {
+											string(Name): {
 												Type:     schema.TypeString,
 												Required: true,
 											},
@@ -171,7 +171,7 @@ func expandSecretKeyRef(data interface{}) (*oceancd.SecretKeyRef, error) {
 		secretKeyRef.SetKey(spotinst.String(v))
 	}
 
-	if v, ok := m[string(KeyName)].(string); ok && v != "" {
+	if v, ok := m[string(Name)].(string); ok && v != "" {
 		secretKeyRef.SetName(spotinst.String(v))
 	}
 	return secretKeyRef, nil
@@ -180,7 +180,7 @@ func expandSecretKeyRef(data interface{}) (*oceancd.SecretKeyRef, error) {
 func flattenSecretKeyRef(secretKeyRef *oceancd.SecretKeyRef) []interface{} {
 	result := make(map[string]interface{})
 	result[string(Key)] = spotinst.StringValue(secretKeyRef.Key)
-	result[string(KeyName)] = spotinst.StringValue(secretKeyRef.Name)
+	result[string(Name)] = spotinst.StringValue(secretKeyRef.Name)
 
 	return []interface{}{result}
 }
