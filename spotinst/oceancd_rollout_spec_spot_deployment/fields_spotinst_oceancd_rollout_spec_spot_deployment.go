@@ -14,9 +14,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanCDRolloutSpecSpotDeployment,
 		SpotDeployment,
 		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			MaxItems: 1,
+			Type:          schema.TypeList,
+			Optional:      true,
+			ConflictsWith: []string{string(SpotDeployments)},
+			MaxItems:      1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(SpotDeploymentName): {
@@ -85,9 +86,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanCDRolloutSpecSpotDeployment,
 		SpotDeployments,
 		&schema.Schema{
-			Type:     schema.TypeSet,
-			Optional: true,
-			MaxItems: 1,
+			Type:          schema.TypeSet,
+			Optional:      true,
+			ConflictsWith: []string{string(SpotDeployment)},
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(SpotDeploymentsName): {
