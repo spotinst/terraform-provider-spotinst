@@ -127,7 +127,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", "testVng"),
-					resource.TestCheckResourceAttr(resourceName, "ocean_id", "o-2116ff4a"),
+					resource.TestCheckResourceAttr(resourceName, "ocean_id", "o-751eaa33"),
 					resource.TestCheckResourceAttr(resourceName, "min_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "max_count", "100"),
 					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "30"),
@@ -181,7 +181,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   name  = "testVng"
 
-  ocean_id = "o-2116ff4a"
+  ocean_id = "o-751eaa33"
 
   availability_zones = [
     "1",
@@ -225,7 +225,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   name  = "testVngUpdated"
 
-  ocean_id = "o-2116ff4a"
+  ocean_id = "o-751eaa33"
 
   availability_zones = [
     "1",
