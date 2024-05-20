@@ -170,7 +170,7 @@ func resourceSpotinstOceanCDRolloutSpecUpdate(ctx context.Context, resourceData 
 }
 
 func updateOceanCDRolloutSpec(RolloutSpec *oceancd.RolloutSpec, resourceData *schema.ResourceData, meta interface{}) error {
-	var input = &oceancd.UpdateRolloutSpecInput{
+	var input = &oceancd.PatchRolloutSpecInput{
 		RolloutSpec: RolloutSpec,
 	}
 
@@ -182,7 +182,7 @@ func updateOceanCDRolloutSpec(RolloutSpec *oceancd.RolloutSpec, resourceData *sc
 		log.Printf("===> stratgey update configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).oceancd.UpdateRolloutSpec(context.Background(), input); err != nil {
+	if _, err := meta.(*Client).oceancd.PatchRolloutSpec(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update rolloutSpec [%v]: %v", name, err)
 	}
 	return nil
