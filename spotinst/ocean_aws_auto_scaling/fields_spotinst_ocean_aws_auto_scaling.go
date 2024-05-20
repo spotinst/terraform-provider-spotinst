@@ -305,6 +305,9 @@ func expandOceanAWSAutoScalerHeadroom(data interface{}) (*aws.AutoScalerHeadroom
 			} else {
 				headroom.SetGPUPerUnit(nil)
 			}
+			if headroom.MemoryPerUnit == nil && headroom.GPUPerUnit == nil && headroom.CPUPerUnit == nil && headroom.NumOfUnits == nil {
+				headroom = nil
+			}
 		}
 		return headroom, nil
 	}

@@ -5,6 +5,14 @@ ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: added `linux_os_config` block as part of node pool properties of virtual node group template to set maximum number of memory areas a process may have,
 * resource/spotinst_ocean_aks_np_virtual_node_group: added `linux_os_config` block as part of node pool properties to set maximum number of memory areas a process may have,
 
+## 1.172.3 (May, 17 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed `autoscale_headroom` block to set to null when underlying attributes are not passed in config.
+
+## 1.172.2 (May, 17 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws: reverting th fix done for `autoscale_headroom` block.
+
 ## 1.172.1 (May, 16 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed disabling of `autoscale_headroom` object and its attributes in cluster config under `autoscaler`.

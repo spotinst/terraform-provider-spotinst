@@ -201,6 +201,10 @@ const (
 	OceanCDStrategyCanary  ResourceAffinity = "OceanCD_Strategy_Canary"
 	OceanCDStrategyRolling ResourceAffinity = "OceanCD_Strategy_Rolling"
 
+	OceanCDVerificationTemplate        ResourceAffinity = "OceanCD_Verification_Template"
+	OceanCDVerificationTemplateArgs    ResourceAffinity = "OceanCD_Verification_Template_Args"
+	OceanCDVerificationTemplateMetrics ResourceAffinity = "OceanCD_Verification_Template_Metrics"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"
