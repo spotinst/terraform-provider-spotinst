@@ -156,7 +156,11 @@ resource "spotinst_ocean_aks_np" "example" {
   kubernetes_version    = "1.26"
   pod_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
   vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
-
+  linux_os_config {
+    sysctls {
+      vm_max_map_count = 65530
+    }
+  }
   // ----------------------------------------------------------------------
 
   // --- strategy ---------------------------------------------------------
@@ -252,6 +256,9 @@ The following arguments are supported:
 * `os_sku` - (Optional, Enum: `"Ubuntu", "Windows2019", "Windows2022", "AzureLinux", "CBLMariner"`) The OS SKU of the OS type. Must correlate with the os type.
 * `pod_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign pods in the cluster (requires azure network-plugin).
 * `vnet_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign nodes in the cluster (requires azure network-plugin).
+* `linux_os_config` - (Optional) Custom Linux OS configuration.
+* `sysctls` - (Optional) System Controls
+* `vm_max_map_count` - (Optional) Maximum number of memory map areas a process may have. Can be configured only if OS type is Linux.
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.

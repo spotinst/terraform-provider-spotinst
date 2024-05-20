@@ -127,7 +127,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
 					resource.TestCheckResourceAttr(resourceName, "name", "testVng"),
-					resource.TestCheckResourceAttr(resourceName, "ocean_id", "o-751eaa33"),
+					resource.TestCheckResourceAttr(resourceName, "ocean_id", "o-2116ff4a"),
 					resource.TestCheckResourceAttr(resourceName, "min_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "max_count", "100"),
 					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "30"),
@@ -144,6 +144,9 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "65530"),
 				),
 			},
 			{
@@ -163,6 +166,9 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.2", "3"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "65531"),
 				),
 			},
 		},
@@ -175,7 +181,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   name  = "testVng"
 
-  ocean_id = "o-751eaa33"
+  ocean_id = "o-2116ff4a"
 
   availability_zones = [
     "1",
@@ -197,7 +203,11 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.27"
   //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
-
+  linux_os_config {
+   sysctls {
+     vm_max_map_count = 65530
+   }
+  }
   // --- strategy -------------------------------------------------------------
 
   spot_percentage      = 50
@@ -215,7 +225,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   name  = "testVngUpdated"
 
-  ocean_id = "o-751eaa33"
+  ocean_id = "o-2116ff4a"
 
   availability_zones = [
     "1",
@@ -238,7 +248,11 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   os_sku                = "Ubuntu"
   kubernetes_version    = "1.27"
   //vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
-
+  linux_os_config {
+   sysctls {
+     vm_max_map_count = 65531
+   }
+  }
   // --- strategy -------------------------------------------------------------
 
   spot_percentage      = 100

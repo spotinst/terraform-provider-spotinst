@@ -231,6 +231,9 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "65530"),
 				),
 			},
 			{
@@ -254,6 +257,9 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.2", "3"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "65531"),
 				),
 			},
 		},
@@ -292,7 +298,11 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   kubernetes_version    = "1.27"
   //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
-
+  linux_os_config {
+   sysctls {
+     vm_max_map_count = 65530
+   }
+  }
   // --- strategy ---------------------------------------------------------
 
   spot_percentage      = 50
@@ -346,7 +356,11 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   kubernetes_version    = "1.27"
   //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
-
+  linux_os_config {
+   sysctls {
+     vm_max_map_count = 65531
+   }
+  }
   // --- strategy ---------------------------------------------------------
 
   spot_percentage      = 100

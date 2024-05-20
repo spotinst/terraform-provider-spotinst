@@ -519,8 +519,8 @@ func expandLinuxOSConfig(data interface{}) (*azure_np.LinuxOSConfig, error) {
 func expandSysctls(data interface{}) (*azure_np.Sysctls, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		sysctls := &azure_np.Sysctls{}
-		m := list[0].(map[string]interface{})
 		if list[0] != nil {
+			m := list[0].(map[string]interface{})
 			if v, ok := m[string(VmMaxMapCount)].(int); ok {
 				if v == -1 {
 					sysctls.SetVmMaxMapCount(nil)
