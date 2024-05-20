@@ -138,16 +138,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			rolloutSpecWrapper := resourceObject.(*commons.OceanCDRolloutSpecWrapper)
 			rolloutSpec := rolloutSpecWrapper.GetRolloutSpec()
-			var result []*oceancd.SpotDeployment = nil
-			if value, ok := resourceData.GetOkExists(string(SpotDeployments)); ok {
-				if spotDeployments, err := expandSpotDeployments(value); err != nil {
+			var spotDeploymentList []*oceancd.SpotDeployment = nil
+			if value, ok := resourceData.GetOk(string(SpotDeployments)); ok {
+				if args, err := expandSpotDeployments(value); err != nil {
 					return err
 				} else {
-					value = spotDeployments
+					spotDeploymentList = args
 				}
-				rolloutSpec.SetSpotDeployments(result)
 			}
-
+			rolloutSpec.SetSpotDeployments(spotDeploymentList)
 			return nil
 		},
 		nil,

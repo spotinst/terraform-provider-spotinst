@@ -658,7 +658,7 @@ func expandNginx(data interface{}) (*oceancd.Nginx, error) {
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(AlbAnnotationPrefix)].(string); ok && v != "" {
+			if v, ok := m[string(NginxAnnotationPrefix)].(string); ok && v != "" {
 				nginx.SetAnnotationPreffix(spotinst.String(v))
 			} else {
 				nginx.SetAnnotationPreffix(nil)
