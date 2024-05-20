@@ -206,6 +206,10 @@ const (
 	OceanCDRolloutSpecStrategy       ResourceAffinity = "OceanCD_Rollout_Spec_Strategy"
 	OceanCDRolloutSpecTraffic        ResourceAffinity = "OceanCD_Rollout_Spec_Traffic"
 
+	OceanCDVerificationTemplate        ResourceAffinity = "OceanCD_Verification_Template"
+	OceanCDVerificationTemplateArgs    ResourceAffinity = "OceanCD_Verification_Template_Args"
+	OceanCDVerificationTemplateMetrics ResourceAffinity = "OceanCD_Verification_Template_Metrics"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"

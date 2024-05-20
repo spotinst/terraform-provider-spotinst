@@ -114,6 +114,9 @@ func Provider() *schema.Provider {
 
 			//OceanCD RolloutSpec
 			string(commons.OceanCDRolloutSpecResourceName): resourceSpotinstOceanCDRolloutSpec(),
+
+			//OceanCD Verification Template
+			string(commons.OceanCDVerificationTemplateResourceName): resourceSpotinstOceanCDVerificationTemplate(),
 		},
 	}
 
