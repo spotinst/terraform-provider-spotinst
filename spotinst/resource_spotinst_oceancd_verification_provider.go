@@ -3,6 +3,9 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_cloud_watch"
@@ -10,8 +13,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_jenkins"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_new_relic"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_provider_prometheus"
-	"log"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 

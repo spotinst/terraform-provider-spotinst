@@ -2,6 +2,7 @@ package oceancd_verification_provider_cloud_watch
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"

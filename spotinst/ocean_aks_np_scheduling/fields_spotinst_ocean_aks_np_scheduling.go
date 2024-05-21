@@ -2,6 +2,7 @@ package ocean_aks_np_scheduling
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -247,19 +248,19 @@ func expandShutdownHours(data interface{}) (*azure_np.ShutdownHours, error) {
 	return nil, nil
 }
 
-func expandtasks(data interface{}) ([]*azure_np.Task, error) {
+func expandtasks(data interface{}) ([]*azure_np.Tasks, error) {
 	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		tasks := make([]*azure_np.Task, 0, len(list))
+		tasks := make([]*azure_np.Tasks, 0, len(list))
 		for _, item := range list {
 			m := item.(map[string]interface{})
-			task := &azure_np.Task{}
+			task := &azure_np.Tasks{}
 
 			if v, ok := m[string(TasksIsEnabled)].(bool); ok {
 				task.SetIsEnabled(spotinst.Bool(v))
 			}
 
 			if v, ok := m[string(TaskType)].(string); ok && v != "" {
-				task.SetType(spotinst.String(v))
+				task.SetTaskType(spotinst.String(v))
 			}
 
 			if v, ok := m[string(CronExpression)].(string); ok && v != "" {
@@ -272,9 +273,9 @@ func expandtasks(data interface{}) ([]*azure_np.Task, error) {
 					return nil, err
 				}
 				if parameters != nil {
-					task.SetParameter(parameters)
+					task.SetParameters(parameters)
 				} else {
-					task.SetParameter(nil)
+					task.SetParameters(nil)
 				}
 			}
 
@@ -285,9 +286,9 @@ func expandtasks(data interface{}) ([]*azure_np.Task, error) {
 	}
 	return nil, nil
 }
-func expandParameters(data interface{}) (*azure_np.Parameter, error) {
+func expandParameters(data interface{}) (*azure_np.Parameters, error) {
 	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
-		parameter := &azure_np.Parameter{}
+		parameter := &azure_np.Parameters{}
 		m := list[0].(map[string]interface{})
 
 		if v, ok := m[string(ParametersClusterRoll)]; ok {
@@ -367,23 +368,23 @@ func expandListVNG(data interface{}) []string {
 
 	return result
 }
-func flattenTasks(tasks []*azure_np.Task) []interface{} {
+func flattenTasks(tasks []*azure_np.Tasks) []interface{} {
 	result := make([]interface{}, 0, len(tasks))
 
 	for _, task := range tasks {
 		m := make(map[string]interface{})
 		m[string(TasksIsEnabled)] = spotinst.BoolValue(task.IsEnabled)
-		m[string(TaskType)] = spotinst.StringValue(task.Type)
+		m[string(TaskType)] = spotinst.StringValue(task.TaskType)
 		m[string(CronExpression)] = spotinst.StringValue(task.CronExpression)
-		if task.Parameter != nil {
-			m[string(Parameters)] = flattenParameters(task.Parameter)
+		if task.Parameters != nil {
+			m[string(Parameters)] = flattenParameters(task.Parameters)
 		}
 		result = append(result, m)
 	}
 
 	return result
 }
-func flattenParameters(parameters *azure_np.Parameter) []interface{} {
+func flattenParameters(parameters *azure_np.Parameters) []interface{} {
 	result := make(map[string]interface{})
 
 	if parameters.ClusterRoll != nil {

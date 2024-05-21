@@ -3,9 +3,10 @@ package spotinst
 import (
 	"errors"
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 	stdlog "log"
 	"strings"
+
+	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 
 	"github.com/spotinst/spotinst-sdk-go/service/organization"
 
