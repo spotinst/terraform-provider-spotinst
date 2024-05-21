@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.173.1 (May 21, 2024)
+## 1.174.0 (May 21, 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support for `tasks` object under `scheduling` block.
 

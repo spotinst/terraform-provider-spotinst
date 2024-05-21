@@ -553,7 +553,6 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.0", "Sat:08:00-Sun:08:00"),
-
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.task_type", "clusterRoll"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.#", "1"),
