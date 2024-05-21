@@ -201,6 +201,11 @@ const (
 	OceanCDStrategyCanary  ResourceAffinity = "OceanCD_Strategy_Canary"
 	OceanCDStrategyRolling ResourceAffinity = "OceanCD_Strategy_Rolling"
 
+	OceanCDRolloutSpec               ResourceAffinity = "OceanCD_Rollout_Spec"
+	OceanCDRolloutSpecSpotDeployment ResourceAffinity = "OceanCD_Rollout_Spec_Spot_Deployment"
+	OceanCDRolloutSpecStrategy       ResourceAffinity = "OceanCD_Rollout_Spec_Strategy"
+	OceanCDRolloutSpecTraffic        ResourceAffinity = "OceanCD_Rollout_Spec_Traffic"
+
 	OceanCDVerificationTemplate        ResourceAffinity = "OceanCD_Verification_Template"
 	OceanCDVerificationTemplateArgs    ResourceAffinity = "OceanCD_Verification_Template_Args"
 	OceanCDVerificationTemplateMetrics ResourceAffinity = "OceanCD_Verification_Template_Metrics"
