@@ -2,7 +2,7 @@
 
 ## 1.174.0 (May 21, 2024)
 ENHANCEMENTS:
-* resource/spotinst_ocean_aks_np: Added support for `tasks` object under `scheduling` block.
+* resource/spotinst_ocean_aks_np: Added `tasks` object under `scheduling` block supporting schedule roll.
 
 ## 1.173.0 (May 21, 2024)
 FEATURES: Added the below resources
