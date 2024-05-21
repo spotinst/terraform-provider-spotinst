@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.173.0 (May 21, 2024)
+FEATURES: Added the below resources
+* **New Resource:** `resource/spotinst_oceancd_verification_provider`
+* **New Resource:** `resource/spotinst_oceancd_verification_template`
+* **New Resource:** `resource/spotinst_oceancd_strategy`
+* **New Resource:** `resource/spotinst_oceancd_rollout_spec`
+
 ## 1.172.3 (May, 17 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed `autoscale_headroom` block to set to null when underlying attributes are not passed in config.
