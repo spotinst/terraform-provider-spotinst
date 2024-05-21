@@ -2,6 +2,7 @@ package oceancd_rollout_spec_strategy
 
 import (
 	"fmt"
+
 	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
