@@ -140,10 +140,10 @@ The following arguments are supported:
 * `spot_deployment` - (Optional) Represents the SpotDeployment selector.
     * `spot_deployment_cluster_id` - (Optional) Ocean CD cluster identifier for the references `SpotDeployment`.
     * `spot_deployment_name` - (Optional) The name of the `SpotDeployment` resource
-    * `namespace` - (Optional) The namespace which the `SpotDeployment` resource exists within.
+    * `spot_deployment_namespace` - (Optional) The namespace which the `SpotDeployment` resource exists within.
 * `spot_deployments` - (Optional) You must specify either `spotDeployment` OR `spotDeployments` but not both. Every SpotDeployment has to be unique. If more than one `SpotDeployment` has been configured, no `traffic` managers can be set as part of the RolloutSpec.For such case ensure that each of the chosen SpotDeployments are being exposed with different Kubernetes services.
     * `spot_deployments_cluster_id` - (Optional) Ocean CD cluster identifier for the references `SpotDeployment`.
-    * `spot_deployment_name` - (Optional) The name of the `SpotDeployment` resource
+    * `spot_deployments_name` - (Optional) The name of the `SpotDeployment` resource
     * `spot_deployments_namespace` - (Optional) The namespace which the `SpotDeployment` resource exists within.
 * `strategy` - (Optional) Determines the Ocean CD strategy
     * `strategy_name` - (Required) Ocean CD strategy name identifier.
