@@ -28,9 +28,9 @@ resource "spotinst_oceancd_rollout_spec" "example" {
   // --- Spot Deployment ----------------------------------------------------------------
  
   spot_deployment {
-    cluster_id = "Test-Cluster-Id"
+    spot_deployment_cluster_id = "Test-Cluster-Id"
     spot_deployment_name = "TestDeployment"
-    namespace = "default"
+    spot_deployment_namespace = "default"
   }  
   
   //--------------------------------------------------------------------------------------    
@@ -38,9 +38,9 @@ resource "spotinst_oceancd_rollout_spec" "example" {
   // --- Spot Deployments ----------------------------------------------------------------
  
   spot_deployments {
-    cluster_id = "Test-Cluster-Id"
+    spot_deployments_cluster_id = "Test-Cluster-Id"
     spot_deployment_name = "TestDeployment"
-    namespace = "default"
+    spot_deployments_namespace = "default"
   }  
   
   //------------------------------------------------------------------------------    
@@ -138,13 +138,13 @@ The following arguments are supported:
 * `failure_policy` - (Optional) Holds information on how to react when failure happens.
     * `action` - (Required) Choose an action to perform on failure. Default is `abort`.  Enum: "abort" "pause" "promote".
 * `spot_deployment` - (Optional) Represents the SpotDeployment selector.
-    * `cluster_id` - (Optional) Ocean CD cluster identifier for the references `SpotDeployment`.
+    * `spot_deployment_cluster_id` - (Optional) Ocean CD cluster identifier for the references `SpotDeployment`.
     * `spot_deployment_name` - (Optional) The name of the `SpotDeployment` resource
     * `namespace` - (Optional) The namespace which the `SpotDeployment` resource exists within.
 * `spot_deployments` - (Optional) You must specify either `spotDeployment` OR `spotDeployments` but not both. Every SpotDeployment has to be unique. If more than one `SpotDeployment` has been configured, no `traffic` managers can be set as part of the RolloutSpec.For such case ensure that each of the chosen SpotDeployments are being exposed with different Kubernetes services.
-    * `cluster_id` - (Optional) Ocean CD cluster identifier for the references `SpotDeployment`.
+    * `spot_deployments_cluster_id` - (Optional) Ocean CD cluster identifier for the references `SpotDeployment`.
     * `spot_deployment_name` - (Optional) The name of the `SpotDeployment` resource
-    * `namespace` - (Optional) The namespace which the `SpotDeployment` resource exists within.
+    * `spot_deployments_namespace` - (Optional) The namespace which the `SpotDeployment` resource exists within.
 * `strategy` - (Optional) Determines the Ocean CD strategy
     * `strategy_name` - (Required) Ocean CD strategy name identifier.
     * `args` - (Optional) Arguments defined in Verification Templates.

@@ -4,10 +4,7 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	Strategy commons.FieldName = "strategy"
-)
-
-const (
-	Name commons.FieldName = "strategy_name"
+	Name     commons.FieldName = "strategy_name"
 )
 
 const (

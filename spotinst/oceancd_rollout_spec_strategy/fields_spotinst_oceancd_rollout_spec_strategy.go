@@ -21,7 +21,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				Schema: map[string]*schema.Schema{
 					string(Name): {
 						Type:     schema.TypeString,
-						Optional: true,
+						Required: true,
 					},
 					string(Args): {
 						Type:     schema.TypeSet,
