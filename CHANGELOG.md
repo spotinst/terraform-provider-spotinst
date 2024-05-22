@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.175.0 (May 22, 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `tasks` object under `scheduling` block supporting schedule roll.
+
 ## 1.174.0 (May, 22 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: added `linux_os_config` block as part of node pool properties of virtual node group template to set maximum number of memory areas a process may have,

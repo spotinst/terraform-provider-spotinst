@@ -3,11 +3,12 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_strategy_canary"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_strategy_rolling"
-	"log"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 

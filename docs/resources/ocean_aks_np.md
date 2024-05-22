@@ -106,17 +106,6 @@ resource "spotinst_ocean_aks_np" "example" {
   
   // ----------------------------------------------------------------------
 
-  // --- Scheduling -------------------------------------------------------
-  
-  scheduling {
-    shutdown_hours{
-      is_enabled   = true
-      time_windows = ["Sat:08:00-Sun:08:00"]
-    }
-  }
-  
-  // ----------------------------------------------------------------------
-
   // --- virtualNodeGroupTemplate -----------------------------------------
 
   // --- autoscale --------------------------------------------------------
@@ -233,10 +222,6 @@ The following arguments are supported:
 * `health` - (Optional) The Ocean AKS Health object.
     * `grace_period` - (Optional, Default: `600`) The amount of time to wait, in seconds, from the moment the instance has launched until monitoring of its health checks begins.
 * `name` - (Required) Add a name for the Ocean cluster.
-* `scheduling` - (Optional) An object used to specify times when the cluster will turn off. Once the shutdown time will be over, the cluster will return to its previous state.
-    * `shutdown_hours` - (Optional) [Shutdown Hours](https://docs.spot.io/ocean/features/running-hours?id=shutdown-hours)An object used to specify times that the nodes in the cluster will be taken down.
-        * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the cluster remains in its current state.
-        * `time_windows` - (Optional) The times that the shutdown hours will apply.
 * `headrooms` - (Optional) Specify the custom headroom per VNG. Provide a list of headroom objects.
   * `cpu_per_unit` - (Optional) Configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
   * `memory_per_unit` - (Optional) Configure the amount of memory (MiB) to allocate the headroom.
@@ -311,6 +296,51 @@ update_policy {
     batch_min_healthy_percentage = 100
     respect_pdb = true
     node_names = ["aks-omnp123456-7890-vmss000001"]
+  }
+}
+```
+<a id="Scheduling"></a>
+## Scheduling
+* `scheduling` - (Optional) An object used to specify times when the cluster will turn off. Once the shutdown time will be over, the cluster will return to its previous state.
+  * `shutdown_hours` - (Optional) An object used to specify times that the nodes in the cluster will be taken down.
+    * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the cluster remains in its current state.
+    * `time_windows` - (Optional) The times that the shutdown hours will apply. Required if isEnabled is true.
+  * `tasks` - (Optional) A list of scheduling tasks to preform on the cluster at a specific cron time.
+    * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for `cluster.scheduling.tasks` object.
+    * `cron_expression` - (Required) A valid cron expression. The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of `frequency` or `cronExpression` should be used at a time. Required for `cluster.scheduling.tasks` object. (Example: `0 1 * * *`).
+    * `task_type` - (Required) Valid values: `clusterRoll` The type of the scheduling task.
+    * `parameters` - (Optional) The parameters of the scheduling task. Each task type will have properties relevant only to it.
+      * `parameters_cluster_roll` - (Optional) The parameters of the cluster roll scheduling task.
+        * `batch_min_healthy_percentage` - (Optional) The minimum percentage of the scaled nodes that should be healthy at each batch. Valid values are 1-100.
+        * `batch_size_percentage` - (Optional) The percentage of the cluster that will be rolled at each batch. Valid values are 1-100.
+        * `comment` - (Optional) A comment to be added to the cluster roll.
+        * `respect_pdb` - (Optional) During the roll, if the parameter is set to true we honor PDB during the instance replacement.
+        * `respect_restrict_scale_down` - (Optional) During the roll, if the parameter is set to true we honor Restrict Scale Down label during the nodes replacement.
+        * `vng_ids` - (Optional) List of Virtual Node Group IDs to be rolled. If not set or set to null, cluster roll will be applied.
+
+```hcl
+scheduling {
+  shutdown_hours {
+    is_enabled   = true
+    time_windows = [
+      "Fri:15:30-Sat:13:30", 
+      "Sun:15:30-Mon:13:30",
+    ]
+  }
+  tasks {
+    is_enabled      = true
+    cron_expression = "* 1 * * *"
+    task_type       = "clusterRoll"
+    parameters  {
+      parameters_cluster_roll{
+        batch_min_healthy_percentage = 50
+        batch_size_percentage = 20
+        comment = "Scheduled cluster roll"
+        respect_pdb = true
+        respect_restrict_scale_down=true
+        vng_ids=["vng123","vng456"]
+      }
+    }
   }
 }
 ```

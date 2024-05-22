@@ -3,12 +3,13 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_template"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_template_args"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/oceancd_verification_template_metrics"
-	"log"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
