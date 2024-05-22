@@ -33,7 +33,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 								string(TimeWindows): {
 									Type:     schema.TypeList,
-									Required: true,
+									Optional: true,
 									Elem:     &schema.Schema{Type: schema.TypeString},
 								},
 							},
