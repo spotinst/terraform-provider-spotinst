@@ -2,6 +2,7 @@ package ocean_aks_np_node_pool_properties
 
 import (
 	"fmt"
+
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
