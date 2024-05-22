@@ -585,7 +585,7 @@ const testSchedulingOceanAKSNPConfig_Create = `
   scheduling {
     shutdown_hours{
       is_enabled   = false
-      time_windows = ["Sat:08:00-Sun:08:00"]
+      time_windows = ["Fri:15:30-Sat:15:30"]
     }
   tasks {
       is_enabled      = true
