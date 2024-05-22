@@ -524,7 +524,6 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:15:30"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.cron_expression", "0 1 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.is_enabled", "true"),
@@ -554,6 +553,7 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.0", "Sat:08:00-Sun:08:00"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.cron_expression", "0 2 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.task_type", "clusterRoll"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.#", "1"),
@@ -585,7 +585,6 @@ const testSchedulingOceanAKSNPConfig_Create = `
   scheduling {
     shutdown_hours{
       is_enabled   = false
-      time_windows = ["Fri:15:30-Sat:15:30"]
     }
   tasks {
       is_enabled      = true
@@ -615,6 +614,7 @@ const testSchedulingOceanAKSNPConfig_Update = `
     }
     tasks {
       is_enabled      = false
+      cron_expression = "0 2 * * *"
       task_type       = "clusterRoll"
       parameters  {
         parameters_cluster_roll{
