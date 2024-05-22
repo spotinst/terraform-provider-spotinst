@@ -233,7 +233,7 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "65530"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79550"),
 				),
 			},
 			{
@@ -259,7 +259,7 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.2", "3"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "65531"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79551"),
 				),
 			},
 		},
@@ -300,7 +300,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   // ----------------------------------------------------------------------
   linux_os_config {
    sysctls {
-     vm_max_map_count = 65530
+     vm_max_map_count = 79550
    }
   }
   // --- strategy ---------------------------------------------------------
@@ -358,7 +358,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   // ----------------------------------------------------------------------
   linux_os_config {
    sysctls {
-     vm_max_map_count = 65531
+     vm_max_map_count = 79551
    }
   }
   // --- strategy ---------------------------------------------------------

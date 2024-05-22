@@ -522,11 +522,7 @@ func expandSysctls(data interface{}) (*azure_np.Sysctls, error) {
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 			if v, ok := m[string(VmMaxMapCount)].(int); ok {
-				if v == -1 {
-					sysctls.SetVmMaxMapCount(nil)
-				} else {
-					sysctls.SetVmMaxMapCount(spotinst.Int(v))
-				}
+				sysctls.SetVmMaxMapCount(spotinst.Int(v))
 			}
 		}
 		return sysctls, nil
