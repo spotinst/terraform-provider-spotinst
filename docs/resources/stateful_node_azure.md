@@ -116,6 +116,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
       gallery_name                = "galleryName"
       image_name                  = "imageName"
       version_name                = "1.1.0"
+      spot_account_id             = "act-123456"
     }
   }
   // -------------------------------------------------------------------
@@ -281,6 +282,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     snapshot_ttl_in_hours = 0
     public_ip_should_deallocate = true
     public_ip_ttl_in_hours = 0
+    should_deregister_from_lb   = true
   }
   }
   // -------------------------------------------------------------------
@@ -375,6 +377,7 @@ The following arguments are supported:
     * `gallery_name` - (Required) Name of the gallery.
     * `image_name` - (Required) Name of the gallery image.
     * `version_name` - (Required) Image's version. Can be in the format x.x.x or 'latest'.
+    * `spot_account_id` - (Optional) The Spot account ID that connected to the Azure subscription to which the gallery belongs. Relevant only in case of cross-subscription shared galleries.
   * `custom_image` - (Optional) Custom image definitions. Required if marketplace image or gallery image are not specified.
     * `custom_image_resource_group_name` - (Required) The resource group name for custom image.
     * `name` - (Required) The name of the custom image.
@@ -560,6 +563,7 @@ The following arguments are supported:
     * `snapshot_ttl_in_hours` - (Optional, Default: 96) Hours to keep the snapshots alive before deletion.
     * `public_ip_should_deallocate` - (Required) Indicates whether to delete the stateful node's public ip resources.
     * `public_ip_ttl_in_hours` - (Optional, Default: 96) Hours to keep the public ip alive before deletion.
+    * `should_deregister_from_lb` - (Optional, Default: true) Indicates whether to deregister the stateful node's VM from any type of load balancer. Can be changed to false only when shouldTerminateVms is 'false'.
 
 
 

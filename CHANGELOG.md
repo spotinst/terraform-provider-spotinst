@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.176.0 (June 7, 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `tasks` object under `gallery` attribute under `image` and `should_deregister_from_lb` under `delete`.
+
 ## 1.175.0 (May 22, 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added `tasks` object under `scheduling` block supporting schedule roll.

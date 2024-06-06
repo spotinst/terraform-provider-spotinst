@@ -613,6 +613,10 @@ func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string
 		if v, ok := m[string(stateful_node_azure.PublicIPTTLInHours)].(int); ok && v >= 0 {
 			spec.DeallocationConfig.PublicIPDeallocationConfig.TTLInHours = spotinst.Int(v)
 		}
+
+		if v, ok := m[string(stateful_node_azure.ShouldDeregisterFromLb)].(bool); ok {
+			spec.DeallocationConfig.ShouldDeregisterFromLb = spotinst.Bool(v)
+		}
 	}
 
 	return spec, nil
