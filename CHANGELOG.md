@@ -1,8 +1,8 @@
 ## Unreleased
 
-## 1.176.0 (June 7, 2024)
+## 1.176.0 (June 11, 2024)
 ENHANCEMENTS:
-* resource/spotinst_stateful_node_azure: Added `spot_account_id` object under `gallery` attribute under `image` and `should_deregister_from_lb` under `delete`.
+* resource/spotinst_stateful_node_azure: Added `spot_account_id` attribute under `gallery` object and `should_deregister_from_lb` field.
 
 ## 1.175.0 (May 22, 2024)
 ENHANCEMENTS:

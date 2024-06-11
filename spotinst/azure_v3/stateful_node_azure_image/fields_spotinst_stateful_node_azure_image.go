@@ -188,6 +188,7 @@ func flattenStatefulNodeAzureGallery(image *azure.Gallery) []interface{} {
 	result[string(GalleryName)] = spotinst.StringValue(image.GalleryName)
 	result[string(ImageName)] = spotinst.StringValue(image.ImageName)
 	result[string(VersionName)] = spotinst.StringValue(image.VersionName)
+	result[string(SpotAccountId)] = spotinst.StringValue(image.SpotAccountId)
 	return []interface{}{result}
 }
 

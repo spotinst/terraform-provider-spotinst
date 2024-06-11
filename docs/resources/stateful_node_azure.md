@@ -377,7 +377,7 @@ The following arguments are supported:
     * `gallery_name` - (Required) Name of the gallery.
     * `image_name` - (Required) Name of the gallery image.
     * `version_name` - (Required) Image's version. Can be in the format x.x.x or 'latest'.
-    * `spot_account_id` - (Optional) The Spot account ID that connected to the Azure subscription to which the gallery belongs. Relevant only in case of cross-subscription shared galleries.
+    * `spot_account_id` - (Optional) The Spot account ID that connected to the Azure subscription to which the gallery belongs. Relevant only in case of cross-subscription shared galleries. [Read more](https://docs.spot.io/elastigroup/features-azure/shared-image-galleries) about cross-subscription shared galleries in Elastigroup.
   * `custom_image` - (Optional) Custom image definitions. Required if marketplace image or gallery image are not specified.
     * `custom_image_resource_group_name` - (Required) The resource group name for custom image.
     * `name` - (Required) The name of the custom image.
