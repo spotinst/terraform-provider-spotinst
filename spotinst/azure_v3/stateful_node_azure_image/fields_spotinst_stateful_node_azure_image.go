@@ -93,6 +93,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeString,
 									Required: true,
 								},
+								string(SpotAccountId): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
 							},
 						},
 					},
@@ -184,6 +188,7 @@ func flattenStatefulNodeAzureGallery(image *azure.Gallery) []interface{} {
 	result[string(GalleryName)] = spotinst.StringValue(image.GalleryName)
 	result[string(ImageName)] = spotinst.StringValue(image.ImageName)
 	result[string(VersionName)] = spotinst.StringValue(image.VersionName)
+	result[string(SpotAccountId)] = spotinst.StringValue(image.SpotAccountId)
 	return []interface{}{result}
 }
 
@@ -296,6 +301,9 @@ func expandStatefulNodeAzureGallery(data interface{}) (*azure.Gallery, error) {
 			}
 			if v, ok := m[string(VersionName)].(string); ok && v != "" {
 				gallery.SetVersionName(spotinst.String(v))
+			}
+			if v, ok := m[string(SpotAccountId)].(string); ok && v != "" {
+				gallery.SetSpotAccountId(spotinst.String(v))
 			}
 		}
 		return gallery, nil

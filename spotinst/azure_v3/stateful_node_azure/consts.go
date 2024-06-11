@@ -31,6 +31,7 @@ const (
 	SnapshotTTLInHours       commons.FieldName = SnapshotPrefix + "ttl_in_hours"
 	ShouldDeallocatePublicIP commons.FieldName = PublicIPDeallocation + "should_deallocate"
 	PublicIPTTLInHours       commons.FieldName = PublicIPDeallocation + "ttl_in_hours"
+	ShouldDeregisterFromLb   commons.FieldName = "should_deregister_from_lb"
 )
 
 const (

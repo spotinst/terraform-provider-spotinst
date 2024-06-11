@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.176.0 (June 11, 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `spot_account_id` attribute under `gallery` object and `should_deregister_from_lb` field.
+
 ## 1.175.0 (May 22, 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added `tasks` object under `scheduling` block supporting schedule roll.

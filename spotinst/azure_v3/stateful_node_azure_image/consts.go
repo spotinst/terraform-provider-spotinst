@@ -31,4 +31,5 @@ const (
 	GalleryName              commons.FieldName = "gallery_name"
 	ImageName                commons.FieldName = "image_name"
 	VersionName              commons.FieldName = "version_name"
+	SpotAccountId            commons.FieldName = "spot_account_id"
 )
