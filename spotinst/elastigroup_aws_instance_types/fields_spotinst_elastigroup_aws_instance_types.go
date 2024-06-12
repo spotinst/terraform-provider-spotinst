@@ -116,10 +116,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var result []string
+			var result []string = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.InstanceTypes != nil &&
 				elastigroup.Compute.InstanceTypes.Spot != nil {
-				result = append(result, elastigroup.Compute.InstanceTypes.Spot...)
+				result = elastigroup.Compute.InstanceTypes.Spot
 			}
 			if err := resourceData.Set(string(Spot), result); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Spot), err)
@@ -129,27 +129,27 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(Spot)); ok {
-				spots := v.([]interface{})
-				spotTypes := make([]string, len(spots))
-				for i, j := range spots {
-					spotTypes[i] = j.(string)
+			if value, ok := resourceData.GetOk(string(Spot)); ok && value != nil {
+				if spots, err := expandSpotInstanceTypes(value); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.InstanceTypes.SetSpot(spots)
 				}
-				elastigroup.Compute.InstanceTypes.SetSpot(spotTypes)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(Spot)); ok {
-				rawSpotTypes := v.([]interface{})
-				spotTypes := make([]string, len(rawSpotTypes))
-				for i, v := range rawSpotTypes {
-					spotTypes[i] = v.(string)
+			var value []string = nil
+			if v, ok := resourceData.GetOk(string(Spot)); ok && v != nil {
+				if spots, err := expandSpotInstanceTypes(v); err != nil {
+					return err
+				} else {
+					value = spots
 				}
-				elastigroup.Compute.InstanceTypes.SetSpot(spotTypes)
 			}
+			elastigroup.Compute.InstanceTypes.SetSpot(value)
 			return nil
 		},
 		nil,
@@ -502,14 +502,33 @@ func expandResourceRequirementsList(data interface{}) ([]string, error) {
 	return result, nil
 }
 
+func expandSpotInstanceTypes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if spotInstance, ok := v.(string); ok && spotInstance != "" {
+			result = append(result, spotInstance)
+		}
+	}
+	return result, nil
+}
+
 func flattenResourceRequirements(requirements *aws.ResourceRequirements) []interface{} {
 	var out []interface{}
 
 	if requirements != nil {
 		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(RequiredGpuMinimum)] = value
+		result[string(RequiredGpuMaximum)] = value
 
-		result[string(RequiredGpuMinimum)] = spotinst.IntValue(requirements.RequiredGpu.Minimum)
-		result[string(RequiredGpuMaximum)] = spotinst.IntValue(requirements.RequiredGpu.Maximum)
+		if requirements.RequiredGpu.Minimum != nil {
+			result[string(RequiredGpuMinimum)] = spotinst.IntValue(requirements.RequiredGpu.Minimum)
+		}
+		if requirements.RequiredGpu.Maximum != nil {
+			result[string(RequiredGpuMaximum)] = spotinst.IntValue(requirements.RequiredGpu.Maximum)
+		}
 		result[string(RequiredMemoryMinimum)] = spotinst.IntValue(requirements.RequiredMemory.Minimum)
 		result[string(RequiredMemoryMaximum)] = spotinst.IntValue(requirements.RequiredMemory.Maximum)
 		result[string(RequiredVCpuMinimum)] = spotinst.IntValue(requirements.RequiredVCpu.Minimum)

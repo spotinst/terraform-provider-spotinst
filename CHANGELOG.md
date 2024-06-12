@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.176.1 (June, 12 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Fixed conflicts between `instance_types_spot` and `resource_requirements` for group updating. 
+
 ## 1.176.0 (June 11, 2024)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `spot_account_id` attribute under `gallery` object and `should_deregister_from_lb` field.
