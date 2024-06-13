@@ -71,9 +71,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
+
 			var result []string
-			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes != nil &&
-				elastigroup.Compute.VMSizes.SpotSizes != nil {
+			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes.SpotSizes != nil {
 				result = append(result, elastigroup.Compute.VMSizes.SpotSizes...)
 				if err := resourceData.Set(string(SpotSizes), result); err != nil {
 					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotSizes), err)
@@ -84,30 +84,39 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(SpotSizes)); ok {
-				virtualMachines := v.([]interface{})
-				spotSizes := make([]string, len(virtualMachines))
-				for i, j := range virtualMachines {
-					spotSizes[i] = j.(string)
+			if v, ok := resourceData.Get(string(SpotSizes)).([]interface{}); ok && v != nil {
+				if spotSizes, err := expandSpotSizes(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.VMSizes.SetSpotSizes(spotSizes)
 				}
-				elastigroup.Compute.VMSizes.SetSpotSizes(spotSizes)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(SpotSizes)); ok {
-				virtualMachines := v.([]interface{})
-				spotSizes := make([]string, len(virtualMachines))
-				for i, j := range virtualMachines {
-					spotSizes[i] = j.(string)
+			if v, ok := resourceData.Get(string(SpotSizes)).([]interface{}); ok && v != nil {
+				if spotSizes, err := expandSpotSizes(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.VMSizes.SetSpotSizes(spotSizes)
 				}
-				elastigroup.Compute.VMSizes.SetSpotSizes(spotSizes)
 			}
 			return nil
 		},
 		nil,
 	)
+}
 
+func expandSpotSizes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if spotSizes, ok := v.(string); ok && spotSizes != "" {
+			result = append(result, spotSizes)
+		}
+	}
+	return result, nil
 }
