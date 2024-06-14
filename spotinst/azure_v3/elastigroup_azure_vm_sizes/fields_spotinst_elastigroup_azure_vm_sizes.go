@@ -2,31 +2,60 @@ package elastigroup_azure_vm_sizes
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[OnDemandSizes] = commons.NewGenericField(
+	fieldsMap[VmSizes] = commons.NewGenericField(
 		commons.ElastigroupAzureVMSizes,
-		OnDemandSizes,
+		VmSizes,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Required: true,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
-			elastigroup := egWrapper.GetElastigroup()
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(OnDemandSizes): {
+						Type:     schema.TypeList,
+						Required: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
 
-			var result []string
-			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes != nil &&
-				elastigroup.Compute.VMSizes.OnDemandSizes != nil {
-				result = append(result, elastigroup.Compute.VMSizes.OnDemandSizes...)
-				if err := resourceData.Set(string(OnDemandSizes), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OnDemandSizes), err)
+					string(SpotSizes): {
+						Type:     schema.TypeList,
+						Required: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value []interface{} = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes != nil {
+				value = flattenAzureGroupSizes(elastigroup.Compute.VMSizes)
+			}
+			if err := resourceData.Set(string(VmSizes), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VmSizes), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(VmSizes)); ok {
+				if vmSize, err := expandAzureGroupSizes(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetVMSizes(vmSize)
 				}
 			}
 			return nil
@@ -34,81 +63,71 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(OnDemandSizes)); ok {
-				virtualMachines := v.([]interface{})
-				onDemandSizes := make([]string, len(virtualMachines))
-				for i, j := range virtualMachines {
-					onDemandSizes[i] = j.(string)
+			if v, ok := resourceData.GetOk(string(VmSizes)); ok {
+				if vmSize, err := expandAzureGroupSizes(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetVMSizes(vmSize)
 				}
-				elastigroup.Compute.VMSizes.SetOnDemandSizes(onDemandSizes)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(OnDemandSizes)); ok {
-				virtualMachines := v.([]interface{})
-				onDemandSizes := make([]string, len(virtualMachines))
-				for i, j := range virtualMachines {
-					onDemandSizes[i] = j.(string)
-				}
-				elastigroup.Compute.VMSizes.SetOnDemandSizes(onDemandSizes)
 			}
 			return nil
 		},
 		nil,
 	)
 
-	fieldsMap[SpotSizes] = commons.NewGenericField(
-		commons.ElastigroupAzureVMSizes,
-		SpotSizes,
-		&schema.Schema{
-			Type:     schema.TypeList,
-			Required: true,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
-			elastigroup := egWrapper.GetElastigroup()
+}
 
-			var result []string
-			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes.SpotSizes != nil {
-				result = append(result, elastigroup.Compute.VMSizes.SpotSizes...)
-				if err := resourceData.Set(string(SpotSizes), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(SpotSizes), err)
-				}
+func flattenAzureGroupSizes(vmSizes *azurev3.VMSizes) []interface{} {
+	result := make(map[string]interface{})
+	if len(vmSizes.OnDemandSizes) > 0 {
+		result[string(OnDemandSizes)] = vmSizes.OnDemandSizes
+	}
+	if len(vmSizes.SpotSizes) > 0 {
+		result[string(SpotSizes)] = vmSizes.SpotSizes
+	}
+	return []interface{}{result}
+}
+
+func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
+	vmSizes := &azurev3.VMSizes{}
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(OnDemandSizes)]; ok && v != nil {
+			onDemandSizes, err := expandOnDemandSizes(v)
+			if err != nil {
+				return nil, err
 			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			if value, ok := resourceData.GetOk(string(SpotSizes)); ok {
-				if spotSizes, err := expandSpotSizes(value); err != nil {
-					return err
-				} else {
-					elastigroup.Compute.VMSizes.SetSpotSizes(spotSizes)
-				}
+			if onDemandSizes != nil {
+				vmSizes.SetOnDemandSizes(onDemandSizes)
 			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			if value, ok := resourceData.GetOk(string(SpotSizes)); ok {
-				if spotSizes, err := expandSpotSizes(value); err != nil {
-					return err
-				} else {
-					elastigroup.Compute.VMSizes.SetSpotSizes(spotSizes)
-				}
-			} else {
-				elastigroup.Compute.VMSizes.SetSpotSizes(nil)
+		}
+
+		if v, ok := m[string(SpotSizes)]; ok && v != nil {
+			spotSizes, err := expandSpotSizes(v)
+			if err != nil {
+				return nil, err
 			}
-			return nil
-		},
-		nil,
-	)
+			if spotSizes != nil {
+				vmSizes.SetSpotSizes(spotSizes)
+			}
+		}
+
+	}
+	return vmSizes, nil
+}
+
+func expandOnDemandSizes(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if clusterIds, ok := v.(string); ok && clusterIds != "" {
+			result = append(result, clusterIds)
+		}
+	}
+	return result, nil
 }
 
 func expandSpotSizes(data interface{}) ([]string, error) {
@@ -116,8 +135,8 @@ func expandSpotSizes(data interface{}) ([]string, error) {
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
-		if spotSizes, ok := v.(string); ok && spotSizes != "" {
-			result = append(result, spotSizes)
+		if clusterIds, ok := v.(string); ok && clusterIds != "" {
+			result = append(result, clusterIds)
 		}
 	}
 	return result, nil
