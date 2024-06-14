@@ -84,7 +84,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.Get(string(SpotSizes)).([]interface{}); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(SpotSizes)); ok {
 				if spotSizes, err := expandSpotSizes(v); err != nil {
 					return err
 				} else {
@@ -96,7 +96,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.Get(string(SpotSizes)).([]interface{}); ok && v != nil {
+			if v, ok := resourceData.GetOk(string(SpotSizes)); ok {
 				if spotSizes, err := expandSpotSizes(v); err != nil {
 					return err
 				} else {
