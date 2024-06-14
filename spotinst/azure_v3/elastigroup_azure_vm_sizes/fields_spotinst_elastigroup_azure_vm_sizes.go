@@ -39,23 +39,28 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var value []interface{} = nil
-			if elastigroup.Compute != nil && elastigroup.Compute.VMSizes != nil {
-				value = flattenAzureGroupSizes(elastigroup.Compute.VMSizes)
+			var result []interface{} = nil
+			if elastigroup != nil && elastigroup.Compute != nil && elastigroup.Compute.VMSizes != nil {
+				vmSizes := elastigroup.Compute.VMSizes
+				result = flattenAzureGroupSizes(vmSizes)
 			}
-			if err := resourceData.Set(string(VmSizes), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VmSizes), err)
+
+			if result != nil {
+				if err := resourceData.Set(string(VmSizes), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VmSizes), err)
+				}
 			}
+
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.GetOk(string(VmSizes)); ok {
-				if vmSize, err := expandAzureGroupSizes(v); err != nil {
+				if vmSizes, err := expandAzureGroupSizes(v); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.SetVMSizes(vmSize)
+					elastigroup.Compute.SetVMSizes(vmSizes)
 				}
 			}
 			return nil
@@ -63,18 +68,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
 			elastigroup := egWrapper.GetElastigroup()
+			var value *azurev3.VMSizes = nil
 			if v, ok := resourceData.GetOk(string(VmSizes)); ok {
-				if vmSize, err := expandAzureGroupSizes(v); err != nil {
+				if vmSizes, err := expandAzureGroupSizes(v); err != nil {
 					return err
 				} else {
-					elastigroup.Compute.SetVMSizes(vmSize)
+					value = vmSizes
 				}
+
 			}
+			elastigroup.Compute.SetVMSizes(value)
 			return nil
 		},
 		nil,
 	)
-
 }
 
 func flattenAzureGroupSizes(vmSizes *azurev3.VMSizes) []interface{} {
@@ -123,8 +130,8 @@ func expandOnDemandSizes(data interface{}) ([]string, error) {
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
-		if clusterIds, ok := v.(string); ok && clusterIds != "" {
-			result = append(result, clusterIds)
+		if odSizes, ok := v.(string); ok {
+			result = append(result, odSizes)
 		}
 	}
 	return result, nil
@@ -135,8 +142,8 @@ func expandSpotSizes(data interface{}) ([]string, error) {
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
-		if clusterIds, ok := v.(string); ok && clusterIds != "" {
-			result = append(result, clusterIds)
+		if spotSizes, ok := v.(string); ok {
+			result = append(result, spotSizes)
 		}
 	}
 	return result, nil
