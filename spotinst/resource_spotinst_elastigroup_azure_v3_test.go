@@ -540,9 +540,10 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "standard_a1_v2"),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_a1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
 				),
 			},
 			{
@@ -554,9 +555,10 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "standard_a1_v2"),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_a1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
 				),
 			},
 		},

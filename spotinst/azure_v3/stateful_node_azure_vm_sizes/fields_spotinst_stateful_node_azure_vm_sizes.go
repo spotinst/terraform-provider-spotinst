@@ -119,7 +119,7 @@ func expandStatefulNodeAzureVmSizes(data interface{}) (*azure.VMSizes, error) {
 		m := list[0].(map[string]interface{})
 
 		if v, ok := m[string(OnDemandSizes)]; ok && v != nil {
-			onDemandSizes, err := expandSizes(v)
+			onDemandSizes, err := expandStatefulNodeAzureSizes(v)
 			if err != nil {
 				return nil, err
 			}
@@ -129,7 +129,7 @@ func expandStatefulNodeAzureVmSizes(data interface{}) (*azure.VMSizes, error) {
 		}
 
 		if v, ok := m[string(SpotSizes)]; ok && v != nil {
-			spotSizes, err := expandSizes(v)
+			spotSizes, err := expandStatefulNodeAzureSizes(v)
 			if err != nil {
 				return nil, err
 			}
@@ -138,23 +138,23 @@ func expandStatefulNodeAzureVmSizes(data interface{}) (*azure.VMSizes, error) {
 			}
 		}
 
-		if v, ok := m[string(PreferredSpotSizes)]; ok && v != nil {
-			prefferedSpotSizes, err := expandSizes(v)
+		if v, ok := m[string(PreferredSpotSizes)]; ok {
+			prefferedSpotSizes, err := expandStatefulNodeAzureSizes(v)
 			if err != nil {
 				return nil, err
 			}
-			if prefferedSpotSizes != nil {
+
+			if prefferedSpotSizes != nil && len(prefferedSpotSizes) > 0 {
 				vmSizes.SetPreferredSpotSizes(prefferedSpotSizes)
 			} else {
 				vmSizes.SetPreferredSpotSizes(nil)
 			}
 		}
-
 	}
 	return vmSizes, nil
 }
 
-func expandSizes(data interface{}) ([]string, error) {
+func expandStatefulNodeAzureSizes(data interface{}) ([]string, error) {
 	list := data.([]interface{})
 	result := make([]string, 0, len(list))
 
