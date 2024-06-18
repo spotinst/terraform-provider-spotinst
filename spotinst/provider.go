@@ -59,8 +59,6 @@ func Provider() *schema.Provider {
 			string(commons.OceanGKELaunchSpecImportResourceName):   resourceSpotinstOceanGKELaunchSpecImport(),
 			string(commons.OceanECSResourceName):                   resourceSpotinstOceanECS(),
 			string(commons.OceanECSLaunchSpecResourceName):         resourceSpotinstOceanECSLaunchSpec(),
-			string(commons.OceanAKSResourceName):                   resourceSpotinstOceanAKS(),
-			string(commons.OceanAKSVirtualNodeGroupResourceName):   resourceSpotinstOceanAKSVirtualNodeGroup(),
 			string(commons.OceanAKSNPResourceName):                 resourceSpotinstOceanAKSNP(),
 			string(commons.OceanAKSNPVirtualNodeGroupResourceName): resourceSpotinstOceanAKSNPVirtualNodeGroup(),
 
