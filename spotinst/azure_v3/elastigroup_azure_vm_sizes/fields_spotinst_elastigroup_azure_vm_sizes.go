@@ -102,7 +102,7 @@ func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
 		m := list[0].(map[string]interface{})
 
 		if v, ok := m[string(OnDemandSizes)]; ok && v != nil {
-			onDemandSizes, err := expandOnDemandSizes(v)
+			onDemandSizes, err := expandSizes(v)
 			if err != nil {
 				return nil, err
 			}
@@ -112,7 +112,7 @@ func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
 		}
 
 		if v, ok := m[string(SpotSizes)]; ok && v != nil {
-			spotSizes, err := expandSpotSizes(v)
+			spotSizes, err := expandSizes(v)
 			if err != nil {
 				return nil, err
 			}
@@ -125,25 +125,13 @@ func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
 	return vmSizes, nil
 }
 
-func expandOnDemandSizes(data interface{}) ([]string, error) {
+func expandSizes(data interface{}) ([]string, error) {
 	list := data.([]interface{})
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
 		if odSizes, ok := v.(string); ok {
 			result = append(result, odSizes)
-		}
-	}
-	return result, nil
-}
-
-func expandSpotSizes(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if spotSizes, ok := v.(string); ok {
-			result = append(result, spotSizes)
 		}
 	}
 	return result, nil
