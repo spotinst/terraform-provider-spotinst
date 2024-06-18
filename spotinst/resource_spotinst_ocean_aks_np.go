@@ -3,13 +3,6 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"log"
-
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
-
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_vm_sizes"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np"
@@ -18,7 +11,10 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_health"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_count_limits"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_pool_properties"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_strategy"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_vm_sizes"
+	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -255,8 +251,8 @@ func rollOceanAKSCluster(resourceData *schema.ResourceData, meta interface{}) er
 		}
 
 		log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, rollJSON)
-		rollInput := &azure.CreateRollInput{Roll: rollSpec}
-		if _, err = meta.(*Client).ocean.CloudProviderAzure().CreateRoll(context.TODO(), rollInput); err != nil {
+		rollInput := &azure_np.CreateRollInput{Roll: rollSpec}
+		if _, err = meta.(*Client).ocean.CloudProviderAzureNP().CreateRoll(context.TODO(), rollInput); err != nil {
 			return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
 		}
 		log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
@@ -264,9 +260,9 @@ func rollOceanAKSCluster(resourceData *schema.ResourceData, meta interface{}) er
 
 	return nil
 }
-func expandOceanAKSClusterRollConfig(data interface{}, clusterID string) (*azure.RollSpec, error) {
+func expandOceanAKSClusterRollConfig(data interface{}, clusterID string) (*azure_np.RollSpec, error) {
 	list := data.([]interface{})
-	spec := &azure.RollSpec{
+	spec := &azure_np.RollSpec{
 		ClusterID: spotinst.String(clusterID),
 	}
 

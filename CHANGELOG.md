@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.177.0 (June, 18 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks: Removed support for `spotinst_ocean_aks` resource as the api's are deprecated.
+
 ## 1.176.1 (June, 12 2024)
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: Fixed conflicts between `instance_types_spot` and `resource_requirements` for group updating. 
