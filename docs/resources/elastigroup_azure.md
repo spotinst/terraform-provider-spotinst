@@ -26,8 +26,10 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   // -------------------------------------------------------------------
 
   // --- INSTANCE TYPES ------------------------------------------------
-  od_sizes   = ["standard_a1_v1", "standard_a1_v2"]
-  spot_sizes = ["standard_a1_v1", "standard_a1_v2"]
+   vm_sizes {
+       od_sizes   = ["standard_a1_v1","standard_a1_v2"]
+       spot_sizes = ["standard_a1_v1","standard_a1_v2"]
+   }
   // -------------------------------------------------------------------
 
   // --- LAUNCH SPEC ---------------------------------------------------
@@ -117,8 +119,9 @@ The following arguments are supported:
 * `tags` - (Optional) Key-Value pairs for VMs in the Elastigroup.
     * `key` - (Required) Tag Key for Vms in Elastigroup.
     * `value` - (Required) Tag Value for Vms in Elastigroup.
-* `od_sizes` - (Required) Available On-Demand sizes
-* `spot_sizes` - (Required) Available Low-Priority sizes.
+* `vm_sizes` - (Required) Sizes of On-Demand and Low-Priority VMs.
+    * `od_sizes` - (Required) Available On-Demand sizes
+    * `spot_sizes` - (Required) Available Low-Priority sizes.
 
 <a id="strategy"></a>
 ## Strategy

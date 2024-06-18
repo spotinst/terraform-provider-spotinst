@@ -565,15 +565,19 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 
 const testAzureV3VMSizesGroupConfig_Create = `
 // --- VM SIZES --------------------------------------------
-  od_sizes = ["standard_a1_v2"]
-  spot_sizes = ["standard_a1_v2"]
+   vm_sizes{  
+     od_sizes = ["standard_a1_v2"]
+     spot_sizes = ["standard_a1_v2"]
+   }
 // ---------------------------------------------------------
 `
 
 const testAzureV3VMSizesGroupConfig_Update = `
 // --- VM SIZES --------------------------------
-  od_sizes = ["standard_a1_v2"]
-  spot_sizes = ["standard_a1_v2"]
+   vm_sizes{  
+     od_sizes = ["standard_a1_v2"]
+     spot_sizes = ["standard_a1_v2"]
+   }
 // ---------------------------------------------
 `
 
