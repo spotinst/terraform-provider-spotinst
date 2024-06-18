@@ -14,8 +14,6 @@ exclude_files=(
 	"docs/resources/elastigroup_gke.md"
 	"docs/resources/health_check.md"
 	"docs/resources/stateful_node_aws.md"
-	"docs/resources/ocean_aks.md"
-	"docs/resources/ocean_aks_virtual_node_group.md"
 	"docs/resources/mrscaler_aws.md"
 	"docs/resources/ocean_aws.md"
 	"docs/resources/ocean_aws_launch_spec.md"
