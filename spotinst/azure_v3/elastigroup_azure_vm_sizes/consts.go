@@ -7,10 +7,7 @@ const (
 )
 
 const (
-	VmSizes commons.FieldName = "vm_sizes"
-)
-
-const (
+	VmSizes       commons.FieldName = "vm_sizes"
 	OnDemandSizes commons.FieldName = "od_sizes"
 	SpotSizes     commons.FieldName = "spot_sizes"
 )
