@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.178.0 (June, 20 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added `preferred_od_types` field to support preferredOnDemandTypes list in vng.
+
 ## 1.177.0 (June, 18 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks: Removed support for `spotinst_ocean_aks` resource as the api's are deprecated.

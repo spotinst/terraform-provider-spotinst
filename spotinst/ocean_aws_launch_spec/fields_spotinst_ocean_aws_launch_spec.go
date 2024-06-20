@@ -1105,7 +1105,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			if v, ok := resourceData.GetOk(string(PreferredSpotTypes)); ok {
-				if preferredSpotTypes, err := expandPreferredSpotTypes(v); err != nil {
+				if preferredSpotTypes, err := expandInstanceTypes(v); err != nil {
 					return err
 				} else {
 					launchSpec.SetPreferredSpotTypes(preferredSpotTypes)
@@ -1914,6 +1914,56 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[PreferredOnDemandTypes] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		PreferredOnDemandTypes,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value []string = nil
+			if launchSpec.PreferredOnDemandTypes != nil {
+				value = launchSpec.PreferredOnDemandTypes
+			}
+			if err := resourceData.Set(string(PreferredOnDemandTypes), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredOnDemandTypes), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(PreferredOnDemandTypes)); ok {
+				if preferredOdDemandTypes, err := expandInstanceTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetPreferredOnDemandTypes(preferredOdDemandTypes)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(PreferredOnDemandTypes)); ok {
+				if preferredOdDemandTypes, err := expandInstanceTypes(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetPreferredOnDemandTypes(preferredOdDemandTypes)
+				}
+			} else {
+				launchSpec.SetPreferredOnDemandTypes(nil)
+			}
+
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -2117,18 +2167,6 @@ func expandInstanceTypes(data interface{}) ([]string, error) {
 	for _, v := range list {
 		if instanceTypes, ok := v.(string); ok && instanceTypes != "" {
 			result = append(result, instanceTypes)
-		}
-	}
-	return result, nil
-}
-
-func expandPreferredSpotTypes(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if preferredSpotTypes, ok := v.(string); ok && preferredSpotTypes != "" {
-			result = append(result, preferredSpotTypes)
 		}
 	}
 	return result, nil

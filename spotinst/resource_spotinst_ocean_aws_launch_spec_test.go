@@ -170,6 +170,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_types.2", "m5.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.0", "m3.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_od_types.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_od_types.0", "m4.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world")),
@@ -206,6 +208,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.0", "m3.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "preferred_spot_types.1", "m4.xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_od_types.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_od_types.0", "m4.2xlarge"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_od_types.1", "m3.2xlarge"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.0", "sg-0041bd3fd6aa2ee3c"),
 					resource.TestCheckResourceAttr(resourceName, "security_groups.1", "sg-0195f2ac3a6014a15"),
@@ -242,6 +247,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   subnet_ids = ["subnet-4333093a"]
   instance_types = ["m3.xlarge", "m4.2xlarge", "m5.2xlarge"]
   preferred_spot_types = ["m3.xlarge"]
+  preferred_od_types = ["m4.2xlarge"]
   root_volume_size = 20 
   associate_public_ip_address = true
   restrict_scale_down = true
@@ -272,6 +278,7 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   subnet_ids = ["subnet-4333093a", "subnet-8ab89cc1"]
   instance_types = ["m3.2xlarge", "m4.xlarge", "m4.2xlarge", "m5.xlarge", "m5.2xlarge"]
   preferred_spot_types = ["m3.2xlarge","m4.xlarge"]
+  preferred_od_types = ["m4.2xlarge", "m3.2xlarge"]
   security_groups = ["sg-0041bd3fd6aa2ee3c","sg-0195f2ac3a6014a15" ]
   root_volume_size = 30
   name = "launch spec name test update"
