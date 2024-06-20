@@ -544,6 +544,7 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_a1_v2"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_a1_v2"),
 				),
 			},
 			{
@@ -559,6 +560,7 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_a1_v2"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_a1_v2"),
 				),
 			},
 		},
