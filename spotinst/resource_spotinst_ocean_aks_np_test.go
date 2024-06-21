@@ -231,6 +231,9 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79550"),
 				),
 			},
 			{
@@ -254,6 +257,9 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.2", "3"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79551"),
 				),
 			},
 		},
@@ -292,7 +298,11 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   kubernetes_version    = "1.27"
   //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
-
+  linux_os_config {
+   sysctls {
+     vm_max_map_count = 79550
+   }
+  }
   // --- strategy ---------------------------------------------------------
 
   spot_percentage      = 50
@@ -346,7 +356,11 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   kubernetes_version    = "1.27"
   //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   // ----------------------------------------------------------------------
-
+  linux_os_config {
+   sysctls {
+     vm_max_map_count = 79551
+   }
+  }
   // --- strategy ---------------------------------------------------------
 
   spot_percentage      = 100
@@ -524,6 +538,18 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.cron_expression", "0 1 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_min_healthy_percentage", "80"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_size_percentage", "20"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "Scheduled cluster roll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_restrict_scale_down", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.vng_ids.0", "vng123"),
 				),
 			},
 			{
@@ -540,6 +566,16 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.0", "Sat:08:00-Sun:08:00"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.cron_expression", "0 2 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.task_type", "clusterRoll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_min_healthy_percentage", "70"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_size_percentage", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "Scheduled cluster roll_updated"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_restrict_scale_down", "false"),
 				),
 			},
 			{
@@ -563,7 +599,21 @@ const testSchedulingOceanAKSNPConfig_Create = `
   scheduling {
     shutdown_hours{
       is_enabled   = false
-      time_windows = ["Sat:08:00-Sun:08:00"]
+    }
+  tasks {
+      is_enabled      = true
+      cron_expression = "0 1 * * *"
+      task_type       = "clusterRoll"
+      parameters  {
+        parameters_cluster_roll{
+          batch_min_healthy_percentage = 80
+          batch_size_percentage = 20
+          comment = "Scheduled cluster roll"
+          respect_pdb = true
+          respect_restrict_scale_down=true
+          vng_ids=["vng123"]
+        }
+      }
     }
   }
   // -------------------------------------------------------------------
@@ -575,6 +625,20 @@ const testSchedulingOceanAKSNPConfig_Update = `
     shutdown_hours{
       is_enabled   = true
       time_windows = ["Sat:08:00-Sun:08:00"]
+    }
+    tasks {
+      is_enabled      = false
+      cron_expression = "0 2 * * *"
+      task_type       = "clusterRoll"
+      parameters  {
+        parameters_cluster_roll{
+          batch_min_healthy_percentage = 70
+          batch_size_percentage = 10
+          comment = "Scheduled cluster roll_updated"
+          respect_pdb = false
+          respect_restrict_scale_down=false
+        }
+      }
     }
   }
   // -------------------------------------------------------------------
