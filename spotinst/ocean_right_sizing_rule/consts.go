@@ -1,10 +1,10 @@
-package ocean_aws_right_sizing_rule
+package ocean_right_sizing_rule
 
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	OceanId     commons.FieldName = "ocean_id"
-	Name        commons.FieldName = "name"
+	RuleName    commons.FieldName = "rule_name"
 	RestartPods commons.FieldName = "restart_pods"
 
 	RecommendationApplicationIntervals  commons.FieldName = "recommendation_application_intervals"
@@ -35,18 +35,18 @@ const (
 	OverheadCpuPercentage                   commons.FieldName = "cpu_percentage"
 	OverheadMemoryPercentage                commons.FieldName = "memory_percentage"
 
-	AttachWorkloads commons.FieldName = "attach_workloads"
-	Namespaces      commons.FieldName = "namespaces"
-	NamespaceName   commons.FieldName = "namespace_name"
-	Workloads       commons.FieldName = "workloads"
-	WorkloadName    commons.FieldName = "workload_name"
-	WorkloadType    commons.FieldName = "workload_type"
-	RegexName       commons.FieldName = "regex_name"
-	Labels          commons.FieldName = "labels"
-	Key             commons.FieldName = "key"
-	Value           commons.FieldName = "value"
+	AttachRightSizingRule commons.FieldName = "attach_workloads"
+	Namespaces            commons.FieldName = "namespaces"
+	NamespaceName         commons.FieldName = "namespace_name"
+	Workloads             commons.FieldName = "workloads"
+	WorkloadName          commons.FieldName = "workload_name"
+	WorkloadType          commons.FieldName = "workload_type"
+	RegexName             commons.FieldName = "regex_name"
+	Labels                commons.FieldName = "labels"
+	Key                   commons.FieldName = "key"
+	Value                 commons.FieldName = "value"
 
-	DetachWorkloads        commons.FieldName = "detach_workloads"
+	DetachRightSizingRule  commons.FieldName = "detach_workloads"
 	NamespacesForDetach    commons.FieldName = "namespaces"
 	NamespaceNameForDetach commons.FieldName = "namespace_name"
 	WorkloadsForDetach     commons.FieldName = "workloads"

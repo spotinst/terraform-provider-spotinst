@@ -34,7 +34,7 @@ const (
 
 	OceanAWSExtendedResourceDefinition ResourceAffinity = "Ocean_AWS_Extended_Resource_Definition"
 
-	OceanAWSRightSizingRule ResourceAffinity = "Ocean_AWS_Right_Sizing_Rule"
+	OceanRightSizingRule ResourceAffinity = "Ocean_Right_Sizing_Rule"
 
 	OceanGKE                          ResourceAffinity = "Ocean_GKE"
 	OceanGKEImport                    ResourceAffinity = "Ocean_GKE_Import"

@@ -10,11 +10,9 @@ require (
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/sethvargo/go-password v0.2.0
-	github.com/spotinst/spotinst-sdk-go v1.356.0
+	github.com/spotinst/spotinst-sdk-go v1.358.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 )
-
-replace github.com/spotinst/spotinst-sdk-go v1.342.0 => /home/pritish/Documents/GitHub/spotinst-sdk-go
 
 require (
 	cloud.google.com/go v0.65.0 // indirect

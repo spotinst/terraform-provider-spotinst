@@ -2,46 +2,45 @@ package commons
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/aws"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/right_sizing"
+	"log"
 )
 
 const (
-	OceanAWSRightSizingRuleResourceName ResourceName = "spotinst_ocean_aws_right_sizing_rule"
+	OceanRightSizingRuleResourceName ResourceName = "spotinst_ocean_right_sizing_rule"
 )
 
-var OceanAWSRightSizingRuleResource *OceanAWSRightSizingRuleTerraformResource
+var OceanRightSizingRuleResource *OceanRightSizingRuleTerraformResource
 
-type OceanAWSRightSizingRuleTerraformResource struct {
+type OceanRightSizingRuleTerraformResource struct {
 	GenericResource
 }
 
 type RightSizingRuleWrapper struct {
-	rightSizingRule *aws.RightSizingRule
+	rightSizingRule *right_sizing.RightsizingRule
 }
 
-// NewOceanAWSRightSizingRuleResource creates a new OceanAWSRightRuleSizing resource
-func NewOceanAWSRightSizingRuleResource(fieldMap map[FieldName]*GenericField) *OceanAWSRightSizingRuleTerraformResource {
-	return &OceanAWSRightSizingRuleTerraformResource{
+// NewOceanRightSizingRuleResource creates a new OceanRightRuleSizing resource
+func NewOceanRightSizingRuleResource(fieldMap map[FieldName]*GenericField) *OceanRightSizingRuleTerraformResource {
+	return &OceanRightSizingRuleTerraformResource{
 		GenericResource: GenericResource{
-			resourceName: OceanAWSRightSizingRuleResourceName,
+			resourceName: OceanRightSizingRuleResourceName,
 			fields:       NewGenericFields(fieldMap),
 		},
 	}
 }
 
-// OnCreate is called when creating a new resource block and returns a new OceanAWSExtendedResourceDefinition or an error.
-func (res *OceanAWSRightSizingRuleTerraformResource) OnCreate(
+// OnCreate is called when creating a new resource block and returns a new OceanRightSizingRuleResourceDefinition or an error.
+func (res *OceanRightSizingRuleTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*aws.RightSizingRule, error) {
+	meta interface{}) (*right_sizing.RightsizingRule, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	rsrWrapper := NewOceanAWSRightSizingRuleWrapper()
+	rsrWrapper := NewOceanRightSizingRuleWrapper()
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
@@ -51,12 +50,12 @@ func (res *OceanAWSRightSizingRuleTerraformResource) OnCreate(
 			return nil, err
 		}
 	}
-	return rsrWrapper.GetOceanAWSRightSizingRule(), nil
+	return rsrWrapper.GetOceanRightSizingRule(), nil
 }
 
 // OnRead is called when reading an existing resource and throws an error if it is unable to do so.
-func (res *OceanAWSRightSizingRuleTerraformResource) OnRead(
-	rightSizingRule *aws.RightSizingRule,
+func (res *OceanRightSizingRuleTerraformResource) OnRead(
+	rightSizingRule *right_sizing.RightsizingRule,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -64,8 +63,8 @@ func (res *OceanAWSRightSizingRuleTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
-	rsrWrapper := NewOceanAWSRightSizingRuleWrapper()
-	rsrWrapper.SetOceanAWSRightSizingRule(rightSizingRule)
+	rsrWrapper := NewOceanRightSizingRuleWrapper()
+	rsrWrapper.SetOceanRightSizingRule(rightSizingRule)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
@@ -80,15 +79,15 @@ func (res *OceanAWSRightSizingRuleTerraformResource) OnRead(
 }
 
 // OnUpdate is called when updating an existing resource and returns
-// an extendedResourceDefinition with a bool indicating if had been updated, or an error.
-func (res *OceanAWSRightSizingRuleTerraformResource) OnUpdate(
+// an rightSizingResource with a bool indicating if had been updated, or an error.
+func (res *OceanRightSizingRuleTerraformResource) OnUpdate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (bool, *aws.RightSizingRule, error) {
+	meta interface{}) (bool, *right_sizing.RightsizingRule, error) {
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	rsrWrapper := NewOceanAWSRightSizingRuleWrapper()
+	rsrWrapper := NewOceanRightSizingRuleWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -103,23 +102,23 @@ func (res *OceanAWSRightSizingRuleTerraformResource) OnUpdate(
 		}
 	}
 
-	return hasChanged, rsrWrapper.GetOceanAWSRightSizingRule(), nil
+	return hasChanged, rsrWrapper.GetOceanRightSizingRule(), nil
 }
 
-// NewOceanAWSRightSizingRuleWrapper Spotinst RightSizingRule must have a wrapper struct.
+// NewOceanRightSizingRuleWrapper Spotinst RightSizingRule must have a wrapper struct.
 // the wrapper struct is intended to help reflect the field states into the RightSizingRule object properly.
-func NewOceanAWSRightSizingRuleWrapper() *RightSizingRuleWrapper {
+func NewOceanRightSizingRuleWrapper() *RightSizingRuleWrapper {
 	return &RightSizingRuleWrapper{
-		rightSizingRule: &aws.RightSizingRule{},
+		rightSizingRule: &right_sizing.RightsizingRule{},
 	}
 }
 
-// GetOceanAWSRightSizingRule returns a wrapped OceanAWSRightSizingRule
-func (rsrWrapper *RightSizingRuleWrapper) GetOceanAWSRightSizingRule() *aws.RightSizingRule {
+// GetOceanRightSizingRule returns a wrapped OceanRightSizingRule
+func (rsrWrapper *RightSizingRuleWrapper) GetOceanRightSizingRule() *right_sizing.RightsizingRule {
 	return rsrWrapper.rightSizingRule
 }
 
-// SetOceanAWSRightSizingRule  applies rightSizingRule fields to the rightSizingRule wrapper.
-func (rsrWrapper *RightSizingRuleWrapper) SetOceanAWSRightSizingRule(rsr *aws.RightSizingRule) {
+// SetOceanRightSizingRule  applies rightSizingRule fields to the rightSizingRule wrapper.
+func (rsrWrapper *RightSizingRuleWrapper) SetOceanRightSizingRule(rsr *right_sizing.RightsizingRule) {
 	rsrWrapper.rightSizingRule = rsr
 }

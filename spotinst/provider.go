@@ -104,8 +104,8 @@ func Provider() *schema.Provider {
 			// AWS set credential
 			string(commons.CredentialsAWSResourceName): resourceSpotinstCredentialsAWS(),
 
-			// AWS set credential
-			string(commons.OceanAWSRightSizingRuleResourceName): resourceSpotinstOceanAWSRightSizingRule(),
+			// Ocean Rightsizing rule
+			string(commons.OceanRightSizingRuleResourceName): resourceSpotinstOceanRightSizingRule(),
 
 			//OceanCD Verification Provider
 			string(commons.OceanCDVerificationProviderResourceName): resourceSpotinstOceanCDVerificationProvider(),
