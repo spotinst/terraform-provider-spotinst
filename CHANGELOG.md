@@ -1,5 +1,14 @@
 ## Unreleased
 
+## 1.179.0 (June, 27 2024)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_right_sizing_rule`
+* NOTE: This is internal release. It is not expected to be used by customers.
+
+## 1.178.0 (June, 20 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added `preferred_od_types` field to support preferredOnDemandTypes list in vng.
+
 ## 1.177.0 (June, 18 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks: Removed support for `spotinst_ocean_aks` resource as the api's are deprecated.
