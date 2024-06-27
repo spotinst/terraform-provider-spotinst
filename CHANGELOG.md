@@ -3,7 +3,7 @@
 ## 1.179.0 (June, 27 2024)
 FEATURES:
 * **New Resource:** `resource/spotinst_ocean_right_sizing_rule`
-* NOTE: This release is for internal use to implement crossplane provider and published without documentation.
+* NOTE: This is internal release. It is not expected to be used by customers.
 
 ## 1.178.0 (June, 20 2024)
 ENHANCEMENTS:
