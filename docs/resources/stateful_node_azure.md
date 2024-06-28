@@ -44,9 +44,11 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
 
   // --- COMPUTE -------------------------------------------------------
   os                   = "Linux"
-  od_sizes             = ["standard_ds1_v2", "standard_ds2_v2"]
-  spot_sizes           = ["standard_ds1_v2", "standard_ds2_v2"]
-  preferred_spot_sizes = ["standard_ds1_v2"]
+  vm_sizes {
+    od_sizes             = ["standard_ds1_v2", "standard_ds2_v2"]
+    spot_sizes           = ["standard_ds1_v2", "standard_ds2_v2"]
+    preferred_spot_sizes = ["standard_ds1_v2"]
+  }
   zones                = ["1","3"]
   preferred_zone      = "1"
   custom_data          = ""
@@ -323,9 +325,10 @@ The following arguments are supported:
 ## Compute
 
 * `os` - (Required, Enum `"Linux", "Windows"`) Type of operating system.
-* `od_sizes` - (Required) Available On-Demand sizes.
-* `spot_sizes` - (Required) Available Spot-VM sizes.
-* `preferred_spot_sizes` - (Optional) Prioritize Spot VM sizes when launching Spot VMs for the group. If set, must be a sublist of compute.vmSizes.spotSizes.
+* `vm_sizes` - (Required) Defines the VM sizes to use when launching VMs.
+    * `od_sizes` - (Required) Available On-Demand sizes.
+    * `spot_sizes` - (Required) Available Spot-VM sizes.
+    * `preferred_spot_sizes` - (Optional) Prioritize Spot VM sizes when launching Spot VMs for the group. If set, must be a sublist of compute.vmSizes.spotSizes.
 * `zones` - (Optional, Enum `"1", "2", "3"`) List of Azure Availability Zones in the defined region. If not defined, Virtual machines will be launched regionally.
 * `preferred_zone` - (Optional, Enum `"1", "2", "3"`) The AZ to prioritize when launching VMs. If no markets are available in the Preferred AZ, VMs are launched in the non-preferred AZ. Must be a sublist of compute.zones.
 * `custom_data` - (Optional) This value will hold the YAML in base64 and will be executed upon VM launch.
