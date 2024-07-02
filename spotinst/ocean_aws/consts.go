@@ -34,3 +34,11 @@ const (
 	BatchMinHealthyPercentage commons.FieldName = "batch_min_healthy_percentage"
 	RespectPDB                commons.FieldName = "respect_pdb"
 )
+
+const (
+	AttachLoadBalancer commons.FieldName = "attach_load_balancer"
+	LoadBalancerArn    commons.FieldName = "arn"
+	LoadBalancerName   commons.FieldName = "name"
+	LoadBalancerType   commons.FieldName = "type"
+	DetachLoadBalancer commons.FieldName = "detach_load_balancer"
+)

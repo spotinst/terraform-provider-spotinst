@@ -3,24 +3,20 @@ package spotinst
 import (
 	"context"
 	"fmt"
-	"log"
-
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np"
-
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_vm_sizes"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_auto_scale"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_node_count_limits"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_node_pool_properties"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_strategy"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_vm_sizes"
+	"log"
 )
 
 func resourceSpotinstOceanAKSNPVirtualNodeGroup() *schema.Resource {
@@ -101,7 +97,7 @@ const ErrCodeAKSNPVirtualNodeGroupNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
 
 func resourceSpotinstOceanAKSNPVirtualNodeGroupRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	virtualNodeGroupID := resourceData.Id()
-	log.Printf(string(commons.ResourceOnRead), commons.OceanAKSVirtualNodeGroupResource.GetName(), virtualNodeGroupID)
+	log.Printf(string(commons.ResourceOnRead), commons.OceanAKSNPVirtualNodeGroupResource.GetName(), virtualNodeGroupID)
 
 	virtualNodeGroup, err := readAKSNPVirtualNodeGroup(context.TODO(), virtualNodeGroupID, meta.(*Client))
 	if err != nil {
@@ -244,8 +240,8 @@ func rollOceanAKSVNG(resourceData *schema.ResourceData, meta interface{}) error 
 		}
 
 		log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, rollJSON)
-		rollInput := &azure.CreateRollInput{Roll: rollSpec}
-		if _, err = meta.(*Client).ocean.CloudProviderAzure().CreateRoll(context.TODO(), rollInput); err != nil {
+		rollInput := &azure_np.CreateRollInput{Roll: rollSpec}
+		if _, err = meta.(*Client).ocean.CloudProviderAzureNP().CreateRoll(context.TODO(), rollInput); err != nil {
 			return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
 		}
 		log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
@@ -254,9 +250,9 @@ func rollOceanAKSVNG(resourceData *schema.ResourceData, meta interface{}) error 
 	return nil
 }
 
-func expandOceanAKSVirtualNodeGroupRollConfig(data interface{}, clusterID string) (*azure.RollSpec, error) {
+func expandOceanAKSVirtualNodeGroupRollConfig(data interface{}, clusterID string) (*azure_np.RollSpec, error) {
 	list := data.([]interface{})
-	spec := &azure.RollSpec{
+	spec := &azure_np.RollSpec{
 		ClusterID: spotinst.String(clusterID),
 	}
 

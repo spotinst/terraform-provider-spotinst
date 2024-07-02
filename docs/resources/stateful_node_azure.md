@@ -44,9 +44,11 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
 
   // --- COMPUTE -------------------------------------------------------
   os                   = "Linux"
-  od_sizes             = ["standard_ds1_v2", "standard_ds2_v2"]
-  spot_sizes           = ["standard_ds1_v2", "standard_ds2_v2"]
-  preferred_spot_sizes = ["standard_ds1_v2"]
+  vm_sizes {
+    od_sizes             = ["standard_ds1_v2", "standard_ds2_v2"]
+    spot_sizes           = ["standard_ds1_v2", "standard_ds2_v2"]
+    preferred_spot_sizes = ["standard_ds1_v2"]
+  }
   zones                = ["1","3"]
   preferred_zone      = "1"
   custom_data          = ""
@@ -116,6 +118,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
       gallery_name                = "galleryName"
       image_name                  = "imageName"
       version_name                = "1.1.0"
+      spot_account_id             = "act-123456"
     }
   }
   // -------------------------------------------------------------------
@@ -281,6 +284,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     snapshot_ttl_in_hours = 0
     public_ip_should_deallocate = true
     public_ip_ttl_in_hours = 0
+    should_deregister_from_lb   = true
   }
   }
   // -------------------------------------------------------------------
@@ -321,9 +325,10 @@ The following arguments are supported:
 ## Compute
 
 * `os` - (Required, Enum `"Linux", "Windows"`) Type of operating system.
-* `od_sizes` - (Required) Available On-Demand sizes.
-* `spot_sizes` - (Required) Available Spot-VM sizes.
-* `preferred_spot_sizes` - (Optional) Prioritize Spot VM sizes when launching Spot VMs for the group. If set, must be a sublist of compute.vmSizes.spotSizes.
+* `vm_sizes` - (Required) Defines the VM sizes to use when launching VMs.
+    * `od_sizes` - (Required) Available On-Demand sizes.
+    * `spot_sizes` - (Required) Available Spot-VM sizes.
+    * `preferred_spot_sizes` - (Optional) Prioritize Spot VM sizes when launching Spot VMs for the group. If set, must be a sublist of compute.vmSizes.spotSizes.
 * `zones` - (Optional, Enum `"1", "2", "3"`) List of Azure Availability Zones in the defined region. If not defined, Virtual machines will be launched regionally.
 * `preferred_zone` - (Optional, Enum `"1", "2", "3"`) The AZ to prioritize when launching VMs. If no markets are available in the Preferred AZ, VMs are launched in the non-preferred AZ. Must be a sublist of compute.zones.
 * `custom_data` - (Optional) This value will hold the YAML in base64 and will be executed upon VM launch.
@@ -375,6 +380,7 @@ The following arguments are supported:
     * `gallery_name` - (Required) Name of the gallery.
     * `image_name` - (Required) Name of the gallery image.
     * `version_name` - (Required) Image's version. Can be in the format x.x.x or 'latest'.
+    * `spot_account_id` - (Optional) The Spot account ID that connected to the Azure subscription to which the gallery belongs. Relevant only in case of cross-subscription shared galleries. [Read more](https://docs.spot.io/elastigroup/features-azure/shared-image-galleries) about cross-subscription shared galleries in Elastigroup.
   * `custom_image` - (Optional) Custom image definitions. Required if marketplace image or gallery image are not specified.
     * `custom_image_resource_group_name` - (Required) The resource group name for custom image.
     * `name` - (Required) The name of the custom image.
@@ -560,6 +566,7 @@ The following arguments are supported:
     * `snapshot_ttl_in_hours` - (Optional, Default: 96) Hours to keep the snapshots alive before deletion.
     * `public_ip_should_deallocate` - (Required) Indicates whether to delete the stateful node's public ip resources.
     * `public_ip_ttl_in_hours` - (Optional, Default: 96) Hours to keep the public ip alive before deletion.
+    * `should_deregister_from_lb` - (Optional, Default: true) Indicates whether to deregister the stateful node's VM from any type of load balancer. Can be changed to false only when shouldTerminateVms is 'false'.
 
 
 

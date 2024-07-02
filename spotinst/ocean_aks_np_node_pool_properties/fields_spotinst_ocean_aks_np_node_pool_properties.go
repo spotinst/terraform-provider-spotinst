@@ -3,6 +3,8 @@ package ocean_aks_np_node_pool_properties
 import (
 	"fmt"
 
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
@@ -383,6 +385,102 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[LinuxOSConfig] = commons.NewGenericField(
+		commons.OceanAKSNPProperties,
+		LinuxOSConfig,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Sysctls): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(VmMaxMapCount): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value []interface{} = nil
+			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil {
+				if cluster.VirtualNodeGroupTemplate.NodePoolProperties.LinuxOSConfig != nil {
+					value = flattenLinuxOSConfig(cluster.VirtualNodeGroupTemplate.NodePoolProperties.LinuxOSConfig)
+				}
+			}
+			if len(value) > 0 {
+				if err := resourceData.Set(string(LinuxOSConfig), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LinuxOSConfig), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if value, ok := resourceData.GetOk(string(LinuxOSConfig)); ok {
+				if config, err := expandLinuxOSConfig(value); err != nil {
+					return err
+				} else {
+					cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetLinuxOSConfig(config)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var linuxConfig *azure_np.LinuxOSConfig = nil
+			if v, ok := resourceData.GetOk(string(LinuxOSConfig)); ok {
+				if config, err := expandLinuxOSConfig(v); err != nil {
+					return err
+				} else {
+					linuxConfig = config
+				}
+			}
+			cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetLinuxOSConfig(linuxConfig)
+			return nil
+		},
+		nil,
+	)
+}
+
+func flattenLinuxOSConfig(linuxConfig *azure_np.LinuxOSConfig) []interface{} {
+	var out []interface{}
+
+	if linuxConfig != nil {
+		result := make(map[string]interface{})
+
+		if linuxConfig.Sysctls != nil {
+			result[string(Sysctls)] = flattenSysctls(linuxConfig.Sysctls)
+		}
+		out = append(out, result)
+	}
+	return out
+}
+
+func flattenSysctls(sysctls *azure_np.Sysctls) []interface{} {
+	var out []interface{}
+
+	if sysctls != nil {
+		result := make(map[string]interface{})
+
+		if sysctls.VmMaxMapCount != nil {
+			result[string(VmMaxMapCount)] = spotinst.IntValue(sysctls.VmMaxMapCount)
+		}
+		out = append(out, result)
+	}
+	return out
 }
 
 func expandSubnetList(data interface{}) ([]string, error) {
@@ -395,4 +493,40 @@ func expandSubnetList(data interface{}) ([]string, error) {
 		}
 	}
 	return result, nil
+}
+
+func expandLinuxOSConfig(data interface{}) (*azure_np.LinuxOSConfig, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		linuxConfig := &azure_np.LinuxOSConfig{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(Sysctls)]; ok {
+				sysctls, err := expandSysctls(v)
+				if err != nil {
+					return nil, err
+				}
+				if sysctls != nil {
+					linuxConfig.SetSysctls(sysctls)
+				} else {
+					linuxConfig.SetSysctls(nil)
+				}
+			}
+		}
+		return linuxConfig, nil
+	}
+	return nil, nil
+}
+
+func expandSysctls(data interface{}) (*azure_np.Sysctls, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		sysctls := &azure_np.Sysctls{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(VmMaxMapCount)].(int); ok {
+				sysctls.SetVmMaxMapCount(spotinst.Int(v))
+			}
+		}
+		return sysctls, nil
+	}
+	return nil, nil
 }

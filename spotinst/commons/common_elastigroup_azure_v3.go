@@ -115,7 +115,6 @@ func NewElastigroupAzureV3Wrapper() *ElastigroupAzureV3Wrapper {
 				LaunchSpecification: &azurev3.LaunchSpecification{
 					//LoadBalancersConfig: &v3.LoadBalancersConfig{},
 				},
-				VMSizes: &azurev3.VMSizes{},
 			},
 			Capacity: &azurev3.Capacity{},
 			Strategy: &azurev3.Strategy{},

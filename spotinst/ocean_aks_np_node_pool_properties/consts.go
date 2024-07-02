@@ -12,4 +12,7 @@ const (
 	KubernetesVersion  commons.FieldName = "kubernetes_version"
 	PodSubnetIDs       commons.FieldName = "pod_subnet_ids"
 	VnetSubnetIDs      commons.FieldName = "vnet_subnet_ids"
+	LinuxOSConfig      commons.FieldName = "linux_os_config"
+	Sysctls            commons.FieldName = "sysctls"
+	VmMaxMapCount      commons.FieldName = "vm_max_map_count"
 )

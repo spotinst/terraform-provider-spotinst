@@ -6,6 +6,8 @@ import (
 	stdlog "log"
 	"strings"
 
+	"github.com/spotinst/spotinst-sdk-go/service/oceancd"
+
 	"github.com/spotinst/spotinst-sdk-go/service/organization"
 
 	"github.com/hashicorp/go-cleanhttp"
@@ -53,6 +55,7 @@ type Client struct {
 	statefulNode    stateful.Service
 	organization    organization.Service
 	account         account.Service
+	oceancd         oceancd.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
@@ -77,6 +80,7 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 		statefulNode:    stateful.New(sess),
 		organization:    organization.New(sess),
 		account:         account.New(sess),
+		oceancd:         oceancd.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")

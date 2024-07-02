@@ -666,12 +666,13 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.0", "standard_ds2_v2"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "standard_ds1_v2"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_spot_sizes.0", "standard_ds2_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_ds2_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_ds1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.0", "standard_ds2_v2"),
 				),
 			},
 			{
@@ -682,12 +683,13 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.0", "standard_ds3_v2"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "standard_ds4_v2"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_spot_sizes.0", "standard_ds3_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_ds3_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_ds4_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.preferred_spot_sizes.0", "standard_ds3_v2"),
 				),
 			},
 			{
@@ -698,10 +700,11 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckStatefulNodeAzureV3Exists(&node, resourceName),
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spot_sizes.0", "standard_ds3_v2"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "od_sizes.0", "standard_ds4_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_ds3_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_ds4_v2"),
 				),
 			},
 		},
@@ -709,20 +712,26 @@ func TestAccSpotinstStatefulNodeAzureV3_VMSizes(t *testing.T) {
 }
 
 const testVMSizesStatefulNodeAzureV3Config_Create = `
-spot_sizes = ["standard_ds2_v2"]
-od_sizes = ["standard_ds1_v2"]
-preferred_spot_sizes =  ["standard_ds2_v2"]
+vm_sizes {
+	spot_sizes = ["standard_ds2_v2"]
+	od_sizes = ["standard_ds1_v2"]
+	preferred_spot_sizes =  ["standard_ds2_v2"]
+}
 `
 
 const testVMSizesStatefulNodeAzureV3Config_Update = `
-spot_sizes = ["standard_ds3_v2"]
-od_sizes = ["standard_ds4_v2"]
-preferred_spot_sizes =  ["standard_ds3_v2"]
+vm_sizes {
+	spot_sizes = ["standard_ds3_v2"]
+	od_sizes = ["standard_ds4_v2"]
+	preferred_spot_sizes =  ["standard_ds3_v2"]
+}
 `
 
 const testVMSizesStatefulNodeAzureV3Config_EmptyFields = `
-spot_sizes = ["standard_ds3_v2"]
-od_sizes = ["standard_ds4_v2"]
+vm_sizes {
+	spot_sizes = ["standard_ds3_v2"]
+	od_sizes = ["standard_ds4_v2"]
+}
 `
 
 //endregion

@@ -57,6 +57,11 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   kubernetes_version    = "1.26"
   pod_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
   vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
+  linux_os_config {
+    sysctls {
+      vm_max_map_count = 79550
+    }
+  }
 
   // --------------------------------------------------------------------------
 
@@ -133,6 +138,9 @@ The following arguments are supported:
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `pod_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign pods in the cluster (requires azure network-plugin).
 * `vnet_subnet_ids` - (Optional) The IDs of subnets in an existing VNet into which to assign nodes in the cluster (requires azure network-plugin).
+* `linux_os_config` - (Optional) Custom Linux OS configuration.
+  * `sysctls` - (Optional) System Controls
+    * `vm_max_map_count` - (Optional) Maximum number of memory map areas a process may have. Can be configured only if OS type is Linux.
 * `fallback_to_ondemand` - (Optional) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
