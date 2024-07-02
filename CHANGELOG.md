@@ -1,9 +1,14 @@
 ## Unreleased
 
+## 1.180.0 (June, 28 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Modified `od_sizes` and `spot_sizes` to be subfields of `vm_sizes` block.
+* resource/spotinst_stateful_node_azure: Modified `od_sizes` and `spot_sizes` to be subfields of `vm_sizes` block.
+
 ## 1.179.0 (June, 27 2024)
 FEATURES:
 * **New Resource:** `resource/spotinst_ocean_right_sizing_rule`
-* NOTE: This release is for internal use to implement crossplane provider and published without documentation.
+* NOTE: This is internal release. It is not expected to be used by customers.
 
 ## 1.178.0 (June, 20 2024)
 ENHANCEMENTS:
