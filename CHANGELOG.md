@@ -1,5 +1,51 @@
 ## Unreleased
 
+## 1.180.1 (July, 02 2024)
+ENHANCEMENTS:
+* Upgraded go-getter package from v1.6.2 to v1.7.5 and other dependency packages.
+
+## 1.180.0 (June, 28 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Modified `od_sizes` and `spot_sizes` to be subfields of `vm_sizes` block.
+* resource/spotinst_stateful_node_azure: Modified `od_sizes` and `spot_sizes` to be subfields of `vm_sizes` block.
+
+## 1.179.0 (June, 27 2024)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_right_sizing_rule`
+* NOTE: This is internal release. It is not expected to be used by customers.
+
+## 1.178.0 (June, 20 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added `preferred_od_types` field to support preferredOnDemandTypes list in vng.
+
+## 1.177.0 (June, 18 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks: Removed support for `spotinst_ocean_aks` resource as the api's are deprecated.
+
+## 1.176.1 (June, 12 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Fixed conflicts between `instance_types_spot` and `resource_requirements` for group updating. 
+
+## 1.176.0 (June 11, 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `spot_account_id` attribute under `gallery` object and `should_deregister_from_lb` field.
+
+## 1.175.0 (May 22, 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added `tasks` object under `scheduling` block supporting schedule roll.
+
+## 1.174.0 (May, 22 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: added `linux_os_config` block as part of node pool properties of virtual node group template to set maximum number of memory areas a process may have,
+* resource/spotinst_ocean_aks_np_virtual_node_group: added `linux_os_config` block as part of node pool properties to set maximum number of memory areas a process may have,
+
+## 1.173.0 (May 21, 2024)
+FEATURES: Added the below resources
+* **New Resource:** `resource/spotinst_oceancd_verification_provider`
+* **New Resource:** `resource/spotinst_oceancd_verification_template`
+* **New Resource:** `resource/spotinst_oceancd_strategy`
+* **New Resource:** `resource/spotinst_oceancd_rollout_spec`
+
 ## 1.172.3 (May, 17 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed `autoscale_headroom` block to set to null when underlying attributes are not passed in config.

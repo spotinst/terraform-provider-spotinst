@@ -323,6 +323,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
+					string(ShouldDeregisterFromLb): {
+						Type:     schema.TypeBool,
+						Default:  true,
+						Optional: true,
+					},
 				},
 			},
 		},

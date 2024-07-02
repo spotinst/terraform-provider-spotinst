@@ -34,6 +34,8 @@ const (
 
 	OceanAWSExtendedResourceDefinition ResourceAffinity = "Ocean_AWS_Extended_Resource_Definition"
 
+	OceanRightSizingRule ResourceAffinity = "Ocean_Right_Sizing_Rule"
+
 	OceanGKE                          ResourceAffinity = "Ocean_GKE"
 	OceanGKEImport                    ResourceAffinity = "Ocean_GKE_Import"
 	OceanGKEImportScheduling          ResourceAffinity = "Ocean_GKE_Import_Scheduling"
@@ -49,22 +51,6 @@ const (
 
 	OceanGKELaunchSpecImport ResourceAffinity = "Ocean_GKE_Launch_Spec_Import"
 	OceanGKENetworkInterface ResourceAffinity = "Ocean_GKE_Network_Interface"
-
-	OceanAKS                    ResourceAffinity = "Ocean_AKS"
-	OceanAKSLogin               ResourceAffinity = "Ocean_AKS_Login"
-	OceanAKSStrategy            ResourceAffinity = "Ocean_AKS_Strategy"
-	OceanAKSHealth              ResourceAffinity = "Ocean_AKS_Health"
-	OceanAKSAutoScaling         ResourceAffinity = "Ocean_AKS_Auto_Scaling"
-	OceanAKSLaunchSpecification ResourceAffinity = "Ocean_AKS_Launch_Specification"
-	OceanAKSImage               ResourceAffinity = "Ocean_AKS_Image"
-	OceanAKSExtensions          ResourceAffinity = "Ocean_AKS_Extensions"
-	OceanAKSLoadBalancers       ResourceAffinity = "Ocean_AKS_Load_Balancers_Config"
-	OceanAKSNetwork             ResourceAffinity = "Ocean_AKS_Network"
-	OceanAKSVMSizes             ResourceAffinity = "Ocean_AKS_VMSizes"
-
-	OceanAKSVirtualNodeGroup                    ResourceAffinity = "Ocean_AKS_virtual_node_group"
-	OceanAKSVirtualNodeGroupAutoScaling         ResourceAffinity = "Ocean_AKS_virtual_node_group_Auto_Scaling"
-	OceanAKSVirtualNodeGroupLaunchSpecification ResourceAffinity = "Ocean_AKS_virtual_node_group_launch_specification"
 
 	OceanECS                    ResourceAffinity = "Ocean_ECS"
 	OceanECSAutoScaler          ResourceAffinity = "Ocean_ECS_Auto_Scaler"
@@ -200,6 +186,11 @@ const (
 	OceanCDStrategy        ResourceAffinity = "OceanCD_Strategy"
 	OceanCDStrategyCanary  ResourceAffinity = "OceanCD_Strategy_Canary"
 	OceanCDStrategyRolling ResourceAffinity = "OceanCD_Strategy_Rolling"
+
+	OceanCDRolloutSpec               ResourceAffinity = "OceanCD_Rollout_Spec"
+	OceanCDRolloutSpecSpotDeployment ResourceAffinity = "OceanCD_Rollout_Spec_Spot_Deployment"
+	OceanCDRolloutSpecStrategy       ResourceAffinity = "OceanCD_Rollout_Spec_Strategy"
+	OceanCDRolloutSpecTraffic        ResourceAffinity = "OceanCD_Rollout_Spec_Traffic"
 
 	OceanCDVerificationTemplate        ResourceAffinity = "OceanCD_Verification_Template"
 	OceanCDVerificationTemplateArgs    ResourceAffinity = "OceanCD_Verification_Template_Args"

@@ -59,8 +59,6 @@ func Provider() *schema.Provider {
 			string(commons.OceanGKELaunchSpecImportResourceName):   resourceSpotinstOceanGKELaunchSpecImport(),
 			string(commons.OceanECSResourceName):                   resourceSpotinstOceanECS(),
 			string(commons.OceanECSLaunchSpecResourceName):         resourceSpotinstOceanECSLaunchSpec(),
-			string(commons.OceanAKSResourceName):                   resourceSpotinstOceanAKS(),
-			string(commons.OceanAKSVirtualNodeGroupResourceName):   resourceSpotinstOceanAKSVirtualNodeGroup(),
 			string(commons.OceanAKSNPResourceName):                 resourceSpotinstOceanAKSNP(),
 			string(commons.OceanAKSNPVirtualNodeGroupResourceName): resourceSpotinstOceanAKSNPVirtualNodeGroup(),
 
@@ -106,11 +104,17 @@ func Provider() *schema.Provider {
 			// AWS set credential
 			string(commons.CredentialsAWSResourceName): resourceSpotinstCredentialsAWS(),
 
+			// Ocean Rightsizing rule
+			string(commons.OceanRightSizingRuleResourceName): resourceSpotinstOceanRightSizingRule(),
+
 			//OceanCD Verification Provider
 			string(commons.OceanCDVerificationProviderResourceName): resourceSpotinstOceanCDVerificationProvider(),
 
 			//OceanCD Strategy
 			string(commons.OceanCDStrategyResourceName): resourceSpotinstOceanCDStrategy(),
+
+			//OceanCD RolloutSpec
+			string(commons.OceanCDRolloutSpecResourceName): resourceSpotinstOceanCDRolloutSpec(),
 
 			//OceanCD Verification Template
 			string(commons.OceanCDVerificationTemplateResourceName): resourceSpotinstOceanCDVerificationTemplate(),
