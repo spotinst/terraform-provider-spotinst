@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.179.0 (June, 27 2024)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_right_sizing_rule`
+* NOTE: This release is for internal use to implement crossplane provider and published without documentation.
+
 ## 1.178.0 (June, 20 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added `preferred_od_types` field to support preferredOnDemandTypes list in vng.
