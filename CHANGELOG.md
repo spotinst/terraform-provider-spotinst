@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.180.1 (July, 02 2024)
+ENHANCEMENTS:
+* Upgraded go-getter package from v1.6.2 to v1.7.5 and other dependency packages.
+
 ## 1.180.0 (June, 28 2024)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Modified `od_sizes` and `spot_sizes` to be subfields of `vm_sizes` block.
