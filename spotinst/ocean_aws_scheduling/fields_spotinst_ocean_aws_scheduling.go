@@ -156,10 +156,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if cluster != nil && cluster.Scheduling != nil {
 				result = flattenScheduledTasks(cluster.Scheduling)
 			}
-			if len(result) > 0 {
-				if err := resourceData.Set(string(ScheduledTask), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScheduledTask), err)
-				}
+			if err := resourceData.Set(string(ScheduledTask), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ScheduledTask), err)
 			}
 			return nil
 		},
