@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.180.2 (July, 05 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed `scheduled_task` object null issue with terraform refresh.
+
 ## 1.180.1 (July, 02 2024)
 ENHANCEMENTS:
 * Upgraded go-getter package from v1.6.2 to v1.7.5 and other dependency packages.
