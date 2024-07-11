@@ -113,7 +113,6 @@ func NewStatefulNodeAzureV3Wrapper() *StatefulNodeAzureV3Wrapper {
 						LoadBalancers: []*azure.LoadBalancer{},
 					},
 				},
-				VMSizes: &azure.VMSizes{},
 			},
 			Scheduling: &azure.Scheduling{
 				Tasks: []*azure.Task{},

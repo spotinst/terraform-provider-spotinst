@@ -1,5 +1,23 @@
 ## Unreleased
 
+## 1.180.2 (July, 05 2024)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed `scheduled_task` object null issue with terraform refresh.
+
+## 1.180.1 (July, 02 2024)
+ENHANCEMENTS:
+* Upgraded go-getter package from v1.6.2 to v1.7.5 and other dependency packages.
+
+## 1.180.0 (June, 28 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Modified `od_sizes` and `spot_sizes` to be subfields of `vm_sizes` block.
+* resource/spotinst_stateful_node_azure: Modified `od_sizes` and `spot_sizes` to be subfields of `vm_sizes` block.
+
+## 1.179.0 (June, 27 2024)
+FEATURES:
+* **New Resource:** `resource/spotinst_ocean_right_sizing_rule`
+* NOTE: This is internal release. It is not expected to be used by customers.
+
 ## 1.178.0 (June, 20 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added `preferred_od_types` field to support preferredOnDemandTypes list in vng.
