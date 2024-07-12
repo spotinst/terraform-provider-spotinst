@@ -26,6 +26,10 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
   instance_types = ["n1-standard-1, n1-standard-2"]
   tags = ["tag1", "tag2"]
   
+  create_options {
+    initial_nodes = 1
+  }
+  
   shielded_instance_config {
     enable_secure_boot = false
     enable_integrity_monitoring = true
@@ -113,6 +117,8 @@ The following arguments are supported:
 * `node_pool_name` - (Optional) The node pool you wish to use in your Launch Spec.
 * `name` - (Optional) The launch specification name.
 * `source_image` - (Required) Image URL.
+* `create_options` - (Optional)
+    * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created Virtual Node Group.
 * `metadata` - (Required only if `node_pool_name` is not set) Cluster's metadata.
     * `key` - (Required) The metadata key.
     * `value` - (Required) The metadata value.

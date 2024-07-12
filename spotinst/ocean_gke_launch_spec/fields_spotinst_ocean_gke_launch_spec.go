@@ -1220,6 +1220,25 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[CreateOptions] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		CreateOptions,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(InitialNodes): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+				},
+			},
+		},
+		nil, nil, nil, nil,
+	)
 }
 
 func expandTaints(data interface{}, taints []*gcp.Taint) ([]*gcp.Taint, error) {
