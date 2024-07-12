@@ -103,7 +103,7 @@ func createGKELaunchSpec(resourceData *schema.ResourceData, launchSpec *gcp.Laun
 			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 				for _, err := range errs {
 					if err.Code == "InvalidParamterValue" &&
-						strings.Contains(err.Message, "Invalid IAM Instance Profile") {
+						strings.Contains(err.Message, "Invalid InitialNodes count") {
 						return resource.NonRetryableError(err)
 					}
 				}
