@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.181.0 (July, 12 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: Added support for `initial_nodes` under `create_options`.
+
+## 1.180.3 (July, 11 2024)
+ENHANCEMENTS:
+* Upgraded dependency packages to solve vulnerabilities.
+
 ## 1.180.2 (July, 05 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed `scheduled_task` object null issue with terraform refresh.

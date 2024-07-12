@@ -78,3 +78,8 @@ const (
 	IPCidrRange         commons.FieldName = "ip_cidr_range"
 	SubnetworkRangeName commons.FieldName = "subnetwork_range_name"
 )
+
+const (
+	CreateOptions commons.FieldName = "create_options"
+	InitialNodes  commons.FieldName = "initial_nodes"
+)
