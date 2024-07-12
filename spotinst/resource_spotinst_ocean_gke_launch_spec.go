@@ -3,7 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"log"
+	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
@@ -64,7 +67,7 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 		return diag.FromErr(err)
 	}
 
-	launchSpecId, err := createGKELaunchSpec(launchSpec, meta.(*Client))
+	launchSpecId, err := createGKELaunchSpec(resourceData, launchSpec, meta.(*Client))
 
 	if err != nil {
 		return diag.FromErr(err)
@@ -75,20 +78,46 @@ func resourceSpotinstOceanGKELaunchSpecCreate(ctx context.Context, resourceData 
 	return resourceSpotinstOceanGKELaunchSpecRead(ctx, resourceData, meta)
 }
 
-func createGKELaunchSpec(launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*string, error) {
+func createGKELaunchSpec(resourceData *schema.ResourceData, launchSpec *gcp.LaunchSpec, spotinstClient *Client) (*string, error) {
 	if json, err := commons.ToJson(launchSpec); err != nil {
 		return nil, err
 	} else {
 		log.Printf("===> LaunchSpec GKE create configuration: %s", json)
 	}
 
-	input := &gcp.CreateLaunchSpecInput{LaunchSpec: launchSpec}
-
-	if out, err := spotinstClient.ocean.CloudProviderGCP().CreateLaunchSpec(context.Background(), input); err != nil {
+	var resp *gcp.CreateLaunchSpecOutput = nil
+	err := resource.RetryContext(context.Background(), time.Minute, func() *resource.RetryError {
+		input := &gcp.CreateLaunchSpecInput{LaunchSpec: launchSpec}
+		if createOptions, exists := resourceData.GetOkExists(string(ocean_gke_launch_spec.CreateOptions)); exists {
+			list := createOptions.([]interface{})
+			if len(list) > 0 && list[0] != nil {
+				m := list[0].(map[string]interface{})
+				if initialNodes, ok := m[string(ocean_gke_launch_spec.InitialNodes)].(int); ok && initialNodes > 0 {
+					input.InitialNodes = spotinst.Int(initialNodes)
+				}
+			}
+		}
+		out, err := spotinstClient.ocean.CloudProviderGCP().CreateLaunchSpec(context.Background(), input)
+		if err != nil {
+			// Checks whether we should retry launchSpec creation.
+			if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+				for _, err := range errs {
+					if err.Code == "InvalidParamterValue" &&
+						strings.Contains(err.Message, "Invalid IAM Instance Profile") {
+						return resource.NonRetryableError(err)
+					}
+				}
+			}
+			// Some other error, report it.
+			return resource.NonRetryableError(err)
+		}
+		resp = out
+		return nil
+	})
+	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create launchSpec: %s", err)
-	} else {
-		return out.LaunchSpec.ID, nil
 	}
+	return resp.LaunchSpec.ID, nil
 }
 
 const ErrCodeGKELaunchSpecNotFound = "CANT_GET_OCEAN_LAUNCH_SPEC"
