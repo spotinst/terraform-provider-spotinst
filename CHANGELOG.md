@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.181.1 (July, 18 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Added null check before setting value of `required_gpu_minimum` and `required_gpu_maximum` under `resource_requirements`.
+
 ## 1.181.0 (July, 12 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: Added support for `initial_nodes` under `create_options`.
