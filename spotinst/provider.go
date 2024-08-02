@@ -121,6 +121,9 @@ func Provider() *schema.Provider {
 
 			// GCP set credential
 			string(commons.CredentialsGCPResourceName): resourceSpotinstCredentialsGCP(),
+
+			// Account Creation
+			string(commons.AccountResourceName): resourceSpotinstAccount(),
 		},
 	}
 
