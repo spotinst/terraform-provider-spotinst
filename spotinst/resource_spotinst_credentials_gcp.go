@@ -3,9 +3,10 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/spotinst/spotinst-sdk-go/service/account/providers/gcp"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/credentials_gcp"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

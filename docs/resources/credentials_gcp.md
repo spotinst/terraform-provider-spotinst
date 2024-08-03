@@ -14,18 +14,18 @@ Provides a Spotinst credential GCP resource.
 
 ```hcl
 # set credential GCP
-resource "spotinst_credentials_gcp" "gcp_connect" {
-  account_id = "act-123456"
-  type = "service_account"
-  project_id = "demo-labs"
-  private_key_id = "1234567890"
-  private_key = "-----BEGIN PRIVATE KEY-----abcd1234-----END PRIVATE KEY-----"
-  client_email = "demo-role-act-123456@demo-labs.iam.gserviceaccount.com"
-  client_id = "1234567890"
-  auth_uri = "https://accounts.google.com/o/oauth2/auth"
-  token_uri = "https://oauth2.googleapis.com/token"
+resource "spotinst_credentials_gcp" "cred_gcp" {
+  account_id                  = "act-123456"
+  type                        = "service_account"
+  project_id                  = "demo-labs"
+  private_key_id              = "1234567890"
+  private_key                 = "-----BEGIN PRIVATE KEY-----abcd1234-----END PRIVATE KEY-----"
+  client_email                = "demo-role-act-123456@demo-labs.iam.gserviceaccount.com"
+  client_id                   = "1234567890"
+  auth_uri                    = "https://accounts.google.com/o/oauth2/auth"
+  token_uri                   = "https://oauth2.googleapis.com/token"
   auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
-  client_x509_cert_url = "https://www.googleapis.com/robot/v1/metadata/x509/demo-role-act-123456%40demo-labs.iam.gserviceaccount.com"
+  client_x509_cert_url        = "https://www.googleapis.com/robot/v1/metadata/x509/demo-role-act-123456%40demo-labs.iam.gserviceaccount.com"
 
   lifecycle {
     ignore_changes = [

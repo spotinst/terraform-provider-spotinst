@@ -2,8 +2,9 @@ package commons
 
 import (
 	"fmt"
-	"github.com/spotinst/spotinst-sdk-go/service/account/providers/gcp"
 	"log"
+
+	"github.com/spotinst/spotinst-sdk-go/service/account/providers/gcp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
