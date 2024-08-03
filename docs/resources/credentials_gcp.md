@@ -46,7 +46,7 @@ The following arguments are supported:
 * `private_key` - (Required) Private key of JSON key created during prerequisites stage.
 * `client_email` - (Required) Email associated with service account.
 * `client_id` - (Required) Client ID of service account.
-* `auth_uri` - (Required, Default: https://accounts.google.com/o/oauth2/auth) The ID of the account associated with your token.
-* `token_uri` - (Required, Default: https://oauth2.googleapis.com/token) The ID of the account associated with your token.
-* `auth_provider_x509_cert_url` - (Required, Default: https://www.googleapis.com/oauth2/v1/certs) The ID of the account associated with your token.
+* `auth_uri` - (Required, Default: https://accounts.google.com/o/oauth2/auth) Authentication uri.
+* `token_uri` - (Required, Default: https://oauth2.googleapis.com/token) Token uri.
+* `auth_provider_x509_cert_url` - (Required, Default: https://www.googleapis.com/oauth2/v1/certs).
 * `client_x509_cert_url` - (Required) Should be in following format - "https://www.googleapis.com/robot/v1/metadata/x509/".
