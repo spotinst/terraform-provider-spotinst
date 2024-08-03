@@ -1,6 +1,8 @@
 module github.com/spotinst/terraform-provider-spotinst
 
-go 1.20
+go 1.21
+
+toolchain go1.22.0
 
 require (
 	github.com/bflad/tfproviderlint v0.29.0
@@ -10,7 +12,7 @@ require (
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/sethvargo/go-password v0.3.1
-	github.com/spotinst/spotinst-sdk-go v1.359.0
+	github.com/spotinst/spotinst-sdk-go v1.360.0
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 )
 

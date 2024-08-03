@@ -20,6 +20,7 @@ func resourceSpotinstAccount() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceSpotinstAccountCreate,
 		ReadContext:   resourceSpotinstAccountRead,
+		UpdateContext: schema.NoopContext,
 		DeleteContext: resourceSpotinstAccountDelete,
 
 		Importer: &schema.ResourceImporter{

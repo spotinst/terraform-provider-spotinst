@@ -52,7 +52,7 @@ func resourceSpotinstCredentialsGCPCreate(ctx context.Context, resourceData *sch
 		return diag.FromErr(err)
 	}
 
-	log.Printf("===> Account created successfully: %s <===", resourceData.Id())
+	log.Printf("===> Account credentials set successfully: %s <===", resourceData.Id())
 	return resourceSpotinstCredentialsGCPRead(ctx, resourceData, meta)
 
 }
@@ -71,6 +71,8 @@ func createGCPCredentials(credentials *gcp.ServiceAccounts, spotinstClient *Clie
 	return nil
 }
 
+const ErrCodeServiceAccountNotFound = "ServiceAccount_DOESNT_EXIST"
+
 func resourceSpotinstCredentialsGCPRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -78,18 +80,18 @@ func resourceSpotinstCredentialsGCPRead(ctx context.Context, resourceData *schem
 	input := &gcp.ReadServiceAccountsInput{AccountId: spotinst.String(id)}
 	resp, err := meta.(*Client).account.CloudProviderGCP().ReadServiceAccount(context.Background(), input)
 	if err != nil {
-		// If the account was not found, return nil so that we can show
-		// that the account does not exist
+		// If the serviceAccount was not found, return nil so that we can show
+		// that the credential was not set.
 		if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
 			for _, err := range errs {
-				if err.Code == ErrCodeAccountNotFound {
+				if err.Code == ErrCodeServiceAccountNotFound {
 					resourceData.SetId("")
 					return nil
 				}
 			}
 		}
 		// Some other error, report it.
-		return diag.Errorf("failed to read account: %s", err)
+		return diag.Errorf("failed to read credential: %s", err)
 	}
 	// if nothing was found, return no state
 	credentialsResponse := resp.ServiceAccounts
