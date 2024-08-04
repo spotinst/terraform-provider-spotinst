@@ -118,6 +118,12 @@ func Provider() *schema.Provider {
 
 			//OceanCD Verification Template
 			string(commons.OceanCDVerificationTemplateResourceName): resourceSpotinstOceanCDVerificationTemplate(),
+
+			// GCP set credential
+			string(commons.CredentialsGCPResourceName): resourceSpotinstCredentialsGCP(),
+
+			// Account Creation
+			string(commons.AccountResourceName): resourceSpotinstAccount(),
 		},
 	}
 

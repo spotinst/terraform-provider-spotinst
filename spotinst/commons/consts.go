@@ -175,6 +175,8 @@ const (
 	OceanAKSNPVirtualNodeGroupVmSizes            ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Vm_Sizes"
 	AccountAWS                                   ResourceAffinity = "Account_AWS"
 	CredentialsAWS                               ResourceAffinity = "Credentials_AWS"
+	CredentialsGCP                               ResourceAffinity = "Credentials_GCP"
+	Account                                      ResourceAffinity = "Account"
 
 	OceanCDVerificationProvider           ResourceAffinity = "OceanCD_Verification_Provider"
 	OceanCDVerificationProviderCloudWatch ResourceAffinity = "OceanCD_Verification_Provider_Cloud_Watch"
