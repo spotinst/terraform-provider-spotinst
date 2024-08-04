@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.182.0 (July 04, 2024)
+## 1.182.0 (August 04, 2024)
 FEATURES:
 * **New Resource:** `resource/spotinst_account`
 * **New Resource:** `resource/spotinst_credentials_gcp`
