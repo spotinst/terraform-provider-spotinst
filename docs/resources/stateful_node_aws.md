@@ -97,6 +97,12 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
     should_tag_snapshots = true
     should_tag_amis = true
   }
+  
+  metadata_options {
+    http_put_response_hop_limit = 33
+    http_tokens = "required"
+    instance_metadata_tags = "enabled"
+  }
 
 }
 ```
@@ -199,7 +205,25 @@ resource_tag_specification {
     should_tag_snapshots      = true
     should_tag_amis           = true
 }
-```        
+```    
+
+<a id="metadata options"></a>
+## Metadata Options
+
+* `metadata_options` - (Optional) Optional field. Used for IMDSv2.
+    * `http_put_response_hop_limit` - (Optional) An integer within 1,64 range (including). The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further instance metadata requests can travel.
+    * `http_tokens` - Required for IMDSv2. Can’t be null in Create or Update. Values can be `optional` or `required`.
+    * `instance_metadata_tags` - (Optional) Valid values: `enabled` or `disabled` Indicates whether access to instance tags from the instance metadata is enabled or disabled. Can’t be null.
+
+Usage:
+
+```hcl
+metadata_options {
+    http_put_response_hop_limit = 33
+    http_tokens = "optional"
+    instance_metadata_tags = "enabled"
+}
+```    
 
 <a id="network-interface"></a>
 ## Network Interface 

@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.183.0 (August, 06 2024)
+ENHANCEMENTS:
+* resource/spotinst_managed_instance_aws: Added support for `metadata_options`.
+
 ## 1.182.1 (August 06, 2024)
 FIXES:
 * resource/spotinst_ocean_aks_np: Upgraded Kubernetes version in unit tests.

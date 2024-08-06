@@ -1057,6 +1057,8 @@ func expandMetadataOptions(data interface{}) (*aws.MetadataOptions, error) {
 	}
 	if v, ok := m[string(InstanceMetadataTags)].(string); ok && v != "" {
 		metadataOptions.SetInstanceMetadataTags(spotinst.String(v))
+	} else {
+		metadataOptions.SetInstanceMetadataTags(nil)
 	}
 
 	return metadataOptions, nil
