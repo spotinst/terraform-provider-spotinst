@@ -59,8 +59,10 @@ const (
 
 // Security
 const (
-	Security          commons.FieldName = "security"
-	SecureBootEnabled commons.FieldName = "secure_boot_enabled"
-	SecurityType      commons.FieldName = "security_type"
-	VTpmEnabled       commons.FieldName = "vtpm_enabled"
+	Security                     commons.FieldName = "security"
+	SecureBootEnabled            commons.FieldName = "secure_boot_enabled"
+	SecurityType                 commons.FieldName = "security_type"
+	VTpmEnabled                  commons.FieldName = "vtpm_enabled"
+	EncryptionAtHost             commons.FieldName = "encryption_at_host"
+	ConfidentialOsDiskEncryption commons.FieldName = "confidential_os_disk_encryption"
 )
