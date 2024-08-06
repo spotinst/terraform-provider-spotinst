@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.184.0 (August, 06 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `encryption_at_host` and `confidential_os_disk_encryption` in `security` block.
+
 ## 1.183.0 (August, 06 2024)
 ENHANCEMENTS:
 * resource/spotinst_managed_instance_aws: Added support for `metadata_options`.
