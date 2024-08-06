@@ -1,12 +1,12 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: account_aws"
+page_title: "Spotinst: account"
 subcategory: "Accounts"
 description: |-
   Create a Spotinst account resource.
 ---
 
-# spotinst\_account\_aws
+# spotinst\_account
 
 Provides a Spotinst account resource.
 
@@ -14,8 +14,8 @@ Provides a Spotinst account resource.
 
 ```hcl
 # Create a Account
-resource "spotinst_account_aws" "my_aws_acct" {
-  name="my_aws_acct"
+resource "spotinst_account" "my_acct" {
+  name="my_acct"
 }
 ```
 
