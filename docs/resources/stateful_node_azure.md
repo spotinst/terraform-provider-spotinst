@@ -474,7 +474,7 @@ The following arguments are supported:
 
 * `security` - (Optional) Specifies the Security related profile settings for the virtual machine.
     * `secure_boot_enabled` - (Optional) Specifies whether secure boot should be enabled on the virtual machine.
-    * `security_type` - (Optional) Enum: `"Standard", "TrustedLaunch"` Security type refers to the different security features of a virtual machine. Security features like Trusted launch virtual machines help to improve the security of Azure generation 2 virtual machines.
+    * `security_type` - (Optional) Enum: `"Standard", "TrustedLaunch", "ConfidentialVM"` Security type refers to the different security features of a virtual machine. Security features like Trusted launch virtual machines help to improve the security of Azure generation 2 virtual machines.
     * `vtpm_enabled` - (Optional) Specifies whether vTPM should be enabled on the virtual machine.
     * `encryption_at_host` - (Optional) Enables the Host Encryption for the virtual machine. The Encryption at host will be disabled unless this property is set to true for the resource.
     * `confidential_os_disk_encryption` - (Optional) Confidential disk encryption binds the disk encryption keys to the VM's TPM, ensuring VM-only access. The security type must be "ConfidentialVM" to enable defining this preference as “true”.
