@@ -707,6 +707,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+					string(EncryptionAtHost): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(ConfidentialOsDiskEncryption): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -979,6 +987,8 @@ func flattenSecurity(secure *azure.Security) interface{} {
 	security[string(SecureBootEnabled)] = spotinst.BoolValue(secure.SecureBootEnabled)
 	security[string(SecurityType)] = spotinst.StringValue(secure.SecurityType)
 	security[string(VTpmEnabled)] = spotinst.BoolValue(secure.VTpmEnabled)
+	security[string(EncryptionAtHost)] = spotinst.BoolValue(secure.EncryptionAtHost)
+	security[string(ConfidentialOsDiskEncryption)] = spotinst.BoolValue(secure.ConfidentialOsDiskEncryption)
 
 	return []interface{}{security}
 }
@@ -1000,6 +1010,14 @@ func expandSecurity(data interface{}) (*azure.Security, error) {
 
 			if v, ok := m[string(VTpmEnabled)].(bool); ok {
 				security.SetVTpmEnabled(spotinst.Bool(v))
+			}
+
+			if v, ok := m[string(EncryptionAtHost)].(bool); ok {
+				security.SetEncryptionAtHost(spotinst.Bool(v))
+			}
+
+			if v, ok := m[string(ConfidentialOsDiskEncryption)].(bool); ok {
+				security.SetConfidentialOsDiskEncryption(spotinst.Bool(v))
 			}
 
 		}
