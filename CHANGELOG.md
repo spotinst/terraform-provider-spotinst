@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.182.1 (August 05, 2024)
+## 1.182.1 (August 06, 2024)
 FIXES:
 * resource/spotinst_ocean_aks_np: Upgraded Kubernetes version in unit tests.
 
