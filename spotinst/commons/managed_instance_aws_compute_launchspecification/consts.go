@@ -44,3 +44,10 @@ const (
 	Encrypted           commons.FieldName = "encrypted"
 	KmsKeyId            commons.FieldName = "kms_key_id"
 )
+
+const (
+	MetadataOptions         commons.FieldName = "metadata_options"
+	HttpPutResponseHopLimit commons.FieldName = "http_put_response_hop_limit"
+	HttpTokens              commons.FieldName = "http_tokens"
+	InstanceMetadataTags    commons.FieldName = "instance_metadata_tags"
+)
