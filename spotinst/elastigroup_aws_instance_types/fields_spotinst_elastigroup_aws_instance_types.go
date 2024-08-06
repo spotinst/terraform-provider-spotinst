@@ -523,11 +523,13 @@ func flattenResourceRequirements(requirements *aws.ResourceRequirements) []inter
 		result[string(RequiredGpuMinimum)] = value
 		result[string(RequiredGpuMaximum)] = value
 
-		if requirements.RequiredGpu.Minimum != nil {
-			result[string(RequiredGpuMinimum)] = spotinst.IntValue(requirements.RequiredGpu.Minimum)
-		}
-		if requirements.RequiredGpu.Maximum != nil {
-			result[string(RequiredGpuMaximum)] = spotinst.IntValue(requirements.RequiredGpu.Maximum)
+		if requirements.RequiredGpu != nil {
+			if requirements.RequiredGpu.Minimum != nil {
+				result[string(RequiredGpuMinimum)] = spotinst.IntValue(requirements.RequiredGpu.Minimum)
+			}
+			if requirements.RequiredGpu.Maximum != nil {
+				result[string(RequiredGpuMaximum)] = spotinst.IntValue(requirements.RequiredGpu.Maximum)
+			}
 		}
 		result[string(RequiredMemoryMinimum)] = spotinst.IntValue(requirements.RequiredMemory.Minimum)
 		result[string(RequiredMemoryMaximum)] = spotinst.IntValue(requirements.RequiredMemory.Maximum)

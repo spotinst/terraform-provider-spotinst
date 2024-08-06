@@ -1,5 +1,18 @@
 ## Unreleased
 
+## 1.182.1 (August 06, 2024)
+FIXES:
+* resource/spotinst_ocean_aks_np: Upgraded Kubernetes version in unit tests.
+
+## 1.182.0 (August 04, 2024)
+FEATURES:
+* **New Resource:** `resource/spotinst_account`
+* **New Resource:** `resource/spotinst_credentials_gcp`
+
+## 1.181.1 (July, 18 2024)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Added null check before setting value of `required_gpu_minimum` and `required_gpu_maximum` under `resource_requirements`.
+
 ## 1.181.0 (July, 12 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: Added support for `initial_nodes` under `create_options`.
