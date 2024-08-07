@@ -114,6 +114,7 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
 
   strategy {
     spot_percentage = 70
+    draining_timeout = 300
   }
   
   create_options {
@@ -237,6 +238,7 @@ The following arguments are supported:
     * `min_instance_count` - (Optional) Set a minimum number of instances per Virtual Node Group. Can be null. If set, value must be greater than or equal to 0.
 * `strategy` - (Optional) 
     * `spot_percentage` - (Optional) The desired percentage of the Spot instances out of all running instances for this VNG. Only available when the field is not set in the cluster directly (cluster.strategy.spotPercentage).
+    * `draining_timeout` - (Optional, >=300) The configurable amount of time that Ocean will wait for the draining process to complete before terminating an instance. If you have not defined a draining timeout, the default of 300 seconds will be used.
 * `create_options` - (Optional)
     * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created Virtual Node Group. The parameter is recommended in case the use_as_template_only (in spotinst_ocean_aws resource) is set to true during Ocean resource creation.
 * `delete_options` - (Optional)

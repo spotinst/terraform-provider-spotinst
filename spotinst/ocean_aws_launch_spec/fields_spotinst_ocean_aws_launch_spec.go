@@ -1175,11 +1175,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanAWSLaunchSpec,
 		Strategy,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(SpotPercentage): {
+						Type:         schema.TypeInt,
+						Optional:     true,
+						Default:      -1,
+						ValidateFunc: validation.IntAtLeast(-1),
+					},
+					string(DrainingTimeout): {
 						Type:         schema.TypeInt,
 						Optional:     true,
 						Default:      -1,
@@ -1191,7 +1197,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			var result []interface{} = nil
+			var result interface{} = nil
 			if launchSpec.Strategy != nil {
 				strategy := launchSpec.Strategy
 				result = flattenStrategy(strategy)
@@ -2485,15 +2491,25 @@ func expandResourceLimits(data interface{}) (*aws.ResourceLimits, error) {
 }
 
 func expandStrategy(data interface{}) (*aws.LaunchSpecStrategy, error) {
-	if list := data.(*schema.Set).List(); len(list) > 0 {
+	if list := data.([]interface{}); len(list) > 0 {
 		strategy := &aws.LaunchSpecStrategy{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(SpotPercentage)].(int); ok && v > -1 {
-				strategy.SetSpotPercentage(spotinst.Int(v))
-			} else {
-				strategy.SetSpotPercentage(nil)
+			if v, ok := m[string(SpotPercentage)].(int); ok {
+				if v == -1 {
+					strategy.SetSpotPercentage(nil)
+				} else {
+					strategy.SetSpotPercentage(spotinst.Int(v))
+				}
+
+			}
+			if v, ok := m[string(DrainingTimeout)].(int); ok {
+				if v == -1 {
+					strategy.SetDrainingTimeout(nil)
+				} else {
+					strategy.SetDrainingTimeout(spotinst.Int(v))
+				}
 			}
 		}
 		return strategy, nil
@@ -2506,9 +2522,15 @@ func flattenStrategy(strategy *aws.LaunchSpecStrategy) []interface{} {
 
 	if strategy != nil {
 		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(SpotPercentage)] = value
+		result[string(DrainingTimeout)] = value
 
 		if strategy.SpotPercentage != nil {
 			result[string(SpotPercentage)] = spotinst.IntValue(strategy.SpotPercentage)
+		}
+		if strategy.DrainingTimeout != nil {
+			result[string(DrainingTimeout)] = spotinst.IntValue(strategy.DrainingTimeout)
 		}
 		if len(result) > 0 {
 			out = append(out, result)
