@@ -2,6 +2,7 @@ package elastigroup_gcp_strategy
 
 import (
 	"fmt"
+	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -230,4 +231,139 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+	fieldsMap[OptimizationWindow] = commons.NewGenericField(
+		commons.ElastigroupGCPStrategy,
+		OptimizationWindow,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []string
+			if elastigroup.Strategy != nil && elastigroup.Strategy.OptimizationWindows != nil {
+				result = append(result, elastigroup.Strategy.OptimizationWindows...)
+			}
+			if err := resourceData.Set(string(OptimizationWindow), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OptimizationWindow), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(OptimizationWindow)); ok {
+				optimizationWindowList := v.([]interface{})
+				optimizationWindow := make([]string, len(optimizationWindowList))
+				for i, j := range optimizationWindowList {
+					optimizationWindow[i] = j.(string)
+				}
+				elastigroup.Strategy.SetOptimizationWindows(optimizationWindow)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(OptimizationWindow)); ok {
+				optimizationWindowList := v.([]interface{})
+				optimizationWindow := make([]string, len(optimizationWindowList))
+				for i, j := range optimizationWindowList {
+					optimizationWindow[i] = j.(string)
+				}
+				elastigroup.Strategy.SetOptimizationWindows(optimizationWindow)
+			} else {
+				elastigroup.Strategy.SetOptimizationWindows(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+	fieldsMap[RevertToPreemptible] = commons.NewGenericField(
+		commons.ElastigroupGCPStrategy,
+		RevertToPreemptible,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(PerformAt): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result interface{} = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.RevertToPreemptible != nil &&
+				elastigroup.Strategy.RevertToPreemptible.PerformAt != nil {
+				revertToPreemptible := elastigroup.Strategy.RevertToPreemptible
+				result = flattenRevertToPreemptible(revertToPreemptible)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(RevertToPreemptible), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RevertToPreemptible), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(RevertToPreemptible)); ok {
+				if revertToPreemptible, err := expandRevertToPreemptible(v); err != nil {
+					return err
+				} else {
+					elastigroup.Strategy.SetRevertToPreemptible(revertToPreemptible)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result *gcp.RevertToPreemptible = nil
+			if v, ok := resourceData.GetOk(string(RevertToPreemptible)); ok {
+				if value, err := expandRevertToPreemptible(v); err != nil {
+					return err
+				} else {
+					result = value
+				}
+			}
+			elastigroup.Strategy.SetRevertToPreemptible(result)
+			return nil
+		},
+		nil,
+	)
+}
+func flattenRevertToPreemptible(revertToPreemptible *gcp.RevertToPreemptible) []interface{} {
+	result := make([]interface{}, 0, 1)
+	m := make(map[string]string)
+	m[string(PerformAt)] = spotinst.StringValue(revertToPreemptible.PerformAt)
+	result = append(result, m)
+
+	return result
+}
+func expandRevertToPreemptible(data interface{}) (*gcp.RevertToPreemptible, error) {
+	list := data.([]interface{})
+	if list != nil && list[0] != nil {
+		revertToPreemptibles := make([]*gcp.RevertToPreemptible, 0, len(list))
+		for _, item := range list {
+			m := item.(map[string]interface{})
+			revertToPreemptible := &gcp.RevertToPreemptible{}
+
+			if v, ok := m[string(PerformAt)].(string); ok && v != "" {
+				revertToPreemptible.SetPerformAt(spotinst.String(v))
+			}
+			revertToPreemptibles = append(revertToPreemptibles, revertToPreemptible)
+		}
+		return revertToPreemptibles[0], nil
+	}
+	return nil, nil
+
 }
