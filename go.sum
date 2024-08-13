@@ -541,6 +541,8 @@ github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasO
 github.com/spf13/pflag v1.0.2/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
 github.com/spotinst/spotinst-sdk-go v1.362.0 h1:hyhySd+WTZfC/J5670aumE+oWejGRRQ0ay8WF01+Pr4=
 github.com/spotinst/spotinst-sdk-go v1.362.0/go.mod h1:Tn4/eb0SFY6IXmxz71CClujvbD/PuT+EO6Ta8v6AML4=
+github.com/spotinst/spotinst-sdk-go v1.363.0 h1:mJPgyGREjubnvUoCTEPr92HLGJ4BmSiTFhMRWyAH7Ro=
+github.com/spotinst/spotinst-sdk-go v1.363.0/go.mod h1:Tn4/eb0SFY6IXmxz71CClujvbD/PuT+EO6Ta8v6AML4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
