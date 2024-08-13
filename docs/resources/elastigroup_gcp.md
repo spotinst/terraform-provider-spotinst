@@ -27,6 +27,10 @@ resource "spotinst_elastigroup_gcp" "example" {
   availability_zones = ["asia-east1-c", "us-central1-a"]
 
   preemptible_percentage = 50
+  revert_to_preemptible{
+    perform_at="timeWindow"
+  }
+  optimization_windows=["Mon:01:00-Mon:03:00"]
   # on_demand_count      = 2
   fallback_to_ondemand   = true
   draining_timeout       = 180
@@ -141,7 +145,9 @@ The following arguments are supported:
 * `instance_name_prefix` - (Optional) Set an instance name prefix to be used for all launched instances and their boot disk. The prefix value should comply with the following limitations: 
     * A maximal length of 25 characters.
     * The first character must be a lowercase letter, and all the following characters must be hyphens, lowercase letters, or digits, except the last character, which cannot be a hyphen.
-
+* `revert_to_preemptible` - (Optional) Setting for revert to preemptible option.
+  * `perform_at` - (Required) Valid values: "always", "never", "timeWindow". Required on strategy.revertToPreemptible object.
+* `optimization_windows` - (Optional) Set time window to perform the revert to preemptible. Time windows must be at least 120 minutes. Format: DayInWeek:HH-DayInWeek:HH. Required when strategy.revertToPreemptible.performAt is 'timeWindow'.
 <a id="GPU"></a>
 ## GPU
 

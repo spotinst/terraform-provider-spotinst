@@ -8,4 +8,7 @@ const (
 	DrainingTimeout       commons.FieldName = "draining_timeout"
 	FallbackToOnDemand    commons.FieldName = "fallback_to_ondemand"
 	ProvisioningModel     commons.FieldName = "provisioning_model"
+	OptimizationWindows   commons.FieldName = "optimization_windows"
+	RevertToPreemptible   commons.FieldName = "revert_to_preemptible"
+	PerformAt             commons.FieldName = "perform_at"
 )
