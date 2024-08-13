@@ -231,9 +231,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-	fieldsMap[OptimizationWindow] = commons.NewGenericField(
+	fieldsMap[OptimizationWindows] = commons.NewGenericField(
 		commons.ElastigroupGCPStrategy,
-		OptimizationWindow,
+		OptimizationWindows,
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
@@ -246,15 +246,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if elastigroup.Strategy != nil && elastigroup.Strategy.OptimizationWindows != nil {
 				result = append(result, elastigroup.Strategy.OptimizationWindows...)
 			}
-			if err := resourceData.Set(string(OptimizationWindow), result); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OptimizationWindow), err)
+			if err := resourceData.Set(string(OptimizationWindows), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OptimizationWindows), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(OptimizationWindow)); ok {
+			if v, ok := resourceData.GetOk(string(OptimizationWindows)); ok {
 				optimizationWindowList := v.([]interface{})
 				optimizationWindow := make([]string, len(optimizationWindowList))
 				for i, j := range optimizationWindowList {
@@ -267,7 +267,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(OptimizationWindow)); ok {
+			if v, ok := resourceData.GetOk(string(OptimizationWindows)); ok {
 				optimizationWindowList := v.([]interface{})
 				optimizationWindow := make([]string, len(optimizationWindowList))
 				for i, j := range optimizationWindowList {

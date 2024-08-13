@@ -2,7 +2,7 @@
 
 ## 1.186.0 (August, 13 2024)
 ENHANCEMENTS:
-* resource/spotinst_elastigroup_gcp: Added support for `revert_to_preemptible` and `optimization_window` under `strategy` object.
+* resource/spotinst_elastigroup_gcp: Added support for `revert_to_preemptible` and `optimization_windows` under `strategy` object.
 
 ## 1.185.0 (August, 07 2024)
 ENHANCEMENTS:

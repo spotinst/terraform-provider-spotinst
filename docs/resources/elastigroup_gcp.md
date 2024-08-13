@@ -30,7 +30,7 @@ resource "spotinst_elastigroup_gcp" "example" {
   revert_to_preemptible{
     perform_at="timeWindow"
   }
-  optimization_window=["Mon:01:00-Mon:03:00"]
+  optimization_windows=["Mon:01:00-Mon:03:00"]
   # on_demand_count      = 2
   fallback_to_ondemand   = true
   draining_timeout       = 180
@@ -147,7 +147,7 @@ The following arguments are supported:
     * The first character must be a lowercase letter, and all the following characters must be hyphens, lowercase letters, or digits, except the last character, which cannot be a hyphen.
 * `revert_to_preemptible` - (Optional) Setting for revert to preemptible option.
   * `perform_at` - (Required) Valid values: "always", "never", "timeWindow". Required on strategy.revertToPreemptible object.
-* `optimization_window` - (Optional)(Array of strings) Set time window to perform the revert to preemptible. Time windows must be at least 120 minutes. Format: DayInWeek:HH-DayInWeek:HH. Required when strategy.revertToPreemptible.performAt is 'timeWindow'.
+* `optimization_windows` - (Optional) Set time window to perform the revert to preemptible. Time windows must be at least 120 minutes. Format: DayInWeek:HH-DayInWeek:HH. Required when strategy.revertToPreemptible.performAt is 'timeWindow'.
 <a id="GPU"></a>
 ## GPU
 
