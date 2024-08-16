@@ -1,9 +1,6 @@
 module github.com/spotinst/terraform-provider-spotinst
 
 go 1.21
-
-toolchain go1.21.13
-
 require (
 	github.com/bflad/tfproviderlint v0.29.0
 	github.com/client9/misspell v0.3.4
