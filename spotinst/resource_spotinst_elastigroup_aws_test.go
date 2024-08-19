@@ -1371,13 +1371,13 @@ const testElasticIPsGroupConfig_Count_Variables = `
 // --- VARIABLES --------------------------------------------
 variable "elastic_ips" {
   description = "List with the Elastic IPs for elastigroups"
-  type        = "list"
+  type        = list(string)
   default     = ["eipalloc-123", "eipalloc-456", "eipalloc-789"]
 }
 
 variable "elastic_ips_update" {
   description = "List with the Elastic IPs for elastigroups"
-  type        = "list"
+  type        = list(string)
   default     = ["eipalloc-111", "eipalloc-444", "eipalloc-777"]
 }
 // ----------------------------------------------------------
