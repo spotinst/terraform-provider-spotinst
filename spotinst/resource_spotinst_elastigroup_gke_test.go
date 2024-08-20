@@ -195,6 +195,8 @@ func TestAccSpotinstElastigroupGKE_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "node_image", "COS"),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_preemptible.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_preemptible.0.perform_at", "always"),
 				),
 			},
 			{
@@ -206,6 +208,8 @@ func TestAccSpotinstElastigroupGKE_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "node_image", "COS"),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_preemptible.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "revert_to_preemptible.0.perform_at", "always"),
 				),
 			},
 		},
@@ -245,6 +249,10 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
   }
  }
 
+revert_to_preemptible {
+	perform_at = "always"
+}
+
 }
 
 `
@@ -281,6 +289,10 @@ resource "` + string(commons.ElastigroupGKEResourceName) + `" "%v" {
     num_of_units    = 2
   }
  }
+
+revert_to_preemptible {
+	perform_at = "always"
+}
 
 }
 
