@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.187.0 (August, 20 2024)
+FIXES:
+* Upgraded dependency packages to solve vulnerabilities.
+
 ## 1.186.0 (August, 13 2024)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_gcp: Added support for `revert_to_preemptible` and `optimization_windows` under `strategy` object.
