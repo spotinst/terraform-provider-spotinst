@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.188.0 (August, 22 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added support for `restrict_single_az`, `auto_healing`, `dynamic_iops` and `dynamic_volume_size` fields.
+
 ## 1.187.0 (August, 20 2024)
 FIXES:
 * Upgraded dependency packages to solve vulnerabilities.
