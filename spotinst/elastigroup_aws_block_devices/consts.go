@@ -22,10 +22,18 @@ const (
 	KmsKeyId            commons.FieldName = "kms_key_id"
 	NoDevice            commons.FieldName = "nodevice"
 	Throughput          commons.FieldName = "throughput"
-	// --------------------------------------------------------------
 
-	// - EPHEMERAL --------------------------------------------------
 	EphemeralBlockDevice commons.FieldName = "ephemeral_block_device"
 	VirtualName          commons.FieldName = "virtual_name"
-	// --------------------------------------------------------------
+
+	DynamicVolumeSize   commons.FieldName = "dynamic_volume_size"
+	BaseSize            commons.FieldName = "base_size"
+	Resource            commons.FieldName = "resource"
+	SizePerResourceUnit commons.FieldName = "size_per_resource_unit"
+)
+const (
+	DynamicIops             commons.FieldName = "dynamic_iops"
+	IopsBaseSize            commons.FieldName = "base_size"
+	IopsResource            commons.FieldName = "resource"
+	IopsSizePerResourceUnit commons.FieldName = "size_per_resource_unit"
 )

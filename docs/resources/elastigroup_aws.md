@@ -225,6 +225,7 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `utilize_reserved_instances` - (Optional) In a case of any available reserved instances, Elastigroup will utilize them first before purchasing Spot instances.
 * `minimum_instance_lifetime` - (Optional) Defines the preferred minimum instance lifetime in hours. Markets which comply with this preference will be prioritized. Optional values: 1, 3, 6, 12, 24.
+* `restrict_single_az` - (Optional) Elastigroup will automatically scale your instances in the most available and cost efficient availability zone. Every evaluation will be done when there are no active instances in the group.
 * `scaling_strategy` - (Optional) Set termination policy.
     * `terminate_at_end_of_billing_hour` - (Optional) Specify whether to terminate instances at the end of each billing hour.
     * `termination_policy` - (Optional) - Determines whether to terminate the newest instances when performing a scaling action. Valid values: `"default"`, `"newestInstance"`.
@@ -232,6 +233,7 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
 * `health_check_type` - (Optional) The service that will perform health checks for the instance. Valid values: `"ELB"`, `"HCS"`, `"TARGET_GROUP"`, `"EC2"`, `"K8S_NODE"`, `"NOMAD_NODE"`, `"ECS_CLUSTER_INSTANCE"`.
 * `health_check_grace_period` - (Optional) The amount of time, in seconds, after the instance has launched to starts and check its health.
 * `health_check_unhealthy_duration_before_replacement` - (Optional) The amount of time, in seconds, that we will wait before replacing an instance that is running and became unhealthy (this is only applicable for instances that were once healthy).
+* `auto_healing` - (Optional, Default: `true`) Auto-healing replacement won't be triggered if this parameter value is "false". In a case of a stateful group - no recycling will start if this parameter value is "false".
 
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `elastic_ips` - (Optional) A list of [AWS Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) allocation IDs to associate to the group instances.
@@ -585,7 +587,15 @@ Each `ebs_block_device` supports the following:
 * `encrypted` - (Optional) Enables [EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) on the volume.
 * `kms_key_id` - (Optional) ID for a user managed CMK under which the EBS Volume is encrypted
 * `throughput`- (Optional) The amount of data transferred to or from a storage device per second, you can use this param just in a case that `volume_type` = gp3.
-
+* `dynamic_volume_size` - (Optional) Set dynamic volume size properties. When using this object, you cannot use `volume_size`. You must use one or the other.
+  * `base_size` - (Optional) Initial size for volume.
+  * `resource` - (Optional) Type of resource, valid values: `"CPU", "MEMORY"`.
+  * `size_per_resource_unit` - (Optional) Additional size per resource unit (in GB).
+* `dynamic_iops` - (Optional) Set dynamic IOPS properties. When using this object, you cannot use the `iops` object. You must use one or the other.
+  * `base_size` - (Optional) Initial size for IOPS.
+  * `resource` - (Optional) Type of resource, valid values: `"CPU", "MEMORY"`.
+  * `size_per_resource_unit` - (Optional) Additional size per resource unit (in IOPS).
+  
 Modifying any `ebs_block_device` currently requires resource replacement.
 
 Usage:
@@ -595,11 +605,19 @@ Usage:
      device_name           = "/dev/sdb" 
      snapshot_id           = "" 
      volume_type           = "gp2"  
-     volume_size           = 8
-     iops                  = 1
      delete_on_termination = true
      encrypted             = false
      kms_key_id            = "kms-key-01"
+     dynamic_volume_size {
+        base_size              = 50
+        resource               = "CPU"
+        size_per_resource_unit = 20
+      }
+      dynamic_iops {
+        base_size              = 50
+        resource               = "memory"
+        size_per_resource_unit = 20
+      }
    }
    
    ebs_block_device {
