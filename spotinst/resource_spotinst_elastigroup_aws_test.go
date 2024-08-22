@@ -832,6 +832,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "default"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_commitments", "true"),
 					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "1"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_single_az", "true"),
 				),
 			},
 			{
@@ -854,6 +855,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.0.termination_policy", "newestInstance"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_commitments", "false"),
 					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "12"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_single_az", "false"),
 				),
 			},
 			{
@@ -873,6 +875,7 @@ func TestAccSpotinstElastigroupAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_strategy.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "minimum_instance_lifetime", "0"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_single_az", "false"),
 				),
 			},
 		},
@@ -889,6 +892,7 @@ const testStrategyGroupConfig_Create = `
 	utilize_reserved_instances = false
 	utilize_commitments = true
   	minimum_instance_lifetime = 1
+	restrict_single_az = true
 
 
 	scaling_strategy {
@@ -908,6 +912,7 @@ const testStrategyGroupConfig_Update = `
 	utilize_reserved_instances = true
 	utilize_commitments = false
   	minimum_instance_lifetime = 12
+	restrict_single_az = false
 
 	scaling_strategy {
 	 terminate_at_end_of_billing_hour = false
@@ -922,6 +927,7 @@ const testStrategyGroupConfig_EmptyFields = `
 	orientation 		     = "costOriented"
 	draining_timeout 	   = 600
   	minimum_instance_lifetime = 0
+	restrict_single_az = false
 	// ---------------------------------
 `
 
