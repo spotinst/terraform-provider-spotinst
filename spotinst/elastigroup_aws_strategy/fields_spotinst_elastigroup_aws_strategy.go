@@ -564,8 +564,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var value *bool = nil
-			if elastigroup.Strategy != nil && elastigroup.Strategy.UtilizeReservedInstances != nil {
-				value = elastigroup.Strategy.UtilizeReservedInstances
+			if elastigroup.Strategy != nil && elastigroup.Strategy.RestrictSingleAz != nil {
+				value = elastigroup.Strategy.RestrictSingleAz
 			}
 			if err := resourceData.Set(string(RestrictSingleAz), spotinst.BoolValue(value)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RestrictSingleAz), err)
