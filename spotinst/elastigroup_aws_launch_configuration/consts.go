@@ -22,6 +22,7 @@ const (
 	CPUCredits         commons.FieldName = "cpu_credits"
 	MetadataOptions    commons.FieldName = "metadata_options"
 	CPUOptions         commons.FieldName = "cpu_options"
+	AutoHealing        commons.FieldName = "auto_healing"
 
 	// - MetadataOptions -----------------------------
 	HTTPTokens              commons.FieldName = "http_tokens"

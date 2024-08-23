@@ -979,6 +979,46 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[AutoHealing] = commons.NewGenericField(
+		commons.ElastigroupAWSLaunchConfiguration,
+		AutoHealing,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *bool = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.AutoHealing != nil {
+				value = elastigroup.Compute.LaunchSpecification.AutoHealing
+			}
+			if err := resourceData.Set(string(AutoHealing), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoHealing), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(AutoHealing)).(bool); ok {
+				elastigroup.Compute.LaunchSpecification.SetAutoHealing(spotinst.Bool(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(AutoHealing)).(bool); ok {
+				elastigroup.Compute.LaunchSpecification.SetAutoHealing(spotinst.Bool(v))
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)

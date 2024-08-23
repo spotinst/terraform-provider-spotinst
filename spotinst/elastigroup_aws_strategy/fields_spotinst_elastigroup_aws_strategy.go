@@ -552,6 +552,47 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[RestrictSingleAz] = commons.NewGenericField(
+		commons.ElastigroupAWSStrategy,
+		RestrictSingleAz,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *bool = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.RestrictSingleAz != nil {
+				value = elastigroup.Strategy.RestrictSingleAz
+			}
+			if err := resourceData.Set(string(RestrictSingleAz), spotinst.BoolValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RestrictSingleAz), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(RestrictSingleAz)).(bool); ok && v {
+				ris := spotinst.Bool(v)
+				elastigroup.Strategy.SetRestrictSingleAz(ris)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var ris *bool = nil
+			if v, ok := resourceData.Get(string(RestrictSingleAz)).(bool); ok && v {
+				ris = spotinst.Bool(v)
+			}
+			elastigroup.Strategy.SetRestrictSingleAz(ris)
+			return nil
+		},
+		nil,
+	)
 }
 
 func flattenAWSGroupScalingStrategy(strategy *aws.ScalingStrategy) []interface{} {

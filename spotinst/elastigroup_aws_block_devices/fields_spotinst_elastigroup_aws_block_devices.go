@@ -66,6 +66,54 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
+
+					string(DynamicVolumeSize): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(BaseSize): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(Resource): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(SizePerResourceUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+							},
+						},
+					},
+
+					string(DynamicIops): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(IopsBaseSize): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+
+								string(IopsResource): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(IopsSizePerResourceUnit): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -200,10 +248,36 @@ func flattenAWSGroupEBSBlockDevices(devices []*aws.BlockDeviceMapping) []interfa
 			m[string(VolumeType)] = spotinst.StringValue(dev.EBS.VolumeType)
 			m[string(VolumeSize)] = spotinst.IntValue(dev.EBS.VolumeSize)
 			m[string(Throughput)] = spotinst.IntValue(dev.EBS.Throughput)
+			if dev.EBS.DynamicVolumeSize != nil {
+				m[string(DynamicVolumeSize)] = flattenDynamicVolumeSize(dev.EBS.DynamicVolumeSize)
+			}
+
+			if dev.EBS.DynamicIOPS != nil {
+				m[string(DynamicIops)] = flattenDynamicIops(dev.EBS.DynamicIOPS)
+			}
 			result = append(result, m)
 		}
 	}
 	return result
+}
+
+func flattenDynamicVolumeSize(dvs *aws.DynamicVolumeSize) interface{} {
+
+	DynamicVS := make(map[string]interface{})
+	DynamicVS[string(BaseSize)] = spotinst.IntValue(dvs.BaseSize)
+	DynamicVS[string(Resource)] = spotinst.StringValue(dvs.Resource)
+	DynamicVS[string(SizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
+
+	return []interface{}{DynamicVS}
+}
+func flattenDynamicIops(dvs *aws.DynamicIOPS) interface{} {
+
+	dynamicIops := make(map[string]interface{})
+	dynamicIops[string(IopsBaseSize)] = spotinst.IntValue(dvs.BaseSize)
+	dynamicIops[string(IopsResource)] = spotinst.StringValue(dvs.Resource)
+	dynamicIops[string(IopsSizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
+
+	return []interface{}{dynamicIops}
 }
 
 func flattenAWSGroupEphemeralBlockDevices(devices []*aws.BlockDeviceMapping) []interface{} {
@@ -261,10 +335,77 @@ func expandAWSGroupEBSBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping,
 		if v, ok := m[string(Throughput)].(int); ok && v > 0 {
 			device.EBS.SetThroughput(spotinst.Int(v))
 		}
+
+		if v, ok := m[string(DynamicVolumeSize)]; ok && v != nil {
+			if dynamicVolumeSize, err := expandDynamicVolumeSize(v); err != nil {
+				return nil, err
+			} else {
+				if dynamicVolumeSize != nil {
+					device.EBS.SetDynamicVolumeSize(dynamicVolumeSize)
+				}
+			}
+		}
+
+		if v, ok := m[string(DynamicIops)]; ok && v != nil {
+			if dynamicIops, err := expandDynamicIops(v); err != nil {
+				return nil, err
+			} else {
+				if dynamicIops != nil {
+					device.EBS.SetDynamicIOPS(dynamicIops)
+				}
+			}
+		}
+
 		devices = append(devices, device)
 	}
 
 	return devices, nil
+}
+
+func expandDynamicVolumeSize(data interface{}) (*aws.DynamicVolumeSize, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		dvs := &aws.DynamicVolumeSize{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(BaseSize)].(int); ok && v >= 0 {
+				dvs.SetBaseSize(spotinst.Int(v))
+			}
+
+			if v, ok := m[string(Resource)].(string); ok && v != "" {
+				dvs.SetResource(spotinst.String(v))
+			}
+
+			if v, ok := m[string(SizePerResourceUnit)].(int); ok && v >= 0 {
+				dvs.SetSizePerResourceUnit(spotinst.Int(v))
+			}
+		}
+		return dvs, nil
+	}
+	return nil, nil
+}
+
+func expandDynamicIops(data interface{}) (*aws.DynamicIOPS, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		dvs := &aws.DynamicIOPS{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(IopsBaseSize)].(int); ok && v >= 0 {
+				dvs.SetBaseSize(spotinst.Int(v))
+			}
+
+			if v, ok := m[string(IopsResource)].(string); ok && v != "" {
+				dvs.SetResource(spotinst.String(v))
+			}
+
+			if v, ok := m[string(IopsSizePerResourceUnit)].(int); ok && v >= 0 {
+				dvs.SetSizePerResourceUnit(spotinst.Int(v))
+			}
+		}
+		return dvs, nil
+	}
+	return nil, nil
 }
 
 func expandAWSGroupEphemeralBlockDevices(data interface{}) ([]*aws.BlockDeviceMapping, error) {
