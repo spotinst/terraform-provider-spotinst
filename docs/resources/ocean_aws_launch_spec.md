@@ -196,7 +196,7 @@ The following arguments are supported:
 * `root_volume_size` - (Optional) Set root volume size (in GB).
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
-* `restrict_scale_down`- (Optional) Boolean. When set to `True`, nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
+* `restrict_scale_down`- (Optional) Boolean. When set to `true`, nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `labels` - (Optional) Optionally adds labels to instances launched in the cluster.
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.
