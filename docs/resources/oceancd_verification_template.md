@@ -205,7 +205,7 @@ The following arguments are supported:
                 * `id` - (Required) The response ID. Must be unique and not null. This object can contain characters, letters, numbers and underscore. The first letter must be a lowercase letter.
                 * `label` - (Optional) A human-readable label for this metric or expression. If the metric or expression is shown in a CloudWatch dashboard widget, the label is shown
                 * `period` - (Optional) The granularity, in seconds, of the returned data points.
-                * `return_data` - (Optional) This option indicates whether to return the timestamps and raw data values of this metric. If you are performing this call just to do math expressions and do not also need the raw data returned, you can specify False . If you omit this, the default of True is used.
+                * `return_data` - (Optional) This option indicates whether to return the timestamps and raw data values of this metric. If you are performing this call just to do math expressions and do not also need the raw data returned, you can specify `false`. If you omit this, the default of `true` is used.
                 * `metric_stat` - (Optional) The metric to be returned, along with statistics, period, and units. Use this parameter only if this object is retrieving a metric and not performing a math expression on returned data.Within one metricdataquery object, you must specify either expression or metricstat but not both.
                     * `metric_period` - (Optional) The granularity, in seconds, of the returned data points.
                     * `stat` - (Optional) The statistic to return. It can include any CloudWatch statistic or extended statistic.

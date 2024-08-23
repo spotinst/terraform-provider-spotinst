@@ -109,7 +109,7 @@ The following arguments are supported:
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `instance_types` - (Optional) A list of instance types allowed to be provisioned for pods pending under the specified launch specification. The list overrides the list defined for the Ocean cluster.
 * `preferred_spot_types` - (Optional) When Ocean scales up instances, it takes your preferred types into consideration while maintaining a variety of machine types running for optimized distribution.
-* `restrict_scale_down`- (Optional) Boolean. When set to “True”, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
+* `restrict_scale_down`- (Optional) Boolean. When set to `true`, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `subnet_ids` - (Optional) Set subnets in launchSpec. Each element in the array should be a subnet ID.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
@@ -125,7 +125,7 @@ The following arguments are supported:
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 
 * `scheduling_task` - (Optional) Used to define scheduled tasks such as a manual headroom update.
-    * `is_enabled` - (Required) Describes whether the task is enabled. When True, the task runs. When False, it does not run.
+    * `is_enabled` - (Required) Describes whether the task is enabled. When `true`, the task runs. When `false`, it does not run.
     * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ". The cron job runs in UTC time and is in Unix cron format.
     * `task_type` - (Required) The activity that you are scheduling. Valid values: "manualHeadroomUpdate".
     * `task_headroom` - (Optional) The config of this scheduled task. Depends on the value of taskType.
