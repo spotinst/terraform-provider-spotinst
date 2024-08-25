@@ -153,7 +153,7 @@ The following arguments are supported:
   * `min_instance_count` - (Optional) Option to set a minimum number of instances per virtual node group. Can be null. If set, the value must be greater than or equal to 0.
 * `service_account` - (Optional) The account used by applications running on the VM to call GCP APIs.
 * `scheduling_task` - (Optional) Used to define scheduled tasks such as a manual headroom update.
-  * `is_enabled` - (Required) Describes whether the task is enabled. When True, the task runs. When False, it does not run.
+  * `is_enabled` - (Required) Describes whether the task is enabled. When `true`, the task runs. When `false`, it does not run.
   * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ". The cron job runs in UTC time and is in Unix cron format.
   * `task_type` - (Required) The activity that you are scheduling. Valid values: "manualHeadroomUpdate".
   * `task_headroom` - (Optional) The config of this scheduled task. Depends on the value of taskType.

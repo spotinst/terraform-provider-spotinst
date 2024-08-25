@@ -216,7 +216,7 @@ The following arguments are supported:
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
     * `autoscale_headroom` - (Optional) Spare resource capacity management enabling fast assignment of pods without waiting for new resources to launch.
         * `automatic` - (Optional) [Automatic headroom](https://docs.spot.io/ocean/features/headroom?id=automatic-headroom) configuration.
-            * `is_enabled` - (Optional, Default - false) Enable automatic headroom. When set to True, Ocean configures and optimizes headroom automatically.
+            * `is_enabled` - (Optional, Default - false) Enable automatic headroom. When set to `true`, Ocean configures and optimizes headroom automatically.
             * `percentage` - (Optional) Optionally set a number between 0-100 to control the percentage of total cluster resources dedicated to headroom.
 * `controller_cluster_id` - (Required) Enter a unique Ocean cluster identifier. Cannot be updated. This needs to match with string that was used to install the controller in the cluster, typically clusterName + 8 digit string.
 * `health` - (Optional) The Ocean AKS Health object.
@@ -303,7 +303,7 @@ update_policy {
 ## Scheduling
 * `scheduling` - (Optional) An object used to specify times when the cluster will turn off. Once the shutdown time will be over, the cluster will return to its previous state.
   * `shutdown_hours` - (Optional) An object used to specify times that the nodes in the cluster will be taken down.
-    * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the cluster remains in its current state.
+    * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When `false`, the mechanism is deactivated, and the cluster remains in its current state.
     * `time_windows` - (Optional) The times that the shutdown hours will apply. Required if isEnabled is true.
   * `tasks` - (Optional) A list of scheduling tasks to preform on the cluster at a specific cron time.
     * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for `cluster.scheduling.tasks` object.

@@ -196,7 +196,7 @@ The following arguments are supported:
 * `root_volume_size` - (Optional) Set root volume size (in GB).
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
-* `restrict_scale_down`- (Optional) Boolean. When set to `True`, nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
+* `restrict_scale_down`- (Optional) Boolean. When set to `true`, nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `labels` - (Optional) Optionally adds labels to instances launched in the cluster.
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.
@@ -245,7 +245,7 @@ The following arguments are supported:
     * `force_delete` - (Optional) When set to `true`, delete even if it is the last Virtual Node Group (also, the default Virtual Node Group must be configured with `useAsTemlateOnly = true`). Should be set at creation or update, but will be used only at deletion.
     * `delete_nodes` - (Optional) When set to "true", all instances belonging to the deleted launch specification will be drained, detached, and terminated.
 * `scheduling_task` - (Optional) Used to define scheduled tasks such as a manual headroom update.
-    * `is_enabled` - (Required) Describes whether the task is enabled. When True, the task runs. When False, it does not run.
+    * `is_enabled` - (Required) Describes whether the task is enabled. When `true`, the task runs. When `false`, it does not run.
     * `cron_expression` - (Required) A valid cron expression. For example : " * * * * * ". The cron job runs in UTC time and is in Unix cron format.
     * `task_type` - (Required) The activity that you are scheduling. Valid values: "manualHeadroomUpdate".
     * `task_headroom` - (Optional) The config of this scheduled task. Depends on the value of taskType.
@@ -255,7 +255,7 @@ The following arguments are supported:
       * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 * `scheduling_shutdown_hours` - (Optional) Used to specify times that the nodes in the virtual node group will be taken down.
     * `time_windows` - (Required ) The times that the shutdown hours will apply.
-    * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When False, the mechanism is deactivated, and the virtual node group remains in its current state.
+    * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When `false`, the mechanism is deactivated, and the virtual node group remains in its current state.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
