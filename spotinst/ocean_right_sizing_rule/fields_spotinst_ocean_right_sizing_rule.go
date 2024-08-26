@@ -79,12 +79,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
 			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
 			if v, ok := resourceData.GetOk(string(RestartReplicas)); ok && v != "" {
-				rightSizingRule.SetRuleName(spotinst.String(resourceData.Get(string(RestartReplicas)).(string)))
+				rightSizingRule.SetRestartReplicas(spotinst.String(resourceData.Get(string(RestartReplicas)).(string)))
 			}
 			return nil
 		},
 		nil,
-	)
+
 
 	fieldsMap[ExcludePreliminaryRecommendations] = commons.NewGenericField(
 		commons.OceanRightSizingRule,
@@ -100,25 +100,32 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if rightSizingRule.ExcludePreliminaryRecommendations != nil {
 				value = rightSizingRule.ExcludePreliminaryRecommendations
 			}
-			if err := resourceData.Set(string(ExcludePreliminaryRecommendations), value); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ExcludePreliminaryRecommendations), err)
+			if value != nil {
+				if err := resourceData.Set(string(ExcludePreliminaryRecommendations), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ExcludePreliminaryRecommendations), err)
+				}
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
 			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
-			if v, ok := resourceData.GetOk(string(ExcludePreliminaryRecommendations)); ok && v != "" {
-				rightSizingRule.SetExcludePreliminaryRecommendations(spotinst.Bool(resourceData.Get(string(ExcludePreliminaryRecommendations)).(bool)))
+			if v, ok := resourceData.GetOkExists(string(ExcludePreliminaryRecommendations)); ok && v != nil {
+				temp := v.(bool)
+				excludepreliminaryrecommendations := spotinst.Bool(temp)
+				rightSizingRule.SetExcludePreliminaryRecommendations(excludepreliminaryrecommendations)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
 			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
-			if v, ok := resourceData.GetOk(string(ExcludePreliminaryRecommendations)); ok && v != "" {
-				rightSizingRule.SetExcludePreliminaryRecommendations(spotinst.Bool(resourceData.Get(string(ExcludePreliminaryRecommendations)).(bool)))
+			var value *bool = nil
+			if v, ok := resourceData.GetOkExists(string(ExcludePreliminaryRecommendations)); ok && v != nil {
+				temp := v.(bool)
+				value = spotinst.Bool(temp)
 			}
+			rightSizingRule.SetExcludePreliminaryRecommendations(value)
 			return nil
 		},
 		nil,
@@ -641,8 +648,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				result = flattenRecommendationApplicationHPA(recommendationApplicationHPA)
 			}
 			if result != nil {
-				if err := resourceData.Set(string(RecommendationApplicationOverheadValues), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RecommendationApplicationOverheadValues), err)
+				if err := resourceData.Set(string(RecommendationApplicationHPA), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RecommendationApplicationHPA), err)
 				}
 			}
 			return nil
