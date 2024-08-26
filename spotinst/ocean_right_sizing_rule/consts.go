@@ -3,10 +3,10 @@ package ocean_right_sizing_rule
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	OceanId     commons.FieldName = "ocean_id"
-	RuleName    commons.FieldName = "rule_name"
-	RestartPods commons.FieldName = "restart_pods"
-
+	OceanId                             commons.FieldName = "ocean_id"
+	RuleName                            commons.FieldName = "rule_name"
+	RestartReplicas                     commons.FieldName = "restart_replicas"
+	ExcludePreliminaryRecommendations   commons.FieldName = "exclude_preliminary_recommendations"
 	RecommendationApplicationIntervals  commons.FieldName = "recommendation_application_intervals"
 	RepetitionBasis                     commons.FieldName = "repetition_basis"
 	WeeklyRepetitionBasis               commons.FieldName = "weekly_repetition_basis"
@@ -56,4 +56,7 @@ const (
 	LabelsForDetach        commons.FieldName = "labels"
 	KeyForDetach           commons.FieldName = "key"
 	ValueForDetach         commons.FieldName = "value"
+
+	RecommendationApplicationHPA commons.FieldName = "recommendation_application_HPA"
+	AllowHPARecommendation       commons.FieldName = "allow_HPA_recommendation"
 )
