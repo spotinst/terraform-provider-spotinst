@@ -57,6 +57,6 @@ const (
 	KeyForDetach           commons.FieldName = "key"
 	ValueForDetach         commons.FieldName = "value"
 
-	RecommendationApplicationHPA commons.FieldName = "recommendation_application_HPA"
-	AllowHPARecommendation       commons.FieldName = "allow_HPA_recommendation"
+	RecommendationApplicationHPA commons.FieldName = "recommendation_application_hpa"
+	AllowHPARecommendation       commons.FieldName = "allow_hpa_recommendation"
 )
