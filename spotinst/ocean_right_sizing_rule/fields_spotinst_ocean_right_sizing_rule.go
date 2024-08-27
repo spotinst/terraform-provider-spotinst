@@ -84,7 +84,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			return nil
 		},
 		nil,
-
+	)
 
 	fieldsMap[ExcludePreliminaryRecommendations] = commons.NewGenericField(
 		commons.OceanRightSizingRule,
