@@ -503,6 +503,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.availability_vs_cost", "50"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.vm_admins.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.vm_admins.0", "testing"),
 				),
 			},
 			{
@@ -520,6 +522,8 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.availability_vs_cost", "100"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.vm_admins.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.vm_admins.0", "testingUpdate"),
 				),
 			},
 			{
@@ -547,6 +551,7 @@ strategy {
 	}
 	preferred_life_cycle = "spot"
     availability_vs_cost = "50"
+	vm_admins = ["testing"]
 }
 `
 
@@ -559,6 +564,7 @@ strategy {
 	}
 	preferred_life_cycle = "spot"
     availability_vs_cost = "100"
+	vm_admins = ["testingUpdate"]
 }
 `
 

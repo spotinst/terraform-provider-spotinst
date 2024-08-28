@@ -98,6 +98,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeInt,
 						Optional: true,
 					},
+					string(VmAdmins): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
 				},
 			},
 		},
@@ -275,6 +280,10 @@ func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 		result[string(OdWindows)] = spotinst.StringSlice(strategy.OdWindows)
 	}
 
+	if strategy.VmAdmins != nil {
+		result[string(VmAdmins)] = spotinst.StringSlice(strategy.VmAdmins)
+	}
+
 	return []interface{}{result}
 }
 
@@ -346,6 +355,19 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 				strategy.SetOdWindows(odWindows)
 			} else {
 				strategy.SetOdWindows(nil)
+			}
+		}
+
+		if v, ok := m[string(VmAdmins)]; ok {
+			vmAdmins, err := expandStatefulNodeAzureStrategyList(v)
+			if err != nil {
+				return nil, err
+			}
+
+			if vmAdmins != nil && len(vmAdmins) > 0 {
+				strategy.SetVmAdmins(vmAdmins)
+			} else {
+				strategy.SetVmAdmins(nil)
 			}
 		}
 
