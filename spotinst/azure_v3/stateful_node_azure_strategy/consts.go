@@ -12,6 +12,7 @@ const (
 	OptimizationWindows commons.FieldName = "optimization_windows"
 	OdWindows           commons.FieldName = "od_windows"
 	AvailabilityVsCost  commons.FieldName = "availability_vs_cost"
+	VmAdmins            commons.FieldName = "vm_admins"
 )
 
 const (

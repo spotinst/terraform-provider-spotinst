@@ -3,9 +3,8 @@ package ocean_right_sizing_rule
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	OceanId     commons.FieldName = "ocean_id"
-	RuleName    commons.FieldName = "rule_name"
-	RestartPods commons.FieldName = "restart_pods"
+	OceanId  commons.FieldName = "ocean_id"
+	RuleName commons.FieldName = "rule_name"
 
 	RecommendationApplicationIntervals  commons.FieldName = "recommendation_application_intervals"
 	RepetitionBasis                     commons.FieldName = "repetition_basis"
