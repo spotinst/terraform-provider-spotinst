@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.189.0 (August, 29 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added support for `vm_admins` field in `strategy` block.
+
 ## 1.188.1 (August, 25 2024)
 FIXES:
 * Fixed documentation for boolean values to lower case.
