@@ -20,4 +20,12 @@ const (
 	Custom            commons.FieldName = "custom"
 	ResourceGroupName commons.FieldName = "resource_group_name"
 	ImageName         commons.FieldName = "image_name"
+
+	// gallery image
+	GalleryImage             commons.FieldName = "gallery_image"
+	GalleryName              commons.FieldName = "gallery_name"
+	GalleryImageName         commons.FieldName = "image_name"
+	GalleryResourceGroupName commons.FieldName = "resource_group_name"
+	GalleryVersion           commons.FieldName = "version"
+	SpotAccountId            commons.FieldName = "spot_account_id"
 )

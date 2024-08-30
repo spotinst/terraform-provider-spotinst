@@ -65,6 +65,38 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+
+					string(GalleryImage): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(GalleryName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(GalleryImageName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(GalleryResourceGroupName): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+
+								string(GalleryVersion): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(SpotAccountId): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -125,6 +157,9 @@ func flattenAzureGroupImage(image *azurev3.Image) []interface{} {
 	if image.MarketPlace != nil {
 		result[string(Marketplace)] = flattenAzureGroupMarketplaceImage(image.MarketPlace)
 	}
+	if image.GalleryImage != nil {
+		result[string(GalleryImage)] = flattenAzureGroupGalleryImage(image.GalleryImage)
+	}
 	return []interface{}{result}
 }
 
@@ -141,6 +176,16 @@ func flattenAzureGroupCustomImage(image *azurev3.CustomImage) []interface{} {
 	result := make(map[string]interface{})
 	result[string(ImageName)] = spotinst.StringValue(image.Name)
 	result[string(ResourceGroupName)] = spotinst.StringValue(image.ResourceGroupName)
+	return []interface{}{result}
+}
+
+func flattenAzureGroupGalleryImage(image *azurev3.GalleryImage) []interface{} {
+	result := make(map[string]interface{})
+	result[string(GalleryName)] = spotinst.StringValue(image.GalleryName)
+	result[string(GalleryImageName)] = spotinst.StringValue(image.ImageName)
+	result[string(GalleryResourceGroupName)] = spotinst.StringValue(image.ResourceGroupName)
+	result[string(SpotAccountId)] = spotinst.StringValue(image.SpotAccountId)
+	result[string(GalleryVersion)] = spotinst.StringValue(image.Version)
 	return []interface{}{result}
 }
 
@@ -173,6 +218,19 @@ func expandAzureGroupImage(data interface{}) (*azurev3.Image, error) {
 			}
 		} else {
 			image.Custom = nil
+		}
+
+		if v, ok := m[string(GalleryImage)]; ok {
+
+			gallery, err := expandAzureGroupGalleryImage(v)
+			if err != nil {
+				return nil, err
+			}
+			if gallery != nil {
+				image.SetGalleryImage(gallery)
+			}
+		} else {
+			image.GalleryImage = nil
 		}
 
 	} else {
@@ -221,6 +279,37 @@ func expandAzureGroupCustomImage(data interface{}) (*azurev3.CustomImage, error)
 			}
 		}
 		return custom, nil
+	}
+	return nil, nil
+}
+
+func expandAzureGroupGalleryImage(data interface{}) (*azurev3.GalleryImage, error) {
+	gallery := &azurev3.GalleryImage{}
+	if list := data.([]interface{}); len(list) > 0 {
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(GalleryName)].(string); ok && v != "" {
+				gallery.SetGalleryName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(GalleryImageName)].(string); ok && v != "" {
+				gallery.SetImageName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(GalleryResourceGroupName)].(string); ok && v != "" {
+				gallery.SetResourceGroupName(spotinst.String(v))
+			}
+
+			if v, ok := m[string(SpotAccountId)].(string); ok && v != "" {
+				gallery.SetSpotAccountId(spotinst.String(v))
+			}
+
+			if v, ok := m[string(GalleryVersion)].(string); ok && v != "" {
+				gallery.SetVersion(spotinst.String(v))
+			}
+		}
+		return gallery, nil
 	}
 	return nil, nil
 }

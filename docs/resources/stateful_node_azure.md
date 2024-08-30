@@ -26,6 +26,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     optimization_windows    = ["Tue:19:46-Tue:20:46"]
     od_windows              = ["Wed:19:46-Wed:21:46"]
     availability_vs_cost    = 100
+    vm_admins               = ["UbuntuUser", "TestUser"]
     revert_to_spot {
       perform_at            = "timeWindow"
     }
@@ -322,6 +323,7 @@ The following arguments are supported:
       * `crg_name` - (Required) The name of the CRG.
       * `crg_resource_group_name` - (Required) Azure resource group name
       * `crg_should_prioritize` - The desired CRG to utilize ahead of other CRGs in the subscription.
+  * `vm_admins` - (Optional) Defines Azure identities that are considered VM admins. If the list is empty, the defined behavior is `NONE`, If the list is null, the defined behavior is `ALL`. This applies if the object is not defined. If an identity contains the string, it will be considered permitted to perform the following actions: Stop VM: VM admins can move the VM to a "stopped (deallocated)" state using the Azure console. If triggered by someone else, it is considered an interruption. 
 
 <a id="compute"></a>
 ## Compute
