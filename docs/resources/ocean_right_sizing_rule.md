@@ -1,6 +1,6 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: ocean_aws"
+page_title: "Spotinst: ocean_right_sizing"
 subcategory: "Ocean"
 description: |-
   Provides a Spotinst Ocean right sizing rule resource.
