@@ -134,12 +134,20 @@ The following arguments are supported:
 ## Image
 
 * `image` - (Required) Image of a VM. An image is a template for creating new VMs. Choose from Azure image catalogue (marketplace) or use a custom image.
-    * `publisher` - (Optional) Image publisher. Required if resource_group_name is not specified.
-    * `offer` - (Optional) Name of the image to use. Required if publisher is specified.
-    * `sku` - (Optional) Image's Stock Keeping Unit, which is the specific version of the image. Required if publisher is specified.
-    * `version` - 
-    * `resource_group_name` - (Optional) Name of Resource Group for custom image. Required if publisher not specified.
-    * `image_name` - (Optional) Name of the custom image. Required if resource_group_name is specified.
+  * `marketplace` - (Optional) Select an image from Azure's Marketplace image catalogue. Cannot be used with `custom` or `gallery`
+      * `publisher` - (Optional) Image publisher. Required if marketplace image is specified.
+      * `offer` - (Optional) Name of the image to use. Required if marketplace image is specified.
+      * `sku` - (Optional) Image's Stock Keeping Unit, which is the specific version of the image. Required if marketplace image is specified.
+      * `version` - Image's version. if version not provided we use `latest`. Required if marketplace image is specified.
+  * `custom` - (Optional) Custom image to launch Elastigroup with. Cannot be used with `marketplace` or `gallery`.
+      * `resource_group_name` - (Optional) Name of Resource Group for custom image. Required if custom image is specified.
+      * `image_name` - (Optional) Name of the custom image. Required if custom image is specified.
+  * `gallery_image` - (Optional) Gallery image to launch Elastigroup with. Cannot be used with `marketplace` or `custom`.
+      * `gallery_name` - (Optional) Name of the gallery. Required if gallery image is specified.
+      * `image_name` - (Optional) Name of the gallery image. Required if gallery image is specified.
+      * `resource_group_name` - (Optional) Name of Resource Group for gallery image. Required if gallery image is specified.
+      * `version` - (Optional) Image's version. Can be in the format x.x.x or 'latest'. Required if gallery image is specified.
+      * `spot_account_id` - (Optional) The Spot account ID that connected to the Azure subscription to which the gallery belongs. Relevant only in case of cross-subscription shared galleries. Read more (https://docs.spot.io/elastigroup/features-azure/shared-image-galleries) about cross-subscription shared galleries in Elastigroup.
 
 ```hcl
   // market image
@@ -157,6 +165,16 @@ The following arguments are supported:
     custom {
       image_name          = "customImage"
       resource_group_name = "resourceGroup"
+    }
+  }
+  
+  // gallery image
+  image {
+    gallery_image {
+      resource_group_name = "resourceGroup"
+      gallery_name = "galleryName"
+      image_name = "imageName"
+      version = "1.0.0"
     }
   } 
 ```

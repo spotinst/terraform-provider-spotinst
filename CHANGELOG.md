@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.190.0 (August, 30 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Added support for `gallery_image` block in `image`.
+
 ## 1.189.0 (August, 29 2024)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added support for `vm_admins` field in `strategy` block.
