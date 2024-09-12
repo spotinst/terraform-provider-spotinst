@@ -2,6 +2,7 @@ package elastigroup_gcp_strategy
 
 import (
 	"fmt"
+
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/gcp"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
