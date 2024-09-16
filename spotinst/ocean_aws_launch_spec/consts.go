@@ -89,8 +89,10 @@ const (
 )
 
 const (
-	SpotPercentage  commons.FieldName = "spot_percentage"
-	DrainingTimeout commons.FieldName = "draining_timeout"
+	SpotPercentage           commons.FieldName = "spot_percentage"
+	DrainingTimeout          commons.FieldName = "draining_timeout"
+	UtilizeCommitments       commons.FieldName = "utilize_commitments"
+	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
 )
 
 const (

@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.191.0 (September, 12 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added support for `utilize_commitments` and `utilize_reserved_instances` under strategy.
+
 ## 1.190.0 (August, 30 2024)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Added support for `gallery_image` block in `image`.

@@ -1191,6 +1191,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Default:      -1,
 						ValidateFunc: validation.IntAtLeast(-1),
 					},
+					string(UtilizeCommitments): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					string(UtilizeReservedInstances): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  true,
+					},
 				},
 			},
 		},
@@ -2511,6 +2521,12 @@ func expandStrategy(data interface{}) (*aws.LaunchSpecStrategy, error) {
 					strategy.SetDrainingTimeout(spotinst.Int(v))
 				}
 			}
+			if v, ok := m[string(UtilizeCommitments)].(bool); ok {
+				strategy.SetUtilizeCommitments(spotinst.Bool(v))
+			}
+			if v, ok := m[string(UtilizeReservedInstances)].(bool); ok {
+				strategy.SetUtilizeReservedInstances(spotinst.Bool(v))
+			}
 		}
 		return strategy, nil
 	}
@@ -2531,6 +2547,12 @@ func flattenStrategy(strategy *aws.LaunchSpecStrategy) []interface{} {
 		}
 		if strategy.DrainingTimeout != nil {
 			result[string(DrainingTimeout)] = spotinst.IntValue(strategy.DrainingTimeout)
+		}
+		if strategy.UtilizeCommitments != nil {
+			result[string(UtilizeCommitments)] = spotinst.BoolValue(strategy.UtilizeCommitments)
+		}
+		if strategy.UtilizeReservedInstances != nil {
+			result[string(UtilizeReservedInstances)] = spotinst.BoolValue(strategy.UtilizeReservedInstances)
 		}
 		if len(result) > 0 {
 			out = append(out, result)
