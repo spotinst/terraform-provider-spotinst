@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.192.0 (September, 18 2024)
+NOTES:
+* Added controller v2 reference in ocean resources.
+
 ## 1.191.0 (September, 12 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added support for `utilize_commitments` and `utilize_reserved_instances` under strategy.

@@ -12,11 +12,11 @@ Manages a Spotinst Ocean GKE resource.
 
 ## Prerequisites
 
-Installation of the Ocean controller is required by this resource. You can accomplish this by using the [spotinst/ocean-controller](https://registry.terraform.io/modules/spotinst/ocean-controller/spotinst) module as follows:
+Installation of the Ocean controller is required by this resource. You can accomplish this by using the [spotinst/terraform-ocean-kubernetes-controller ](https://registry.terraform.io/modules/spotinst/kubernetes-controller/ocean) module as follows:
 
 ```hcl
-module "ocean-controller" {
-  source = "spotinst/ocean-controller/spotinst"
+module "kubernetes-controller" {
+  source = "spotinst/kubernetes-controller/ocean"
 
   # Credentials.
   spotinst_token   = "redacted"
