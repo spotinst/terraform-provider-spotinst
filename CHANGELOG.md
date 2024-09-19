@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.193.0 (September, 19 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: Added support for `should_utilize_commitments` under strategy.
+
 ## 1.192.0 (September, 18 2024)
 NOTES:
 * Added controller v2 reference in ocean resources.
