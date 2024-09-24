@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.194.0 (September, 24 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Added support for `scaling_up_policy` and `scaling_down_policy`.
+
 ## 1.193.0 (September, 19 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: Added support for `should_utilize_commitments` under strategy.
