@@ -109,8 +109,6 @@ type AzureV3GroupConfigMetadata struct {
 	image                string
 	network              string
 	login                string
-	scalingUp            string
-	scalingDown          string
 	fieldsToAppend       string
 	updateBaselineFields bool
 }
@@ -144,14 +142,6 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 		gcm.login = testAzureV3LoginGroupConfig_Create
 	}
 
-	if gcm.scalingUp == "" {
-		gcm.scalingUp = testAzureV3ScalingUpPolicyGroupConfig_Create
-	}
-
-	if gcm.scalingDown == "" {
-		gcm.scalingDown = testAzureV3ScalingDownPolicyGroupConfig_Create
-	}
-
 	template := `provider "azure" {
  account = "fake"
  token = "fake"
@@ -167,8 +157,6 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 			gcm.image,
 			gcm.network,
 			gcm.login,
-			gcm.scalingUp,
-			gcm.scalingDown,
 			gcm.fieldsToAppend,
 		)
 	} else {
@@ -182,8 +170,6 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 			gcm.image,
 			gcm.network,
 			gcm.login,
-			gcm.scalingUp,
-			gcm.scalingDown,
 			gcm.fieldsToAppend,
 		)
 	}
@@ -655,7 +641,6 @@ func TestAccSpotinstElastigroupAzureV3_ScalingUpPolicies(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				ResourceName: resourceName,
 				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
 					groupName:      groupName,
 					fieldsToAppend: testAzureV3ScalingUpPolicyGroupConfig_Create,
@@ -686,11 +671,11 @@ func TestAccSpotinstElastigroupAzureV3_ScalingUpPolicies(t *testing.T) {
 				),
 			},
 			{
-				ResourceName: resourceName,
 				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
 					groupName:      groupName,
 					fieldsToAppend: testAzureV3ScalingUpPolicyGroupConfig_Update,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
@@ -718,11 +703,11 @@ func TestAccSpotinstElastigroupAzureV3_ScalingUpPolicies(t *testing.T) {
 				),
 			},
 			{
-				ResourceName: resourceName,
 				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
 					groupName:      groupName,
 					fieldsToAppend: testAzureV3ScalingUpPolicyGroupConfig_EmptyFields,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
@@ -815,11 +800,11 @@ func TestAccSpotinstElastigroupAzureV3_ScalingDownPolicies(t *testing.T) {
 
 		Steps: []resource.TestStep{
 			{
-				ResourceName: resourceName,
 				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
 					groupName:      groupName,
 					fieldsToAppend: testAzureV3ScalingDownPolicyGroupConfig_Create,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
@@ -845,11 +830,11 @@ func TestAccSpotinstElastigroupAzureV3_ScalingDownPolicies(t *testing.T) {
 				),
 			},
 			{
-				ResourceName: resourceName,
 				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
 					groupName:      groupName,
 					fieldsToAppend: testAzureV3ScalingDownPolicyGroupConfig_Update,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
@@ -877,11 +862,11 @@ func TestAccSpotinstElastigroupAzureV3_ScalingDownPolicies(t *testing.T) {
 				),
 			},
 			{
-				ResourceName: resourceName,
 				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
 					groupName:      groupName,
 					fieldsToAppend: testAzureV3ScalingDownPolicyGroupConfig_EmptyFields,
 				}),
+				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupAzureV3Exists(&group, resourceName),
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
