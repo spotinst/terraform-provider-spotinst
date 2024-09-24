@@ -118,6 +118,7 @@ func NewElastigroupAzureV3Wrapper() *ElastigroupAzureV3Wrapper {
 			},
 			Capacity: &azurev3.Capacity{},
 			Strategy: &azurev3.Strategy{},
+			Scaling:  &azurev3.Scaling{},
 		},
 	}
 }

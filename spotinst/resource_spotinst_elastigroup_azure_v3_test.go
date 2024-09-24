@@ -627,3 +627,320 @@ const testAzureV3LoginGroupConfig_Create = `
 `
 
 // endregion
+
+func TestAccSpotinstElastigroupAzureV3_ScalingUpPolicies(t *testing.T) {
+	groupName := "test-acc-eg-scaling-up-policy"
+	resourceName := createElastigroupAzureV3ResourceName(groupName)
+
+	var group azurev3.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "azure") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureV3Destroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureV3ScalingUpPolicyGroupConfig_Create,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.metric_name", "Disk Read Bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.source", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.threshold", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.operator", "gt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.0.type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.0.adjustment", "1"),
+				),
+			},
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureV3ScalingUpPolicyGroupConfig_Update,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.metric_name", "Disk Read Bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.source", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.evaluation_periods", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.0.type", "updateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.0.maximum", "6"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.0.minimum", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.0.action.0.target", "2"),
+				),
+			},
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureV3ScalingUpPolicyGroupConfig_EmptyFields,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_up_policy.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureV3ScalingUpPolicyGroupConfig_Create = `
+ // --- SCALE UP POLICY ------------------
+ scaling_up_policy {
+  policy_name = "policy-name"
+  metric_name = "Disk Read Bytes"
+  namespace = "Microsoft.Compute"
+  source = ""
+  statistic = "average"
+  unit = "bytes"
+  cooldown = 60
+  is_enabled = false
+  dimensions {
+      name = "name-1"
+      value = "value-1"
+  }
+  threshold = 10
+
+  operator = "gt"
+  evaluation_periods = "10"
+  period = "60"
+
+  action {
+	type = "adjustment"
+    adjustment = "1"
+  }
+
+  }
+ // ----------------------------------------
+`
+
+const testAzureV3ScalingUpPolicyGroupConfig_Update = `
+ // --- SCALE UP POLICY ------------------
+ scaling_up_policy {
+  policy_name = "policy-name-update"
+  metric_name = "Disk Read Bytes"
+  namespace = "Microsoft.Compute"
+  source = ""
+  statistic = "average"
+  unit = "bytes"
+  is_enabled = true
+  cooldown = 300
+  dimensions {
+      name = "name-1-update"
+      value = "value-1-update"
+  }
+  threshold = 5
+
+  operator = "lt"
+  evaluation_periods = 5
+  period = 300
+
+  action {
+	type = "updateCapacity"
+    minimum = 1
+    maximum = 6
+    target = 2
+  }
+  }
+ // ----------------------------------------
+`
+
+const testAzureV3ScalingUpPolicyGroupConfig_EmptyFields = `
+ // --- SCALE UP POLICY ------------------
+ // ----------------------------------------
+`
+
+// endregion
+
+// region Elastigroup: Scaling Down Policies
+func TestAccSpotinstElastigroupAzureV3_ScalingDownPolicies(t *testing.T) {
+	groupName := "test-acc-eg-scaling-down-policy"
+	resourceName := createElastigroupAzureV3ResourceName(groupName)
+
+	var group azurev3.Group
+	resource.Test(t, resource.TestCase{
+		PreCheck:      func() { testAccPreCheck(t, "aws") },
+		Providers:     TestAccProviders,
+		CheckDestroy:  testElastigroupAzureV3Destroy,
+		IDRefreshName: resourceName,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureV3ScalingDownPolicyGroupConfig_Create,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.policy_name", "policy-name"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.metric_name", "Disk Read Bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.source", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.cooldown", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.name", "name-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.value", "value-1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.threshold", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.evaluation_periods", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.type", "adjustment"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.adjustment", "1"),
+				),
+			},
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureV3ScalingDownPolicyGroupConfig_Update,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.policy_name", "policy-name-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.metric_name", "Disk Read Bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.namespace", "Microsoft.Compute"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.source", ""),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.statistic", "average"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.unit", "bytes"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.cooldown", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.name", "name-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.dimensions.0.value", "value-1-update"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.threshold", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.operator", "lt"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.evaluation_periods", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.period", "300"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.type", "updateCapacity"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.minimum", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.maximum", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.target", "5"),
+				),
+			},
+			{
+				Config: createElastigroupAzureV3Terraform(&AzureV3GroupConfigMetadata{
+					groupName:      groupName,
+					fieldsToAppend: testAzureV3ScalingDownPolicyGroupConfig_EmptyFields,
+				}),
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckElastigroupAzureV3Exists(&group, resourceName),
+					testCheckElastigroupAzureV3Attributes(&group, groupName),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.#", "0"),
+				),
+			},
+		},
+	})
+}
+
+const testAzureV3ScalingDownPolicyGroupConfig_Create = `
+ // --- SCALE DOWN POLICY ------------------
+ scaling_down_policy {
+  policy_name = "policy-name"
+  metric_name = "Disk Read Bytes"
+  namespace = "Microsoft.Compute"
+  source = ""
+  statistic = "average"
+  unit = "bytes"
+  is_enabled = false
+  cooldown = 60
+  dimensions {
+      name = "name-1"
+      value = "value-1"
+  }
+  threshold = 10
+
+  operator = "lt"
+  evaluation_periods = 10
+  period = 60
+  action {
+    type = "adjustment"
+    adjustment = "1"
+  }
+
+  }
+ // ----------------------------------------
+`
+
+const testAzureV3ScalingDownPolicyGroupConfig_Update = `
+ // --- SCALE DOWN POLICY ------------------
+ scaling_down_policy {
+  policy_name = "policy-name-update"
+  metric_name = "Disk Read Bytes"
+  namespace = "Microsoft.Compute"
+  source = ""
+  statistic = "average"
+  unit = "bytes"
+  is_enabled = true
+  cooldown = 300
+  dimensions {
+      name = "name-1-update"
+      value = "value-1-update"
+  }
+  threshold = 5
+
+  operator = "lt"
+  evaluation_periods = 5
+  period = 300
+
+  action {
+  	type = "updateCapacity"
+  	minimum = 1
+  	maximum = 10
+	target = 5
+ }
+
+  }
+ // ----------------------------------------
+`
+
+const testAzureV3ScalingDownPolicyGroupConfig_EmptyFields = `
+ // --- SCALE DOWN POLICY ------------------
+ // ----------------------------------------
+`
+
+// endregion

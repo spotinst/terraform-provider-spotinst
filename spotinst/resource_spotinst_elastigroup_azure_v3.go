@@ -3,6 +3,7 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_scaling_policies"
 	"log"
 	"time"
 
@@ -50,6 +51,7 @@ func setupElastigroupAzureV3Resource() {
 	elastigroup_azure_strategy.Setup(fieldsMap)
 	elastigroup_azure_vm_sizes.Setup(fieldsMap)
 	elastigroup_azure_launchspecification.Setup(fieldsMap)
+	elastigroup_azure_scaling_policies.Setup(fieldsMap)
 
 	commons.ElastigroupAzureV3Resource = commons.NewElastigroupAzureV3Resource(fieldsMap)
 }
