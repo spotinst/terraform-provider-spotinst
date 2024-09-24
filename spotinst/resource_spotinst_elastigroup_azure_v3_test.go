@@ -853,7 +853,7 @@ func TestAccSpotinstElastigroupAzureV3_ScalingDownPolicies(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.threshold", "5"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.operator", "lt"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.evaluation_periods", "5"),
-					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.period", "600"),
+					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.period", "300"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.type", "updateCapacity"),
 					resource.TestCheckResourceAttr(resourceName, "scaling_down_policy.0.action.0.minimum", "1"),
@@ -925,7 +925,7 @@ const testAzureV3ScalingDownPolicyGroupConfig_Update = `
 
   operator = "lt"
   evaluation_periods = 5
-  period = 600
+  period = 300
 
   action {
   	type = "updateCapacity"
