@@ -235,6 +235,85 @@ The following arguments are supported:
 ```
 
 
+<a id="scaling-policy"></a>
+## Scaling Policies
+
+`scaling_up_policy` / `scaling_down_policy` supports the following:
+
+* `policy_name` - (Required) The name of the policy.
+* `metric_name` - (Required) Metric to monitor by Azure metric display name.
+* `statistic` - (Required) Statistic by which to evaluate the selected metric. Valid Values: `"average"`, `"sampleCount"`, `"sum"`, `"minimum"`, `"maximum"`
+* `unit` - (Optional) Unit to measure to evaluate the selected metric: Valid Values: `"percent`, `"seconds"`, `"milliseconds"`, `"bytes"`, `"countPerSecond"`, `"bytesPerSecond"`, `"seconds"`
+* `threshold` - (Required) The value at which the scaling action is triggered.
+* `namespace` - (Required) The namespace for the alarm's associated metric. Select one of the next namespaces presented in Azure configurator - [Namespace](https://learn.microsoft.com/en-us/azure/templates/)
+* `is_enabled` - (Optional, Default: `true`) Specifies whether the scaling policy described in this block is enabled.
+* `period` - (Required) Amount of time (seconds) for which the threshold must be met in order to trigger the scaling action.
+* `evaluation_periods` - (Required) Amount of time (seconds) for which the threshold must be met in order to trigger the scaling action.
+* `cooldown` - (Required) Time (seconds) to wait after a scaling action before resuming monitoring.
+* `dimensions` - (Optional) A list of dimensions describing qualities of the metric. Required if scaling.up.namespace is different from 'Microsoft.Compute'
+    * `name` - (Optional) Azure resource group for the scaling.down.dimensions. Required if using namespace different from "Microsoft.Compute".
+    * `value` - (Optional) Azure resource the scaling.down.dimensions. Required if using namespace different from "Microsoft.Compute".
+* `operator` - (Required) The operator used to evaluate the threshold against the current metric value. Valid values: `"gt"`, `"gte"`, `"lt"`, `"lte"`.
+* `source` - (Optional) The source of the metric.
+* `action` - (Required) Scaling action to take when the policy is triggered.
+    * `type` - (Required) Type of scaling action to take when the scaling policy is triggered. Valid Values: `"adjustment"`, `"updateCapacity"`
+    * `adjustment` - (Optional)  Value to which the action type will be adjusted. Required if using the next action types: `"numeric"`, `"percentageAdjustment"`
+    * `maximum` - (Optional)  Upper limit of instances that you can scale down to. Also you must indicate “minimum” and “target” amounts. Required if selected as action type: `"updateCapacity"`
+    * `minimum` - (Optional)  Lower limit of instances that you can scale down to. Also you must indicate “target” and “maximum” amounts. Required if selected as action type: `"updateCapacity"`
+    * `target` - (Optional)  Desired number of instances. Also you must indicate “minimum” and “maximum” amounts. Required if selected as action type: `"updateCapacity"`
+
+Usage:
+
+```hcl
+  //--- SCALING --------------------------------------------------------
+   scaling_up_policy {
+    policy_name        = "Scaling Up Policy"
+    metric_name        = "Percentage CPU"
+    statistic          = "average"
+    unit               = "count"
+    namespace          = "Microsoft.Network/applicationGateways"
+    threshold          = 1.5
+    period             = 60
+    evaluation_periods = 5
+    cooldown           = 300
+    operator           = "gt"
+    is_enabled         = false
+    dimensions {
+      name  = "name-1"
+      value = "value-1"
+    }
+    action {
+      type       = "updateCapacity"
+      minimum    = "1"
+      maximum    = "6"
+      target     = "2"
+    }
+  }
+
+  scaling_down_policy {
+    policy_name        = "Scaling Down Policy"
+    metric_name        = "Disk Read Bytes"
+    statistic          = "average"
+    unit               = "bytes"
+    namespace          = "Microsoft.Compute"
+    threshold          = 5
+    operator           = "gt"
+    period             = 60
+    evaluation_periods = 10
+    cooldown           = 300
+    is_enabled         = true
+    dimensions {
+      name  = "name-1"
+      value = "value-1"
+    }
+    action {
+      type       = "adjustment"
+      adjustment = "2"
+    }
+  }
+```
+
+
 
 
     

@@ -105,7 +105,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 func baseScalingPolicySchema() *schema.Schema {
 	return &schema.Schema{
-		//Type:     schema.TypeSet,
 		Type:     schema.TypeList,
 		Optional: true,
 		Elem: &schema.Resource{
@@ -153,7 +152,7 @@ func baseScalingPolicySchema() *schema.Schema {
 						Schema: map[string]*schema.Schema{
 							string(DimensionName): {
 								Type:     schema.TypeString,
-								Required: true,
+								Optional: true,
 							},
 
 							string(DimensionValue): {
@@ -167,13 +166,6 @@ func baseScalingPolicySchema() *schema.Schema {
 				string(Threshold): {
 					Type:     schema.TypeFloat,
 					Required: true,
-					/*Default:  -1,
-					DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-						if old == "-1" && new == "null" {
-							return true
-						}
-						return false
-					},*/
 				},
 
 				string(Operator): {
@@ -236,7 +228,6 @@ func baseScalingPolicySchema() *schema.Schema {
 }
 
 func expandAzureGroupScalingPolicies(data interface{}) ([]*azurev3.ScalingPolicy, error) {
-	//list := data.(*schema.Set).List()
 	if list := data.([]interface{}); len(list) > 0 {
 		policies := make([]*azurev3.ScalingPolicy, 0, len(list))
 		for _, item := range list {
@@ -354,7 +345,6 @@ func expandAzureGroupScalingPolicyAction(data interface{}) (*azurev3.Action, err
 		return nil, nil
 	}
 
-	//if list != nil && list[0] != nil {
 	m := list[0].(map[string]interface{})
 	if v, ok := m[string(Type)].(string); ok && v != "" {
 		action.SetType(spotinst.String(v))
@@ -412,19 +402,6 @@ func flattenAzureGroupScalingPolicy(policies []*azurev3.ScalingPolicy) []interfa
 		if policy.Action != nil {
 			m[string(Action)] = flattenAction(policy.Action)
 		}
-
-		/*if policy.Action != nil && policy.Action.Type != nil {
-			m[string(ActionType)] = spotinst.StringValue(policy.Action.Type)
-			m[string(Adjustment)] = spotinst.StringValue(policy.Action.Adjustment)
-			m[string(Minimum)] = spotinst.IntValue(policy.Action.Minimum)
-			m[string(Maximum)] = spotinst.IntValue(policy.Action.Maximum)
-			m[string(Target)] = spotinst.IntValue(policy.Action.Target)
-			m[string(EvaluationPeriods)] = spotinst.IntValue(policy.EvaluationPeriods)
-			m[string(Period)] = spotinst.IntValue(policy.Period)
-			m[string(Operator)] = spotinst.StringValue(policy.Operator)
-			m[string(Threshold)] = spotinst.Float64Value(policy.Threshold)
-		}*/
-
 		result = append(result, m)
 	}
 	return result
