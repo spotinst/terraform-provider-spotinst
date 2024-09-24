@@ -109,6 +109,8 @@ type AzureV3GroupConfigMetadata struct {
 	image                string
 	network              string
 	login                string
+	scalingUp            string
+	scalingDown          string
 	fieldsToAppend       string
 	updateBaselineFields bool
 }
@@ -142,6 +144,14 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 		gcm.login = testAzureV3LoginGroupConfig_Create
 	}
 
+	if gcm.scalingUp == "" {
+		gcm.scalingUp = testAzureV3ScalingUpPolicyGroupConfig_Create
+	}
+
+	if gcm.scalingDown == "" {
+		gcm.scalingDown = testAzureV3ScalingDownPolicyGroupConfig_Create
+	}
+
 	template := `provider "azure" {
  account = "fake"
  token = "fake"
@@ -157,6 +167,8 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 			gcm.image,
 			gcm.network,
 			gcm.login,
+			gcm.scalingUp,
+			gcm.scalingDown,
 			gcm.fieldsToAppend,
 		)
 	} else {
@@ -170,6 +182,8 @@ func createElastigroupAzureV3Terraform(gcm *AzureV3GroupConfigMetadata) string {
 			gcm.image,
 			gcm.network,
 			gcm.login,
+			gcm.scalingUp,
+			gcm.scalingDown,
 			gcm.fieldsToAppend,
 		)
 	}
