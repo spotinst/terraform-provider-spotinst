@@ -117,6 +117,7 @@ const (
 	ElastigroupAzureScalingPolicies     ResourceAffinity = "Elastigroup_Azure_Scaling_Policies"
 	ElastigroupAzureScheduledTask       ResourceAffinity = "Elastigroup_Azure_Scheduled_Task"
 	ElastigroupAzureLaunchSpecification ResourceAffinity = "Elastigroup_Azure_Launch_Specification"
+	ElastirgoupAzureExtensions          ResourceAffinity = "Elastigroup_Azure_Extensions"
 
 	MRScalerAWS                    ResourceAffinity = "MRScaler_AWS"
 	MRScalerAWSTaskScalingPolicies ResourceAffinity = "MRScaler_Task_AWS_Scaling_Polices"

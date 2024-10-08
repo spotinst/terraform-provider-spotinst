@@ -92,10 +92,8 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     protected_settings         = {
       "script" : "IyEvYmluL2Jhc2gKZWNobyAibmlyIiA+IC9ob29uaXIudHh0Cg=="
     }
-    publicSettings = {
-      "fileUris": [
-          "https://testspot/Azuretest.sh"
-      ]
+    public_settings = {
+      "fileUris": "https://testspot/Azuretest.sh"
     }
   }
   // -------------------------------------------------------------------

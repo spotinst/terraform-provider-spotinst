@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.195.0 (October, 08 2024)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Added support for `extensions` block to support azure extensions.
+
 ## 1.194.0 (September, 24 2024)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Added support for `scaling_up_policy` and `scaling_down_policy`.
