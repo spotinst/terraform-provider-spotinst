@@ -234,6 +234,43 @@ The following arguments are supported:
   }
 ```
 
+<a id="extensions"></a>
+## Extensions
+
+* `extensions` - (Optional) An object for an Azure extensions.
+    * `name` - (Required) Name of the extension.
+    * `type` - (Required) Type of the extension.
+    * `publisher` - (Required) Publisher of an extension.
+    * `api_version` - (Required) The API version of the extension. Required if extension specified.
+    * `minor_version_auto_upgrade` - (Required) Enable minor version upgrades of the extension. Required if extension specified.
+    * `protected_settings` - (Optional) Object for protected settings. This must not exist simultaneously with `protected_settings_from_key_vault`
+    * `public_settings` - (Optional) Object for public settings.
+    * `enable_automatic_upgrade` - (Optional) Indicates whether the extension should be automatically upgraded by the platform if there is a newer version of the extension available.
+    * `protected_settings_from_key_vault` - (Optional) The extensions protected settings that are passed by reference, and consumed from key vault.
+      * `secret_url` - (Required) The URL referencing a secret in a Key Vault.
+      * `sourcevault` - (Required) The relative URL of the Key Vault containing the secret.
+
+```hcl
+  extensions {
+    name                       = "extensionName"
+    type                       = "customScript"
+    publisher                  = "Microsoft.Azure.Extensions"
+    api_version                = "2.0"
+    minor_version_auto_upgrade = true
+    enable_automatic_upgrade   = false
+    protected_settings         = {
+      "script" : "IyEvYmluL2Jhc2gKZWNobyAibmlyIC9ob29uaXIudHh0Cg=="
+    }
+    public_settings = {
+      "fileUris": "https://testspot/Azuretest.sh"
+    }
+    
+    protected_settings_from_key_vault {
+      source_vault = "/subscriptions/abcde-123490-566778/resourceGroups/resourceGroupName/providers/Microsoft.KeyVault/vaults/keyVaultName"
+      secret_url = "https://terraform-extension-test.vault.azure.net/secrets/TestSeccret"
+    }
+  }
+```  
 
 <a id="scaling-policy"></a>
 ## Scaling Policies
