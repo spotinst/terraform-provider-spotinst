@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.195.1 (Oct 22, 2024)
+## 1.195.1 (Oct 23, 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added support for `respect_pdb` field under `roll_config`.
 
