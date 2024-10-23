@@ -294,6 +294,8 @@ The architectures that come from the Virtual Node Group's images will be taken i
     * `should_roll` - (Required) Enables the roll.
     * `roll_config` - (Required) Holds the roll configuration.
         * `batch_size_percentage` - (Required) Sets the percentage of the instances to deploy in each batch.
+        * `respect_pdb` - (Optional, Default: false) During the roll, if the parameter is set to `true` we honor PDB during the instance replacement.
+
 
 ```hcl
 update_policy {
@@ -301,6 +303,7 @@ update_policy {
 
   roll_config {
     batch_size_percentage = 33
+    respect_pdb = true
   }
 }
 ```

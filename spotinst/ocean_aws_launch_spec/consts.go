@@ -106,6 +106,7 @@ const (
 
 	RollConfig          commons.FieldName = "roll_config"
 	BatchSizePercentage commons.FieldName = "batch_size_percentage"
+	RespectPDB          commons.FieldName = "respect_pdb"
 )
 
 const (

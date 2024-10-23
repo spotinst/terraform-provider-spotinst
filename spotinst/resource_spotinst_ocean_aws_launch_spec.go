@@ -299,6 +299,10 @@ func expandOceanAWSLaunchSpecRollConfig(data interface{}, clusterID, specID stri
 		if v, ok := m[string(ocean_aws_launch_spec.BatchSizePercentage)].(int); ok {
 			spec.BatchSizePercentage = spotinst.Int(v)
 		}
+
+		if v, ok := m[string(ocean_aws_launch_spec.RespectPDB)].(bool); ok {
+			spec.RespectPDB = spotinst.Bool(v)
+		}
 	}
 
 	return spec, nil
