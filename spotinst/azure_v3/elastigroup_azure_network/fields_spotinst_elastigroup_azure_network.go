@@ -46,7 +46,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								},
 								string(AssignPublicIP): {
 									Type:     schema.TypeBool,
-									Required: true,
+									Optional: true,
 								},
 								string(PublicIPSku): {
 									Type:     schema.TypeString,
