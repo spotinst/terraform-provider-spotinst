@@ -1,8 +1,13 @@
 ## Unreleased
 
+
 ## 1.196.0 (October, 27 2024)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Added support for `scheduling`, `health`, `load_balancer`, `secrets`, `security` blocks.
+
+## 1.195.1 (Oct 23, 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added support for `respect_pdb` field under `roll_config`.
 
 ## 1.195.0 (October, 08 2024)
 ENHANCEMENTS:
