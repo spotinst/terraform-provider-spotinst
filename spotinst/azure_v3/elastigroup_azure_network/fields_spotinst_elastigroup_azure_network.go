@@ -40,17 +40,43 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeString,
 									Required: true,
 								},
-
 								string(IsPrimary): {
 									Type:     schema.TypeBool,
 									Required: true,
 								},
-
 								string(AssignPublicIP): {
 									Type:     schema.TypeBool,
 									Required: true,
 								},
-
+								string(PublicIPSku): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+								string(SecurityGroup): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Name): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+											string(ResourceGroupName): {
+												Type:     schema.TypeString,
+												Optional: true,
+											},
+										},
+									},
+								},
+								string(EnableIPForwarding): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+								string(PrivateIPAddresses): {
+									Type:     schema.TypeList,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+									Optional: true,
+								},
 								string(AdditionalIPConfigs): {
 									Type:     schema.TypeList,
 									Optional: true,
@@ -60,7 +86,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 												Type:     schema.TypeString,
 												Required: true,
 											},
-
 											string(PrivateIPVersion): {
 												Type:     schema.TypeString,
 												Optional: true,
@@ -72,7 +97,22 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 										},
 									},
 								},
-
+								string(PublicIPs): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(Name): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(ResourceGroupName): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+										},
+									},
+								},
 								string(ApplicationSecurityGroup): {
 									Type:     schema.TypeSet,
 									Optional: true,
@@ -82,7 +122,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 												Type:     schema.TypeString,
 												Required: true,
 											},
-
 											string(ResourceGroupName): {
 												Type:     schema.TypeString,
 												Required: true,
@@ -160,11 +199,22 @@ func flattenAzureGroupNetworkInterfaces(networkInterfaces []*azurev3.NetworkInte
 		m[string(SubnetName)] = spotinst.StringValue(inter.SubnetName)
 		m[string(IsPrimary)] = spotinst.BoolValue(inter.IsPrimary)
 		m[string(AssignPublicIP)] = spotinst.BoolValue(inter.AssignPublicIP)
+		m[string(PublicIPSku)] = spotinst.StringValue(inter.PublicIpSku)
+		m[string(EnableIPForwarding)] = spotinst.BoolValue(inter.EnableIPForwarding)
+		if inter.PrivateIpAddresses != nil {
+			m[string(PrivateIPAddresses)] = spotinst.StringSlice(inter.PrivateIpAddresses)
+		}
+		if inter.SecurityGroup != nil {
+			m[string(SecurityGroup)] = flattenSecurityGroup(inter.SecurityGroup)
+		}
 		if inter.AdditionalIPConfigs != nil {
 			m[string(AdditionalIPConfigs)] = flattenAzureAdditionalIPConfigs(inter.AdditionalIPConfigs)
 		}
 		if inter.ApplicationSecurityGroups != nil {
 			m[string(ApplicationSecurityGroup)] = flattenApplicationSecurityGroups(inter.ApplicationSecurityGroups)
+		}
+		if inter.PublicIps != nil {
+			m[string(PublicIPs)] = flattenPublicIPs(inter.PublicIps)
 		}
 		result = append(result, m)
 	}
@@ -192,6 +242,28 @@ func flattenApplicationSecurityGroups(applicationSecurityGroups []*azurev3.Appli
 		m := make(map[string]interface{})
 		m[string(Name)] = spotinst.StringValue(applicationSecurityGroup.Name)
 		m[string(ResourceGroupName)] = spotinst.StringValue(applicationSecurityGroup.ResourceGroupName)
+		result = append(result, m)
+	}
+
+	return result
+}
+
+func flattenSecurityGroup(networkSecurityGroup *azurev3.SecurityGroup) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(Name)] = spotinst.StringValue(networkSecurityGroup.Name)
+	result[string(ResourceGroupName)] = spotinst.StringValue(networkSecurityGroup.ResourceGroupName)
+
+	return []interface{}{result}
+}
+
+func flattenPublicIPs(publicIPS []*azurev3.PublicIps) []interface{} {
+	result := make([]interface{}, 0, len(publicIPS))
+
+	for _, publicIPS := range publicIPS {
+		m := make(map[string]interface{})
+		m[string(Name)] = spotinst.StringValue(publicIPS.Name)
+		m[string(ResourceGroupName)] = spotinst.StringValue(publicIPS.ResourceGroupName)
 		result = append(result, m)
 	}
 
@@ -255,6 +327,40 @@ func expandAzureGroupNetworkInterfaces(data interface{}) ([]*azurev3.NetworkInte
 				networkInterface.SetApplicationSecurityGroups(ApplicationSecurityGroups)
 			}
 		}
+
+		if v, ok := attr[string(EnableIPForwarding)].(bool); ok {
+			networkInterface.SetEnableIPForwarding(spotinst.Bool(v))
+		}
+
+		if v, ok := attr[string(PrivateIPAddresses)]; ok {
+			if privateIPAddresses, err := expandPrivateIPAddresses(v); err != nil {
+				return nil, err
+			} else {
+				networkInterface.SetPrivateIpAddresses(privateIPAddresses)
+			}
+		}
+
+		if v, ok := attr[string(PublicIPSku)].(string); ok {
+			networkInterface.SetPublicIpSku(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(SecurityGroup)]; ok {
+			if securityGroup, err := expandSecurityGroup(v); err != nil {
+				return nil, err
+			} else {
+				if securityGroup != nil {
+					networkInterface.SetSecurityGroup(securityGroup)
+				}
+			}
+		}
+
+		if v, ok := attr[string(PublicIPs)]; ok {
+			if pips, err := expandPublicIPs(v); err != nil {
+				return nil, err
+			} else {
+				networkInterface.SetPublicIps(pips)
+			}
+		}
 		networkInterfaces = append(networkInterfaces, networkInterface)
 	}
 
@@ -303,4 +409,56 @@ func expandApplicationSecurityGroups(data interface{}) ([]*azurev3.ApplicationSe
 	}
 
 	return applicationSecurityGroups, nil
+}
+
+func expandPrivateIPAddresses(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if privateIPAddresses, ok := v.(string); ok && privateIPAddresses != "" {
+			result = append(result, privateIPAddresses)
+		}
+	}
+
+	return result, nil
+}
+
+func expandPublicIPs(data interface{}) ([]*azurev3.PublicIps, error) {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		newPublicIPSList := make([]*azurev3.PublicIps, 0, len(list))
+		for _, v := range list {
+			pips := v.(map[string]interface{})
+			publicIP := &azurev3.PublicIps{}
+
+			if v, ok := pips[string(Name)].(string); ok && v != "" {
+				publicIP.SetName(spotinst.String(v))
+			}
+			if v, ok := pips[string(ResourceGroupName)].(string); ok && v != "" {
+				publicIP.SetResourceGroupName(spotinst.String(v))
+			}
+
+			newPublicIPSList = append(newPublicIPSList, publicIP)
+		}
+		return newPublicIPSList, nil
+	}
+	return nil, nil
+}
+
+func expandSecurityGroup(data interface{}) (*azurev3.SecurityGroup, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		securityGroup := &azurev3.SecurityGroup{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(Name)].(string); ok && v != "" {
+				securityGroup.SetName(spotinst.String(v))
+			}
+			if v, ok := m[string(ResourceGroupName)].(string); ok && v != "" {
+				securityGroup.SetResourceGroupName(spotinst.String(v))
+			}
+		}
+		return securityGroup, nil
+	}
+	return nil, nil
 }

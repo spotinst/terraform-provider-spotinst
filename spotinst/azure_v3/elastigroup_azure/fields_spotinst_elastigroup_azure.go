@@ -266,4 +266,156 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[Description] = commons.NewGenericField(
+		commons.ElastigroupAzure,
+		Description,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if elastigroup.Description != nil {
+				value = elastigroup.Description
+			}
+			if err := resourceData.Set(string(Description), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Description), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(Description)); ok && v != "" {
+				elastigroup.SetDescription(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if v, ok := resourceData.Get(string(Description)).(string); ok && v != "" {
+				description := spotinst.String(v)
+				value = description
+			}
+			elastigroup.SetDescription(value)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[Zones] = commons.NewGenericField(
+		commons.ElastigroupAzure,
+		Zones,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.Zones != nil {
+				result = elastigroup.Compute.Zones
+			}
+			if err := resourceData.Set(string(Zones), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Zones), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(Zones)).([]interface{}); ok && v != nil {
+				if zones, err := expandZones(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetZones(zones)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(Zones)); ok {
+				if zones, err := expandZones(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetZones(zones)
+				}
+			} else {
+				elastigroup.Compute.SetZones(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[PreferredZones] = commons.NewGenericField(
+		commons.ElastigroupAzure,
+		PreferredZones,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result []string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.PreferredZones != nil {
+				result = elastigroup.Compute.PreferredZones
+			}
+			if err := resourceData.Set(string(PreferredZones), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredZones), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(PreferredZones)).([]interface{}); ok && v != nil {
+				if zones, err := expandZones(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetPreferredZones(zones)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(PreferredZones)); ok {
+				if zones, err := expandZones(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.SetPreferredZones(zones)
+				}
+			} else {
+				elastigroup.Compute.SetPreferredZones(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+}
+
+func expandZones(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if zone, ok := v.(string); ok && zone != "" {
+			result = append(result, zone)
+		}
+	}
+
+	return result, nil
 }

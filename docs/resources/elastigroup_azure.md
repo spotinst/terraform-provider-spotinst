@@ -15,9 +15,12 @@ Provides a Spotinst elastigroup Azure resource.
 ```hcl
 resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   name                = "example_elastigroup_azure"
+  description         = "Azure Elastigroup Resource through TF"
   resource_group_name = "spotinst-azure"
   region              = "eastus"
   os                  = "Linux"
+  zones               = ["1", "2", "3"]
+  preferred_zones     = ["1", "3"]
 
   // --- CAPACITY ------------------------------------------------------
   min_size         = 0
@@ -29,11 +32,16 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
    vm_sizes {
        od_sizes   = ["standard_a1_v1","standard_a1_v2"]
        spot_sizes = ["standard_a1_v1","standard_a1_v2"]
+       preferred_spot_sizes = ["standard_a1_v2"]
    }
   // -------------------------------------------------------------------
 
   // --- LAUNCH SPEC ---------------------------------------------------
   custom_data = "IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
+  shutdown_script = "IlRlc3RpbmcgRUci"
+  //user_data = "IlRlc3RpbmcgRUci"
+  
+  vm_name_prefix = "prefixName"
   
   managed_service_identity {
   resource_group_name = "MC_ocean-westus-dev_ocean-westus-dev-aks_westus"
@@ -48,6 +56,17 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   tags {
   key = "key2"
   value = "value2"
+  }
+  
+  os_disk {
+    size_gb = 32
+    type = "Premium_LRS"
+  }
+
+  data_disk {
+    size_gb = 8
+    type = "Premium_LRS"
+    lun = 2
   }
   
   // --- IMAGE ---------------------------------------------------------
@@ -66,6 +85,24 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   spot_percentage       = 65
   draining_timeout      = 300
   fallback_to_on_demand = true
+  optimization_windows    = ["Mon:19:46-Tue:20:46"]
+  availability_vs_cost    = 100
+  revert_to_spot {
+    perform_at            = "timeWindow"
+  }
+  signal {
+    type    = "vmReadyToShutdown"
+    timeout = 60
+  }
+  capacity_reservation {
+    should_utilize       = true
+    utilization_strategy = "utilizeOverOD"
+    capacity_reservation_groups {
+      crg_name                = "crg name"
+      crg_resource_group_name = "resourceGroupName"
+      crg_should_prioritize   = true
+    }
+  }
   // -------------------------------------------------------------------
 
   // --- NETWORK -------------------------------------------------------
@@ -77,6 +114,8 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
       subnet_name      = "default"
       assign_public_ip = false
       is_primary       = true
+      public_ip_sku = "Standard"
+      enable_ip_forwarding = true
 
       additional_ip_configs {
         name             = "SecondaryIPConfig"
@@ -87,14 +126,91 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
         name                = "ApplicationSecurityGroupName"
         resource_group_name = "ResourceGroup"
       }
+      
+       public_ips {
+        name                = "PublicIpName"
+        resource_group_name = "ResourceGroup"
+      }
+
+      security_group {
+        name                = "NetworkSecurityGroupName"
+        resource_group_name = "ResourceGroup"
+      }
     }
   }
   // -------------------------------------------------------------------
+  
+  proximity_placement_groups {
+    name                = "TestProximityPlacementGroup"
+    resource_group_name = "ResourceGroup"
+  }
+
+  boot_diagnostics {
+    is_enabled      = true
+    storage_url     = "https://.blob.core.windows.net"
+    type            = "unmanaged"
+  }
+
+  secret {
+    source_vault {
+      name                = "TestVault"
+      resource_group_name = "ResourceGroup"
+    }
+
+    vault_certificates {
+      certificate_url     = "string"
+      certificate_store   = "string"
+    }
+  }
+
+  security {
+    security_type = "Standard"
+    secure_boot_enabled = false
+    vtpm_enabled = false
+    confidential_os_disk_encryption = false
+  }
 
   // --- LOGIN ---------------------------------------------------------
   login {
     user_name      = "admin"
     ssh_public_key = "33a2s1f3g5a1df5g1ad3f2g1adfg56dfg=="
+  }
+  // -------------------------------------------------------------------
+  
+  // --- HEALTH --------------------------------------------------------
+  health {
+    health_check_types = ["applicationGateway"]
+    unhealthy_duration = 240
+    grace_period       = 420
+    auto_healing       = false
+  }
+  // -------------------------------------------------------------------
+  
+  // --- SCHEDULING ----------------------------------------------------
+  scheduling_task {
+    is_enabled      = true
+    type            = "scale"
+    cron_expression = "52 10 * * *"
+    scale_max_capacity = 8
+    scale_min_capacity = 0
+    scale_target_capacity = 2
+  }
+
+  scheduling_task {
+    is_enabled      = true
+    type            = "scaleUp"
+    cron_expression = "52 11 * * *"
+    adjustment = 1
+  }
+  // -------------------------------------------------------------------
+  
+  // --- LOAD BALANCER -------------------------------------------------
+  load_balancer {
+    type                = "loadBalancer"
+    resource_group_name = "AutomationResourceGroup"
+    name                = "Automation-Lb"
+    sku                 = "Standard"
+    backend_pool_names  = ["Automation-Lb-BackendPool"]
   }
   // -------------------------------------------------------------------
 }

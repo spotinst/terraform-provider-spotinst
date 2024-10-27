@@ -34,6 +34,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							Type: schema.TypeString,
 						},
 					},
+
+					string(PreferredSpotSizes): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Schema{
+							Type: schema.TypeString,
+						},
+					},
 				},
 			},
 		},
@@ -93,6 +101,9 @@ func flattenAzureGroupSizes(vmSizes *azurev3.VMSizes) []interface{} {
 	if len(vmSizes.SpotSizes) > 0 {
 		result[string(SpotSizes)] = vmSizes.SpotSizes
 	}
+	if len(vmSizes.PreferredSpotSizes) > 0 {
+		result[string(PreferredSpotSizes)] = vmSizes.PreferredSpotSizes
+	}
 	return []interface{}{result}
 }
 
@@ -119,6 +130,16 @@ func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
 			}
 			if spotSizes != nil {
 				vmSizes.SetSpotSizes(spotSizes)
+			}
+		}
+
+		if v, ok := m[string(PreferredSpotSizes)]; ok && v != nil {
+			preferredSpotSizes, err := expandSizes(v)
+			if err != nil {
+				return nil, err
+			}
+			if preferredSpotSizes != nil {
+				vmSizes.SetPreferredSpotSizes(preferredSpotSizes)
 			}
 		}
 

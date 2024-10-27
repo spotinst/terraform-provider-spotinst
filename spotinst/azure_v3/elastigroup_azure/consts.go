@@ -10,4 +10,7 @@ const (
 	MinSize           commons.FieldName = "min_size"
 	DesiredCapacity   commons.FieldName = "desired_capacity"
 	OS                commons.FieldName = "os"
+	Description       commons.FieldName = "description"
+	Zones             commons.FieldName = "zones"
+	PreferredZones    commons.FieldName = "preferred_zones"
 )
