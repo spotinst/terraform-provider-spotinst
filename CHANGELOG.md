@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.196.0 (October, 27 2024)
+## 1.196.0 (October, 28 2024)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Added support for `scheduling`, `health`, `load_balancer`, `secrets`, `security` blocks.
 
