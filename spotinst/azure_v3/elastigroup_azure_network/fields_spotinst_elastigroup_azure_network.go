@@ -97,7 +97,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 										},
 									},
 								},
-								string(PublicIPs): {
+								/*string(PublicIPs): {
 									Type:     schema.TypeList,
 									Optional: true,
 									Elem: &schema.Resource{
@@ -112,7 +112,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 											},
 										},
 									},
-								},
+								},*/
 								string(ApplicationSecurityGroup): {
 									Type:     schema.TypeSet,
 									Optional: true,
@@ -213,9 +213,9 @@ func flattenAzureGroupNetworkInterfaces(networkInterfaces []*azurev3.NetworkInte
 		if inter.ApplicationSecurityGroups != nil {
 			m[string(ApplicationSecurityGroup)] = flattenApplicationSecurityGroups(inter.ApplicationSecurityGroups)
 		}
-		if inter.PublicIps != nil {
+		/*if inter.PublicIps != nil {
 			m[string(PublicIPs)] = flattenPublicIPs(inter.PublicIps)
-		}
+		}*/
 		result = append(result, m)
 	}
 
@@ -257,7 +257,7 @@ func flattenSecurityGroup(networkSecurityGroup *azurev3.SecurityGroup) []interfa
 	return []interface{}{result}
 }
 
-func flattenPublicIPs(publicIPS []*azurev3.PublicIps) []interface{} {
+/*func flattenPublicIPs(publicIPS []*azurev3.PublicIps) []interface{} {
 	result := make([]interface{}, 0, len(publicIPS))
 
 	for _, publicIPS := range publicIPS {
@@ -268,7 +268,7 @@ func flattenPublicIPs(publicIPS []*azurev3.PublicIps) []interface{} {
 	}
 
 	return result
-}
+}*/
 
 func expandAzureGroupNetwork(data interface{}) (*azurev3.Network, error) {
 	network := &azurev3.Network{}
@@ -354,13 +354,13 @@ func expandAzureGroupNetworkInterfaces(data interface{}) ([]*azurev3.NetworkInte
 			}
 		}
 
-		if v, ok := attr[string(PublicIPs)]; ok {
+		/*if v, ok := attr[string(PublicIPs)]; ok {
 			if pips, err := expandPublicIPs(v); err != nil {
 				return nil, err
 			} else {
 				networkInterface.SetPublicIps(pips)
 			}
-		}
+		}*/
 		networkInterfaces = append(networkInterfaces, networkInterface)
 	}
 
@@ -424,7 +424,7 @@ func expandPrivateIPAddresses(data interface{}) ([]string, error) {
 	return result, nil
 }
 
-func expandPublicIPs(data interface{}) ([]*azurev3.PublicIps, error) {
+/*func expandPublicIPs(data interface{}) ([]*azurev3.PublicIps, error) {
 	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
 		newPublicIPSList := make([]*azurev3.PublicIps, 0, len(list))
 		for _, v := range list {
@@ -443,7 +443,7 @@ func expandPublicIPs(data interface{}) ([]*azurev3.PublicIps, error) {
 		return newPublicIPSList, nil
 	}
 	return nil, nil
-}
+}*/
 
 func expandSecurityGroup(data interface{}) (*azurev3.SecurityGroup, error) {
 	if list := data.([]interface{}); len(list) > 0 {
