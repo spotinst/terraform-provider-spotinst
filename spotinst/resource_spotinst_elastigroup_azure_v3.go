@@ -4,7 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_extension"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_health"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_load_balancer"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_scaling_policies"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_scheduling"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_secrets"
 	"log"
 	"time"
 
@@ -54,6 +58,10 @@ func setupElastigroupAzureV3Resource() {
 	elastigroup_azure_launchspecification.Setup(fieldsMap)
 	elastigroup_azure_scaling_policies.Setup(fieldsMap)
 	elastigroup_azure_extension.Setup(fieldsMap)
+	elastigroup_azure_secrets.Setup(fieldsMap)
+	elastigroup_azure_load_balancer.Setup(fieldsMap)
+	elastigroup_azure_health.Setup(fieldsMap)
+	elastigroup_azure_scheduling.Setup(fieldsMap)
 
 	commons.ElastigroupAzureV3Resource = commons.NewElastigroupAzureV3Resource(fieldsMap)
 }

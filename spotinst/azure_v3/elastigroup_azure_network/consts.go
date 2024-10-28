@@ -14,4 +14,9 @@ const (
 	IsPrimary                commons.FieldName = "is_primary"
 	Name                     commons.FieldName = "name"
 	ApplicationSecurityGroup commons.FieldName = "application_security_group"
+	EnableIPForwarding       commons.FieldName = "enable_ip_forwarding"
+	PrivateIPAddresses       commons.FieldName = "private_ip_addresses"
+	PublicIPs                commons.FieldName = "public_ips"
+	PublicIPSku              commons.FieldName = "public_ip_sku"
+	SecurityGroup            commons.FieldName = "security_group"
 )

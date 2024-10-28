@@ -113,12 +113,17 @@ func NewElastigroupAzureV3Wrapper() *ElastigroupAzureV3Wrapper {
 		elastigroup: &azurev3.Group{
 			Compute: &azurev3.Compute{
 				LaunchSpecification: &azurev3.LaunchSpecification{
-					//LoadBalancersConfig: &v3.LoadBalancersConfig{},
+					LoadBalancersConfig: &azurev3.LoadBalancersConfig{
+						LoadBalancers: []*azurev3.LoadBalancer{},
+					},
 				},
 			},
 			Capacity: &azurev3.Capacity{},
 			Strategy: &azurev3.Strategy{},
 			Scaling:  &azurev3.Scaling{},
+			Scheduling: &azurev3.Scheduling{
+				Tasks: []*azurev3.Tasks{},
+			},
 		},
 	}
 }
