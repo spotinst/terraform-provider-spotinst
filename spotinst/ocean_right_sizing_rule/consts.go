@@ -22,7 +22,7 @@ const (
 	ExcludePreliminaryRecommendations   commons.FieldName = "exclude_preliminary_recommendations"
 	RestartReplicas                     commons.FieldName = "restart_replicas"
 	RecommendationApplicationHPA        commons.FieldName = "recommendation_application_hpa"
-	AllowHpaRecommendation              commons.FieldName = "allow_hpa_recommendation"
+	AllowHpaRecommendations             commons.FieldName = "allow_hpa_recommendations"
 
 	RecommendationApplicationBoundaries commons.FieldName = "recommendation_application_boundaries"
 	CpuMin                              commons.FieldName = "cpu_min"

@@ -629,7 +629,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
-					string(AllowHpaRecommendation): {
+					string(AllowHpaRecommendations): {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
@@ -1119,7 +1119,7 @@ func expandRecommendationApplicationHPA(data interface{}) (*right_sizing.Recomme
 		item := list[0]
 		m := item.(map[string]interface{})
 
-		if v, ok := m[string(AllowHpaRecommendation)].(bool); ok {
+		if v, ok := m[string(AllowHpaRecommendations)].(bool); ok {
 			recommendationApplicationHPA.SetAllowHPARecommendations(spotinst.Bool(v))
 		}
 
@@ -1133,7 +1133,7 @@ func flattenRecommendationApplicationHPA(recommendationApplicationHPA *right_siz
 	result := make(map[string]interface{})
 
 	if recommendationApplicationHPA.AllowHPARecommendations != nil {
-		result[string(AllowHpaRecommendation)] = spotinst.BoolValue(recommendationApplicationHPA.AllowHPARecommendations)
+		result[string(AllowHpaRecommendations)] = spotinst.BoolValue(recommendationApplicationHPA.AllowHPARecommendations)
 	}
 	return []interface{}{result}
 }

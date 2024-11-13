@@ -62,61 +62,7 @@ resource "spotinst_ocean_right_sizing_rule" "example" {
     cpu_percentage = 0.80
     memory_percentage = 0.50
   }
-
-  attach_workloads {
-    namespaces {
-      namespace_name = "kube-system"
-      workloads {
-        workload_type = "Deployment"
-        workload_name = "konnectivity-agent"
-      }
-    }
-
-    namespaces{
-      namespace_name = "kube-system"
-      workloads {
-        workload_type = "DaemonSet"
-        regex_name = "csi-*"
-      }
-    }
-
-    namespaces{
-      namespace_name = "kube-system"
-      labels{
-        key = "kubernetes.io/cluster-service"
-        value = "true"
-      }
-    }
-
-  }
-
-
-  detach_workloads {
-    
-    namespaces {
-      namespace_name = "kube-system"
-      workloads {
-        workload_type = "Deployment"
-        workload_name = "konnectivity-agent"
-      }
-    }
-
-    namespaces{
-      namespace_name = "kube-system"
-      workloads {
-        workload_type = "DaemonSet"
-        regex_name = "csi-*"
-      }
-    }
-
-    namespaces{
-      namespace_name = "kube-system"
-      labels{
-        key = "kubernetes.io/cluster-service"
-        value = "true"
-      }
-    }
-  }
+  
 }
 ```
 ```
@@ -136,7 +82,7 @@ The following arguments are supported:
    * `memory_min` - (Optional) the minimal value of memory in Gib.
    * `memory_max` - (Optional) the maximal value of memory in Gib.
 * `recommendation_application_hpa` - HPA Rightsizing Rule Recommendation Configuration
-    * `allow_hpa_recommendation` - Determines by the rule if recommendation application is allowed for workloads with HPA definition.
+    * `allow_hpa_recommendations` - Determines by the rule if recommendation application is allowed for workloads with HPA definition.
 
 * `recommendation_application_intervals` - (Required) Determines the Ocean Rightsizing rule recommendation application intervals.
     * `repetition_basis` - (Optional) Enum: "WEEKLY" "MONTHLY". The repetition basis.
@@ -158,9 +104,8 @@ The following arguments are supported:
   
 * `recommendation_application_overhead_values` - Determines the Ocean Rightsizing rule recommendation application overhead values.
     * `cpu_percentage` - (Optional, Default: 0.1) .
-    * `memory_percentage` - (Optional, Default: 0.1) .
-
-
+    * `memory_percentage` - (Optional, Default: 0.1).
+```
 <a id="attach_workloads"></a>
 ## Attach Workloads
 
