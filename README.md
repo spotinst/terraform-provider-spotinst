@@ -92,7 +92,7 @@ $ go get foo@v1.2.3
 $ go mod tidy
 ```
 
-Stepping through the above commands:
+Stepping through the above  commands:
 
 - `go get foo@v1.2.3` fetches version `v1.2.3` from the source (if needed) and
 adds it to the `go.mod` file for use.
