@@ -329,8 +329,9 @@ func expandNamespaces(data interface{}, ruleName string, oceanId *string, meta i
 		OceanId:  oceanId,
 	}
 	resp, err := meta.(*Client).ocean.RightSizing().ReadRightsizingRuleAttachedWorkloads(context.Background(), input)
-	log.Print(resp)
-	log.Print(err)
+	if err != nil {
+		return namespaces, err
+	}
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
@@ -563,8 +564,9 @@ func expandNamespacesForDetach(data interface{}, ruleName string, oceanId *strin
 		OceanId:  oceanId,
 	}
 	resp, err := meta.(*Client).ocean.RightSizing().ReadRightsizingRuleAttachedWorkloads(context.Background(), input)
-	log.Print(resp)
-	log.Print(err)
+	if err != nil {
+		return namespaces, err
+	}
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
