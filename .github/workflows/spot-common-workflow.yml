@@ -1,0 +1,12 @@
+name: Common Spot Verification Workflow
+on:
+  schedule:
+    - cron: 29 3 * * 3
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+jobs:
+  call-verification-workflow:
+    uses: spotinst/devops-scripts/.github/workflows/common-verification-workflow.yml@master
+    secrets: inherit
