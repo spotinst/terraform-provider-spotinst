@@ -49,6 +49,86 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RestartReplicas] = commons.NewGenericField(
+		commons.OceanRightSizingRule,
+		RestartReplicas,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var value *string = nil
+			if rightSizingRule.RestartReplicas != nil {
+				value = rightSizingRule.RestartReplicas
+			}
+			if err := resourceData.Set(string(RestartReplicas), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RestartReplicas), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RestartReplicas)); ok && v != "" {
+				rightSizingRule.SetRestartReplicas(spotinst.String(resourceData.Get(string(RestartReplicas)).(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RestartReplicas)); ok && v != "" {
+				rightSizingRule.SetRestartReplicas(spotinst.String(resourceData.Get(string(RestartReplicas)).(string)))
+			} else {
+				rightSizingRule.SetRestartReplicas(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[ExcludePreliminaryRecommendations] = commons.NewGenericField(
+		commons.OceanRightSizingRule,
+		ExcludePreliminaryRecommendations,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var value *bool = nil
+			if rightSizingRule.ExcludePreliminaryRecommendations != nil {
+				value = rightSizingRule.ExcludePreliminaryRecommendations
+			}
+			if err := resourceData.Set(string(ExcludePreliminaryRecommendations), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ExcludePreliminaryRecommendations), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if _, ok := resourceData.GetOk(string(ExcludePreliminaryRecommendations)); ok {
+				rightSizingRule.SetExcludePreliminaryRecommendations(spotinst.Bool(resourceData.Get(string(ExcludePreliminaryRecommendations)).(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if _, ok := resourceData.GetOk(string(ExcludePreliminaryRecommendations)); ok {
+				rightSizingRule.SetExcludePreliminaryRecommendations(spotinst.Bool(resourceData.Get(string(ExcludePreliminaryRecommendations)).(bool)))
+			} else {
+				rightSizingRule.SetExcludePreliminaryRecommendations(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[OceanId] = commons.NewGenericField(
 		commons.OrganizationPolicy,
 		OceanId,
@@ -541,6 +621,65 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[RecommendationApplicationHPA] = commons.NewGenericField(
+		commons.OceanRightSizingRule,
+		RecommendationApplicationHPA,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(AllowHpaRecommendations): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var result []interface{} = nil
+			if rightSizingRule.RecommendationApplicationHPA != nil {
+				recommendationApplicationHPA := rightSizingRule.RecommendationApplicationHPA
+				result = flattenRecommendationApplicationHPA(recommendationApplicationHPA)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(RecommendationApplicationHPA), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RecommendationApplicationHPA), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationHPA)); ok {
+				if recommendationApplicationHPA, err := expandRecommendationApplicationHPA(v); err != nil {
+					return err
+				} else {
+					rightSizingRule.SetRecommendationApplicationHPA(recommendationApplicationHPA)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var value *right_sizing.RecommendationApplicationHPA = nil
+			if v, ok := resourceData.GetOk(string(RecommendationApplicationHPA)); ok {
+				if recommendationApplicationHPA, err := expandRecommendationApplicationHPA(v); err != nil {
+					return err
+				} else {
+					value = recommendationApplicationHPA
+				}
+			}
+			rightSizingRule.SetRecommendationApplicationHPA(value)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func flattenRecommendationApplicationIntervals(recommendationApplicationIntervals []*right_sizing.RecommendationApplicationIntervals) []interface{} {
@@ -970,4 +1109,31 @@ func expandRecommendationApplicationOverheadValues(data interface{}) (*right_siz
 
 	}
 	return nil, nil
+}
+
+func expandRecommendationApplicationHPA(data interface{}) (*right_sizing.RecommendationApplicationHPA, error) {
+	list := data.(*schema.Set).List()
+	recommendationApplicationHPA := &right_sizing.RecommendationApplicationHPA{}
+
+	if len(list) > 0 {
+		item := list[0]
+		m := item.(map[string]interface{})
+
+		if v, ok := m[string(AllowHpaRecommendations)].(bool); ok {
+			recommendationApplicationHPA.SetAllowHPARecommendations(spotinst.Bool(v))
+		}
+
+		return recommendationApplicationHPA, nil
+
+	}
+	return nil, nil
+}
+
+func flattenRecommendationApplicationHPA(recommendationApplicationHPA *right_sizing.RecommendationApplicationHPA) []interface{} {
+	result := make(map[string]interface{})
+
+	if recommendationApplicationHPA.AllowHPARecommendations != nil {
+		result[string(AllowHpaRecommendations)] = spotinst.BoolValue(recommendationApplicationHPA.AllowHPARecommendations)
+	}
+	return []interface{}{result}
 }

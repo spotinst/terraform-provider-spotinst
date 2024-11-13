@@ -19,6 +19,10 @@ const (
 	MonthlyWeeklyIntervalDays           commons.FieldName = "interval_days"
 	MonthlyWeeklyIntervalHoursStartTime commons.FieldName = "interval_hours_start_time"
 	MonthlyWeeklyIntervalHoursEndTime   commons.FieldName = "interval_hours_end_time"
+	ExcludePreliminaryRecommendations   commons.FieldName = "exclude_preliminary_recommendations"
+	RestartReplicas                     commons.FieldName = "restart_replicas"
+	RecommendationApplicationHPA        commons.FieldName = "recommendation_application_hpa"
+	AllowHpaRecommendations             commons.FieldName = "allow_hpa_recommendations"
 
 	RecommendationApplicationBoundaries commons.FieldName = "recommendation_application_boundaries"
 	CpuMin                              commons.FieldName = "cpu_min"

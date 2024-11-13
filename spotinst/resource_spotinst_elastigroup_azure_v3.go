@@ -3,14 +3,15 @@ package spotinst
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_extension"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_health"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_load_balancer"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_scaling_policies"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_scheduling"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/azure_v3/elastigroup_azure_secrets"
-	"log"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"reflect"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -214,7 +215,7 @@ func attachRightSizingRule(resourceData *schema.ResourceData, meta interface{}, 
 				"skipping attach workloads for right sizing rule %q", ruleName)
 		}
 
-		attachWorkloadsSpec, err := expandAttachWorkloadsConfig(attachWorkloadsSchema, ruleName, oceanId)
+		attachWorkloadsSpec, err := expandAttachWorkloadsConfig(attachWorkloadsSchema, ruleName, oceanId, meta)
 		if err != nil {
 			return fmt.Errorf("failed expanding attach workloads "+
 				"configuration for right sizing rule %q, error: %v", ruleName, err)
@@ -226,18 +227,20 @@ func attachRightSizingRule(resourceData *schema.ResourceData, meta interface{}, 
 				"configuration for right sizing rule %q, error: %v", ruleName, err)
 		}
 
-		log.Printf("onUpdate() -> Updating right sizing rule [%v] with configuration %s", ruleName, updateStateJSON)
-		attachRuleInput := &right_sizing.RightSizingAttachDetachInput{
-			RuleName:   attachWorkloadsSpec.RuleName,
-			OceanId:    attachWorkloadsSpec.OceanId,
-			Namespaces: attachWorkloadsSpec.Namespaces,
+		if len(attachWorkloadsSpec.Namespaces) > 0 {
+			log.Printf("onUpdate() -> Updating right sizing rule [%v] with configuration %s", ruleName, updateStateJSON)
+			attachRuleInput := &right_sizing.RightSizingAttachDetachInput{
+				RuleName:   attachWorkloadsSpec.RuleName,
+				OceanId:    attachWorkloadsSpec.OceanId,
+				Namespaces: attachWorkloadsSpec.Namespaces,
+			}
+			if _, err = meta.(*Client).ocean.RightSizing().AttachRightSizingRule(context.TODO(),
+				attachRuleInput); err != nil {
+				return fmt.Errorf("onUpdate() -> Attach workloads failed for right sizing rule [%v], error: %v",
+					ruleName, err)
+			}
+			log.Printf("onUpdate() -> Successfully attached workloads for right sizing rule [%v]", ruleName)
 		}
-		if _, err = meta.(*Client).ocean.RightSizing().AttachRightSizingRule(context.TODO(),
-			attachRuleInput); err != nil {
-			return fmt.Errorf("onUpdate() -> Attach workloads failed for right sizing rule [%v], error: %v",
-				ruleName, err)
-		}
-		log.Printf("onUpdate() -> Successfully attached workloads for right sizing rule [%v]", ruleName)
 	}
 
 	return nil
@@ -259,7 +262,7 @@ func detachRightSizingRule(resourceData *schema.ResourceData, meta interface{}, 
 				"skipping detach workloads for right sizing rule %q", ruleName)
 		}
 
-		detachWorkloadsSpec, err := expandDetachWorkloadsConfig(detachWorkloadsSchema, ruleName, oceanId)
+		detachWorkloadsSpec, err := expandDetachWorkloadsConfig(detachWorkloadsSchema, ruleName, oceanId, meta)
 		if err != nil {
 			return fmt.Errorf("failed expanding attach workloads "+
 				"configuration for right sizing rule %q, error: %v", ruleName, err)
@@ -271,25 +274,27 @@ func detachRightSizingRule(resourceData *schema.ResourceData, meta interface{}, 
 				"configuration for right sizing rule %q, error: %v", ruleName, err)
 		}
 
-		log.Printf("onUpdate() -> Updating right sizing rule [%v] with configuration %s", ruleName, updateStateJSON)
-		detachWorkloadsInput := &right_sizing.RightSizingAttachDetachInput{
-			RuleName:   detachWorkloadsSpec.RuleName,
-			OceanId:    detachWorkloadsSpec.OceanId,
-			Namespaces: detachWorkloadsSpec.Namespaces,
+		if len(detachWorkloadsSpec.Namespaces) > 0 {
+			log.Printf("onUpdate() -> Updating right sizing rule [%v] with configuration %s", ruleName, updateStateJSON)
+			detachWorkloadsInput := &right_sizing.RightSizingAttachDetachInput{
+				RuleName:   detachWorkloadsSpec.RuleName,
+				OceanId:    detachWorkloadsSpec.OceanId,
+				Namespaces: detachWorkloadsSpec.Namespaces,
+			}
+			if _, err = meta.(*Client).ocean.RightSizing().DetachRightSizingRule(context.TODO(),
+				detachWorkloadsInput); err != nil {
+				return fmt.Errorf("onUpdate() -> Detach workloads failed for right sizing rule [%v], error: %v",
+					ruleName, err)
+			}
+			log.Printf("onUpdate() -> Successfully detached workloads for right sizing rule [%v]", ruleName)
 		}
-		if _, err = meta.(*Client).ocean.RightSizing().DetachRightSizingRule(context.TODO(),
-			detachWorkloadsInput); err != nil {
-			return fmt.Errorf("onUpdate() -> Detach workloads failed for right sizing rule [%v], error: %v",
-				ruleName, err)
-		}
-		log.Printf("onUpdate() -> Successfully detached workloads for right sizing rule [%v]", ruleName)
 	}
 
 	return nil
 }
 
 func expandAttachWorkloadsConfig(data interface{},
-	ruleName string, oceanId *string) (*right_sizing.RightSizingAttachDetachInput, error) {
+	ruleName string, oceanId *string, meta interface{}) (*right_sizing.RightSizingAttachDetachInput, error) {
 	spec := &right_sizing.RightSizingAttachDetachInput{
 		OceanId:  oceanId,
 		RuleName: spotinst.String(ruleName),
@@ -299,7 +304,7 @@ func expandAttachWorkloadsConfig(data interface{},
 		m := data.(map[string]interface{})
 
 		if v, ok := m[string(ocean_right_sizing_rule.Namespaces)]; ok {
-			namespaces, err := expandNamespaces(v)
+			namespaces, err := expandNamespaces(v, ruleName, oceanId, meta)
 			if err != nil {
 				return nil, err
 			}
@@ -315,9 +320,18 @@ func expandAttachWorkloadsConfig(data interface{},
 	return spec, nil
 }
 
-func expandNamespaces(data interface{}) ([]*right_sizing.Namespace, error) {
+func expandNamespaces(data interface{}, ruleName string, oceanId *string, meta interface{}) ([]*right_sizing.Namespace, error) {
 	list := data.(*schema.Set).List()
 	namespaces := make([]*right_sizing.Namespace, 0, len(list))
+
+	input := &right_sizing.ReadRightsizingRuleAttachedWorkloadsInput{
+		RuleName: spotinst.String(ruleName),
+		OceanId:  oceanId,
+	}
+	resp, err := meta.(*Client).ocean.RightSizing().ReadRightsizingRuleAttachedWorkloads(context.Background(), input)
+	if err != nil {
+		return namespaces, err
+	}
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
@@ -329,7 +343,7 @@ func expandNamespaces(data interface{}) ([]*right_sizing.Namespace, error) {
 		}
 
 		if v, ok := attr[string(ocean_right_sizing_rule.Workloads)]; ok {
-			workloads, err := expandWorkloads(v)
+			workloads, err := expandWorkloads(v, namespace.NamespaceName, resp)
 			if err != nil {
 				return nil, err
 			}
@@ -342,7 +356,7 @@ func expandNamespaces(data interface{}) ([]*right_sizing.Namespace, error) {
 		}
 
 		if v, ok := attr[string(ocean_right_sizing_rule.Labels)]; ok {
-			labels, err := expandLabels(v)
+			labels, err := expandLabels(v, namespace.NamespaceName, resp)
 			if err != nil {
 				return nil, err
 			}
@@ -354,14 +368,22 @@ func expandNamespaces(data interface{}) ([]*right_sizing.Namespace, error) {
 			namespace.Labels = nil
 		}
 
-		namespaces = append(namespaces, namespace)
+		if len(namespace.Labels) == 0 && len(namespace.Workloads) == 0 {
+			continue
+		} else {
+			namespaces = append(namespaces, namespace)
+		}
 	}
 	return namespaces, nil
 }
 
-func expandWorkloads(data interface{}) ([]*right_sizing.Workload, error) {
+func expandWorkloads(data interface{}, namespaceName *string, response *right_sizing.ReadRightsizingRuleAttachedWorkloadsOutput) ([]*right_sizing.Workload, error) {
 	list := data.(*schema.Set).List()
 	workloads := make([]*right_sizing.Workload, 0, len(list))
+
+	// Fetching details of workload already attached .
+	responseDataWorkload := response.RightsizingRuleAttachedWorkloads.RightsizingRuleWorkloads
+	responseDataRegex := response.RightsizingRuleAttachedWorkloads.RightsizingRuleRegex
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
@@ -380,14 +402,80 @@ func expandWorkloads(data interface{}) ([]*right_sizing.Workload, error) {
 			workload.RegexName = spotinst.String(v)
 		}
 
-		workloads = append(workloads, workload)
+		//Since responseDataWorkload, responseDataRegex and responseDataLabel will be empty list in GET attachedWorkload API response, so validation of user's workload against GET attachedWorkload response in IF block is not required in case of first attach workload API call.
+		if len(responseDataWorkload) == 0 && len(responseDataRegex) == 0 {
+			workloads = append(workloads, workload)
+		} else {
+			if v, ok := attr[string(ocean_right_sizing_rule.WorkloadName)].(string); ok && v != "" {
+
+				// Creating list[map] so that we can check whether workload requested by user is already attached on not.
+				var list []map[string]interface{}
+				for _, obj := range responseDataWorkload {
+					item := map[string]interface{}{
+						"Name":         spotinst.StringValue(obj.Name),
+						"WorkloadType": spotinst.StringValue(obj.Type),
+						"Namespace":    spotinst.StringValue(obj.Namespace),
+					}
+					list = append(list, item)
+				}
+				userWorkload := map[string]interface{}{
+					"Name":         spotinst.StringValue(workload.Name),
+					"WorkloadType": spotinst.StringValue(workload.WorkloadType),
+					"Namespace":    spotinst.StringValue(namespaceName),
+				}
+				alreadyExist := false
+				for _, item := range list {
+					if reflect.DeepEqual(item, userWorkload) {
+						alreadyExist = true
+						break
+					}
+				}
+				if alreadyExist {
+					break
+				} else {
+					workloads = append(workloads, workload)
+				}
+			}
+			if v, ok := attr[string(ocean_right_sizing_rule.RegexName)].(string); ok && v != "" {
+				// Creating list[map] so that we can check whether `workload with regex` requested by user is already attached on not.
+				var list []map[string]interface{}
+				for _, obj := range responseDataRegex {
+					item := map[string]interface{}{
+						"Name":         spotinst.StringValue(obj.Name),
+						"WorkloadType": spotinst.StringValue(obj.WorkloadType),
+						"Namespace":    spotinst.StringValue(obj.Namespace),
+					}
+					list = append(list, item)
+				}
+				userWorkload := map[string]interface{}{
+					"Name":         spotinst.StringValue(workload.RegexName),
+					"WorkloadType": spotinst.StringValue(workload.WorkloadType),
+					"Namespace":    spotinst.StringValue(namespaceName),
+				}
+				alreadyExist := false
+				for _, item := range list {
+					if reflect.DeepEqual(item, userWorkload) {
+						alreadyExist = true
+						break
+					}
+				}
+				if alreadyExist {
+					break
+				} else {
+					workloads = append(workloads, workload)
+				}
+			}
+		}
 	}
 	return workloads, nil
 }
 
-func expandLabels(data interface{}) ([]*right_sizing.Label, error) {
+func expandLabels(data interface{}, namespaceName *string, response *right_sizing.ReadRightsizingRuleAttachedWorkloadsOutput) ([]*right_sizing.Label, error) {
 	list := data.(*schema.Set).List()
 	labels := make([]*right_sizing.Label, 0, len(list))
+
+	// Fetching details of workload using labels already attached .
+	responseDataLabels := response.RightsizingRuleAttachedWorkloads.RightsizingRuleLabels
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
@@ -402,14 +490,47 @@ func expandLabels(data interface{}) ([]*right_sizing.Label, error) {
 			label.Value = spotinst.String(v)
 		}
 
-		labels = append(labels, label)
+		//In case of responseDataLabel returned as empty list then not validating user's workload against GET attachedWorkload response.
+		if len(responseDataLabels) == 0 {
+			labels = append(labels, label)
+		} else {
+			if v, ok := attr[string(ocean_right_sizing_rule.Key)].(string); ok && v != "" {
 
+				// Creating list[map] so that we can check whether workload having requested label by user is already attached on not.
+				var list []map[string]interface{}
+				for _, obj := range responseDataLabels {
+					item := map[string]interface{}{
+						"Key":       spotinst.StringValue(obj.Key),
+						"Value":     spotinst.StringValue(obj.Value),
+						"Namespace": spotinst.StringValue(obj.Namespace),
+					}
+					list = append(list, item)
+				}
+				userWorkload := map[string]interface{}{
+					"Key":       spotinst.StringValue(label.Key),
+					"Value":     spotinst.StringValue(label.Value),
+					"Namespace": spotinst.StringValue(namespaceName),
+				}
+				alreadyExist := false
+				for _, item := range list {
+					if reflect.DeepEqual(item, userWorkload) {
+						alreadyExist = true
+						break
+					}
+				}
+				if alreadyExist {
+					break
+				} else {
+					labels = append(labels, label)
+				}
+			}
+		}
 	}
 	return labels, nil
 }
 
 func expandDetachWorkloadsConfig(data interface{},
-	ruleName string, oceanId *string) (*right_sizing.RightSizingAttachDetachInput, error) {
+	ruleName string, oceanId *string, meta interface{}) (*right_sizing.RightSizingAttachDetachInput, error) {
 	spec := &right_sizing.RightSizingAttachDetachInput{
 		OceanId:  oceanId,
 		RuleName: spotinst.String(ruleName),
@@ -419,7 +540,7 @@ func expandDetachWorkloadsConfig(data interface{},
 		m := data.(map[string]interface{})
 
 		if v, ok := m[string(ocean_right_sizing_rule.NamespacesForDetach)]; ok {
-			namespaces, err := expandNamespacesForDetach(v)
+			namespaces, err := expandNamespacesForDetach(v, ruleName, oceanId, meta)
 			if err != nil {
 				return nil, err
 			}
@@ -435,9 +556,17 @@ func expandDetachWorkloadsConfig(data interface{},
 	return spec, nil
 }
 
-func expandNamespacesForDetach(data interface{}) ([]*right_sizing.Namespace, error) {
+func expandNamespacesForDetach(data interface{}, ruleName string, oceanId *string, meta interface{}) ([]*right_sizing.Namespace, error) {
 	list := data.(*schema.Set).List()
 	namespaces := make([]*right_sizing.Namespace, 0, len(list))
+	input := &right_sizing.ReadRightsizingRuleAttachedWorkloadsInput{
+		RuleName: spotinst.String(ruleName),
+		OceanId:  oceanId,
+	}
+	resp, err := meta.(*Client).ocean.RightSizing().ReadRightsizingRuleAttachedWorkloads(context.Background(), input)
+	if err != nil {
+		return namespaces, err
+	}
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
@@ -449,7 +578,7 @@ func expandNamespacesForDetach(data interface{}) ([]*right_sizing.Namespace, err
 		}
 
 		if v, ok := attr[string(ocean_right_sizing_rule.WorkloadsForDetach)]; ok {
-			workloads, err := expandWorkloadsForDetach(v)
+			workloads, err := expandWorkloadsForDetach(v, namespace.NamespaceName, resp)
 			if err != nil {
 				return nil, err
 			}
@@ -462,7 +591,7 @@ func expandNamespacesForDetach(data interface{}) ([]*right_sizing.Namespace, err
 		}
 
 		if v, ok := attr[string(ocean_right_sizing_rule.LabelsForDetach)]; ok {
-			labels, err := expandLabelsForDetach(v)
+			labels, err := expandLabelsForDetach(v, namespace.NamespaceName, resp)
 			if err != nil {
 				return nil, err
 			}
@@ -474,14 +603,22 @@ func expandNamespacesForDetach(data interface{}) ([]*right_sizing.Namespace, err
 			namespace.Labels = nil
 		}
 
-		namespaces = append(namespaces, namespace)
+		if len(namespace.Labels) == 0 && len(namespace.Workloads) == 0 {
+			continue
+		} else {
+			namespaces = append(namespaces, namespace)
+		}
 	}
 	return namespaces, nil
 }
 
-func expandWorkloadsForDetach(data interface{}) ([]*right_sizing.Workload, error) {
+func expandWorkloadsForDetach(data interface{}, namespaceName *string, response *right_sizing.ReadRightsizingRuleAttachedWorkloadsOutput) ([]*right_sizing.Workload, error) {
 	list := data.(*schema.Set).List()
 	workloads := make([]*right_sizing.Workload, 0, len(list))
+
+	// Fetching details of workload already attached .
+	responseDataWorkload := response.RightsizingRuleAttachedWorkloads.RightsizingRuleWorkloads
+	responseDataRegex := response.RightsizingRuleAttachedWorkloads.RightsizingRuleRegex
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
@@ -499,15 +636,79 @@ func expandWorkloadsForDetach(data interface{}) ([]*right_sizing.Workload, error
 		if v, ok := attr[string(ocean_right_sizing_rule.RegexNameForDetach)].(string); ok && v != "" {
 			workload.RegexName = spotinst.String(v)
 		}
+		if len(responseDataWorkload) == 0 && len(responseDataRegex) == 0 {
+			continue
+		} else {
+			if v, ok := attr[string(ocean_right_sizing_rule.WorkloadName)].(string); ok && v != "" {
 
-		workloads = append(workloads, workload)
+				// Creating list[map] so that we can check whether workload requested by user is already attached on not.
+				var list []map[string]interface{}
+				for _, obj := range responseDataWorkload {
+					item := map[string]interface{}{
+						"Name":         spotinst.StringValue(obj.Name),
+						"WorkloadType": spotinst.StringValue(obj.Type),
+						"Namespace":    spotinst.StringValue(obj.Namespace),
+					}
+					list = append(list, item)
+				}
+				userWorkload := map[string]interface{}{
+					"Name":         spotinst.StringValue(workload.Name),
+					"WorkloadType": spotinst.StringValue(workload.WorkloadType),
+					"Namespace":    spotinst.StringValue(namespaceName),
+				}
+				alreadyExist := false
+				for _, item := range list {
+					if reflect.DeepEqual(item, userWorkload) {
+						alreadyExist = true
+						break
+					}
+				}
+				if alreadyExist {
+					workloads = append(workloads, workload)
+				} else {
+					break
+				}
+			}
+			if v, ok := attr[string(ocean_right_sizing_rule.RegexName)].(string); ok && v != "" {
+				// Creating list[map] so that we can check whether `workload with regex` requested by user is already attached on not.
+				var list []map[string]interface{}
+				for _, obj := range responseDataRegex {
+					item := map[string]interface{}{
+						"Name":         spotinst.StringValue(obj.Name),
+						"WorkloadType": spotinst.StringValue(obj.WorkloadType),
+						"Namespace":    spotinst.StringValue(obj.Namespace),
+					}
+					list = append(list, item)
+				}
+				userWorkload := map[string]interface{}{
+					"Name":         spotinst.StringValue(workload.RegexName),
+					"WorkloadType": spotinst.StringValue(workload.WorkloadType),
+					"Namespace":    spotinst.StringValue(namespaceName),
+				}
+				alreadyExist := false
+				for _, item := range list {
+					if reflect.DeepEqual(item, userWorkload) {
+						alreadyExist = true
+						break
+					}
+				}
+				if alreadyExist {
+					workloads = append(workloads, workload)
+				} else {
+					break
+				}
+			}
+		}
 	}
 	return workloads, nil
 }
 
-func expandLabelsForDetach(data interface{}) ([]*right_sizing.Label, error) {
+func expandLabelsForDetach(data interface{}, namespaceName *string, response *right_sizing.ReadRightsizingRuleAttachedWorkloadsOutput) ([]*right_sizing.Label, error) {
 	list := data.(*schema.Set).List()
 	labels := make([]*right_sizing.Label, 0, len(list))
+
+	// Fetching details of workload using labels already attached .
+	responseDataLabels := response.RightsizingRuleAttachedWorkloads.RightsizingRuleLabels
 
 	for _, item := range list {
 		attr := item.(map[string]interface{})
@@ -521,9 +722,42 @@ func expandLabelsForDetach(data interface{}) ([]*right_sizing.Label, error) {
 		if v, ok := attr[string(ocean_right_sizing_rule.ValueForDetach)].(string); ok && v != "" {
 			label.Value = spotinst.String(v)
 		}
+		//In case of responseDataLabel returned as empty list then not validating user's workload against GET attachedWorkload response.
 
-		labels = append(labels, label)
+		if len(responseDataLabels) == 0 {
+			continue
+		} else {
+			if v, ok := attr[string(ocean_right_sizing_rule.Key)].(string); ok && v != "" {
 
+				// Creating list[map] so that we can check whether workload having requested label by user is already attached on not.
+				var list []map[string]interface{}
+				for _, obj := range responseDataLabels {
+					item := map[string]interface{}{
+						"Key":       spotinst.StringValue(obj.Key),
+						"Value":     spotinst.StringValue(obj.Value),
+						"Namespace": spotinst.StringValue(obj.Namespace),
+					}
+					list = append(list, item)
+				}
+				userWorkload := map[string]interface{}{
+					"Key":       spotinst.StringValue(label.Key),
+					"Value":     spotinst.StringValue(label.Value),
+					"Namespace": spotinst.StringValue(namespaceName),
+				}
+				alreadyExist := false
+				for _, item := range list {
+					if reflect.DeepEqual(item, userWorkload) {
+						alreadyExist = true
+						break
+					}
+				}
+				if alreadyExist {
+					labels = append(labels, label)
+				} else {
+					break
+				}
+			}
+		}
 	}
 	return labels, nil
 }
