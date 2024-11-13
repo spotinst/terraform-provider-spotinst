@@ -2,11 +2,12 @@ package elastigroup_azure_scheduling
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	azurev3 "github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/azure/v3"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
-	"strconv"
 )
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
