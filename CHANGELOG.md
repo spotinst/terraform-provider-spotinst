@@ -2,7 +2,7 @@
 
 ## 1.197.0 (Nov, 13 2024)
 ENHANCEMENTS:
-* resource/spotinst_ocean_right_sizing_rule: Fixed rightsizing rule attach, detach issue for duplicate workloads. 
+* resource/spotinst_ocean_right_sizing_rule: Fixed rightsizing rule attach and detach workloads in subsequent updates.
 * resource/spotinst_ocean_right_sizing_rule: Added support for `exclude_preliminary_recommendations`, `recommendation_application_hpa`, and `restart_replicas` attributes.
 
 ## 1.196.0 (October, 28 2024)

@@ -20,7 +20,7 @@ resource "spotinst_ocean_right_sizing_rule" "example" {
   restart_replicas="ALL_MANIFEST"
 
   recommendation_application_hpa{
-    allow_hpa_recommendation= true
+    allow_hpa_recommendations= true
   }
 
   recommendation_application_intervals {
@@ -74,9 +74,8 @@ The following arguments are supported:
 * `ocean_id` - (Required) Identifier of the Ocean cluster.
 * `rule_name` - (Required) The unique name of the rule.
 * `exclude_preliminary_recommendations` - (Optional) Exclude preliminary recommendations (recommendations based on less than 4 full days of data).
-* `restart_replicas` - (Optional) Enum: "MORE_THAN_ONE_REPLICA" "ALL_MANIFEST" "NO_RESTART"
-  Enable to sequentially restart pod batches according to recommendations, for all pods, only more than 1 replica, or not any pod.
-* `recommendation_application_boundaries` - (Optional) Describes the Ocean Kubernetes Auto Scaler.Determines the Ocean Rightsizing rule recommendation application boundaries.
+* `restart_replicas` - (Optional) Valid values: "MORE_THAN_ONE_REPLICA" "ALL_MANIFEST" "NO_RESTART". Enable to sequentially restart pod batches according to recommendations, for all pods, only more than 1 replica, or not any pod.
+* `recommendation_application_boundaries` - (Optional) Determines the Ocean Rightsizing rule recommendation application boundaries.
    * `cpu_min` - (Optional) the minimal value of cpu in vCpu.
    * `cpu_max` - (Optional) the maximal value of cpu in vCpu.
    * `memory_min` - (Optional) the minimal value of memory in Gib.
@@ -85,16 +84,16 @@ The following arguments are supported:
     * `allow_hpa_recommendations` - Determines by the rule if recommendation application is allowed for workloads with HPA definition.
 
 * `recommendation_application_intervals` - (Required) Determines the Ocean Rightsizing rule recommendation application intervals.
-    * `repetition_basis` - (Optional) Enum: "WEEKLY" "MONTHLY". The repetition basis.
-    * `weekly_repetition_basis` - (Optional) the maximal value of cpu in vCpu.
-      * `interval_days` - (Optional) Enum: "SUNDAY" "MONDAY" "TUESDAY" "WEDNESDAY" "THURSDAY" "FRIDAY" "SATURDAY". Array of the days of the week, when we want to trigger the apply recommendations.
+    * `repetition_basis` - (Optional) Valid values: "WEEKLY" "MONTHLY". The repetition basis.
+    * `weekly_repetition_basis` - (Optional) Determines the Ocean Rightsizing rule weekly repetition basis.
+      * `interval_days` - (Optional) Valid values: "SUNDAY" "MONDAY" "TUESDAY" "WEDNESDAY" "THURSDAY" "FRIDAY" "SATURDAY". Array of the days of the week, when we want to trigger the apply recommendations.
       * `interval_hours_start_time` - (Optional) Start time.
       * `interval_hours_end_time` - (Optional) End time.
-    * `monthly_repetition_basis` - (Optional) the minimal value of memory in Gib.
+    * `monthly_repetition_basis` - (Optional) Determines the Ocean Rightsizing rule monthly repetition basis.
       * `interval_months` - (Optional) Array of the months (in number), when we want to trigger the apply recommendations.
-      * `week_of_the_month` - (Optional) Enum: "FIRST" "SECOND" "THIRD" "FOURTH" "LAST". Array of the weeks in the month, when we want to trigger the apply recommendations.
+      * `week_of_the_month` - (Optional) Valid values: "FIRST" "SECOND" "THIRD" "FOURTH" "LAST". Array of the weeks in the month, when we want to trigger the apply recommendations.
       * `weekly_repetition_basis` - (Optional) Determines the Ocean Rightsizing rule weekly repetition basis.
-        * `interval_days` - (Optional) Enum: "SUNDAY" "MONDAY" "TUESDAY" "WEDNESDAY" "THURSDAY" "FRIDAY" "SATURDAY". Array of the days of the week, when we want to trigger the apply recommendations.
+        * `interval_days` - (Optional) Valid values: "SUNDAY" "MONDAY" "TUESDAY" "WEDNESDAY" "THURSDAY" "FRIDAY" "SATURDAY". Array of the days of the week, when we want to trigger the apply recommendations.
         * `interval_hours_start_time` - (Optional) Start time.
         * `interval_hours_end_time` - (Optional) End time.
         
@@ -115,7 +114,7 @@ The following arguments are supported:
         * `workloads` - (Optional) List of workloads.
           * `workload_type` - (Optional). The type of the workload.
           * `workload_name` - (Optional). The name of the workload.
-          * `regex_name` - (Optional). The regex for the workload name.
+          * `regex_name` - (Optional). The regex for the workload name. Not allowed when using workload_name.
         * `labels` - (Optional).
           * `key` - (Optional).
           * `value` - (Optional) .
@@ -159,7 +158,7 @@ attach_workloads {
         * `workloads` - (Optional) List of workloads.
             * `workload_type` - (Optional). The type of the workload.
             * `workload_name` - (Optional). The name of the workload.
-            * `regex_name` - (Optional). The regex for the workload name.
+            * `regex_name` - (Optional). The regex for the workload name.Not allowed when using workload_name.
         * `labels` - (Optional).
             * `key` - (Optional).
             * `value` - (Optional) .

@@ -401,8 +401,7 @@ func expandWorkloads(data interface{}, namespaceName *string, response *right_si
 			workload.RegexName = spotinst.String(v)
 		}
 
-		//During first workload API call responseDataWorkload, responseDataRegex and responseDataLabel will be empty list, hence not validating user's workload again GET attachedWorkload response in IF block.
-		//In case of responseDataWorkload, responseDataRegex empty list not going to validate user's workload again GET attachedWorkload response in IF block.
+		//Since responseDataWorkload, responseDataRegex and responseDataLabel will be empty list in GET attachedWorkload API response, so validation of user's workload against GET attachedWorkload response in IF block is not required in case of first attach workload API call.
 		if len(responseDataWorkload) == 0 && len(responseDataRegex) == 0 {
 			workloads = append(workloads, workload)
 		} else {
@@ -437,7 +436,7 @@ func expandWorkloads(data interface{}, namespaceName *string, response *right_si
 				}
 			}
 			if v, ok := attr[string(ocean_right_sizing_rule.RegexName)].(string); ok && v != "" {
-				// Creating list[map] so that we can check whether workload requested by user is already attached on not.
+				// Creating list[map] so that we can check whether `workload with regex` requested by user is already attached on not.
 				var list []map[string]interface{}
 				for _, obj := range responseDataRegex {
 					item := map[string]interface{}{
@@ -490,7 +489,7 @@ func expandLabels(data interface{}, namespaceName *string, response *right_sizin
 			label.Value = spotinst.String(v)
 		}
 
-		//In case of responseDataLabel empty list not going to validate user's workload again GET attachedWorkload response in IF block.
+		//In case of responseDataLabel returned as empty list then not validating user's workload against GET attachedWorkload response.
 		if len(responseDataLabels) == 0 {
 			labels = append(labels, label)
 		} else {
@@ -607,7 +606,6 @@ func expandNamespacesForDetach(data interface{}, ruleName string, oceanId *strin
 		} else {
 			namespaces = append(namespaces, namespace)
 		}
-		//namespaces = append(namespaces, namespace)
 	}
 	return namespaces, nil
 }
@@ -637,7 +635,6 @@ func expandWorkloadsForDetach(data interface{}, namespaceName *string, response 
 			workload.RegexName = spotinst.String(v)
 		}
 		if len(responseDataWorkload) == 0 && len(responseDataRegex) == 0 {
-			//workloads = append(workloads, workload)
 			continue
 		} else {
 			if v, ok := attr[string(ocean_right_sizing_rule.WorkloadName)].(string); ok && v != "" {
@@ -671,7 +668,7 @@ func expandWorkloadsForDetach(data interface{}, namespaceName *string, response 
 				}
 			}
 			if v, ok := attr[string(ocean_right_sizing_rule.RegexName)].(string); ok && v != "" {
-				// Creating list[map] so that we can check whether workload requested by user is already attached on not.
+				// Creating list[map] so that we can check whether `workload with regex` requested by user is already attached on not.
 				var list []map[string]interface{}
 				for _, obj := range responseDataRegex {
 					item := map[string]interface{}{
@@ -723,7 +720,8 @@ func expandLabelsForDetach(data interface{}, namespaceName *string, response *ri
 		if v, ok := attr[string(ocean_right_sizing_rule.ValueForDetach)].(string); ok && v != "" {
 			label.Value = spotinst.String(v)
 		}
-		//In case of responseDataLabel empty list not going to validate user's workload again GET attachedWorkload response in IF block.
+		//In case of responseDataLabel returned as empty list then not validating user's workload against GET attachedWorkload response.
+
 		if len(responseDataLabels) == 0 {
 			continue
 		} else {
