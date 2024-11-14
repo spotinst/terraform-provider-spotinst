@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.197.1 (Nov, 14 2024)
+NOTES:
+* resource/spotinst_ocean_right_sizing_rule: Fixed document format for readability.
+
 ## 1.197.0 (Nov, 13 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_right_sizing_rule: Fixed rightsizing rule attach and detach workloads in subsequent updates.

@@ -64,9 +64,7 @@ resource "spotinst_ocean_right_sizing_rule" "example" {
   }
   
 }
-```
-```
-
+````
 ## Argument Reference
 
 The following arguments are supported:
@@ -104,7 +102,7 @@ The following arguments are supported:
 * `recommendation_application_overhead_values` - Determines the Ocean Rightsizing rule recommendation application overhead values.
     * `cpu_percentage` - (Optional, Default: 0.1) .
     * `memory_percentage` - (Optional, Default: 0.1).
-```
+
 <a id="attach_workloads"></a>
 ## Attach Workloads
 
