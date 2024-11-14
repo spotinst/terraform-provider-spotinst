@@ -64,7 +64,6 @@ resource "spotinst_ocean_right_sizing_rule" "example" {
   }
   
 }
-
 ````
 ## Argument Reference
 
