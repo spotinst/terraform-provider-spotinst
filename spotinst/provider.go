@@ -54,6 +54,7 @@ func Provider() *schema.Provider {
 			// Ocean.
 			string(commons.OceanAWSResourceName):                   resourceSpotinstOceanAWS(),
 			string(commons.OceanAWSLaunchSpecResourceName):         resourceSpotinstOceanAWSLaunchSpec(),
+			string(commons.OceanAWSRollResourceName):               resourceSpotinstOceanAWSRoll(),
 			string(commons.OceanGKEImportResourceName):             resourceSpotinstOceanGKEImport(),
 			string(commons.OceanGKELaunchSpecResourceName):         resourceSpotinstOceanGKELaunchSpec(),
 			string(commons.OceanGKELaunchSpecImportResourceName):   resourceSpotinstOceanGKELaunchSpecImport(),

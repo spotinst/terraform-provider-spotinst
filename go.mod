@@ -14,6 +14,8 @@ require (
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 )
 
+replace github.com/spotinst/spotinst-sdk-go v1.372.0 => /home/chandra-tf/.go/src/github.com/Go-sdk/spotinst-sdk-go
+
 require (
 	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/auth v0.6.1 // indirect
