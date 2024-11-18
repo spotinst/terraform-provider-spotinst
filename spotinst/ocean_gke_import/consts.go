@@ -32,3 +32,13 @@ const (
 	BatchMinHealthyPercentage commons.FieldName = "batch_min_healthy_percentage"
 	RespectPdb                commons.FieldName = "respect_pdb"
 )
+
+const (
+	Filters         commons.FieldName = "filters"
+	ExcludeFamilies commons.FieldName = "exclude_families"
+	IncludeFamilies commons.FieldName = "include_families"
+	MaxMemoryGiB    commons.FieldName = "max_memory_gib"
+	MaxVcpu         commons.FieldName = "max_vcpu"
+	MinMemoryGiB    commons.FieldName = "min_memory_gib"
+	MinVcpu         commons.FieldName = "min_vcpu"
+)
