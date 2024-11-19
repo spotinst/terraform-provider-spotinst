@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.198.0 (November, 19 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: Added support for `is_aggressive_scale_down_enabled` and `filters` fields.
+
 ## 1.197.1 (Nov, 14 2024)
 NOTES:
 * resource/spotinst_ocean_right_sizing_rule: Fixed document format for readability.

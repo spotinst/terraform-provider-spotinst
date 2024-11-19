@@ -20,4 +20,5 @@ const (
 	GPUPerUnit                       commons.FieldName = "gpu_per_unit"
 	AutoHeadroomPercentage           commons.FieldName = "auto_headroom_percentage"
 	EnableAutomaticAndManualHeadroom commons.FieldName = "enable_automatic_and_manual_headroom"
+	IsAggressiveScaleDownEnabled     commons.FieldName = "is_aggressive_scale_down_enabled"
 )
