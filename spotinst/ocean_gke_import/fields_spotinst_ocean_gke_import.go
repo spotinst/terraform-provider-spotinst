@@ -693,18 +693,6 @@ func expandFilters(data interface{}, nullify bool) (*gcp.Filters, error) {
 	return filters, nil
 }
 
-func expandInstanceTypeList(data interface{}) ([]string, error) {
-	list := data.([]interface{})
-	result := make([]string, 0, len(list))
-
-	for _, v := range list {
-		if instanceTypeList, ok := v.(string); ok && instanceTypeList != "" {
-			result = append(result, instanceTypeList)
-		}
-	}
-	return result, nil
-}
-
 func expandInstanceTypeFiltersList(data interface{}) ([]string, error) {
 	list := data.(*schema.Set).List()
 	result := make([]string, 0, len(list))
