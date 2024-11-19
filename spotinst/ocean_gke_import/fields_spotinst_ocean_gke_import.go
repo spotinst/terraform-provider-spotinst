@@ -506,7 +506,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var result []interface{} = nil
 
@@ -523,7 +523,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			if v, ok := resourceData.GetOk(string(Filters)); ok {
 				if filters, err := expandFilters(v, false); err != nil {
@@ -536,7 +536,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.GKEClusterWrapper)
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
 			cluster := clusterWrapper.GetCluster()
 			var value *gcp.Filters = nil
 

@@ -253,7 +253,8 @@ func expandOceanGCPAutoScalerDown(data interface{}) (*gcp.AutoScalerDown, error)
 
 			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
 				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
-
+			} else {
+				autoScaleDown.SetMaxScaleDownPercentage(nil)
 			}
 
 			if v, ok := m[string(IsAggressiveScaleDownEnabled)].(bool); ok {
