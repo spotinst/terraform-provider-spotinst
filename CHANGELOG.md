@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.199.0 (November, 21 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `reserved_enis` field to support max pods configuration.
+* resource/spotinst_ocean_aws_launch_spec: Added `reserved_enis` field to support max pods configuration.
+
 ## 1.198.0 (November, 19 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: Added support for `is_aggressive_scale_down_enabled` and `filters` fields.
