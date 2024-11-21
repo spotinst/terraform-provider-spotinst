@@ -87,6 +87,7 @@ resource "spotinst_ocean_aws" "example" {
   associate_ipv6_address                             = true
   use_as_template_only                               = true
   health_check_unhealthy_duration_before_replacement = 60
+  reserved_enis                                      = 1
 
   load_balancers {
     arn  = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
@@ -208,6 +209,7 @@ The following arguments are supported:
 * `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
   When set to true, on Ocean resource creation please make sure your custom VNG has an initial_nodes parameter to create nodes for your VNG.
 * `health_check_unhealthy_duration_before_replacement` - (Optional, Default: `120`) The amount of time, in seconds, an existing instance should remain active after becoming unhealthy. After the set time out the instance will be replaced. The minimum value allowed is 60, and it must be a multiple of 60.
+* `reserved_enis` - (Optional, Default: `0`) Specifies the count of ENIs to reserve per instance type for scaling purposes.
 * `load_balancers` - (Optional) - Array of load balancer objects to add to ocean cluster
     * `arn` - (Optional) Required if type is set to `TARGET_GROUP`
     * `name` - (Optional) Required if type is set to `CLASSIC`
