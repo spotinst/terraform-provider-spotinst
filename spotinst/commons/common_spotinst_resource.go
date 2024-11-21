@@ -1,9 +1,9 @@
 package commons
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"log"
+	"math/rand"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
