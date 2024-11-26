@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.199.2 (November, 26 2024)
+BUG FIXES:
+* resource/spotinst_ocean_gke_import: Fixed update of attribute `min_size` and `max_size`.
+
 ## 1.199.1 (November, 26 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed `max_vcpu` and `max_memory_gib` fields to accept null.
