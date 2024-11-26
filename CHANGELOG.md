@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.200.0 (November, 26 2024)
+## 1.199.1 (November, 26 2024)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed `max_vcpu` and `max_memory_gib` fields to accept null.
 * resource/spotinst_ocean_ecs: Fixed `max_vcpu` and `max_memory_gib` fields to accept null.
