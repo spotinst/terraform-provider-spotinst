@@ -1,16 +1,22 @@
 package commons
 
 import (
+	"crypto/rand"
+	"encoding/binary"
 	"encoding/json"
 	"log"
-	"math/rand"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	// Generate a seed using crypto/rand
+	var seed int64
+	binary.Read(rand.Reader, binary.LittleEndian, &seed)
+
+	// Seed the math/rand package with the generated seed
+	mathrand.Seed(seed)
 
 	// Remove timestamp from provider logger, use the timestamp from the Terraform logger.
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
