@@ -3,6 +3,7 @@ package commons
 import (
 	"crypto/rand"
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/big"
 
