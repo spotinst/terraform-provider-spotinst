@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.199.3 (December, 03 2024)
+ENHANCEMENTS:
+* Updated crypto/rand package instead of math/rand as part of penetration testing.
+
 ## 1.199.2 (November, 26 2024)
 BUG FIXES:
 * resource/spotinst_ocean_gke_import: Fixed update of attribute `min_size` and `max_size`.
