@@ -2,11 +2,9 @@ package commons
 
 import (
 	"crypto/rand"
-	"encoding/binary"
 	"encoding/json"
 	"log"
 	"math/big"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
