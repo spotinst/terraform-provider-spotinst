@@ -311,5 +311,5 @@ In addition to all arguments above, the following attributes are exported:
 
 Clusters can be imported using the Ocean `id`, e.g.,
 ```hcl
-$ terraform import spotinst_ocean_ecs.this o-12345678
+$ terraform import spotinst_ocean_ecs.nameOfTheResource o-12345678
 ```
