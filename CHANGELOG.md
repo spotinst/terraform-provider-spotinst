@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.200.0 (December, 06 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added support for `excluded_vm_sizes` and `spot_size_attributes` fields in `vm_sizes` block.
+
 ## 1.199.3 (December, 03 2024)
 ENHANCEMENTS:
 * Updated crypto/rand package instead of math/rand as part of penetration testing.

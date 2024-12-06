@@ -314,3 +314,12 @@ update_policy {
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Virtual Node Group ID.
+
+
+<a id="import"></a>
+## Import
+
+Launch_Specs can be imported using the Launch_Spec `id`, e.g.,
+```hcl
+$ terraform import spotinst_ocean_aws_launch_spec.nameOfTheResource ols-1a2b576
+```
