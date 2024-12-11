@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.201.0 (December, 11 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np_virtual_node_group: added support for `shutdown_hours` in `scheduling` block.
+
 ## 1.200.0 (December, 06 2024)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added support for `excluded_vm_sizes` and `spot_size_attributes` fields in `vm_sizes` block.
