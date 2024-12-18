@@ -293,7 +293,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 					string(ShouldDeallocateNetwork): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 					string(NetworkTTLInHours): {
 						Type:     schema.TypeInt,
@@ -301,7 +301,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 					string(ShouldDeallocateDisk): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 					string(DiskTTLInHours): {
 						Type:     schema.TypeInt,
@@ -309,7 +309,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 					string(ShouldDeallocateSnapshot): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 					string(SnapshotTTLInHours): {
 						Type:     schema.TypeInt,
@@ -317,7 +317,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 					string(ShouldDeallocatePublicIP): {
 						Type:     schema.TypeBool,
-						Required: true,
+						Optional: true,
 					},
 					string(PublicIPTTLInHours): {
 						Type:     schema.TypeInt,
@@ -326,6 +326,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(ShouldDeregisterFromLb): {
 						Type:     schema.TypeBool,
 						Default:  true,
+						Optional: true,
+					},
+					string(ShouldRevertToOd): {
+						Type:     schema.TypeBool,
+						Default:  false,
 						Optional: true,
 					},
 				},
