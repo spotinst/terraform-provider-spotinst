@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.202.0 (December, 18 2024)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added support for `should_revert_to_od` in deallocation config block.
+
 ## 1.201.0 (December, 11 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np_virtual_node_group: added support for `shutdown_hours` in `scheduling` block.
