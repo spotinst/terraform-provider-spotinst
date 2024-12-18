@@ -296,6 +296,7 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     public_ip_should_deallocate = true
     public_ip_ttl_in_hours = 0
     should_deregister_from_lb   = true
+    should_revert_to_od = false
   }
   }
   // -------------------------------------------------------------------
@@ -580,15 +581,16 @@ The following arguments are supported:
 
 * `delete` - (Required) Specify deallocation parameters for stateful node deletion.
     * `should_terminate_vm` - (Required) Indicates whether to delete the stateful node's VM.
-    * `network_should_deallocate` - (Required) Indicates whether to delete the stateful node's network resources.
+    * `network_should_deallocate` - (Optional) Indicates whether to delete the stateful node's network resources.
     * `network_ttl_in_hours` - (Optional, Default: 96) Hours to keep the network resource alive before deletion.
-    * `disk_should_deallocate` - (Required) Indicates whether to delete the stateful node's disk resources.
+    * `disk_should_deallocate` - (Optional) Indicates whether to delete the stateful node's disk resources.
     * `disk_ttl_in_hours` - (Optional, Default: 96) Hours to keep the disk resource alive before deletion.
-    * `snapshot_should_deallocate` - (Required) Indicates whether to delete the stateful node's snapshot resources.
+    * `snapshot_should_deallocate` - (Optional) Indicates whether to delete the stateful node's snapshot resources.
     * `snapshot_ttl_in_hours` - (Optional, Default: 96) Hours to keep the snapshots alive before deletion.
-    * `public_ip_should_deallocate` - (Required) Indicates whether to delete the stateful node's public ip resources.
+    * `public_ip_should_deallocate` - (Optional) Indicates whether to delete the stateful node's public ip resources.
     * `public_ip_ttl_in_hours` - (Optional, Default: 96) Hours to keep the public ip alive before deletion.
     * `should_deregister_from_lb` - (Optional, Default: true) Indicates whether to deregister the stateful node's VM from any type of load balancer. Can be changed to false only when shouldTerminateVms is 'false'.
+    * `should_revert_to_od` - (Optional, Default: false) Indicates whether to change the stateful node's VM lifecycle to on-demand. Can be changed to true only when `should_terminate_vm` is 'false'.
 
 
 
