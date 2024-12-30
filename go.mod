@@ -1,6 +1,6 @@
 module github.com/spotinst/terraform-provider-spotinst
 
-go 1.22
+go 1.23
 
 require (
 	github.com/bflad/tfproviderlint v0.30.0
