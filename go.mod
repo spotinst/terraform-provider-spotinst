@@ -1,6 +1,6 @@
 module github.com/spotinst/terraform-provider-spotinst
 
-go 1.21
+go 1.23.4
 
 require (
 	github.com/bflad/tfproviderlint v0.29.0
@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/sethvargo/go-password v0.3.1
-	github.com/spotinst/spotinst-sdk-go v1.378.0
+	github.com/spotinst/spotinst-sdk-go v1.379.0
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
 )
 
@@ -87,13 +87,13 @@ require (
 	go.opentelemetry.io/otel v1.24.0 // indirect
 	go.opentelemetry.io/otel/metric v1.24.0 // indirect
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
-	golang.org/x/crypto v0.26.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.21.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.23.0 // indirect
-	golang.org/x/text v0.17.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	google.golang.org/api v0.187.0 // indirect
