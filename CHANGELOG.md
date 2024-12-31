@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.203.0 (December, 31 2024)
+ENHANCEMENTS:
+* resource/spotinst_ocean_ecs: added `fallback_to_od` field in `strategy` object.
+
 ## 1.202.0 (December, 18 2024)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added support for `should_revert_to_od` in deallocation config block.
