@@ -9,4 +9,5 @@ const (
 	SpotPercentage           commons.FieldName = "spot_percentage"
 	ClusterOrientation       commons.FieldName = "cluster_orientation"
 	AvailabilityVsCost       commons.FieldName = "availability_vs_cost"
+	FallbackToOnDemand       commons.FieldName = "fallback_to_ondemand"
 )
