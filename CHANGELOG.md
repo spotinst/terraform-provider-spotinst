@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.204.0 (January, 2 2025)
+FIXES:
+* Upgraded packages golang.org/x/crypto from v0.26.0 to v0.31.0, golang.org/x/net from v0.28.0 to v0.33.0 to solve vulnerabilities and upgraded go version to 1.23.
+
 ## 1.203.0 (December, 31 2024)
 ENHANCEMENTS:
 * resource/spotinst_ocean_ecs: added `fallback_to_od` field in `strategy` object.
