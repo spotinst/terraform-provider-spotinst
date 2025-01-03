@@ -520,6 +520,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[MinCpuPlatform] = commons.NewGenericField(
+		commons.ElastigroupGCPLaunchConfiguration,
+		MinCpuPlatform,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.MinCpuPlatform != nil {
+				value = elastigroup.Compute.LaunchSpecification.MinCpuPlatform
+			}
+			if err := resourceData.Set(string(MinCpuPlatform), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MinCpuPlatform), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(MinCpuPlatform)); ok && v != nil {
+				elastigroup.Compute.LaunchSpecification.SetMinCpuPlatform(spotinst.String(resourceData.Get(string(MinCpuPlatform)).(string)))
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetMinCpuPlatform(nil)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(MinCpuPlatform)); ok && v != nil {
+				elastigroup.Compute.LaunchSpecification.SetMinCpuPlatform(spotinst.String(resourceData.Get(string(MinCpuPlatform)).(string)))
+			} else {
+				elastigroup.Compute.LaunchSpecification.SetMinCpuPlatform(nil)
+			}
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func Base64StateFunc(v interface{}) string {
