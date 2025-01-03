@@ -19,12 +19,14 @@ resource "spotinst_elastigroup_gcp" "example" {
   service_account = "example@myProject.iam.gservicecct.com"
   startup_script  = ""
   instance_name_prefix = "test-123a"
+  min_cpu_platform = "Intel Sandy Bridge"
   
   min_size         = 0
   max_size         = 1
   desired_capacity = 1
 
   availability_zones = ["asia-east1-c", "us-central1-a"]
+  preferred_availability_zones = ["us-central1-a"]
 
   preemptible_percentage = 50
   revert_to_preemptible{
@@ -35,6 +37,7 @@ resource "spotinst_elastigroup_gcp" "example" {
   fallback_to_ondemand   = true
   draining_timeout       = 180
   provisioning_model     = "SPOT"
+  should_utilize_commitment = true
   
   labels {
     key = "test_key"
@@ -122,6 +125,7 @@ The following arguments are supported:
 * `min_size` - (Required) The minimum number of instances the group should have at any time.
 * `desired_capacity` - (Required) The desired number of instances the group should have at any time.
 * `availability_zones` - (Required) List of availability zones for the group.
+* `preferred_availability_zones` - (Optional) prioritize availability zones when launching instances for the group. Must be a sublist of `availability_zones`.
 * `subnets` - (Optional) A list of regions and subnets.
     * `region` - (Required) The region for the group of subnets.
     * `subnet_names` - (Required) The names of the subnets in the region.
@@ -135,6 +139,7 @@ The following arguments are supported:
 * `fallback_to_ondemand` - (Optional) Activate fallback-to-on-demand. When provisioning an instance, if no Preemptible market is available, fallback-to-on-demand will provision an On-Demand instance to maintain the group capacity.
 * `draining_timeout` - (Optional) Time (seconds) the instance is allowed to run after it is detached from the group. This is to allow the instance time to drain all the current TCP connections before terminating it.
 * `provisioning_model` - (Optional) Valid values: "SPOT", "PREEMPTIBLE". Define the provisioning model of the launched instances. Default value is "PREEMPTIBLE".
+* `should_utilize_commitments` - (Optional) Enable committed use discounts utilization.
 * `metadata` - (Optional) Array of objects with key-value pairs.
     * `key` - (Optional) Metadata key.
     * `value` - (Optional) Metadata value.
@@ -145,6 +150,7 @@ The following arguments are supported:
 * `instance_name_prefix` - (Optional) Set an instance name prefix to be used for all launched instances and their boot disk. The prefix value should comply with the following limitations: 
     * A maximal length of 25 characters.
     * The first character must be a lowercase letter, and all the following characters must be hyphens, lowercase letters, or digits, except the last character, which cannot be a hyphen.
+* `min_cpu_platform` - (Optional) Select a minimum CPU platform for the compute instance.
 * `revert_to_preemptible` - (Optional) Setting for revert to preemptible option.
   * `perform_at` - (Required) Valid values: "always", "never", "timeWindow". Required on strategy.revertToPreemptible object.
 * `optimization_windows` - (Optional) Set time window to perform the revert to preemptible. Time windows must be at least 120 minutes. Format: DayInWeek:HH-DayInWeek:HH. Required when strategy.revertToPreemptible.performAt is 'timeWindow'.

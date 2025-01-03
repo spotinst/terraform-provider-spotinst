@@ -31,4 +31,5 @@ const (
 	ShutdownScript     commons.FieldName = "shutdown_script"
 	IPForwarding       commons.FieldName = "ip_forwarding"
 	InstanceNamePrefix commons.FieldName = "instance_name_prefix"
+	MinCpuPlatform     commons.FieldName = "min_cpu_platform"
 )
