@@ -704,7 +704,7 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preemptible_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "300"),
 					resource.TestCheckResourceAttr(resourceName, "provisioning_model", "SPOT"),
-					resource.TestCheckResourceAttr(resourceName, "should_utilize_commiments", "true"),
+					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "true"),
 				),
 			},
 			{
@@ -719,7 +719,7 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ondemand_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 					resource.TestCheckResourceAttr(resourceName, "provisioning_model", "PREEMPTIBLE"),
-					resource.TestCheckResourceAttr(resourceName, "should_utilize_commiments", "false"),
+					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "false"),
 				),
 			},
 			{
@@ -744,7 +744,7 @@ const testStrategyGCPGroupConfig_Create = `
  preemptible_percentage = 100
  draining_timeout = 300
  provisioning_model = "SPOT"
-should_utilize_commiments = true
+should_utilize_commitments = true
  // ---------------------------------
 `
 
@@ -753,7 +753,7 @@ const testStrategyGCPGroupConfig_Update = `
   ondemand_count = 1
   draining_timeout = 240
   provisioning_model = "PREEMPTIBLE"
-should_utilize_commiments = false
+should_utilize_commitments = false
  // ---------------------------------
 `
 
