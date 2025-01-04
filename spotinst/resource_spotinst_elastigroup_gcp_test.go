@@ -244,7 +244,7 @@ resource "` + string(commons.ElastigroupGCPResourceName) + `" "%v" {
 
  name = "%v"
  description = "created by Terraform"
- availability_zones = ["us-west1-a", "us-central1-b"]
+ availability_zones = ["us-west1-a", "us-west1-b"]
  preferred_availability_zones = ["us-west1-a"]
 
  // --- CAPACITY ------------
