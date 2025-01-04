@@ -207,7 +207,7 @@ func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "us-west1-a"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "us-west1-b"),
 					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.#", "1"),
