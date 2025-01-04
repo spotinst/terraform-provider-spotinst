@@ -37,7 +37,7 @@ resource "spotinst_elastigroup_gcp" "example" {
   fallback_to_ondemand   = true
   draining_timeout       = 180
   provisioning_model     = "SPOT"
-  should_utilize_commitment = true
+  should_utilize_commitments = true
   
   labels {
     key = "test_key"
