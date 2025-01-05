@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.205.0 (January, 05 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_gcp: added `should_utilize_commitments`, `preferred_availability_zones` and `min_cpu_platform` fields.
+
 ## 1.204.0 (January, 2 2025)
 FIXES:
 * Upgraded packages golang.org/x/crypto from v0.26.0 to v0.31.0, golang.org/x/net from v0.28.0 to v0.33.0 to solve vulnerabilities and upgraded go version to 1.23.
