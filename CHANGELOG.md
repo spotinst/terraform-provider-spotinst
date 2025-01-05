@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.205.0 (January, 04 2025)
+## 1.205.0 (January, 05 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_gcp: added `should_utilize_commitments`, `preferred_availability_zones` and `min_cpu_platform` fields.
 
