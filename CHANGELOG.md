@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.205.1 (January, 07 2025)
+FIXES:
+* Upgraded packages go-getter from v1.7.5 to v1.7.6 and go-git/v5 from v5.12.0 to v5.13.0 to solve vulnerabilities.
+
 ## 1.205.0 (January, 05 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_gcp: added `should_utilize_commitments`, `preferred_availability_zones` and `min_cpu_platform` fields.
