@@ -1,16 +1,41 @@
 package commons
 
 import (
+	"crypto/rand"
 	"encoding/json"
+	"fmt"
 	"log"
-	"math/rand"
-	"time"
+	"math/big"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+// GenerateSecureRandomInt generates a secure random integer between min and max using crypto/rand
+func GenerateSecureRandomInt(min, max int64) (int64, error) {
+	if min >= max {
+		return 0, fmt.Errorf("invalid range: min must be less than max")
+	}
+
+	// Calculate the range
+	rangeSize := max - min + 1
+
+	// Generate a secure random number in the range 0 to rangeSize-1
+	nBig, err := rand.Int(rand.Reader, big.NewInt(rangeSize))
+	if err != nil {
+		return 0, err
+	}
+
+	// Add the min to shift the range to min...max
+	return nBig.Int64() + min, nil
+}
+
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	// Example usage of GenerateSecureRandomInt within init
+	randomNumber, err := GenerateSecureRandomInt(1, 100)
+	if err != nil {
+		log.Fatalf("Failed to generate secure random number: %v", err)
+	}
+	log.Printf("Secure random number: %d", randomNumber)
 
 	// Remove timestamp from provider logger, use the timestamp from the Terraform logger.
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))

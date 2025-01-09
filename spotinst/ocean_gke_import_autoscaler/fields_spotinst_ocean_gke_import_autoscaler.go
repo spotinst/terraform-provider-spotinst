@@ -46,6 +46,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
+								string(IsAggressiveScaleDownEnabled): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
 							},
 						},
 					},
@@ -249,7 +253,14 @@ func expandOceanGCPAutoScalerDown(data interface{}) (*gcp.AutoScalerDown, error)
 
 			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
 				autoScaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
+			} else {
+				autoScaleDown.SetMaxScaleDownPercentage(nil)
+			}
 
+			if v, ok := m[string(IsAggressiveScaleDownEnabled)].(bool); ok {
+				aggressiveScaleDown := &gcp.AggressiveScaleDown{}
+				autoScaleDown.SetAggressiveScaleDown(aggressiveScaleDown)
+				autoScaleDown.AggressiveScaleDown.SetIsEnabled(spotinst.Bool(v))
 			}
 		}
 		return autoScaleDown, nil
@@ -353,6 +364,9 @@ func flattenAutoScaleDown(autoScaleDown *gcp.AutoScalerDown) []interface{} {
 	down := make(map[string]interface{})
 	down[string(EvaluationPeriods)] = spotinst.IntValue(autoScaleDown.EvaluationPeriods)
 	down[string(MaxScaleDownPercentage)] = spotinst.Float64Value(autoScaleDown.MaxScaleDownPercentage)
+	if autoScaleDown != nil && autoScaleDown.AggressiveScaleDown != nil {
+		down[string(IsAggressiveScaleDownEnabled)] = spotinst.BoolValue(autoScaleDown.AggressiveScaleDown.IsEnabled)
+	}
 
 	return []interface{}{down}
 }
