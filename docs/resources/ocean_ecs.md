@@ -66,6 +66,7 @@ resource "spotinst_ocean_ecs" "example" {
 
     spot_percentage             = 100
     utilize_commitments         = false
+    fallback_to_ondemand        = true
     cluster_orientation {
     availability_vs_cost        = "balanced"
   }
@@ -167,6 +168,7 @@ The following arguments are supported:
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
 * `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
 * `spot_percentage` - (Optional) The percentage of Spot instances that would spin up from the `desired_capacity` number.
+* `fallback_to_ondemand` - (Optional, Default: `true`) If no Spot instance markets are available, enable Ocean to launch On-Demand instances instead.
 * `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
 * `cluster_orientation`
     * `availability_vs_cost` - (Optional, Default: `balanced`) You can control the approach that Ocean takes while launching nodes by configuring this value. Possible values: `costOriented`,`balanced`,`cheapest`.
@@ -311,5 +313,5 @@ In addition to all arguments above, the following attributes are exported:
 
 Clusters can be imported using the Ocean `id`, e.g.,
 ```hcl
-$ terraform import spotinst_ocean_ecs.this o-12345678
+$ terraform import spotinst_ocean_ecs.nameOfTheResource o-12345678
 ```

@@ -619,6 +619,7 @@ func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 				),
 			},
 			{
@@ -633,6 +634,7 @@ func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 				),
 			},
 			{
@@ -647,6 +649,7 @@ func TestAccSpotinstOceanECS_Strategy(t *testing.T) {
 					testCheckOceanECSAttributes(&cluster, name),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "-1"),
+					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 				),
 			},
 		},
@@ -657,6 +660,7 @@ const testStrategy_Create = `
 // --- STRATEGY -----------------
 	draining_timeout = 120
 	spot_percentage  = 100
+	fallback_to_ondemand = true
 // --------------------------------
 `
 
@@ -664,6 +668,7 @@ const testStrategy_Update = `
 // --- STRATEGY -----------------
 	draining_timeout = 240
 	spot_percentage  = 50
+	fallback_to_ondemand = false
 // --------------------------------
 `
 

@@ -32,6 +32,7 @@ const (
 	ShouldDeallocatePublicIP commons.FieldName = PublicIPDeallocation + "should_deallocate"
 	PublicIPTTLInHours       commons.FieldName = PublicIPDeallocation + "ttl_in_hours"
 	ShouldDeregisterFromLb   commons.FieldName = "should_deregister_from_lb"
+	ShouldRevertToOd         commons.FieldName = "should_revert_to_od"
 )
 
 const (
