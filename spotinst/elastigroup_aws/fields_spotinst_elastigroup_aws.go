@@ -440,6 +440,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Elem:          &schema.Schema{Type: schema.TypeString},
 			ConflictsWith: []string{string(AvailabilityZones)},
 			Optional:      true,
+			Deprecated:    "This field will soon be deprecated and handled by availability_zones",
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
