@@ -16,7 +16,6 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_auto_scale"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_node_count_limits"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_node_pool_properties"
-	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_scheduling"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_strategy"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_virtual_node_group_vm_sizes"
 )
@@ -47,7 +46,6 @@ func setupOceanAKSNPVirtualNodeGroupResource() {
 	ocean_aks_np_virtual_node_group_node_count_limits.Setup(fieldsMap)
 	ocean_aks_np_virtual_node_group_strategy.Setup(fieldsMap)
 	ocean_aks_np_virtual_node_group_vm_sizes.Setup(fieldsMap)
-	ocean_aks_np_virtual_node_group_scheduling.Setup(fieldsMap)
 
 	commons.OceanAKSNPVirtualNodeGroupResource = commons.NewOceanAKSNPVirtualNodeGroupResource(fieldsMap)
 }

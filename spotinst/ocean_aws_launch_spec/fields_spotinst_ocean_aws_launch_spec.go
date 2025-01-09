@@ -1984,47 +1984,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-
-	fieldsMap[ReservedENIs] = commons.NewGenericField(
-		commons.OceanAWSLaunchSpec,
-		ReservedENIs,
-		&schema.Schema{
-			Type:     schema.TypeInt,
-			Optional: true,
-			Default:  0,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			var value *int = nil
-			if launchSpec.ReservedENIs != nil {
-				value = launchSpec.ReservedENIs
-			}
-			if err := resourceData.Set(string(ReservedENIs), spotinst.IntValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ReservedENIs), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			if v, ok := resourceData.Get(string(ReservedENIs)).(int); ok && v > 0 {
-				launchSpec.SetReservedENIs(spotinst.Int(v))
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
-			launchSpec := launchSpecWrapper.GetLaunchSpec()
-			var value *int = nil
-			if v, ok := resourceData.Get(string(ReservedENIs)).(int); ok && v > 0 {
-				value = spotinst.Int(v)
-			}
-			launchSpec.SetReservedENIs(value)
-			return nil
-		},
-		nil,
-	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)

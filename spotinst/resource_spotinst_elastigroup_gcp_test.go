@@ -207,11 +207,8 @@ func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "us-west1-a"),
-					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "us-west1-b"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.0", "us-west1-a"),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
@@ -227,8 +224,6 @@ func TestAccSpotinstElastigroupGCP_Baseline(t *testing.T) {
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "us-central1-b"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "preferred_availability_zones.0", "us-central1-b"),
 					resource.TestCheckResourceAttr(resourceName, "max_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
@@ -244,8 +239,7 @@ resource "` + string(commons.ElastigroupGCPResourceName) + `" "%v" {
 
  name = "%v"
  description = "created by Terraform"
- availability_zones = ["us-west1-a", "us-west1-b"]
- preferred_availability_zones = ["us-west1-a"]
+ availability_zones = ["us-west1-a"]
 
  // --- CAPACITY ------------
  max_size = 0
@@ -269,7 +263,7 @@ resource "` + string(commons.ElastigroupGCPResourceName) + `" "%v" {
  name = "%v"
  description = "created by Terraform"
  availability_zones = ["us-central1-b"]
- preferred_availability_zones = ["us-central1-b"]
+
  // --- CAPACITY ------------
  max_size = 0
  min_size = 0
@@ -704,7 +698,6 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "preemptible_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "300"),
 					resource.TestCheckResourceAttr(resourceName, "provisioning_model", "SPOT"),
-					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "true"),
 				),
 			},
 			{
@@ -719,7 +712,6 @@ func TestAccSpotinstElastigroupGCP_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "ondemand_count", "1"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 					resource.TestCheckResourceAttr(resourceName, "provisioning_model", "PREEMPTIBLE"),
-					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "false"),
 				),
 			},
 			{
@@ -744,7 +736,6 @@ const testStrategyGCPGroupConfig_Create = `
  preemptible_percentage = 100
  draining_timeout = 300
  provisioning_model = "SPOT"
-should_utilize_commitments = true
  // ---------------------------------
 `
 
@@ -753,7 +744,6 @@ const testStrategyGCPGroupConfig_Update = `
   ondemand_count = 1
   draining_timeout = 240
   provisioning_model = "PREEMPTIBLE"
-should_utilize_commitments = false
  // ---------------------------------
 `
 

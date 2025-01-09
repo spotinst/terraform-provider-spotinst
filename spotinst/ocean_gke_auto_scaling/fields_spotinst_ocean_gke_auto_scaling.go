@@ -33,10 +33,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
-								string(IsAggressiveScaleDownEnabled): {
-									Type:     schema.TypeBool,
-									Optional: true,
-								},
 							},
 						},
 					},
@@ -252,12 +248,6 @@ func expandOceanGKEAutoScalerDown(data interface{}) (*gcp.AutoScalerDown, error)
 
 			if v, ok := m[string(EvaluationPeriods)].(int); ok && v > 0 {
 				autoScaleDown.SetEvaluationPeriods(spotinst.Int(v))
-			}
-
-			if v, ok := m[string(IsAggressiveScaleDownEnabled)].(bool); ok {
-				aggressiveScaleDown := &gcp.AggressiveScaleDown{}
-				autoScaleDown.SetAggressiveScaleDown(aggressiveScaleDown)
-				autoScaleDown.AggressiveScaleDown.SetIsEnabled(spotinst.Bool(v))
 			}
 		}
 		return autoScaleDown, nil

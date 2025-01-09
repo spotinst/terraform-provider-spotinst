@@ -495,54 +495,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
-	fieldsMap[PreferredAvailabilityZones] = commons.NewGenericField(
-		commons.ElastigroupGCP,
-		PreferredAvailabilityZones,
-		&schema.Schema{
-			Type:     schema.TypeList,
-			Optional: true,
-			Elem:     &schema.Schema{Type: schema.TypeString},
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			var result []string
-			if elastigroup.Compute != nil && elastigroup.Compute.PreferredAvailabilityZones != nil {
-				result = append(result, elastigroup.Compute.PreferredAvailabilityZones...)
-			}
-			if err := resourceData.Set(string(PreferredAvailabilityZones), result); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PreferredAvailabilityZones), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(PreferredAvailabilityZones)); ok {
-				zonesList := v.([]interface{})
-				preferredZones := make([]string, len(zonesList))
-				for i, j := range zonesList {
-					preferredZones[i] = j.(string)
-				}
-				elastigroup.Compute.SetPreferredAvailabilityZones(preferredZones)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(PreferredAvailabilityZones)); ok {
-				zonesList := v.([]interface{})
-				preferredZones := make([]string, len(zonesList))
-				for i, j := range zonesList {
-					preferredZones[i] = j.(string)
-				}
-				elastigroup.Compute.SetPreferredAvailabilityZones(preferredZones)
-			}
-			return nil
-		},
-		nil,
-	)
 }
 
 // expandSubnets expands the list of subnet objects

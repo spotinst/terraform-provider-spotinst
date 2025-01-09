@@ -256,20 +256,12 @@ func expandOceanAWSAutoScalerResourceLimits(data interface{}) (*aws.ECSAutoScale
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(MaxMemoryGib)].(int); ok {
-				if v == 0 {
-					resLimits.SetMaxMemoryGiB(nil)
-				} else {
-					resLimits.SetMaxMemoryGiB(spotinst.Int(v))
-				}
+			if v, ok := m[string(MaxMemoryGib)].(int); ok && v > 0 {
+				resLimits.SetMaxMemoryGiB(spotinst.Int(v))
 			}
 
-			if v, ok := m[string(MaxVCpu)].(int); ok {
-				if v == 0 {
-					resLimits.SetMaxVCPU(nil)
-				} else {
-					resLimits.SetMaxVCPU(spotinst.Int(v))
-				}
+			if v, ok := m[string(MaxVCpu)].(int); ok && v > 0 {
+				resLimits.SetMaxVCPU(spotinst.Int(v))
 			}
 
 		}
@@ -346,15 +338,7 @@ func flattenAutoScaleHeadroom(autoScaleHeadroom *aws.ECSAutoScalerHeadroom) []in
 
 func flattenAutoScaleResourceLimits(autoScalerResourceLimits *aws.ECSAutoScalerResourceLimits) []interface{} {
 	down := make(map[string]interface{})
-	value := spotinst.Int(0)
-	down[string(MaxVCpu)] = value
-	down[string(MaxMemoryGib)] = value
-
-	if autoScalerResourceLimits.MaxVCPU != nil {
-		down[string(MaxVCpu)] = spotinst.IntValue(autoScalerResourceLimits.MaxVCPU)
-	}
-	if autoScalerResourceLimits.MaxMemoryGiB != nil {
-		down[string(MaxMemoryGib)] = spotinst.IntValue(autoScalerResourceLimits.MaxMemoryGiB)
-	}
+	down[string(MaxVCpu)] = spotinst.IntValue(autoScalerResourceLimits.MaxVCPU)
+	down[string(MaxMemoryGib)] = spotinst.IntValue(autoScalerResourceLimits.MaxMemoryGiB)
 	return []interface{}{down}
 }

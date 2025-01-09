@@ -1,55 +1,5 @@
 ## Unreleased
 
-## 1.205.1 (January, 07 2025)
-FIXES:
-* Upgraded packages go-getter from v1.7.5 to v1.7.6 and go-git/v5 from v5.12.0 to v5.13.0 to solve vulnerabilities.
-
-## 1.205.0 (January, 05 2025)
-ENHANCEMENTS:
-* resource/spotinst_elastigroup_gcp: added `should_utilize_commitments`, `preferred_availability_zones` and `min_cpu_platform` fields.
-
-## 1.204.0 (January, 2 2025)
-FIXES:
-* Upgraded packages golang.org/x/crypto from v0.26.0 to v0.31.0, golang.org/x/net from v0.28.0 to v0.33.0 to solve vulnerabilities and upgraded go version to 1.23.
-
-## 1.203.0 (December, 31 2024)
-ENHANCEMENTS:
-* resource/spotinst_ocean_ecs: added `fallback_to_od` field in `strategy` object.
-
-## 1.202.0 (December, 18 2024)
-ENHANCEMENTS:
-* resource/spotinst_stateful_node_azure: Added support for `should_revert_to_od` in deallocation config block.
-
-## 1.201.0 (December, 11 2024)
-ENHANCEMENTS:
-* resource/spotinst_ocean_aks_np_virtual_node_group: added support for `shutdown_hours` in `scheduling` block.
-
-## 1.200.0 (December, 06 2024)
-ENHANCEMENTS:
-* resource/spotinst_stateful_node_azure: Added support for `excluded_vm_sizes` and `spot_size_attributes` fields in `vm_sizes` block.
-
-## 1.199.3 (December, 03 2024)
-ENHANCEMENTS:
-* Updated crypto/rand package instead of math/rand as part of penetration testing.
-
-## 1.199.2 (November, 26 2024)
-BUG FIXES:
-* resource/spotinst_ocean_gke_import: Fixed update of attribute `min_size` and `max_size`.
-
-## 1.199.1 (November, 26 2024)
-BUG FIXES:
-* resource/spotinst_ocean_aws: Fixed `max_vcpu` and `max_memory_gib` fields to accept null.
-* resource/spotinst_ocean_ecs: Fixed `max_vcpu` and `max_memory_gib` fields to accept null.
-
-## 1.199.0 (November, 21 2024)
-ENHANCEMENTS:
-* resource/spotinst_ocean_aws: Added `reserved_enis` field to support max pods configuration.
-* resource/spotinst_ocean_aws_launch_spec: Added `reserved_enis` field to support max pods configuration.
-
-## 1.198.0 (November, 19 2024)
-ENHANCEMENTS:
-* resource/spotinst_ocean_gke_import: Added support for `is_aggressive_scale_down_enabled` and `filters` fields.
-
 ## 1.197.1 (Nov, 14 2024)
 NOTES:
 * resource/spotinst_ocean_right_sizing_rule: Fixed document format for readability.

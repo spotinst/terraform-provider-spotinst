@@ -862,7 +862,7 @@ func expandMonthlyRepetitionBasis(data interface{}) (*right_sizing.MonthlyRepeti
 			if intervalMonths != nil && len(intervalMonths) > 0 {
 				monthlyRepetitionBasis.SetIntervalMonths(intervalMonths)
 			} else {
-				monthlyRepetitionBasis.SetIntervalMonths(nil)
+				monthlyRepetitionBasis.SetIntervalMonths(intervalMonths)
 			}
 		}
 

@@ -49,16 +49,6 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     od_sizes             = ["standard_ds1_v2", "standard_ds2_v2"]
     spot_sizes           = ["standard_ds1_v2", "standard_ds2_v2"]
     preferred_spot_sizes = ["standard_ds1_v2"]
-    excluded_vm_sizes    = ["standard_ds2_v3"]
-    
-    spot_size_attributes {
-      max_cpu     = 16
-      min_cpu     = 2
-      max_memory  = 48
-      min_memory  = 2
-      max_storage = 1000
-      min_storage = 50
-    }
   }
   zones                = ["1","3"]
   preferred_zone      = "1"
@@ -296,7 +286,6 @@ resource "spotinst_stateful_node_azure" "test_stateful_node_azure" {
     public_ip_should_deallocate = true
     public_ip_ttl_in_hours = 0
     should_deregister_from_lb   = true
-    should_revert_to_od = false
   }
   }
   // -------------------------------------------------------------------
@@ -340,16 +329,8 @@ The following arguments are supported:
 * `os` - (Required, Enum `"Linux", "Windows"`) Type of operating system.
 * `vm_sizes` - (Required) Defines the VM sizes to use when launching VMs.
     * `od_sizes` - (Required) Available On-Demand sizes.
-    * `spot_sizes` - (Optional) Available Spot-VM sizes. Required if spotSizeAttributes isn't specified.
+    * `spot_sizes` - (Required) Available Spot-VM sizes.
     * `preferred_spot_sizes` - (Optional) Prioritize Spot VM sizes when launching Spot VMs for the group. If set, must be a sublist of compute.vmSizes.spotSizes.
-    * `excluded_vm_sizes` - (Optional) Defines the VM sizes to exclude when defining spot types with spotSizeAttributes.
-    * `spot_size_attributes` - (Optional) Defines values and ranges for attributes of the spot sizes to use when launching VMs. Required if spotSizes isn't specified.
-      * `max_cpu` - (Optional) Maximum amount of vCPU units.
-      * `min_cpu` - (Optional) Minimum amount of vCPU units.
-      * `max_memory` - (Optional) Maximum amount of memory in GiB.
-      * `min_memory` - (Optional) Minimum amount of memory in GiB.
-      * `max_storage` - (Optional) Maximum amount of storage in GiB.
-      * `min_storage` - (optional) Minimum amount of storage in GiB.
 * `zones` - (Optional, Enum `"1", "2", "3"`) List of Azure Availability Zones in the defined region. If not defined, Virtual machines will be launched regionally.
 * `preferred_zone` - (Optional, Enum `"1", "2", "3"`) The AZ to prioritize when launching VMs. If no markets are available in the Preferred AZ, VMs are launched in the non-preferred AZ. Must be a sublist of compute.zones.
 * `custom_data` - (Optional) This value will hold the YAML in base64 and will be executed upon VM launch.
@@ -581,16 +562,15 @@ The following arguments are supported:
 
 * `delete` - (Required) Specify deallocation parameters for stateful node deletion.
     * `should_terminate_vm` - (Required) Indicates whether to delete the stateful node's VM.
-    * `network_should_deallocate` - (Optional) Indicates whether to delete the stateful node's network resources.
+    * `network_should_deallocate` - (Required) Indicates whether to delete the stateful node's network resources.
     * `network_ttl_in_hours` - (Optional, Default: 96) Hours to keep the network resource alive before deletion.
-    * `disk_should_deallocate` - (Optional) Indicates whether to delete the stateful node's disk resources.
+    * `disk_should_deallocate` - (Required) Indicates whether to delete the stateful node's disk resources.
     * `disk_ttl_in_hours` - (Optional, Default: 96) Hours to keep the disk resource alive before deletion.
-    * `snapshot_should_deallocate` - (Optional) Indicates whether to delete the stateful node's snapshot resources.
+    * `snapshot_should_deallocate` - (Required) Indicates whether to delete the stateful node's snapshot resources.
     * `snapshot_ttl_in_hours` - (Optional, Default: 96) Hours to keep the snapshots alive before deletion.
-    * `public_ip_should_deallocate` - (Optional) Indicates whether to delete the stateful node's public ip resources.
+    * `public_ip_should_deallocate` - (Required) Indicates whether to delete the stateful node's public ip resources.
     * `public_ip_ttl_in_hours` - (Optional, Default: 96) Hours to keep the public ip alive before deletion.
     * `should_deregister_from_lb` - (Optional, Default: true) Indicates whether to deregister the stateful node's VM from any type of load balancer. Can be changed to false only when shouldTerminateVms is 'false'.
-    * `should_revert_to_od` - (Optional, Default: false) Indicates whether to change the stateful node's VM lifecycle to on-demand. Can be changed to true only when `should_terminate_vm` is 'false'.
 
 
 

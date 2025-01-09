@@ -21,7 +21,6 @@ const (
 	ResourceTagSpecification                      commons.FieldName = "resource_tag_specification"
 	ShouldTagVolumes                              commons.FieldName = "should_tag_volumes"
 	HealthCheckUnhealthyDurationBeforeReplacement commons.FieldName = "health_check_unhealthy_duration_before_replacement"
-	ReservedENIs                                  commons.FieldName = "reserved_enis"
 )
 
 const (

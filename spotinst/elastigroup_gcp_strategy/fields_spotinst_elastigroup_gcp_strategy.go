@@ -341,51 +341,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-
-	fieldsMap[ShouldUtilizeCommitments] = commons.NewGenericField(
-		commons.ElastigroupGCPStrategy,
-		ShouldUtilizeCommitments,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-		},
-
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			var value *bool = nil
-			if elastigroup.Strategy != nil && elastigroup.Strategy.ShouldUtilizeCommitments != nil {
-				value = elastigroup.Strategy.ShouldUtilizeCommitments
-			}
-			if err := resourceData.Set(string(ShouldUtilizeCommitments), spotinst.BoolValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShouldUtilizeCommitments), err)
-			}
-			return nil
-		},
-
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOkExists(string(ShouldUtilizeCommitments)); ok {
-				ftod := v.(bool)
-				elastigroup.Strategy.SetShouldUtilizeCommitments(spotinst.Bool(ftod))
-			}
-			return nil
-		},
-
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
-			elastigroup := egWrapper.GetElastigroup()
-			var fallback *bool = nil
-			if v, ok := resourceData.GetOkExists(string(ShouldUtilizeCommitments)); ok {
-				ftod := v.(bool)
-				fallback = spotinst.Bool(ftod)
-			}
-			elastigroup.Strategy.SetShouldUtilizeCommitments(fallback)
-			return nil
-		},
-		nil,
-	)
 }
 func flattenRevertToPreemptible(revertToPreemptible *gcp.RevertToPreemptible) []interface{} {
 	result := make([]interface{}, 0, 1)

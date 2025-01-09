@@ -116,7 +116,6 @@ func NewVirtualNodeGroupAKSNPWrapper() *VirtualNodeGroupAKSNPWrapper {
 			Strategy:           &azure_np.Strategy{},
 			AutoScale:          &azure_np.AutoScale{},
 			VmSizes:            &azure_np.VmSizes{},
-			Scheduling:         &azure_np.Scheduling{},
 		},
 	}
 }

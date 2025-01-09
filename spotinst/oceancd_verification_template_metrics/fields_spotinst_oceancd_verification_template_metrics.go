@@ -493,9 +493,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				} else {
 					result = metrics
 				}
+			}
+
+			if len(result) == 0 {
 				verificationTemplate.SetMetrics(result)
 			} else {
-				verificationTemplate.SetMetrics(nil)
+				verificationTemplate.SetMetrics(result)
 			}
 
 			return nil

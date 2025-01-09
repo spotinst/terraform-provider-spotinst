@@ -66,7 +66,6 @@ const (
 	MaxScaleDownPercentage   commons.FieldName = "max_scale_down_percentage"
 	Images                   commons.FieldName = "images"
 	PreferredOnDemandTypes   commons.FieldName = "preferred_od_types"
-	ReservedENIs             commons.FieldName = "reserved_enis"
 )
 
 const (

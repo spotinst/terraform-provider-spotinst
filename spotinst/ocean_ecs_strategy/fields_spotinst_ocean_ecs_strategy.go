@@ -257,52 +257,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-
-	fieldsMap[FallbackToOnDemand] = commons.NewGenericField(
-		commons.OceanECSStrategy,
-		FallbackToOnDemand,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-			Default:  true,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			var value *bool = nil
-			if cluster.Strategy != nil && cluster.Strategy.FallbackToOnDemand != nil {
-				value = cluster.Strategy.FallbackToOnDemand
-			}
-			if value != nil {
-				if err := resourceData.Set(string(FallbackToOnDemand), spotinst.BoolValue(value)); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(FallbackToOnDemand), err)
-				}
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
-				ftod := v.(bool)
-				fallback := spotinst.Bool(ftod)
-				cluster.Strategy.SetFallbackToOnDemand(fallback)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			clusterWrapper := resourceObject.(*commons.ECSClusterWrapper)
-			cluster := clusterWrapper.GetECSCluster()
-			var fallback *bool = nil
-			if v, ok := resourceData.GetOkExists(string(FallbackToOnDemand)); ok && v != nil {
-				ftod := v.(bool)
-				fallback = spotinst.Bool(ftod)
-			}
-			cluster.Strategy.SetFallbackToOnDemand(fallback)
-			return nil
-		},
-		nil,
-	)
 }
 func flattenClusterOrientation(clusterOrientation *aws.ECSClusterOrientation) []interface{} {
 	var out []interface{}

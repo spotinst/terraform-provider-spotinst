@@ -43,15 +43,6 @@ resource "spotinst_ocean_gke_import" "example" {
   
   whitelist = ["n1-standard-1", "n1-standard-2"]
   
-  filters {
-    exclude_families          =   ["n2"]
-    include_families          =   ["c2", "c3"]
-    min_memory_gib            =   8
-    max_memory_gib            =   16
-    min_vcpu                  =   2
-    max_vcpu                  =   16
-  }
-  
   backend_services {
     service_name  = "example-backend-service"
     location_type = "regional"
@@ -90,13 +81,6 @@ The following arguments are supported:
 * `desired_capacity` - (Optional) The number of instances to launch and maintain in the cluster. 
 * `whitelist` - (Optional) Instance types allowed in the Ocean cluster. Cannot be configured if blacklist list is configured.
 * `blacklist` - (Optional) Instance types to avoid launching in the Ocean cluster. Cannot be configured if whitelist list is configured.
-* `filters` - (Optional) List of filters. The Instance types that match with all filters compose the Ocean's whitelist parameter. Cannot be configured together with whitelist/blacklist.
-    * `exclude_families` - (Optional) Types belonging to a family from the ExcludeFamilies will not be available for scaling (asterisk wildcard is also supported). For example, C* will exclude instance types from these families: c5, c4, c4a, etc.
-    * `include_families` - (Optional) Types belonging to a family from the IncludeFamilies will be available for scaling (asterisk wildcard is also supported). For example, C* will include instance types from these families: c5, c4, c4a, etc.
-    * `max_memory_gib` - (Optional) Maximum amount of Memory (GiB).
-    * `max_vcpu` - (Optional) Maximum number of vcpus available.
-    * `min_memory_gib` - (Optional) Minimum amount of Memory (GiB).
-    * `min_vcpu` - (Optional) Minimum number of vcpus available.
 * `draining_timeout` - (Optional) The draining timeout (in seconds) before terminating the instance.
 * `backend_services` - (Optional) Describes the backend service configurations.
     * `service_name` - (Required) The name of the backend service.
@@ -174,7 +158,6 @@ The following arguments are supported:
     * `down` - (Optional) Auto Scaling scale down operations.
         * `evaluation_periods` - (Optional, Default: `null`) The number of evaluation periods that should accumulate before a scale down action takes place.
         * `max_scale_down_percentage` - (Optional) Would represent the maximum % to scale-down. Number between 1-100.
-        * `is_aggressive_scale_down_enabled` - (Optional, Default: `false`) When set to 'true', the Aggressive Scale Down feature is enabled.
     * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
         * `max_vcpu` - (Optional) The maximum cpu in vCpu units that can be allocated to the cluster.
         * `max_memory_gib` - (Optional) The maximum memory in GiB units that can be allocated to the cluster.
@@ -183,7 +166,7 @@ The following arguments are supported:
   autoscaler {
     is_enabled               = true
     is_auto_config           = false
-    cooldown                 = 180
+    cooldown                 = 30
     auto_headroom_percentage = 10
     enable_automatic_and_manual_headroom = false
 
@@ -197,7 +180,6 @@ The following arguments are supported:
     down {
       evaluation_periods =  3
       max_scale_down_percentage = 30
-      is_aggressive_scale_down_enabled = true
     }
 
     resource_limits {

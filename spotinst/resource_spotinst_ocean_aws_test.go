@@ -408,7 +408,6 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "10"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "required"),
 					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "true"),
-					resource.TestCheckResourceAttr(resourceName, "reserved_enis", "1"),
 				),
 			},
 			{
@@ -446,7 +445,6 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_put_response_hop_limit", "20"),
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "optional"),
 					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "false"),
-					resource.TestCheckResourceAttr(resourceName, "reserved_enis", "2"),
 				),
 			},
 			{
@@ -483,7 +481,6 @@ const testLaunchConfigAWSConfig_Create = `
   root_volume_size            						  = 20
   monitoring                  					  	  = true
   ebs_optimized               						  = true
-  reserved_enis										  = 1
 
   instance_metadata_options {
     http_tokens                 = "required"
@@ -525,7 +522,6 @@ const testLaunchConfigAWSConfig_Update = `
   monitoring                                          = false
   ebs_optimized                                       = false
   use_as_template_only                                = false
-  reserved_enis										  = 2
   instance_metadata_options {
 	  http_tokens                                     = "optional"
       http_put_response_hop_limit                     = 20

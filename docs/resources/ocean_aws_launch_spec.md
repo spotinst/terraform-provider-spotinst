@@ -24,7 +24,6 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   restrict_scale_down         = true
   root_volume_size            = 30
   associate_public_ip_address = true
-  reserved_enis               = 1
   
   images {
     image_id = "ami-id1"
@@ -200,7 +199,6 @@ The following arguments are supported:
 * `tags` - (Optional) A key/value mapping of tags to assign to the resource.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
 * `restrict_scale_down`- (Optional) Boolean. When set to `true`, nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
-* `reserved_enis` - (Optional, Default: `0`) Specifies the count of ENIs to reserve per instance type for scaling purposes.
 * `labels` - (Optional) Optionally adds labels to instances launched in the cluster.
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.
@@ -314,12 +312,3 @@ update_policy {
 
 In addition to all arguments above, the following attributes are exported:
 * `id` - The Virtual Node Group ID.
-
-
-<a id="import"></a>
-## Import
-
-Launch_Specs can be imported using the Launch_Spec `id`, e.g.,
-```hcl
-$ terraform import spotinst_ocean_aws_launch_spec.nameOfTheResource ols-1a2b576
-```

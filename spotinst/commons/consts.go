@@ -169,7 +169,6 @@ const (
 
 	OceanAKSNPVirtualNodeGroup                   ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group"
 	OceanAKSNPVirtualNodeGroupStrategy           ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Strategy"
-	OceanAKSNPVirtualNodeGroupScheduling         ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Scheduling"
 	OceanAKSNPVirtualNodeGroupAutoScale          ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Auto_Scale"
 	OceanAKSNPVirtualNodeGroupNodeCountLimits    ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Node_Count_Limits"
 	OceanAKSNPVirtualNodeGroupNodePoolProperties ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Node_Pool_Properties"
