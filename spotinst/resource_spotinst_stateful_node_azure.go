@@ -617,6 +617,10 @@ func expandStatefulNodeAzureDeleteConfig(data interface{}, statefulNodeID string
 		if v, ok := m[string(stateful_node_azure.ShouldDeregisterFromLb)].(bool); ok {
 			spec.DeallocationConfig.ShouldDeregisterFromLb = spotinst.Bool(v)
 		}
+
+		if v, ok := m[string(stateful_node_azure.ShouldRevertToOd)].(bool); ok {
+			spec.DeallocationConfig.ShouldRevertToOd = spotinst.Bool(v)
+		}
 	}
 
 	return spec, nil
