@@ -182,6 +182,8 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "60"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "PREEMPTIBLE"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preemptible_percentage", "30"),
+					resource.TestCheckResourceAttr(resourceName, "auto_update.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "auto_update.0.is_enabled", "true"),
 				),
 			},
 			{
@@ -202,6 +204,8 @@ func TestAccSpotinstOceanGKEImport_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "120"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.provisioning_model", "SPOT"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preemptible_percentage", "60"),
+					resource.TestCheckResourceAttr(resourceName, "auto_update.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "auto_update.0.is_enabled", "false"),
 				),
 			},
 		},
@@ -230,6 +234,9 @@ strategy {
     provisioning_model = "PREEMPTIBLE"
 	preemptible_percentage = 30
   }
+auto_update {
+    is_enabled = true
+  }
  %v
 }
 
@@ -253,6 +260,9 @@ strategy {
     draining_timeout = 120
     provisioning_model = "SPOT"
 	preemptible_percentage = 60
+  }
+auto_update {
+    is_enabled = false
   }
  %v
 }

@@ -41,4 +41,6 @@ const (
 	MaxVcpu         commons.FieldName = "max_vcpu"
 	MinMemoryGiB    commons.FieldName = "min_memory_gib"
 	MinVcpu         commons.FieldName = "min_vcpu"
+	AutoUpdate      commons.FieldName = "auto_update"
+	IsEnabled       commons.FieldName = "is_enabled"
 )
