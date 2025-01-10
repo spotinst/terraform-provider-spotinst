@@ -115,7 +115,7 @@ The following arguments are supported:
     * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
 * `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
 * `auto_update` - (Optional) The Ocean Kubernetes AutoUpdate object. If set to 'true', Ocean will ensure that your clusters have an up-to-date configuration according to the respective GKE cluster.
-    * `is_enabled` - (Optional,Default: `true`) Boolean. Enable the Ocean Kubernetes AutoUpdate.
+    * `is_enabled` - (Optional, Default:`true`) Enable the Ocean Kubernetes AutoUpdate.
 
 
 <a id="scheduled-task"></a>
