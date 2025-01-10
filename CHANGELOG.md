@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.206.0 (January, 10 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: Added support for `auto_update` object.
+
 ## 1.205.1 (January, 07 2025)
 FIXES:
 * Upgraded packages go-getter from v1.7.5 to v1.7.6 and go-git/v5 from v5.12.0 to v5.13.0 to solve vulnerabilities.
