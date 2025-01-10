@@ -41,6 +41,10 @@ resource "spotinst_ocean_gke_import" "example" {
   max_size = 2
   desired_capacity = 0
   
+  auto_update {
+    is_enabled = true
+  }
+  
   whitelist = ["n1-standard-1", "n1-standard-2"]
   
   filters {
@@ -110,6 +114,8 @@ The following arguments are supported:
     * `enable_integrity_monitoring` - (Optional) Boolean. Enable the integrity monitoring parameter on the GCP instances.
     * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
 * `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
+* `auto_update` - (Optional) The Ocean Kubernetes AutoUpdate object. If set to 'true', Ocean will ensure that your clusters have an up-to-date configuration according to the respective GKE cluster.
+    * `is_enabled` - (Optional,Default: `true`) Boolean. Enable the Ocean Kubernetes AutoUpdate.
 
 
 <a id="scheduled-task"></a>
