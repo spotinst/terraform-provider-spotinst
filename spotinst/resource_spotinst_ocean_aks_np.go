@@ -11,6 +11,7 @@ import (
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scale"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_auto_scaler"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_health"
+	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_logging"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_count_limits"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_node_pool_properties"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_aks_np_scheduling"
@@ -52,6 +53,7 @@ func setupClusterAKSNPResource() {
 	ocean_aks_np_auto_scale.Setup(fieldsMap)
 	ocean_aks_np_scheduling.Setup(fieldsMap)
 	ocean_aks_np_vm_sizes.Setup(fieldsMap)
+	ocean_aks_np_logging.Setup(fieldsMap)
 
 	commons.OceanAKSNPResource = commons.NewOceanAKSNPResource(fieldsMap)
 }

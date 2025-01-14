@@ -25,3 +25,9 @@ const (
 	RespectRestrictScaleDown  commons.FieldName = "respect_restrict_scale_down"
 	NodeNames                 commons.FieldName = "node_names"
 )
+const (
+	VNG_Template_Scheduling commons.FieldName = "vng_template_scheduling"
+	ShutdownHours           commons.FieldName = "vng_template_shutdown_hours"
+	TimeWindows             commons.FieldName = "time_windows"
+	ShutdownHoursIsEnabled  commons.FieldName = "is_enabled"
+)
