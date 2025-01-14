@@ -538,7 +538,9 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.is_enabled", "false"),
-					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.suspension_hours.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.suspension_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.cron_expression", "0 1 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.task_type", "clusterRoll"),
@@ -550,6 +552,19 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_restrict_scale_down", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.vng_ids.0", "vng123"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.cron_expression", "0 4 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.task_type", "autoUpgradeVersion"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.apply_toll", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.scope_version", "patch"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.roll_parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.roll_parameters.batch_min_healthy_percentage", "70"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.batch_size_percentage", "10"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.comment", "Scheduled autoUpgrade roll"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.respect_pdb", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.respect_restrict_scale_down", "false"),
 				),
 			},
 			{
@@ -566,6 +581,10 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.shutdown_hours.0.time_windows.0", "Sat:08:00-Sun:08:00"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.suspension_hours.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.suspension_hours.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.suspension_hours.0.time_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.suspension_hours.0.time_windows.0", "Mon:08:00-Tue:08:00"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.cron_expression", "0 2 * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.task_type", "clusterRoll"),
@@ -576,6 +595,19 @@ func TestAccSpotinstOceanAKSNP_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "Scheduled cluster roll_updated"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_restrict_scale_down", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.cron_expression", "0 5 * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.task_type", "autoUpgradeVersion"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.apply_toll", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.scope_version", "patch"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.roll_parameters.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_upgrade_config.0.roll_parameters.batch_min_healthy_percentage", "80"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.batch_size_percentage", "5"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.comment", "Scheduled autoUpgrade roll_updated"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.respect_pdb", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling.0.tasks.1.parameters.0.parameters_cluster_roll.0.roll_parameters.respect_restrict_scale_down", "true"),
 				),
 			},
 			{
@@ -600,18 +632,39 @@ const testSchedulingOceanAKSNPConfig_Create = `
     shutdown_hours{
       is_enabled   = false
     }
+	suspension_hours{
+      is_enabled   = false
+    }
   tasks {
       is_enabled      = true
       cron_expression = "0 1 * * *"
       task_type       = "clusterRoll"
       parameters  {
-        parameters_cluster_roll{
+        parameters_cluster_roll {
           batch_min_healthy_percentage = 80
           batch_size_percentage = 20
           comment = "Scheduled cluster roll"
           respect_pdb = true
           respect_restrict_scale_down=true
           vng_ids=["vng123"]
+        }
+      }
+    }
+	tasks {
+      is_enabled      = true
+      cron_expression = "0 4 * * *"
+      task_type       = "autoUpgradeVersion"
+      parameters  {
+        parameters_upgrade_config {	
+		  apply_roll = false
+		  scope_version = "patch"
+		  roll_parameters {
+          batch_min_healthy_percentage = 70
+          batch_size_percentage = 10
+          comment = "Scheduled autoUpgrade roll"
+          respect_pdb = false
+            respect_restrict_scale_down = false
+		  }
         }
       }
     }
@@ -626,6 +679,10 @@ const testSchedulingOceanAKSNPConfig_Update = `
       is_enabled   = true
       time_windows = ["Sat:08:00-Sun:08:00"]
     }
+	suspension_hours{
+      is_enabled   = true
+      time_windows = ["Mon:08:00-Tue:08:00"]
+    }
     tasks {
       is_enabled      = false
       cron_expression = "0 2 * * *"
@@ -637,6 +694,24 @@ const testSchedulingOceanAKSNPConfig_Update = `
           comment = "Scheduled cluster roll_updated"
           respect_pdb = false
           respect_restrict_scale_down=false
+        }
+      }
+    }
+	tasks {
+      is_enabled      = false
+      cron_expression = "0 5 * * *"
+      task_type       = "autoUpgradeVersion"
+      parameters  {
+        parameters_upgrade_config {	
+		  apply_roll = true
+		  scope_version = "patch"
+		  roll_parameters {
+          batch_min_healthy_percentage = 80
+          batch_size_percentage = 5
+          comment = "Scheduled autoUpgrade roll_updated"
+          respect_pdb = true
+            respect_restrict_scale_down = true
+		  }
         }
       }
     }
