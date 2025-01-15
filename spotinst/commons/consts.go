@@ -177,6 +177,7 @@ const (
 	AccountAWS                                   ResourceAffinity = "Account_AWS"
 	CredentialsAWS                               ResourceAffinity = "Credentials_AWS"
 	CredentialsGCP                               ResourceAffinity = "Credentials_GCP"
+	CredentialsAzure                             ResourceAffinity = "Credentials_Azure"
 	Account                                      ResourceAffinity = "Account"
 
 	OceanCDVerificationProvider           ResourceAffinity = "OceanCD_Verification_Provider"
