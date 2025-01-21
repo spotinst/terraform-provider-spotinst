@@ -112,7 +112,7 @@ type GCPGroupConfigMetadata struct {
 	groupName            string
 	instanceTypes        string
 	launchConfig         string
-	disk                 string
+	disks                string
 	strategy             string
 	fieldsToAppend       string
 	updateBaselineFields bool
@@ -138,8 +138,8 @@ func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
 	//	gcm.launchConfig = testLaunchConfigurationGCPGroupConfig_Create
 	//}
 
-	if gcm.disk == "" {
-		gcm.disk = testDiskGCPGroupConfig_Create
+	if gcm.disks == "" {
+		gcm.disks = testDiskGCPGroupConfig_Create
 	}
 
 	if gcm.strategy == "" {
@@ -161,7 +161,7 @@ func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
-			gcm.disk,
+			gcm.disks,
 			gcm.strategy,
 			gcm.fieldsToAppend,
 		)
@@ -174,7 +174,7 @@ func createElastigroupGCPTerraform(gcm *GCPGroupConfigMetadata) string {
 			gcm.groupName,
 			gcm.instanceTypes,
 			gcm.launchConfig,
-			gcm.disk,
+			gcm.disks,
 			gcm.strategy,
 			gcm.fieldsToAppend,
 		)
@@ -569,57 +569,57 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 				ResourceName: resourceName,
 				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
 					groupName: groupName,
-					disk:      testDiskGCPGroupConfig_Create,
+					disks:     testDiskGCPGroupConfig_Create,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.auto_delete", "false"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.boot", "false"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.device_name", "tf-test-device"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.interface", "SCSI"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.mode", "READ_WRITE"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.source", "fake-source"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.type", "PERSISTENT"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_size_gb", "20"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "pd-standard"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.auto_delete", "false"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.boot", "false"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.device_name", "tf-test-device"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.interface", "SCSI"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.mode", "READ_WRITE"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.source", "fake-source"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.type", "PERSISTENT"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.0.disk_size_gb", "20"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.0.disk_type", "pd-standard"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
 				),
 			},
 			{
 				ResourceName: resourceName,
 				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
 					groupName: groupName,
-					disk:      testDiskGCPGroupConfig_Update,
+					disks:     testDiskGCPGroupConfig_Update,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.auto_delete", "true"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.boot", "true"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.device_name", "tf-test-device-updated"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.interface", "NVM"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.mode", "READ_ONLY"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.source", "fake-source-updated"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.type", "SCRATCH"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_size_gb", "30"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "local-ssd"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.auto_delete", "true"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.boot", "true"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.device_name", "tf-test-device-updated"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.interface", "NVM"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.mode", "READ_ONLY"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.source", "fake-source-updated"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.type", "SCRATCH"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.0.disk_size_gb", "30"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.0.disk_type", "local-ssd"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
 				),
 			},
 			{
 				ResourceName: resourceName,
 				Config: createElastigroupGCPTerraform(&GCPGroupConfigMetadata{
 					groupName: groupName,
-					disk:      testDiskGCPGroupConfig_EmptyFields,
+					disks:     testDiskGCPGroupConfig_EmptyFields,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "disks.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
 				),
 			},
 		},
@@ -628,7 +628,7 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 
 const testDiskGCPGroupConfig_Create = `
  // --- DISK ------------------------
-  disk {
+  disks {
     auto_delete = false
     boot = false
     device_name = "tf-test-device"
@@ -648,7 +648,7 @@ const testDiskGCPGroupConfig_Create = `
 
 const testDiskGCPGroupConfig_Update = `
  // --- DISK ------------------------
-  disk {
+  disks {
     auto_delete = true
     boot = true
     device_name = "tf-test-device-updated"
@@ -660,7 +660,7 @@ const testDiskGCPGroupConfig_Update = `
     initialize_params {
 			disk_size_gb = 30
 			disk_type = "local-ssd"
-      source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
+			source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
 		}
   }
  // ---------------------------------
@@ -668,7 +668,7 @@ const testDiskGCPGroupConfig_Update = `
 
 const testDiskGCPGroupConfig_EmptyFields = `
  // --- DISK ------------------------
-  disk {
+  disks {
     initialize_params {
 			source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
 		}

@@ -3,7 +3,7 @@ package elastigroup_gcp_disk
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	Disk             commons.FieldName = "disk"
+	Disks            commons.FieldName = "disks"
 	AutoDelete       commons.FieldName = "auto_delete"
 	Boot             commons.FieldName = "boot"
 	DeviceName       commons.FieldName = "device_name"

@@ -9,9 +9,9 @@ import (
 
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
-	fieldsMap[Disk] = commons.NewGenericField(
+	fieldsMap[Disks] = commons.NewGenericField(
 		commons.ElastigroupGCPDisk,
-		Disk,
+		Disks,
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
@@ -83,7 +83,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(Disk)); ok {
+			if v, ok := resourceData.GetOk(string(Disks)); ok {
 				if networks, err := expandDisks(v); err != nil {
 					return err
 				} else {
@@ -95,7 +95,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(Disk)); ok {
+			if v, ok := resourceData.GetOk(string(Disks)); ok {
 				if networks, err := expandDisks(v); err != nil {
 					return err
 				} else {
