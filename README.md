@@ -47,8 +47,12 @@ $ go build -o terraform-provider-spotinst
 Then, update your `~/.terraformrc` file to point at the location you've built it.
 
 ```hcl
-providers {
-  spotinst = "${GOPATH}/src/github.com/spotinst/terraform-provider-spotinst/terraform-provider-spotinst"
+provider_installation {
+  dev_overrides {
+    "spotinst/spotinst" = "${GOPATH}/src/github.com/spotinst/terraform-provider-spotinst"
+  }
+
+  direct {}
 }
 ```
 
