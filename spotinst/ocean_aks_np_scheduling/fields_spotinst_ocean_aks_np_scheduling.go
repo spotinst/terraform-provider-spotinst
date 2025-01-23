@@ -26,7 +26,26 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-								string(ShutdownHoursIsEnabled): {
+								string(SchedulingIsEnabled): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+
+								string(TimeWindows): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+							},
+						},
+					},
+					string(SuspensionHours): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(SchedulingIsEnabled): {
 									Type:     schema.TypeBool,
 									Optional: true,
 								},
@@ -101,6 +120,54 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 													},
 												},
 											},
+											string(ParametersUpgradeConfig): {
+												Type:     schema.TypeList,
+												Optional: true,
+												MaxItems: 1,
+												Elem: &schema.Resource{
+													Schema: map[string]*schema.Schema{
+														string(ApplyRoll): {
+															Type:     schema.TypeBool,
+															Optional: true,
+														},
+														string(ScopeVersion): {
+															Type:     schema.TypeString,
+															Optional: true,
+														},
+														string(RollParameters): {
+															Type:     schema.TypeList,
+															Optional: true,
+															MaxItems: 1,
+															Elem: &schema.Resource{
+																Schema: map[string]*schema.Schema{
+																	string(BatchMinHealthyPercentage): {
+																		Type:     schema.TypeInt,
+																		Optional: true,
+																		Default:  -1,
+																	},
+																	string(BatchSizePercentage): {
+																		Type:     schema.TypeInt,
+																		Optional: true,
+																		Default:  -1,
+																	},
+																	string(Comment): {
+																		Type:     schema.TypeString,
+																		Optional: true,
+																	},
+																	string(RespectPdb): {
+																		Type:     schema.TypeBool,
+																		Optional: true,
+																	},
+																	string(RespectRestrictScaleDown): {
+																		Type:     schema.TypeBool,
+																		Optional: true,
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
 										},
 									},
 								},
@@ -166,6 +233,9 @@ func flattenScheduling(scheduling *azure_np.Scheduling) []interface{} {
 		if scheduling.ShutdownHours != nil {
 			result[string(ShutdownHours)] = flattenShutdownHours(scheduling.ShutdownHours)
 		}
+		if scheduling.SuspensionHours != nil {
+			result[string(SuspensionHours)] = flattenSuspensionHours(scheduling.SuspensionHours)
+		}
 		if scheduling.Tasks != nil {
 			result[string(Tasks)] = flattenTasks(scheduling.Tasks)
 		}
@@ -178,9 +248,18 @@ func flattenScheduling(scheduling *azure_np.Scheduling) []interface{} {
 
 func flattenShutdownHours(shutdownHours *azure_np.ShutdownHours) []interface{} {
 	result := make(map[string]interface{})
-	result[string(ShutdownHoursIsEnabled)] = spotinst.BoolValue(shutdownHours.IsEnabled)
+	result[string(SchedulingIsEnabled)] = spotinst.BoolValue(shutdownHours.IsEnabled)
 	if len(shutdownHours.TimeWindows) > 0 {
 		result[string(TimeWindows)] = shutdownHours.TimeWindows
+	}
+	return []interface{}{result}
+}
+
+func flattenSuspensionHours(suspensionHours *azure_np.SuspensionHours) []interface{} {
+	result := make(map[string]interface{})
+	result[string(SchedulingIsEnabled)] = spotinst.BoolValue(suspensionHours.IsEnabled)
+	if len(suspensionHours.TimeWindows) > 0 {
+		result[string(TimeWindows)] = suspensionHours.TimeWindows
 	}
 	return []interface{}{result}
 }
@@ -201,6 +280,18 @@ func expandScheduling(data interface{}) (*azure_np.Scheduling, error) {
 						scheduling.SetShutdownHours(&azure_np.ShutdownHours{})
 					}
 					scheduling.SetShutdownHours(shutdownHours)
+				}
+			}
+			if v, ok := m[string(SuspensionHours)]; ok {
+				suspensionHours, err := expandSuspensionHours(v)
+				if err != nil {
+					return nil, err
+				}
+				if suspensionHours != nil {
+					if scheduling.SuspensionHours == nil {
+						scheduling.SetSuspensionHours(&azure_np.SuspensionHours{})
+					}
+					scheduling.SetSuspensionHours(suspensionHours)
 				}
 			}
 			if v, ok := m[string(Tasks)]; ok {
@@ -226,7 +317,7 @@ func expandShutdownHours(data interface{}) (*azure_np.ShutdownHours, error) {
 		m := list[0].(map[string]interface{})
 
 		var isEnabled = spotinst.Bool(false)
-		if v, ok := m[string(ShutdownHoursIsEnabled)].(bool); ok {
+		if v, ok := m[string(SchedulingIsEnabled)].(bool); ok {
 			isEnabled = spotinst.Bool(v)
 		}
 		shutDownHours.SetIsEnabled(isEnabled)
@@ -244,6 +335,34 @@ func expandShutdownHours(data interface{}) (*azure_np.ShutdownHours, error) {
 		shutDownHours.SetTimeWindows(timeWindows)
 
 		return shutDownHours, nil
+	}
+	return nil, nil
+}
+
+func expandSuspensionHours(data interface{}) (*azure_np.SuspensionHours, error) {
+	suspensionHours := &azure_np.SuspensionHours{}
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+		m := list[0].(map[string]interface{})
+
+		var isEnabled = spotinst.Bool(false)
+		if v, ok := m[string(SchedulingIsEnabled)].(bool); ok {
+			isEnabled = spotinst.Bool(v)
+		}
+		suspensionHours.SetIsEnabled(isEnabled)
+
+		var timeWindows []string = nil
+		if v, ok := m[string(TimeWindows)].([]interface{}); ok && len(v) > 0 {
+			timeWindowList := make([]string, 0, len(v))
+			for _, timeWindow := range v {
+				if v, ok := timeWindow.(string); ok && len(v) > 0 {
+					timeWindowList = append(timeWindowList, v)
+				}
+			}
+			timeWindows = timeWindowList
+		}
+		suspensionHours.SetTimeWindows(timeWindows)
+
+		return suspensionHours, nil
 	}
 	return nil, nil
 }
@@ -303,6 +422,18 @@ func expandParameters(data interface{}) (*azure_np.Parameters, error) {
 			}
 		}
 
+		if v, ok := m[string(ParametersUpgradeConfig)]; ok {
+			expandUpgradeConfig, err := expandParameterUpgradeConfig(v)
+			if err != nil {
+				return nil, err
+			}
+			if expandUpgradeConfig != nil {
+				parameter.SetUpgradeConfig(expandUpgradeConfig)
+			} else {
+				parameter.UpgradeConfig = nil
+			}
+		}
+
 		return parameter, nil
 	}
 
@@ -356,6 +487,85 @@ func expandParameterClusterRoll(data interface{}) (*azure_np.ParameterClusterRol
 
 	return nil, nil
 }
+
+func expandParameterUpgradeConfig(data interface{}) (*azure_np.UpgradeConfig, error) {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		parameterUpgradeConfig := &azure_np.UpgradeConfig{}
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(ScopeVersion)].(string); ok && v != "" {
+			parameterUpgradeConfig.SetScopeVersion(spotinst.String(v))
+		} else {
+			parameterUpgradeConfig.SetScopeVersion(nil)
+		}
+
+		var isApplyRoll = spotinst.Bool(false)
+		if v, ok := m[string(ApplyRoll)].(bool); ok {
+			isApplyRoll = spotinst.Bool(v)
+		}
+		parameterUpgradeConfig.SetApplyRoll(isApplyRoll)
+
+		if v, ok := m[string(RollParameters)]; ok {
+			expandRollParameters, err := expandRollParameters(v)
+			if err != nil {
+				return nil, err
+			}
+			if expandRollParameters != nil {
+				parameterUpgradeConfig.SetRollParameters(expandRollParameters)
+			} else {
+				parameterUpgradeConfig.RollParameters = nil
+			}
+		}
+
+		return parameterUpgradeConfig, nil
+	}
+
+	return nil, nil
+}
+func expandRollParameters(data interface{}) (*azure_np.ParameterClusterRoll, error) {
+	if list := data.([]interface{}); list != nil && len(list) > 0 && list[0] != nil {
+		rollParameters := &azure_np.ParameterClusterRoll{}
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(BatchMinHealthyPercentage)].(int); ok {
+			if v == -1 {
+				rollParameters.SetBatchMinHealthyPercentage(nil)
+			} else {
+				rollParameters.SetBatchMinHealthyPercentage(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(BatchSizePercentage)].(int); ok {
+			if v == -1 {
+				rollParameters.SetBatchSizePercentage(nil)
+			} else {
+				rollParameters.SetBatchSizePercentage(spotinst.Int(v))
+			}
+		}
+
+		if v, ok := m[string(Comment)].(string); ok && v != "" {
+			rollParameters.SetComment(spotinst.String(v))
+		} else {
+			rollParameters.SetComment(nil)
+		}
+
+		var isRespectPdb = spotinst.Bool(false)
+		if v, ok := m[string(RespectPdb)].(bool); ok {
+			isRespectPdb = spotinst.Bool(v)
+		}
+		rollParameters.SetRespectPdb(isRespectPdb)
+
+		var isRespectRestrictScaleDown = spotinst.Bool(false)
+		if v, ok := m[string(RespectRestrictScaleDown)].(bool); ok {
+			isRespectRestrictScaleDown = spotinst.Bool(v)
+		}
+		rollParameters.SetRespectRestrictScaleDown(isRespectRestrictScaleDown)
+
+		return rollParameters, nil
+	}
+
+	return nil, nil
+}
 func expandListVNG(data interface{}) []string {
 	list := data.([]interface{})
 	result := make([]string, 0, len(list))
@@ -391,6 +601,10 @@ func flattenParameters(parameters *azure_np.Parameters) []interface{} {
 		result[string(ParametersClusterRoll)] = flattenParameterClusterRoll(parameters.ClusterRoll)
 	}
 
+	if parameters.UpgradeConfig != nil {
+		result[string(ParametersUpgradeConfig)] = flattenParameterUpgradeConfig(parameters.UpgradeConfig)
+	}
+
 	return []interface{}{result}
 }
 func flattenParameterClusterRoll(clusterRoll *azure_np.ParameterClusterRoll) []interface{} {
@@ -409,6 +623,35 @@ func flattenParameterClusterRoll(clusterRoll *azure_np.ParameterClusterRoll) []i
 	result[string(RespectPdb)] = spotinst.BoolValue(clusterRoll.RespectPdb)
 	result[string(RespectRestrictScaleDown)] = spotinst.BoolValue(clusterRoll.RespectRestrictScaleDown)
 	result[string(VngIDs)] = spotinst.StringSlice(clusterRoll.VngIds)
+
+	return []interface{}{result}
+}
+func flattenParameterUpgradeConfig(upgradeConfig *azure_np.UpgradeConfig) []interface{} {
+	result := make(map[string]interface{})
+
+	result[string(ScopeVersion)] = spotinst.StringValue(upgradeConfig.ScopeVersion)
+	result[string(ApplyRoll)] = spotinst.BoolValue(upgradeConfig.ApplyRoll)
+	if upgradeConfig.RollParameters != nil {
+		result[string(RollParameters)] = flattenRollParameters(upgradeConfig.RollParameters)
+	}
+
+	return []interface{}{result}
+}
+func flattenRollParameters(clusterRoll *azure_np.ParameterClusterRoll) []interface{} {
+	result := make(map[string]interface{})
+	value := spotinst.Int(-1)
+	result[string(BatchMinHealthyPercentage)] = value
+	result[string(BatchSizePercentage)] = value
+
+	if clusterRoll.BatchMinHealthyPercentage != nil {
+		result[string(BatchMinHealthyPercentage)] = spotinst.IntValue(clusterRoll.BatchMinHealthyPercentage)
+	}
+	if clusterRoll.BatchSizePercentage != nil {
+		result[string(BatchSizePercentage)] = spotinst.IntValue(clusterRoll.BatchSizePercentage)
+	}
+	result[string(Comment)] = spotinst.StringValue(clusterRoll.Comment)
+	result[string(RespectPdb)] = spotinst.BoolValue(clusterRoll.RespectPdb)
+	result[string(RespectRestrictScaleDown)] = spotinst.BoolValue(clusterRoll.RespectRestrictScaleDown)
 
 	return []interface{}{result}
 }
