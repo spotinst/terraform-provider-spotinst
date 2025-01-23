@@ -2,7 +2,7 @@
 
 ## 1.208.0 (January, 23 2025)
 FEATURES:
-* **New Resource:** `resource/spotinst_credentials_azure`
+* **New Resource:** added new resource `resource/spotinst_credentials_azure` to support azure account onboarding to spotinst.
 
 ## 1.207.0 (January, 14 2025)
 ENHANCEMENTS:
