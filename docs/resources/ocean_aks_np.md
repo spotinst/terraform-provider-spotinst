@@ -292,9 +292,9 @@ The following arguments are supported:
   * `min_disk` - (Optional) Minimum number of data disks available.
   * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.
   * `gpu_types` - (Optional, Enum `"nvidia-tesla-v100", "amd-radeon-instinct-mi25", "nvidia-a10", "nvidia-tesla-a100", "nvidia-tesla-k80", "nvidia-tesla-m60", "nvidia-tesla-p100", "nvidia-tesla-p40", "nvidia-tesla-t4", "nvidia-tesla-h100"`) The filtered gpu types will belong to one of the gpu types from this list.
-* `logging` - (Optional) The OCean AKS Logging Object.
+* `logging` - (Optional) The Ocean AKS Logging Object.
   * `export` - The Ocean AKS Logging Export object.
-    * `azure_blob` -  Exports your cluster's logs to the storage account and container configured on the storage account [data integration](https://docs.spot.io/#operation/DataIntegrationCreate) given. Each file contains logs of 3 minutes where each log is separated by a new line and saved as a JSON. The file formats are `container`/`accountId``oceanId``oceanName`_`startTime`.log
+    * `azure_blob` -  Exports your cluster's logs to the storage account and container configured on the storage account [data integration](https://docs.spot.io/ocean/features/log-integration-with-azure-blob?id=log-integration-with-azure-blob) given. Each file contains logs of 3 minutes where each log is separated by a new line and saved as a JSON. The file formats are `container`/`accountId``oceanId``oceanName`_`startTime`.log
       * `id` - (Required) The identifier of The Azure Blob data integration to export the logs to.
 * `vng_template_scheduling` - (Optional) An object used to specify times when the virtual node group will turn off all its node pools. Once the shutdown time will be over, the virtual node group will return to its previous state.
   * `shutdown_hours` - (Optional) An object used to specify times that the nodes in the virtual node group will be stopped.

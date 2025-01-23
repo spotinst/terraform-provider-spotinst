@@ -122,6 +122,9 @@ func Provider() *schema.Provider {
 			// GCP set credential
 			string(commons.CredentialsGCPResourceName): resourceSpotinstCredentialsGCP(),
 
+			// Azure set credential
+			string(commons.CredentialsAzureResourceName): resourceSpotinstCredentialsAzure(),
+
 			// Account Creation
 			string(commons.AccountResourceName): resourceSpotinstAccount(),
 		},

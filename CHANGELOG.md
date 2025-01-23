@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.208.0 (January, 23 2025)
+FEATURES:
+* **New Resource:** added new resource `resource/spotinst_credentials_azure` to support azure account onboarding to spotinst.
+
 ## 1.207.0 (January, 14 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support for `vng_template_scheduling`, `logging` and `suspension_hours` object.
