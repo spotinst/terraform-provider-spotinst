@@ -1,9 +1,9 @@
 ---
 layout: "spotinst"
-page_title: "Spotinst: credentials_aws"
+page_title: "Spotinst: credentials_azure"
 subcategory: "Accounts"
 description: |-
-  Provides a Spotinst credential AWS resource.
+  Provides a Spotinst credential Azure resource.
 ---
 
 # spotinst\_credentials\_azure
