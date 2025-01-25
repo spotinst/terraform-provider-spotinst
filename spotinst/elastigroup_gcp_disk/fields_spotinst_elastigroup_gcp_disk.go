@@ -38,7 +38,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(DiskSizeGB): {
-									Type:     schema.TypeString,
+									Type:     schema.TypeInt,
 									Optional: true,
 								},
 

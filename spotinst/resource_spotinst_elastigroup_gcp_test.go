@@ -660,7 +660,7 @@ const testDiskGCPGroupConfig_Update = `
     initialize_params {
 			disk_size_gb = 30
 			disk_type = "local-ssd"
-      source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
+      		source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
 		}
   }
  // ---------------------------------
