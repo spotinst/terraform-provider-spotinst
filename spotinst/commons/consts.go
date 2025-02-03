@@ -167,6 +167,7 @@ const (
 	OceanAKSNPGroupAutoScale  ResourceAffinity = "Ocean_AKS_NP_Auto_Scale"
 	OceanAKSNPScheduling      ResourceAffinity = "Ocean_AKS_NP_Scheduling"
 	OceanAKSNPVmSizes         ResourceAffinity = "Ocean_AKS_NP_Vm_Sizes"
+	OceanAKSNPLogging         ResourceAffinity = "Ocean_AKS_NP_Logging"
 
 	OceanAKSNPVirtualNodeGroup                   ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group"
 	OceanAKSNPVirtualNodeGroupStrategy           ResourceAffinity = "Ocean_AKS_NP_Virtual_Node_Group_Strategy"
@@ -178,6 +179,7 @@ const (
 	AccountAWS                                   ResourceAffinity = "Account_AWS"
 	CredentialsAWS                               ResourceAffinity = "Credentials_AWS"
 	CredentialsGCP                               ResourceAffinity = "Credentials_GCP"
+	CredentialsAzure                             ResourceAffinity = "Credentials_Azure"
 	Account                                      ResourceAffinity = "Account"
 
 	OceanCDVerificationProvider           ResourceAffinity = "OceanCD_Verification_Provider"

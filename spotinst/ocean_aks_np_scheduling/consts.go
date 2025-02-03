@@ -3,10 +3,11 @@ package ocean_aks_np_scheduling
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	Scheduling             commons.FieldName = "scheduling"
-	ShutdownHours          commons.FieldName = "shutdown_hours"
-	TimeWindows            commons.FieldName = "time_windows"
-	ShutdownHoursIsEnabled commons.FieldName = "is_enabled"
+	Scheduling          commons.FieldName = "scheduling"
+	ShutdownHours       commons.FieldName = "shutdown_hours"
+	TimeWindows         commons.FieldName = "time_windows"
+	SchedulingIsEnabled commons.FieldName = "is_enabled"
+	SuspensionHours     commons.FieldName = "suspension_hours"
 )
 const (
 	Tasks                     commons.FieldName = "tasks"
@@ -21,4 +22,10 @@ const (
 	RespectPdb                commons.FieldName = "respect_pdb"
 	RespectRestrictScaleDown  commons.FieldName = "respect_restrict_scale_down"
 	VngIDs                    commons.FieldName = "vng_ids"
+)
+const (
+	ParametersUpgradeConfig commons.FieldName = "parameters_upgrade_config"
+	ApplyRoll               commons.FieldName = "apply_roll"
+	ScopeVersion            commons.FieldName = "scope_version"
+	RollParameters          commons.FieldName = "roll_parameters"
 )
