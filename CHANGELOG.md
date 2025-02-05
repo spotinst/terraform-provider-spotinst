@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.208.1 (February, 05 2025)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Fixed `instance_types_ondemand` field to accept null.
+
 ## 1.208.0 (January, 23 2025)
 FEATURES:
 * **New Resource:** added new resource `resource/spotinst_credentials_azure` to support azure account onboarding to spotinst.

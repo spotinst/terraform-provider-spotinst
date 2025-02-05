@@ -16,9 +16,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSInstanceType,
 		OnDemand,
 		&schema.Schema{
-			Type:          schema.TypeString,
-			Optional:      true,
-			ConflictsWith: []string{string(OnDemandTypes)},
+			Type:     schema.TypeString,
+			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
@@ -44,9 +43,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.Get(string(OnDemand)).(string); ok && v != "" {
-				elastigroup.Compute.InstanceTypes.SetOnDemand(spotinst.String(v))
+			var value *string = nil
+			if v, ok := resourceData.GetOkExists(string(OnDemand)); ok && v != "" {
+				if od, ok := v.(string); ok && od != "" {
+					value = spotinst.String(od)
+				}
 			}
+			elastigroup.Compute.InstanceTypes.SetOnDemand(value)
 			return nil
 		},
 		nil,
@@ -56,10 +59,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.ElastigroupAWSInstanceType,
 		OnDemandTypes,
 		&schema.Schema{
-			Type:          schema.TypeList,
-			Optional:      true,
-			Elem:          &schema.Schema{Type: schema.TypeString},
-			ConflictsWith: []string{string(OnDemand)},
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
