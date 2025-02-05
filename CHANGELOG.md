@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.209.0 (February 05, 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: Added support for `workspaces` object.
+
 ## 1.208.0 (January, 23 2025)
 FEATURES:
 * **New Resource:** added new resource `resource/spotinst_credentials_azure` to support azure account onboarding to spotinst.
