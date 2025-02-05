@@ -447,6 +447,95 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 	})
 }
 
+// testCheckNestedAttrValue is a helper function to check long chains of nested attributes.
+// It expects each level to be a single element list (except for the final level, which should contain the expected value)
+func testCheckNestedAttrValue(resourceName, fullPath, expectedValue string) resource.TestCheckFunc {
+	tests := make([]resource.TestCheckFunc, 0)
+	parts := strings.Split(fullPath, ".")
+	path := parts[0]
+	for _, part := range parts[1:] {
+		if part == "0" {
+			continue
+		}
+		tests = append(tests, resource.TestCheckResourceAttr(resourceName, path+".#", "1"))
+		path = path + ".0." + part
+	}
+	tests = append(tests, resource.TestCheckResourceAttr(resourceName, fullPath, expectedValue))
+	return resource.ComposeTestCheckFunc(tests...)
+}
+
+func TestAccSpotinstOceanSpark_withWorkspacesConfig(t *testing.T) {
+	resourceName := createOceanSparkResourceName(oceanClusterID)
+
+	var cluster spark.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "aws") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanSparkAWSDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWorkspacesStorageDefaultsStorageClassNameGP2,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					testCheckNestedAttrValue(resourceName, "workspaces.0.storage.0.defaults.0.storage_class_name", "gp2"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWorkspacesStorageDefaultsOmitted,
+					// omitting the block should make it preserve the existing value
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					testCheckNestedAttrValue(resourceName, "workspaces.0.storage.0.defaults.0.storage_class_name", "gp2"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWorkspacesStorageDefaultsStorageClassNameEmpty,
+					// empty string should clear the existing value
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					testCheckNestedAttrValue(resourceName, "workspaces.0.storage.0.defaults.0.storage_class_name", ""),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWorkspacesStorageDefaultsStorageClassNameEBS,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					testCheckNestedAttrValue(resourceName, "workspaces.0.storage.0.defaults.0.storage_class_name", "pvc-ebs"),
+				),
+			},
+			{
+				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+					oceanClusterID: oceanClusterID,
+					fieldsToAppend: testConfigWithWorkspacesStorageDefaultsStorageClassNameOmitted,
+					// because the defaults block is specified here, omitting the storage_class_name attribute should act the same as if it were set to the empty string.
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanSparkExists(&cluster, resourceName),
+					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+					testCheckNestedAttrValue(resourceName, "workspaces.0.storage.0.defaults.0.storage_class_name", ""),
+				),
+			},
+		},
+	})
+}
+
 func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
@@ -865,5 +954,51 @@ const testConfigWithLogCollectionUpdate = `
 
     collect_app_logs = false
 
+ }
+`
+
+const testConfigWithWorkspacesStorageDefaultsStorageClassNameGP2 = `
+ workspaces {
+  	storage {
+       defaults {
+          storage_class_name = "gp2"
+       }
+    }
+ }
+`
+
+const testConfigWithWorkspacesStorageDefaultsStorageClassNameEBS = `
+ workspaces {
+  	storage {
+       defaults {
+          storage_class_name = "pvc-ebs"
+       }
+    }
+ }
+`
+
+const testConfigWithWorkspacesStorageDefaultsStorageClassNameEmpty = `
+ workspaces {
+    storage {
+       defaults {
+          storage_class_name = ""
+       }
+    }
+ }
+`
+
+const testConfigWithWorkspacesStorageDefaultsStorageClassNameOmitted = `
+ workspaces {
+    storage {
+       defaults {
+       }
+    }
+ }
+`
+
+const testConfigWithWorkspacesStorageDefaultsOmitted = `
+ workspaces {
+    storage {
+    }
  }
 `
