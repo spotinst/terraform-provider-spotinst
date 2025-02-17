@@ -140,12 +140,12 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OrganizationUserGroup,
 		Policies,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(AccountIds): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Required: true,
 						Elem:     &schema.Schema{Type: schema.TypeString},
 					},
@@ -165,7 +165,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				policies := orgUserGroup.Policies
 				result = flattenPolicies(policies)
 			}
-			if result != nil {
+			if len(result) > 0 {
 				if err := resourceData.Set(string(Policies), result); err != nil {
 					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Policies), err)
 				}
@@ -187,13 +187,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			orgUserGroupWrapper := resourceObject.(*commons.OrgUserGroupWrapper)
 			orgUserGroup := orgUserGroupWrapper.GetOrgUserGroup()
+			var value []*organization.UserGroupPolicy = nil
 			if v, ok := resourceData.GetOk(string(Policies)); ok {
 				if policies, err := expandPolicies(v); err != nil {
 					return err
 				} else {
-					orgUserGroup.SetPolicies(policies)
+					value = policies
 				}
 			}
+			orgUserGroup.SetPolicies(value)
 			return nil
 		},
 		nil,
@@ -201,32 +203,32 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 }
 
 func expandPolicies(data interface{}) ([]*organization.UserGroupPolicy, error) {
-	list := data.(*schema.Set).List()
 
-	if list != nil && list[0] != nil {
+	if list := data.([]interface{}); len(list) > 0 {
 		ifaces := make([]*organization.UserGroupPolicy, 0, len(list))
-		for _, item := range list {
-			m := item.(map[string]interface{})
-			iface := &organization.UserGroupPolicy{}
+		if list != nil && list[0] != nil {
+			for _, item := range list {
+				m := item.(map[string]interface{})
+				iface := &organization.UserGroupPolicy{}
 
-			if v, ok := m[string(AccountIds)]; ok {
-				accounts, err := expandAccountIds(v)
-				if err != nil {
-					return nil, err
+				if v, ok := m[string(AccountIds)]; ok {
+					accounts, err := expandAccountIds(v)
+					if err != nil {
+						return nil, err
+					}
+
+					if accounts != nil {
+						iface.SetAccountIds(accounts)
+					} else {
+						iface.SetAccountIds(nil)
+					}
 				}
 
-				if accounts != nil {
-					iface.SetAccountIds(accounts)
+				if v, ok := m[string(PolicyId)].(string); ok && v != "" {
+					iface.SetPolicyId(spotinst.String(v))
 				}
-			} else {
-				iface.AccountIds = nil
+				ifaces = append(ifaces, iface)
 			}
-
-			if v, ok := m[string(PolicyId)].(string); ok && v != "" {
-				iface.SetPolicyId(spotinst.String(v))
-			}
-
-			ifaces = append(ifaces, iface)
 		}
 		return ifaces, nil
 	}
@@ -234,7 +236,7 @@ func expandPolicies(data interface{}) ([]*organization.UserGroupPolicy, error) {
 }
 
 func expandAccountIds(data interface{}) ([]string, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	result := make([]string, 0, len(list))
 
 	for _, v := range list {
@@ -262,10 +264,13 @@ func flattenPolicies(policies []*organization.UserGroupPolicy) []interface{} {
 
 	for _, policy := range policies {
 		m := make(map[string]interface{})
-		m[string(AccountIds)] = policy.AccountIds
+
+		if policy.AccountIds != nil {
+			m[string(AccountIds)] = policy.AccountIds
+		}
 		m[string(PolicyId)] = spotinst.StringValue(policy.PolicyId)
+
 		result = append(result, m)
 	}
-
 	return result
 }
