@@ -1,7 +1,11 @@
 ## Unreleased
 
+## 1.209.2 (February, 17 2025)
+BUG FIXES:
+* resource/spotinst_organization_user_group: Fixed conflict in difference for accountIds while updating.   
+
 ## 1.209.1 (February, 05 2025)
-BUG FIXE:
+BUG FIXES:
 * resource/spotinst_elastigroup_aws: Fixed `instance_types_ondemand` field to accept null.
 
 ## 1.209.0 (February 05, 2025)
