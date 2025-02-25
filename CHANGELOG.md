@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.210.0 (February, 25 2025)
+ENHANCEMENTS:
+* resource/spotinst_managed_instance_aws: Added support for `preferred_types` field and `resource_requirements` object.
+
 ## 1.209.2 (February, 17 2025)
 BUG FIXES:
 * resource/spotinst_organization_user_group: Fixed conflict in difference for accountIds while updating.   
