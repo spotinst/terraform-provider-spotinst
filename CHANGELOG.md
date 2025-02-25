@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.210.0 (February, 24 2025)
+## 1.210.0 (February, 25 2025)
 ENHANCEMENTS:
 * resource/spotinst_managed_instance_aws: Added support for `preferred_types` field and `resource_requirements` object.
 
