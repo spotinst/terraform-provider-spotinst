@@ -563,6 +563,71 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ShieldedInstanceConfig] = commons.NewGenericField(
+		commons.ElastigroupGCPLaunchConfiguration,
+		ShieldedInstanceConfig,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(EnableSecureBoot): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(EnableIntegrityMonitoring): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result interface{} = nil
+			if elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil &&
+				elastigroup.Compute.LaunchSpecification.ShieldedInstanceConfig != nil {
+				shieldedConfig := elastigroup.Compute.LaunchSpecification.ShieldedInstanceConfig
+				result = flattenShieldedInstanceConfig(shieldedConfig)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(ShieldedInstanceConfig), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShieldedInstanceConfig), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.GetOk(string(ShieldedInstanceConfig)); ok {
+				if shieldedInstanceConfig, err := expandShieldedInstanceConfig(v); err != nil {
+					return err
+				} else {
+					elastigroup.Compute.LaunchSpecification.SetShieldedInstanceConfig(shieldedInstanceConfig)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupGCPWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var result *gcp.ShieldedInstanceConfig = nil
+			if v, ok := resourceData.GetOk(string(ShieldedInstanceConfig)); ok {
+				if value, err := expandShieldedInstanceConfig(v); err != nil {
+					return err
+				} else {
+					result = value
+				}
+			}
+			elastigroup.Compute.LaunchSpecification.SetShieldedInstanceConfig(result)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func Base64StateFunc(v interface{}) string {
@@ -729,4 +794,31 @@ func expandNamedPorts(data interface{}) (*gcp.NamedPorts, error) {
 		}
 	}
 	return namedPorts, nil
+}
+
+func expandShieldedInstanceConfig(data interface{}) (*gcp.ShieldedInstanceConfig, error) {
+	shieldedInstanceConfigs := &gcp.ShieldedInstanceConfig{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return shieldedInstanceConfigs, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(EnableSecureBoot)].(bool); ok {
+		shieldedInstanceConfigs.SetEnableSecureBoot(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(EnableIntegrityMonitoring)].(bool); ok {
+		shieldedInstanceConfigs.SetEnableIntegrityMonitoring(spotinst.Bool(v))
+	}
+	return shieldedInstanceConfigs, nil
+
+}
+
+func flattenShieldedInstanceConfig(shieldedInstanceConfig *gcp.ShieldedInstanceConfig) []interface{} {
+	result := make(map[string]interface{})
+	result[string(EnableSecureBoot)] = spotinst.BoolValue(shieldedInstanceConfig.EnableSecureBoot)
+	result[string(EnableIntegrityMonitoring)] = spotinst.BoolValue(shieldedInstanceConfig.EnableIntegrityMonitoring)
+
+	return []interface{}{result}
 }
