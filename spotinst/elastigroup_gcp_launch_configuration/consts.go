@@ -33,3 +33,9 @@ const (
 	InstanceNamePrefix commons.FieldName = "instance_name_prefix"
 	MinCpuPlatform     commons.FieldName = "min_cpu_platform"
 )
+
+const (
+	ShieldedInstanceConfig    commons.FieldName = "shielded_instance_config"
+	EnableSecureBoot          commons.FieldName = "enable_secure_boot"
+	EnableIntegrityMonitoring commons.FieldName = "enable_integrity_monitoring"
+)

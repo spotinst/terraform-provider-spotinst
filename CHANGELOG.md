@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.211.0 (March, 06 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_gcp: Added `shielded_instance_config` object to support `enable_secure_boot` and `enable_integrity_monitoring` fields.
+
 ## 1.210.0 (February, 25 2025)
 ENHANCEMENTS:
 * resource/spotinst_managed_instance_aws: Added support for `preferred_types` field and `resource_requirements` object.

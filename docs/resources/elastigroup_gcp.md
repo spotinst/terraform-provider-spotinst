@@ -70,6 +70,11 @@ resource "spotinst_elastigroup_gcp" "example" {
       source_image = ""
     }
    }
+   
+  shielded_instance_config {
+    enable_secure_boot = true
+    enable_integrity_monitoring = false
+  }
 
   network_interface {
     network = "spot-network"
@@ -154,6 +159,9 @@ The following arguments are supported:
 * `revert_to_preemptible` - (Optional) Setting for revert to preemptible option.
   * `perform_at` - (Required) Valid values: "always", "never", "timeWindow". Required on strategy.revertToPreemptible object.
 * `optimization_windows` - (Optional) Set time window to perform the revert to preemptible. Time windows must be at least 120 minutes. Format: DayInWeek:HH-DayInWeek:HH. Required when strategy.revertToPreemptible.performAt is 'timeWindow'.
+* `shielded_instance_config` - (Optional) You can use secure boot when you launch VMs using Elastigroup. This helps you comply with your security policies. In the instance configuration, use ‘secureBootEnabled’ set to True to enforce UEFI with secure boot. Elastigroup provisions VMs with secure boot, as long as the images supports UEFI.
+  * `enable_secure_boot` - (Optional) Default: false
+  * `enable_integrity_monitoring` - (Optional) Default: false
 <a id="GPU"></a>
 ## GPU
 
