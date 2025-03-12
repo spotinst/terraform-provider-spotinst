@@ -552,6 +552,68 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[AutoUpdate] = commons.NewGenericField(
+		commons.OceanGKEImport,
+		AutoUpdate,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(IsEnabled): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  true,
+					},
+				},
+			},
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var result []interface{} = nil
+			if cluster != nil && cluster.AutoUpdate != nil {
+				result = flattenAutoUpdate(cluster.AutoUpdate)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(AutoUpdate), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoUpdate), err)
+				}
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(AutoUpdate)); ok {
+				if autoUpdate, err := expandAutoUpdate(v); err != nil {
+					return err
+				} else {
+					cluster.SetAutoUpdate(autoUpdate)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.GKEImportClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *gcp.AutoUpdate = nil
+
+			if v, ok := resourceData.GetOk(string(AutoUpdate)); ok {
+				if autoUpdate, err := expandAutoUpdate(v); err != nil {
+					return err
+				} else {
+					value = autoUpdate
+				}
+			}
+			cluster.SetAutoUpdate(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandServices(data interface{}) ([]*gcp.BackendService, error) {
@@ -738,4 +800,29 @@ func flattenFilters(filters *gcp.Filters) []interface{} {
 	}
 
 	return out
+}
+func flattenAutoUpdate(autoupdate *gcp.AutoUpdate) []interface{} {
+	var out []interface{}
+	if autoupdate != nil {
+		result := make(map[string]interface{})
+		result[string(IsEnabled)] = spotinst.BoolValue(autoupdate.IsEnabled)
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+
+func expandAutoUpdate(data interface{}) (*gcp.AutoUpdate, error) {
+	autoUpdate := &gcp.AutoUpdate{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return autoUpdate, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(IsEnabled)].(bool); ok {
+		autoUpdate.SetIsEnabled(spotinst.Bool(v))
+	}
+	return autoUpdate, nil
 }

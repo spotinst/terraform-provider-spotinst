@@ -69,6 +69,14 @@ resource "spotinst_ocean_spark" "example" {
   spark {
     additional_app_namespaces = ["extra-spark-app-ns-1", "extra-spark-app-ns-2"]
   }
+  
+  workspaces {
+    storage {
+      defaults {
+        storage_class_name = "my-custom-storage-class"
+      }
+    }
+  }
 
 }
 ```
@@ -91,6 +99,7 @@ output "ocean_spark_id" {
 - **ingress** (Block List, Max: 1) (see [below for nested schema](#nestedblock--ingress))
 - **log_collection** (Block List, Max: 1) (see [below for nested schema](#nestedblock--log_collection))
 - **webhook** (Block List, Max: 1) (see [below for nested schema](#nestedblock--webhook))
+- **workspaces** (Block List, Max: 1) (see [below for nested schema](#nestedblock--workspaces))
 - **spark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spark))
 
 <a id="nestedblock--compute"></a>
@@ -172,3 +181,24 @@ Optional:
 Optional:
 
 - **additional_app_namespaces** (List of String) - List of Kubernetes namespaces that should be configured to run Spark applications, in addition to the default Spark application namespace `spark-apps`. 
+
+<a id="nestedblock--workspaces"></a>
+### Nested Schema for `workspaces`
+
+Optional:
+
+- **storage** (Block List, Max: 1) (see [below for nested schema](#nestedblock--workspaces--storage))
+
+<a id="nestedblock--workspaces--storage"></a>
+### Nested Schema for `workspaces.storage`
+
+Optional:
+
+- **defaults** (Block List, Max: 1) (see [below for nested schema](#nestedblock--workspaces--storage--defaults))
+
+<a id="nestedblock--workspaces--storage--defaults"></a>
+### Nested Schema for `workspaces.storage.defaults`
+
+Optional:
+
+- **storage_class_name** (String) - The name of the default storage class to use for new workspaces. If not specified, the default storage class of the Kubernetes cluster will be used.

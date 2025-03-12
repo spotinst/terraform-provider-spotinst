@@ -165,7 +165,7 @@ The following arguments are supported:
 * `name` - (Required) The group name.
 * `description` - (Optional) The group description.
 * `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`. 
-For EC2 Classic instances:  `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
+For EC2 Classic instances: `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`.    
 
 * `availability_zones` - (Optional) One or more availability Zones for the group. When this parameter is set, compute.subnetIds should be left unused.
     * `availability_zones_name` - (Required) The Availability Zone name.

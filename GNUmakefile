@@ -1,6 +1,6 @@
 TEST?=./...
 PKGNAME?=spotinst
-VERSION?=$(shell grep -oP '(?<=Version = ).+' version/version.go | xargs)
+VERSION?=$(shell ggrep -oP '(?<=Version = ).+' version/version.go | xargs)
 RELEASE?=v$(VERSION)
 
 default: build

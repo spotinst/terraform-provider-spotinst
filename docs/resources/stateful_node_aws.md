@@ -56,6 +56,7 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
   ]
 
   preferred_type       = "t1.micro"
+  preferred_types      = ["t2.small", "t3.medium"]
   ebs_optimized        = "true"
   enable_monitoring    = "true"
   placement_tenancy    = "default"
@@ -66,6 +67,18 @@ resource "spotinst_managed_instance_aws" "default-managed-instance" {
   user_data            = "managed instance hello world"
   shutdown_script      = "managed instance bye world"
   cpu_credits          = "standard"
+  
+  resource_requirements {
+    excluded_instance_families = ["a", "m"]
+    excluded_instance_types= ["m3.large"]
+    excluded_instance_generations= ["1", "2"]
+    required_gpu_minimum = 1
+    required_gpu_maximum = 16
+    required_memory_minimum = 2
+    required_memory_maximum = 512
+    required_vcpu_minimum = 2
+    required_vcpu_maximum = 64
+  }
 
   tags {
     key   = "explicit1"
@@ -135,8 +148,19 @@ The following arguments are supported:
 * `elastic_ip` - (Optional) Elastic IP Allocation Id to associate to the instance.
 * `private_ip` - (Optional) Private IP Allocation Id to associate to the instance. 
 * `product` - (Required) Operation system type. Valid values: `"Linux/UNIX"`, `"SUSE Linux"`, `"Windows"`, `"Red Hat Enterprise Linux"`, `"Linux/UNIX (Amazon VPC)"`, `"SUSE Linux (Amazon VPC)"`, `"Windows (Amazon VPC)"`,  `"Red Hat Enterprise Linux (Amazon VPC)"`.    
-* `instance_types` - (Required) Comma separated list of available instance types for instance.
-* `preferred_type` - (Required) Preferred instance types for the instance. We will automatically select optional similar instance types to ensure optimized cost efficiency
+* `instance_types` - (Optional) Comma separated list of available instance types for instance.
+* `preferred_type` - (Optional) Prioritized instance type. The instance type must be included in the selected instance types or meet the resource requirements if defined. Note: Either `preferred_type` or `preferred_types` can be defined, but not both.
+* `preferred_types` - (Optional) Prioritized subset of instance types. The list must be a subset of the selected instance types or meet the resource requirements if defined. Note: Either `preferred_type` or `preferred_types` can be defined, but not both.
+* `resource_requirements` - (Optional) Required instance attributes. Instance types will be selected based on these requirements.
+    * `excluded_instance_families` - (Optional) Instance families to exclude
+    * `excluded_instance_types` - (Optional) Instance types to exclude
+    * `excluded_instance_generations` - (Optional)Instance generations to exclude
+    * `required_gpu_minimum` - (Optional) Required minimum instance GPU (>=1)
+    * `required_gpu_maximum` - (Optional) Required maximum instance GPU (<=16)
+    * `required_memory_minimum` - (Required) Required minimum instance memory (>=1)
+    * `required_memory_maximum` - (Required) Required maximum instance memory (<=512)
+    * `required_vcpu_minimum` - (Required) Required minimum instance vCPU (>=1)
+    * `required_vcpu_maximum` - (Required) Required maximum instance vCPU (<=64)
 * `ebs_optimized` - (Optional, Default: `false`) Enable EBS optimization for supported instances. Note: Additional charges will be applied by the Cloud Provider.
 Default: false
 * `enable_monitoring` - (Optional) Describes whether instance Enhanced Monitoring is enabled.

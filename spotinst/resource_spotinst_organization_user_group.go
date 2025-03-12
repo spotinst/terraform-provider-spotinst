@@ -114,30 +114,39 @@ func resourceOrgUserGroupUpdate(ctx context.Context, resourceData *schema.Resour
 		return diag.FromErr(err)
 	}
 
-	var policies []*organization.UserGroupPolicy = userGroup.Policies
+	var policies = userGroup.Policies
 	userGroup.UserGroupId = spotinst.String(id)
 
 	if shouldUpdate {
 		var accountIds []string
+		var viewerPolicyFound = false
 		if policies != nil {
 			for _, policy := range policies {
+				if spotinst.StringValue(policy.PolicyId) == "3" {
+					viewerPolicyFound = true
+				}
 				for _, actId := range policy.AccountIds {
-					if spotinst.StringValue(policy.PolicyId) != "3" {
-						for i := 0; i < len(policy.AccountIds); i++ {
-							if accountIds != nil {
-								if accountIds[i] == actId {
-									break
-								}
+					found := false
+					if accountIds != nil {
+						for _, acctId := range accountIds {
+							if acctId == actId {
+								found = true
+								break
 							}
-							accountIds = append(accountIds, actId)
 						}
+					}
+					if !found {
+						accountIds = append(accountIds, actId)
 					}
 				}
 			}
-			var accountViewerPolicy organization.UserGroupPolicy
-			accountViewerPolicy.PolicyId = spotinst.String("3")
-			accountViewerPolicy.AccountIds = accountIds
-			policies = append(policies, &accountViewerPolicy)
+			if !viewerPolicyFound {
+				var accountViewerPolicy organization.UserGroupPolicy
+				accountViewerPolicy.PolicyId = spotinst.String("3")
+				accountViewerPolicy.AccountIds = accountIds
+				policies = append(policies, &accountViewerPolicy)
+			}
+
 			var policiesToUpdate []*organization.UserPolicy
 			var policyToUpdate *organization.UserPolicy
 			for _, policy := range policies {

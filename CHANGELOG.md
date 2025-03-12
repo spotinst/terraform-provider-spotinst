@@ -1,5 +1,37 @@
 ## Unreleased
 
+## 1.211.0 (March, 06 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_gcp: Added `shielded_instance_config` object to support `enable_secure_boot` and `enable_integrity_monitoring` fields.
+
+## 1.210.0 (February, 25 2025)
+ENHANCEMENTS:
+* resource/spotinst_managed_instance_aws: Added support for `preferred_types` field and `resource_requirements` object.
+
+## 1.209.2 (February, 17 2025)
+BUG FIXES:
+* resource/spotinst_organization_user_group: Fixed conflict in difference for accountIds while updating.   
+
+## 1.209.1 (February, 05 2025)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: Fixed `instance_types_ondemand` field to accept null.
+
+## 1.209.0 (February 05, 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_spark: Added support for `workspaces` object.
+
+## 1.208.0 (January, 23 2025)
+FEATURES:
+* **New Resource:** added new resource `resource/spotinst_credentials_azure` to support azure account onboarding to spotinst.
+
+## 1.207.0 (January, 14 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support for `vng_template_scheduling`, `logging` and `suspension_hours` object.
+
+## 1.206.0 (January, 10 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: Added support for `auto_update` object.
+
 ## 1.205.1 (January, 07 2025)
 FIXES:
 * Upgraded packages go-getter from v1.7.5 to v1.7.6 and go-git/v5 from v5.12.0 to v5.13.0 to solve vulnerabilities.
