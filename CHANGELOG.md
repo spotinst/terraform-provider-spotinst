@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.212.0 (March, 12 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Fixed `availability_zones` object to align with API route.
+
 ## 1.211.0 (March, 06 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_gcp: Added `shielded_instance_config` object to support `enable_secure_boot` and `enable_integrity_monitoring` fields.
