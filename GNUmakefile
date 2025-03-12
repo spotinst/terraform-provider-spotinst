@@ -1,6 +1,13 @@
 TEST?=./...
 PKGNAME?=spotinst
-VERSION?=$(shell ggrep -oP '(?<=Version = ).+' version/version.go | xargs)
+
+# Use GNU Grep instead of BSD Grep on macOS
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	VERSION?=$(shell ggrep -oP '(?<=Version = ).+' version/version.go | xargs)
+else
+	VERSION?=$(shell grep -oP '(?<=Version = ).+' version/version.go | xargs)
+endif
 RELEASE?=v$(VERSION)
 
 default: build
