@@ -537,8 +537,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		AvailabilityZones,
 		&schema.Schema{
 			Type:     schema.TypeList,
+			Elem:     &schema.Schema{Type: schema.TypeString},
 			Optional: true,
-			Elem: &schema.Resource{
+			/*Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(SubnetIDs): {
 						Type:     schema.TypeList,
@@ -555,10 +556,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 					},
 				},
-			},
+			},*/
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			/*egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
 			var result []interface{} = nil
 			if elastigroup.Compute != nil && elastigroup.Compute.AvailabilityZones != nil {
@@ -569,17 +570,26 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				if err := resourceData.Set(string(AvailabilityZones), result); err != nil {
 					return fmt.Errorf("failed to set availabilityZone configuration: %#v", err)
 				}
-			}
+			}*/
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			if v, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
-				if availabilityZones, err := expandAvailabilityZones(v); err != nil {
-					return err
-				} else {
-					elastigroup.Compute.SetAvailabilityZones(availabilityZones)
+
+			if _, exists := resourceData.GetOk(string(SubnetIDs)); !exists {
+				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
+					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
+						return err
+					} else {
+						elastigroup.Compute.SetAvailabilityZones(zones)
+					}
+					//this will be analysed again
+					/*if v, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
+					if availabilityZones, err := expandAvailabilityZones(v); err != nil {
+						return err
+					} else {
+						elastigroup.Compute.SetAvailabilityZones(availabilityZones)*/
 				}
 			}
 			return nil
@@ -587,7 +597,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
 			elastigroup := egWrapper.GetElastigroup()
-			var result []*aws.AvailabilityZone = nil
+			/*var result []*aws.AvailabilityZone = nil
 			if v, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
 				if availabilityZones, err := expandAvailabilityZones(v); err != nil {
 					return err
@@ -595,7 +605,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					result = availabilityZones
 				}
 			}
-			elastigroup.Compute.SetAvailabilityZones(result)
+			elastigroup.Compute.SetAvailabilityZones(result)*/
+			if _, exists := resourceData.GetOk(string(SubnetIDs)); !exists {
+				if value, ok := resourceData.GetOk(string(AvailabilityZones)); ok {
+					if zones, err := expandAvailabilityZonesSlice(value); err != nil {
+						return err
+					} else {
+						elastigroup.Compute.SetAvailabilityZones(zones)
+					}
+				}
+			}
 			return nil
 		},
 		nil,
@@ -1412,7 +1431,7 @@ func extractTargetGroupFromArn(arn string) (string, error) {
 	return name, nil
 }
 
-func expandAvailabilityZones(data interface{}) ([]*aws.AvailabilityZone, error) {
+/*func expandAvailabilityZones(data interface{}) ([]*aws.AvailabilityZone, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		availabilityZones := make([]*aws.AvailabilityZone, 0, len(list))
 		for _, item := range list {
@@ -1456,4 +1475,4 @@ func flattenAvailabilityZones(availabilityZones []*aws.AvailabilityZone) []inter
 		result = append(result, m)
 	}
 	return result
-}
+}*/

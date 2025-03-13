@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.213.0 (March, 13 2025)
+BUG FIX:
+* resource/spotinst_elastigroup_aws: Reverted `availability_zones` object to array of string as existing customer facing an issue. 
+
 ## 1.212.0 (March, 12 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: Fixed `availability_zones` object to align with API route.
