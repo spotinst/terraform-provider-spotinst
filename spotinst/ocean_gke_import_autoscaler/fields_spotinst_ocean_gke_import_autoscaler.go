@@ -92,6 +92,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(AutoHeadroomPercentage): {
 						Type:     schema.TypeInt,
 						Optional: true,
+						Default:  -1,
+						DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+							if old == "-1" && new == "null" {
+								return true
+							}
+							return false
+						},
 					},
 
 					string(ResourceLimits): {
@@ -192,7 +199,7 @@ func expandAutoscaler(data interface{}) (*gcp.AutoScaler, error) {
 		autoscaler.SetIsAutoConfig(spotinst.Bool(v))
 	}
 
-	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > 0 {
+	if v, ok := m[string(AutoHeadroomPercentage)].(int); ok && v > -1 {
 		autoscaler.SetAutoHeadroomPercentage(spotinst.Int(v))
 	} else {
 		autoscaler.SetAutoHeadroomPercentage(nil)
@@ -324,10 +331,14 @@ func flattenAutoscaler(autoScaler *gcp.AutoScaler) []interface{} {
 	if autoScaler != nil {
 		result := make(map[string]interface{})
 
+		value := spotinst.Int(-1)
+		if autoScaler.AutoHeadroomPercentage != nil {
+			value = autoScaler.AutoHeadroomPercentage
+		}
+		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(value)
 		result[string(IsEnabled)] = spotinst.BoolValue(autoScaler.IsEnabled)
 		result[string(Cooldown)] = spotinst.IntValue(autoScaler.Cooldown)
 		result[string(IsAutoConfig)] = spotinst.BoolValue(autoScaler.IsAutoConfig)
-		result[string(AutoHeadroomPercentage)] = spotinst.IntValue(autoScaler.AutoHeadroomPercentage)
 		result[string(EnableAutomaticAndManualHeadroom)] = spotinst.BoolValue(autoScaler.EnableAutomaticAndManualHeadroom)
 
 		if autoScaler.Headroom != nil {
