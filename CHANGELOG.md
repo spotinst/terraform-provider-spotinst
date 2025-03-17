@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.213.1 (March, 17 2025)
+BUG FIX:
+* resource/spotinst_ocean_gke_import: Fixed null issue for `auto_headroom_percentage` field.
+
 ## 1.213.0 (March, 13 2025)
 BUG FIX:
 * resource/spotinst_elastigroup_aws: Reverted `availability_zones` object to array of string as existing customer facing an issue. 
