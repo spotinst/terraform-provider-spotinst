@@ -2025,6 +2025,68 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[InstanceStorePolicy] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		InstanceStorePolicy,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(InstanceStorePolicyType): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec != nil && launchSpec.InstanceStorePolicy != nil {
+				result = flattenInstanceStorePolicy(launchSpec.InstanceStorePolicy)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(InstanceStorePolicy), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceStorePolicy), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(InstanceStorePolicy)); ok {
+				if instanceStorePolicy, err := expandInstanceStorePolicy(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetInstanceStorePolicy(instanceStorePolicy)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.InstanceStorePolicy = nil
+			if v, ok := resourceData.GetOk(string(InstanceStorePolicy)); ok {
+				if instanceStorePolicy, err := expandInstanceStorePolicy(v); err != nil {
+					return err
+				} else {
+					value = instanceStorePolicy
+				}
+				launchSpec.SetInstanceStorePolicy(value)
+			} else {
+				launchSpec.SetInstanceStorePolicy(value)
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -3189,4 +3251,28 @@ func expandEphemeralStorage(data interface{}) (*aws.EphemeralStorage, error) {
 	}
 
 	return nil, nil
+}
+
+func flattenInstanceStorePolicy(instanceStorePolicy *aws.InstanceStorePolicy) []interface{} {
+	result := make(map[string]interface{})
+	result[string(InstanceStorePolicyType)] = spotinst.StringValue(instanceStorePolicy.InstanceStorePolicyType)
+
+	return []interface{}{result}
+}
+
+func expandInstanceStorePolicy(data interface{}) (*aws.InstanceStorePolicy, error) {
+	instanceStorePolicy := &aws.InstanceStorePolicy{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return instanceStorePolicy, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(InstanceStorePolicyType)].(string); ok && v != "" {
+		instanceStorePolicy.SetInstanceStorePolicyType(spotinst.String(v))
+	} else {
+		instanceStorePolicy.SetInstanceStorePolicyType(nil)
+	}
+
+	return instanceStorePolicy, nil
 }

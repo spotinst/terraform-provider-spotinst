@@ -52,3 +52,7 @@ const (
 	IopsResource            commons.FieldName = "resource"
 	IopsSizePerResourceUnit commons.FieldName = "size_per_resource_unit"
 )
+const (
+	InstanceStorePolicy     commons.FieldName = "instance_store_policy"
+	InstanceStorePolicyType commons.FieldName = "instance_store_policy_type"
+)
