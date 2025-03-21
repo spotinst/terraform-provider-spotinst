@@ -161,3 +161,7 @@ const (
 	EphemeralStorage           commons.FieldName = "ephemeral_storage"
 	EphemeralStorageDeviceName commons.FieldName = "ephemeral_storage_device_name"
 )
+const (
+	InstanceStorePolicy     commons.FieldName = "instance_store_policy"
+	InstanceStorePolicyType commons.FieldName = "instance_store_policy_type"
+)

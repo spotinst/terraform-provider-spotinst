@@ -265,6 +265,8 @@ The following arguments are supported:
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.
+* `instance_store_policy` - (Optional) Determines the utilization of instance store volumes. If not defined, instance store volumes will not be used.
+    * `instance_store_policy_type` - (Optional) Value: `"RAID0"` The method for using the instance store volumes (must also be defined in the userData).
 * `instance_types_filters` - The instance types that match with all filters compose the Virtual Node Group's instanceTypes parameter.
 The architectures that come from the Virtual Node Group's images will be taken into account when using this parameter. Cannot be configured together with Virtual Node Group's instanceTypes and with the Cluster's whitelist/blacklist/filters.
     * `categories` - (Optional) The filtered instance types will belong to one of the categories types from this list. Valid values: `Accelerated_computing`, `Compute_optimized`, `General_purpose`, `Memory_optimized`, `Storage_optimized`.

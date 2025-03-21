@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.214.0 (March, 21 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `instance_store_policy` object to support Ephemeral storage.
+* resource/spotinst_ocean_aws_launch_spec: Added `instance_store_policy` object to support Ephemeral storage.
+
 ## 1.213.1 (March, 17 2025)
 BUG FIX:
 * resource/spotinst_ocean_gke_import: Fixed null issue for `auto_headroom_percentage` field.

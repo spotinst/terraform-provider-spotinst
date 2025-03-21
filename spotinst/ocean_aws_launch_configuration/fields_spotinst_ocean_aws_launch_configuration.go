@@ -981,6 +981,69 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[InstanceStorePolicy] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		InstanceStorePolicy,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(InstanceStorePolicyType): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var result []interface{} = nil
+			if cluster != nil && cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.InstanceStorePolicy != nil {
+				result = flattenInstanceStorePolicy(cluster.Compute.LaunchSpecification.InstanceStorePolicy)
+			}
+
+			if result != nil {
+				if err := resourceData.Set(string(InstanceStorePolicy), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(InstanceStorePolicy), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if v, ok := resourceData.GetOk(string(InstanceStorePolicy)); ok {
+				if storePolicy, err := expandInstanceStorePolicy(v); err != nil {
+					return err
+				} else {
+					cluster.Compute.LaunchSpecification.SetInstanceStorePolicy(storePolicy)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var value *aws.InstanceStorePolicy = nil
+			if v, ok := resourceData.GetOk(string(InstanceStorePolicy)); ok {
+				if storePolicy, err := expandInstanceStorePolicy(v); err != nil {
+					return err
+				} else {
+					value = storePolicy
+				}
+				cluster.Compute.LaunchSpecification.SetInstanceStorePolicy(value)
+			} else {
+				cluster.Compute.LaunchSpecification.SetInstanceStorePolicy(nil)
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSpecification) []interface{} {
@@ -1297,4 +1360,28 @@ func expandDynamicIops(data interface{}) (*aws.ClusterDynamicIops, error) {
 		return dvs, nil
 	}
 	return nil, nil
+}
+
+func expandInstanceStorePolicy(data interface{}) (*aws.InstanceStorePolicy, error) {
+	instanceStorePolicy := &aws.InstanceStorePolicy{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return instanceStorePolicy, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(InstanceStorePolicyType)].(string); ok && v != "" {
+		instanceStorePolicy.SetInstanceStorePolicyType(spotinst.String(v))
+	} else {
+		instanceStorePolicy.SetInstanceStorePolicyType(nil)
+	}
+
+	return instanceStorePolicy, nil
+}
+
+func flattenInstanceStorePolicy(instanceStorePolicy *aws.InstanceStorePolicy) []interface{} {
+	result := make(map[string]interface{})
+	result[string(InstanceStorePolicyType)] = spotinst.StringValue(instanceStorePolicy.InstanceStorePolicyType)
+
+	return []interface{}{result}
 }
