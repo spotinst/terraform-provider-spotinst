@@ -2,6 +2,7 @@ package elastigroup_aws_strategy
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/elastigroup/providers/aws"
@@ -589,6 +590,56 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				ris = spotinst.Bool(v)
 			}
 			elastigroup.Strategy.SetRestrictSingleAz(ris)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[MaxReplacementsPercentage] = commons.NewGenericField(
+		commons.ElastigroupAWSStrategy,
+		MaxReplacementsPercentage,
+		&schema.Schema{
+			Type:         schema.TypeInt,
+			Optional:     true,
+			Default:      -1,
+			ValidateFunc: validation.IntAtLeast(-1),
+			DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+				if old == "-1" && new == "null" {
+					return true
+				}
+				return false
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *int = nil
+			if elastigroup.Strategy != nil && elastigroup.Strategy.MaxReplacementsPercentage != nil {
+				value = elastigroup.Strategy.MaxReplacementsPercentage
+			}
+			if value != nil {
+				if err := resourceData.Set(string(MaxReplacementsPercentage), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxReplacementsPercentage), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(MaxReplacementsPercentage)).(int); ok && v > 0 {
+				elastigroup.Strategy.SetMaxReplacementsPercentage(spotinst.Int(v))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupWrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(MaxReplacementsPercentage)).(int); ok && v > -1 {
+				elastigroup.Strategy.SetMaxReplacementsPercentage(spotinst.Int(v))
+			} else {
+				elastigroup.Strategy.SetMaxReplacementsPercentage(nil)
+			}
 			return nil
 		},
 		nil,

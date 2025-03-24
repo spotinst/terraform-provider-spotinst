@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.215.0 (March, 24 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_aws: Added `max_replacements_percentage` field in `strategy` object.
+
 ## 1.214.0 (March, 21 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added `instance_store_policy` object to support Ephemeral storage.
