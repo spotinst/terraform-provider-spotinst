@@ -22,4 +22,5 @@ const (
 	ConsiderODPricing           commons.FieldName = "consider_od_pricing"
 	ImmediateODRecoverThreshold commons.FieldName = "immediate_od_recover_threshold"
 	RestrictSingleAz            commons.FieldName = "restrict_single_az"
+	MaxReplacementsPercentage   commons.FieldName = "max_replacements_percentage"
 )

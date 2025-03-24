@@ -76,6 +76,7 @@ resource "spotinst_elastigroup_aws" "default-elastigroup" {
   fallback_to_ondemand      = false
   cpu_credits               = "unlimited"
   minimum_instance_lifetime = 12
+  max_replacements_percentage = 10
 
 
   wait_for_capacity         = 5
@@ -226,6 +227,7 @@ Note: Elastigroup can be configured with either imageId or images, but not both.
 * `utilize_reserved_instances` - (Optional) In a case of any available reserved instances, Elastigroup will utilize them first before purchasing Spot instances.
 * `minimum_instance_lifetime` - (Optional) Defines the preferred minimum instance lifetime in hours. Markets which comply with this preference will be prioritized. Optional values: 1, 3, 6, 12, 24.
 * `restrict_single_az` - (Optional) Elastigroup will automatically scale your instances in the most available and cost efficient availability zone. Every evaluation will be done when there are no active instances in the group.
+* `max_replacements_percentage` - (Optional) The percentage of active instances that can be replaced in parallel. This is used to prevent a large number of instances from being replaced at once.
 * `scaling_strategy` - (Optional) Set termination policy.
     * `terminate_at_end_of_billing_hour` - (Optional) Specify whether to terminate instances at the end of each billing hour.
     * `termination_policy` - (Optional) - Determines whether to terminate the newest instances when performing a scaling action. Valid values: `"default"`, `"newestInstance"`.
