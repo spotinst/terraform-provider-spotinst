@@ -25,6 +25,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Default:      -1,
 						ValidateFunc: validation.IntAtLeast(-1),
 					},
+					string(ScalingOrientation): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -86,6 +90,12 @@ func expandStrategy(data interface{}) (*gcp.LaunchSpecStrategy, error) {
 		strategy.SetPreemptiblePercentage(spotinst.Int(v))
 	}
 
+	if v, ok := m[string(ScalingOrientation)].(string); ok && v != "" {
+		strategy.SetScalingOrientation(spotinst.String(v))
+	} else {
+		strategy.SetScalingOrientation(nil)
+	}
+
 	return strategy, nil
 }
 
@@ -95,6 +105,10 @@ func flattenStrategy(ebs *gcp.LaunchSpecStrategy) []interface{} {
 		strategy[string(PreemptiblePercentage)] = spotinst.IntValue(ebs.PreemptiblePercentage)
 	} else {
 		strategy[string(PreemptiblePercentage)] = nil
+	}
+
+	if ebs.ScalingOrientation != nil {
+		strategy[string(ScalingOrientation)] = spotinst.StringValue(ebs.ScalingOrientation)
 	}
 	return []interface{}{strategy}
 }

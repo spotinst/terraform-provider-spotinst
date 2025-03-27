@@ -220,6 +220,7 @@ The following arguments are supported:
     * `provisioning_model` - (Optional) Define the provisioning model of the launched instances. Valid values: `SPOT`, `PREEMPTIBLE`.
     * `preemptible_percentage`- (Optional) Defines the desired preemptible percentage for the cluster.
     * `should_utilize_commitments`- (Optional) Enable committed use discounts utilization.
+    * `scaling_orientation` - (Optional, Default: `balanced`) Valid Values: `"cost", "availability", "balanced"`. Set this value to control the approach that Ocean takes when launching nodes.
 
 ```hcl
   strategy {
@@ -227,6 +228,7 @@ The following arguments are supported:
     provisioning_model = "PREEMPTIBLE"
     preemptible_percentage = 20
     should_utilize_commitments = true
+    scaling_orientation = "balanced"
   }
 ```
 
