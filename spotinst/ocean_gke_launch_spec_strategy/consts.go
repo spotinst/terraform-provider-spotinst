@@ -5,4 +5,5 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 const (
 	Strategy              commons.FieldName = "strategy"
 	PreemptiblePercentage commons.FieldName = "preemptible_percentage"
+	ScalingOrientation    commons.FieldName = "scaling_orientation"
 )

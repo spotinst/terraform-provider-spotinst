@@ -38,6 +38,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+					string(ScalingOrientation): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -112,6 +116,10 @@ func flattenStrategy(strategy *gcp.Strategy) []interface{} {
 			result[string(ShouldUtilizeCommitments)] = spotinst.BoolValue(strategy.ShouldUtilizeCommitments)
 		}
 
+		if strategy.ScalingOrientation != nil {
+			result[string(ScalingOrientation)] = spotinst.StringValue(strategy.ScalingOrientation)
+		}
+
 		if len(result) > 0 {
 			out = append(out, result)
 		}
@@ -150,6 +158,12 @@ func expandStrategy(data interface{}) (*gcp.Strategy, error) {
 
 			if v, ok := m[string(ShouldUtilizeCommitments)].(bool); ok {
 				strategy.SetShouldUtilizeCommitments(spotinst.Bool(v))
+			}
+
+			if v, ok := m[string(ScalingOrientation)].(string); ok && v != "" {
+				strategy.SetScalingOrientation(spotinst.String(v))
+			} else {
+				strategy.SetScalingOrientation(nil)
 			}
 		}
 

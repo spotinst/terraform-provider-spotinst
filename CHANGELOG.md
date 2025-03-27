@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.216.0 (March, 27 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: Added `scaling_orientation` field in `strategy` object.
+* resource/spotinst_ocean_gke_launch_spec: Added `scaling_orientation` field in `strategy` object.
+
 ## 1.215.0 (March, 24 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_aws: Added `max_replacements_percentage` field in `strategy` object.

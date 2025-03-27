@@ -75,6 +75,7 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
 
   strategy {
     preemptible_percentage = 30
+    scaling_orientation    = "balanced"
   }
   
   scheduling_task {
@@ -143,6 +144,7 @@ The following arguments are supported:
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
 * `strategy` - (Optional) The Ocean Launch Spec Strategy object.
     * `preemptible_percentage` - (Optional) Defines the desired preemptible percentage for this launch specification.
+    * `scaling_orientation` - (Optional, Default: `balanced`) Valid Values: `"cost", "availability", "balanced"`. Set this value to control the approach that Ocean takes when launching nodes.
 * `shielded_instance_config` - (Optional) The Ocean shielded instance configuration object.
   * `enable_integrity_monitoring` - (Optional) Boolean. Enable the integrity monitoring parameter on the GCP instances.
   * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
