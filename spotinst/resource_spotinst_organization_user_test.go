@@ -119,23 +119,6 @@ func TestAccSpotinstOrganization_User(t *testing.T) {
 					resource.TestCheckResourceAttr(userResourceName, "policies.1.policy_account_ids.0", "act-e2be553a"),
 				),
 			},
-			/*{
-				Config:             createOrganizationUserTerraform(testOrganization_User_Update_Policy, userName, userPassword),
-				ExpectNonEmptyPlan: true,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(userResourceName, "email", "terraformUpdatedUser3@netapp.com"),
-					resource.TestCheckResourceAttr(userResourceName, "first_name", "terraform_updated_with_second_policy"),
-					resource.TestCheckResourceAttr(userResourceName, "last_name", "user_updated_with_second_policy"),
-					resource.TestCheckResourceAttr(userResourceName, "role", "viewer"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.#", "2"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.0.policy_id", "pol-5479db5e"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.0.policy_account_ids.#", "1"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.0.policy_account_ids.0", "act-75eb3ba3"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.1.policy_id", "pol-467f634c"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.1.policy_account_ids.#", "1"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.1.policy_account_ids.0", "act-e2be553a"),
-				),
-			},*/
 			{
 				Config:             createOrganizationUserTerraform(testOrganization_User_Update_User_Group, userName, userPassword),
 				ExpectNonEmptyPlan: true,
