@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.216.1 (April, 09 2025)
+BUG FIX:
+* Fixed unit tests.
+
 ## 1.216.0 (March, 27 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_import: Added `scaling_orientation` field in `strategy` object.
