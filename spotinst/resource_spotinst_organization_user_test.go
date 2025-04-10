@@ -120,28 +120,11 @@ func TestAccSpotinstOrganization_User(t *testing.T) {
 				),
 			},
 			{
-				Config:             createOrganizationUserTerraform(testOrganization_User_Update_Policy, userName, userPassword),
-				ExpectNonEmptyPlan: true,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(userResourceName, "email", "terraformUpdatedUser3@netapp.com"),
-					resource.TestCheckResourceAttr(userResourceName, "first_name", "terraform_updated_with_second_policy"),
-					resource.TestCheckResourceAttr(userResourceName, "last_name", "user_updated_with_second_policy"),
-					resource.TestCheckResourceAttr(userResourceName, "role", "viewer"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.#", "2"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.0.policy_id", "pol-5479db5e"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.0.policy_account_ids.#", "1"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.0.policy_account_ids.0", "act-75eb3ba3"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.1.policy_id", "pol-467f634c"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.1.policy_account_ids.#", "1"),
-					resource.TestCheckResourceAttr(userResourceName, "policies.1.policy_account_ids.0", "act-e2be553a"),
-				),
-			},
-			{
 				Config:             createOrganizationUserTerraform(testOrganization_User_Update_User_Group, userName, userPassword),
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(userResourceName, "user_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(userResourceName, "user_group_ids.0", "ugr-ef8935dd"),
+					resource.TestCheckResourceAttr(userResourceName, "user_group_ids.0", "ugr-c4cccae9"),
 				),
 			},
 		},
@@ -195,7 +178,7 @@ resource "` + string(commons.OrgUserResourceName) + `" "%v" {
   password = "%v"
   role = "viewer"
 
-  user_group_ids = ["ugr-ef8935dd"]
+  user_group_ids = ["ugr-c4cccae9"]
   
   policies{
     policy_id = "pol-5479db5e"

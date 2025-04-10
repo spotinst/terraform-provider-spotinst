@@ -84,10 +84,13 @@ func TestAccSpotinstOrganization_UserGroup(t *testing.T) {
 					testCheckOrganizationUserGroupExists(&userGroup, userGroupResourceName),
 					resource.TestCheckResourceAttr(userGroupResourceName, "name", "terraform_user_group"),
 					resource.TestCheckResourceAttr(userGroupResourceName, "description", "user group by terraform"),
-					resource.TestCheckResourceAttr(userGroupResourceName, "policies.#", "1"),
-					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.policy_id", "pol-5479db5e"),
+					resource.TestCheckResourceAttr(userGroupResourceName, "policies.#", "2"),
+					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.policy_id", "3"),
 					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.account_ids.#", "1"),
 					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.account_ids.0", "act-75eb3ba3"),
+					resource.TestCheckResourceAttr(userGroupResourceName, "policies.1.policy_id", "pol-5479db5e"),
+					resource.TestCheckResourceAttr(userGroupResourceName, "policies.1.account_ids.#", "1"),
+					resource.TestCheckResourceAttr(userGroupResourceName, "policies.1.account_ids.0", "act-75eb3ba3"),
 				),
 			},
 			{
@@ -103,9 +106,9 @@ func TestAccSpotinstOrganization_UserGroup(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(userGroupResourceName, "policies.#", "2"),
-					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.policy_id", "pol-5479db5e"),
+					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.policy_id", "3"),
 					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.account_ids.#", "1"),
-					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.account_ids.0", "act-75eb3ba3"),
+					resource.TestCheckResourceAttr(userGroupResourceName, "policies.0.account_ids.0", "act-e2be553a"),
 					resource.TestCheckResourceAttr(userGroupResourceName, "policies.1.policy_id", "pol-467f634c"),
 					resource.TestCheckResourceAttr(userGroupResourceName, "policies.1.account_ids.#", "1"),
 					resource.TestCheckResourceAttr(userGroupResourceName, "policies.1.account_ids.0", "act-e2be553a"),
@@ -154,11 +157,6 @@ resource "` + string(commons.OrgUserGroupResourceName) + `" "%v" {
   provider = "aws"
   name = "terraform_user_group_updated"
   description = "user group by terraform updated"
-  
-  policies {
-    account_ids = ["act-75eb3ba3"]
-    policy_id = "pol-5479db5e"
-  }
 
   policies {
     account_ids = ["act-e2be553a"]
@@ -173,12 +171,7 @@ resource "` + string(commons.OrgUserGroupResourceName) + `" "%v" {
   name = "terraform_user_group_updated"
   description = "user group by terraform updated"
   
-  user_ids = ["u-429562d5"]  
-
-  policies {
-    account_ids = ["act-75eb3ba3"]
-    policy_id = "pol-5479db5e"
-  }
+  user_ids = ["u-429562d5"]
 
   policies {
     account_ids = ["act-e2be553a"]

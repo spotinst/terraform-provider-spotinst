@@ -156,7 +156,7 @@ func TestAccSpotinstOrganization_ProgrammaticUser_WithPolicies(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOrganizationProgrammaticUserExists(&progUser, progUserResourceName),
 					resource.TestCheckResourceAttr(progUserResourceName, "user_group_ids.#", "1"),
-					resource.TestCheckResourceAttr(progUserResourceName, "user_group_ids.0", "ugr-ef8935dd"),
+					resource.TestCheckResourceAttr(progUserResourceName, "user_group_ids.0", "ugr-c4cccae9"),
 				),
 			},
 		},
@@ -202,7 +202,7 @@ resource "` + string(commons.OrgProgrammaticUserResourceName) + `" "%v" {
   name = "terraform_programmatic_user_with_policies"
   description = "for terraform unit testing with policies and user groups"
 
-  user_group_ids = ["ugr-ef8935dd"]
+  user_group_ids = ["ugr-c4cccae9"]
 
   policies{
     policy_id = "pol-5479db5e"
