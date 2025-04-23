@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.216.2 (April, 23, 2025)
+BUG FIX:
+* resource/spotinst_ocean_aws_launch_spec: Fixed `no_Device` field to accept empty string inside `block_device_mappings` object.
+
 ## 1.216.1 (April, 10 2025)
 BUG FIX:
 * Fixed unit tests.
