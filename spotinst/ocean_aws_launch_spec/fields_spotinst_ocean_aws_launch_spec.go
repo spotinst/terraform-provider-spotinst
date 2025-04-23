@@ -406,7 +406,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					},
 
 					string(Ebs): {
-						Type:     schema.TypeList,
+						Type:     schema.TypeSet,
 						Optional: true,
 						MaxItems: 1,
 						Elem: &schema.Resource{
@@ -416,13 +416,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(DeleteOnTermination): {
 									Type:     schema.TypeBool,
 									Optional: true,
-									Computed: true,
 								},
 
 								string(Encrypted): {
 									Type:     schema.TypeBool,
 									Optional: true,
-									Computed: true,
 								},
 
 								string(IOPS): {
@@ -448,7 +446,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(VolumeType): {
 									Type:     schema.TypeString,
 									Optional: true,
-									Computed: true,
 								},
 
 								string(DynamicVolumeSize): {
@@ -487,6 +484,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(NoDevice): {
 						Type:     schema.TypeString,
 						Optional: true,
+						Default:  "unset",
 					},
 
 					string(VirtualName): {
@@ -2410,14 +2408,22 @@ func expandBlockDeviceMappings(data interface{}) ([]*aws.BlockDeviceMapping, err
 		}
 
 		if r, ok := attr[string(Ebs)]; ok {
-			if ebs, err := expandEbs(r); err != nil {
+			var ebs *aws.EBS
+			if bdm.EBS != nil {
+				ebs = bdm.EBS
+			}
+			ebs, err := expandEbs(r, ebs)
+			if err != nil {
 				return nil, err
-			} else {
+			}
+			if ebs != nil {
 				bdm.SetEBS(ebs)
+			} else {
+				bdm.EBS = nil
 			}
 		}
 
-		if v, ok := attr[string(NoDevice)].(string); ok && v != "" {
+		if v, ok := attr[string(NoDevice)].(string); ok && v != "unset" {
 			bdm.SetNoDevice(spotinst.String(v))
 		}
 
@@ -2429,56 +2435,54 @@ func expandBlockDeviceMappings(data interface{}) ([]*aws.BlockDeviceMapping, err
 	return bdms, nil
 }
 
-func expandEbs(data interface{}) (*aws.EBS, error) {
+func expandEbs(data interface{}, ebs *aws.EBS) (*aws.EBS, error) {
+	list := data.(*schema.Set).List()
 
-	ebs := &aws.EBS{}
-	list := data.([]interface{})
+	if len(list) > 0 {
+		m := list[0].(map[string]interface{})
+		ebs = &aws.EBS{}
 
-	if list == nil || list[0] == nil {
-		return ebs, nil
-	}
-	m := list[0].(map[string]interface{})
+		if v, ok := m[string(DeleteOnTermination)].(bool); ok {
+			ebs.SetDeleteOnTermination(spotinst.Bool(v))
+		}
 
-	if v, ok := m[string(DeleteOnTermination)].(bool); ok {
-		ebs.SetDeleteOnTermination(spotinst.Bool(v))
-	}
+		if v, ok := m[string(Encrypted)].(bool); ok {
+			ebs.SetEncrypted(spotinst.Bool(v))
+		}
 
-	if v, ok := m[string(Encrypted)].(bool); ok {
-		ebs.SetEncrypted(spotinst.Bool(v))
-	}
+		if v, ok := m[string(IOPS)].(int); ok && v > 0 {
+			ebs.SetIOPS(spotinst.Int(v))
+		}
 
-	if v, ok := m[string(IOPS)].(int); ok && v > 0 {
-		ebs.SetIOPS(spotinst.Int(v))
-	}
+		if v, ok := m[string(KMSKeyID)].(string); ok && v != "" {
+			ebs.SetKMSKeyId(spotinst.String(v))
+		}
 
-	if v, ok := m[string(KMSKeyID)].(string); ok && v != "" {
-		ebs.SetKMSKeyId(spotinst.String(v))
-	}
+		if v, ok := m[string(SnapshotID)].(string); ok && v != "" {
+			ebs.SetSnapshotId(spotinst.String(v))
+		}
 
-	if v, ok := m[string(SnapshotID)].(string); ok && v != "" {
-		ebs.SetSnapshotId(spotinst.String(v))
-	}
+		if v, ok := m[string(VolumeSize)].(int); ok && v > 0 {
+			ebs.SetVolumeSize(spotinst.Int(v))
+		}
 
-	if v, ok := m[string(VolumeSize)].(int); ok && v > 0 {
-		ebs.SetVolumeSize(spotinst.Int(v))
-	}
+		if v, ok := m[string(VolumeType)].(string); ok && v != "" {
+			ebs.SetVolumeType(spotinst.String(v))
+		}
 
-	if v, ok := m[string(VolumeType)].(string); ok && v != "" {
-		ebs.SetVolumeType(spotinst.String(v))
-	}
-
-	if v, ok := m[string(DynamicVolumeSize)]; ok && v != nil {
-		if dynamicVolumeSize, err := expandDynamicVolumeSize(v); err != nil {
-			return nil, err
-		} else {
-			if dynamicVolumeSize != nil {
-				ebs.SetDynamicVolumeSize(dynamicVolumeSize)
+		if v, ok := m[string(DynamicVolumeSize)]; ok && v != nil {
+			if dynamicVolumeSize, err := expandDynamicVolumeSize(v); err != nil {
+				return nil, err
+			} else {
+				if dynamicVolumeSize != nil {
+					ebs.SetDynamicVolumeSize(dynamicVolumeSize)
+				}
 			}
 		}
-	}
 
-	if v, ok := m[string(Throughput)].(int); ok && v > 0 {
-		ebs.SetThroughput(spotinst.Int(v))
+		if v, ok := m[string(Throughput)].(int); ok && v > 0 {
+			ebs.SetThroughput(spotinst.Int(v))
+		}
 	}
 	return ebs, nil
 }
@@ -2515,7 +2519,11 @@ func flattenBlockDeviceMappings(bdms []*aws.BlockDeviceMapping) []interface{} {
 		if bdm.EBS != nil {
 			m[string(Ebs)] = flattenEbs(bdm.EBS)
 		}
-		m[string(NoDevice)] = spotinst.StringValue(bdm.NoDevice)
+		if bdm.NoDevice != nil {
+			m[string(NoDevice)] = spotinst.StringValue(bdm.NoDevice)
+		} else {
+			m[string(NoDevice)] = "unset"
+		}
 		m[string(VirtualName)] = spotinst.StringValue(bdm.VirtualName)
 		result = append(result, m)
 	}

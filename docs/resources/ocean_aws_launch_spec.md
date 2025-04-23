@@ -227,7 +227,7 @@ The following arguments are supported:
             * `base_size`- (Required) Int. Initial size for volume. (Example: 50)
             * `resource`- (Required) String. Resource type to increase volume size dynamically by. (Valid values: `CPU`)
             * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: `baseSize=50`, `sizePerResourceUnit=20`, and instance with 2 CPU is launched; its total disk size will be: 90GB)
-        * `no_device` - (Optional) String. Suppresses the specified device included in the block device mapping of the AMI.
+        * `no_device` - (Optional) String. Suppresses the specified device included in the block device mapping of the AMI. Default value is set to `unset` intentionally, which will appear in the terminal during a terraform plan if this field is not configured or removed. This prevents confusion, as Terraform otherwise considers empty string as null.
 * `autoscale_headrooms_automatic` - (Optional) Set automatic headroom per launch spec.
     * `auto_headroom_percentage` - (Optional) Number between 0-200 to control the headroom % of the specific Virtual Node Group. Effective when cluster.autoScaler.headroom.automatic.`is_enabled` = true is set on the Ocean cluster.
 * `autoscale_headrooms` - (Optional) Set custom headroom per Virtual Node Group. Provide a list of headrooms object.
