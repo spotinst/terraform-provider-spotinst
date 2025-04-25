@@ -180,4 +180,39 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ExpirationDate] = commons.NewGenericField(
+		commons.CredentialsAzure,
+		ExpirationDate,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			ForceNew: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			credentialsWrapper := resourceObject.(*commons.AzureCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
+			var value *string = nil
+			if credentials.ExpirationDate != nil {
+				value = credentials.ExpirationDate
+			}
+			if err := resourceData.Set(string(ExpirationDate), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ExpirationDate), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			credentialsWrapper := resourceObject.(*commons.AzureCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
+			credentials.SetExpirationDate(spotinst.String(resourceData.Get(string(ExpirationDate)).(string)))
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			credentialsWrapper := resourceObject.(*commons.AzureCredentialsWrapper)
+			credentials := credentialsWrapper.GetCredentials()
+			credentials.SetExpirationDate(spotinst.String(resourceData.Get(string(ExpirationDate)).(string)))
+			return nil
+		},
+		nil,
+	)
+
 }
