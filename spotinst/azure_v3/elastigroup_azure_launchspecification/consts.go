@@ -49,6 +49,7 @@ const (
 	SecurityType                 commons.FieldName = "security_type"
 	VTpmEnabled                  commons.FieldName = "vtpm_enabled"
 	ConfidentialOsDiskEncryption commons.FieldName = "confidential_os_disk_encryption"
+	EncryptionAtHost             commons.FieldName = "encryption_at_host"
 )
 
 const (
