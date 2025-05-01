@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.217.0 (May, 01 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Added support for `encryption_at_host` field in `security` object.
+
 ## 1.216.2 (April, 23, 2025)
 BUG FIX:
 * resource/spotinst_ocean_aws_launch_spec: Fixed `no_Device` field to accept empty string inside `block_device_mappings` object.

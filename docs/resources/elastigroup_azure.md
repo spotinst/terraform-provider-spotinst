@@ -168,6 +168,7 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
     secure_boot_enabled = false
     vtpm_enabled = false
     confidential_os_disk_encryption = false
+    encryption_at_host = false
   }
 
   // --- LOGIN ---------------------------------------------------------
@@ -269,10 +270,11 @@ The following arguments are supported:
 ## Security
 
 * `security` - (Optional) Specifies the Security related profile settings for the virtual machine.
-  * `confidential_os_disk_encryption` - Confidential disk encryption binds the disk encryption keys to the VM's TPM, ensuring VM-only access. The security type must be "ConfidentialVM" to enable defining this preference as “true”.
-  * `secure_boot_enabled` - Specifies whether secure boot should be enabled on the virtual machine.
+  * `confidential_os_disk_encryption` - (Optional, Default: false) Confidential disk encryption binds the disk encryption keys to the VM's TPM, ensuring VM-only access. The security type must be "ConfidentialVM" to enable defining this preference as “true”.
+  * `secure_boot_enabled` - (Optional, Default: false) Specifies whether secure boot should be enabled on the virtual machine.
   * `security_type` - Security type refers to the different security features of a virtual machine. Security features like Trusted launch virtual machines help to improve the security of Azure generation 2 virtual machines. Valid values: `"Standard"`, `"TrustedLaunch"`, `"ConfidentialVM"`
-  * `vtpm_enabled` - Specifies whether vTPM should be enabled on the virtual machine.
+  * `vtpm_enabled` - (Optional) Specifies whether vTPM should be enabled on the virtual machine.
+  * `encryption_at_host` - (Optional, Default: false) Enables the Host Encryption for the virtual machine. The Encryption at host will be disabled unless this property is set to true for the resource.
 
 <a id="proximity_placement_groups"></a>
 ## Proximity Placement Groups

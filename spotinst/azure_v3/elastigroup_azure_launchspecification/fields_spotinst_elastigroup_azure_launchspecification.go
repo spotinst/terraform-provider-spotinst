@@ -611,6 +611,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+					string(EncryptionAtHost): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -873,6 +877,7 @@ func flattenSecurity(secure *azurev3.Security) interface{} {
 	security[string(SecurityType)] = spotinst.StringValue(secure.SecurityType)
 	security[string(VTpmEnabled)] = spotinst.BoolValue(secure.VTpmEnabled)
 	security[string(ConfidentialOsDiskEncryption)] = spotinst.BoolValue(secure.ConfidentialOsDiskEncryption)
+	security[string(EncryptionAtHost)] = spotinst.BoolValue(secure.EncryptionAtHost)
 
 	return []interface{}{security}
 }
@@ -895,6 +900,9 @@ func expandSecurity(data interface{}) (*azurev3.Security, error) {
 			}
 			if v, ok := m[string(ConfidentialOsDiskEncryption)].(bool); ok {
 				security.SetConfidentialOsDiskEncryption(spotinst.Bool(v))
+			}
+			if v, ok := m[string(EncryptionAtHost)].(bool); ok {
+				security.SetEncryptionAtHost(spotinst.Bool(v))
 			}
 		}
 		return security, nil
