@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.217.0 (May, 02 2025)
+## 1.217.0 (May, 01 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Added support for `encryption_at_host` field in `security` object.
 
