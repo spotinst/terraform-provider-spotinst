@@ -14,7 +14,6 @@ const (
 	ExcludedVmSizes    commons.FieldName = "excluded_vm_sizes"
 
 	SpotSizeAttributes commons.FieldName = "spot_size_attributes"
-	CPUArchitecture    commons.FieldName = "cpu_architecture"
 	MaxCpu             commons.FieldName = "max_cpu"
 	MaxMemory          commons.FieldName = "max_memory"
 	MaxStorage         commons.FieldName = "max_storage"

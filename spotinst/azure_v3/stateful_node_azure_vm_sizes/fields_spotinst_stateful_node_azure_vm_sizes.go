@@ -12,7 +12,7 @@ import (
 func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 	fieldsMap[VmSizes] = commons.NewGenericField(
-		commons.ElastigroupAzureVMSizes,
+		commons.StatefulNodeAzureVMSizes,
 		VmSizes,
 		&schema.Schema{
 			Type:     schema.TypeList,

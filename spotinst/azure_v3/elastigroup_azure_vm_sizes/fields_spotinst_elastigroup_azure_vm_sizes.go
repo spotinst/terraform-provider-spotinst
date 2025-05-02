@@ -30,7 +30,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 					string(SpotSizes): {
 						Type:     schema.TypeList,
-						Required: true,
+						Optional: true,
 						Elem: &schema.Schema{
 							Type: schema.TypeString,
 						},
@@ -58,12 +58,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						MaxItems: 1,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
-
-								string(CPUArchitecture): {
-									Type:     schema.TypeString,
-									Optional: true,
-								},
-
 								string(MaxMemory): {
 									Type:     schema.TypeInt,
 									Optional: true,
@@ -150,18 +144,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 
 func flattenAzureGroupSizes(vmSizes *azurev3.VMSizes) []interface{} {
 	result := make(map[string]interface{})
-	if len(vmSizes.OnDemandSizes) > 0 {
-		result[string(OnDemandSizes)] = vmSizes.OnDemandSizes
+	if vmSizes.OnDemandSizes != nil {
+		result[string(OnDemandSizes)] = spotinst.StringSlice(vmSizes.OnDemandSizes)
 	}
-	if len(vmSizes.SpotSizes) > 0 {
-		result[string(SpotSizes)] = vmSizes.SpotSizes
+	if vmSizes.SpotSizes != nil {
+		result[string(SpotSizes)] = spotinst.StringSlice(vmSizes.SpotSizes)
 	}
-	if len(vmSizes.PreferredSpotSizes) > 0 {
-		result[string(PreferredSpotSizes)] = vmSizes.PreferredSpotSizes
+	if vmSizes.PreferredSpotSizes != nil {
+		result[string(PreferredSpotSizes)] = spotinst.StringSlice(vmSizes.PreferredSpotSizes)
 	}
 
-	if len(vmSizes.ExcludedVmSizes) > 0 {
-		result[string(ExcludedVmSizes)] = vmSizes.ExcludedVmSizes
+	if vmSizes.ExcludedVmSizes != nil {
+		result[string(ExcludedVmSizes)] = spotinst.StringSlice(vmSizes.ExcludedVmSizes)
 	}
 
 	if vmSizes.SpotSizeAttributes != nil {
@@ -178,7 +172,7 @@ func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
 		m := list[0].(map[string]interface{})
 
 		if v, ok := m[string(OnDemandSizes)]; ok && v != nil {
-			onDemandSizes, err := expandSizes(v)
+			onDemandSizes, err := expandElastigroupVmSizes(v)
 			if err != nil {
 				return nil, err
 			}
@@ -188,27 +182,31 @@ func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
 		}
 
 		if v, ok := m[string(SpotSizes)]; ok && v != nil {
-			spotSizes, err := expandSizes(v)
+			spotSizes, err := expandElastigroupVmSizes(v)
 			if err != nil {
 				return nil, err
 			}
-			if spotSizes != nil {
+			if spotSizes != nil && len(spotSizes) > 0 {
 				vmSizes.SetSpotSizes(spotSizes)
+			} else {
+				vmSizes.SetSpotSizes(nil)
 			}
 		}
 
 		if v, ok := m[string(PreferredSpotSizes)]; ok && v != nil {
-			preferredSpotSizes, err := expandSizes(v)
+			preferredSpotSizes, err := expandElastigroupVmSizes(v)
 			if err != nil {
 				return nil, err
 			}
-			if preferredSpotSizes != nil {
+			if preferredSpotSizes != nil && len(preferredSpotSizes) > 0 {
 				vmSizes.SetPreferredSpotSizes(preferredSpotSizes)
+			} else {
+				vmSizes.SetPreferredSpotSizes(nil)
 			}
 		}
 
 		if v, ok := m[string(ExcludedVmSizes)]; ok {
-			excludedVmSizes, err := expandSizes(v)
+			excludedVmSizes, err := expandElastigroupVmSizes(v)
 			if err != nil {
 				return nil, err
 			}
@@ -237,7 +235,7 @@ func expandAzureGroupSizes(data interface{}) (*azurev3.VMSizes, error) {
 	return vmSizes, nil
 }
 
-func expandSizes(data interface{}) ([]string, error) {
+func expandElastigroupVmSizes(data interface{}) ([]string, error) {
 	list := data.([]interface{})
 	result := make([]string, 0, len(list))
 
@@ -319,9 +317,6 @@ func expandSpotSizeAttributes(data interface{}) (*azurev3.SpotSizeAttributes, er
 		}
 	}
 
-	if v, ok := m[string(CPUArchitecture)].(string); ok && v != "" {
-		spotSizeAttributes.SetCPUArchitecture(spotinst.String(v))
-	}
 	return spotSizeAttributes, nil
 }
 
@@ -353,9 +348,6 @@ func flattenSpotSizeAttributes(spotSizeAttributes *azurev3.SpotSizeAttributes) [
 		}
 		if spotSizeAttributes.MinStorage != nil {
 			spotAttributes[string(MinStorage)] = spotinst.IntValue(spotSizeAttributes.MinStorage)
-		}
-		if spotSizeAttributes.CPUArchitecture != nil {
-			spotAttributes[string(CPUArchitecture)] = spotinst.StringValue(spotSizeAttributes.CPUArchitecture)
 		}
 	}
 

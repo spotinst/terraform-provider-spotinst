@@ -244,8 +244,16 @@ The following arguments are supported:
     * `value` - (Required) Tag Value for Vms in Elastigroup.
 * `vm_sizes` - (Required) Sizes of On-Demand and Low-Priority VMs.
     * `od_sizes` - (Required) Available On-Demand sizes
-    * `spot_sizes` - (Required) Available Low-Priority sizes.
+    * `spot_sizes` - (Optional) Available Low-Priority sizes.
     * `preferred_spot_sizes` -- (Optional) Prioritize Spot VM sizes when launching Spot VMs for the group. Must be a sublist of `spot_sizes`.
+    * `excluded_vm_sizes` - (Optional) Exclude these spot VM sizes when using attribute-based VM sizes.
+    * `spot_size_attributes` - (Optional) The values and ranges for spot size attributes when launching VMs. Required if spotSizes isn't specified.
+        * `max_cpu` - (Optional) Maximum instance CPU units.
+        * `min_cpu` - (Optional) Minimum instance CPU units.
+        * `max_memory` - (Optional) Maximum amount of memory in GiB.
+        * `min_memory` - (Optional) Minimum amount of memory in GiB.
+        * `max_storage` - (Optional) Maximum amount of storage in GiB.
+        * `min_storage` - (optional) Minimum amount of storage in GiB.
 
 <a id="health"></a>
 ## Health

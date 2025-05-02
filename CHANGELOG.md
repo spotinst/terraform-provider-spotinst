@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.218.0 (May, 02 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_azure_v3: Added support for `excluded_vm_sizes` and `spot_size_attributes` in `vm_sizes` object.
+
 ## 1.217.0 (May, 01 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Added support for `encryption_at_host` field in `security` object.
