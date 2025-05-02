@@ -33,6 +33,16 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
        od_sizes   = ["standard_a1_v1","standard_a1_v2"]
        spot_sizes = ["standard_a1_v1","standard_a1_v2"]
        preferred_spot_sizes = ["standard_a1_v2"]
+       excluded_vm_sizes    = ["standard_ds2_v3"]
+    
+       spot_size_attributes {
+          max_cpu     = 16
+          min_cpu     = 2
+          max_memory  = 64
+          min_memory  = 8
+          max_storage = 512
+          min_storage = 32
+       }
    }
   // -------------------------------------------------------------------
 
