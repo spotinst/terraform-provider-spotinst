@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.218.1 (May, 05 2024)
+BUG FIX:
+* resource/spotinst_stateful_node_azure: Fixed `managed_service_identities` object to allow user to update the fields.
+
 ## 1.218.0 (May, 02 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_azure_v3: Added support for `excluded_vm_sizes` and `spot_size_attributes` in `vm_sizes` object.
