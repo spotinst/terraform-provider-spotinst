@@ -217,7 +217,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeSet,
 			Optional: true,
-			Computed: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Name): {
@@ -238,6 +237,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			if st.Compute != nil && st.Compute.LaunchSpecification != nil && st.Compute.LaunchSpecification.ManagedServiceIdentities != nil {
 				value = flattenManagedServiceIdentities(st.Compute.LaunchSpecification.ManagedServiceIdentities)
 			}
+
 			if err := resourceData.Set(string(ManagedServiceIdentities), value); err != nil {
 				return fmt.Errorf(commons.FailureFieldReadPattern, string(ManagedServiceIdentities), err)
 			}
@@ -259,18 +259,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 			var value []*azure.ManagedServiceIdentity
-			if st != nil && st.Compute != nil &&
-				st.Compute.LaunchSpecification != nil &&
-				st.Compute.LaunchSpecification.ManagedServiceIdentities != nil {
-				if v, ok := resourceData.GetOk(string(ManagedServiceIdentities)); ok {
-					if msis, err := expandManagedServiceIdentities(v); err != nil {
-						return err
-					} else {
-						value = msis
-					}
+			if v, ok := resourceData.GetOk(string(ManagedServiceIdentities)); ok {
+				if msis, err := expandManagedServiceIdentities(v); err != nil {
+					return err
+				} else {
+					value = msis
 				}
-				st.Compute.LaunchSpecification.SetManagedServiceIdentities(value)
+
 			}
+			st.Compute.LaunchSpecification.SetManagedServiceIdentities(value)
 			return nil
 		},
 		nil,
@@ -807,10 +804,15 @@ func expandManagedServiceIdentities(data interface{}) ([]*azure.ManagedServiceId
 		if !ok {
 			continue
 		}
-		msis = append(msis, &azure.ManagedServiceIdentity{
-			ResourceGroupName: spotinst.String(attr[string(ResourceGroupName)].(string)),
-			Name:              spotinst.String(attr[string(Name)].(string)),
-		})
+
+		serviceId := &azure.ManagedServiceIdentity{}
+		if v, ok := attr[string(ResourceGroupName)].(string); ok && v != "" {
+			serviceId.SetResourceGroupName(spotinst.String(v))
+		}
+		if v, ok := attr[string(Name)].(string); ok && v != "" {
+			serviceId.SetName(spotinst.String(v))
+		}
+		msis = append(msis, serviceId)
 	}
 	return msis, nil
 }
