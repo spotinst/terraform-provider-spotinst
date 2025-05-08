@@ -409,8 +409,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "required"),
 					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "true"),
 					resource.TestCheckResourceAttr(resourceName, "reserved_enis", "1"),
-					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.key", "startuptaint key"),
-					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.value", "startuptaint value"),
+					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.key", "startuptaint-key"),
+					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.value", "startuptaint-value"),
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.effect", "NoSchedule"),
 				),
 			},
@@ -450,8 +450,8 @@ func TestAccSpotinstOceanAWS_LaunchConfiguration(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "instance_metadata_options.0.http_tokens", "optional"),
 					resource.TestCheckResourceAttr(resourceName, "resource_tag_specification.0.should_tag_volumes", "false"),
 					resource.TestCheckResourceAttr(resourceName, "reserved_enis", "2"),
-					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.key", "startuptaint key updated"),
-					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.value", "startuptaint value updated"),
+					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.key", "startuptaint-key-updated"),
+					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.value", "startuptaint-value-updated"),
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.effect", "NoExecute"),
 				),
 			},
@@ -513,8 +513,8 @@ const testLaunchConfigAWSConfig_Create = `
   }
 
   startup_taints {
-	key = "startuptaint key"
-	value = "startuptaint value"
+	key = "startuptaint-key"
+	value = "startuptaint-value"
 	effect = "NoSchedule"
   }
   
@@ -559,8 +559,8 @@ const testLaunchConfigAWSConfig_Update = `
   }
 
   startup_taints {
-	key = "startuptaint key updated"
-	value = "startuptaint value updated"
+	key = "startuptaint-key-updated"
+	value = "startuptaint-value-updated"
 	effect = "NoExecute"
   }
 
