@@ -1044,6 +1044,74 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[StartupTaints] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		StartupTaints,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StartupTaintsKey): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(StartupTaintsValue): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(StartupTaintsEffect): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var result []interface{} = nil
+			if cluster != nil && cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.StartupTaints != nil {
+				startupTaints := cluster.Compute.LaunchSpecification.StartupTaints
+				result = flattenStartupTaints(startupTaints)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(StartupTaints), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(StartupTaints), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			if value, ok := resourceData.GetOk(string(StartupTaints)); ok {
+				if startupTaints, err := expandStartupTaints(value); err != nil {
+					return err
+				} else {
+					cluster.Compute.LaunchSpecification.SetStartupTaints(startupTaints)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+			var taintList []*aws.StartupTaints = nil
+			if value, ok := resourceData.GetOk(string(StartupTaints)); ok {
+				if startupTaints, err := expandStartupTaints(value); err != nil {
+					return err
+				} else {
+					taintList = startupTaints
+				}
+			}
+			cluster.Compute.LaunchSpecification.SetStartupTaints(taintList)
+			return nil
+		},
+		nil,
+	)
 }
 
 func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSpecification) []interface{} {
@@ -1384,4 +1452,46 @@ func flattenInstanceStorePolicy(instanceStorePolicy *aws.InstanceStorePolicy) []
 	result[string(InstanceStorePolicyType)] = spotinst.StringValue(instanceStorePolicy.InstanceStorePolicyType)
 
 	return []interface{}{result}
+}
+
+func expandStartupTaints(value interface{}) ([]*aws.StartupTaints, error) {
+	taintsList, ok := value.(*schema.Set)
+	if !ok {
+		return nil, fmt.Errorf("expected a schema.Set for StartupTaints, got %T", value)
+	}
+
+	var taints []*aws.StartupTaints
+	for _, item := range taintsList.List() {
+		data, ok := item.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("expected a map[string]interface{} for StartupTaints item, got %T", item)
+		}
+
+		taint := &aws.StartupTaints{
+			Key:    spotinst.String(data[string(StartupTaintsKey)].(string)),
+			Value:  spotinst.String(data[string(StartupTaintsValue)].(string)),
+			Effect: spotinst.String(data[string(StartupTaintsEffect)].(string)),
+		}
+		taints = append(taints, taint)
+	}
+
+	return taints, nil
+}
+
+func flattenStartupTaints(taints []*aws.StartupTaints) []interface{} {
+	if taints == nil {
+		return nil
+	}
+
+	var result []interface{}
+	for _, taint := range taints {
+		item := map[string]interface{}{
+			string(StartupTaintsKey):    spotinst.StringValue(taint.Key),
+			string(StartupTaintsValue):  spotinst.StringValue(taint.Value),
+			string(StartupTaintsEffect): spotinst.StringValue(taint.Effect),
+		}
+		result = append(result, item)
+	}
+
+	return result
 }

@@ -165,3 +165,10 @@ const (
 	InstanceStorePolicy     commons.FieldName = "instance_store_policy"
 	InstanceStorePolicyType commons.FieldName = "instance_store_policy_type"
 )
+
+const (
+	StartupTaints       commons.FieldName = "startup_taints"
+	StartupTaintsKey    commons.FieldName = "key"
+	StartupTaintsValue  commons.FieldName = "value"
+	StartupTaintsEffect commons.FieldName = "effect"
+)
