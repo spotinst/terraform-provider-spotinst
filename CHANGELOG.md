@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.219.0 (May, 08 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added support for `startup_taints` object.
+* resource/spotinst_ocean_aws_launch_spec: Added support for `startup_taints` object.
+
 ## 1.218.1 (May, 05 2024)
 BUG FIX:
 * resource/spotinst_stateful_node_azure: Fixed `managed_service_identities` object to allow user to update the fields.

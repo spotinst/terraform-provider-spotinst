@@ -61,6 +61,12 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     effect = "NoExecute"
   }
 
+  startup_taints {
+    key    = "another-key"
+    value  = "another-value"
+    effect = "NoSchedule"
+  }
+
   autoscale_headrooms_automatic {
     auto_headroom_percentage = 5
   }
@@ -208,6 +214,10 @@ The following arguments are supported:
     * `key` - (Required) The taint key.
     * `value` - (Required) The taint value.
     * `effect` - (Required) The effect of the taint. Valid values: `"NoSchedule"`, `"PreferNoSchedule"`, `"NoExecute"`.
+* `startup_taints` - (Optional) Temporary taints applied to a node during its initialization phase. For a startup taint to work, it must also be set as a regular taint in the userData for the cluster.
+    * `key` - (Optional) Set startup taint key.
+    * `value` - (Optional) Set startup taint value.
+    * `effect` - (Optional) Set startup taint effect.
 * `elastic_ip_pool` - (Optional) Assign an Elastic IP to the instances spun by the Virtual Node Group. Can be null.
     * `tag_selector` - (Optional) A key-value pair, which defines an Elastic IP from the customer pool. Can be null.
         * `tag_key` - (Required) Elastic IP tag key. The Virtual Node Group will consider all Elastic IPs tagged with this tag as a part of the Elastic IP pool to use.

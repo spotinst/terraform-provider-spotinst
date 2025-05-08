@@ -125,7 +125,13 @@ resource "spotinst_ocean_aws" "example" {
     http_tokens = "required"
     http_put_response_hop_limit = 10
   }
-  
+
+  startup_taints {
+    key    = "example-key"
+    value  = "example-value"
+    effect = "NoSchedule"
+  }
+
   block_device_mappings {
     device_name = "/dev/xvda"
     ebs {
@@ -257,6 +263,10 @@ The following arguments are supported:
             * `id` - (Required) The identifier of The S3 data integration to export the logs to.
 * `resource_tag_specification` - (Optional) Specify which resources should be tagged with Virtual Node Group tags or Ocean tags. If tags are set on the VNG, the resources will be tagged with the VNG tags; otherwise, they will be tagged with the Ocean tags.
     * `should_tag_volumes` - (Optional) Specify if Volume resources will be tagged with Virtual Node Group tags or Ocean tags.
+* `startup_taints` - (Optional) Temporary taints applied to a node during its initialization phase. For a startup taint to work, it must also be set as a regular taint in the userData for the cluster.
+  * `key` - (Optional) Set startup taint key.
+  * `value` - (Optional) Set startup taint value.
+  * `effect` - (Optional) Set startup taint effect.
 ## Auto Scaler
 * `autoscaler` - (Optional) Describes the Ocean Kubernetes Auto Scaler.
     * `autoscale_is_enabled` - (Optional, Default: `true`) Enable the Ocean Kubernetes Auto Scaler.

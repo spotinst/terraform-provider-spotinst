@@ -685,7 +685,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
 			launchSpec := launchSpecWrapper.GetLaunchSpec()
 			var result []interface{} = nil
-			if launchSpec.Labels != nil {
+			if launchSpec.Taints != nil {
 				taints := launchSpec.Taints
 				result = flattenTaints(taints)
 			}
@@ -2085,6 +2085,73 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[StartupTaints] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		StartupTaints,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(StartupTaintsKey): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(StartupTaintsValue): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+					string(StartupTaintsEffect): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.Labels != nil {
+				taints := launchSpec.StartupTaints
+				result = flattenStartupTaints(taints)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(StartupTaints), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(StartupTaints), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if value, ok := resourceData.GetOk(string(StartupTaints)); ok {
+				if startupTaints, err := expandStartupTaints(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetStartupTaints(startupTaints)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var taintList []*aws.StartupTaints = nil
+			if value, ok := resourceData.GetOk(string(StartupTaints)); ok {
+				if startupTaints, err := expandStartupTaints(value); err != nil {
+					return err
+				} else {
+					taintList = startupTaints
+				}
+			}
+			launchSpec.SetStartupTaints(taintList)
+			return nil
+		},
+		nil,
+	)
 }
 
 var InstanceProfileArnRegex = regexp.MustCompile(`arn:aws:iam::\d{12}:instance-profile/?[a-zA-Z_0-9+=,.@\-_/]+`)
@@ -3283,4 +3350,46 @@ func expandInstanceStorePolicy(data interface{}) (*aws.InstanceStorePolicy, erro
 	}
 
 	return instanceStorePolicy, nil
+}
+
+func expandStartupTaints(value interface{}) ([]*aws.StartupTaints, error) {
+	taintsList, ok := value.(*schema.Set)
+	if !ok {
+		return nil, fmt.Errorf("expected a schema.Set for StartupTaints, got %T", value)
+	}
+
+	var taints []*aws.StartupTaints
+	for _, item := range taintsList.List() {
+		data, ok := item.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("expected a map[string]interface{} for StartupTaints item, got %T", item)
+		}
+
+		taint := &aws.StartupTaints{
+			Key:    spotinst.String(data[string(StartupTaintsKey)].(string)),
+			Value:  spotinst.String(data[string(StartupTaintsValue)].(string)),
+			Effect: spotinst.String(data[string(StartupTaintsEffect)].(string)),
+		}
+		taints = append(taints, taint)
+	}
+
+	return taints, nil
+}
+
+func flattenStartupTaints(taints []*aws.StartupTaints) []interface{} {
+	if taints == nil {
+		return nil
+	}
+
+	var result []interface{}
+	for _, taint := range taints {
+		item := map[string]interface{}{
+			string(StartupTaintsKey):    spotinst.StringValue(taint.Key),
+			string(StartupTaintsValue):  spotinst.StringValue(taint.Value),
+			string(StartupTaintsEffect): spotinst.StringValue(taint.Effect),
+		}
+		result = append(result, item)
+	}
+
+	return result
 }
