@@ -559,8 +559,13 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_a1_v2"),
-					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_a1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.min_cpu", "2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.max_cpu", "100"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.min_memory", "8"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.max_memory", "64"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.min_storage", "32"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.max_storage", "1024"),
 				),
 			},
 		},
@@ -580,7 +585,14 @@ const testAzureV3VMSizesGroupConfig_Update = `
 // --- VM SIZES --------------------------------
    vm_sizes{  
      od_sizes = ["standard_a1_v2"]
-     spot_sizes = ["standard_a1_v2"]
+     spot_size_attributes {
+		min_cpu = "2"
+		max_cpu = "100"
+		min_memory = "8"
+		max_memory = "64"
+		min_storage = "32"
+		max_storage = "1024"
+	}
    }
 // ---------------------------------------------
 `
