@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.209.0 (May 16, 2025)
+ENHANCEMENTS:
+* resource/spotinst_credentials_azure: Added `expiration_date` field to support expiry date for Azure App Secret while onboarding Azure Account to Spot.
+
 ## 1.219.0 (May, 08 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added support for `startup_taints` object.

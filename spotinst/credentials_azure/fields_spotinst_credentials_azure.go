@@ -187,6 +187,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeString,
 			Optional: true,
 			ForceNew: true,
+			Default:  -1,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			credentialsWrapper := resourceObject.(*commons.AzureCredentialsWrapper)
