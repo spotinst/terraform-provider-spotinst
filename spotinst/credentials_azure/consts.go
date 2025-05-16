@@ -8,4 +8,5 @@ const (
 	ClientSecret   commons.FieldName = "client_secret"
 	TenantId       commons.FieldName = "tenant_id"
 	SubscriptionId commons.FieldName = "subscription_id"
+	ExpirationDate commons.FieldName = "expiration_date"
 )
