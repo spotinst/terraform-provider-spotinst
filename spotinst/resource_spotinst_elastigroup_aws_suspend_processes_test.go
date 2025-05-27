@@ -115,7 +115,7 @@ func createSuspendProcessesTerraform(ccm *SuspendProcessesMetadata, formatToUse 
 
 // region SuspendProcesses: Baseline
 func TestAccSpotinstSuspendProcessesElastigroupAWS_Baseline(t *testing.T) {
-	groupId := "sig-05d0a009"
+	groupId := "sig-74267bfd"
 	resourceName := createSuspendProcessesResourceName(groupId)
 
 	var spWrapper commons.SuspendProcessesWrapper
@@ -134,7 +134,7 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckSuspendProcessesExists(spWrapper.SuspendProcesses, resourceName),
 					testSuspendProcessesAttributes(&spWrapper, groupId),
-					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-93207c25"),
+					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-74267bfd"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.0.name", "SCHEDULING"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.1.name", "PREVENTIVE_REPLACEMENT"),
@@ -150,7 +150,7 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_Baseline(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckSuspendProcessesExists(spWrapper.SuspendProcesses, resourceName),
 					testSuspendProcessesAttributes(&spWrapper, groupId),
-					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-93207c25"),
+					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-74267bfd"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.0.name", "OUT_OF_STRATEGY"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.1.name", "REVERT_PREFERRED"),
@@ -165,7 +165,7 @@ const testBaselineSuspendProcessesConfig_Create = `
 resource "` + string(commons.SuspendProcessesResourceName) + `" "%v" {
   provider = "%v"
 
-	group_id = "sig-93207c25"
+	group_id = "sig-74267bfd"
 	suspension  {
     	name = "SCHEDULING"
   	}
@@ -186,7 +186,7 @@ const testBaselineSuspendProcessesConfig_Update = `
 resource "` + string(commons.SuspendProcessesResourceName) + `" "%v" {
 	provider = "%v"
 
- 	group_id = "sig-93207c25"
+ 	group_id = "sig-74267bfd"
   	suspension  {
     	name = "OUT_OF_STRATEGY"
 	  }
@@ -204,7 +204,7 @@ resource "` + string(commons.SuspendProcessesResourceName) + `" "%v" {
 
 // region SuspendProcesses: RemoveSuspension
 func TestAccSpotinstSuspendProcessesElastigroupAWS_RemoveSuspension(t *testing.T) {
-	groupId := "sig-05d0a009"
+	groupId := "sig-74267bfd"
 	resourceName := createSuspendProcessesResourceName(groupId)
 
 	var spWrapper commons.SuspendProcessesWrapper
@@ -223,7 +223,7 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_RemoveSuspension(t *testing.T
 				Check: resource.ComposeTestCheckFunc(
 					testCheckSuspendProcessesExists(spWrapper.SuspendProcesses, resourceName),
 					testSuspendProcessesAttributes(&spWrapper, groupId),
-					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-93207c25"),
+					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-74267bfd"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.#", "4"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.0.name", "SCHEDULING"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.1.name", "PREVENTIVE_REPLACEMENT"),
@@ -239,7 +239,7 @@ func TestAccSpotinstSuspendProcessesElastigroupAWS_RemoveSuspension(t *testing.T
 				Check: resource.ComposeTestCheckFunc(
 					testCheckSuspendProcessesExists(spWrapper.SuspendProcesses, resourceName),
 					testSuspendProcessesAttributes(&spWrapper, groupId),
-					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-93207c25"),
+					resource.TestCheckResourceAttr(resourceName, "group_id", "sig-74267bfd"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.0.name", "OUT_OF_STRATEGY"),
 					resource.TestCheckResourceAttr(resourceName, "suspension.1.name", "REVERT_PREFERRED"),
@@ -254,7 +254,7 @@ const testRemoveSuspensionSuspendProcessesConfig_Create = `
 resource "` + string(commons.SuspendProcessesResourceName) + `" "%v" {
   provider = "%v"
 
-	group_id = "sig-93207c25"
+	group_id = "sig-74267bfd"
 	suspension  {
     	name = "OUT_OF_STRATEGY"
   	}
@@ -275,7 +275,7 @@ const testRemoveSuspensionSuspendProcessesConfig_Update = `
 resource "` + string(commons.SuspendProcessesResourceName) + `" "%v" {
 	provider = "%v"
 
- 	group_id = "sig-93207c25"
+ 	group_id = "sig-74267bfd"
   	suspension  {
     	name = "SCHEDULING"
   	}
