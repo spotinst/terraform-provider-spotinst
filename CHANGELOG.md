@@ -1,5 +1,9 @@
 ## Unreleased
 
+##1.220.2 (May 27, 2025)
+BUG FIX:
+* resource/spotinst_stateful_node_azure: Removed `should_persist_vm` field from `persistence` object.
+
 ##1.220.1 (May 27, 2025)
 BUG FIX:
 * resource/spotinst_stateful_node_azure: Removed `should_persist_vm` field from statefulnode configuration.

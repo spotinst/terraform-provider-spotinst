@@ -8,5 +8,4 @@ const (
 	ShouldPersistDataDisks   commons.FieldName = "should_persist_data_disks"
 	DataDisksPersistenceMode commons.FieldName = "data_disks_persistence_mode"
 	ShouldPersistNetwork     commons.FieldName = "should_persist_network"
-	ShouldPersistVM          commons.FieldName = "should_persist_vm"
 )

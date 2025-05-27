@@ -436,7 +436,6 @@ func TestAccSpotinstStatefulNodeAzureV3_Persistence(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "should_persist_data_disks", "false"),
 					resource.TestCheckResourceAttr(resourceName, "data_disks_persistence_mode", "reattach"),
 					resource.TestCheckResourceAttr(resourceName, "should_persist_network", "true"),
-					resource.TestCheckResourceAttr(resourceName, "should_persist_vm", "false"),
 				),
 			},
 			{
@@ -464,7 +463,6 @@ os_disk_persistence_mode = "reattach"
 should_persist_data_disks = false
 data_disks_persistence_mode = "reattach"
 should_persist_network = true
-should_persist_vm = false
 `
 
 const testPersistenceStatefulNodeAzureV3Config_Update = `

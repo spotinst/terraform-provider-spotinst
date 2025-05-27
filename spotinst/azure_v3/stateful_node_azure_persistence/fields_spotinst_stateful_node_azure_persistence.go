@@ -244,47 +244,4 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
-
-	fieldsMap[ShouldPersistVM] = commons.NewGenericField(
-		commons.StatefulNodeAzurePersistence,
-		ShouldPersistVM,
-		&schema.Schema{
-			Type:     schema.TypeBool,
-			Optional: true,
-			Computed: true,
-			Default:  nil,
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			var value *bool = nil
-			if statefulNode.Persistence != nil && statefulNode.Persistence.ShouldPersistVM != nil {
-				value = statefulNode.Persistence.ShouldPersistVM
-			}
-			if err := resourceData.Set(string(ShouldPersistVM), spotinst.BoolValue(value)); err != nil {
-				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShouldPersistVM), err)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.GetOk(string(ShouldPersistVM)); ok && v.(bool) {
-				statefulNode.Persistence.SetShouldPersistVM(spotinst.Bool(v.(bool)))
-			} else {
-				statefulNode.Persistence.SetShouldPersistVM(nil)
-			}
-			return nil
-		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
-			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(ShouldPersistVM)).(bool); ok {
-				statefulNode.Persistence.SetShouldPersistVM(spotinst.Bool(v))
-			}
-			return nil
-		},
-		nil,
-	)
-
 }
