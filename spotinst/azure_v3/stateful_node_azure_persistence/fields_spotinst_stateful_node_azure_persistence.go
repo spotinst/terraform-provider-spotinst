@@ -252,6 +252,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			Type:     schema.TypeBool,
 			Optional: true,
 			Computed: true,
+			Default:  nil,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
@@ -268,8 +269,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			snWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			statefulNode := snWrapper.GetStatefulNode()
-			if v, ok := resourceData.Get(string(ShouldPersistVM)).(bool); ok {
-				statefulNode.Persistence.SetShouldPersistVM(spotinst.Bool(v))
+			if v, ok := resourceData.GetOk(string(ShouldPersistVM)); ok && v.(bool) {
+				statefulNode.Persistence.SetShouldPersistVM(spotinst.Bool(v.(bool)))
+			} else {
+				statefulNode.Persistence.SetShouldPersistVM(nil)
 			}
 			return nil
 		},
