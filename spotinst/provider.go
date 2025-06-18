@@ -127,6 +127,9 @@ func Provider() *schema.Provider {
 
 			// Account Creation
 			string(commons.AccountResourceName): resourceSpotinstAccount(),
+
+			//Notification Center Policy
+			string(commons.NotificationCenterResourceName): resourceSpotinstNotificationCenter(),
 		},
 	}
 

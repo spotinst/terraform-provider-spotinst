@@ -202,6 +202,8 @@ const (
 	OceanCDVerificationTemplateArgs    ResourceAffinity = "OceanCD_Verification_Template_Args"
 	OceanCDVerificationTemplateMetrics ResourceAffinity = "OceanCD_Verification_Template_Metrics"
 
+	NotificationCenter ResourceAffinity = "Notification_Center"
+
 	ResourceFieldOnRead   LogFormat = "onRead() -> %s -> %s"
 	ResourceFieldOnCreate LogFormat = "onCreate() -> %s -> %s"
 	ResourceFieldOnUpdate LogFormat = "onUpdate() -> %s -> %s"
