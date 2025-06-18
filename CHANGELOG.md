@@ -1,5 +1,13 @@
 ## Unreleased
 
+##1.220.2 (May 27, 2025)
+BUG FIX:
+* resource/spotinst_stateful_node_azure: Removed `should_persist_vm` field from `persistence` object.
+
+##1.220.1 (May 27, 2025)
+BUG FIX:
+* resource/spotinst_stateful_node_azure: Removed `should_persist_vm` field from statefulnode configuration.
+
 ## 1.220.0 (May 16, 2025)
 ENHANCEMENTS:
 * resource/spotinst_credentials_azure: Added `expiration_date` field to support expiry date for Azure App Secret while onboarding Azure Account to Spot.

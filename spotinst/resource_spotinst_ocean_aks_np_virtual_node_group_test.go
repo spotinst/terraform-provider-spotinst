@@ -136,7 +136,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "os_disk_type", "Managed"),
 					resource.TestCheckResourceAttr(resourceName, "os_type", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "os_sku", "Ubuntu"),
-					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.29"),
+					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.30"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
@@ -159,7 +159,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "50"),
 					resource.TestCheckResourceAttr(resourceName, "enable_node_public_ip", "false"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_size_gb", "64"),
-					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.29"),
+					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.30"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "3"),
@@ -201,7 +201,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   os_disk_type          = "Managed"
   os_type               = "Linux"
   os_sku                = "Ubuntu"
-  kubernetes_version    = "1.29"
+  kubernetes_version    = "1.30"
   //vnet_subnet_ids       = ["/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"]
   linux_os_config {
    sysctls {
@@ -246,7 +246,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   os_disk_type          = "Managed"
   os_type               = "Linux"
   os_sku                = "Ubuntu"
-  kubernetes_version    = "1.29"
+  kubernetes_version    = "1.30"
   //vnet_subnet_ids       = ["/subscriptions/123456-1234-1234-1234-123456789/resourceGroups/ExampleResourceGroup/providers/Microsoft.Network/virtualNetworks/ExampleVirtualNetwork/subnets/default"]
   linux_os_config {
    sysctls {
