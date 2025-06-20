@@ -96,7 +96,7 @@ func resourceSpotinstNotificationCenterUpdate(ctx context.Context, resourceData 
 
 	if shouldUpdate {
 		nc.SetID(spotinst.String(id))
-		if err := updateNotificationCenter(nc, resourceData, meta); err != nil {
+		if err := updateNotificationCenter(nc, resourceData, meta.(*Client)); err != nil {
 			return diag.FromErr(err)
 		}
 	}
@@ -104,10 +104,8 @@ func resourceSpotinstNotificationCenterUpdate(ctx context.Context, resourceData 
 	return resourceSpotinstNotificationCenterRead(ctx, resourceData, meta)
 }
 
-func updateNotificationCenter(nc *notificationcenter.NotificationCenter, resourceData *schema.ResourceData, meta interface{}) error {
-	input := &notificationcenter.UpdateNotificationCenterPolicyInput{
-		NotificationCenter: nc,
-	}
+func updateNotificationCenter(nc *notificationcenter.NotificationCenter, resourceData *schema.ResourceData, client *Client) error {
+	input := nc
 
 	if json, err := commons.ToJson(nc); err != nil {
 		return err
@@ -115,7 +113,7 @@ func updateNotificationCenter(nc *notificationcenter.NotificationCenter, resourc
 		log.Printf("===> Notification Center Policy update configuration: %s", json)
 	}
 
-	if _, err := meta.(*Client).notificationCenter.UpdateNotificationCenterPolicy(context.Background(), input); err != nil {
+	if err := client.notificationCenter.UpdateNotificationCenterPolicy(context.Background(), input); err != nil {
 		return fmt.Errorf("[ERROR] Failed to update notification center policy %s: %s", resourceData.Id(), err)
 	}
 	return nil

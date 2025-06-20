@@ -54,7 +54,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			ncWrapper := resourceObject.(*commons.NotificationCenterWrapper)
 			nc := ncWrapper.GetNotificationCenter()
-			if err := resourceData.Set(string(Description), nc.Name); err != nil {
+			if err := resourceData.Set(string(Description), nc.Description); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Description), err)
 			}
 			return nil
@@ -88,7 +88,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			ncWrapper := resourceObject.(*commons.NotificationCenterWrapper)
 			nc := ncWrapper.GetNotificationCenter()
-			if err := resourceData.Set(string(PrivacyLevel), nc.Name); err != nil {
+			if err := resourceData.Set(string(PrivacyLevel), nc.PrivacyLevel); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PrivacyLevel), err)
 			}
 			return nil
@@ -101,12 +101,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+		/*func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			ncWrapper := resourceObject.(*commons.NotificationCenterWrapper)
 			nc := ncWrapper.GetNotificationCenter()
 			if v, ok := resourceData.GetOk(string(PrivacyLevel)); ok {
 				nc.SetPrivacyLevel(spotinst.String(v.(string)))
 			}
+			return nil
+		},
+		nil,*/
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
 		},
 		nil,
@@ -127,7 +132,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				value = nc.IsActive
 			}
 			if value != nil {
-				if err := resourceData.Set(string(IsActive), spotinst.BoolValue(value)); err != nil {
+				if err := resourceData.Set(string(IsActive), nc.IsActive); err != nil {
 					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(IsActive), err)
 				}
 			}
@@ -459,7 +464,7 @@ func expandSubscriptions(data interface{}) ([]*notificationcenter.Subscriptions,
 		if v, ok := attr[string(Endpoint)].(string); ok && v != "" {
 			sub.SetEndpoint(spotinst.String(v))
 		}
-		if v, ok := attr[string(Endpoint)].(string); ok && v != "" {
+		if v, ok := attr[string(SubscriptionType)].(string); ok && v != "" {
 			sub.SetType(spotinst.String(v))
 		}
 
@@ -474,7 +479,7 @@ func expandComputePolicyConfig(data interface{}) (*notificationcenter.ComputePol
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(Events)].(string); ok {
+			if v, ok := m[string(Events)]; ok {
 				events, err := expandEvents(v)
 				if err != nil {
 					return nil, err
@@ -485,7 +490,7 @@ func expandComputePolicyConfig(data interface{}) (*notificationcenter.ComputePol
 					computePolicyConfig.SetEvents(nil)
 				}
 			}
-			if v, ok := m[string(ResourceIds)].(string); ok {
+			if v, ok := m[string(ResourceIds)]; ok {
 				resourceIds, err := expandNotificationList(v)
 				if err != nil {
 					return nil, err
@@ -496,7 +501,7 @@ func expandComputePolicyConfig(data interface{}) (*notificationcenter.ComputePol
 					computePolicyConfig.SetResourceIds(nil)
 				}
 			}
-			if v, ok := m[string(DynamicRules)].(string); ok {
+			if v, ok := m[string(DynamicRules)]; ok {
 				dynamicRules, err := expandDynamicRules(v)
 				if err != nil {
 					return nil, err

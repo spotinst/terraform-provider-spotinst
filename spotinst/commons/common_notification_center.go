@@ -7,9 +7,7 @@ import (
 	"log"
 )
 
-const (
-	NotificationCenterResourceName ResourceName = "spotinst_notification_center"
-)
+const NotificationCenterResourceName ResourceName = "spotinst_notification_center"
 
 var NotificationCenterResource *NotificationCenterTerraformResource
 
@@ -39,12 +37,15 @@ func (res *NotificationCenterTerraformResource) OnRead(
 		return fmt.Errorf("resource fields are nil or empty, cannot read")
 	}
 
+	notificationWrapper := NewNotificationCenterWrapper()
+	notificationWrapper.SetNotificationCenter(notificationCenter)
+
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
 			continue
 		}
 		log.Printf(string(ResourceFieldOnRead), field.resourceAffinity, field.fieldNameStr)
-		if err := field.onRead(notificationCenter, resourceData, meta); err != nil {
+		if err := field.onRead(notificationWrapper, resourceData, meta); err != nil {
 			return err
 		}
 	}
@@ -57,7 +58,7 @@ func (res *NotificationCenterTerraformResource) OnCreate(resourceData *schema.Re
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
 	}
 
-	nc := NewNotificationCenter()
+	nc := NewNotificationCenterWrapper()
 	for _, field := range res.fields.fieldsMap {
 		if field.onCreate == nil {
 			continue
@@ -76,7 +77,7 @@ func (res *NotificationCenterTerraformResource) OnUpdate(resourceData *schema.Re
 		return false, nil, fmt.Errorf("resource fields are nil or empty, cannot update")
 	}
 
-	nc := NewNotificationCenter()
+	nc := NewNotificationCenterWrapper()
 	hasChanged := false
 	for _, field := range res.fields.fieldsMap {
 		if field.onUpdate == nil {
@@ -93,7 +94,7 @@ func (res *NotificationCenterTerraformResource) OnUpdate(resourceData *schema.Re
 	return hasChanged, nc.GetNotificationCenter(), nil
 }
 
-func NewNotificationCenter() *NotificationCenterWrapper {
+func NewNotificationCenterWrapper() *NotificationCenterWrapper {
 	return &NotificationCenterWrapper{
 		notificationCenter: &notificationcenter.NotificationCenter{},
 	}
