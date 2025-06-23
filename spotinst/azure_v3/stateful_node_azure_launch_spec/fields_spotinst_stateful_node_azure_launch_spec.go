@@ -695,6 +695,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(SecureBootEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
+						Default:  nil,
 					},
 					string(SecurityType): {
 						Type:     schema.TypeString,
@@ -703,14 +704,17 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(VTpmEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
+						Default:  nil,
 					},
 					string(EncryptionAtHost): {
 						Type:     schema.TypeBool,
 						Optional: true,
+						Default:  nil,
 					},
 					string(ConfidentialOsDiskEncryption): {
 						Type:     schema.TypeBool,
 						Optional: true,
+						Default:  nil,
 					},
 				},
 			},
@@ -732,24 +736,19 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
-			var value *azure.Security = nil
-
 			if v, ok := resourceData.GetOk(string(Security)); ok {
 				if security, err := expandSecurity(v); err != nil {
 					return err
-				} else {
-					value = security
+				} else if security != nil {
+					st.Compute.LaunchSpecification.SetSecurity(security)
 				}
 			}
-			st.Compute.LaunchSpecification.SetSecurity(value)
-
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			stWrapper := resourceObject.(*commons.StatefulNodeAzureV3Wrapper)
 			st := stWrapper.GetStatefulNode()
 			var value *azure.Security = nil
-
 			if v, ok := resourceData.GetOk(string(Security)); ok {
 				if security, err := expandSecurity(v); err != nil {
 					return err
@@ -1002,26 +1001,45 @@ func expandSecurity(data interface{}) (*azure.Security, error) {
 		if list[0] != nil {
 			m := list[0].(map[string]interface{})
 
-			if v, ok := m[string(SecureBootEnabled)].(bool); ok {
-				security.SetSecureBootEnabled(spotinst.Bool(v))
+			if v, exists := m[string(SecureBootEnabled)]; exists && v != nil {
+				if b, ok := v.(bool); ok {
+					security.SetSecureBootEnabled(spotinst.Bool(b))
+				}
+			}
+
+			if v, exists := m[string(EncryptionAtHost)]; exists && v != nil {
+				if b, ok := v.(bool); ok {
+					security.SetEncryptionAtHost(spotinst.Bool(b))
+				}
+			}
+
+			if v, exists := m[string(ConfidentialOsDiskEncryption)]; exists && v != nil {
+				if b, ok := v.(bool); ok {
+					security.SetConfidentialOsDiskEncryption(spotinst.Bool(b))
+				}
 			}
 
 			if v, ok := m[string(SecurityType)].(string); ok && v != "" {
 				security.SetSecurityType(spotinst.String(v))
 			}
 
-			if v, ok := m[string(VTpmEnabled)].(bool); ok {
-				security.SetVTpmEnabled(spotinst.Bool(v))
+			if v, exists := m[string(VTpmEnabled)]; exists && v != nil {
+				if b, ok := v.(bool); ok {
+					security.SetVTpmEnabled(spotinst.Bool(b))
+				}
 			}
 
-			if v, ok := m[string(EncryptionAtHost)].(bool); ok {
-				security.SetEncryptionAtHost(spotinst.Bool(v))
+			if v, exists := m[string(EncryptionAtHost)]; exists && v != nil {
+				if b, ok := v.(bool); ok {
+					security.SetEncryptionAtHost(spotinst.Bool(b))
+				}
 			}
 
-			if v, ok := m[string(ConfidentialOsDiskEncryption)].(bool); ok {
-				security.SetConfidentialOsDiskEncryption(spotinst.Bool(v))
+			if v, exists := m[string(ConfidentialOsDiskEncryption)]; exists && v != nil {
+				if b, ok := v.(bool); ok {
+					security.SetConfidentialOsDiskEncryption(spotinst.Bool(b))
+				}
 			}
-
 		}
 
 		return security, nil
