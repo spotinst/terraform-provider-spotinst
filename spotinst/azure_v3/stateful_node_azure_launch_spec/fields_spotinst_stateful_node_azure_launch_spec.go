@@ -3,7 +3,6 @@ package stateful_node_azure_launch_spec
 import (
 	"encoding/base64"
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/spotinst/spotinst-sdk-go/service/stateful/providers/azure"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
@@ -689,13 +688,14 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		&schema.Schema{
 			Type:     schema.TypeList,
 			Optional: true,
+			Computed: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(SecureBootEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						Default:  nil,
+						Computed: true,
 					},
 					string(SecurityType): {
 						Type:     schema.TypeString,
@@ -704,17 +704,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(VTpmEnabled): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						Default:  nil,
+						Computed: true,
 					},
 					string(EncryptionAtHost): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						Default:  nil,
+						Computed: true,
 					},
 					string(ConfidentialOsDiskEncryption): {
-						Type:     schema.TypeBool,
+						Type:     schema.TypeString,
 						Optional: true,
-						Default:  nil,
 					},
 				},
 			},
@@ -988,8 +987,20 @@ func flattenSecurity(secure *azure.Security) interface{} {
 	security[string(SecureBootEnabled)] = spotinst.BoolValue(secure.SecureBootEnabled)
 	security[string(SecurityType)] = spotinst.StringValue(secure.SecurityType)
 	security[string(VTpmEnabled)] = spotinst.BoolValue(secure.VTpmEnabled)
-	security[string(EncryptionAtHost)] = spotinst.BoolValue(secure.EncryptionAtHost)
-	security[string(ConfidentialOsDiskEncryption)] = spotinst.BoolValue(secure.ConfidentialOsDiskEncryption)
+
+	if v := secure.EncryptionAtHost; v != nil {
+		security[string(EncryptionAtHost)] = spotinst.BoolValue(v)
+	}
+
+	if secure.ConfidentialOsDiskEncryption != nil {
+		if *secure.ConfidentialOsDiskEncryption == true {
+			b := "true"
+			security[string(ConfidentialOsDiskEncryption)] = b
+		} else {
+			b := "false"
+			security[string(ConfidentialOsDiskEncryption)] = b
+		}
+	}
 
 	return []interface{}{security}
 }
@@ -1013,9 +1024,11 @@ func expandSecurity(data interface{}) (*azure.Security, error) {
 				}
 			}
 
-			if v, exists := m[string(ConfidentialOsDiskEncryption)]; exists && v != nil {
-				if b, ok := v.(bool); ok {
-					security.SetConfidentialOsDiskEncryption(spotinst.Bool(b))
+			if v, ok := m[string(ConfidentialOsDiskEncryption)].(string); ok && v != "" {
+				if v == "true" {
+					security.SetConfidentialOsDiskEncryption(spotinst.Bool(true))
+				} else if v == "false" {
+					security.SetConfidentialOsDiskEncryption(spotinst.Bool(false))
 				}
 			}
 
@@ -1026,18 +1039,6 @@ func expandSecurity(data interface{}) (*azure.Security, error) {
 			if v, exists := m[string(VTpmEnabled)]; exists && v != nil {
 				if b, ok := v.(bool); ok {
 					security.SetVTpmEnabled(spotinst.Bool(b))
-				}
-			}
-
-			if v, exists := m[string(EncryptionAtHost)]; exists && v != nil {
-				if b, ok := v.(bool); ok {
-					security.SetEncryptionAtHost(spotinst.Bool(b))
-				}
-			}
-
-			if v, exists := m[string(ConfidentialOsDiskEncryption)]; exists && v != nil {
-				if b, ok := v.(bool); ok {
-					security.SetConfidentialOsDiskEncryption(spotinst.Bool(b))
 				}
 			}
 		}
