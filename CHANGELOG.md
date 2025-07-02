@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.221.0 (Jul, 02 2025)
+ENHANCEMENTS:
+* resource/spotinst_elastigroup_gcp: Added `backend_balancing` object in `backend_services`.
+
 ##1.220.3 (Jun 23, 2025)
 BUG FIX:
 * resource/spotinst_stateful_node_azure: Fixed `security` object accept null and ignore the object when not configured.

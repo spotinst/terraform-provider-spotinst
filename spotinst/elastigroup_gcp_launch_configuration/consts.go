@@ -24,6 +24,10 @@ const (
 	Scheme          commons.FieldName = "scheme"
 	NamedPorts      commons.FieldName = "named_ports"
 
+	BackendBalancing     commons.FieldName = "backend_balancing"
+	BackendBalancingMode commons.FieldName = "backend_balancing_mode"
+	MaxRatePerInstance   commons.FieldName = "max_rate_per_instance"
+
 	Ports              commons.FieldName = "ports"
 	ServiceName        commons.FieldName = "service_name"
 	ServiceAccount     commons.FieldName = "service_account"
