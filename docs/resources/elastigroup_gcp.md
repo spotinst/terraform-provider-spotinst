@@ -54,6 +54,10 @@ resource "spotinst_elastigroup_gcp" "example" {
         name = "port-name"
         ports = [8000, 6000]
       }
+     backend_balancing {
+        backend_balancing_mode = "RATE"
+        max_rate_per_instance = 500
+     }
    }
 
   disks {
@@ -203,6 +207,9 @@ Usage:
     * `named_ports` - (Optional) Describes a named port and a list of ports.
         * `name` - (Required) The name of the port.
         * `ports` - (Required) A list of ports.
+    * `backend_balancing` - (Optional) Configure how traffic is distributed across instance groups.
+        * `backend_balancing_mode` - (Optional) The backend balancing mode. Valid values: `RATE`, `UTILIZATION`.
+        * `max_rate_per_instance` - (Optional) If the backendBalancingMode is set to RATE, this field is required.
 
 Usage:
 
