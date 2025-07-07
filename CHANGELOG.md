@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.222.0 (Jul, 07 2025)
+FEATURES:
+* **New Resource:** added new resource `resource/spotinst_notification_center` to support notification center service by creating, updating the policies.
+
 ## 1.221.0 (Jul, 02 2025)
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_gcp: Added `backend_balancing` object in `backend_services`.

@@ -19,6 +19,7 @@ import (
 	"github.com/spotinst/spotinst-sdk-go/service/healthcheck"
 	"github.com/spotinst/spotinst-sdk-go/service/managedinstance"
 	"github.com/spotinst/spotinst-sdk-go/service/mrscaler"
+	"github.com/spotinst/spotinst-sdk-go/service/notificationcenter"
 	"github.com/spotinst/spotinst-sdk-go/service/ocean"
 	"github.com/spotinst/spotinst-sdk-go/service/stateful"
 	"github.com/spotinst/spotinst-sdk-go/service/subscription"
@@ -45,17 +46,18 @@ type Config struct {
 }
 
 type Client struct {
-	elastigroup     elastigroup.Service
-	healthCheck     healthcheck.Service
-	subscription    subscription.Service
-	mrscaler        mrscaler.Service
-	ocean           ocean.Service
-	managedInstance managedinstance.Service
-	dataIntegration dataintegration.Service
-	statefulNode    stateful.Service
-	organization    organization.Service
-	account         account.Service
-	oceancd         oceancd.Service
+	elastigroup        elastigroup.Service
+	healthCheck        healthcheck.Service
+	subscription       subscription.Service
+	mrscaler           mrscaler.Service
+	ocean              ocean.Service
+	managedInstance    managedinstance.Service
+	dataIntegration    dataintegration.Service
+	statefulNode       stateful.Service
+	organization       organization.Service
+	account            account.Service
+	oceancd            oceancd.Service
+	notificationCenter notificationcenter.Service
 }
 
 // Client configures and returns a fully initialized Spotinst client.
@@ -70,17 +72,18 @@ func (c *Config) Client() (*Client, diag.Diagnostics) {
 
 	// Create a new client.
 	client := &Client{
-		elastigroup:     elastigroup.New(sess),
-		healthCheck:     healthcheck.New(sess),
-		subscription:    subscription.New(sess),
-		mrscaler:        mrscaler.New(sess),
-		ocean:           ocean.New(sess),
-		managedInstance: managedinstance.New(sess),
-		dataIntegration: dataintegration.New(sess),
-		statefulNode:    stateful.New(sess),
-		organization:    organization.New(sess),
-		account:         account.New(sess),
-		oceancd:         oceancd.New(sess),
+		elastigroup:        elastigroup.New(sess),
+		healthCheck:        healthcheck.New(sess),
+		subscription:       subscription.New(sess),
+		mrscaler:           mrscaler.New(sess),
+		ocean:              ocean.New(sess),
+		managedInstance:    managedinstance.New(sess),
+		dataIntegration:    dataintegration.New(sess),
+		statefulNode:       stateful.New(sess),
+		organization:       organization.New(sess),
+		account:            account.New(sess),
+		oceancd:            oceancd.New(sess),
+		notificationCenter: notificationcenter.New(sess),
 	}
 
 	stdlog.Println("[INFO] Spotinst client configured")
