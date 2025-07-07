@@ -62,6 +62,24 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+					string(BackendBalancing): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(BackendBalancingMode): {
+									Type:     schema.TypeString,
+									Optional: true,
+								},
+
+								string(MaxRatePerInstance): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -753,17 +771,28 @@ func expandServices(data interface{}) ([]*gcp.BackendService, error) {
 
 		if v, ok := attr[string(LocationType)].(string); ok && v != "" {
 			elem.SetLocationType(spotinst.String(v))
+		}
 
-			if v, ok := attr[string(NamedPorts)]; ok {
-				namedPorts, err := expandNamedPorts(v)
-				if err != nil {
-					return nil, err
-				}
-				if namedPorts != nil {
-					elem.SetNamedPorts(namedPorts)
-				}
+		if v, ok := attr[string(NamedPorts)]; ok {
+			namedPorts, err := expandNamedPorts(v)
+			if err != nil {
+				return nil, err
+			}
+			if namedPorts != nil {
+				elem.SetNamedPorts(namedPorts)
 			}
 		}
+
+		if v, ok := attr[string(BackendBalancing)]; ok {
+			backendBalancing, err := expandBackendBalancing(v)
+			if err != nil {
+				return nil, err
+			}
+			if backendBalancing != nil {
+				elem.SetBackendBalancing(backendBalancing)
+			}
+		}
+
 		out = append(out, elem)
 	}
 	return out, nil
@@ -794,6 +823,25 @@ func expandNamedPorts(data interface{}) (*gcp.NamedPorts, error) {
 		}
 	}
 	return namedPorts, nil
+}
+
+func expandBackendBalancing(data interface{}) (*gcp.BackendBalancing, error) {
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return nil, nil
+	}
+	m := list[0].(map[string]interface{})
+	backendBalancing := &gcp.BackendBalancing{}
+
+	if v, ok := m[string(BackendBalancingMode)].(string); ok && v != "" {
+		backendBalancing.SetBackendBalancingMode(spotinst.String(v))
+	}
+
+	if v, ok := m[string(MaxRatePerInstance)].(int); ok && v > 0 {
+		backendBalancing.SetMaxRatePerInstance(spotinst.Int(v))
+	}
+
+	return backendBalancing, nil
 }
 
 func expandShieldedInstanceConfig(data interface{}) (*gcp.ShieldedInstanceConfig, error) {
