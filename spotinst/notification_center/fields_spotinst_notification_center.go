@@ -15,7 +15,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		Name,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Required: true,
+			Optional: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			ncWrapper := resourceObject.(*commons.NotificationCenterWrapper)
@@ -83,7 +83,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		PrivacyLevel,
 		&schema.Schema{
 			Type:     schema.TypeString,
-			Optional: true,
+			Required: true,
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			ncWrapper := resourceObject.(*commons.NotificationCenterWrapper)
@@ -101,16 +101,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			}
 			return nil
 		},
-		/*func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
-			ncWrapper := resourceObject.(*commons.NotificationCenterWrapper)
-			nc := ncWrapper.GetNotificationCenter()
-			if v, ok := resourceData.GetOk(string(PrivacyLevel)); ok {
-				nc.SetPrivacyLevel(spotinst.String(v.(string)))
-			}
-			return nil
-		},
-		nil,*/
-
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			return nil
 		},
@@ -166,7 +156,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.NotificationCenter,
 		RegisteredUsers,
 		&schema.Schema{
-			Type:     schema.TypeList,
+			Type:     schema.TypeSet,
 			Optional: true,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
@@ -192,7 +182,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				result = flattenRegisteredUsers(nc.RegisteredUsers)
 			}
 
-			if len(result) > 0 {
+			if result != nil {
 				if err := resourceData.Set(string(RegisteredUsers), result); err != nil {
 					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RegisteredUsers), err)
 				}
@@ -217,7 +207,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			ncWrapper := resourceObject.(*commons.NotificationCenterWrapper)
 			nc := ncWrapper.GetNotificationCenter()
 			var value []*notificationcenter.RegisteredUsers = nil
-			if v, ok := resourceData.GetOkExists(string(RegisteredUsers)); ok {
+			if v, ok := resourceData.GetOk(string(RegisteredUsers)); ok {
 				if registeredUsers, err := expandRegisteredUsers(v); err != nil {
 					return err
 				} else {
@@ -300,13 +290,13 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		ComputePolicyConfig,
 		&schema.Schema{
 			Type:     schema.TypeList,
-			Optional: true,
+			Required: true,
 			MaxItems: 1,
 			Elem: &schema.Resource{
 				Schema: map[string]*schema.Schema{
 					string(Events): {
 						Type:     schema.TypeList,
-						Optional: true,
+						Required: true,
 						Elem: &schema.Resource{
 							Schema: map[string]*schema.Schema{
 								string(Event): {
@@ -412,7 +402,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 }
 
 func expandRegisteredUsers(data interface{}) ([]*notificationcenter.RegisteredUsers, error) {
-	list := data.([]interface{})
+	list := data.(*schema.Set).List()
 	users := make([]*notificationcenter.RegisteredUsers, 0, len(list))
 	for _, user := range list {
 		attr, ok := user.(map[string]interface{})
