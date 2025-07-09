@@ -120,7 +120,11 @@ func TestAccSpotinstNotificationCenter(t *testing.T) {
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.#", "1"),
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.0.event", "Stateful recycle finished"),
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.0.event_type", "INFO"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.should_include_all_resources", "true"),
+					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.#", "1"),
+					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.filter_conditions#", "1"),
+					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.filter_conditions.0.expression", "DO-NOT-DELETE"),
+					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.filter_conditions.0.identifier", "resource_name"),
+					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.filter_conditions.0.operator", "contains"),
 				),
 			},
 		},
@@ -178,7 +182,13 @@ resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
 	  event="Stateful recycle finished"
 	  event_type="INFO"
 	}
-	should_include_all_resources=true
+	dynamic_rules {
+		filter_conditions {
+			expression="DO-NOT-DELETE"
+			identifier="resource_name"
+			operator="contains"
+		}
+	}
   }
 }
 `
