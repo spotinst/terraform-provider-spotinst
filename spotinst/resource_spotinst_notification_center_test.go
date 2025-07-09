@@ -130,7 +130,6 @@ func TestAccSpotinstNotificationCenter(t *testing.T) {
 const testNotificationCenter_Create = `
 resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
   provider = "aws"
-  policy_id="%v"
   name="Notification-center"
   description="Testing of notification center policy"
   is_active=true
@@ -162,7 +161,6 @@ resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
 const testNotificationCenter_Update = `
 resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
   provider = "aws"
-  policy_id="%v"
   name="Notification-center"
   description="Update Testing of notification center policy"
   is_active=true

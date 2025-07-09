@@ -909,6 +909,9 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  strategy {
   spot_percentage = 70
   draining_timeout= 360
+  orientation {
+	availability_vs_cost= "balanced"
+  }
 }
 
 %v
@@ -930,6 +933,9 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  strategy {
   spot_percentage = 30
   draining_timeout= 420
+  orientation {
+	availability_vs_cost= "cheapest"
+  }
 }
 %v
 }
