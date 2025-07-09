@@ -803,8 +803,8 @@ const testImageStatefulNodeAzureV3Config_Update = `
 image {
 	marketplace_image {
 		publisher = "Canonical"
-		offer = "UbuntuServer"
-		sku = "18.04-LTS"
+		offer = "ubuntu-24_04-lts"
+		sku = "server"
 		version = "latest"
 	}
 }
