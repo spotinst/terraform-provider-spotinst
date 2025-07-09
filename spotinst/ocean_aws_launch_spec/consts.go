@@ -94,6 +94,8 @@ const (
 	DrainingTimeout          commons.FieldName = "draining_timeout"
 	UtilizeCommitments       commons.FieldName = "utilize_commitments"
 	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
+	Orientation              commons.FieldName = "orientation"
+	AvailabilityVsCost       commons.FieldName = "availability_vs_cost"
 )
 
 const (

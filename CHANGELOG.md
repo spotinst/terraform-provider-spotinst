@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.223.0 (Jul 09, 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added `orientation` to support the approach that Ocean takes while launching nodes.
+
 ## 1.222.0 (Jul, 07 2025)
 FEATURES:
 * **New Resource:** added new resource `resource/spotinst_notification_center` to support notification center service by creating, updating the policies.
@@ -8,19 +12,19 @@ FEATURES:
 ENHANCEMENTS:
 * resource/spotinst_elastigroup_gcp: Added `backend_balancing` object in `backend_services`.
 
-##1.220.4 (Jun 26, 2025)
+## 1.220.4 (Jun 26, 2025)
 BUG FIX:
 * resource/spotinst_stateful_node_azure: Fixed `confidential_os_disk_encryption` field to accept null instead of defaulting to false in `security` object.
 
-##1.220.3 (Jun 23, 2025)
+## 1.220.3 (Jun 23, 2025)
 BUG FIX:
 * resource/spotinst_stateful_node_azure: Fixed `security` object accept null and ignore the object when not configured.
 
-##1.220.2 (May 27, 2025)
+## 1.220.2 (May 27, 2025)
 BUG FIX:
 * resource/spotinst_stateful_node_azure: Removed `should_persist_vm` field from `persistence` object.
 
-##1.220.1 (May 27, 2025)
+## 1.220.1 (May 27, 2025)
 BUG FIX:
 * resource/spotinst_stateful_node_azure: Removed `should_persist_vm` field from statefulnode configuration.
 

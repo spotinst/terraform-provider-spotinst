@@ -873,6 +873,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "70"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "360"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.orientation.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.orientation.0.availability_vs_cost", "balanced"),
 				),
 			},
 			{
@@ -885,6 +887,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.spot_percentage", "30"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "420"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.orientation.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.orientation.0.availability_vs_cost", "cheapest"),
 				),
 			},
 		},
