@@ -65,7 +65,7 @@ func createNotificationCenterTerraform(tfResource string, resourceName string) s
 }
 
 // region Subscription: Http
-func TestAccSpotinstNotificationCenter_DynamicRules(t *testing.T) {
+func TestAccSpotinstNotificationCenter(t *testing.T) {
 	notificationcenterName := "notification-center"
 	ncResourceName := createNotificationCenterResourceName(notificationcenterName)
 
