@@ -80,7 +80,7 @@ func TestAccSpotinstNotificationCenter(t *testing.T) {
 				Config: createNotificationCenterTerraform(testNotificationCenter_Create, notificationcenterName),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckNotificationCenterExists(&notificationcenter, ncResourceName),
-					resource.TestCheckResourceAttr(ncResourceName, "name", "Notification-center"),
+					resource.TestCheckResourceAttr(ncResourceName, "name", "Notification-center-terraform"),
 					resource.TestCheckResourceAttr(ncResourceName, "description", "Testing of notification center policy"),
 					resource.TestCheckResourceAttr(ncResourceName, "is_active", "true"),
 					resource.TestCheckResourceAttr(ncResourceName, "privacy_level", "public"),
@@ -95,17 +95,13 @@ func TestAccSpotinstNotificationCenter(t *testing.T) {
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.#", "1"),
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.0.event", "Maximum capacity reached"),
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.0.event_type", "WARN"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.#", "1"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions#", "1"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions.0.expression", "DO-NOT-DELETE"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions.0.identifier", "resource_name"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions.0.operator", "contains"),
+					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.should_include_all_resources", "true"),
 				),
 			},
 			{
 				Config: createNotificationCenterTerraform(testNotificationCenter_Update, notificationcenterName),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(ncResourceName, "name", "Notification-center"),
+					resource.TestCheckResourceAttr(ncResourceName, "name", "Notification-center-terraform-update"),
 					resource.TestCheckResourceAttr(ncResourceName, "description", "Update Testing of notification center policy"),
 					resource.TestCheckResourceAttr(ncResourceName, "is_active", "true"),
 					resource.TestCheckResourceAttr(ncResourceName, "privacy_level", "public"),
@@ -120,11 +116,7 @@ func TestAccSpotinstNotificationCenter(t *testing.T) {
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.#", "1"),
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.0.event", "Stateful recycle finished"),
 					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.events.0.event_type", "INFO"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.#", "1"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions#", "1"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions.0.expression", "DO-NOT-DELETE"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions.0.identifier", "resource_name"),
-					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.dynamic_rules.0.filter_conditions.0.operator", "contains"),
+					resource.TestCheckResourceAttr(ncResourceName, "compute_policy_config.0.should_include_all_resources", "true"),
 				),
 			},
 		},
@@ -134,7 +126,7 @@ func TestAccSpotinstNotificationCenter(t *testing.T) {
 const testNotificationCenter_Create = `
 resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
   provider = "aws"
-  name="Notification-center"
+  name="Notification-center-terraform"
   description="Testing of notification center policy"
   is_active=true
   privacy_level="public"
@@ -151,13 +143,7 @@ resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
 	  event="Maximum capacity reached"
 	  event_type="WARN"
 	}
-	dynamic_rules {
-		filter_conditions {
-			expression="DO-NOT-DELETE"
-			identifier="resource_name"
-			operator="contains"
-		}
-	}
+	should_include_all_resources = true
   }
 }
 `
@@ -165,7 +151,7 @@ resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
 const testNotificationCenter_Update = `
 resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
   provider = "aws"
-  name="Notification-center"
+  name="Notification-center-terraform-update"
   description="Update Testing of notification center policy"
   is_active=true
   privacy_level="public"
@@ -182,13 +168,7 @@ resource "` + string(commons.NotificationCenterResourceName) + `" "%v" {
 	  event="Stateful recycle finished"
 	  event_type="INFO"
 	}
-	dynamic_rules {
-		filter_conditions {
-			expression="DO-NOT-DELETE"
-			identifier="resource_name"
-			operator="contains"
-		}
-	}
+	should_include_all_resources = true
   }
 }
 `
