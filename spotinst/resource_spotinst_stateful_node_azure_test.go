@@ -760,9 +760,9 @@ func TestAccSpotinstStatefulNodeAzureV3_Image(t *testing.T) {
 					testCheckStatefulNodeAzureV3Attributes(&node, statefulNodeName),
 					resource.TestCheckResourceAttr(resourceName, "image.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.offer", "UbuntuServer"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.offer", "ubuntu-24_04-lts"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.publisher", "Canonical"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.sku", "18.04-LTS"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.sku", "server"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.version", "latest"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.custom_image.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.gallery.#", "0"),
@@ -776,9 +776,9 @@ func TestAccSpotinstStatefulNodeAzureV3_Image(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "image.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.offer", "UbuntuServer"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.offer", "ubuntu-24_04-lts"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.publisher", "Canonical"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.sku", "18.04-LTS"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.sku", "server"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace_image.0.version", "latest"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.custom_image.#", "0"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.gallery.#", "0"),
@@ -792,8 +792,8 @@ const testImageStatefulNodeAzureV3Config_Create = `
 image {
 	marketplace_image {
 		publisher = "Canonical"
-		offer = "UbuntuServer"
-		sku = "18.04-LTS"
+		offer = "ubuntu-24_04-lts"
+		sku = "server"
 		version = "latest"
 	}
 }

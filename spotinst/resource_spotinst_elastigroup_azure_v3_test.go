@@ -365,9 +365,9 @@ func TestAccSpotinstElastigroupAzureV3_Image(t *testing.T) {
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "image.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.offer", "UbuntuServer"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.offer", "ubuntu-24_04-lts"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.publisher", "Canonical"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.sku", "18.04-LTS"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.sku", "server"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.version", "latest"),
 				),
 			},
@@ -380,8 +380,8 @@ const testAzureV3ImageGroupConfig_Create = `
   image {
     marketplace {
       publisher = "Canonical"
-      offer = "UbuntuServer"
-      sku = "18.04-LTS"
+      offer = "ubuntu-24_04-lts"
+      sku = "server"
       version = "latest"
     }
   }
