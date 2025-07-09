@@ -1199,6 +1199,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Default:  true,
 					},
+					string(Orientation): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(AvailabilityVsCost): {
+									Type:     schema.TypeString,
+									Optional: true,
+									Default:  "balanced",
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -2709,6 +2723,17 @@ func expandStrategy(data interface{}) (*aws.LaunchSpecStrategy, error) {
 			if v, ok := m[string(UtilizeReservedInstances)].(bool); ok {
 				strategy.SetUtilizeReservedInstances(spotinst.Bool(v))
 			}
+			if v, ok := m[string(Orientation)]; ok {
+				orientation, err := expandOrientation(v)
+				if err != nil {
+					return nil, err
+				}
+				if orientation != nil {
+					strategy.SetOrientation(orientation)
+				} else {
+					strategy.SetOrientation(nil)
+				}
+			}
 		}
 		return strategy, nil
 	}
@@ -2735,6 +2760,9 @@ func flattenStrategy(strategy *aws.LaunchSpecStrategy) []interface{} {
 		}
 		if strategy.UtilizeReservedInstances != nil {
 			result[string(UtilizeReservedInstances)] = spotinst.BoolValue(strategy.UtilizeReservedInstances)
+		}
+		if strategy.Orientation != nil {
+			result[string(Orientation)] = flattenOrientation(strategy.Orientation)
 		}
 		if len(result) > 0 {
 			out = append(out, result)
@@ -3392,4 +3420,31 @@ func flattenStartupTaints(taints []*aws.StartupTaints) []interface{} {
 	}
 
 	return result
+}
+
+func flattenOrientation(orientation *aws.LaunchSpecOrientation) []interface{} {
+	var out []interface{}
+	if orientation != nil {
+		result := make(map[string]interface{})
+		if orientation.AvailabilityVsCost != nil {
+			result[string(AvailabilityVsCost)] = spotinst.StringValue(orientation.AvailabilityVsCost)
+		}
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
+}
+func expandOrientation(data interface{}) (*aws.LaunchSpecOrientation, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		orientation := &aws.LaunchSpecOrientation{}
+		if list != nil && list[0] != nil {
+			m := list[0].(map[string]interface{})
+			if v, ok := m[string(AvailabilityVsCost)].(string); ok {
+				orientation.SetAvailabilityVsCost(spotinst.String(v))
+			}
+		}
+		return orientation, nil
+	}
+	return nil, nil
 }

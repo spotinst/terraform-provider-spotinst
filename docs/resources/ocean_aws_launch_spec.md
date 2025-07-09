@@ -124,6 +124,9 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     draining_timeout = 300
     utilize_commitments= false
     utilize_reserved_instances= true
+    cluster_orientation {
+        availability_vs_cost = "balanced"
+    }
   }
   
   create_options {
@@ -255,6 +258,8 @@ The following arguments are supported:
     * `draining_timeout` - (Optional, >=300) The configurable amount of time that Ocean will wait for the draining process to complete before terminating an instance. If you have not defined a draining timeout, the default of 300 seconds will be used.
     * `utilize_commitments` - (Optional, Default: `false`) When set as ‘true’, if savings plans commitments have available capacity, Ocean will utilize them alongside RIs (if exist) to maximize cost efficiency. If the value is set as 'null', it will automatically be inherited from the cluster level.
     * `utilize_reserved_instances` - (Optional, Default: `true`) When set as ‘true’, if reserved instances exist, Ocean will utilize them before launching spot instances. If the value is set as 'null', it will automatically be inherited from the cluster level.
+    * `orientation` - (Optional) Vng orientation configuration.
+        * `availability_vs_cost` - (Optional, Default: `"balanced"`) Set this value to control the approach that Ocean takes while launching nodes. Valid values: `"costOriented"`, `"cheapest"`, `"balanced"`.
 * `create_options` - (Optional)
     * `initial_nodes` - (Optional) When set to an integer greater than 0, a corresponding amount of nodes will be launched from the created Virtual Node Group. The parameter is recommended in case the use_as_template_only (in spotinst_ocean_aws resource) is set to true during Ocean resource creation.
 * `delete_options` - (Optional)

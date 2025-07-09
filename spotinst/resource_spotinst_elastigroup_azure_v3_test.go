@@ -365,9 +365,9 @@ func TestAccSpotinstElastigroupAzureV3_Image(t *testing.T) {
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "image.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.offer", "UbuntuServer"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.offer", "ubuntu-24_04-lts"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.publisher", "Canonical"),
-					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.sku", "18.04-LTS"),
+					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.sku", "server"),
 					resource.TestCheckResourceAttr(resourceName, "image.0.marketplace.0.version", "latest"),
 				),
 			},
@@ -380,8 +380,8 @@ const testAzureV3ImageGroupConfig_Create = `
   image {
     marketplace {
       publisher = "Canonical"
-      offer = "UbuntuServer"
-      sku = "18.04-LTS"
+      offer = "ubuntu-24_04-lts"
+      sku = "server"
       version = "latest"
     }
   }
@@ -542,9 +542,9 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_a1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_ds2_v2"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_a1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_sizes.0", "standard_ds2_v2"),
 				),
 			},
 			{
@@ -558,7 +558,7 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 					testCheckElastigroupAzureV3Attributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_a1_v2"),
+					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.od_sizes.0", "standard_ds2_v2"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.min_cpu", "2"),
 					resource.TestCheckResourceAttr(resourceName, "vm_sizes.0.spot_size_attributes.0.max_cpu", "100"),
@@ -575,8 +575,8 @@ func TestAccSpotinstElastigroupAzureV3_VMSizes(t *testing.T) {
 const testAzureV3VMSizesGroupConfig_Create = `
 // --- VM SIZES --------------------------------------------
    vm_sizes{  
-     od_sizes = ["standard_a1_v2"]
-     spot_sizes = ["standard_a1_v2"]
+     od_sizes = ["standard_ds2_v2"]
+     spot_sizes = ["standard_ds2_v2"]
    }
 // ---------------------------------------------------------
 `
@@ -584,7 +584,7 @@ const testAzureV3VMSizesGroupConfig_Create = `
 const testAzureV3VMSizesGroupConfig_Update = `
 // --- VM SIZES --------------------------------
    vm_sizes{  
-     od_sizes = ["standard_a1_v2"]
+     od_sizes = ["standard_ds2_v2"]
      spot_size_attributes {
 		min_cpu = "2"
 		max_cpu = "100"
