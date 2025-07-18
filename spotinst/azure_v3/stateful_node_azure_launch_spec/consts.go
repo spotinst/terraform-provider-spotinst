@@ -24,6 +24,7 @@ const (
 	ManagedServiceIdentities commons.FieldName = "managed_service_identities"
 	Name                     commons.FieldName = "name"
 	ResourceGroupName        commons.FieldName = "resource_group_name"
+	SubscriptionID           commons.FieldName = "subscription_id"
 )
 
 // Proximity Placement Groups

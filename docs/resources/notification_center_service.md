@@ -83,13 +83,13 @@ The following arguments are supported:
 * `subscriptions` - (Optional) Subscriptions to the notification policy.
     * `endpoint` - (Optional) The endpoint of the subscription.
     * `subscription_type` - (Optional) Valid values: `"email"` `"webhook"` `"slack"` `"sns"`. The type of subscription.
-* `compute_policy_config` - (Required) Use only one of these parameters: a non-empty resourceIds, a non-empty dynamicRules, or shouldIncludeAllResources set to true.
+* `compute_policy_config` - (Required) Use only one of these parameters: a non-empty `resource_ids` or a non-empty `dynamic_rules` or `should_include_all_resources` set to true.
     * `events` - (Required) A list of events to subscribe to.
       * `event` - (Optional) The event name.
       * `event_type` - (Optional) Valid values: `"ERROR"` `"WARN"` `"INFO"`. The type of event.
-    * `should_include_all_resources` - (Optional) If true, all resources will be included in the policy.
-    * `resource_ids` - (Optional) Manually specified resource IDs to include in the policy. Must be resources related to the account. Use this parameter only if `should_include_all_resources` is false.
-    * `dynamic_rules` - (Optional) A list of dynamic rules to apply to the policy.
+    * `should_include_all_resources` - (Optional) If true, all resources will be included in the policy. Use this parameter only if `resource_ids` and `dynamic_rules` are not specified.
+    * `resource_ids` - (Optional) Manually specified resource IDs to include in the policy. Must be resources related to the account. Use this parameter only if `should_include_all_resources` is false and `dynamic_rules` is not specified.
+    * `dynamic_rules` - (Optional) A list of dynamic rules to apply to the policy. Use this parameter only if `should_include_all_resources` is false and `resource_ids` is not specified.
       * `filter_conditions` - (Optional) A list of filter conditions to apply to the dynamic rule.
         * `expression` - (Optional) The expression to filter resources.
         * `identifier` - (Optional) The identifier of the resource to filter. Valid values: `"resource_name"` `"resource_id"` `"region"` `"image"` `"tag"` `"load_balancer"`, `"availability_zones"`, `"security_groups"`.
