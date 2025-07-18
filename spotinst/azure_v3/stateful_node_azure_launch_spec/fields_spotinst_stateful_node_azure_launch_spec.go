@@ -226,6 +226,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeString,
 						Required: true,
 					},
+					string(SubscriptionID): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
 				},
 			},
 		},
@@ -810,6 +814,9 @@ func expandManagedServiceIdentities(data interface{}) ([]*azure.ManagedServiceId
 		if v, ok := attr[string(Name)].(string); ok && v != "" {
 			serviceId.SetName(spotinst.String(v))
 		}
+		if v, ok := attr[string(SubscriptionID)].(string); ok && v != "" {
+			serviceId.SetSubscriptionID(spotinst.String(v))
+		}
 		msis = append(msis, serviceId)
 	}
 	return msis, nil
@@ -821,6 +828,7 @@ func flattenManagedServiceIdentities(msis []*azure.ManagedServiceIdentity) []int
 		m := make(map[string]interface{})
 		m[string(ResourceGroupName)] = spotinst.StringValue(msi.ResourceGroupName)
 		m[string(Name)] = spotinst.StringValue(msi.Name)
+		m[string(SubscriptionID)] = spotinst.StringValue(msi.SubscriptionID)
 		result = append(result, m)
 	}
 	return result

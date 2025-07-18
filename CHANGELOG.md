@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.224.0 (Jul 18, 2025)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure: Added `subscription_id` field in `managed_service_identities` block.
+
 ## 1.223.0 (Jul 09, 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added `orientation` to support the approach that Ocean takes while launching nodes.
