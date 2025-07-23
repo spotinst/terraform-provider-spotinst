@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.224.1 (Jul 23, 2025)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed `autoscale_headroom` object to remove default of negative value to ignore the drift shown during plan.
+
 ## 1.224.0 (Jul 18, 2025)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure: Added `subscription_id` field in `managed_service_identities` block.
