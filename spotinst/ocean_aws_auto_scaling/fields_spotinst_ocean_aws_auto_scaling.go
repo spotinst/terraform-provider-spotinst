@@ -68,24 +68,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 								string(CPUPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									Default:  -1,
 								},
 
 								string(GPUPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									Default:  -1,
 								},
 								string(MemoryPerUnit): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									Default:  -1,
 								},
 
 								string(NumOfUnits): {
 									Type:     schema.TypeInt,
 									Optional: true,
-									Default:  -1,
 								},
 							},
 						},
