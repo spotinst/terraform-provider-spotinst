@@ -59,4 +59,9 @@ const (
 	LabelsForDetach        commons.FieldName = "labels"
 	KeyForDetach           commons.FieldName = "key"
 	ValueForDetach         commons.FieldName = "value"
+
+	AutoApplyDefinition           commons.FieldName = "auto_apply_definition"
+	AutoApplyDefinitionEnabled    commons.FieldName = "enabled"
+	AutoApplyDefinitionNamespaces commons.FieldName = "namespaces"
+	AutoApplyDefinitionLabels     commons.FieldName = "labels"
 )
