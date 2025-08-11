@@ -85,6 +85,7 @@ resource "spotinst_ocean_aws" "example" {
   ebs_optimized                                      = true
   associate_public_ip_address                        = true
   associate_ipv6_address                             = true
+  primary_ipv6                                       = true
   use_as_template_only                               = true
   health_check_unhealthy_duration_before_replacement = 60
   reserved_enis                                      = 1
@@ -209,6 +210,7 @@ The following arguments are supported:
 * `iam_instance_profile` - (Optional) The instance profile iam role.
 * `associate_public_ip_address` - (Optional, Default: `false`) Configure public IP address allocation.
 * `associate_ipv6_address` - (Optional, Default: `false`) Configure IPv6 address allocation.
+* `primary_ipv6` - (Optional) Enables assignment of a primary IPv6 address to the cluster. This feature is only available when `associate_ipv6_address` is explicitly set to true. Additionally, the cluster must have been initially created as an EKS cluster in IPv6 mode.
 * `root_volume_size` - (Optional) The size (in Gb) to allocate for the root volume. Minimum `20`.
 * `monitoring` - (Optional) Enable detailed monitoring for cluster. Flag will enable Cloud Watch detailed monitoring (one minute increments). Note: there are additional hourly costs for this service based on the region used.
 * `ebs_optimized` - (Optional) Enable EBS optimized for cluster. Flag will enable optimized capacity for high bandwidth connectivity to the EB service for non EBS optimized instance types. For instances that are EBS optimized this flag will be ignored.
