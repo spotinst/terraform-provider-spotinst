@@ -22,6 +22,7 @@ const (
 	ShouldTagVolumes                              commons.FieldName = "should_tag_volumes"
 	HealthCheckUnhealthyDurationBeforeReplacement commons.FieldName = "health_check_unhealthy_duration_before_replacement"
 	ReservedENIs                                  commons.FieldName = "reserved_enis"
+	PrimaryIPv6                                   commons.FieldName = "primary_ipv6"
 )
 
 const (

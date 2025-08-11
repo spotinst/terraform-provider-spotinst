@@ -1112,6 +1112,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[PrimaryIPv6] = commons.NewGenericField(
+		commons.OceanAWSLaunchConfiguration,
+		PrimaryIPv6,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var value *bool = nil
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil &&
+				cluster.Compute.LaunchSpecification.PrimaryIPv6 != nil {
+
+				value = cluster.Compute.LaunchSpecification.PrimaryIPv6
+			}
+
+			if err := resourceData.Set(string(PrimaryIPv6), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(PrimaryIPv6), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(PrimaryIPv6)); ok {
+				cluster.Compute.LaunchSpecification.SetPrimaryIPv6(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			if v, ok := resourceData.GetOkExists(string(PrimaryIPv6)); ok {
+				cluster.Compute.LaunchSpecification.SetPrimaryIPv6(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 func flattenResourceTagSpecification(resourceTagSpecification *aws.ResourceTagSpecification) []interface{} {

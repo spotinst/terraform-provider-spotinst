@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.225.0 (Aug 11, 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added `primary_ipv6` field to Enable assignment of a primary IPv6 address to the cluster.
+
 ## 1.224.1 (Jul 23, 2025)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed `autoscale_headroom` object to remove default of negative value to ignore the drift shown during plan.
