@@ -230,7 +230,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	name 				= "%v"
 	description 		= "created by Terraform"
 	product 			= "Linux/UNIX"
-	availability_zones = ["us-west-2b", "us-west-2c"]
+	availability_zones = ["us-west-2b:subnet-8ab89cc1", "us-west-2c:subnet-42f1e418"]
 	
 	// --- CAPACITY ------------
 	max_size 		  = 0
@@ -254,7 +254,7 @@ resource "` + string(commons.ElastigroupAWSResourceName) + `" "%v" {
 	name 							= "%v"
 	description  			= "created by Terraform"
 	product 						= "Linux/UNIX"
-	availability_zones = ["us-west-2a"]
+	availability_zones = ["us-west-2a:subnet-4333093a"]
 	
 	// --- CAPACITY ------------
 	max_size 		    = 0
