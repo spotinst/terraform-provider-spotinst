@@ -102,6 +102,15 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
       subnetwork_range_name = "gke-test-native-vpc-pods-123456-vng"
     }
   }
+  
+   filters {
+    exclude_families          =   ["n2"]
+    include_families          =   ["c2", "c3"]
+    min_memory_gib            =   8
+    max_memory_gib            =   16
+    min_vcpu                  =   2
+    max_vcpu                  =   16
+  }
 }
 ```
 ```
@@ -172,6 +181,13 @@ The following arguments are supported:
   * `alias_ip_ranges` - (Optional) use the imported node pool’s associated aliasIpRange to assign secondary IP addresses to the nodes. Cannot be changed after VNG creation.
     * `ip_cidr_range` - (Required) specify the IP address range in CIDR notation that can be used for the alias IP addresses associated with the imported node pool.
     * `subnetwork_range_name` - (Required) specify the IP address range for the subnet secondary IP range.
+* `filters` - (Optional) List of filters. The Instance types that match with all filters compose the Ocean's whitelist parameter. Cannot be configured if cluster's `instance_types` is configured.
+  * `exclude_families` - (Optional) Types belonging to a family from the ExcludeFamilies will not be available for scaling (asterisk wildcard is also supported). For example, C* will exclude instance types from these families: c5, c4, c4a, etc.
+  * `include_families` - (Optional) Types belonging to a family from the IncludeFamilies will be available for scaling (asterisk wildcard is also supported). For example, C* will include instance types from these families: c5, c4, c4a, etc.
+  * `max_memory_gib` - (Optional) Maximum amount of Memory (GiB).
+  * `max_vcpu` - (Optional) Maximum number of vcpus available.
+  * `min_memory_gib` - (Optional) Minimum amount of Memory (GiB).
+  * `min_vcpu` - (Optional) Minimum number of vcpus available.
 
 <a id="update-policy"></a>
 ## Update Policy

@@ -1239,6 +1239,100 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+
+	fieldsMap[Filters] = commons.NewGenericField(
+		commons.OceanGKELaunchSpec,
+		Filters,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(ExcludeFamilies): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(IncludeFamilies): {
+						Type:     schema.TypeSet,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+
+					string(MaxMemoryGiB): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MaxVcpu): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinMemoryGiB): {
+						Type:     schema.TypeFloat,
+						Optional: true,
+						Default:  -1,
+					},
+
+					string(MinVcpu): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+
+			if launchSpec != nil && launchSpec.Filters != nil {
+				result = flattenFilters(launchSpec.Filters)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(Filters), result); err != nil {
+					return fmt.Errorf(commons.FailureFieldReadPattern, string(Filters), err)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(Filters)); ok {
+				if filters, err := expandFilters(v, false); err != nil {
+					return err
+				} else {
+					launchSpec.SetFilters(filters)
+				}
+			}
+			return nil
+		},
+
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecGKEWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *gcp.Filters = nil
+
+			if v, ok := resourceData.GetOk(string(Filters)); ok {
+				if filters, err := expandFilters(v, true); err != nil {
+					return err
+				} else {
+					value = filters
+				}
+			}
+			launchSpec.SetFilters(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandTaints(data interface{}, taints []*gcp.Taint) ([]*gcp.Taint, error) {
@@ -1772,4 +1866,125 @@ func flattenLaunchSpecAliasIPRanges(aliasIPRanges []*gcp.LaunchSpecAliasIPRanges
 	}
 
 	return result
+}
+
+func flattenFilters(filters *gcp.Filters) []interface{} {
+	var out []interface{}
+
+	if filters != nil {
+		result := make(map[string]interface{})
+		value := spotinst.Int(-1)
+		result[string(MaxMemoryGiB)] = value
+		result[string(MinMemoryGiB)] = value
+		result[string(MaxVcpu)] = value
+		result[string(MinVcpu)] = value
+
+		if filters.MaxMemoryGiB != nil {
+			result[string(MaxMemoryGiB)] = spotinst.Float64Value(filters.MaxMemoryGiB)
+		}
+		if filters.MinMemoryGiB != nil {
+			result[string(MinMemoryGiB)] = spotinst.Float64Value(filters.MinMemoryGiB)
+		}
+		if filters.MaxVcpu != nil {
+			result[string(MaxVcpu)] = spotinst.IntValue(filters.MaxVcpu)
+		}
+		if filters.MinVcpu != nil {
+			result[string(MinVcpu)] = spotinst.IntValue(filters.MinVcpu)
+		}
+		if filters.ExcludeFamilies != nil {
+			result[string(ExcludeFamilies)] = filters.ExcludeFamilies
+		}
+		if filters.IncludeFamilies != nil {
+			result[string(IncludeFamilies)] = filters.IncludeFamilies
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+
+	return out
+}
+
+func expandFilters(data interface{}, nullify bool) (*gcp.Filters, error) {
+	filters := &gcp.Filters{}
+	list := data.([]interface{})
+	if list == nil || list[0] == nil {
+		return filters, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(ExcludeFamilies)]; ok {
+		excludeFamilies, err := expandFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if excludeFamilies != nil && len(excludeFamilies) > 0 {
+			filters.SetExcludeFamilies(excludeFamilies)
+		} else {
+			if nullify {
+				filters.SetExcludeFamilies(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(IncludeFamilies)]; ok {
+		includeFamilies, err := expandFiltersList(v)
+		if err != nil {
+			return nil, err
+		}
+		if includeFamilies != nil && len(includeFamilies) > 0 {
+			filters.SetIncludeFamilies(includeFamilies)
+		} else {
+			if nullify {
+				filters.SetIncludeFamilies(nil)
+			}
+		}
+	}
+
+	if v, ok := m[string(MaxMemoryGiB)].(float64); ok {
+		if v == -1 {
+			filters.SetMaxMemoryGiB(nil)
+		} else {
+			filters.SetMaxMemoryGiB(spotinst.Float64(v))
+		}
+	}
+
+	if v, ok := m[string(MaxVcpu)].(int); ok {
+		if v == -1 {
+			filters.SetMaxVcpu(nil)
+		} else {
+			filters.SetMaxVcpu(spotinst.Int(v))
+		}
+	}
+
+	if v, ok := m[string(MinMemoryGiB)].(float64); ok {
+		if v == -1 {
+			filters.SetMinMemoryGiB(nil)
+		} else {
+			filters.SetMinMemoryGiB(spotinst.Float64(v))
+		}
+	}
+
+	if v, ok := m[string(MinVcpu)].(int); ok {
+		if v == -1 {
+			filters.SetMinVcpu(nil)
+		} else {
+			filters.SetMinVcpu(spotinst.Int(v))
+		}
+	}
+
+	return filters, nil
+}
+
+func expandFiltersList(data interface{}) ([]string, error) {
+	list := data.(*schema.Set).List()
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if filterList, ok := v.(string); ok && filterList != "" {
+			result = append(result, filterList)
+		}
+	}
+	return result, nil
 }

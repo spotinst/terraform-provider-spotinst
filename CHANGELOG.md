@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.226.0 (Aug, 29 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: Added `filters` object to support filtering the instance types.
+
 ## 1.225.1 (Aug, 19 2025)
 BUG FIX:
 * resource/spotinst_elastigroup_aws: Fixed `availability_zones` object to accept multiple subnets of same zone in one block.
