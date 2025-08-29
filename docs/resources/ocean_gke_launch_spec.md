@@ -107,7 +107,7 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
     exclude_families          =   ["n2"]
     include_families          =   ["c2", "c3"]
     min_memory_gib            =   8
-    max_memory_gib            =   16
+    max_memory_gib            =   32
     min_vcpu                  =   2
     max_vcpu                  =   16
   }
