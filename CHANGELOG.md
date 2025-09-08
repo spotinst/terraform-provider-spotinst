@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.227.0 (Sept, 08 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_right_sizing_rule: Added support for `auto_apply_definition` object.
+
 ## 1.226.0 (Aug, 29 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: Added `filters` object to support filtering the instance types.

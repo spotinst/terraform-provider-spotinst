@@ -63,6 +63,16 @@ resource "spotinst_ocean_right_sizing_rule" "example" {
     memory_percentage = 0.50
   }
   
+  auto_apply_definition {
+    enabled = true
+    namespaces = ["kube-system", "spot-system"]
+
+    labels = {
+      "k8s-app" = "kube-proxy",
+      "app.kubernetes.io/name" = "metrics-server"
+    }
+   }
+  
 }
 ````
 ## Argument Reference
@@ -102,6 +112,10 @@ The following arguments are supported:
 * `recommendation_application_overhead_values` - Determines the Ocean Rightsizing rule recommendation application overhead values.
     * `cpu_percentage` - (Optional, Default: 0.1) .
     * `memory_percentage` - (Optional, Default: 0.1).
+* `auto_apply_definition` - (Optional) Ocean Rightsizing Rule Auto Apply Configuration.
+  * `enabled` - (Optional) Determines if auto apply is enabled.
+  * `namespaces` - (Optional) List of namespaces that match the auto-apply rule.
+  * `labels` - (Optional) A set of key-value label pairs used to automatically apply this rule to all workloads in the cluster that match these labels.
 
 <a id="attach_workloads"></a>
 ## Attach Workloads

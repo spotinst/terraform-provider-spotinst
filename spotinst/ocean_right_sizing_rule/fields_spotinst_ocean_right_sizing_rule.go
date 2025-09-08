@@ -680,6 +680,74 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[AutoApplyDefinition] = commons.NewGenericField(
+		commons.OceanRightSizingRule,
+		AutoApplyDefinition,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(AutoApplyDefinitionEnabled): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
+					string(AutoApplyDefinitionNamespaces): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+					string(AutoApplyDefinitionLabels): {
+						Type:     schema.TypeMap,
+						Optional: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var result []interface{} = nil
+			if rightSizingRule.AutoApplyDefinition != nil {
+				autoApplyDefinition := rightSizingRule.AutoApplyDefinition
+				result = flattenAutoApplyDefinition(autoApplyDefinition)
+			}
+			if len(result) > 0 {
+				if err := resourceData.Set(string(AutoApplyDefinition), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoApplyDefinition), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if v, ok := resourceData.GetOk(string(AutoApplyDefinition)); ok {
+				if autoApplyDefinition, err := expandAutoApplyDefinition(v); err != nil {
+					return err
+				} else {
+					rightSizingRule.SetAutoApplyDefinition(autoApplyDefinition)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var value *right_sizing.AutoApplyDefinition = nil
+			if v, ok := resourceData.GetOk(string(AutoApplyDefinition)); ok {
+				if autoApplyDefinition, err := expandAutoApplyDefinition(v); err != nil {
+					return err
+				} else {
+					value = autoApplyDefinition
+				}
+			}
+			rightSizingRule.SetAutoApplyDefinition(value)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func flattenRecommendationApplicationIntervals(recommendationApplicationIntervals []*right_sizing.RecommendationApplicationIntervals) []interface{} {
@@ -996,11 +1064,12 @@ func flattenRecommendationApplicationBoundaries(recommendationApplicationBoundar
 
 	if recommendationApplicationBoundaries != nil {
 		result := make(map[string]interface{})
-		/*value := spotinst.Float64(-1)
+		value := spotinst.Float64(-1)
+		value1 := spotinst.Int(-1)
 		result[string(CpuMin)] = value
 		result[string(CpuMax)] = value
-		result[string(MemoryMin)] = value
-		result[string(MemoryMax)] = value*/
+		result[string(MemoryMin)] = value1
+		result[string(MemoryMax)] = value1
 
 		if recommendationApplicationBoundaries.Cpu.Min != nil {
 			result[string(CpuMin)] = spotinst.Float64Value(recommendationApplicationBoundaries.Cpu.Min)
@@ -1136,4 +1205,81 @@ func flattenRecommendationApplicationHPA(recommendationApplicationHPA *right_siz
 		result[string(AllowHpaRecommendations)] = spotinst.BoolValue(recommendationApplicationHPA.AllowHPARecommendations)
 	}
 	return []interface{}{result}
+}
+
+func expandAutoApplyDefinition(data interface{}) (*right_sizing.AutoApplyDefinition, error) {
+	list, ok := data.([]interface{})
+	if !ok || len(list) == 0 || list[0] == nil {
+		return nil, nil
+	}
+	m, ok := list[0].(map[string]interface{})
+	if !ok {
+		return nil, nil
+	}
+
+	autoApplyDefinition := &right_sizing.AutoApplyDefinition{}
+
+	if v, ok := m[string(AutoApplyDefinitionEnabled)].(bool); ok {
+		autoApplyDefinition.SetEnabled(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(AutoApplyDefinitionNamespaces)]; ok {
+		namespaces, err := expandNamespacesList(v)
+		if err != nil {
+			return nil, err
+		}
+		if namespaces != nil && len(namespaces) > 0 {
+			autoApplyDefinition.SetNamespaces(namespaces)
+		} else {
+			autoApplyDefinition.SetNamespaces(nil)
+		}
+	}
+
+	if v, ok := m[string(AutoApplyDefinitionLabels)].(map[string]interface{}); ok && len(v) > 0 {
+		labels := make(map[string][]string)
+		for key, value := range v {
+			if strVal, ok := value.(string); ok {
+				labels[key] = []string{strVal}
+			}
+		}
+		autoApplyDefinition.SetLabels(&labels)
+	}
+
+	return autoApplyDefinition, nil
+}
+
+func flattenAutoApplyDefinition(autoApplyDefinition *right_sizing.AutoApplyDefinition) []interface{} {
+	result := make(map[string]interface{})
+
+	if autoApplyDefinition == nil {
+		return nil
+	}
+
+	if autoApplyDefinition.Enabled != nil {
+		result[string(AutoApplyDefinitionEnabled)] = spotinst.BoolValue(autoApplyDefinition.Enabled)
+	}
+	if autoApplyDefinition.Namespaces != nil && len(autoApplyDefinition.Namespaces) > 0 {
+		result[string(AutoApplyDefinitionNamespaces)] = autoApplyDefinition.Namespaces
+	}
+	if autoApplyDefinition.Labels != nil && len(*autoApplyDefinition.Labels) > 0 {
+		labels := make(map[string]interface{})
+		for k, v := range *autoApplyDefinition.Labels {
+			labels[k] = v[0]
+		}
+		result[string(AutoApplyDefinitionLabels)] = labels
+	}
+
+	return []interface{}{result}
+}
+
+func expandNamespacesList(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if namespaces, ok := v.(string); ok && namespaces != "" {
+			result = append(result, namespaces)
+		}
+	}
+	return result, nil
 }
