@@ -1142,24 +1142,31 @@ var TargetGroupArnRegex = regexp.MustCompile(`arn:aws:elasticloadbalancing:.*:\d
 
 func expandAvailabilityZonesSlice(data interface{}) ([]*aws.AvailabilityZone, error) {
 	list := data.([]interface{})
-	zones := make([]*aws.AvailabilityZone, 0, len(list))
+	zoneMap := make(map[string]*aws.AvailabilityZone)
 	for _, str := range list {
 		if s, ok := str.(string); ok {
 			parts := strings.Split(s, ":")
-			zone := &aws.AvailabilityZone{}
-			if len(parts) >= 1 && parts[0] != "" {
-				zone.SetName(spotinst.String(parts[0]))
+			if len(parts) >= 2 && parts[0] != "" && parts[1] != "" {
+				zoneName := parts[0]
+				subnetId := parts[1]
+				zone, exists := zoneMap[zoneName]
+				if !exists {
+					zone = &aws.AvailabilityZone{}
+					zone.SetName(spotinst.String(zoneName))
+					zone.SetSubnetIDs([]string{})
+					zoneMap[zoneName] = zone
+				}
+				zone.SubnetIDs = append(zone.SubnetIDs, subnetId)
+				if len(parts) >= 3 && parts[2] != "" {
+					zone.SetPlacementGroupName(spotinst.String(parts[2]))
+				}
 			}
-			if len(parts) >= 2 && parts[1] != "" {
-				zone.SetSubnetId(spotinst.String(parts[1]))
-			}
-			if len(parts) >= 3 && parts[2] != "" {
-				zone.SetPlacementGroupName(spotinst.String(parts[2]))
-			}
-			zones = append(zones, zone)
 		}
 	}
-
+	zones := make([]*aws.AvailabilityZone, 0, len(zoneMap))
+	for _, zone := range zoneMap {
+		zones = append(zones, zone)
+	}
 	return zones, nil
 }
 

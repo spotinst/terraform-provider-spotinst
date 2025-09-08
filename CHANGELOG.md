@@ -1,5 +1,13 @@
 ## Unreleased
 
+## 1.226.0 (Aug, 29 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_launch_spec: Added `filters` object to support filtering the instance types.
+
+## 1.225.1 (Aug, 19 2025)
+BUG FIX:
+* resource/spotinst_elastigroup_aws: Fixed `availability_zones` object to accept multiple subnets of same zone in one block.
+
 ## 1.225.0 (Aug 11, 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added `primary_ipv6` field to Enable assignment of a primary IPv6 address to the cluster.
