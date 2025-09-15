@@ -748,6 +748,51 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[DownsideOnly] = commons.NewGenericField(
+		commons.OceanRightSizingRule,
+		DownsideOnly,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var value *bool = nil
+			if rightSizingRule.DownsideOnly != nil {
+				value = rightSizingRule.DownsideOnly
+			}
+			if value != nil {
+				if err := resourceData.Set(string(DownsideOnly), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DownsideOnly), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if v, ok := resourceData.GetOkExists(string(DownsideOnly)); ok && v != nil {
+				downSide := v.(bool)
+				downsideOnly := spotinst.Bool(downSide)
+				rightSizingRule.SetDownsideOnly(downsideOnly)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var downsideOnly *bool = nil
+			if v, ok := resourceData.GetOkExists(string(DownsideOnly)); ok && v != nil {
+				downside := v.(bool)
+				downsideOnly = spotinst.Bool(downside)
+			}
+			rightSizingRule.SetDownsideOnly(downsideOnly)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func flattenRecommendationApplicationIntervals(recommendationApplicationIntervals []*right_sizing.RecommendationApplicationIntervals) []interface{} {
