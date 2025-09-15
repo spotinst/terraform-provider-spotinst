@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.228.0 (Sept, 15 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_right_sizing_rule: Added support for `downside_only` field.
+
 ## 1.227.0 (Sept, 08 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_right_sizing_rule: Added support for `auto_apply_definition` object.

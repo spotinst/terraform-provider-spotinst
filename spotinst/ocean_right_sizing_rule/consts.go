@@ -3,8 +3,9 @@ package ocean_right_sizing_rule
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	OceanId  commons.FieldName = "ocean_id"
-	RuleName commons.FieldName = "rule_name"
+	OceanId      commons.FieldName = "ocean_id"
+	RuleName     commons.FieldName = "rule_name"
+	DownsideOnly commons.FieldName = "downside_only"
 
 	RecommendationApplicationIntervals  commons.FieldName = "recommendation_application_intervals"
 	RepetitionBasis                     commons.FieldName = "repetition_basis"
