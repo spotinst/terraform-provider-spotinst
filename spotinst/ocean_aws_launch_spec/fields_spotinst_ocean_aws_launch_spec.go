@@ -250,6 +250,81 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[VNGLoadBalancers] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		VNGLoadBalancers,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Arn): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(LBName): {
+						Type:     schema.TypeString,
+						Optional: true,
+					},
+
+					string(Type): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		}, func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			var balancerResults []interface{} = nil
+			if launchSpec != nil && launchSpec.LoadBalancers != nil {
+				balancers := launchSpec.LoadBalancers
+				balancerResults = flattenLoadBalancer(balancers)
+			}
+
+			if err := resourceData.Set(string(VNGLoadBalancers), balancerResults); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(VNGLoadBalancers), err)
+			}
+
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			if value, ok := resourceData.GetOk(string(VNGLoadBalancers)); ok {
+				if lb, err := expandLb(value); err != nil {
+					return err
+				} else {
+					launchSpec.SetVNGLoadBalancer(lb)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+
+			var result []*aws.VNGLoadBalancer = nil
+			if lbs := launchSpec.LoadBalancers; len(lbs) > 0 {
+				result = append(result, lbs...)
+			}
+			if value, ok := resourceData.GetOk(string(VNGLoadBalancers)); ok {
+				if lb, err := expandLb(value); err != nil {
+					return err
+				} else {
+					result = append(result, lb...)
+				}
+			}
+
+			launchSpec.SetVNGLoadBalancer(result)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[Tags] = commons.NewGenericField(
 		commons.OceanAWSLaunchConfiguration,
 		Tags,
@@ -2225,6 +2300,44 @@ func flattenLabels(labels []*aws.Label) []interface{} {
 		m := make(map[string]interface{})
 		m[string(LabelKey)] = spotinst.StringValue(label.Key)
 		m[string(LabelValue)] = spotinst.StringValue(label.Value)
+
+		result = append(result, m)
+	}
+	return result
+}
+
+func expandLb(lb interface{}) ([]*aws.VNGLoadBalancer, error) {
+	list := lb.([]interface{})
+	lbOutput := make([]*aws.VNGLoadBalancer, 0, len(list))
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		singleLb := &aws.VNGLoadBalancer{}
+		if arn, ok := attr[string(Arn)]; ok && arn != "" {
+			singleLb.SetArn(spotinst.String(arn.(string)))
+		}
+		if name, ok := attr[string(LBName)]; ok && name != "" {
+			singleLb.SetName(spotinst.String(name.(string)))
+		}
+		if typeIn, ok := attr[string(Type)]; ok && typeIn != "" {
+			singleLb.SetType(spotinst.String(typeIn.(string)))
+		}
+
+		lbOutput = append(lbOutput, singleLb)
+	}
+	return lbOutput, nil
+}
+
+func flattenLoadBalancer(balancers []*aws.VNGLoadBalancer) []interface{} {
+	result := make([]interface{}, 0, len(balancers))
+	for _, balancer := range balancers {
+		m := make(map[string]interface{})
+		m[string(Arn)] = spotinst.StringValue(balancer.Arn)
+		m[string(LBName)] = spotinst.StringValue(balancer.Name)
+		m[string(Type)] = spotinst.StringValue(balancer.Type)
 
 		result = append(result, m)
 	}
