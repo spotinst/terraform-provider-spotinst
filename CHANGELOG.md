@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.229.0 (Oct, 24 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added support for `load_balancers` object.
+
 ## 1.228.0 (Sept, 15 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_right_sizing_rule: Added support for `downside_only` field.
