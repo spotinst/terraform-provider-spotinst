@@ -127,9 +127,6 @@ The following arguments are supported:
           * `workload_type` - (Optional). The type of the workload.
           * `workload_name` - (Optional). The name of the workload.
           * `regex_name` - (Optional). The regex for the workload name. Not allowed when using workload_name.
-        * `labels` - (Optional).
-          * `key` - (Optional).
-          * `value` - (Optional) .
 
 
 ```hcl
@@ -149,15 +146,6 @@ attach_workloads {
       regex_name = "csi-*"
     }
   }
-
-  namespaces{
-    namespace_name = "kube-system"
-    labels{
-      key = "kubernetes.io/cluster-service"
-      value = "true"
-    }
-  }
-
 }
 ```
 
@@ -171,9 +159,6 @@ attach_workloads {
             * `workload_type` - (Optional). The type of the workload.
             * `workload_name` - (Optional). The name of the workload.
             * `regex_name` - (Optional). The regex for the workload name.Not allowed when using workload_name.
-        * `labels` - (Optional).
-            * `key` - (Optional).
-            * `value` - (Optional) .
 
 
 ```hcl
@@ -192,14 +177,6 @@ attach_workloads {
     workloads {
       workload_type = "DaemonSet"
       regex_name = "csi-*"
-    }
-  }
-
-  namespaces{
-    namespace_name = "kube-system"
-    labels{
-      key = "kubernetes.io/cluster-service"
-      value = "true"
     }
   }
 }

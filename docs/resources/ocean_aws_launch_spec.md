@@ -55,6 +55,15 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
     value = "value1"
   }
 
+  load_balancers {
+    arn  = "arn:aws:elasticloadbalancing:us-west-2:fake-arn"
+    type = "TARGET_GROUP"
+  }
+  load_balancers {
+    name = "example"
+    type = "CLASSIC"
+  }
+
   taints {
     key    = "key1"
     value  = "value1"
@@ -213,6 +222,10 @@ The following arguments are supported:
 * `labels` - (Optional) Optionally adds labels to instances launched in the cluster.
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.
+* `load_balancers` - (Optional) - Array of load balancer objects to add to VNG
+    * `arn` - (Optional) Required if type is set to `TARGET_GROUP`
+    * `name` - (Optional) Required if type is set to `CLASSIC`
+    * `type` - (Required) Can be set to `CLASSIC` or `TARGET_GROUP`
 * `taints` - (Optional) Optionally adds labels to instances launched in the cluster.
     * `key` - (Required) The taint key.
     * `value` - (Required) The taint value.

@@ -192,6 +192,11 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.key", "startuptaint-key"),
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.value", "startuptaint-value"),
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.effect", "NoSchedule"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 				),
 			},
 			{
@@ -237,6 +242,11 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.key", "startuptaint-key-updated"),
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.value", "startuptaint-value-updated"),
 					resource.TestCheckResourceAttr(resourceName, "startup_taints.0.effect", "NoExecute"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.arn", "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.0.type", "TARGET_GROUP"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.name", "AntonK"),
+					resource.TestCheckResourceAttr(resourceName, "load_balancers.1.type", "CLASSIC"),
 				),
 			},
 		},
@@ -278,6 +288,16 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 	effect = "NoSchedule"
   }
 
+  load_balancers {
+     arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
+      type = "TARGET_GROUP"
+    }
+
+  load_balancers {
+    name = "AntonK"
+    type = "CLASSIC"
+  }
+
  %v
 }
 `
@@ -316,6 +336,14 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
 	key = "startuptaint-key-updated"
 	value = "startuptaint-value-updated"
 	effect = "NoExecute"
+  }
+  load_balancers {
+    arn  = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/testTargetGroup/1234567890123456"
+    type = "TARGET_GROUP"
+  }
+  load_balancers {
+	name = "AntonK"
+	type = "CLASSIC"
   }
 
 %v

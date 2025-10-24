@@ -174,3 +174,10 @@ const (
 	StartupTaintsValue  commons.FieldName = "value"
 	StartupTaintsEffect commons.FieldName = "effect"
 )
+
+const (
+	VNGLoadBalancers commons.FieldName = "load_balancers"
+	Arn              commons.FieldName = "arn"
+	LBName           commons.FieldName = "name"
+	Type             commons.FieldName = "type"
+)
