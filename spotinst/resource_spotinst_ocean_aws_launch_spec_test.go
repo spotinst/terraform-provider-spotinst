@@ -385,6 +385,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "fakeKey"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "fakeVal"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_down.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_down.0.max_scale_down_percentage", "50.5"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_down.0.is_aggressive_scale_down_enabled", "true"),
 				),
 			},
 			{
@@ -404,6 +407,9 @@ func TestAccSpotinstOceanAWSLaunchSpec_AutoScale(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.key", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "tags.0.value", "updated"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_down.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_down.0.max_scale_down_percentage", "80.4"),
+					resource.TestCheckResourceAttr(resourceName, "autoscale_down.0.is_aggressive_scale_down_enabled", "false"),
 				),
 			},
 			{
@@ -451,6 +457,11 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  	auto_headroom_percentage = 10
  }
 
+ autoscale_down {
+	max_scale_down_percentage = 50.5
+	is_aggressive_scale_down_enabled = true
+}
+
  tags {
      key   = "fakeKey"
      value = "fakeVal"
@@ -481,6 +492,11 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
  autoscale_headrooms_automatic {
  	auto_headroom_percentage = 5
  }
+
+ autoscale_down {
+	max_scale_down_percentage = 80.4
+	is_aggressive_scale_down_enabled = false
+}
 
  tags {
      key   = "updated"

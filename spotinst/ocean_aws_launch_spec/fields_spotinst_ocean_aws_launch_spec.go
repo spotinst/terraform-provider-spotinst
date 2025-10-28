@@ -1006,6 +1006,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeFloat,
 						Optional: true,
 					},
+					string(IsAggressiveScaleDownEnabled): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
 				},
 			},
 		},
@@ -3057,6 +3062,11 @@ func flattenAutoscaleDown(down *aws.AutoScalerDownVNG) []interface{} {
 		if down.MaxScaleDownPercentage != nil {
 			result[string(MaxScaleDownPercentage)] = spotinst.Float64Value(down.MaxScaleDownPercentage)
 		}
+
+		if down.AggressiveScaleDown.IsEnabled != nil {
+			result[string(IsAggressiveScaleDownEnabled)] = spotinst.BoolValue(down.AggressiveScaleDown.IsEnabled)
+		}
+
 		if len(result) > 0 {
 			out = append(out, result)
 		}
@@ -3073,6 +3083,12 @@ func expandAutoscaleDown(down interface{}) (*aws.AutoScalerDownVNG, error) {
 				autoscaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
 			} else {
 				autoscaleDown.SetMaxScaleDownPercentage(nil)
+			}
+
+			if v, ok := m[string(IsAggressiveScaleDownEnabled)].(bool); ok {
+				autoscaleDown.AggressiveScaleDown.SetIsEnabled(spotinst.Bool(v))
+			} else {
+				autoscaleDown.AggressiveScaleDown.SetIsEnabled(nil)
 			}
 		}
 		return autoscaleDown, nil
