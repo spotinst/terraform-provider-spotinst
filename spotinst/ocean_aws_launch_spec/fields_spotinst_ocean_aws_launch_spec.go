@@ -1005,6 +1005,11 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(MaxScaleDownPercentage): {
 						Type:     schema.TypeFloat,
 						Optional: true,
+						Default:  -1,
+					},
+					string(IsAggressiveScaleDownEnabled): {
+						Type:     schema.TypeBool,
+						Optional: true,
 					},
 				},
 			},
@@ -3054,9 +3059,16 @@ func flattenAutoscaleDown(down *aws.AutoScalerDownVNG) []interface{} {
 	var out []interface{}
 	if down != nil {
 		result := make(map[string]interface{})
+		value := spotinst.Float64(-1)
 		if down.MaxScaleDownPercentage != nil {
-			result[string(MaxScaleDownPercentage)] = spotinst.Float64Value(down.MaxScaleDownPercentage)
+			value = down.MaxScaleDownPercentage
 		}
+		result[string(MaxScaleDownPercentage)] = spotinst.Float64Value(value)
+
+		if down.AggressiveScaleDown != nil {
+			result[string(IsAggressiveScaleDownEnabled)] = spotinst.BoolValue(down.AggressiveScaleDown.IsEnabled)
+		}
+
 		if len(result) > 0 {
 			out = append(out, result)
 		}
@@ -3069,10 +3081,16 @@ func expandAutoscaleDown(down interface{}) (*aws.AutoScalerDownVNG, error) {
 		autoscaleDown := &aws.AutoScalerDownVNG{}
 		if list != nil && list[0] != nil {
 			m := list[0].(map[string]interface{})
-			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok {
+			if v, ok := m[string(MaxScaleDownPercentage)].(float64); ok && v > 0 {
 				autoscaleDown.SetMaxScaleDownPercentage(spotinst.Float64(v))
 			} else {
 				autoscaleDown.SetMaxScaleDownPercentage(nil)
+			}
+
+			if v, ok := m[string(IsAggressiveScaleDownEnabled)].(bool); ok {
+				aggressiveScaleDown := &aws.AggressiveScaleDownVNG{}
+				autoscaleDown.SetAggressiveScaleDownVNG(aggressiveScaleDown)
+				autoscaleDown.AggressiveScaleDown.SetIsEnabled(spotinst.Bool(v))
 			}
 		}
 		return autoscaleDown, nil
