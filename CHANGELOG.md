@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.231.0 (Nov, 27 2025)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added support for `dynamic_iops` field.
+
 ## 1.230.0 (Oct, 29 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added support for `is_aggressive_scale_down_enabled` field.
