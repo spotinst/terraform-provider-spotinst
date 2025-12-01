@@ -552,6 +552,31 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 									Type:     schema.TypeInt,
 									Optional: true,
 								},
+
+								string(DynamicIops): {
+									Type:     schema.TypeList,
+									Optional: true,
+									MaxItems: 1,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+
+											string(IopsBaseSize): {
+												Type:     schema.TypeInt,
+												Required: true,
+											},
+
+											string(IopsResource): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+
+											string(IopsSizePerResourceUnit): {
+												Type:     schema.TypeInt,
+												Required: true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},
@@ -2682,6 +2707,17 @@ func expandEbs(data interface{}, ebs *aws.EBS) (*aws.EBS, error) {
 		if v, ok := m[string(Throughput)].(int); ok && v > 0 {
 			ebs.SetThroughput(spotinst.Int(v))
 		}
+
+		if v, ok := m[string(DynamicIops)]; ok && v != nil {
+			if dynamicIops, err := expandDynamicIops(v); err != nil {
+				return nil, err
+			} else {
+				if dynamicIops != nil {
+					ebs.SetDynamicIops(dynamicIops)
+				}
+			}
+		}
+
 	}
 	return ebs, nil
 }
@@ -2701,6 +2737,29 @@ func expandDynamicVolumeSize(data interface{}) (*aws.DynamicVolumeSize, error) {
 			}
 
 			if v, ok := m[string(SizePerResourceUnit)].(int); ok && v >= 0 {
+				dvs.SetSizePerResourceUnit(spotinst.Int(v))
+			}
+		}
+		return dvs, nil
+	}
+	return nil, nil
+}
+
+func expandDynamicIops(data interface{}) (*aws.VNGDynamicIops, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		dvs := &aws.VNGDynamicIops{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(IopsBaseSize)].(int); ok && v >= 0 {
+				dvs.SetBaseSize(spotinst.Int(v))
+			}
+
+			if v, ok := m[string(IopsResource)].(string); ok && v != "" {
+				dvs.SetResource(spotinst.String(v))
+			}
+
+			if v, ok := m[string(IopsSizePerResourceUnit)].(int); ok && v >= 0 {
 				dvs.SetSizePerResourceUnit(spotinst.Int(v))
 			}
 		}
@@ -2745,6 +2804,10 @@ func flattenEbs(ebs *aws.EBS) []interface{} {
 		elasticBS[string(DynamicVolumeSize)] = flattenDynamicVolumeSize(ebs.DynamicVolumeSize)
 	}
 
+	if ebs.DynamicIops != nil {
+		elasticBS[string(DynamicIops)] = flattenDynamicIops(ebs.DynamicIops)
+	}
+
 	return []interface{}{elasticBS}
 }
 
@@ -2756,6 +2819,16 @@ func flattenDynamicVolumeSize(dvs *aws.DynamicVolumeSize) interface{} {
 	DynamicVS[string(SizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
 
 	return []interface{}{DynamicVS}
+}
+
+func flattenDynamicIops(dvs *aws.VNGDynamicIops) interface{} {
+
+	dynamicIops := make(map[string]interface{})
+	dynamicIops[string(IopsBaseSize)] = spotinst.IntValue(dvs.BaseSize)
+	dynamicIops[string(IopsResource)] = spotinst.StringValue(dvs.Resource)
+	dynamicIops[string(IopsSizePerResourceUnit)] = spotinst.IntValue(dvs.SizePerResourceUnit)
+
+	return []interface{}{dynamicIops}
 }
 
 func flattenResourceLimits(resourceLimits *aws.ResourceLimits) []interface{} {

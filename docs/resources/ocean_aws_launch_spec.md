@@ -112,6 +112,11 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
         resource               = "CPU"
         size_per_resource_unit = 20
       }
+      dynamic_iops {
+        base_size              = 50
+        resource               = "memory"
+        size_per_resource_unit = 20
+      }
     }
   }
   
@@ -254,6 +259,10 @@ The following arguments are supported:
             * `base_size`- (Required) Int. Initial size for volume. (Example: 50)
             * `resource`- (Required) String. Resource type to increase volume size dynamically by. (Valid values: `CPU`)
             * `size_per_resource_unit`- (Required) Int. Additional size (in GB) per resource unit. (Example: `baseSize=50`, `sizePerResourceUnit=20`, and instance with 2 CPU is launched; its total disk size will be: 90GB)
+        * `dynamic_iops` - (Optional) Set dynamic IOPS properties. When using this object, you cannot use the `iops` attribute. You must use one or the other.
+            * `base_size`- (Required) Initial size for IOPS.
+            * `resource`- (Required, ENUM: `CPU`, `memory`)
+            * `size_per_resource_unit`- (Required) Additional size per resource unit (in IOPS). (Example: `baseSize=50`, `sizePerResourceUnit=20`, and an instance with 2 CPU is launched; its IOPS size will be: 90).
         * `no_device` - (Optional) String. Suppresses the specified device included in the block device mapping of the AMI. Default value is set to `unset` intentionally, which will appear in the terminal during a terraform plan if this field is not configured or removed. This prevents confusion, as Terraform otherwise considers empty string as null.
 * `autoscale_headrooms_automatic` - (Optional) Set automatic headroom per launch spec.
     * `auto_headroom_percentage` - (Optional) Number between 0-200 to control the headroom % of the specific Virtual Node Group. Effective when cluster.autoScaler.headroom.automatic.`is_enabled` = true is set on the Ocean cluster.

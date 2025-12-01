@@ -91,6 +91,13 @@ const (
 )
 
 const (
+	DynamicIops             commons.FieldName = "dynamic_iops"
+	IopsBaseSize            commons.FieldName = "base_size"
+	IopsResource            commons.FieldName = "resource"
+	IopsSizePerResourceUnit commons.FieldName = "size_per_resource_unit"
+)
+
+const (
 	SpotPercentage           commons.FieldName = "spot_percentage"
 	DrainingTimeout          commons.FieldName = "draining_timeout"
 	UtilizeCommitments       commons.FieldName = "utilize_commitments"
