@@ -30,3 +30,11 @@ const (
 	CRGResourceGroupName      commons.FieldName = "crg_resource_group_name"
 	CRGShouldPrioritize       commons.FieldName = "crg_should_prioritize"
 )
+
+const (
+	InterruptionToleration commons.FieldName = "interruption_toleration"
+	Cooldown               commons.FieldName = "cooldown"
+	EvaluationPeriod       commons.FieldName = "evaluation_period"
+	IsEnabled              commons.FieldName = "is_enabled"
+	Threshold              commons.FieldName = "threshold"
+)
