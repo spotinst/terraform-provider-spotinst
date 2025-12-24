@@ -584,7 +584,7 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_size_gb", "20"),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "pd-standard"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-1"),
 				),
 			},
 			{
@@ -606,7 +606,7 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_size_gb", "30"),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "local-ssd"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-2"),
 				),
 			},
 			{
@@ -619,7 +619,7 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 					testCheckElastigroupGCPExists(&group, resourceName),
 					testCheckElastigroupGCPAttributes(&group, groupName),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-2"),
 				),
 			},
 		},
@@ -640,7 +640,7 @@ const testDiskGCPGroupConfig_Create = `
     initialize_params {
 			disk_size_gb = 20
 			disk_type = "pd-standard"
-			source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-1"
+			source_image = "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-1"
 		}
   }
  // ---------------------------------
@@ -660,7 +660,7 @@ const testDiskGCPGroupConfig_Update = `
     initialize_params {
 			disk_size_gb = 30
 			disk_type = "local-ssd"
-      source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
+      source_image = "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-2"
 		}
   }
  // ---------------------------------
@@ -670,7 +670,7 @@ const testDiskGCPGroupConfig_EmptyFields = `
  // --- DISK ------------------------
   disk {
     initialize_params {
-			source_image = "https://www.googleapis.com/compute/v1/projects/spotinst-labs/global/images/test-image-2"
+			source_image = "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-2"
 		}
   }
  // ---------------------------------
