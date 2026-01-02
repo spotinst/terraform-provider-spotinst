@@ -140,7 +140,7 @@ The following arguments are supported:
     * `key` - (Required) The label key.
     * `value` - (Required) The label value.
 * `restrict_scale_down` - (Optional) Boolean. When set to `true`, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
-* `root_volume_type` - (Optional) Root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`.
+* `root_volume_type` - (Optional) Root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`, `"pd-balanced"`.
 * `root_volume_size` - (Optional) Root volume size (in GB).
 * `instance_types` - (Optional) List of supported machine types for the Launch Spec.
 * `tags` - (Optional) Every node launched from this configuration will be tagged with those tags. Note: during creation some tags are automatically imported to the state file, it is required to manually add it to the template configuration

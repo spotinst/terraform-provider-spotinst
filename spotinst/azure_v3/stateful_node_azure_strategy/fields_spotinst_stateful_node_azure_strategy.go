@@ -84,6 +84,31 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+					string(InterruptionToleration): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(Cooldown): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(EvaluationPeriod): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+								string(IsEnabled): {
+									Type:     schema.TypeBool,
+									Optional: true,
+								},
+								string(Threshold): {
+									Type:     schema.TypeInt,
+									Optional: true,
+								},
+							},
+						},
+					},
 					string(OptimizationWindows): {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -272,6 +297,10 @@ func flattenStatefulNodeAzureStrategy(strategy *azure.Strategy) []interface{} {
 		result[string(CapacityReservation)] = flattenStatefulNodeAzureCapacityReservation(strategy.CapacityReservation)
 	}
 
+	if strategy.InterruptionToleration != nil {
+		result[string(InterruptionToleration)] = flattenInterruptionToleration(strategy.InterruptionToleration)
+	}
+
 	if strategy.OptimizationWindows != nil {
 		result[string(OptimizationWindows)] = spotinst.StringSlice(strategy.OptimizationWindows)
 	}
@@ -330,6 +359,21 @@ func expandStatefulNodeAzureStrategy(data interface{}) (*azure.Strategy, error) 
 
 			strategy.SetCapacityReservation(capacityReservation)
 
+		}
+
+		if v, ok := m[string(InterruptionToleration)]; ok && v != nil {
+			if interruptionToleration, err := expandInterruptionToleration(v); err != nil {
+				return nil, err
+			} else {
+				if interruptionToleration != nil {
+					strategy.SetInterruptionToleration(interruptionToleration)
+				} else {
+					strategy.SetInterruptionToleration(nil)
+				}
+
+			}
+		} else {
+			strategy.SetInterruptionToleration(nil)
 		}
 
 		if v, ok := m[string(OptimizationWindows)]; ok {
@@ -502,6 +546,43 @@ func expandCapacityReservationGroups(data interface{}) ([]*azure.CapacityReserva
 	return nil, nil
 }
 
+func expandInterruptionToleration(data interface{}) (*azure.InterruptionToleration, error) {
+	if list := data.([]interface{}); len(list) > 0 {
+		interruptionToleration := &azure.InterruptionToleration{}
+		if list[0] != nil {
+			m := list[0].(map[string]interface{})
+
+			if v, ok := m[string(IsEnabled)]; ok && v != nil {
+				if boolVal, isBool := v.(bool); isBool {
+					interruptionToleration.SetIsEnabled(spotinst.Bool(boolVal))
+				}
+			} else {
+				interruptionToleration.SetIsEnabled(nil)
+			}
+
+			if v, ok := m[string(Cooldown)].(int); ok && v > 0 {
+				interruptionToleration.SetCooldown(spotinst.Int(v))
+			} else {
+				interruptionToleration.SetCooldown(nil)
+			}
+
+			if v, ok := m[string(EvaluationPeriod)].(int); ok && v > 0 {
+				interruptionToleration.SetEvaluationPeriod(spotinst.Int(v))
+			} else {
+				interruptionToleration.SetEvaluationPeriod(nil)
+			}
+
+			if v, ok := m[string(Threshold)].(int); ok && v > 0 {
+				interruptionToleration.SetThreshold(spotinst.Int(v))
+			} else {
+				interruptionToleration.SetThreshold(nil)
+			}
+		}
+		return interruptionToleration, nil
+	}
+	return nil, nil
+}
+
 func flattenStatefulNodeAzureCapacityReservation(capacityReservation *azure.CapacityReservation) []interface{} {
 	result := make(map[string]interface{})
 	result[string(ShouldUtilize)] = spotinst.BoolValue(capacityReservation.ShouldUtilize)
@@ -522,4 +603,36 @@ func flattenCapacityReservationGroups(capacityReservationGroups []*azure.Capacit
 	}
 
 	return result
+}
+
+func flattenInterruptionToleration(interruptionToleration *azure.InterruptionToleration) []interface{} {
+
+	var out []interface{}
+
+	if interruptionToleration != nil {
+		interTol := make(map[string]interface{})
+
+		if interruptionToleration.IsEnabled != nil {
+			interTol[string(IsEnabled)] = spotinst.BoolValue(interruptionToleration.IsEnabled)
+		}
+
+		if interruptionToleration.Cooldown != nil {
+			interTol[string(Cooldown)] = spotinst.IntValue(interruptionToleration.Cooldown)
+		}
+
+		if interruptionToleration.EvaluationPeriod != nil {
+			interTol[string(EvaluationPeriod)] = spotinst.IntValue(interruptionToleration.EvaluationPeriod)
+		}
+
+		if interruptionToleration.Threshold != nil {
+			interTol[string(Threshold)] = spotinst.IntValue(interruptionToleration.Threshold)
+		}
+
+		if len(interTol) > 0 {
+			out = append(out, interTol)
+		}
+
+		return []interface{}{interTol}
+	}
+	return out
 }

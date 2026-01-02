@@ -499,6 +499,11 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "40"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.cooldown", "120"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.evaluation_period", "30"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.threshold", "3"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.availability_vs_cost", "50"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.vm_admins.#", "1"),
@@ -518,6 +523,11 @@ func TestAccSpotinstStatefulNodeAzureV3_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.draining_timeout", "20"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.revert_to_spot.0.perform_at", "always"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.cooldown", "10080"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.evaluation_period", "1440"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "strategy.0.interruption_toleration.0.threshold", "4"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.preferred_life_cycle", "spot"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.availability_vs_cost", "100"),
 					resource.TestCheckResourceAttr(resourceName, "strategy.0.vm_admins.#", "1"),
@@ -547,6 +557,12 @@ strategy {
 	revert_to_spot {
 		perform_at =  "always"
 	}
+    interruption_toleration {
+      cooldown          = 120
+      evaluation_period = 30
+      is_enabled        = true
+      threshold         = 3
+    }
 	preferred_life_cycle = "spot"
     availability_vs_cost = "50"
 	vm_admins = ["testing"]
@@ -560,6 +576,12 @@ strategy {
 	revert_to_spot {
 		perform_at =  "always"
 	}
+    interruption_toleration {
+      cooldown          = 10080
+      evaluation_period = 1440
+      is_enabled        = false
+      threshold         = 4
+    }
 	preferred_life_cycle = "spot"
     availability_vs_cost = "100"
 	vm_admins = ["testingUpdate"]
