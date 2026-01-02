@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.232.0 (Jan, 2 2026)
+ENHANCEMENTS:
+* resource/spotinst_stateful_node_azure_strategy: Added support for `interruption_toleration` field.
+
 ## 1.231.0 (Dec, 1 2025)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added support for `dynamic_iops` field.
