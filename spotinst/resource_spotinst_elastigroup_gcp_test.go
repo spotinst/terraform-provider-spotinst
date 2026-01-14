@@ -605,7 +605,7 @@ func TestAccSpotinstElastigroupGCP_Disk(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "disk.0.type", "SCRATCH"),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_size_gb", "30"),
-					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "local-ssd"),
+					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.disk_type", "pd-balanced"),
 					resource.TestCheckResourceAttr(resourceName, "disk.0.initialize_params.0.source_image", "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-2"),
 				),
 			},
@@ -659,7 +659,7 @@ const testDiskGCPGroupConfig_Update = `
 
     initialize_params {
 			disk_size_gb = 30
-			disk_type = "local-ssd"
+			disk_type = "pd-balanced"
       source_image = "https://www.googleapis.com/compute/v1/projects/automation-labs/global/images/test-image-2"
 		}
   }
