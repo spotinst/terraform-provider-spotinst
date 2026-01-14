@@ -401,7 +401,7 @@ const testInstanceTypesGCPGroupConfig_Update = `
 //				Check: resource.ComposeTestCheckFunc(
 //					testCheckElastigroupGCPExists(&group, resourceName),
 //					testCheckElastigroupGCPAttributes(&group, groupName),
-//					resource.TestCheckResourceAttr(resourceName, "service_account", "terraform-acc-test-account@automation-labs.iam.gserviceaccount.com"),
+//					resource.TestCheckResourceAttr(resourceName, "service_account", "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"),
 //					resource.TestCheckResourceAttr(resourceName, "startup_script", "echo hello world updated"),
 //					resource.TestCheckResourceAttr(resourceName, "shutdown_script", elastigroup_gcp_launch_configuration.Base64StateFunc("echo goodbye world updated")),
 //					resource.TestCheckResourceAttr(resourceName, "backend_services.#", "2"),
@@ -499,7 +499,7 @@ const testInstanceTypesGCPGroupConfig_Update = `
 //
 //const testLaunchConfigurationGCPGroupConfig_Update = `
 // // --- LAUNCH CONFIGURATION --------------
-// service_account = "terraform-acc-test-account@automation-labs.iam.gserviceaccount.com"
+// service_account = "terraform-acc-test-account@spotinst-labs.iam.gserviceaccount.com"
 // startup_script = "echo hello world updated"
 // shutdown_script = "echo goodbye world updated"
 // ip_forwarding = true
