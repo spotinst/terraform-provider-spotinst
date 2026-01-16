@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.232.1 (Jan, 16 2026)
+TEST FIXES:
+* resource/resource_spotinst_elastigroup_gcp_test: Fixed unit tests.
+
 ## 1.232.0 (Jan, 2 2026)
 ENHANCEMENTS:
 * resource/spotinst_stateful_node_azure_strategy: Added support for `interruption_toleration` field.
