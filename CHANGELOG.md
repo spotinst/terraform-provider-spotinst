@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.232.2 (Jan, 23 2026)
+BUG FIXES:
+* resource/spotinst_elastigroup_aws: resolved errors with `capacity_unit`
+
 ## 1.232.1 (Jan, 16 2026)
 TEST FIXES:
 * resource/resource_spotinst_elastigroup_gcp_test: Fixed unit tests.
