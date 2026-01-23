@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.232.2 (Jan, 23 2026)
+## 1.232.3 (Jan, 23 2026)
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: resolved errors with `capacity_unit`
 
