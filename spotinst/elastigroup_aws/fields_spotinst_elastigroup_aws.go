@@ -260,6 +260,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			elastigroup := egWrapper.GetElastigroup()
 			if v, ok := resourceData.Get(string(CapacityUnit)).(string); ok && v != "" {
 				elastigroup.Capacity.SetUnit(spotinst.String(v))
+			} else {
+				elastigroup.Capacity.SetUnit(spotinst.String("instance"))
 			}
 			return nil
 		},
