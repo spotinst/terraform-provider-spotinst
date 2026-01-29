@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.232.4 (Jan, 30 2026)
+TEST FIXES:
+* resource/resource_spotinst_ocean_aks_np_test: Fixed unit tests.
+
 ## 1.232.3 (Jan, 23 2026)
 BUG FIXES:
 * resource/spotinst_elastigroup_aws: resolved errors with `capacity_unit`
