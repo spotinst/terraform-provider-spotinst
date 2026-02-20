@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.232.5 (Jan, 12 2026)
+## 1.232.5 (Feb, 20 2026)
 TEST FIXES:
 * resource/resource_spotinst_ocean_aws_launch_spec_test: Fixed unit test.
 
