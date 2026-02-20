@@ -177,8 +177,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world")),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "test"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "labels.0.key", "label key"),
-					resource.TestCheckResourceAttr(resourceName, "labels.0.value", "label value"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.key", "label-key"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.value", "label-value"),
 					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "taints.0.key", "taint key"),
 					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taint value"),
@@ -226,8 +226,8 @@ func TestAccSpotinstOceanAWSLaunchSpec_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "user_data", elastigroup_aws_launch_configuration.Base64StateFunc("hello world updated")),
 					resource.TestCheckResourceAttr(resourceName, "iam_instance_profile", "updated"),
 					resource.TestCheckResourceAttr(resourceName, "labels.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "labels.0.key", "label key updated"),
-					resource.TestCheckResourceAttr(resourceName, "labels.0.value", "label value updated"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.key", "label-key-updated"),
+					resource.TestCheckResourceAttr(resourceName, "labels.0.value", "label-value-updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "taints.0.key", "taint key updated"),
 					resource.TestCheckResourceAttr(resourceName, "taints.0.value", "taint value updated"),
@@ -272,8 +272,8 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   reserved_enis = 1
 
   labels {
-    key = "label key"
-    value = "label value"
+    key = "label-key"
+    value = "label-value"
   }
 
   taints {
@@ -322,8 +322,8 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   reserved_enis = 2
 
   labels {
-    key = "label key updated"
-    value = "label value updated"
+    key = "label-key-updated"
+    value = "label-value-updated"
   }
 
   taints {
