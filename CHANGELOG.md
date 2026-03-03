@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.232.5 (Mar, 3 2026)
+NOTES:
+* documentation: resource/spotinst_ocean_aks_np: Updated `availability_zones` description for AZ‑independent workloads.
+
 ## 1.232.4 (Jan, 30 2026)
 TEST FIXES:
 * resource/resource_spotinst_ocean_aks_np_test: Fixed unit tests.
