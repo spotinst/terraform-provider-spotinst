@@ -112,6 +112,8 @@ resource "spotinst_ocean_aws" "example" {
   spot_percentage            = 100
   utilize_commitments        = false
   spread_nodes_by            = "count"
+  max_replacements_percentage  = 25
+
   cluster_orientation{
     availability_vs_cost="balanced"
   }

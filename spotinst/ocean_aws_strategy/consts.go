@@ -14,4 +14,5 @@ const (
 	ClusterOrientation       commons.FieldName = "cluster_orientation"
 	AvailabilityVsCost       commons.FieldName = "availability_vs_cost"
 	SpreadNodesBy            commons.FieldName = "spread_nodes_by"
+	MaxReplacementsPercentage commons.FieldName = "max_replacements_percentage"
 )

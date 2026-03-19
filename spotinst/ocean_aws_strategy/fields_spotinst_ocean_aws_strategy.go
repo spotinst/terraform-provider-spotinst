@@ -162,6 +162,52 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[MaxReplacementsPercentage] = commons.NewGenericField(
+	commons.OceanAWSStrategy,
+	MaxReplacementsPercentage,
+	&schema.Schema{
+		Type:         schema.TypeInt,
+		Optional:     true,
+		ValidateFunc: validation.IntBetween(0, 100),
+	},
+	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+		clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+		cluster := clusterWrapper.GetCluster()
+
+		var value *int = nil
+		if cluster.Strategy != nil && cluster.Strategy.MaxReplacementsPercentage != nil {
+			value = cluster.Strategy.MaxReplacementsPercentage
+		}
+		if value != nil {
+			if err := resourceData.Set(string(MaxReplacementsPercentage), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxReplacementsPercentage), err)
+			}
+		}
+		return nil
+	},
+	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+		clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+		cluster := clusterWrapper.GetCluster()
+
+		if v, ok := resourceData.GetOkExists(string(MaxReplacementsPercentage)); ok {
+			cluster.Strategy.SetMaxReplacementsPercentage(spotinst.Int(v.(int)))
+		}
+		return nil
+	},
+	func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+		clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+		cluster := clusterWrapper.GetCluster()
+
+		var value *int = nil
+		if v, ok := resourceData.Get(string(MaxReplacementsPercentage)).(int); ok && v >= 0 {
+			value = spotinst.Int(v)
+		}
+		cluster.Strategy.SetMaxReplacementsPercentage(value)
+		return nil
+	},
+	nil,
+	)
+
 	fieldsMap[UtilizeReservedInstances] = commons.NewGenericField(
 		commons.OceanAWSStrategy,
 		UtilizeReservedInstances,
