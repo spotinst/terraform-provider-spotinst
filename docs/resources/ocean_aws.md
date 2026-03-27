@@ -234,6 +234,7 @@ The following arguments are supported:
 * `draining_timeout` - (Optional) The time in seconds, the instance is allowed to run while detached from the ELB. This is to allow the instance time to be drained from incoming TCP connections before terminating it, during a scale down operation.
 * `grace_period` - (Optional, Default: 300) The amount of time, in seconds, after the instance has launched to start checking its health.
 * `spot_percentage` - (Optional) The desired percentage of Spot instances out of all running instances. Only available when the field is not set in any VNG directly (launchSpec.strategy.spotPercentage).
+* `max_replacements_percentage` - (Optional) Limits the percentage of instances that can be replaced at once during a run cycle.
 * `utilize_commitments` - (Optional, Default false) If savings plans exist, Ocean will utilize them before launching Spot instances.
 * `spread_nodes_by` - (Optional, Default: `count`) Ocean will spread the nodes across markets by this value. Possible values: `vcpu` or `count`.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
