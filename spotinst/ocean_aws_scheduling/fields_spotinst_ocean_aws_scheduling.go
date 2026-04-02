@@ -146,6 +146,40 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 							},
 						},
 					},
+					string(OptimizationWindows): {
+						Type:     schema.TypeList,
+						Optional: true,
+						MaxItems: 1,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(OptimizationWindowsIsEnabled): {
+									Type:     schema.TypeBool,
+									Required: true,
+								},
+								string(Windows): {
+									Type:     schema.TypeList,
+									Optional: true,
+									Elem: &schema.Resource{
+										Schema: map[string]*schema.Schema{
+											string(CronExpression): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(Duration): {
+												Type:     schema.TypeString,
+												Required: true,
+											},
+											string(Effects): {
+												Type:     schema.TypeList,
+												Required: true,
+												Elem:     &schema.Schema{Type: schema.TypeString},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -207,6 +241,10 @@ func flattenScheduledTasks(scheduling *aws.Scheduling) []interface{} {
 
 		if scheduling.Tasks != nil {
 			result[string(Tasks)] = flattenTasks(scheduling.Tasks)
+		}
+
+		if scheduling.OptimizationWindows != nil {
+			result[string(OptimizationWindows)] = flattenOptimizationWindows(scheduling.OptimizationWindows)
 		}
 
 		if len(result) > 0 {
@@ -336,6 +374,19 @@ func expandScheduledTasks(data interface{}) (*aws.Scheduling, error) {
 					scheduling.SetShutdownHours(nil)
 				}
 			}
+
+			if v, ok := m[string(OptimizationWindows)]; ok {
+				optWin, err := expandOptimizationWindows(v)
+				if err != nil {
+					return nil, err
+				}
+				if optWin != nil {
+					scheduling.SetOptimizationWindows(optWin)
+				} else {
+					scheduling.SetOptimizationWindows(nil)
+				}
+			}
+
 		}
 		return scheduling, nil
 	}
@@ -563,4 +614,87 @@ func expandtasks(data interface{}) ([]*aws.Task, error) {
 		return tasks, nil
 	}
 	return nil, nil
+}
+
+func flattenOptimizationWindows(ow *aws.OptimizationWindows) []interface{} {
+	result := make(map[string]interface{})
+	result[string(OptimizationWindowsIsEnabled)] = spotinst.BoolValue(ow.IsEnabled)
+
+	if len(ow.Windows) > 0 {
+		result[string(Windows)] = flattenOptimizationWindowsList(ow.Windows)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenOptimizationWindowsList(windows []*aws.OptimizationWindow) []interface{} {
+	result := make([]interface{}, 0, len(windows))
+	for _, w := range windows {
+		m := make(map[string]interface{})
+		m[string(CronExpression)] = spotinst.StringValue(w.CronExpression)
+		m[string(Duration)] = spotinst.StringValue(w.Duration)
+		if effects := flattenWindowEffects(w.Effects); effects != nil {
+			m[string(Effects)] = effects
+		}
+		result = append(result, m)
+	}
+	return result
+}
+
+func flattenWindowEffects(effects []string) []string {
+	if len(effects) == 0 {
+		return nil
+	}
+	return effects
+}
+
+func expandOptimizationWindows(data interface{}) (*aws.OptimizationWindows, error) {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+		ow := &aws.OptimizationWindows{}
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(OptimizationWindowsIsEnabled)].(bool); ok {
+			ow.SetIsEnabled(spotinst.Bool(v))
+		}
+
+		if v, ok := m[string(Windows)].([]interface{}); ok {
+			if len(v) > 0 {
+				ow.SetWindows(expandOptimizationWindowsList(v))
+			} else {
+				ow.SetWindows(nil)
+			}
+		}
+		return ow, nil
+	}
+	return nil, nil
+}
+
+func expandOptimizationWindowsList(v []interface{}) []*aws.OptimizationWindow {
+	windows := make([]*aws.OptimizationWindow, 0, len(v))
+	for _, item := range v {
+		wm := item.(map[string]interface{})
+		win := &aws.OptimizationWindow{}
+
+		if cron, ok := wm[string(CronExpression)].(string); ok && cron != "" {
+			win.SetCronExpression(spotinst.String(cron))
+		}
+		if dur, ok := wm[string(Duration)].(string); ok && dur != "" {
+			win.SetDuration(spotinst.String(dur))
+		}
+		if effects, ok := wm[string(Effects)].([]interface{}); ok && len(effects) > 0 {
+			win.SetEffects(expandWindowEffects(effects))
+		}
+		windows = append(windows, win)
+	}
+	return windows
+}
+
+func expandWindowEffects(effects []interface{}) []string {
+	effectList := make([]string, 0, len(effects))
+	for _, e := range effects {
+		if s, ok := e.(string); ok {
+			effectList = append(effectList, s)
+		}
+	}
+	return effectList
 }
