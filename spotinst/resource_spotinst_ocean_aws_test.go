@@ -762,8 +762,8 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.cron_expression", "0 * * * *"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.duration", "9h"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.#", "2"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.0", "ignoreRestrictScaleDown"),
-					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.1", "ignorePdb"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.0", "ignorePdb"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.1", "ignoreRestrictScaleDown"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.cron_expression", "0 0 * * 2"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.duration", "6m"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.effects.#", "1"),
@@ -853,7 +853,7 @@ const testSchedulingConfig_Update = `
       windows {
         cron_expression = "0 * * * *"
         duration        = "9h"
-        effects         = ["ignoreRestrictScaleDown","ignorePdb"]
+        effects         = ["ignorePdb","ignoreRestrictScaleDown"]
       }
       windows {
         cron_expression = "0 0 * * 2"
