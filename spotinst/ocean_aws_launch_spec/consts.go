@@ -189,3 +189,11 @@ const (
 	LBName           commons.FieldName = "name"
 	Type             commons.FieldName = "type"
 )
+
+const (
+	OptimizationWindows          commons.FieldName = "optimization_windows"
+	OptimizationWindowsIsEnabled commons.FieldName = "is_enabled"
+	Windows                      commons.FieldName = "windows"
+	Duration                     commons.FieldName = "duration"
+	Effects                      commons.FieldName = "effects"
+)

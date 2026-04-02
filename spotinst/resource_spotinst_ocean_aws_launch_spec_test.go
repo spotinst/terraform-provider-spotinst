@@ -1036,6 +1036,17 @@ func TestAccSpotinstOceanAWSLaunchSpec_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.0", "Sat:08:00-Sat:08:30"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.cron_expression", "0 * * * 2"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.duration", "8h"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.effects.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.effects.0", "ignoreRestrictScaleDown"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.1.cron_expression", "0 0 * * 1"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.1.duration", "7h"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.1.effects.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.1.effects.0", "ignorePdb"),
 				),
 			},
 			{
@@ -1057,6 +1068,14 @@ func TestAccSpotinstOceanAWSLaunchSpec_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.0", "Sat:08:00-Sat:08:30"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.1", "Sun:08:00-Sun:08:30"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.cron_expression", "0 * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.duration", "9h"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.effects.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.effects.0", "ignorePdb"),
+					resource.TestCheckResourceAttr(resourceName, "optimization_windows.0.windows.0.effects.1", "ignoreRestrictScaleDown"),
 				),
 			},
 		},
@@ -1088,6 +1107,20 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
     is_enabled = true
     time_windows = ["Sat:08:00-Sat:08:30"]
   }
+
+  optimization_windows {
+    is_enabled = true
+    windows {
+      cron_expression = "0 * * * 2"
+      duration        = "8h"
+      effects         = ["ignoreRestrictScaleDown"]
+    }
+    windows {
+      cron_expression = "0 0 * * 1"
+      duration        = "7h"
+      effects         = ["ignorePdb"]
+    }
+  }
 %v
 }
 
@@ -1117,6 +1150,15 @@ resource "` + string(commons.OceanAWSLaunchSpecResourceName) + `" "%v" {
   scheduling_shutdown_hours {
     is_enabled = false
     time_windows = ["Sat:08:00-Sat:08:30", "Sun:08:00-Sun:08:30"]
+  }
+
+  optimization_windows {
+    is_enabled = false
+    windows {
+      cron_expression = "0 * * * *"
+      duration        = "9h"
+      effects         = ["ignorePdb", "ignoreRestrictScaleDown"]
+    }
   }
 %v
 }
