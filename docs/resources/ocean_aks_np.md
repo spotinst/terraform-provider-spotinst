@@ -168,6 +168,7 @@ resource "spotinst_ocean_aks_np" "example" {
   
   spot_percentage      = 50
   fallback_to_ondemand = true
+  draining_timeout     = 600
 
   // ----------------------------------------------------------------------
 
@@ -270,6 +271,7 @@ The following arguments are supported:
     * `vm_max_map_count` - (Optional) Maximum number of memory map areas a process may have. Can be configured only if OS type is Linux.
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
+* `draining_timeout` - (Optional) Time in seconds to allow the node to drain before it is terminated. The parameter value will be in range `[300-3600]`.
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
   * `key` - (Optional) Tag key for VMs in the cluster.

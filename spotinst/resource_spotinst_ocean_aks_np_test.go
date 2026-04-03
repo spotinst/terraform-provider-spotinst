@@ -307,6 +307,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
 
   spot_percentage      = 50
   fallback_to_ondemand = false
+  draining_timeout     = 300
 
   // ----------------------------------------------------------------------
 
@@ -365,6 +366,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
 
   spot_percentage      = 100
   fallback_to_ondemand = true
+  draining_timeout     = 900
 
   // ----------------------------------------------------------------------
 
