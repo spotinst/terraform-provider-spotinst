@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.233.0 (Apr, 3 2026)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support for `draining_timeout` field.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `draining_timeout` field.
+
 ## 1.232.5 (Mar, 3 2026)
 NOTES:
 * documentation: resource/spotinst_ocean_aks_np: Updated `availability_zones` description for AZ‑independent workloads.

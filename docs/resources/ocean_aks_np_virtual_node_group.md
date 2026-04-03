@@ -69,6 +69,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   
   spot_percentage      = 50
   fallback_to_ondemand = true
+  draining_timeout     = 600
 
   // ---------------------------------------------------------------------------
 
@@ -156,6 +157,7 @@ The following arguments are supported:
   * `sysctls` - (Optional) System Controls
     * `vm_max_map_count` - (Optional) Maximum number of memory map areas a process may have. Can be configured only if OS type is Linux.
 * `fallback_to_ondemand` - (Optional) If no spot instance markets are available, enable Ocean to launch on-demand instances instead.
+* `draining_timeout` - (Optional) Time in seconds to allow the node to drain before it is terminated. The parameter value will be in range `[300-3600]`.
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
     * `key` - (Optional) Tag key for VMs in the cluster.
