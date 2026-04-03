@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -99,4 +100,48 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[DrainingTimeout] = commons.NewGenericField(
+		commons.OceanAKSNPStrategy,
+		DrainingTimeout,
+		&schema.Schema{
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(300, 3600),
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value *int = nil
+			if cluster.VirtualNodeGroupTemplate.Strategy != nil && cluster.VirtualNodeGroupTemplate.Strategy.DrainingTimeout != nil {
+				value = cluster.VirtualNodeGroupTemplate.Strategy.DrainingTimeout
+			}
+			if value != nil {
+				if err := resourceData.Set(string(DrainingTimeout), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DrainingTimeout), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+				cluster.VirtualNodeGroupTemplate.Strategy.SetDrainingTimeout(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var dt *int = nil
+			if v, ok := resourceData.Get(string(DrainingTimeout)).(int); ok && v > 0 {
+				dt = spotinst.Int(v)
+			}
+			cluster.VirtualNodeGroupTemplate.Strategy.SetDrainingTimeout(dt)
+			return nil
+		},
+		nil,
+	)
+
 }
