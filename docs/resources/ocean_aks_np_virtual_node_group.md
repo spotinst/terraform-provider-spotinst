@@ -69,7 +69,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   
   spot_percentage      = 50
   fallback_to_ondemand = true
-  draining_timeout     = 900
+  draining_timeout     = 600
 
   // ---------------------------------------------------------------------------
 
