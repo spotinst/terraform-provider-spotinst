@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -98,6 +99,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				fallback = spotinst.Bool(ftod)
 			}
 			virtualNodeGroup.Strategy.SetFallbackToOD(fallback)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[DrainingTimeout] = commons.NewGenericField(
+		commons.OceanAKSNPVirtualNodeGroupStrategy,
+		DrainingTimeout,
+		&schema.Schema{
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(300, 3600),
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			var value *int = nil
+			if virtualNodeGroup.Strategy != nil && virtualNodeGroup.Strategy.DrainingTimeout != nil {
+				value = virtualNodeGroup.Strategy.DrainingTimeout
+			}
+			if value != nil {
+				if err := resourceData.Set(string(DrainingTimeout), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DrainingTimeout), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOkExists(string(DrainingTimeout)); ok {
+				virtualNodeGroup.Strategy.SetDrainingTimeout(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			var dt *int = nil
+			if v, ok := resourceData.Get(string(DrainingTimeout)).(int); ok && v > 0 {
+				dt = spotinst.Int(v)
+			}
+			virtualNodeGroup.Strategy.SetDrainingTimeout(dt)
 			return nil
 		},
 		nil,
