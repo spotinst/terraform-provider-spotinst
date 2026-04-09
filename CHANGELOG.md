@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.234.0 (Apr, 9 2026)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws: Added support for `optimization_windows` field.
+* resource/spotinst_ocean_aws_launch_spec: Added support for `optimization_windows` field.
+
 ## 1.233.0 (Apr, 3 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support for `draining_timeout` field.
