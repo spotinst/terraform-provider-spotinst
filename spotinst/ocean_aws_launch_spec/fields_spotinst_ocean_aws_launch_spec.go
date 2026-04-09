@@ -1628,6 +1628,88 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[OptimizationWindows] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		OptimizationWindows,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(OptimizationWindowsIsEnabled): {
+						Type:     schema.TypeBool,
+						Required: true,
+					},
+					string(Windows): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: map[string]*schema.Schema{
+								string(CronExpression): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Duration): {
+									Type:     schema.TypeString,
+									Required: true,
+								},
+								string(Effects): {
+									Type:     schema.TypeList,
+									Required: true,
+									Elem:     &schema.Schema{Type: schema.TypeString},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec.LaunchSpecScheduling != nil && launchSpec.LaunchSpecScheduling.OptimizationWindows != nil {
+				opWin := launchSpec.LaunchSpecScheduling.OptimizationWindows
+				result = flattenVNGOptimizationWindows(opWin)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(OptimizationWindows), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(OptimizationWindows), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(OptimizationWindows)); ok {
+				if ow, err := expandVNGOptimizationWindows(v); err != nil {
+					return err
+				} else {
+					launchSpec.LaunchSpecScheduling.SetOptimizationWindows(ow)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.LaunchSpecOptimizationWindows = nil
+
+			if v, ok := resourceData.GetOk(string(OptimizationWindows)); ok {
+				if ow, err := expandVNGOptimizationWindows(v); err != nil {
+					return err
+				} else {
+					value = ow
+				}
+			}
+			launchSpec.LaunchSpecScheduling.SetOptimizationWindows(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[SchedulingShutdownHours] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
 		SchedulingShutdownHours,
@@ -3126,6 +3208,89 @@ func expandTimeWindows(data interface{}) ([]string, error) {
 	}
 
 	return result, nil
+}
+
+func flattenVNGOptimizationWindows(ow *aws.LaunchSpecOptimizationWindows) []interface{} {
+	result := make(map[string]interface{})
+	result[string(OptimizationWindowsIsEnabled)] = spotinst.BoolValue(ow.IsEnabled)
+
+	if len(ow.Windows) > 0 {
+		result[string(Windows)] = flattenVNGOptimizationWindowsList(ow.Windows)
+	}
+
+	return []interface{}{result}
+}
+
+func flattenVNGOptimizationWindowsList(windows []*aws.LaunchSpecOptimizationWindow) []interface{} {
+	result := make([]interface{}, 0, len(windows))
+	for _, w := range windows {
+		m := make(map[string]interface{})
+		m[string(CronExpression)] = spotinst.StringValue(w.CronExpression)
+		m[string(Duration)] = spotinst.StringValue(w.Duration)
+		if effects := flattenVNGWindowEffects(w.Effects); effects != nil {
+			m[string(Effects)] = effects
+		}
+		result = append(result, m)
+	}
+	return result
+}
+
+func flattenVNGWindowEffects(effects []string) []string {
+	if len(effects) == 0 {
+		return nil
+	}
+	return effects
+}
+
+func expandVNGOptimizationWindows(data interface{}) (*aws.LaunchSpecOptimizationWindows, error) {
+	if list := data.([]interface{}); len(list) > 0 && list[0] != nil {
+		ow := &aws.LaunchSpecOptimizationWindows{}
+		m := list[0].(map[string]interface{})
+
+		if v, ok := m[string(OptimizationWindowsIsEnabled)].(bool); ok {
+			ow.SetIsEnabled(spotinst.Bool(v))
+		}
+
+		if v, ok := m[string(Windows)].([]interface{}); ok {
+			if len(v) > 0 {
+				ow.SetWindows(expandVNGOptimizationWindowsList(v))
+			} else {
+				ow.SetWindows(nil)
+			}
+		}
+		return ow, nil
+	}
+	return nil, nil
+}
+
+func expandVNGOptimizationWindowsList(v []interface{}) []*aws.LaunchSpecOptimizationWindow {
+	windows := make([]*aws.LaunchSpecOptimizationWindow, 0, len(v))
+	for _, item := range v {
+		wm := item.(map[string]interface{})
+		win := &aws.LaunchSpecOptimizationWindow{}
+
+		if cron, ok := wm[string(CronExpression)].(string); ok && cron != "" {
+			win.SetCronExpression(spotinst.String(cron))
+		}
+		if dur, ok := wm[string(Duration)].(string); ok && dur != "" {
+			win.SetDuration(spotinst.String(dur))
+		}
+		if effects, ok := wm[string(Effects)].([]interface{}); ok && len(effects) > 0 {
+			win.SetEffects(expandVNGWindowEffects(effects))
+		}
+		windows = append(windows, win)
+	}
+	return windows
+}
+
+func expandVNGWindowEffects(effects []interface{}) []string {
+	effectList := make([]string, 0, len(effects))
+	for _, e := range effects {
+		if s, ok := e.(string); ok {
+			effectList = append(effectList, s)
+		}
+	}
+	return effectList
 }
 
 func flattenAutoscaleDown(down *aws.AutoScalerDownVNG) []interface{} {

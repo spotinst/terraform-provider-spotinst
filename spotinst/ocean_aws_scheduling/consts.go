@@ -23,3 +23,11 @@ const (
 	Comment                   commons.FieldName = "comment"
 	RespectPdb                commons.FieldName = "respect_pdb"
 )
+
+const (
+	OptimizationWindows          commons.FieldName = "optimization_windows"
+	OptimizationWindowsIsEnabled commons.FieldName = "is_enabled"
+	Windows                      commons.FieldName = "windows"
+	Duration                     commons.FieldName = "duration"
+	Effects                      commons.FieldName = "effects"
+)

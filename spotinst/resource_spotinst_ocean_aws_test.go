@@ -719,6 +719,17 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.ami_auto_update_cluster_roll.0.respect_pdb", "false"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.minor_version", "true"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.ami_auto_update.0.patch", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.cron_expression", "0 * * * 2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.duration", "8h"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.0", "ignoreRestrictScaleDown"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.cron_expression", "0 0 * * 1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.duration", "7d"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.effects.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.effects.0", "ignorePdb"),
 				),
 			},
 			{
@@ -745,6 +756,18 @@ func TestAccSpotinstOceanAWS_Scheduling(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.batch_size_percentage", "20"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.comment", "test"),
 					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.tasks.0.parameters.0.parameters_cluster_roll.0.respect_pdb", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.cron_expression", "0 * * * *"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.duration", "9h"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.0", "ignorePdb"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.0.effects.1", "ignoreRestrictScaleDown"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.cron_expression", "0 0 * * 2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.duration", "6m"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.effects.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduled_task.0.optimization_windows.0.windows.1.effects.0", "ignoreRestrictScaleDown"),
 				),
 			},
 			{
@@ -788,6 +811,19 @@ const testSchedulingConfig_Create = `
         }
       }
     }
+	optimization_windows {
+      is_enabled = true
+      windows {
+        cron_expression = "0 * * * 2"
+        duration        = "8h"
+        effects         = ["ignoreRestrictScaleDown"]
+      }
+      windows {
+        cron_expression = "0 0 * * 1"
+        duration        = "7d"
+        effects         = ["ignorePdb"]
+      }
+    }
  }
  // ---------------------------------
 `
@@ -810,6 +846,19 @@ const testSchedulingConfig_Update = `
 			  comment = "test"
 			  respect_pdb = false
 		  }
+      }
+    }
+	optimization_windows {
+      is_enabled = false
+      windows {
+        cron_expression = "0 * * * *"
+        duration        = "9h"
+        effects         = ["ignorePdb","ignoreRestrictScaleDown"]
+      }
+      windows {
+        cron_expression = "0 0 * * 2"
+        duration        = "6m"
+        effects         = ["ignoreRestrictScaleDown"]
       }
     }
   }
