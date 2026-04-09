@@ -176,6 +176,15 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   }
 }
 
+optimization_windows {
+  is_enabled = true
+  windows {
+    cron_expression = "0 0 * * *"
+    duration        = "8h"
+    effects         = ["ignorePdb","ignoreRestrictScaleDown"]
+  }
+}
+
   instance_types_filters {
     categories                =   ["Accelerated_computing", "Compute_optimized"]
     disk_types                =   ["NVMe", "EBS"]
@@ -301,6 +310,12 @@ The following arguments are supported:
 * `scheduling_shutdown_hours` - (Optional) Used to specify times that the nodes in the virtual node group will be taken down.
     * `time_windows` - (Required ) The times that the shutdown hours will apply.
     * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When `false`, the mechanism is deactivated, and the virtual node group remains in its current state.
+* `optimization_windows` - (Optional) An object used to specify time windows during which certain optimization constraints can be eased.
+  * `is_enabled` - (Required) Used to enable or disable the optimization windows mechanism. Must be a boolean (null is invalid). When `true`, at least one window must be defined. When `false`, windows can be empty or omitted.
+  * `windows` - (Optional) The times when the optimization windows will apply. Required if `is_enabled` is `true`.
+  * `cron_expression` - (Required) A valid cron expression defining when the optimization window starts. For example: `0 0 * * *` (daily at midnight). The cron job runs in UTC time and follows Unix cron format.
+  * `duration` - (Required) The duration of the optimization window. Must be in the format where unit is `m` (minutes), `h` (hours), or `d` (days). Examples: `10m`, `5h`, `2d`.
+  * `effects` - (Required) Items Enum: `ignorePdb` `ignoreRestrictScaleDown`. The list of effects that will be applied during this optimization window.
 * `instance_metadata_options` - (Optional) Ocean instance metadata options object for IMDSv2.
     * `http_tokens` - (Required) Determines if a signed token is required or not. Valid values: `optional` or `required`.
     * `http_put_response_hop_limit` - (Optional) An integer from 1 through 64. The desired HTTP PUT response hop limit for instance metadata requests. The larger the number, the further the instance metadata requests can travel.

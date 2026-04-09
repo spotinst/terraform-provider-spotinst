@@ -353,6 +353,12 @@ update_policy {
     * `shutdown_hours` - (Optional) Set shutdown hours for cluster object.
         * `is_enabled` - (Optional) Toggle the shutdown hours task. (Example: `true`).
         * `time_windows` - (Required) Set time windows for shutdown hours. Specify a list of `timeWindows` with at least one time window Each string is in the format of: `ddd:hh:mm-ddd:hh:mm` where `ddd` = day of week = Sun | Mon | Tue | Wed | Thu | Fri | Sat, `hh` = hour 24 = 0 -23, `mm` = minute = 0 - 59. Time windows should not overlap. Required if `cluster.scheduling.isEnabled` is `true`. (Example: `Fri:15:30-Wed:14:30`).
+    * `optimization_windows` - (Optional) An object used to specify time windows during which certain optimization constraints can be eased.
+        * `is_enabled` - (Required) Used to enable or disable the optimization windows mechanism. Must be a boolean (null is invalid). When `true`, at least one window must be defined. When `false`, windows can be empty or omitted.
+        * `windows` - (Optional) The times when the optimization windows will apply. Required if `is_enabled` is `true`.
+            * `cron_expression` - (Required) A valid cron expression defining when the optimization window starts. For example: `0 0 * * *` (daily at midnight). The cron job runs in UTC time and follows Unix cron format.
+            * `duration` - (Required) The duration of the optimization window. Must be in the format where unit is `m` (minutes), `h` (hours), or `d` (days). Examples: `10m`, `5h`, `2d`.
+            * `effects` - (Required) Items Enum: `ignorePdb` `ignoreRestrictScaleDown`. The list of effects that will be applied during this optimization window.
     * `tasks` - (Optional) The scheduling tasks for the cluster.
         * `is_enabled` - (Required)  Describes whether the task is enabled. When true the task should run when false it should not run. Required for `cluster.scheduling.tasks` object.
         * `cron_expression` - (Required) A valid cron expression. The cron is running in UTC time zone and is in Unix cron format Cron Expression Validator Script. Only one of `frequency` or `cronExpression` should be used at a time. Required for `cluster.scheduling.tasks` object. (Example: `0 1 * * *`).
@@ -381,6 +387,14 @@ scheduled_task {
       "Fri:15:30-Sat:13:30", 
       "Sun:15:30-Mon:13:30",
     ]
+  }
+  optimization_windows {
+    is_enabled = true
+    windows {
+      cron_expression = "0 0 * * *"
+      duration        = "8h"
+      effects         = ["ignorePdb","ignoreRestrictScaleDown"]
+    }
   }
   tasks {
     is_enabled      = false
