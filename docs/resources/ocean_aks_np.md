@@ -105,9 +105,8 @@ resource "spotinst_ocean_aks_np" "example" {
     should_replace_unhealthy_instances                 = true
     health_check_unhealthy_duration_before_replacement = 300
   }
-
+  
   // ----------------------------------------------------------------------
-
   
   // ---- Logging ---------------------------------------------------------
   
