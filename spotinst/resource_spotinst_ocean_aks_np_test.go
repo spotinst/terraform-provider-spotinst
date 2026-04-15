@@ -752,6 +752,8 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 					testCheckOceanAKSNPAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "health.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "health.0.grace_period", "10"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.should_replace_unhealthy_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.health_check_unhealthy_duration_before_replacement", "180"),
 				),
 			},
 			{
@@ -765,6 +767,8 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "health.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "health.0.grace_period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.should_replace_unhealthy_instances", "true"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.health_check_unhealthy_duration_before_replacement", "500"),
 				),
 			},
 			/*{
@@ -787,6 +791,8 @@ const testHealthOceanAKSNPConfig_Create = `
   // --- Health --------------------------------------------------------
   health {
     grace_period = 10
+	should_replace_unhealthy_instances                 = false
+    health_check_unhealthy_duration_before_replacement = 180
   }
   // -------------------------------------------------------------------
 `
@@ -795,6 +801,8 @@ const testHealthOceanAKSNPConfig_Update = `
   // --- Health --------------------------------------------------------
   health {
     grace_period = 60
+	should_replace_unhealthy_instances                 = true
+    health_check_unhealthy_duration_before_replacement = 500
   }
   // -------------------------------------------------------------------
 `

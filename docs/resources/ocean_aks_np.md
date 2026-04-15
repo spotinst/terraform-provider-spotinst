@@ -99,12 +99,15 @@ resource "spotinst_ocean_aks_np" "example" {
   // ----------------------------------------------------------------------
 
   // --- Health -----------------------------------------------------------
-  
+
   health {
-    grace_period = 600
+    grace_period                                       = 600
+    should_replace_unhealthy_instances                 = true
+    health_check_unhealthy_duration_before_replacement = 300
   }
-  
+
   // ----------------------------------------------------------------------
+
   
   // ---- Logging ---------------------------------------------------------
   
@@ -244,6 +247,8 @@ The following arguments are supported:
 * `controller_cluster_id` - (Required) Enter a unique Ocean cluster identifier. Cannot be updated. This needs to match with string that was used to install the controller in the cluster, typically clusterName + 8 digit string.
 * `health` - (Optional) The Ocean AKS Health object.
   * `grace_period` - (Optional, Default: `600`) The amount of time to wait, in seconds, from the moment the instance has launched until monitoring of its health checks begins.
+  * `should_replace_unhealthy_instances` - (Optional, Default: `false`) Indicates whether Ocean automatically replaces nodes that remain in a NotReady or Unschedulable state. When `false`, unhealthy nodes are detected but not replaced. When `true`, unhealthy nodes are automatically replaced.
+  * `health_check_unhealthy_duration_before_replacement` - (Optional, Default: `180`) The amount of time, in seconds, a node is allowed to remain unhealthy after the grace period has elapsed before Ocean automatically replaces it. Valid values are in range `[120-3600]`.
 * `name` - (Required) Add a name for the Ocean cluster.
 * `headrooms` - (Optional) Specify the custom headroom per VNG. Provide a list of headroom objects.
   * `cpu_per_unit` - (Optional) Configure the number of CPUs to allocate the headroom. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.

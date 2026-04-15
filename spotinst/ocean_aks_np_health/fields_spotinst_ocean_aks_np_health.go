@@ -24,6 +24,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Default:  -1,
 					},
+					string(ShouldReplaceUnhealthyInstances): {
+						Type:     schema.TypeBool,
+						Default:  false,
+						Optional: true,
+					},
+					string(HealthCheckUnhealthyDurationBeforeReplacement): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
 				},
 			},
 		},
