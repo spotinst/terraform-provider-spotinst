@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	SpotPercentage     commons.FieldName = "spot_percentage"
-	FallbackToOnDemand commons.FieldName = "fallback_to_ondemand"
-	DrainingTimeout    commons.FieldName = "draining_timeout"
+	SpotPercentage           commons.FieldName = "spot_percentage"
+	FallbackToOnDemand       commons.FieldName = "fallback_to_ondemand"
+	DrainingTimeout          commons.FieldName = "draining_timeout"
+	ShouldUtilizeCommitments commons.FieldName = "should_utilize_commitments"
 )

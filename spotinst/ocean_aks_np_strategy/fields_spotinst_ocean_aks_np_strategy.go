@@ -144,4 +144,50 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[ShouldUtilizeCommitments] = commons.NewGenericField(
+		commons.OceanAKSNPStrategy,
+		ShouldUtilizeCommitments,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value *bool = nil
+			if cluster.VirtualNodeGroupTemplate.Strategy != nil && cluster.VirtualNodeGroupTemplate.Strategy.ShouldUtilizeCommitments != nil {
+				value = cluster.VirtualNodeGroupTemplate.Strategy.ShouldUtilizeCommitments
+			}
+			if value != nil {
+				if err := resourceData.Set(string(ShouldUtilizeCommitments), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(ShouldUtilizeCommitments), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOkExists(string(ShouldUtilizeCommitments)); ok && v != nil {
+				suc := v.(bool)
+				commitments := spotinst.Bool(suc)
+				cluster.VirtualNodeGroupTemplate.Strategy.SetShouldUtilizeCommitments(commitments)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var suc *bool = nil
+			if v, ok := resourceData.GetOkExists(string(ShouldUtilizeCommitments)); ok && v != nil {
+				shouldUse := v.(bool)
+				suc = spotinst.Bool(shouldUse)
+			}
+			cluster.VirtualNodeGroupTemplate.Strategy.SetShouldUtilizeCommitments(suc)
+			return nil
+		},
+		nil,
+	)
+
 }

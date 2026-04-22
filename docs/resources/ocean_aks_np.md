@@ -168,9 +168,10 @@ resource "spotinst_ocean_aks_np" "example" {
 
   // --- strategy ---------------------------------------------------------
   
-  spot_percentage      = 50
-  fallback_to_ondemand = true
-  draining_timeout     = 600
+  spot_percentage             = 50
+  fallback_to_ondemand        = true
+  draining_timeout            = 600
+  should_utilize_commitments  = true
 
   // ----------------------------------------------------------------------
 
@@ -277,6 +278,7 @@ The following arguments are supported:
 * `fallback_to_ondemand` - (Optional) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `draining_timeout` - (Optional) Time in seconds to allow the node to drain before it is terminated. The parameter value will be in range `[300-3600]`.
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
+* `should_utilize_commitments` - (Optional, Default: `false`) Determines whether to utilize any existing Azure Savings Plans or Reserved Instances associated with the subscription for On-Demand VMs.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
   * `key` - (Optional) Tag key for VMs in the cluster.
   * `value` - (Optional) Tag value for VMs in the cluster.
