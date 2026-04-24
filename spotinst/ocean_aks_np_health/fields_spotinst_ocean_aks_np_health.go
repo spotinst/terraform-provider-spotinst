@@ -24,6 +24,16 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Optional: true,
 						Default:  -1,
 					},
+					string(ShouldReplaceUnhealthyInstances): {
+						Type:     schema.TypeBool,
+						Default:  false,
+						Optional: true,
+					},
+					string(HealthCheckUnhealthyDurationBeforeReplacement): {
+						Type:     schema.TypeInt,
+						Optional: true,
+						Default:  -1,
+					},
 				},
 			},
 		},
@@ -89,6 +99,17 @@ func expandHealth(data interface{}) (*azure_np.Health, error) {
 			} else {
 				health.SetGracePeriod(nil)
 			}
+
+			if v, ok := m[string(ShouldReplaceUnhealthyInstances)].(bool); ok {
+				health.SetShouldReplaceUnhealthyInstances(spotinst.Bool(v))
+			}
+
+			if v, ok := m[string(HealthCheckUnhealthyDurationBeforeReplacement)].(int); ok && v > -1 {
+				health.SetHealthCheckUnhealthyDurationBeforeReplacement(spotinst.Int(v))
+			} else {
+				health.SetHealthCheckUnhealthyDurationBeforeReplacement(nil)
+			}
+
 		}
 		return health, nil
 	}
@@ -103,6 +124,12 @@ func flattenHealth(health *azure_np.Health) []interface{} {
 
 		if health.GracePeriod != nil {
 			result[string(GracePeriod)] = spotinst.IntValue(health.GracePeriod)
+		}
+		if health.ShouldReplaceUnhealthyInstances != nil {
+			result[string(ShouldReplaceUnhealthyInstances)] = spotinst.BoolValue(health.ShouldReplaceUnhealthyInstances)
+		}
+		if health.HealthCheckUnhealthyDurationBeforeReplacement != nil {
+			result[string(HealthCheckUnhealthyDurationBeforeReplacement)] = spotinst.IntValue(health.HealthCheckUnhealthyDurationBeforeReplacement)
 		}
 		if len(result) > 0 {
 			out = append(out, result)

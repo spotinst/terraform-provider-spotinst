@@ -226,6 +226,7 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.33"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
+					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "false"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
@@ -253,6 +254,7 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.33"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
+					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "true"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
@@ -305,9 +307,10 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   }
   // --- strategy ---------------------------------------------------------
 
-  spot_percentage      = 50
-  fallback_to_ondemand = false
-  draining_timeout     = 300
+  spot_percentage            = 50
+  fallback_to_ondemand       = false
+  draining_timeout           = 300
+  should_utilize_commitments = false
 
   // ----------------------------------------------------------------------
 
@@ -364,9 +367,10 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
   }
   // --- strategy ---------------------------------------------------------
 
-  spot_percentage      = 100
-  fallback_to_ondemand = true
-  draining_timeout     = 900
+  spot_percentage            = 100
+  fallback_to_ondemand       = true
+  draining_timeout           = 900
+  should_utilize_commitments = true
 
   // ----------------------------------------------------------------------
 
@@ -752,6 +756,8 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 					testCheckOceanAKSNPAttributes(&cluster, clusterName),
 					resource.TestCheckResourceAttr(resourceName, "health.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "health.0.grace_period", "10"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.should_replace_unhealthy_instances", "false"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.health_check_unhealthy_duration_before_replacement", "180"),
 				),
 			},
 			{
@@ -765,6 +771,8 @@ func TestAccSpotinstOceanAKSNP_Health(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "health.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "health.0.grace_period", "60"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.should_replace_unhealthy_instances", "true"),
+					resource.TestCheckResourceAttr(resourceName, "health.0.health_check_unhealthy_duration_before_replacement", "500"),
 				),
 			},
 			/*{
@@ -787,6 +795,8 @@ const testHealthOceanAKSNPConfig_Create = `
   // --- Health --------------------------------------------------------
   health {
     grace_period = 10
+	should_replace_unhealthy_instances                 = false
+    health_check_unhealthy_duration_before_replacement = 180
   }
   // -------------------------------------------------------------------
 `
@@ -795,6 +805,8 @@ const testHealthOceanAKSNPConfig_Update = `
   // --- Health --------------------------------------------------------
   health {
     grace_period = 60
+	should_replace_unhealthy_instances                 = true
+    health_check_unhealthy_duration_before_replacement = 500
   }
   // -------------------------------------------------------------------
 `

@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.235.0 (Apr, 24 2026)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np: Added support for `shouldUtilizeCommitments`, `shouldReplaceUnhealthyInstances` and `healthCheckUnhealthyDurationBeforeReplacement` field.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `shouldUtilizeCommitments` field.
+
 ## 1.234.0 (Apr, 9 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws: Added support for `optimization_windows` field.

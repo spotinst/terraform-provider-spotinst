@@ -5,6 +5,8 @@ import (
 )
 
 const (
-	Health      commons.FieldName = "health"
-	GracePeriod commons.FieldName = "grace_period"
+	Health                                        commons.FieldName = "health"
+	GracePeriod                                   commons.FieldName = "grace_period"
+	ShouldReplaceUnhealthyInstances               commons.FieldName = "should_replace_unhealthy_instances"
+	HealthCheckUnhealthyDurationBeforeReplacement commons.FieldName = "health_check_unhealthy_duration_before_replacement"
 )
