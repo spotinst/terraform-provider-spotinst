@@ -816,7 +816,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		commons.OceanGKELaunchSpec,
 		Storage,
 		&schema.Schema{
-			Type:     schema.TypeSet,
+			Type:     schema.TypeList,
 			Optional: true,
 			Computed: true,
 			MaxItems: 1,
@@ -825,7 +825,15 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(LocalSSDCount): {
 						Type:     schema.TypeInt,
 						Optional: true,
-						Computed: true,
+					},
+					string(LocalNvmeSsdCount): {
+						Type:     schema.TypeInt,
+						Optional: true,
+					},
+
+					string(LocalSsdEphemeralStorageCount): {
+						Type:     schema.TypeInt,
+						Optional: true,
 					},
 				},
 			},
@@ -1458,7 +1466,7 @@ func expandShieldedInstanceConfig(data interface{}) (*gcp.ShieldedInstanceConfig
 func expandStorage(data interface{}) (*gcp.Storage, error) {
 	var storage *gcp.Storage
 	updated := 0
-	list := data.(*schema.Set).List()
+	list := data.([]interface{})
 	for _, v := range list {
 		attr, ok := v.(map[string]interface{})
 		if !ok {
@@ -1467,9 +1475,25 @@ func expandStorage(data interface{}) (*gcp.Storage, error) {
 
 		s := &gcp.Storage{}
 
-		if v, ok := attr[string(LocalSSDCount)].(int); ok {
+		if v, ok := attr[string(LocalSSDCount)].(int); ok && v > 0 {
 			updated = 1
 			s.SetLocalSSDCount(spotinst.Int(v))
+		} else {
+			s.SetLocalSSDCount(nil)
+		}
+
+		if v, ok := attr[string(LocalNvmeSsdCount)].(int); ok && v > 0 {
+			updated = 1
+			s.SetLocalNvmeSsdCount(spotinst.Int(v))
+		} else {
+			s.SetLocalNvmeSsdCount(nil)
+		}
+
+		if v, ok := attr[string(LocalSsdEphemeralStorageCount)].(int); ok && v > 0 {
+			updated = 1
+			s.SetLocalSsdEphemeralStorageCount(spotinst.Int(v))
+		} else {
+			s.SetLocalSsdEphemeralStorageCount(nil)
 		}
 
 		storage = s
@@ -1580,6 +1604,14 @@ func flattenStorage(storage *gcp.Storage) []interface{} {
 
 		if storage.LocalSSDCount != nil {
 			result[string(LocalSSDCount)] = spotinst.IntValue(storage.LocalSSDCount)
+		}
+
+		if storage.LocalNvmeSsdCount != nil {
+			result[string(LocalNvmeSsdCount)] = spotinst.IntValue(storage.LocalNvmeSsdCount)
+		}
+
+		if storage.LocalSsdEphemeralStorageCount != nil {
+			result[string(LocalSsdEphemeralStorageCount)] = spotinst.IntValue(storage.LocalSsdEphemeralStorageCount)
 		}
 
 		if len(result) > 0 {

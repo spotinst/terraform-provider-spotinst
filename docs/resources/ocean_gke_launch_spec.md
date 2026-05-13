@@ -37,6 +37,8 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
 
   storage {
     local_ssd_count = 5
+    local_nvme_ssd_count                = 2
+    local_ssd_ephemeral_storage_count   = 2
   }
 
   resource_limits {
@@ -159,6 +161,8 @@ The following arguments are supported:
   * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
 * `storage` - (Optional) The Ocean virtual node group storage object.
   * `local_ssd_count` - (Optional) Defines the number of local SSDs to be attached per node for this VNG.
+  * `local_nvme_ssd_count` - (Optional) Defines the number of local NVMe SSDs to be attached per node in raw block mode for this VNG. All `instance_types` configured in this VNG must support the value of `local_nvme_ssd_count`. Otherwise, if the Ocean cluster has `instance_types` on a permit list, at least one must support the value of `local_nvme_ssd_count`.
+  * `local_ssd_ephemeral_storage_count` - (Optional) Defines the number of local SSDs to be used as ephemeral storage per node for this VNG. All `instance_types` configured in this VNG must support the value of `local_ssd_ephemeral_storage_count`. Otherwise, if the Ocean cluster has `instance_types` on a permit list, at least one must support the value of `local_ssd_ephemeral_storage_count`.
 * `resource_limits` - (Optional) The Ocean virtual node group resource limits object.
   * `max_instance_count` - (Optional) Option to set a maximum number of instances per virtual node group. Can be null. If set, the value must be greater than or equal to 0.
   * `min_instance_count` - (Optional) Option to set a minimum number of instances per virtual node group. Can be null. If set, the value must be greater than or equal to 0.

@@ -1,5 +1,8 @@
 ## Unreleased
 
+## 1.236.0 (May, 14 2026)
+* resource/spotinst_ocean_gke_launch_spec: Added support for `local_nvme_ssd_count` and `local_ssd_ephemeral_storage_count` field.
+
 ## 1.235.0 (Apr, 24 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support for `shouldUtilizeCommitments`, `shouldReplaceUnhealthyInstances` and `healthCheckUnhealthyDurationBeforeReplacement` field.
