@@ -1,7 +1,8 @@
 ## Unreleased
 
-## 1.236.0 (May, 14 2026)
+## 1.236.0 (May, 15 2026)
 * resource/spotinst_ocean_gke_launch_spec: Added support for `local_nvme_ssd_count` and `local_ssd_ephemeral_storage_count` field.
+* resource/spotinst_ocean_aws: Added support for `max_replacement_limit_percentage` field.
 
 ## 1.235.0 (Apr, 24 2026)
 ENHANCEMENTS:
