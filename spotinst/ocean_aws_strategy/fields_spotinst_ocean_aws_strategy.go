@@ -24,7 +24,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			cluster := clusterWrapper.GetCluster()
 			var value *int = nil
 
-			if cluster.Strategy != nil && cluster.Strategy.DrainingTimeout != nil {
+			if cluster.Strategy != nil && cluster.Strategy.GracePeriod != nil {
 				value = cluster.Strategy.GracePeriod
 			}
 			if value != nil {
@@ -157,6 +157,53 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				spotPercentage = spotinst.Float64(float64(v))
 			}
 			cluster.Strategy.SetSpotPercentage(spotPercentage)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[MaxReplacementLimitPercentage] = commons.NewGenericField(
+		commons.OceanAWSStrategy,
+		MaxReplacementLimitPercentage,
+		&schema.Schema{
+			Type:         schema.TypeInt,
+			Optional:     true,
+			Default:      -1,
+			ValidateFunc: validation.IntAtLeast(-1),
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			value := spotinst.Int(-1)
+			if cluster.Strategy != nil && cluster.Strategy.MaxReplacementLimitPercentage != nil {
+				value = cluster.Strategy.MaxReplacementLimitPercentage
+			}
+			if err := resourceData.Set(string(MaxReplacementLimitPercentage), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MaxReplacementLimitPercentage), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var value *int = nil
+			if v := resourceData.Get(string(MaxReplacementLimitPercentage)).(int); v > -1 {
+				value = spotinst.Int(v)
+			}
+			cluster.Strategy.SetMaxReplacementLimitPercentage(value)
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AWSClusterWrapper)
+			cluster := clusterWrapper.GetCluster()
+
+			var value *int = nil
+			if v := resourceData.Get(string(MaxReplacementLimitPercentage)).(int); v > -1 {
+				value = spotinst.Int(v)
+			}
+			cluster.Strategy.SetMaxReplacementLimitPercentage(value)
 			return nil
 		},
 		nil,
