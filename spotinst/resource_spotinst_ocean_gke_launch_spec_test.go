@@ -354,6 +354,342 @@ tags = ["a","gke-terraform-tests-do-not-delete-f0fbf73b-node"]
 
 // endregion
 
+// region OceanGKELaunchSpec: Storage LocalNvmeSsdCount
+func TestAccSpotinstOceanGKELaunchSpec_Storage_LocalNvmeSsdCount(t *testing.T) {
+	oceanID := "o-6419f8ac"
+	resourceName := createOceanGKELaunchSpecResource(oceanID)
+
+	var launchSpec gcp.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKELaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanGKELaunchSpecTerraform(
+					&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true},
+					testLocalNvmeSsdCountOceanGKELaunchSpecConfig_Create,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "storage.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "storage.0.local_nvme_ssd_count", "1"),
+				),
+			},
+			{
+				Config: createOceanGKELaunchSpecTerraform(
+					&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true},
+					testLocalNvmeSsdCountOceanGKELaunchSpecConfig_Update,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "storage.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "storage.0.local_nvme_ssd_count", "3"),
+				),
+			},
+		},
+	})
+}
+
+const testLocalNvmeSsdCountOceanGKELaunchSpecConfig_Create = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1353-gke1389000-cos-125-19216-220-106-c-pre"
+ restrict_scale_down = false
+ root_volume_type = "pd-standard"
+ root_volume_size = 12
+ instance_types = ["n1-standard-1"]
+ service_account = "default"
+ name = "test_ocean_gke_launch_spec_storage_nvme_ssd"
+
+ metadata {
+     key = "gci-update-strategy"
+     value = "update_disabled"
+ }
+
+ metadata {
+    key   = "kube-labels"
+    value = "cloud.google.com/gke-boot-disk=pd-balanced,cloud.google.com/gke-container-runtime=containerd,cloud.google.com/gke-cpu-scaling-level=1,cloud.google.com/gke-local-nvme-ssd=true,cloud.google.com/gke-logging-variant=DEFAULT,cloud.google.com/gke-max-pods-per-node=110,cloud.google.com/gke-memory-gb-scaling-level=3,cloud.google.com/gke-nodepool=nvme-ssd-pool,cloud.google.com/gke-os-distribution=cos,cloud.google.com/gke-provisioning=spot,cloud.google.com/gke-spot=true,cloud.google.com/gke-stack-type=IPV4,cloud.google.com/machine-family=n1,cloud.google.com/private-node=false,disk-type.gke.io/pd-balanced=true,disk-type.gke.io/pd-extreme=true,disk-type.gke.io/pd-ssd=true,disk-type.gke.io/pd-standard=true"
+  }
+ 
+ labels {
+     key = "testKey2"
+     value = "testVal2"
+   }
+
+ taints {
+     key = "testTaintKey"
+     value = "testTaintVal"
+     effect = "NoSchedule"
+   }
+
+ shielded_instance_config {
+    enable_secure_boot = true
+    enable_integrity_monitoring = false
+  }
+
+ storage {
+    local_nvme_ssd_count = 1
+  }
+
+ resource_limits {
+    max_instance_count = 5
+    min_instance_count = 0
+  }
+
+ network_interfaces {
+    network = "Test_VNG_Network"
+    project_id = "Test_VNG_Network_Project"
+    access_configs {
+      name = "external-nat-vng"
+      type     = "ONE_TO_ONE_NAT"
+    }
+    alias_ip_ranges {
+      ip_cidr_range         = "/25"
+      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+    }
+  }
+}
+`
+
+const testLocalNvmeSsdCountOceanGKELaunchSpecConfig_Update = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1353-gke1389000-cos-125-19216-220-106-c-pre"
+ restrict_scale_down = false
+ root_volume_type = "pd-standard"
+ root_volume_size = 12
+ instance_types = ["n1-standard-1"]
+ service_account = "default"
+ name = "test_ocean_gke_launch_spec_storage_nvme_ssd_update"
+
+ metadata {
+     key = "gci-update-strategy"
+     value = "update_disabled"
+ }
+
+ metadata {
+    key   = "kube-labels"
+    value = "cloud.google.com/gke-boot-disk=pd-balanced,cloud.google.com/gke-container-runtime=containerd,cloud.google.com/gke-cpu-scaling-level=1,cloud.google.com/gke-local-nvme-ssd=true,cloud.google.com/gke-logging-variant=DEFAULT,cloud.google.com/gke-max-pods-per-node=110,cloud.google.com/gke-memory-gb-scaling-level=3,cloud.google.com/gke-nodepool=nvme-ssd-pool,cloud.google.com/gke-os-distribution=cos,cloud.google.com/gke-provisioning=spot,cloud.google.com/gke-spot=true,cloud.google.com/gke-stack-type=IPV4,cloud.google.com/machine-family=n1,cloud.google.com/private-node=false,disk-type.gke.io/pd-balanced=true,disk-type.gke.io/pd-extreme=true,disk-type.gke.io/pd-ssd=true,disk-type.gke.io/pd-standard=true"
+  }
+ 
+ labels {
+     key = "testKey2"
+     value = "testVal2"
+   }
+
+ taints {
+     key = "testTaintKey"
+     value = "testTaintVal"
+     effect = "NoSchedule"
+   }
+
+ shielded_instance_config {
+    enable_secure_boot = true
+    enable_integrity_monitoring = false
+  }
+
+ storage {
+    local_nvme_ssd_count = 3
+  }
+
+ resource_limits {
+    max_instance_count = 5
+    min_instance_count = 0
+  }
+
+ network_interfaces {
+    network = "Test_VNG_Network"
+    project_id = "Test_VNG_Network_Project"
+    access_configs {
+      name = "external-nat-vng"
+      type     = "ONE_TO_ONE_NAT"
+    }
+    alias_ip_ranges {
+      ip_cidr_range         = "/25"
+      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+    }
+  }
+}
+`
+
+// endregion
+
+// region OceanGKELaunchSpec: Storage LocalSsdEphemeralStorageCount
+func TestAccSpotinstOceanGKELaunchSpec_Storage_LocalSsdEphemeralStorageCount(t *testing.T) {
+	oceanID := "o-6419f8ac"
+	resourceName := createOceanGKELaunchSpecResource(oceanID)
+
+	var launchSpec gcp.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKELaunchSpecDestroy,
+
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanGKELaunchSpecTerraform(
+					&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true},
+					testLocalSsdEphemeralStorageCountOceanGKELaunchSpecConfig_Create,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "storage.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "storage.0.local_ssd_ephemeral_storage_count", "1"),
+				),
+			},
+			{
+				Config: createOceanGKELaunchSpecTerraform(
+					&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true},
+					testLocalSsdEphemeralStorageCountOceanGKELaunchSpecConfig_Update,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "storage.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "storage.0.local_ssd_ephemeral_storage_count", "3"),
+				),
+			},
+		},
+	})
+}
+
+const testLocalSsdEphemeralStorageCountOceanGKELaunchSpecConfig_Create = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1353-gke1234000-cos-125-19216-220-72-c-pre"
+ restrict_scale_down = false
+ root_volume_type = "pd-standard"
+ root_volume_size = 12
+ instance_types = ["n1-standard-1"]
+ service_account = "default"
+ name = "test_ocean_gke_launch_spec_storage_ephemeral_ssd"
+
+ metadata {
+     key = "gci-update-strategy"
+     value = "update_disabled"
+ }
+
+ metadata {
+    key   = "kube-labels"
+    value = "cloud.google.com/gke-boot-disk=pd-standard,cloud.google.com/gke-container-runtime=containerd,cloud.google.com/gke-cpu-scaling-level=1,cloud.google.com/gke-ephemeral-storage-local-ssd=true,cloud.google.com/gke-logging-variant=DEFAULT,cloud.google.com/gke-max-pods-per-node=110,cloud.google.com/gke-memory-gb-scaling-level=3,cloud.google.com/gke-nodepool=ephemeral-storage-pool,cloud.google.com/gke-os-distribution=cos,cloud.google.com/gke-provisioning=spot,cloud.google.com/gke-spot=true,cloud.google.com/gke-stack-type=IPV4,cloud.google.com/machine-family=n1,cloud.google.com/private-node=false,disk-type.gke.io/pd-balanced=true,disk-type.gke.io/pd-extreme=true,disk-type.gke.io/pd-ssd=true,disk-type.gke.io/pd-standard=true"
+  }
+ 
+ labels {
+     key = "testKey2"
+     value = "testVal2"
+   }
+
+ taints {
+     key = "testTaintKey"
+     value = "testTaintVal"
+     effect = "NoSchedule"
+   }
+
+ shielded_instance_config {
+    enable_secure_boot = true
+    enable_integrity_monitoring = false
+  }
+
+ storage {
+    local_ssd_ephemeral_storage_count = 1
+  }
+
+ resource_limits {
+    max_instance_count = 5
+    min_instance_count = 0
+  }
+
+ network_interfaces {
+    network = "Test_VNG_Network"
+    project_id = "Test_VNG_Network_Project"
+    access_configs {
+      name = "external-nat-vng"
+      type     = "ONE_TO_ONE_NAT"
+    }
+    alias_ip_ranges {
+      ip_cidr_range         = "/25"
+      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+    }
+  }
+}
+`
+
+const testLocalSsdEphemeralStorageCountOceanGKELaunchSpecConfig_Update = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"  
+
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1353-gke1234000-cos-125-19216-220-72-c-pre"
+ restrict_scale_down = false
+ root_volume_type = "pd-standard"
+ root_volume_size = 12
+ instance_types = ["n1-standard-1"]
+ service_account = "default"
+ name = "test_ocean_gke_launch_spec_storage_ephemeral_ssd_update"
+
+ metadata {
+     key = "gci-update-strategy"
+     value = "update_disabled"
+ }
+
+ metadata {
+    key   = "kube-labels"
+    value = "cloud.google.com/gke-boot-disk=pd-standard,cloud.google.com/gke-container-runtime=containerd,cloud.google.com/gke-cpu-scaling-level=1,cloud.google.com/gke-ephemeral-storage-local-ssd=true,cloud.google.com/gke-logging-variant=DEFAULT,cloud.google.com/gke-max-pods-per-node=110,cloud.google.com/gke-memory-gb-scaling-level=3,cloud.google.com/gke-nodepool=ephemeral-storage-pool,cloud.google.com/gke-os-distribution=cos,cloud.google.com/gke-provisioning=spot,cloud.google.com/gke-spot=true,cloud.google.com/gke-stack-type=IPV4,cloud.google.com/machine-family=n1,cloud.google.com/private-node=false,disk-type.gke.io/pd-balanced=true,disk-type.gke.io/pd-extreme=true,disk-type.gke.io/pd-ssd=true,disk-type.gke.io/pd-standard=true"
+  }
+ 
+ labels {
+     key = "testKey2"
+     value = "testVal2"
+   }
+
+ taints {
+     key = "testTaintKey"
+     value = "testTaintVal"
+     effect = "NoSchedule"
+   }
+
+ shielded_instance_config {
+    enable_secure_boot = true
+    enable_integrity_monitoring = false
+  }
+
+ storage {
+    local_ssd_ephemeral_storage_count = 3
+  }
+
+ resource_limits {
+    max_instance_count = 5
+    min_instance_count = 0
+  }
+
+ network_interfaces {
+    network = "Test_VNG_Network"
+    project_id = "Test_VNG_Network_Project"
+    access_configs {
+      name = "external-nat-vng"
+      type     = "ONE_TO_ONE_NAT"
+    }
+    alias_ip_ranges {
+      ip_cidr_range         = "/25"
+      subnetwork_range_name = "gke-test-native-vpc-pods-5cb557f7-vng"
+    }
+  }
+}
+`
+
+// endregion
+
 // region OceanGKELaunchSpec: Labels
 func TestAccSpotinstOceanGKELaunchSpec_Labels(t *testing.T) {
 	oceanID := "o-6419f8ac"

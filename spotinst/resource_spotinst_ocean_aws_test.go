@@ -612,6 +612,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "120"),
 					resource.TestCheckResourceAttr(resourceName, "grace_period", "50"),
 					resource.TestCheckResourceAttr(resourceName, "spread_nodes_by", "count"),
+					resource.TestCheckResourceAttr(resourceName, "max_replacement_limit_percentage", "10"),
 				),
 			},
 			{
@@ -628,6 +629,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "240"),
 					resource.TestCheckResourceAttr(resourceName, "grace_period", "100"),
+					resource.TestCheckResourceAttr(resourceName, "max_replacement_limit_percentage", "25"),
 				),
 			},
 			{
@@ -644,6 +646,7 @@ func TestAccSpotinstOceanAWS_Strategy(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "-1"),
 					resource.TestCheckResourceAttr(resourceName, "utilize_reserved_instances", "true"),
 					resource.TestCheckResourceAttr(resourceName, "draining_timeout", "0"),
+					resource.TestCheckResourceAttr(resourceName, "max_replacement_limit_percentage", "-1"),
 				),
 			},
 		},
@@ -658,6 +661,7 @@ const testStrategyConfig_Create = `
  draining_timeout			= 120
  grace_period 				= 50
  spread_nodes_by			= "count"
+ max_replacement_limit_percentage = 10
  // ---------------------------------
 `
 
@@ -668,12 +672,14 @@ const testStrategyConfig_Update = `
  utilize_reserved_instances = true
  draining_timeout			= 240
  grace_period = 100
+ max_replacement_limit_percentage = 25
  // ---------------------------------
 `
 
 const testStrategyConfig_EmptyFields = `
  // --- STRATEGY --------------------
  spot_percentage = null
+ max_replacement_limit_percentage = -1
  // ---------------------------------
 `
 

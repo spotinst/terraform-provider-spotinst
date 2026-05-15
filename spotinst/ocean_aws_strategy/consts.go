@@ -5,13 +5,14 @@ import (
 )
 
 const (
-	SpotPercentage           commons.FieldName = "spot_percentage"
-	FallbackToOnDemand       commons.FieldName = "fallback_to_ondemand"
-	UtilizeReservedInstances commons.FieldName = "utilize_reserved_instances"
-	DrainingTimeout          commons.FieldName = "draining_timeout"
-	GracePeriod              commons.FieldName = "grace_period"
-	UtilizeCommitments       commons.FieldName = "utilize_commitments"
-	ClusterOrientation       commons.FieldName = "cluster_orientation"
-	AvailabilityVsCost       commons.FieldName = "availability_vs_cost"
-	SpreadNodesBy            commons.FieldName = "spread_nodes_by"
+	SpotPercentage                commons.FieldName = "spot_percentage"
+	FallbackToOnDemand            commons.FieldName = "fallback_to_ondemand"
+	UtilizeReservedInstances      commons.FieldName = "utilize_reserved_instances"
+	DrainingTimeout               commons.FieldName = "draining_timeout"
+	GracePeriod                   commons.FieldName = "grace_period"
+	UtilizeCommitments            commons.FieldName = "utilize_commitments"
+	ClusterOrientation            commons.FieldName = "cluster_orientation"
+	AvailabilityVsCost            commons.FieldName = "availability_vs_cost"
+	SpreadNodesBy                 commons.FieldName = "spread_nodes_by"
+	MaxReplacementLimitPercentage commons.FieldName = "max_replacement_limit_percentage"
 )
