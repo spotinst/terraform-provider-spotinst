@@ -184,7 +184,20 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 			launchSpec.SetUserData(userData)
 			return nil
 		},
-		nil,
+		// Always include user_data in the PUT body when it is set in config.
+		// Without this, the default HasChange-based gate has been observed to
+		// miss diffs on user_data (the resource-level apply runs and
+		// updatedAt advances, but the live user_data is unchanged on the
+		// backend). Forcing user_data to flow through onUpdate on every apply
+		// makes this class of silent non-persist impossible for this field.
+		// Cost is one extra well-formed field in the PATCH body per apply
+		// when user_data is configured, which is negligible.
+		func(resourceData *schema.ResourceData, meta interface{}) bool {
+			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
+				return true
+			}
+			return resourceData.HasChange(string(UserData))
+		},
 	)
 
 	fieldsMap[Labels] = commons.NewGenericField(
