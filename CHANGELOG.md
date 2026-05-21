@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.236.1 (May, 21 2026)
+BUG FIXES:
+* resource/spotinst_ocean_aws_launch_spec: resolved bug to set `user_data` when available.
+
 ## 1.236.0 (May, 15 2026)
 * resource/spotinst_ocean_gke_launch_spec: Added support for `local_nvme_ssd_count` and `local_ssd_ephemeral_storage_count` field.
 * resource/spotinst_ocean_aws: Added support for `max_replacement_limit_percentage` field.
