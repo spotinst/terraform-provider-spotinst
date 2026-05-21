@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.237.0 (May, 21 2026)
+## 1.236.1 (May, 21 2026)
 BUG FIXES:
 * resource/spotinst_ocean_aws_launch_spec: resolved bug to set `user_data` when available.
 
