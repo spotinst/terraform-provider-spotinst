@@ -192,7 +192,6 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		// makes this class of silent non-persist impossible for this field.
 		// Cost is one extra well-formed field in the PATCH body per apply
 		// when user_data is configured, which is negligible.
-
 		func(resourceData *schema.ResourceData, meta interface{}) bool {
 			if v, ok := resourceData.Get(string(UserData)).(string); ok && v != "" {
 				return true
