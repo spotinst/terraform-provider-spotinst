@@ -140,6 +140,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "false"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
@@ -164,6 +165,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "true"),
+					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
@@ -216,6 +218,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   fallback_to_ondemand       = false
   draining_timeout           = 300
   should_utilize_commitments = false
+  restrict_scale_down        = true
 
   // ---------------------------------------------------------------------------
  
@@ -263,6 +266,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   fallback_to_ondemand       = true
   draining_timeout           = 900
   should_utilize_commitments = true
+  restrict_scale_down        = false
 
   // ---------------------------------------------------------------------------
 

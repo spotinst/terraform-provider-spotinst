@@ -29,4 +29,5 @@ const (
 	NodePoolNames             commons.FieldName = "node_pool_names"
 	RespectRestrictScaleDown  commons.FieldName = "respect_restrict_scale_down"
 	NodeNames                 commons.FieldName = "node_names"
+	RestrictScaleDown         commons.FieldName = "restrict_scale_down"
 )

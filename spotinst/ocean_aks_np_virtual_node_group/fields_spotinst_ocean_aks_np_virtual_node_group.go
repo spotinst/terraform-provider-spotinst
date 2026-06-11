@@ -370,6 +370,48 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil, nil, nil, nil,
 	)
+	fieldsMap[RestrictScaleDown] = commons.NewGenericField(
+		commons.OceanAKSNPVirtualNodeGroup,
+		RestrictScaleDown,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			var value *bool = nil
+			if virtualNodeGroup.RestrictScaleDown != nil {
+				value = virtualNodeGroup.RestrictScaleDown
+			}
+			if value != nil {
+				if err := resourceData.Set(string(RestrictScaleDown), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(RestrictScaleDown), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+				restrictScaleDown := spotinst.Bool(v.(bool))
+				virtualNodeGroup.SetRestrictScaleDown(restrictScaleDown)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			virtualNodeGroupWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := virtualNodeGroupWrapper.GetVirtualNodeGroup()
+			var restrictScaleDown *bool = nil
+			if v, ok := resourceData.GetOkExists(string(RestrictScaleDown)); ok && v != nil {
+				restrictScaleDown = spotinst.Bool(v.(bool))
+				virtualNodeGroup.SetRestrictScaleDown(restrictScaleDown)
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandAvailaiblityZones(data interface{}) ([]string, error) {

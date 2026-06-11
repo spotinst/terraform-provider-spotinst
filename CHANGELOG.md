@@ -1,10 +1,15 @@
 ## Unreleased
 
+## 1.237.0 (June, 11 2026)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `restrict_scale_down` field.
+
 ## 1.236.1 (May, 21 2026)
 BUG FIXES:
 * resource/spotinst_ocean_aws_launch_spec: Added a fix to `user_data` to show up in all updates if configured.
 
 ## 1.236.0 (May, 15 2026)
+ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: Added support for `local_nvme_ssd_count` and `local_ssd_ephemeral_storage_count` field.
 * resource/spotinst_ocean_aws: Added support for `max_replacement_limit_percentage` field.
 
