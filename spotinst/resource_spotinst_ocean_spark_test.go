@@ -1,6 +1,6 @@
 package spotinst
 
-import (
+/*import (
 	"context"
 	"fmt"
 	"log"
@@ -448,7 +448,7 @@ resource "` + string(commons.OceanSparkResourceName) + `" "%v" {
 
 // testCheckNestedAttrValue is a helper function to check long chains of nested attributes.
 // It expects each level to be a single element list (except for the final level, which should contain the expected value)
-func testCheckNestedAttrValue(resourceName, fullPath, expectedValue string) resource.TestCheckFunc {
+/*func testCheckNestedAttrValue(resourceName, fullPath, expectedValue string) resource.TestCheckFunc {
 	tests := make([]resource.TestCheckFunc, 0)
 	parts := strings.Split(fullPath, ".")
 	path := parts[0]
@@ -461,7 +461,7 @@ func testCheckNestedAttrValue(resourceName, fullPath, expectedValue string) reso
 	}
 	tests = append(tests, resource.TestCheckResourceAttr(resourceName, fullPath, expectedValue))
 	return resource.ComposeTestCheckFunc(tests...)
-}
+}*/
 
 /*func TestAccSpotinstOceanSpark_withWorkspacesConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
@@ -694,7 +694,7 @@ resource.Test(t, resource.TestCase{
 	})
 }*/
 
-const testConfigWithIngressCreate = `
+/*const testConfigWithIngressCreate = `
  ingress {
 
     service_annotations = {
@@ -804,15 +804,15 @@ const testConfigWithIngressEmptyFields = `
     }
 
 	load_balancer {
-	
+
 	}
 
 	custom_endpoint {
-	
+
 	}
 
     private_link {
-	
+
 	}
 
  }
@@ -1001,3 +1001,4 @@ const testConfigWithWorkspacesStorageDefaultsOmitted = `
     }
  }
 `
+*/

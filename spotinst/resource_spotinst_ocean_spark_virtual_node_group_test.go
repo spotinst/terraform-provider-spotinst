@@ -1,6 +1,6 @@
 package spotinst
 
-import (
+/*import (
 	"context"
 	"fmt"
 	"log"
@@ -173,11 +173,11 @@ func attachOceanSparkVngTerraform(scvam *SparkClusterVngAttachMetadata) string {
 	})
 }*/
 
-const testAttachVngConfig = `
+/*const testAttachVngConfig = `
 resource "` + string(commons.OceanSparkVirtualNodeGroupResourceName) + `" "%v" {
   provider = "aws"
 
   virtual_node_group_id = "%v"
   ocean_spark_cluster_id = "%v"
 }
-`
+`*/

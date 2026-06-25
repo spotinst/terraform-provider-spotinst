@@ -2,7 +2,7 @@
 
 ## 1.237.1 (June, 25 2026)
 NOTES:
-* SDK Version Update: Updating the version of `SDK` to blacklist OFAS APIs in the provider.
+* Ocean_Spark: Added decommissioned message for Ocean_spark in spotinst-sdk for accessing OFAS APIs in the provider.
 
 ## 1.237.0 (June, 11 2026)
 ENHANCEMENTS:
