@@ -1,12 +1,11 @@
 package spotinst
 
-import (
+/*import (
 	"context"
 	"fmt"
 	"log"
 	"os"
 	"strings"
-	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -151,7 +150,7 @@ func attachOceanSparkVngTerraform(scvam *SparkClusterVngAttachMetadata) string {
 	return template
 }
 
-func TestAccSpotinstOceanSparkVng_attach(t *testing.T) {
+/*func TestAccSpotinstOceanSparkVng_attach(t *testing.T) {
 	resourceName := createOceanSparkVngResourceName(oceanSparkVngID)
 
 	var vng spark.DedicatedVirtualNodeGroup
@@ -172,13 +171,13 @@ func TestAccSpotinstOceanSparkVng_attach(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
-const testAttachVngConfig = `
+/*const testAttachVngConfig = `
 resource "` + string(commons.OceanSparkVirtualNodeGroupResourceName) + `" "%v" {
   provider = "aws"
 
   virtual_node_group_id = "%v"
   ocean_spark_cluster_id = "%v"
 }
-`
+`*/
