@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -150,7 +149,7 @@ resource "` + string(commons.OceanSparkResourceName) + `" "%v" {
 }
 `
 
-func TestAccSpotinstOceanSpark_noConfig(t *testing.T) {
+/*func TestAccSpotinstOceanSpark_noConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -171,9 +170,9 @@ func TestAccSpotinstOceanSpark_noConfig(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
-func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
+/*func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -311,9 +310,9 @@ func TestAccSpotinstOceanSpark_withIngressConfig(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
-func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
+/*func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -367,9 +366,9 @@ func TestAccSpotinstOceanSpark_withWebhookConfig(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
-func TestAccSpotinstOceanSpark_withComputeConfig(t *testing.T) {
+/*func TestAccSpotinstOceanSpark_withComputeConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -407,9 +406,9 @@ func TestAccSpotinstOceanSpark_withComputeConfig(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
-func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
+/*func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -445,7 +444,7 @@ func TestAccSpotinstOceanSpark_withLogCollectionConfig(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
 // testCheckNestedAttrValue is a helper function to check long chains of nested attributes.
 // It expects each level to be a single element list (except for the final level, which should contain the expected value)
@@ -464,7 +463,7 @@ func testCheckNestedAttrValue(resourceName, fullPath, expectedValue string) reso
 	return resource.ComposeTestCheckFunc(tests...)
 }
 
-func TestAccSpotinstOceanSpark_withWorkspacesConfig(t *testing.T) {
+/*func TestAccSpotinstOceanSpark_withWorkspacesConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -534,9 +533,9 @@ func TestAccSpotinstOceanSpark_withWorkspacesConfig(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
-func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
+/*func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
 	resourceName := createOceanSparkResourceName(oceanClusterID)
 
 	var cluster spark.Cluster
@@ -589,111 +588,111 @@ func TestAccSpotinstOceanSpark_withSparkConfig(t *testing.T) {
 			},
 		},
 	})
-}
+}*/
 
-func TestAccSpotinstOceanSpark_withSparkConfig_withDefaultNamespaceIncludedInAppNamespaceList_shouldIgnoreDefaultNamespace(t *testing.T) {
-	resourceName := createOceanSparkResourceName(oceanClusterID)
+/*func TestAccSpotinstOceanSpark_withSparkConfig_withDefaultNamespaceIncludedInAppNamespaceList_shouldIgnoreDefaultNamespace(t *testing.T) {
+resourceName := createOceanSparkResourceName(oceanClusterID)
 
-	var cluster spark.Cluster
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t, "aws") },
-		Providers:    TestAccProviders,
-		CheckDestroy: testOceanSparkAWSDestroy,
+var cluster spark.Cluster
+resource.Test(t, resource.TestCase{
+	PreCheck:     func() { testAccPreCheck(t, "aws") },
+	Providers:    TestAccProviders,
+	CheckDestroy: testOceanSparkAWSDestroy,
 
-		Steps: []resource.TestStep{
-			{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID: oceanClusterID,
-					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListCreate,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-2"),
-				),
-			},
-			{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID: oceanClusterID,
-					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
-				),
-			},
-			{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID: oceanClusterID,
-					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate2,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
-				),
-			},
-			{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID: oceanClusterID,
-					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate3,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-5"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
-				),
-			},
-			{
-				Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
-					oceanClusterID: oceanClusterID,
-					fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListEmptyFields,
-				}),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckOceanSparkExists(&cluster, resourceName),
-					testCheckOceanSparkAttributes(&cluster, oceanClusterID),
-					resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
-					resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "0"),
-				),
-			},
-			/*
-				This case does not work:
-				spark {
-					additional_app_namespaces = ["spark-apps"]
-				 }
-
-				i.e. where the list only contains one element, and that element is diff-suppressed.
-				We get a list with length 1 (spark.0.additional_app_namespaces.# == 1), but it does not actually contain any elements.
-				The test case also fails with the following:
-
-				After applying this test step and performing a `terraform refresh`, the plan was not empty.
-				~ spark {
-				  ~ additional_app_namespaces = [
-					  + null,
-					]
-				}
-
-				We ignore this edge case here, and rely on the terraform module to prevent this.
-				There we have validation that the default 'spark-apps' namespace should not be provided in the additional namespace list.
-			*/
+	Steps: []resource.TestStep{
+		{
+			Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+				oceanClusterID: oceanClusterID,
+				fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListCreate,
+			}),
+			Check: resource.ComposeTestCheckFunc(
+				testCheckOceanSparkExists(&cluster, resourceName),
+				testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+				resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+				resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-2"),
+			),
 		},
+		{
+			Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+				oceanClusterID: oceanClusterID,
+				fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate,
+			}),
+			Check: resource.ComposeTestCheckFunc(
+				testCheckOceanSparkExists(&cluster, resourceName),
+				testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+				resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+				resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
+			),
+		},
+		{
+			Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+				oceanClusterID: oceanClusterID,
+				fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate2,
+			}),
+			Check: resource.ComposeTestCheckFunc(
+				testCheckOceanSparkExists(&cluster, resourceName),
+				testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+				resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+				resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "3"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-1"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-4"),
+			),
+		},
+		{
+			Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+				oceanClusterID: oceanClusterID,
+				fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListUpdate3,
+			}),
+			Check: resource.ComposeTestCheckFunc(
+				testCheckOceanSparkExists(&cluster, resourceName),
+				testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+				resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+				resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "2"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-5"),
+				resource.TestCheckTypeSetElemAttr(resourceName, "spark.0.additional_app_namespaces.*", "spark-apps-ns-3"),
+			),
+		},
+		{
+			Config: createOceanSparkTerraform(&SparkClusterConfigMetadata{
+				oceanClusterID: oceanClusterID,
+				fieldsToAppend: testConfigWithSparkConfigWithDefaultNamespaceIncludedInNamespaceListEmptyFields,
+			}),
+			Check: resource.ComposeTestCheckFunc(
+				testCheckOceanSparkExists(&cluster, resourceName),
+				testCheckOceanSparkAttributes(&cluster, oceanClusterID),
+				resource.TestCheckResourceAttr(resourceName, "spark.#", "1"),
+				resource.TestCheckResourceAttr(resourceName, "spark.0.additional_app_namespaces.#", "0"),
+			),
+		},
+*/ /*
+	This case does not work:
+	spark {
+		additional_app_namespaces = ["spark-apps"]
+	 }
+
+	i.e. where the list only contains one element, and that element is diff-suppressed.
+	We get a list with length 1 (spark.0.additional_app_namespaces.# == 1), but it does not actually contain any elements.
+	The test case also fails with the following:
+
+	After applying this test step and performing a `terraform refresh`, the plan was not empty.
+	~ spark {
+	  ~ additional_app_namespaces = [
+		  + null,
+		]
+	}
+
+	We ignore this edge case here, and rely on the terraform module to prevent this.
+	There we have validation that the default 'spark-apps' namespace should not be provided in the additional namespace list.
+*/
+/*},
 	})
-}
+}*/
 
 const testConfigWithIngressCreate = `
  ingress {

@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.237.1 (June, 25 2026)
+NOTES:
+* SDK Version Update: Updating the version of `SDK` to blacklist OFAS APIs in the provider.
+
 ## 1.237.0 (June, 11 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `restrict_scale_down` field.
