@@ -1,7 +1,7 @@
 ## Unreleased
 
 ## 1.238.0 (July, 2 2026)
-ENHANCEMENTS:
+NOTES:
 * Ocean_Spark: Decommissioned SDK code and removed components in terraform-provider.
 
 ## 1.237.1 (June, 25 2026)
