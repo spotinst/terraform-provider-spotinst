@@ -2,7 +2,7 @@
 
 ## 1.238.0 (July, 2 2026)
 ENHANCEMENTS:
-* Ocean_Spark: Removed support for Ocean_spark in spotinst-sdk and provider.
+* Ocean_Spark: Decommissioned SDK code and removed components in terraform-provider.
 
 ## 1.237.1 (June, 25 2026)
 NOTES:
