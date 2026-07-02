@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.238.0 (July, 2 2026)
+NOTES:
+* Ocean_Spark: Decommissioned SDK code and removed components in terraform-provider.
+
 ## 1.237.1 (June, 25 2026)
 NOTES:
 * Ocean_Spark: Added decommissioned message for Ocean_spark in spotinst-sdk for accessing OFAS APIs in the provider.
