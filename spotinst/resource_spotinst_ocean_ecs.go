@@ -118,6 +118,25 @@ func createECSCluster(resourceData *schema.ResourceData, cluster *aws.ECSCluster
 
 const ErrCodeECSClusterNotFound = "CANT_GET_OCEAN_CLUSTER"
 
+// ErrCodeClusterHasNoActiveInstances is the Spotinst API error code returned
+// when a roll is requested on an Ocean cluster that currently has no active
+// instances (e.g. an autoscaled cluster with min_size = 0 scaled to zero).
+// Rolling such a cluster is a no-op rather than a failure.
+const ErrCodeClusterHasNoActiveInstances = "CLUSTER_HAS_NO_ACTIVE_INSTANCES"
+
+// clusterHasNoActiveInstances reports whether err is the Spotinst API error
+// returned when a roll is requested on a cluster that has no active instances.
+func clusterHasNoActiveInstances(err error) bool {
+	if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+		for _, e := range errs {
+			if e.Code == ErrCodeClusterHasNoActiveInstances {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func resourceSpotinstClusterECSRead(ctx context.Context, resourceData *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	id := resourceData.Id()
 	log.Printf(string(commons.ResourceOnRead),
@@ -247,6 +266,10 @@ func rollECSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 						rollClusterInput.Roll.ClusterID = spotinst.String(clusterID)
 						_, err := meta.(*Client).ocean.CloudProviderAWS().RollECS(context.Background(), rollClusterInput)
 						if err != nil {
+							if clusterHasNoActiveInstances(err) {
+								log.Printf("onRoll() -> cluster [%v] has no active instances, nothing to roll", clusterID)
+								return nil
+							}
 							return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
 						} else {
 							log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)
