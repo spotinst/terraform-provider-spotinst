@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.238.1 (July, 25 2026)
+## 1.238.1 (July, 27 2026)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
 * resource/spotinst_ocean_aws_launch_spec: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
