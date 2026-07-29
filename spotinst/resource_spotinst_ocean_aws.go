@@ -305,7 +305,7 @@ func rollOceanAWSCluster(resourceData *schema.ResourceData, meta interface{}) er
 		log.Printf("onRoll() -> Rolling cluster [%v] with configuration %s", clusterID, rollJSON)
 		rollInput := &aws.CreateRollInput{Roll: rollSpec}
 		if _, err = meta.(*Client).ocean.CloudProviderAWS().CreateRoll(context.TODO(), rollInput); err != nil {
-			if clusterHasNoActiveInstances(err) {
+			if commons.ClusterHasNoActiveInstances(err) {
 				log.Printf("onRoll() -> cluster [%v] has no active instances, nothing to roll", clusterID)
 				return nil
 			}

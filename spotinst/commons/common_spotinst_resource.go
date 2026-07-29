@@ -8,6 +8,7 @@ import (
 	"math/big"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/spotinst/spotinst-sdk-go/spotinst/client"
 )
 
 // GenerateSecureRandomInt generates a secure random integer between min and max using crypto/rand
@@ -140,4 +141,23 @@ func ToJson(object interface{}) (string, error) {
 	} else {
 		return string(bytes), nil
 	}
+}
+
+// ErrCodeClusterHasNoActiveInstances is the Spotinst API error code returned
+// when a roll is requested on an Ocean cluster that currently has no active
+// instances (e.g. an autoscaled cluster with min_size = 0 scaled to zero).
+// Rolling such a cluster is a no-op rather than a failure.
+const ErrCodeClusterHasNoActiveInstances = "CLUSTER_HAS_NO_ACTIVE_INSTANCES"
+
+// clusterHasNoActiveInstances reports whether err is the Spotinst API error
+// returned when a roll is requested on a cluster that has no active instances.
+func ClusterHasNoActiveInstances(err error) bool {
+	if errs, ok := err.(client.Errors); ok && len(errs) > 0 {
+		for _, e := range errs {
+			if e.Code == ErrCodeClusterHasNoActiveInstances {
+				return true
+			}
+		}
+	}
+	return false
 }
