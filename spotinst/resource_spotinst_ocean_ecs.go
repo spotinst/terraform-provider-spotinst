@@ -247,6 +247,10 @@ func rollECSCluster(resourceData *schema.ResourceData, meta interface{}) error {
 						rollClusterInput.Roll.ClusterID = spotinst.String(clusterID)
 						_, err := meta.(*Client).ocean.CloudProviderAWS().RollECS(context.Background(), rollClusterInput)
 						if err != nil {
+							if commons.ClusterHasNoActiveInstances(err) {
+								log.Printf("onRoll() -> cluster [%v] has no active instances, nothing to roll", clusterID)
+								return nil
+							}
 							return fmt.Errorf("onRoll() -> Roll failed for cluster [%v], error: %v", clusterID, err)
 						} else {
 							log.Printf("onRoll() -> Successfully rolled cluster [%v]", clusterID)

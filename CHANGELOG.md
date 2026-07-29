@@ -1,5 +1,15 @@
 ## Unreleased
 
+## 1.238.1 (July, 29 2026)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
+* resource/spotinst_ocean_aws_launch_spec: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
+* resource/spotinst_ocean_aks_np: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
+* resource/spotinst_ocean_gke_launch_spec: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
+* resource/spotinst_ocean_gke_import: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
+* resource/spotinst_ocean_ecs: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
+
 ## 1.238.0 (July, 2 2026)
 NOTES:
 * Ocean_Spark: Decommissioned SDK code and removed components in terraform-provider.
