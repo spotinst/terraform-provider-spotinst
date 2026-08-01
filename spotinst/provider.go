@@ -101,6 +101,9 @@ func Provider() *schema.Provider {
 			// Ocean Rightsizing rule
 			string(commons.OceanRightSizingRuleResourceName): resourceSpotinstOceanRightSizingRule(),
 
+			// Ocean Rightsizing cluster config
+			string(commons.OceanRightSizingClusterConfigResourceName): resourceSpotinstOceanRightSizingClusterConfig(),
+
 			//OceanCD Verification Provider
 			string(commons.OceanCDVerificationProviderResourceName): resourceSpotinstOceanCDVerificationProvider(),
 
