@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/cluster_right_sizing"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/right_sizing_cluster_config"
 )
 
 const (
@@ -19,8 +19,8 @@ type OceanRightSizingClusterConfigTerraformResource struct {
 }
 
 type RightSizingClusterConfigWrapper struct {
-	postClusterConfigurationInput *cluster_right_sizing.PostClusterConfigurationInput
-	clusterConfiguration          *cluster_right_sizing.ClusterConfiguration
+	RightsizingClusterConfigurationInput *right_sizing_cluster_config.RightsizingClusterConfigurationInput
+	RightsizingClusterConfiguration      *right_sizing_cluster_config.RightsizingClusterConfiguration
 }
 
 func NewOceanRightSizingClusterConfigResource(fieldMap map[FieldName]*GenericField) *OceanRightSizingClusterConfigTerraformResource {
@@ -34,7 +34,7 @@ func NewOceanRightSizingClusterConfigResource(fieldMap map[FieldName]*GenericFie
 
 func (res *OceanRightSizingClusterConfigTerraformResource) OnCreate(
 	resourceData *schema.ResourceData,
-	meta interface{}) (*cluster_right_sizing.PostClusterConfigurationInput, error) {
+	meta interface{}) (*right_sizing_cluster_config.RightsizingClusterConfigurationInput, error) {
 
 	if res.fields == nil || res.fields.fieldsMap == nil || len(res.fields.fieldsMap) == 0 {
 		return nil, fmt.Errorf("resource fields are nil or empty, cannot create")
@@ -51,11 +51,11 @@ func (res *OceanRightSizingClusterConfigTerraformResource) OnCreate(
 		}
 	}
 
-	return wrapper.GetPostClusterConfigurationInput(), nil
+	return wrapper.GetRightsizingClusterConfigurationInput(), nil
 }
 
 func (res *OceanRightSizingClusterConfigTerraformResource) OnRead(
-	clusterConfiguration *cluster_right_sizing.ClusterConfiguration,
+	RightsizingClusterConfiguration *right_sizing_cluster_config.RightsizingClusterConfiguration,
 	resourceData *schema.ResourceData,
 	meta interface{}) error {
 
@@ -64,7 +64,7 @@ func (res *OceanRightSizingClusterConfigTerraformResource) OnRead(
 	}
 
 	wrapper := NewRightSizingClusterConfigWrapper()
-	wrapper.SetClusterConfiguration(clusterConfiguration)
+	wrapper.SetRightsizingClusterConfiguration(RightsizingClusterConfiguration)
 
 	for _, field := range res.fields.fieldsMap {
 		if field.onRead == nil {
@@ -81,23 +81,23 @@ func (res *OceanRightSizingClusterConfigTerraformResource) OnRead(
 
 func NewRightSizingClusterConfigWrapper() *RightSizingClusterConfigWrapper {
 	return &RightSizingClusterConfigWrapper{
-		postClusterConfigurationInput: &cluster_right_sizing.PostClusterConfigurationInput{},
-		clusterConfiguration:          &cluster_right_sizing.ClusterConfiguration{},
+		RightsizingClusterConfigurationInput: &right_sizing_cluster_config.RightsizingClusterConfigurationInput{},
+		RightsizingClusterConfiguration:      &right_sizing_cluster_config.RightsizingClusterConfiguration{},
 	}
 }
 
-func (w *RightSizingClusterConfigWrapper) GetPostClusterConfigurationInput() *cluster_right_sizing.PostClusterConfigurationInput {
-	return w.postClusterConfigurationInput
+func (w *RightSizingClusterConfigWrapper) GetRightsizingClusterConfigurationInput() *right_sizing_cluster_config.RightsizingClusterConfigurationInput {
+	return w.RightsizingClusterConfigurationInput
 }
 
-func (w *RightSizingClusterConfigWrapper) SetPostClusterConfigurationInput(input *cluster_right_sizing.PostClusterConfigurationInput) {
-	w.postClusterConfigurationInput = input
+func (w *RightSizingClusterConfigWrapper) SetRightsizingClusterConfigurationInput(input *right_sizing_cluster_config.RightsizingClusterConfigurationInput) {
+	w.RightsizingClusterConfigurationInput = input
 }
 
-func (w *RightSizingClusterConfigWrapper) GetClusterConfiguration() *cluster_right_sizing.ClusterConfiguration {
-	return w.clusterConfiguration
+func (w *RightSizingClusterConfigWrapper) GetRightsizingClusterConfiguration() *right_sizing_cluster_config.RightsizingClusterConfiguration {
+	return w.RightsizingClusterConfiguration
 }
 
-func (w *RightSizingClusterConfigWrapper) SetClusterConfiguration(config *cluster_right_sizing.ClusterConfiguration) {
-	w.clusterConfiguration = config
+func (w *RightSizingClusterConfigWrapper) SetRightsizingClusterConfiguration(config *right_sizing_cluster_config.RightsizingClusterConfiguration) {
+	w.RightsizingClusterConfiguration = config
 }

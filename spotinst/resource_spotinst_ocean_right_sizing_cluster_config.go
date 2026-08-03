@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/cluster_right_sizing"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/right_sizing_cluster_config"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/ocean_right_sizing_cluster_config"
@@ -57,14 +57,14 @@ func resourceSpotinstOceanRightSizingClusterConfigCreate(ctx context.Context, re
 	return resourceSpotinstOceanRightSizingClusterConfigRead(ctx, resourceData, meta)
 }
 
-func createOceanRightSizingClusterConfig(input *cluster_right_sizing.PostClusterConfigurationInput, spotinstClient *Client) (*cluster_right_sizing.PostClusterConfigurationOutput, error) {
+func createOceanRightSizingClusterConfig(input *right_sizing_cluster_config.RightsizingClusterConfigurationInput, spotinstClient *Client) (*right_sizing_cluster_config.RightsizingClusterConfigurationOutput, error) {
 	if json, err := commons.ToJson(input); err != nil {
 		return nil, err
 	} else {
 		log.Printf("===> Ocean right sizing cluster config create configuration: %s", json)
 	}
 
-	output, err := spotinstClient.ocean.ClusterRightSizing().PostClusterConfiguration(context.Background(), input)
+	output, err := spotinstClient.ocean.RightSizingClusterConfig().PostRightSizingClusterConfiguration(context.Background(), input)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR] failed to create ocean right sizing cluster config: %s", err)
 	}
@@ -86,12 +86,12 @@ func resourceSpotinstOceanRightSizingClusterConfigRead(ctx context.Context, reso
 		}
 	}
 
-	input := &cluster_right_sizing.ReadClusterConfigurationInput{
+	input := &right_sizing_cluster_config.ReadRightsizingClusterConfigurationInput{
 		OceanId:           spotinst.String(oceanID),
 		ClusterIdentifier: spotinst.String(clusterIdentifier),
 	}
 
-	output, err := meta.(*Client).ocean.ClusterRightSizing().ReadClusterConfiguration(context.Background(), input)
+	output, err := meta.(*Client).ocean.RightSizingClusterConfig().ReadRightSizingClusterConfiguration(context.Background(), input)
 	if err != nil {
 		return diag.FromErr(err)
 	}
