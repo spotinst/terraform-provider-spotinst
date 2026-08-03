@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/cluster_right_sizing"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/right_sizing_cluster_config"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -24,7 +24,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			wrapper := resourceObject.(*commons.RightSizingClusterConfigWrapper)
-			input := wrapper.GetPostClusterConfigurationInput()
+			input := wrapper.GetRightsizingClusterConfigurationInput()
 
 			if v, ok := resourceData.GetOk(string(OceanId)); ok && v.(string) != "" {
 				input.OceanId = spotinst.String(v.(string))
@@ -33,7 +33,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			wrapper := resourceObject.(*commons.RightSizingClusterConfigWrapper)
-			input := wrapper.GetPostClusterConfigurationInput()
+			input := wrapper.GetRightsizingClusterConfigurationInput()
 
 			if v, ok := resourceData.GetOk(string(OceanId)); ok && v.(string) != "" {
 				input.OceanId = spotinst.String(v.(string))
@@ -55,7 +55,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			wrapper := resourceObject.(*commons.RightSizingClusterConfigWrapper)
-			input := wrapper.GetPostClusterConfigurationInput()
+			input := wrapper.GetRightsizingClusterConfigurationInput()
 
 			if v, ok := resourceData.GetOk(string(ClusterIdentifier)); ok && v.(string) != "" {
 				input.ClusterIdentifier = spotinst.String(v.(string))
@@ -64,7 +64,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			wrapper := resourceObject.(*commons.RightSizingClusterConfigWrapper)
-			input := wrapper.GetPostClusterConfigurationInput()
+			input := wrapper.GetRightsizingClusterConfigurationInput()
 
 			if v, ok := resourceData.GetOk(string(ClusterIdentifier)); ok && v.(string) != "" {
 				input.ClusterIdentifier = spotinst.String(v.(string))
@@ -106,18 +106,18 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			wrapper := resourceObject.(*commons.RightSizingClusterConfigWrapper)
-			config := wrapper.GetClusterConfiguration()
+			config := wrapper.GetRightsizingClusterConfiguration()
 
-			if err := resourceData.Set(string(Config), flattenClusterConfiguration(config)); err != nil {
+			if err := resourceData.Set(string(Config), flattenRightsizingClusterConfiguration(config)); err != nil {
 				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Config), err)
 			}
 			return nil
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			wrapper := resourceObject.(*commons.RightSizingClusterConfigWrapper)
-			input := wrapper.GetPostClusterConfigurationInput()
+			input := wrapper.GetRightsizingClusterConfigurationInput()
 
-			config, err := expandClusterConfiguration(resourceData.Get(string(Config)))
+			config, err := expandRightsizingClusterConfiguration(resourceData.Get(string(Config)))
 			if err != nil {
 				return err
 			}
@@ -126,9 +126,9 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
 			wrapper := resourceObject.(*commons.RightSizingClusterConfigWrapper)
-			input := wrapper.GetPostClusterConfigurationInput()
+			input := wrapper.GetRightsizingClusterConfigurationInput()
 
-			config, err := expandClusterConfiguration(resourceData.Get(string(Config)))
+			config, err := expandRightsizingClusterConfiguration(resourceData.Get(string(Config)))
 			if err != nil {
 				return err
 			}
@@ -139,7 +139,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 	)
 }
 
-func flattenClusterConfiguration(config *cluster_right_sizing.ClusterConfiguration) []interface{} {
+func flattenRightsizingClusterConfiguration(config *right_sizing_cluster_config.RightsizingClusterConfiguration) []interface{} {
 	if config == nil {
 		return nil
 	}
@@ -162,7 +162,7 @@ func flattenClusterConfiguration(config *cluster_right_sizing.ClusterConfigurati
 	return []interface{}{m}
 }
 
-func expandClusterConfiguration(data interface{}) (*cluster_right_sizing.ClusterConfiguration, error) {
+func expandRightsizingClusterConfiguration(data interface{}) (*right_sizing_cluster_config.RightsizingClusterConfiguration, error) {
 	list, ok := data.([]interface{})
 	if !ok || len(list) == 0 || list[0] == nil {
 		return nil, nil
@@ -173,7 +173,7 @@ func expandClusterConfiguration(data interface{}) (*cluster_right_sizing.Cluster
 		return nil, fmt.Errorf("invalid config format")
 	}
 
-	config := &cluster_right_sizing.ClusterConfiguration{}
+	config := &right_sizing_cluster_config.RightsizingClusterConfiguration{}
 
 	if v, ok := m[string(AdjustLimitOnDownsize)].(bool); ok {
 		config.SetAdjustLimitOnDownsize(spotinst.Bool(v))

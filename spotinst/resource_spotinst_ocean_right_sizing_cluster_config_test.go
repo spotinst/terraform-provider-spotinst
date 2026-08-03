@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/spotinst/spotinst-sdk-go/service/ocean/cluster_right_sizing"
+	"github.com/spotinst/spotinst-sdk-go/service/ocean/right_sizing_cluster_config"
 	"github.com/spotinst/spotinst-sdk-go/spotinst"
 	"github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 )
@@ -18,7 +18,7 @@ func createOceanRightSizingClusterConfigResource(name string) string {
 	return fmt.Sprintf("%v.%v", string(commons.OceanRightSizingClusterConfigResourceName), name)
 }
 
-func testCheckOceanRightSizingClusterConfigExists(config *cluster_right_sizing.ClusterConfiguration, resourceName string) resource.TestCheckFunc {
+func testCheckOceanRightSizingClusterConfigExists(config *right_sizing_cluster_config.RightsizingClusterConfiguration, resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {
@@ -33,12 +33,12 @@ func testCheckOceanRightSizingClusterConfigExists(config *cluster_right_sizing.C
 		clusterIdentifier := rs.Primary.Attributes["cluster_identifier"]
 
 		client := testAccProviderAWS.Meta().(*Client)
-		input := &cluster_right_sizing.ReadClusterConfigurationInput{
+		input := &right_sizing_cluster_config.ReadRightsizingClusterConfigurationInput{
 			OceanId:           spotinst.String(oceanID),
 			ClusterIdentifier: spotinst.String(clusterIdentifier),
 		}
 
-		resp, err := client.ocean.ClusterRightSizing().ReadClusterConfiguration(context.Background(), input)
+		resp, err := client.ocean.RightSizingClusterConfig().ReadRightSizingClusterConfiguration(context.Background(), input)
 		if err != nil {
 			return err
 		}
@@ -139,7 +139,7 @@ const testRightSizingClusterConfigBaseline_Update = `
 // TestAccSpotinstOceanRightSizingClusterConfig tests the resource lifecycle (Create, Read, Update, Read)
 func TestAccSpotinstOceanRightSizingClusterConfig(t *testing.T) {
 	resourceName := createOceanRightSizingClusterConfigResource("test")
-	var config cluster_right_sizing.ClusterConfiguration
+	var config right_sizing_cluster_config.RightsizingClusterConfiguration
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t, "aws") },
