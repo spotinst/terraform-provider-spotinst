@@ -1,4 +1,9 @@
 ## Unreleased
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed `block_device_mappings` not showing drift when the API returns null (e.g. after a `root_volume_size` update).
+* resource/spotinst_ocean_aws_launch_spec: Fixed `block_device_mappings` not showing drift when the API returns null.
+* resource/spotinst_ocean_ecs: Fixed `block_device_mappings` not showing drift when the API returns null.
+* resource/spotinst_ocean_ecs_launch_spec: Fixed `block_device_mappings` not showing drift when the API returns null.
 
 ## 1.238.1 (July, 29 2026)
 BUG FIXES:

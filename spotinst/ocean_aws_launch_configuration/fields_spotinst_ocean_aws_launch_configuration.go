@@ -800,10 +800,8 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				result = flattenBlockDeviceMappings(cluster.Compute.LaunchSpecification.BlockDeviceMappings)
 			}
 
-			if len(result) > 0 {
-				if err := resourceData.Set(string(BlockDeviceMappings), result); err != nil {
-					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(BlockDeviceMappings), err)
-				}
+			if err := resourceData.Set(string(BlockDeviceMappings), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(BlockDeviceMappings), err)
 			}
 			return nil
 		},
