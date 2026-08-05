@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 1.239.0 (August, 5 2026)
+FEATURES:
+* **New Resource:** `spotinst_ocean_right_sizing_cluster_config`
+
 ## 1.238.1 (July, 29 2026)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Added a fix to handle `terraform apply` on ocean clusters with 0 instances.
