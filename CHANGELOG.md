@@ -1,8 +1,7 @@
 ## Unreleased
 
-## 1.239.0 (August, 4 2026)
+## 1.239.0 (August, 5 2026)
 FEATURES:
-
 * **New Resource:** `spotinst_ocean_right_sizing_cluster_config`
 
 ## 1.238.1 (July, 29 2026)
