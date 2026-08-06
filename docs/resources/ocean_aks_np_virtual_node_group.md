@@ -20,6 +20,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   ocean_id = "o-134abcd"
 
   // --- autoscale ----------------------------------------------------------------
+  auto_headroom_percentage = 5
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512
@@ -140,6 +141,7 @@ The following arguments are supported:
   * `memory_per_unit` - (Optional) Configure the amount of memory (MiB) to allocate the headroom.
   * `gpu_per_unit` - (Optional) Amount of GPU to allocate for headroom unit.
   * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
+* `auto_headroom_percentage` - (Optional) Optionally set a number between `[0 .. 200]` to control the percentage of VNG resources dedicated to automatic headroom.
 * `availability_zones` - (Optional) An Array holding Availability Zones, this configures the availability zones the Ocean may launch instances in per VNG.
 * `labels` - (Optional) An array of labels to add to the virtual node group.Only custom user labels are allowed, and not Kubernetes built-in labels or Spot internal labels.
   * `key` - (Required) Set label key. The following are not allowed: ["kubernetes.azure.com/agentpool", "kubernetes.io/arch", "kubernetes.io/os", "node.kubernetes.io/instance-type", "topology.kubernetes.io/region", "topology.kubernetes.io/zone", "kubernetes.azure.com/cluster", "kubernetes.azure.com/mode", "kubernetes.azure.com/role", "kubernetes.azure.com/scalesetpriority", "kubernetes.io/hostname", "kubernetes.azure.com/storageprofile", "kubernetes.azure.com/storagetier", "kubernetes.azure.com/instance-sku", "kubernetes.azure.com/node-image-version", "kubernetes.azure.com/subnet", "kubernetes.azure.com/vnet", "kubernetes.azure.com/ppg", "kubernetes.azure.com/encrypted-set", "kubernetes.azure.com/accelerator", "kubernetes.azure.com/fips_enabled", "kubernetes.azure.com/os-sku"]

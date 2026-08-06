@@ -3,8 +3,9 @@ package ocean_aks_np_auto_scaler
 import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
-	AutoScaler         commons.FieldName = "autoscaler"
-	AutoscaleIsEnabled commons.FieldName = "autoscale_is_enabled"
+	AutoScaler                       commons.FieldName = "autoscaler"
+	AutoscaleIsEnabled               commons.FieldName = "autoscale_is_enabled"
+	EnableAutomaticAndManualHeadroom commons.FieldName = "enable_automatic_and_manual_headroom"
 )
 
 const (

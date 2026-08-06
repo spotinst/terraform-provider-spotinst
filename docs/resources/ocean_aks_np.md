@@ -81,6 +81,7 @@ resource "spotinst_ocean_aks_np" "example" {
   
   autoscaler {
     autoscale_is_enabled = true
+    enable_automatic_and_manual_headroom  = true
     resource_limits {
       max_vcpu       = 750
       max_memory_gib = 1500
@@ -123,6 +124,7 @@ resource "spotinst_ocean_aks_np" "example" {
   // --- virtualNodeGroupTemplate -----------------------------------------
 
   // --- autoscale --------------------------------------------------------
+  auto_headroom_percentage = 5
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512
@@ -235,6 +237,7 @@ The following arguments are supported:
   * `aks_resource_group_name` - (Required) The name of the cluster's resource group.
 * `autoscaler` - (Optional) The Ocean Kubernetes Autoscaler object.
   * `autoscale_is_enabled` - (Optional) Enable the Ocean Kubernetes Autoscaler.
+  * `enable_automatic_and_manual_headroom` - (Optional) Enable mixed mode for manual and automatic headroom. Relevant only when `autoscale_headroom.automatic.is_enabled` is set to `true`. If `false`, Ocean manages headroom automatically without combining with manual VNG headrooms.
   * `autoscale_down` - (Optional) Auto Scaling scale down operations.
     * `max_scale_down_percentage` - (Optional) The maximum percentage allowed to scale down in a single scaling action.
   * `resource_limits` - (Optional) Optionally set upper and lower bounds on the resource usage of the cluster.
@@ -255,6 +258,7 @@ The following arguments are supported:
   * `memory_per_unit` - (Optional) Configure the amount of memory (MiB) to allocate the headroom.
   * `gpu_per_unit` - (Optional) Amount of GPU to allocate for headroom unit.
   * `num_of_units` - (Optional) The number of units to retain as headroom, where each unit has the defined headroom CPU and memory.
+* `auto_headroom_percentage` - (Optional) Optionally set a number between `[0 .. 200]` to control the percentage of VNG resources dedicated to automatic headroom.
 * `availability_zones` - (Required) An Array holding Availability Zones, this configures the availability zones the Ocean may launch nodes in per VNG.
   Select zone 0 if you have a workload that requires no availability zone redundancy (AZ=null). You can select this option either alone or together with other availability zones.
   In case zone 0 is selected together with other availability zones, nodes of zone 0 will be scaled only for workloads that demand it.
