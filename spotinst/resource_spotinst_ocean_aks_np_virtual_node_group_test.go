@@ -292,6 +292,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Headrooms(t *testing.T) {
 				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testHeadroomsOceanAKSNPVirtualNodeGroup_Create),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "auto_headroom_percentage", "5"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.memory_per_unit", "512"),
@@ -303,6 +304,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Headrooms(t *testing.T) {
 				Config: createOceanAKSNPVirtualNodeGroupTerraform(&AKSNPVirtualNodeGroupConfigMetadata{vngResourceName: vngResourceName, updateBaselineFields: true}, testHeadroomsOceanAKSNPVirtualNodeGroup_Update),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPVirtualNodeGroupExists(&virtualNodeGroup, resourceName),
+					resource.TestCheckResourceAttr(resourceName, "auto_headroom_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.memory_per_unit", "512"),
@@ -336,6 +338,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   ocean_id = "o-751eaa33"
 
+  auto_headroom_percentage = 5
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512
@@ -355,6 +358,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   ocean_id = "o-751eaa33"
 
+  auto_headroom_percentage = 10
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512

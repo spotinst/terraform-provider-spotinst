@@ -23,6 +23,10 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 						Type:     schema.TypeBool,
 						Optional: true,
 					},
+					string(EnableAutomaticAndManualHeadroom): {
+						Type:     schema.TypeBool,
+						Optional: true,
+					},
 					string(ResourceLimits): {
 						Type:     schema.TypeList,
 						Optional: true,
@@ -150,6 +154,9 @@ func expandAutoScaler(data interface{}) (*azure_np.AutoScaler, error) {
 
 			if v, ok := m[string(AutoscaleIsEnabled)].(bool); ok {
 				autoScaler.SetIsEnabled(spotinst.Bool(v))
+			}
+			if v, ok := m[string(EnableAutomaticAndManualHeadroom)].(bool); ok {
+				autoScaler.SetEnableAutomaticAndManualHeadroom(spotinst.Bool(v))
 			}
 
 			if v, ok := m[string(ResourceLimits)]; ok && v != nil {
@@ -300,6 +307,7 @@ func expandAutomatic(data interface{}) (*azure_np.Automatic, error) {
 func flattenAutoScaler(autoScaler *azure_np.AutoScaler) []interface{} {
 	result := make(map[string]interface{})
 	result[string(AutoscaleIsEnabled)] = spotinst.BoolValue(autoScaler.IsEnabled)
+	result[string(EnableAutomaticAndManualHeadroom)] = spotinst.BoolValue(autoScaler.EnableAutomaticAndManualHeadroom)
 
 	if autoScaler.Headroom != nil {
 		result[string(Headroom)] = flattenHeadroom(autoScaler.Headroom)
