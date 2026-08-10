@@ -4,6 +4,7 @@ import "github.com/spotinst/terraform-provider-spotinst/spotinst/commons"
 
 const (
 	SchedulingTask commons.FieldName = "scheduling_task"
+	ShutdownHours  commons.FieldName = "scheduling_shutdown_hours"
 )
 
 const (
@@ -18,4 +19,9 @@ const (
 	GPUPerUnit    commons.FieldName = "gpu_per_unit"
 	MemoryPerUnit commons.FieldName = "memory_per_unit"
 	NumOfUnits    commons.FieldName = "num_of_units"
+)
+
+const (
+	ShutdownHoursIsEnabled commons.FieldName = "is_enabled"
+	TimeWindows            commons.FieldName = "time_windows"
 )

@@ -1188,6 +1188,10 @@ func TestAccSpotinstOceanGKELaunchSpec_Scheduling(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:17:30"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.0.cpu_per_unit", "512"),
@@ -1202,6 +1206,11 @@ func TestAccSpotinstOceanGKELaunchSpec_Scheduling(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
 					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.0", "Fri:15:30-Sat:18:30"),
+					resource.TestCheckResourceAttr(resourceName, "scheduling_shutdown_hours.0.time_windows.1", "Sun:15:30-Mon:18:30"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "scheduling_task.0.task_headroom.0.memory_per_unit", "256"),
@@ -1241,6 +1250,11 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
       num_of_units = 1
     }
   }
+
+  scheduling_shutdown_hours {
+    is_enabled   = true
+    time_windows = ["Fri:15:30-Sat:17:30"]
+  }
  
 }
 
@@ -1271,6 +1285,11 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
       memory_per_unit = 256
       num_of_units = 2
     }
+  }
+
+  scheduling_shutdown_hours {
+    is_enabled   = false
+    time_windows = ["Fri:15:30-Sat:18:30", "Sun:15:30-Mon:18:30"]
   }
 
 }
