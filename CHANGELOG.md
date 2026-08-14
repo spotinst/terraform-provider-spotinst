@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.240.0 (August, 12 2026)
+## 1.240.0 (August, 14 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_gke_launch_spec: Added support for `scheduling_shutdown_hours` field.
 * resource/spotinst_ocean_aks_np: Added support for `enable_automatic_and_manual_headroom` and `auto_headroom_percentage` fields.
