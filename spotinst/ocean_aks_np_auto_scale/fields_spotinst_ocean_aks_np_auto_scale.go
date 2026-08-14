@@ -94,6 +94,58 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[AutoHeadroomPercentage] = commons.NewGenericField(
+		commons.OceanAKSNPGroupAutoScale,
+		AutoHeadroomPercentage,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+			Default:  -1,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+
+			value := spotinst.Int(-1)
+			if cluster != nil && cluster.VirtualNodeGroupTemplate.AutoScale != nil &&
+				cluster.VirtualNodeGroupTemplate.AutoScale.AutoHeadroomPercentage != nil {
+				value = cluster.VirtualNodeGroupTemplate.AutoScale.AutoHeadroomPercentage
+			}
+
+			if err := resourceData.Set(string(AutoHeadroomPercentage), spotinst.IntValue(value)); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(AutoHeadroomPercentage), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+
+			if v, ok := resourceData.GetOkExists(string(AutoHeadroomPercentage)); ok {
+				if v.(int) == -1 {
+					cluster.VirtualNodeGroupTemplate.AutoScale.SetAutoHeadroomPercentage(nil)
+				} else {
+					cluster.VirtualNodeGroupTemplate.AutoScale.SetAutoHeadroomPercentage(spotinst.Int(v.(int)))
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+
+			if v, ok := resourceData.GetOkExists(string(AutoHeadroomPercentage)); ok {
+				if v.(int) == -1 {
+					cluster.VirtualNodeGroupTemplate.AutoScale.SetAutoHeadroomPercentage(nil)
+				} else {
+					cluster.VirtualNodeGroupTemplate.AutoScale.SetAutoHeadroomPercentage(spotinst.Int(v.(int)))
+				}
+			}
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandHeadrooms(headroom interface{}) ([]*azure_np.Headrooms, error) {

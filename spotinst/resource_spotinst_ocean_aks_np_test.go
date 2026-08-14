@@ -420,6 +420,7 @@ func TestAccSpotinstOceanAKSNP_AutoScaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.automatic.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.automatic.0.percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.automatic.0.is_enabled", "true"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "true"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "40"),
@@ -442,6 +443,7 @@ func TestAccSpotinstOceanAKSNP_AutoScaler(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.automatic.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.automatic.0.percentage", "60"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_headroom.0.automatic.0.is_enabled", "false"),
+					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.enable_automatic_and_manual_headroom", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.autoscale_is_enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "autoscaler.0.resource_limits.0.max_memory_gib", "80"),
@@ -468,6 +470,7 @@ const testAutoScalerOceanAKSNPConfig_Create = `
     // --- AutoScaler ----------------------------------------------------
     autoscaler {
       autoscale_is_enabled = true
+      enable_automatic_and_manual_headroom = true
 
       autoscale_down {
         max_scale_down_percentage = 10
@@ -492,6 +495,7 @@ const testAutoScalerOceanAKSNPConfig_Update = `
     // --- AutoScaler ----------------------------------------------------
     autoscaler {
       autoscale_is_enabled = false
+      enable_automatic_and_manual_headroom = false
 
       autoscale_down {
         max_scale_down_percentage = 50
@@ -840,6 +844,7 @@ func TestAccSpotinstOceanAKSNP_Headrooms(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckOceanAKSNPExists(&cluster, resourceName),
 					testCheckOceanAKSNPAttributes(&cluster, clusterName),
+					resource.TestCheckResourceAttr(resourceName, "auto_headroom_percentage", "5"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.memory_per_unit", "512"),
@@ -856,6 +861,7 @@ func TestAccSpotinstOceanAKSNP_Headrooms(t *testing.T) {
 				}),
 				//ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "auto_headroom_percentage", "10"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.cpu_per_unit", "1024"),
 					resource.TestCheckResourceAttr(resourceName, "headrooms.0.memory_per_unit", "512"),
@@ -884,6 +890,7 @@ func TestAccSpotinstOceanAKSNP_Headrooms(t *testing.T) {
 
 const testHeadroomsOceanAKSNPConfig_Create = `
   // --- autoscale --------------------------------------------------------
+  auto_headroom_percentage = 5
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512
@@ -895,6 +902,7 @@ const testHeadroomsOceanAKSNPConfig_Create = `
 `
 const testHeadroomsOceanAKSNPConfig_Update = `
   // --- autoscale --------------------------------------------------------
+  auto_headroom_percentage = 10
   headrooms {
     cpu_per_unit    = 1024
     memory_per_unit = 512

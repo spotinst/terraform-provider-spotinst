@@ -91,6 +91,11 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
         memory_per_unit = 2048
     }
   }
+
+  scheduling_shutdown_hours {
+    is_enabled   = true
+    time_windows = ["Mon:00:30-Mon:23:00", "Tue:06:30-Tue:23:00"]
+  }
   
   network_interfaces {
     network = "test-vng-network"
@@ -176,6 +181,9 @@ The following arguments are supported:
     * `cpu_per_unit` - (Optional) Optionally configure the number of CPUs to allocate for each headroom unit. CPUs are denoted in millicores, where 1000 millicores = 1 vCPU.
     * `gpu_per_unit` - (Optional) Optionally configure the number of GPUS to allocate for each headroom unit.
     * `memory_per_unit` - (Optional) Optionally configure the amount of memory (MiB) to allocate for each headroom unit.
+* `scheduling_shutdown_hours` - (Optional) An object used to specify times that the nodes in the virtual node group will be taken down.
+  * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When `false`, the mechanism is deactivated, and the virtual node group remains in its current state.
+  * `time_windows` - (Required) The times that the shutdown hours will apply.
 * `network_interfaces` - (Optional) Settings for network interfaces.
   * `network` - (Required) The name of the network.
   * `project_id` - (Optional) Use a network resource from a different project. Set the project identifier to use its network resource. This parameter is relevant only if the network resource is in a different project.
