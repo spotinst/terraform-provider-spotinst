@@ -168,6 +168,57 @@ resource "spotinst_ocean_aks_np" "example" {
   }
   // ----------------------------------------------------------------------
 
+  // --- LocalDnsProfile --------------------------------------------------
+
+  local_dns_profile {
+    mode = "Required"
+    vnet_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "VnetDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+    vnet_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Error"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+    kube_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+    kube_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Error"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+  }
+  // ----------------------------------------------------------------------
+  
   // --- strategy ---------------------------------------------------------
   
   spot_percentage             = 50
@@ -281,6 +332,19 @@ The following arguments are supported:
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `draining_timeout` - (Optional) Time in seconds to allow the node to drain before it is terminated. The parameter value will be in range `[300-3600]`.
+* `local_dns_profile` - (Optional) Local DNS profile configuration for the node pool. Requires VM sizes with at least 4 vCPUs and Linux (Ubuntu 22.04+ or Azure Linux) OS. See: [AKS Local DNS Custom Field](https://learn.microsoft.com/en-us/azure/aks/localdns-custom).
+  * `mode` - (Required) The LocalDNS mode. Required when localDnsProfile is configured. Allowed values: `"Required"`, `"Preferred"`, `"Disabled"`.
+  * `vnet_dns_overrides` - (Optional) Per-zone DNS override configuration for VNet DNS resolution. Keys are DNS zone names (`"."` or `"cluster.local"`).
+    * `zone` - (Required) The DNS zone name this override applies to (`"."`, `"cluster.local"`).
+    * `query_logging` - (Optional) Define the logging level for DNS queries. Allowed values: `"Error"`, `"Log"`.
+    * `protocol` - (Optional) Sets the protocol used for DNS queries (UDP/TCP preference). Allowed values: `"PreferUDP"`, `"ForceTCP"`.
+    * `forward_destination` - (Optional) Specifies the DNS server to forward queries to. Allowed values:  `"VnetDNS"`, `"ClusterCoreDNS"`.
+    * `forward_policy` - (Optional) Determines the policy to use when selecting the upstream DNS server. Allowed values:  `"Sequential"`, `"RoundRobin"`, `"Random"`.
+    * `max_concurrent` - (Optional) Maximum number of concurrent DNS queries handled by LocalDNS.
+    * `cache_duration_in_seconds` - (Optional) Maximum TTL (Time To Live) in seconds for which DNS responses are cached.
+    * `serve_stale_duration_in_seconds` - (Optional) Duration (in seconds) to serve stale DNS responses if upstream is unavailable.
+    * `serve_stale` - (Optional) Policy for serving stale DNS responses during upstream failures. Allowed values: `"Immediate"`, `"Verify"`, `"Disabled"`.
+  * `kube_dns_overrides` - (Optional) Per-zone DNS override configuration for kube-dns/CoreDNS resolution. Keys are DNS zone names (e.g. `"."` or `"cluster.local"`) and all values are same as `vnet_dns_overrides`. 
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `should_utilize_commitments` - (Optional, Default: `false`) Determines whether to utilize any existing Azure Savings Plans or Reserved Instances associated with the subscription for On-Demand VMs.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.

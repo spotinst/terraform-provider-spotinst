@@ -16,3 +16,19 @@ const (
 	Sysctls            commons.FieldName = "sysctls"
 	VmMaxMapCount      commons.FieldName = "vm_max_map_count"
 )
+
+const (
+	LocalDnsProfile             commons.FieldName = "local_dns_profile"
+	Mode                        commons.FieldName = "mode"
+	VnetDNSOverrides            commons.FieldName = "vnet_dns_overrides"
+	KubeDNSOverrides            commons.FieldName = "kube_dns_overrides"
+	DNSZone                     commons.FieldName = "zone"
+	QueryLogging                commons.FieldName = "query_logging"
+	Protocol                    commons.FieldName = "protocol"
+	ForwardDestination          commons.FieldName = "forward_destination"
+	ForwardPolicy               commons.FieldName = "forward_policy"
+	MaxConcurrent               commons.FieldName = "max_concurrent"
+	CacheDurationInSeconds      commons.FieldName = "cache_duration_in_seconds"
+	ServeStaleDurationInSeconds commons.FieldName = "serve_stale_duration_in_seconds"
+	ServeStale                  commons.FieldName = "serve_stale"
+)
