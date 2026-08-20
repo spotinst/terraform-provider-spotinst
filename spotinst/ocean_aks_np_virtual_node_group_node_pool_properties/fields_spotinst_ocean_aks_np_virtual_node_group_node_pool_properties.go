@@ -103,6 +103,49 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[EncryptionAtHost] = commons.NewGenericField(
+		commons.OceanAKSNPVirtualNodeGroupNodePoolProperties,
+		EncryptionAtHost,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			var value *bool = nil
+			if virtualNodeGroup.NodePoolProperties != nil && virtualNodeGroup.NodePoolProperties.EncryptionAtHost != nil {
+				value = virtualNodeGroup.NodePoolProperties.EncryptionAtHost
+			}
+			if value != nil {
+				if err := resourceData.Set(string(EncryptionAtHost), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EncryptionAtHost), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOkExists(string(EncryptionAtHost)); ok && v != nil {
+				virtualNodeGroup.NodePoolProperties.SetEncryptionAtHost(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			var encryptionAtHost *bool = nil
+			if v, ok := resourceData.GetOkExists(string(EncryptionAtHost)); ok && v != nil {
+				encryptionAtHost = spotinst.Bool(v.(bool))
+			}
+			virtualNodeGroup.NodePoolProperties.SetEncryptionAtHost(encryptionAtHost)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[OsDiskSizeGB] = commons.NewGenericField(
 		commons.OceanAKSNPVirtualNodeGroupNodePoolProperties,
 		OsDiskSizeGB,

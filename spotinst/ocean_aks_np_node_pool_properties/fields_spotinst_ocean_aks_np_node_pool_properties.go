@@ -103,6 +103,50 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[EncryptionAtHost] = commons.NewGenericField(
+		commons.OceanAKSNPProperties,
+		EncryptionAtHost,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value *bool = nil
+			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil &&
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.EncryptionAtHost != nil {
+				value = cluster.VirtualNodeGroupTemplate.NodePoolProperties.EncryptionAtHost
+			}
+			if value != nil {
+				if err := resourceData.Set(string(EncryptionAtHost), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EncryptionAtHost), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOkExists(string(EncryptionAtHost)); ok && v != nil {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEncryptionAtHost(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var encryptionAtHost *bool = nil
+			if v, ok := resourceData.GetOkExists(string(EncryptionAtHost)); ok && v != nil {
+				encryptionAtHost = spotinst.Bool(v.(bool))
+			}
+			cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEncryptionAtHost(encryptionAtHost)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[OsDiskSizeGB] = commons.NewGenericField(
 		commons.OceanAKSNPProperties,
 		OsDiskSizeGB,

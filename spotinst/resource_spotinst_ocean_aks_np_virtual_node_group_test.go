@@ -132,6 +132,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_count", "100"),
 					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "30"),
 					resource.TestCheckResourceAttr(resourceName, "enable_node_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "encryption_at_host", "true"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_size_gb", "32"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_type", "Managed"),
 					resource.TestCheckResourceAttr(resourceName, "os_type", "Linux"),
@@ -200,6 +201,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_count", "150"),
 					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "50"),
 					resource.TestCheckResourceAttr(resourceName, "enable_node_public_ip", "false"),
+					resource.TestCheckResourceAttr(resourceName, "encryption_at_host", "false"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_size_gb", "64"),
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.31"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
@@ -281,6 +283,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   max_pods_per_node     = 30
   enable_node_public_ip = true
+  encryption_at_host    = true
   os_disk_size_gb       = 32
   os_disk_type          = "Managed"
   os_type               = "Linux"
@@ -383,6 +386,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
 
   max_pods_per_node     = 50
   enable_node_public_ip = false
+  encryption_at_host    = false
   os_disk_size_gb       = 64
   os_disk_type          = "Managed"
   os_type               = "Linux"

@@ -51,6 +51,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   
   max_pods_per_node     = 30
   enable_node_public_ip = true
+  encryption_at_host    = true
   os_disk_size_gb       = 30
   os_disk_type          = "Managed"
   os_type               = "Linux"
@@ -200,6 +201,7 @@ The following arguments are supported:
 * `max_count` - (Optional, Default: 1000) Maximum node count limit.
 * `min_count` - (Optional, Default: 0) Minimum node count limit.
 * `enable_node_public_ip` - (Optional) Enable node public IP.
+* `encryption_at_host` - (Optional, Default: `false`) Whether to enable host-based encryption for nodes. When set to `true`, use `vmSizes.preferredVmSizes` to provide compatible VM sizes. **Important:** This setting is immutable at the Azure infrastructure level once nodes are launched. Changing this value requires a roll operation for new nodes to reflect the updated configuration.
 * `max_pods_per_node` - (Optional) The maximum number of pods per node in the node pools.
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.

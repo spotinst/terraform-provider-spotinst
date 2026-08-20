@@ -15,6 +15,7 @@ const (
 	LinuxOSConfig      commons.FieldName = "linux_os_config"
 	Sysctls            commons.FieldName = "sysctls"
 	VmMaxMapCount      commons.FieldName = "vm_max_map_count"
+	EncryptionAtHost   commons.FieldName = "encryption_at_host"
 )
 
 const (
