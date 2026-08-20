@@ -206,6 +206,7 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
 					resource.TestCheckResourceAttr(resourceName, "custom_data", "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="),
+					resource.TestCheckResourceAttr(resourceName, "license_type", "RHEL_BYOS"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "AutomationResourceIdentity"),
@@ -227,6 +228,7 @@ func TestAccSpotinstElastigroupAzureV3_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "min_size", "0"),
 					resource.TestCheckResourceAttr(resourceName, "desired_capacity", "0"),
 					resource.TestCheckResourceAttr(resourceName, "os", "Linux"),
+					resource.TestCheckResourceAttr(resourceName, "license_type", "SLES_BYOS"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.resource_group_name", "AutomationResourceGroup"),
 					resource.TestCheckResourceAttr(resourceName, "managed_service_identity.0.name", "AutomationResourceIdentity"),
@@ -263,6 +265,7 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
 
  // --- LAUNCHSPEC ----------
  custom_data = "IyEvY=IyEvYmluL2Jhc2gKZWNobyAidGVzdCI="
+ license_type = "RHEL_BYOS"
 
  managed_service_identity {
     resource_group_name = "AutomationResourceGroup"
@@ -303,6 +306,10 @@ resource "` + string(commons.ElastigroupAzureV3ResourceName) + `" "%v" {
  max_size 		  = 5
  min_size 		  = 0
  desired_capacity = 0
+ // -------------------------
+
+ // --- LAUNCHSPEC ----------
+ license_type = "SLES_BYOS"
  // -------------------------
 
  managed_service_identity {
