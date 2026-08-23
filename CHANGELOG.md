@@ -1,10 +1,10 @@
 ## Unreleased
 
-## 1.241.0 (August, 20 2026)
+## 1.241.0 (August, 25 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_right_sizing_rule: Added support for `cpu_percentile` and `memory_percentile` field.
-* resource/spotinst_ocean_aks_np: Added support for `local_dns_profile` and `encryption_at_host` fields.
-* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `local_dns_profile` and `encryption_at_host` fields.
+* resource/spotinst_ocean_aks_np: Added support for `local_dns_profile`, `encryption_at_host` and `preferred_vm_sizes` fields.
+* resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `local_dns_profile`, `encryption_at_host` and `preferred_vm_sizes` fields.
 * resource/spotinst_elastigroup_azure_v3: Added support for `license_type` object.
 
 ## 1.240.0 (August, 14 2026)
