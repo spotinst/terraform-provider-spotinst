@@ -233,6 +233,9 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.0", "Standard_D4s_v3"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.1", "Standard_D8s_v3"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79550"),
@@ -301,6 +304,8 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.2", "3"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.0", "Standard_D4s_v3"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79551"),
@@ -458,6 +463,8 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
     "2"
   ]
 
+  preferred_vm_sizes = ["Standard_D4s_v3", "Standard_D8s_v3"]
+
 %v
 %v
 %v
@@ -575,6 +582,8 @@ local_dns_profile {
     "2",
 	"3"
   ]
+
+  preferred_vm_sizes = ["Standard_D4s_v3"]
 
 %v
 %v

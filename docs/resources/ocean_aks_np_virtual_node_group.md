@@ -157,6 +157,8 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
     min_disk               = 1
     gpu_types              = ["nvidia-tesla-t4"]
   }
+
+  preferred_vm_sizes = ["Standard_D4s_v3", "Standard_D8s_v3"]
   
   // ----------------------------------------------------------------------------
   
@@ -254,6 +256,7 @@ The following arguments are supported:
     * `min_disk` - (Optional) Minimum number of data disks available.
     * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.
     * `gpu_types` - (Optional, Enum `"nvidia-tesla-v100", "amd-radeon-instinct-mi25", "nvidia-a10", "nvidia-tesla-a100", "nvidia-tesla-k80", "nvidia-tesla-m60", "nvidia-tesla-p100", "nvidia-tesla-p40", "nvidia-tesla-t4", "nvidia-tesla-h100"`) The filtered gpu types will belong to one of the gpu types from this list.
+* `preferred_vm_sizes` - (Optional) Preferred VM sizes for this virtual node group. Used when nodePoolProperties.encryptionAtHost is true to constrain launches to compatible sizes.
 * `scheduling`- (Optional) An object used to specify times when the virtual node group will turn off all its node pools. Once the shutdown time will be over, the virtual node group will return to its previous state.
   * `shutdown_hours` - (Optional) An object used to specify times that the nodes in the virtual node group will be stopped.
     * `is_enabled` - (Optional) Flag to enable or disable the shutdown hours mechanism. When `false`, the mechanism is deactivated, and the virtual node gorup remains in its current state.

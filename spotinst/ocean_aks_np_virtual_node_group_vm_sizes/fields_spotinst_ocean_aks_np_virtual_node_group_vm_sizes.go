@@ -159,6 +159,59 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[PreferredVmSizes] = commons.NewGenericField(
+		commons.OceanAKSNPVirtualNodeGroupVmSizes,
+		PreferredVmSizes,
+		&schema.Schema{
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeString},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			var value []string = nil
+			if virtualNodeGroup != nil && virtualNodeGroup.VmSizes != nil &&
+				virtualNodeGroup.VmSizes.PreferredVmSizes != nil {
+				value = virtualNodeGroup.VmSizes.PreferredVmSizes
+			}
+			if err := resourceData.Set(string(PreferredVmSizes), value); err != nil {
+				return fmt.Errorf(commons.FailureFieldReadPattern, string(PreferredVmSizes), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOk(string(PreferredVmSizes)); ok {
+				if preferredVmSizes, err := expandPreferredVmSizes(v); err != nil {
+					return err
+				} else {
+					virtualNodeGroup.VmSizes.SetPreferredVmSizes(preferredVmSizes)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			var value []string = nil
+			if v, ok := resourceData.GetOk(string(PreferredVmSizes)); ok {
+				if preferredVmSizes, err := expandPreferredVmSizes(v); err != nil {
+					return err
+				} else {
+					value = preferredVmSizes
+				}
+			}
+			if virtualNodeGroup.VmSizes == nil {
+				virtualNodeGroup.VmSizes = &azure_np.VmSizes{}
+			}
+			virtualNodeGroup.VmSizes.SetPreferredVmSizes(value)
+			return nil
+		},
+		nil,
+	)
 }
 
 func expandFilters(data interface{}, nullify bool) (*azure_np.Filters, error) {
@@ -325,6 +378,17 @@ func expandVmSizesFiltersList(data interface{}) ([]string, error) {
 	for _, v := range list {
 		if vmSizeList, ok := v.(string); ok && vmSizeList != "" {
 			result = append(result, vmSizeList)
+		}
+	}
+	return result, nil
+}
+
+func expandPreferredVmSizes(data interface{}) ([]string, error) {
+	list := data.(*schema.Set).List()
+	result := make([]string, 0, len(list))
+	for _, v := range list {
+		if vmSize, ok := v.(string); ok && vmSize != "" {
+			result = append(result, vmSize)
 		}
 	}
 	return result, nil
