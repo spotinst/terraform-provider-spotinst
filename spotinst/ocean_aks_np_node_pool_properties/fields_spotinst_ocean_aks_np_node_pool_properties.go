@@ -2,6 +2,7 @@ package ocean_aks_np_node_pool_properties
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
@@ -609,38 +610,45 @@ func flattenLocalDnsProfile(profile *azure_np.LocalDnsProfile) []interface{} {
 }
 
 func flattenDNSOverrides(overrides map[string]*azure_np.DNSOverrideSettings) []interface{} {
+	zones := make([]string, 0, len(overrides))
+	for zone := range overrides {
+		zones = append(zones, zone)
+	}
+	sort.Strings(zones)
+
 	result := make([]interface{}, 0, len(overrides))
 
-	for zone, dnsSettings := range overrides {
-		if dnsSettings == nil {
+	for _, zone := range zones {
+		settings := overrides[zone]
+		if settings == nil {
 			continue
 		}
 		item := make(map[string]interface{})
 		item[string(DNSZone)] = zone
 
-		if dnsSettings.QueryLogging != nil {
-			item[string(QueryLogging)] = spotinst.StringValue(dnsSettings.QueryLogging)
+		if settings.QueryLogging != nil {
+			item[string(QueryLogging)] = spotinst.StringValue(settings.QueryLogging)
 		}
-		if dnsSettings.Protocol != nil {
-			item[string(Protocol)] = spotinst.StringValue(dnsSettings.Protocol)
+		if settings.Protocol != nil {
+			item[string(Protocol)] = spotinst.StringValue(settings.Protocol)
 		}
-		if dnsSettings.ForwardDestination != nil {
-			item[string(ForwardDestination)] = spotinst.StringValue(dnsSettings.ForwardDestination)
+		if settings.ForwardDestination != nil {
+			item[string(ForwardDestination)] = spotinst.StringValue(settings.ForwardDestination)
 		}
-		if dnsSettings.ForwardPolicy != nil {
-			item[string(ForwardPolicy)] = spotinst.StringValue(dnsSettings.ForwardPolicy)
+		if settings.ForwardPolicy != nil {
+			item[string(ForwardPolicy)] = spotinst.StringValue(settings.ForwardPolicy)
 		}
-		if dnsSettings.MaxConcurrent != nil {
-			item[string(MaxConcurrent)] = spotinst.IntValue(dnsSettings.MaxConcurrent)
+		if settings.MaxConcurrent != nil {
+			item[string(MaxConcurrent)] = spotinst.IntValue(settings.MaxConcurrent)
 		}
-		if dnsSettings.CacheDurationInSeconds != nil {
-			item[string(CacheDurationInSeconds)] = spotinst.IntValue(dnsSettings.CacheDurationInSeconds)
+		if settings.CacheDurationInSeconds != nil {
+			item[string(CacheDurationInSeconds)] = spotinst.IntValue(settings.CacheDurationInSeconds)
 		}
-		if dnsSettings.ServeStaleDurationInSeconds != nil {
-			item[string(ServeStaleDurationInSeconds)] = spotinst.IntValue(dnsSettings.ServeStaleDurationInSeconds)
+		if settings.ServeStaleDurationInSeconds != nil {
+			item[string(ServeStaleDurationInSeconds)] = spotinst.IntValue(settings.ServeStaleDurationInSeconds)
 		}
-		if dnsSettings.ServeStale != nil {
-			item[string(ServeStale)] = spotinst.StringValue(dnsSettings.ServeStale)
+		if settings.ServeStale != nil {
+			item[string(ServeStale)] = spotinst.StringValue(settings.ServeStale)
 		}
 		result = append(result, item)
 	}

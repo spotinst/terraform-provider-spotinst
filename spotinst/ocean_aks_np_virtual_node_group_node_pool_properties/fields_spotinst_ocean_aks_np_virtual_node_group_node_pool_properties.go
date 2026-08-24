@@ -2,6 +2,7 @@ package ocean_aks_np_virtual_node_group_node_pool_properties
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
@@ -603,9 +604,16 @@ func flattenLocalDnsProfile(profile *azure_np.LocalDnsProfile) []interface{} {
 }
 
 func flattenDNSOverrides(overrides map[string]*azure_np.DNSOverrideSettings) []interface{} {
+	zones := make([]string, 0, len(overrides))
+	for zone := range overrides {
+		zones = append(zones, zone)
+	}
+	sort.Strings(zones)
+
 	result := make([]interface{}, 0, len(overrides))
 
-	for zone, settings := range overrides {
+	for _, zone := range zones {
+		settings := overrides[zone]
 		if settings == nil {
 			continue
 		}
@@ -640,7 +648,6 @@ func flattenDNSOverrides(overrides map[string]*azure_np.DNSOverrideSettings) []i
 	}
 	return result
 }
-
 func flattenSysctls(sysctls *azure_np.Sysctls) []interface{} {
 	var out []interface{}
 
