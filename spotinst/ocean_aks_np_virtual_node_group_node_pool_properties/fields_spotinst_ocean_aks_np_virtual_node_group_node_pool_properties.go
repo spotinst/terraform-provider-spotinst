@@ -648,6 +648,7 @@ func flattenDNSOverrides(overrides map[string]*azure_np.DNSOverrideSettings) []i
 	}
 	return result
 }
+
 func flattenSysctls(sysctls *azure_np.Sysctls) []interface{} {
 	var out []interface{}
 
