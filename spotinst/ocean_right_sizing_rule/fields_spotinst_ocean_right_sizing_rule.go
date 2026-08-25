@@ -793,6 +793,90 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[CpuPercentile] = commons.NewGenericField(
+		commons.OceanRightSizingRule,
+		CpuPercentile,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var value *int = nil
+			if rightSizingRule.CpuPercentile != nil {
+				value = rightSizingRule.CpuPercentile
+			}
+			if value != nil {
+				if err := resourceData.Set(string(CpuPercentile), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CpuPercentile), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if v, ok := resourceData.GetOkExists(string(CpuPercentile)); ok && v != nil {
+				rightSizingRule.SetCpuPercentile(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var cpuPercentile *int = nil
+			if v, ok := resourceData.GetOkExists(string(CpuPercentile)); ok && v != nil {
+				cpuPercentile = spotinst.Int(v.(int))
+			}
+			rightSizingRule.SetCpuPercentile(cpuPercentile)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[MemoryPercentile] = commons.NewGenericField(
+		commons.OceanRightSizingRule,
+		MemoryPercentile,
+		&schema.Schema{
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var value *int = nil
+			if rightSizingRule.MemoryPercentile != nil {
+				value = rightSizingRule.MemoryPercentile
+			}
+			if value != nil {
+				if err := resourceData.Set(string(MemoryPercentile), spotinst.IntValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(MemoryPercentile), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			if v, ok := resourceData.GetOkExists(string(MemoryPercentile)); ok && v != nil {
+				rightSizingRule.SetMemoryPercentile(spotinst.Int(v.(int)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			rightSizingRuleWrapper := resourceObject.(*commons.RightSizingRuleWrapper)
+			rightSizingRule := rightSizingRuleWrapper.GetOceanRightSizingRule()
+			var memoryPercentile *int = nil
+			if v, ok := resourceData.GetOkExists(string(MemoryPercentile)); ok && v != nil {
+				memoryPercentile = spotinst.Int(v.(int))
+			}
+			rightSizingRule.SetMemoryPercentile(memoryPercentile)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func flattenRecommendationApplicationIntervals(recommendationApplicationIntervals []*right_sizing.RecommendationApplicationIntervals) []interface{} {

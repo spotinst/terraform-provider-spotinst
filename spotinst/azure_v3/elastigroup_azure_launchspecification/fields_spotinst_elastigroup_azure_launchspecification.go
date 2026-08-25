@@ -586,6 +586,48 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[LicenseType] = commons.NewGenericField(
+		commons.ElastigroupAzureLaunchSpecification,
+		LicenseType,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if elastigroup != nil && elastigroup.Compute != nil && elastigroup.Compute.LaunchSpecification != nil && elastigroup.Compute.LaunchSpecification.LicenseType != nil {
+				value = elastigroup.Compute.LaunchSpecification.LicenseType
+			}
+			if err := resourceData.Set(string(LicenseType), value); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LicenseType), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			if v, ok := resourceData.Get(string(LicenseType)).(string); ok && v != "" {
+				licenseType := spotinst.String(v)
+				elastigroup.Compute.LaunchSpecification.SetLicenseType(licenseType)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			egWrapper := resourceObject.(*commons.ElastigroupAzureV3Wrapper)
+			elastigroup := egWrapper.GetElastigroup()
+			var value *string = nil
+			if v, ok := resourceData.Get(string(LicenseType)).(string); ok && v != "" {
+				licenseType := spotinst.String(v)
+				value = licenseType
+			}
+			elastigroup.Compute.LaunchSpecification.SetLicenseType(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[Security] = commons.NewGenericField(
 		commons.ElastigroupAzureLaunchSpecification,
 		Security,

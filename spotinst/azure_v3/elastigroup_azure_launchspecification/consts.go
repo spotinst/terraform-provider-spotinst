@@ -14,6 +14,7 @@ const (
 	ShutdownScript commons.FieldName = "shutdown_script"
 	UserData       commons.FieldName = "user_data"
 	VmNamePrefix   commons.FieldName = "vm_name_prefix"
+	LicenseType    commons.FieldName = "license_type"
 )
 
 const (
