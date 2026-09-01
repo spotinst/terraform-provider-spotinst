@@ -52,6 +52,7 @@ resource "spotinst_elastigroup_azure_v3" "test_azure_group" {
   //user_data = "IlRlc3RpbmcgRUci"
   
   vm_name_prefix = "prefixName"
+  license_type = "Windows_Server"
   
   managed_service_identity {
   resource_group_name = "MC_ocean-westus-dev_ocean-westus-dev-aks_westus"
@@ -243,6 +244,7 @@ The following arguments are supported:
 * `user_data` - (Optional) Define a set of scripts or other metadata that's inserted to an Azure virtual machine at provision time. Cannot be defined along with `custom_data`.
 * `shutdown_script` - (Optional) Shutdown script for the group. Value should be passed as a string encoded at Base64 only.
 * `vm_name_prefix` - (Optional) Set a VM name prefix to be used for all launched VMs and the VM resources.
+* `license_type` - (Optional) Enables Azure Hybrid Benefit for the Elastigroup. Accepted values: `Windows_Client`, `Windows_Server`, `RHEL_BYOS`, `SLES_BYOS`.
 * `zones` - (Optional) List of Azure Availability Zones in the defined region; If not defined, Virtual machines will be launched regionally.
 * `preferred_zones` - (Optional) The AZs to prioritize when launching VMs. If no markets are available in the Preferred AZs, VMs are launched in the non-preferred AZs. Must be a sublist of `zones`.
 * `managed_service_identity` - (Optional) List of Managed Service Identity objects.

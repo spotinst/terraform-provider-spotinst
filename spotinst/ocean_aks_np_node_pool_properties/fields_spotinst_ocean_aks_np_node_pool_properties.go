@@ -2,6 +2,7 @@ package ocean_aks_np_node_pool_properties
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/spotinst/spotinst-sdk-go/service/ocean/providers/azure_np"
 
@@ -98,6 +99,50 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 				enableIp = spotinst.Bool(publicIp)
 			}
 			cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEnableNodePublicIP(enableIp)
+			return nil
+		},
+		nil,
+	)
+
+	fieldsMap[EncryptionAtHost] = commons.NewGenericField(
+		commons.OceanAKSNPProperties,
+		EncryptionAtHost,
+		&schema.Schema{
+			Type:     schema.TypeBool,
+			Optional: true,
+			Default:  false,
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value *bool = nil
+			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil &&
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.EncryptionAtHost != nil {
+				value = cluster.VirtualNodeGroupTemplate.NodePoolProperties.EncryptionAtHost
+			}
+			if value != nil {
+				if err := resourceData.Set(string(EncryptionAtHost), spotinst.BoolValue(value)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(EncryptionAtHost), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOkExists(string(EncryptionAtHost)); ok && v != nil {
+				cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEncryptionAtHost(spotinst.Bool(v.(bool)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var encryptionAtHost *bool = nil
+			if v, ok := resourceData.GetOkExists(string(EncryptionAtHost)); ok && v != nil {
+				encryptionAtHost = spotinst.Bool(v.(bool))
+			}
+			cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetEncryptionAtHost(encryptionAtHost)
 			return nil
 		},
 		nil,
@@ -453,6 +498,81 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+
+	fieldsMap[LocalDnsProfile] = commons.NewGenericField(
+		commons.OceanAKSNPProperties,
+		LocalDnsProfile,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(Mode): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(VnetDNSOverrides): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: dnsOverrideSettingsSchema(),
+						},
+					},
+					string(KubeDNSOverrides): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem: &schema.Resource{
+							Schema: dnsOverrideSettingsSchema(),
+						},
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var value []interface{} = nil
+			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.NodePoolProperties != nil {
+				if cluster.VirtualNodeGroupTemplate.NodePoolProperties.LocalDnsProfile != nil {
+					value = flattenLocalDnsProfile(cluster.VirtualNodeGroupTemplate.NodePoolProperties.LocalDnsProfile)
+				}
+			}
+			if len(value) > 0 {
+				if err := resourceData.Set(string(LocalDnsProfile), value); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(LocalDnsProfile), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if value, ok := resourceData.GetOk(string(LocalDnsProfile)); ok {
+				if profile, err := expandLocalDnsProfile(value); err != nil {
+					return err
+				} else {
+					cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetLocalDnsProfile(profile)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			var profile *azure_np.LocalDnsProfile = nil
+			if v, ok := resourceData.GetOk(string(LocalDnsProfile)); ok {
+				if p, err := expandLocalDnsProfile(v); err != nil {
+					return err
+				} else {
+					profile = p
+				}
+			}
+			cluster.VirtualNodeGroupTemplate.NodePoolProperties.SetLocalDnsProfile(profile)
+			return nil
+		},
+		nil,
+	)
+
 }
 
 func flattenLinuxOSConfig(linuxConfig *azure_np.LinuxOSConfig) []interface{} {
@@ -467,6 +587,72 @@ func flattenLinuxOSConfig(linuxConfig *azure_np.LinuxOSConfig) []interface{} {
 		out = append(out, result)
 	}
 	return out
+}
+
+func flattenLocalDnsProfile(profile *azure_np.LocalDnsProfile) []interface{} {
+	var out []interface{}
+
+	if profile != nil {
+		result := make(map[string]interface{})
+
+		if profile.Mode != nil {
+			result[string(Mode)] = spotinst.StringValue(profile.Mode)
+		}
+		if profile.VnetDNSOverrides != nil {
+			result[string(VnetDNSOverrides)] = flattenDNSOverrides(profile.VnetDNSOverrides)
+		}
+		if profile.KubeDNSOverrides != nil {
+			result[string(KubeDNSOverrides)] = flattenDNSOverrides(profile.KubeDNSOverrides)
+		}
+		out = append(out, result)
+	}
+	return out
+}
+
+func flattenDNSOverrides(overrides map[string]*azure_np.DNSOverrideSettings) []interface{} {
+	zones := make([]string, 0, len(overrides))
+	for zone := range overrides {
+		zones = append(zones, zone)
+	}
+	sort.Strings(zones)
+
+	result := make([]interface{}, 0, len(overrides))
+
+	for _, zone := range zones {
+		settings := overrides[zone]
+		if settings == nil {
+			continue
+		}
+		item := make(map[string]interface{})
+		item[string(DNSZone)] = zone
+
+		if settings.QueryLogging != nil {
+			item[string(QueryLogging)] = spotinst.StringValue(settings.QueryLogging)
+		}
+		if settings.Protocol != nil {
+			item[string(Protocol)] = spotinst.StringValue(settings.Protocol)
+		}
+		if settings.ForwardDestination != nil {
+			item[string(ForwardDestination)] = spotinst.StringValue(settings.ForwardDestination)
+		}
+		if settings.ForwardPolicy != nil {
+			item[string(ForwardPolicy)] = spotinst.StringValue(settings.ForwardPolicy)
+		}
+		if settings.MaxConcurrent != nil {
+			item[string(MaxConcurrent)] = spotinst.IntValue(settings.MaxConcurrent)
+		}
+		if settings.CacheDurationInSeconds != nil {
+			item[string(CacheDurationInSeconds)] = spotinst.IntValue(settings.CacheDurationInSeconds)
+		}
+		if settings.ServeStaleDurationInSeconds != nil {
+			item[string(ServeStaleDurationInSeconds)] = spotinst.IntValue(settings.ServeStaleDurationInSeconds)
+		}
+		if settings.ServeStale != nil {
+			item[string(ServeStale)] = spotinst.StringValue(settings.ServeStale)
+		}
+		result = append(result, item)
+	}
+	return result
 }
 
 func flattenSysctls(sysctls *azure_np.Sysctls) []interface{} {
@@ -517,6 +703,99 @@ func expandLinuxOSConfig(data interface{}) (*azure_np.LinuxOSConfig, error) {
 	return nil, nil
 }
 
+func expandLocalDnsProfile(data interface{}) (*azure_np.LocalDnsProfile, error) {
+	list := data.([]interface{})
+	if len(list) == 0 || list[0] == nil {
+		return nil, nil
+	}
+	m := list[0].(map[string]interface{})
+	profile := &azure_np.LocalDnsProfile{}
+
+	if v, ok := m[string(Mode)].(string); ok && v != "" {
+		profile.SetMode(spotinst.String(v))
+	} else {
+		profile.SetMode(nil)
+	}
+
+	if v, ok := m[string(VnetDNSOverrides)]; ok {
+		overrides, err := expandDNSOverrides(v)
+		if err != nil {
+			return nil, err
+		}
+		if len(overrides) > 0 {
+			profile.SetVnetDNSOverrides(overrides)
+		} else {
+			profile.SetVnetDNSOverrides(nil)
+		}
+	} else {
+		profile.SetVnetDNSOverrides(nil)
+	}
+
+	if v, ok := m[string(KubeDNSOverrides)]; ok {
+		overrides, err := expandDNSOverrides(v)
+		if err != nil {
+			return nil, err
+		}
+		if len(overrides) > 0 {
+			profile.SetKubeDNSOverrides(overrides)
+		} else {
+			profile.SetKubeDNSOverrides(nil)
+		}
+	} else {
+		profile.SetKubeDNSOverrides(nil)
+	}
+
+	return profile, nil
+}
+
+func expandDNSOverrides(data interface{}) (map[string]*azure_np.DNSOverrideSettings, error) {
+	list := data.([]interface{})
+	result := make(map[string]*azure_np.DNSOverrideSettings, len(list))
+
+	for _, v := range list {
+		m, ok := v.(map[string]interface{})
+		if !ok || m == nil {
+			continue
+		}
+
+		zone, ok := m[string(DNSZone)].(string)
+		if !ok || zone == "" {
+			continue
+		}
+
+		settings := &azure_np.DNSOverrideSettings{}
+
+		if v, ok := m[string(QueryLogging)].(string); ok && v != "" {
+			settings.SetQueryLogging(spotinst.String(v))
+		}
+		if v, ok := m[string(Protocol)].(string); ok && v != "" {
+			settings.SetProtocol(spotinst.String(v))
+		}
+		if v, ok := m[string(ForwardDestination)].(string); ok && v != "" {
+			settings.SetForwardDestination(spotinst.String(v))
+		}
+		if v, ok := m[string(ForwardPolicy)].(string); ok && v != "" {
+			settings.SetForwardPolicy(spotinst.String(v))
+		}
+		if v, ok := m[string(MaxConcurrent)].(int); ok && v > 0 {
+			settings.SetMaxConcurrent(spotinst.Int(v))
+		}
+		if v, ok := m[string(CacheDurationInSeconds)].(int); ok && v > 0 {
+			settings.SetCacheDurationInSeconds(spotinst.Int(v))
+		}
+		if v, ok := m[string(ServeStaleDurationInSeconds)].(int); ok && v > 0 {
+			settings.SetServeStaleDurationInSeconds(spotinst.Int(v))
+		}
+		if v, ok := m[string(ServeStale)].(string); ok && v != "" {
+			settings.SetServeStale(spotinst.String(v))
+		}
+
+		result[zone] = settings
+	}
+
+	return result, nil
+}
+
 func expandSysctls(data interface{}) (*azure_np.Sysctls, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		sysctls := &azure_np.Sysctls{}
@@ -529,4 +808,45 @@ func expandSysctls(data interface{}) (*azure_np.Sysctls, error) {
 		return sysctls, nil
 	}
 	return nil, nil
+}
+
+func dnsOverrideSettingsSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		string(DNSZone): {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		string(QueryLogging): {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		string(Protocol): {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		string(ForwardDestination): {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		string(ForwardPolicy): {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		string(MaxConcurrent): {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		string(CacheDurationInSeconds): {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		string(ServeStaleDurationInSeconds): {
+			Type:     schema.TypeInt,
+			Optional: true,
+		},
+		string(ServeStale): {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+	}
 }

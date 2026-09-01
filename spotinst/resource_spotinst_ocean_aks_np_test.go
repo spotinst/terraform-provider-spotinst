@@ -219,6 +219,7 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_count", "100"),
 					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "30"),
 					resource.TestCheckResourceAttr(resourceName, "enable_node_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "encryption_at_host", "true"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_size_gb", "32"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_type", "Managed"),
 					resource.TestCheckResourceAttr(resourceName, "os_type", "Linux"),
@@ -232,9 +233,52 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.0", "Standard_D4s_v3"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.1", "Standard_D8s_v3"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79550"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.mode", "Required"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.zone", "."),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.query_logging", "Error"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.protocol", "PreferUDP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.forward_destination", "VnetDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.forward_policy", "Sequential"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.max_concurrent", "1000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.cache_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.serve_stale_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.serve_stale", "Immediate"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.zone", "cluster.local"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.query_logging", "Error"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.protocol", "PreferUDP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.forward_destination", "VnetDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.forward_policy", "Sequential"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.max_concurrent", "1000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.cache_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.serve_stale_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.serve_stale", "Immediate"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.zone", "."),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.query_logging", "Error"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.protocol", "PreferUDP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.forward_destination", "VnetDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.forward_policy", "Sequential"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.max_concurrent", "1000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.cache_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.serve_stale_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.serve_stale", "Immediate"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.zone", "cluster.local"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.query_logging", "Error"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.protocol", "PreferUDP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.forward_destination", "VnetDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.forward_policy", "Sequential"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.max_concurrent", "1000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.cache_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.serve_stale_duration_in_seconds", "3600"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.serve_stale", "Immediate"),
 				),
 			},
 			{
@@ -250,6 +294,7 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "max_count", "150"),
 					resource.TestCheckResourceAttr(resourceName, "max_pods_per_node", "50"),
 					resource.TestCheckResourceAttr(resourceName, "enable_node_public_ip", "true"),
+					resource.TestCheckResourceAttr(resourceName, "encryption_at_host", "false"),
 					resource.TestCheckResourceAttr(resourceName, "os_disk_size_gb", "64"),
 					resource.TestCheckResourceAttr(resourceName, "kubernetes_version", "1.34"),
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
@@ -259,9 +304,51 @@ func TestAccSpotinstOceanAKSNP_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.1", "2"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.2", "3"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "preferred_vm_sizes.0", "Standard_D4s_v3"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "linux_os_config.0.sysctls.0.vm_max_map_count", "79551"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.mode", "Preferred"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.zone", "."),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.query_logging", "Log"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.protocol", "ForceTCP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.forward_destination", "ClusterCoreDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.forward_policy", "RoundRobin"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.max_concurrent", "1500"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.cache_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.serve_stale_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.0.serve_stale", "Verify"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.zone", "cluster.local"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.query_logging", "Log"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.protocol", "ForceTCP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.forward_destination", "ClusterCoreDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.forward_policy", "RoundRobin"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.max_concurrent", "1500"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.cache_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.serve_stale_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.vnet_dns_overrides.1.serve_stale", "Verify"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.zone", "."),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.query_logging", "Log"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.protocol", "ForceTCP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.forward_destination", "ClusterCoreDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.forward_policy", "RoundRobin"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.max_concurrent", "1500"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.cache_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.serve_stale_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.0.serve_stale", "Verify"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.zone", "cluster.local"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.query_logging", "Log"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.protocol", "ForceTCP"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.forward_destination", "ClusterCoreDNS"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.forward_policy", "RoundRobin"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.max_concurrent", "1500"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.cache_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.serve_stale_duration_in_seconds", "4000"),
+					resource.TestCheckResourceAttr(resourceName, "local_dns_profile.0.kube_dns_overrides.1.serve_stale", "Verify"),
 				),
 			},
 		},
@@ -293,6 +380,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
 
   max_pods_per_node     = 30
   enable_node_public_ip = true
+  encryption_at_host    = true
   os_disk_size_gb       = 32
   os_disk_type          = "Managed"
   os_type               = "Linux"
@@ -314,10 +402,68 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
 
   // ----------------------------------------------------------------------
 
+  // --- Local DNS Profile ---------------------------------------------------------
+
+  local_dns_profile {
+    mode = "Required"
+
+    vnet_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "VnetDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+
+    vnet_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "VnetDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+
+    kube_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "VnetDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+
+    kube_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "VnetDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+  }
+
+  // ----------------------------------------------------------------------
+
   availability_zones = [
     "1",
     "2"
   ]
+
+  preferred_vm_sizes = ["Standard_D4s_v3", "Standard_D8s_v3"]
 
 %v
 %v
@@ -353,6 +499,7 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
 
   max_pods_per_node     = 50
   enable_node_public_ip = true
+  encryption_at_host    = false
   os_disk_size_gb       = 64
   os_disk_type          = "Managed"
   os_type               = "Linux"
@@ -374,11 +521,69 @@ resource "` + string(commons.OceanAKSNPResourceName) + `" "%v" {
 
   // ----------------------------------------------------------------------
 
+  // --- Local DNS Profile ---------------------------------------------------------
+  
+local_dns_profile {
+    mode = "Preferred"
+
+    vnet_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Log"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "RoundRobin"
+      max_concurrent                  = 1500
+      cache_duration_in_seconds       = 4000
+      serve_stale_duration_in_seconds = 4000
+      serve_stale                     = "Verify"
+    }
+
+    vnet_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Log"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "RoundRobin"
+      max_concurrent                  = 1500
+      cache_duration_in_seconds       = 4000
+      serve_stale_duration_in_seconds = 4000
+      serve_stale                     = "Verify"
+    }
+
+    kube_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Log"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "RoundRobin"
+      max_concurrent                  = 1500
+      cache_duration_in_seconds       = 4000
+      serve_stale_duration_in_seconds = 4000
+      serve_stale                     = "Verify"
+    }
+
+    kube_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Log"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "RoundRobin"
+      max_concurrent                  = 1500
+      cache_duration_in_seconds       = 4000
+      serve_stale_duration_in_seconds = 4000
+      serve_stale                     = "Verify"
+    }
+  }
+
+  // ----------------------------------------------------------------------
+
   availability_zones = [
     "1",
     "2",
 	"3"
   ]
+
+  preferred_vm_sizes = ["Standard_D4s_v3"]
 
 %v
 %v

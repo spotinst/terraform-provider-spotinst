@@ -154,6 +154,7 @@ resource "spotinst_ocean_aks_np" "example" {
   
   max_pods_per_node     = 30
   enable_node_public_ip = true
+  encryption_at_host    = true
   os_disk_size_gb       = 30
   os_disk_type          = "Managed"
   os_type               = "Windows"
@@ -168,6 +169,57 @@ resource "spotinst_ocean_aks_np" "example" {
   }
   // ----------------------------------------------------------------------
 
+  // --- LocalDnsProfile --------------------------------------------------
+
+  local_dns_profile {
+    mode = "Required"
+    vnet_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "VnetDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+    vnet_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Error"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+    kube_dns_overrides {
+      zone                            = "."
+      query_logging                   = "Error"
+      protocol                        = "PreferUDP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+    kube_dns_overrides {
+      zone                            = "cluster.local"
+      query_logging                   = "Error"
+      protocol                        = "ForceTCP"
+      forward_destination             = "ClusterCoreDNS"
+      forward_policy                  = "Sequential"
+      max_concurrent                  = 1000
+      cache_duration_in_seconds       = 3600
+      serve_stale_duration_in_seconds = 3600
+      serve_stale                     = "Immediate"
+    }
+  }
+  // ----------------------------------------------------------------------
+  
   // --- strategy ---------------------------------------------------------
   
   spot_percentage             = 50
@@ -216,6 +268,8 @@ resource "spotinst_ocean_aks_np" "example" {
     min_disk               = 1
     gpu_types              = ["nvidia-tesla-t4"]
   }
+
+  preferred_vm_sizes = ["Standard_D4s_v3", "Standard_D8s_v3"]
   
   // ----------------------------------------------------------------------
 }
@@ -268,6 +322,7 @@ The following arguments are supported:
 * `max_count` - (Optional, Default: 1000) Maximum node count limit.
 * `min_count` - (Optional, Default: 0) Minimum node count limit.
 * `enable_node_public_ip` - (Optional) Enable node public IP.
+* `encryption_at_host` - (Optional, Default: `false`) Whether to enable host-based encryption for nodes. When set to `true`, use `vmSizes.preferredVmSizes` to provide compatible VM sizes. **Important:** This setting is immutable at the Azure infrastructure level once nodes are launched. Changing this value requires a roll operation for new nodes to reflect the updated configuration.
 * `max_pods_per_node` - (Optional) The maximum number of pods per node in the node pools.
 * `os_disk_size_gb` - (Optional) The size of the OS disk in GB.
 * `os_disk_type` - (Optional, Enum:`"Managed" ,"Ephemeral"`) The type of the OS disk.
@@ -281,6 +336,19 @@ The following arguments are supported:
 * `kubernetes_version` - (Optional) The desired Kubernetes version of the launched nodes. In case the value is null, the Kubernetes version of the control plane is used.
 * `fallback_to_ondemand` - (Optional) If no spot VM markets are available, enable Ocean to launch regular (pay-as-you-go) nodes instead.
 * `draining_timeout` - (Optional) Time in seconds to allow the node to drain before it is terminated. The parameter value will be in range `[300-3600]`.
+* `local_dns_profile` - (Optional) Local DNS profile configuration for the node pool. Requires VM sizes with at least 4 vCPUs and Linux (Ubuntu 22.04+ or Azure Linux) OS. See: [AKS Local DNS Custom Field](https://learn.microsoft.com/en-us/azure/aks/localdns-custom).
+  * `mode` - (Required) The LocalDNS mode. Required when localDnsProfile is configured. Allowed values: `"Required"`, `"Preferred"`, `"Disabled"`.
+  * `vnet_dns_overrides` - (Optional) Per-zone DNS override configuration for VNet DNS resolution. Keys are DNS zone names (`"."` or `"cluster.local"`).
+    * `zone` - (Required) The DNS zone name this override applies to (`"."`, `"cluster.local"`).
+    * `query_logging` - (Optional) Define the logging level for DNS queries. Allowed values: `"Error"`, `"Log"`.
+    * `protocol` - (Optional) Sets the protocol used for DNS queries (UDP/TCP preference). Allowed values: `"PreferUDP"`, `"ForceTCP"`.
+    * `forward_destination` - (Optional) Specifies the DNS server to forward queries to. Allowed values:  `"VnetDNS"`, `"ClusterCoreDNS"`.
+    * `forward_policy` - (Optional) Determines the policy to use when selecting the upstream DNS server. Allowed values:  `"Sequential"`, `"RoundRobin"`, `"Random"`.
+    * `max_concurrent` - (Optional) Maximum number of concurrent DNS queries handled by LocalDNS.
+    * `cache_duration_in_seconds` - (Optional) Maximum TTL (Time To Live) in seconds for which DNS responses are cached.
+    * `serve_stale_duration_in_seconds` - (Optional) Duration (in seconds) to serve stale DNS responses if upstream is unavailable.
+    * `serve_stale` - (Optional) Policy for serving stale DNS responses during upstream failures. Allowed values: `"Immediate"`, `"Verify"`, `"Disabled"`.
+  * `kube_dns_overrides` - (Optional) Per-zone DNS override configuration for kube-dns/CoreDNS resolution. Keys are DNS zone names (e.g. `"."` or `"cluster.local"`) and all values are same as `vnet_dns_overrides`. 
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `should_utilize_commitments` - (Optional, Default: `false`) Determines whether to utilize any existing Azure Savings Plans or Reserved Instances associated with the subscription for On-Demand VMs.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
@@ -306,6 +374,7 @@ The following arguments are supported:
   * `min_disk` - (Optional) Minimum number of data disks available.
   * `vm_types` - (Optional, Enum `"generalPurpose", "memoryOptimized", "computeOptimized", "highPerformanceCompute", "storageOptimized", "GPU"`) The filtered vm types will belong to one of the vm types from this list.
   * `gpu_types` - (Optional, Enum `"nvidia-tesla-v100", "amd-radeon-instinct-mi25", "nvidia-a10", "nvidia-tesla-a100", "nvidia-tesla-k80", "nvidia-tesla-m60", "nvidia-tesla-p100", "nvidia-tesla-p40", "nvidia-tesla-t4", "nvidia-tesla-h100"`) The filtered gpu types will belong to one of the gpu types from this list.
+* `preferred_vm_sizes` - (Optional) Preferred VM sizes for this virtual node group. Used when nodePoolProperties.encryptionAtHost is true to constrain launches to compatible sizes.
 * `logging` - (Optional) The Ocean AKS Logging Object.
   * `export` - The Ocean AKS Logging Export object.
     * `azure_blob` -  Exports your cluster's logs to the storage account and container configured on the storage account [data integration](https://docs.spot.io/ocean/features/log-integration-with-azure-blob?id=log-integration-with-azure-blob) given. Each file contains logs of 3 minutes where each log is separated by a new line and saved as a JSON. The file formats are `container`/`accountId``oceanId``oceanName`_`startTime`.log

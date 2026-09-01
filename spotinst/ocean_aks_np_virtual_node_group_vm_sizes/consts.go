@@ -19,4 +19,5 @@ const (
 	MinDisk               commons.FieldName = "min_disk"
 	VmTypes               commons.FieldName = "vm_types"
 	GpuTypes              commons.FieldName = "gpu_types"
+	PreferredVmSizes      commons.FieldName = "preferred_vm_sizes"
 )
