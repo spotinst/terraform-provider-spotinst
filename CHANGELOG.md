@@ -1,5 +1,12 @@
 ## Unreleased
 
+## 1.241.1 (September, 1 2026)
+BUG FIXES:
+* resource/spotinst_ocean_aws: Fixed `block_device_mappings` not showing drift when the API returns null (e.g. after a `root_volume_size` update).
+* resource/spotinst_ocean_aws_launch_spec: Fixed `block_device_mappings` not showing drift when the API returns null.
+* resource/spotinst_ocean_ecs: Fixed `block_device_mappings` not showing drift when the API returns null.
+* resource/spotinst_ocean_ecs_launch_spec: Fixed `block_device_mappings` not showing drift when the API returns null.
+
 ## 1.241.0 (August, 25 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_right_sizing_rule: Added support for `cpu_percentile` and `memory_percentile` field.
