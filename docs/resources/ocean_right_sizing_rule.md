@@ -85,7 +85,7 @@ The following arguments are supported:
 * `ocean_id` - (Required) Identifier of the Ocean cluster.
 * `rule_name` - (Required) The unique name of the rule.
 * `exclude_preliminary_recommendations` - (Optional) Exclude preliminary recommendations (recommendations based on less than 4 full days of data).
-* `restart_replicas` - (Optional) Valid values: "MORE_THAN_ONE_REPLICA" "ALL_MANIFEST" "NO_RESTART". Enable to sequentially restart pod batches according to recommendations, for all pods, only more than 1 replica, or not any pod.
+* `restart_replicas` - (Optional) Valid values: "MORE_THAN_ONE_REPLICA" "ALL_MANIFEST" "NO_RESTART" "IN_PLACE_OR_RECREATE". Enable to sequentially restart pod batches according to recommendations, for all pods, only more than 1 replica, or not any pod.
 * `cpu_percentile` - (Optional) vCPU percentile for calculating recommendations.
 * `memory_percentile` - (Optional) Memory percentile for calculating recommendations.
 * `recommendation_application_boundaries` - (Optional) Determines the Ocean Rightsizing rule recommendation application boundaries.
