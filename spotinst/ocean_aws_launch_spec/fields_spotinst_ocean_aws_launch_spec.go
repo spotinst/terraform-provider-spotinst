@@ -2162,7 +2162,7 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 					string(CapacityReservationsFallback): {
 						Type:     schema.TypeBool,
 						Optional: true,
-						Default:  true,
+						Default:  false,
 					},
 				},
 			},
