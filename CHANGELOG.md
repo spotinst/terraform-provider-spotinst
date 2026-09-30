@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.241.2 (October, 1 2026)
+ENHANCEMENTS:
+* resource/spotinst_ocean_aws_launch_spec: Added support for `capacity_reservations` object.
+* resource/spotinst_ocean_right_sizing_rule: Added missing `restart_replicas` docs.
+
 ## 1.241.1 (September, 1 2026)
 BUG FIXES:
 * resource/spotinst_ocean_aws: Fixed `block_device_mappings` not showing drift when the API returns null (e.g. after a `root_volume_size` update).
