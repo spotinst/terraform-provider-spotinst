@@ -2145,6 +2145,71 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[CapacityReservations] = commons.NewGenericField(
+		commons.OceanAWSLaunchSpec,
+		CapacityReservations,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(CapacityReservationIDs): {
+						Type:     schema.TypeList,
+						Optional: true,
+						Elem:     &schema.Schema{Type: schema.TypeString},
+					},
+					string(CapacityReservationsFallback): {
+						Type:     schema.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var result []interface{} = nil
+			if launchSpec != nil && launchSpec.CapacityReservations != nil {
+				result = flattenCapacityReservations(launchSpec.CapacityReservations)
+			}
+			if result != nil {
+				if err := resourceData.Set(string(CapacityReservations), result); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(CapacityReservations), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			if v, ok := resourceData.GetOk(string(CapacityReservations)); ok {
+				if capacityReservations, err := expandCapacityReservations(v); err != nil {
+					return err
+				} else {
+					launchSpec.SetCapacityReservations(capacityReservations)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			launchSpecWrapper := resourceObject.(*commons.LaunchSpecWrapper)
+			launchSpec := launchSpecWrapper.GetLaunchSpec()
+			var value *aws.CapacityReservations = nil
+			if v, ok := resourceData.GetOk(string(CapacityReservations)); ok {
+				if capacityReservations, err := expandCapacityReservations(v); err != nil {
+					return err
+				} else {
+					value = capacityReservations
+				}
+			}
+			launchSpec.SetCapacityReservations(value)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[PreferredOnDemandTypes] = commons.NewGenericField(
 		commons.OceanAWSLaunchSpec,
 		PreferredOnDemandTypes,
@@ -3718,6 +3783,15 @@ func flattenEphemeralStorage(ephemeralStorage *aws.EphemeralStorage) []interface
 
 	return out
 }
+
+func flattenCapacityReservations(capacityReservations *aws.CapacityReservations) []interface{} {
+	result := make(map[string]interface{})
+	result[string(CapacityReservationIDs)] = capacityReservations.CapacityReservationIDs
+	result[string(CapacityReservationsFallback)] = spotinst.BoolValue(capacityReservations.Fallback)
+
+	return []interface{}{result}
+}
+
 func expandEphemeralStorage(data interface{}) (*aws.EphemeralStorage, error) {
 	if list := data.([]interface{}); len(list) > 0 {
 		ephemeralStorage := &aws.EphemeralStorage{}
@@ -3734,6 +3808,49 @@ func expandEphemeralStorage(data interface{}) (*aws.EphemeralStorage, error) {
 	}
 
 	return nil, nil
+}
+
+func expandCapacityReservations(data interface{}) (*aws.CapacityReservations, error) {
+	capacityReservations := &aws.CapacityReservations{}
+	list := data.([]interface{})
+	if list == nil || len(list) == 0 || list[0] == nil {
+		return nil, nil
+	}
+	m := list[0].(map[string]interface{})
+
+	if v, ok := m[string(CapacityReservationsFallback)].(bool); ok {
+		capacityReservations.SetFallback(spotinst.Bool(v))
+	}
+
+	if v, ok := m[string(CapacityReservationIDs)]; ok {
+		ids, err := expandCapacityReservationIDs(v)
+		if err != nil {
+			return nil, err
+		}
+		capacityReservations.SetCapacityReservationIDs(ids)
+	} else {
+		capacityReservations.SetCapacityReservationIDs(nil)
+	}
+
+	return capacityReservations, nil
+}
+
+func expandCapacityReservationIDs(data interface{}) ([]string, error) {
+	list := data.([]interface{})
+	if list == nil || len(list) == 0 {
+		return nil, nil
+	}
+	result := make([]string, 0, len(list))
+
+	for _, v := range list {
+		if id, ok := v.(string); ok && id != "" {
+			result = append(result, id)
+		}
+	}
+	if len(result) == 0 {
+		return nil, nil
+	}
+	return result, nil
 }
 
 func flattenInstanceStorePolicy(instanceStorePolicy *aws.InstanceStorePolicy) []interface{} {

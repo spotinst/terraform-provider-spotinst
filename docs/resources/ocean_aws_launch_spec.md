@@ -123,7 +123,12 @@ resource "spotinst_ocean_aws_launch_spec" "example" {
   ephemeral_storage{
     ephemeral_storage_device_name = "/dev/xvda"
   }
-
+  
+  capacity_reservations {
+    ids = ["cr-1a2b3c4d", "cr-5e6f7g8h"]
+    fallback = true
+  }
+  
   resource_limits {
     max_instance_count = 4
     min_instance_count = 0
@@ -343,7 +348,9 @@ The architectures that come from the Virtual Node Group's images will be taken i
     * `virtualization_types` - (Optional) The filtered instance types will support at least one of the virtualization types from this list. Valid values: `hvm`, `paravirtual`.
 * `ephemeral_storage` - (Optional)
     * `ephemeral_storage_device_name` - (Optional) Specify an alternative device name from which ephemeral storage calculations should be derived. This parameter is used when the ephemeral storage should not utilize the root device. Provide the device name configured in the VNG's BDM or AMI's BDM that differs from the default root device.
-
+* `capacity_reservations` - (Optional) Configuration for targeting AWS Capacity Reservations.
+    * `ids` - (Optional) List of AWS Capacity Reservation IDs to target.
+    * `fallback` - (Optional, Default: false) Determines behavior when reservations are exhausted or unavailable.
 
 <a id="update-policy"></a>
 ## Update Policy

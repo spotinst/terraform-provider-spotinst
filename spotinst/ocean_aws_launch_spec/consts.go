@@ -197,3 +197,9 @@ const (
 	Duration                     commons.FieldName = "duration"
 	Effects                      commons.FieldName = "effects"
 )
+
+const (
+	CapacityReservations         commons.FieldName = "capacity_reservations"
+	CapacityReservationIDs       commons.FieldName = "ids"
+	CapacityReservationsFallback commons.FieldName = "fallback"
+)
