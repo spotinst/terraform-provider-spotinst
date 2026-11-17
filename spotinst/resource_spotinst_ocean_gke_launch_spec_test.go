@@ -780,6 +780,89 @@ resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
 
 //endregion
 
+// region OceanGKELaunchSpec: DynamicVolumeSize
+func TestAccSpotinstOceanGKELaunchSpec_DynamicVolumeSize(t *testing.T) {
+	oceanID := "o-6419f8ac"
+	resourceName := createOceanGKELaunchSpecResource(oceanID)
+
+	var launchSpec gcp.LaunchSpec
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKELaunchSpecDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: createOceanGKELaunchSpecTerraform(
+					&GKELaunchSpecConfigMetadata{oceanID: oceanID},
+					testDynamicVolumeSizeOceanGKELaunchSpecConfig_Create,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.base_size", "20"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.size_per_resource_unit", "10"),
+				),
+			},
+			{
+				Config: createOceanGKELaunchSpecTerraform(
+					&GKELaunchSpecConfigMetadata{oceanID: oceanID, updateBaselineFields: true},
+					testDynamicVolumeSizeOceanGKELaunchSpecConfig_Update,
+				),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKELaunchSpecExists(&launchSpec, resourceName),
+					testCheckOceanGKELaunchSpecAttributes(&launchSpec, oceanID),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.base_size", "25"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.size_per_resource_unit", "15"),
+				),
+			},
+		},
+	})
+}
+
+const testDynamicVolumeSizeOceanGKELaunchSpecConfig_Create = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
+
+ metadata {
+   key   = "gci-update-strategy"
+   value = "update_disabled"
+ }
+
+ dynamic_volume_size {
+   base_size              = 20
+   resource               = "CPU"
+   size_per_resource_unit = 10
+ }
+}
+`
+
+const testDynamicVolumeSizeOceanGKELaunchSpecConfig_Update = `
+resource "` + string(commons.OceanGKELaunchSpecResourceName) + `" "%v" {
+ provider = "%v"
+ ocean_id = "%v"
+ source_image = "https://www.googleapis.com/compute/v1/projects/gke-node-images/global/images/gke-1118-gke6-cos-69-10895-138-0-v190330-pre"
+
+ metadata {
+   key   = "gci-update-strategy"
+   value = "update_disabled"
+ }
+
+ dynamic_volume_size {
+   base_size              = 25
+   resource               = "CPU"
+   size_per_resource_unit = 15
+ }
+}
+`
+
+// endregion
+
 // region OceanGKELaunchSpec: Taints
 func TestAccSpotinstOceanGKELaunchSpec_Taints(t *testing.T) {
 	oceanID := "o-6419f8ac"

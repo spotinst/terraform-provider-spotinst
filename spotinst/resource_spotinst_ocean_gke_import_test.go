@@ -352,6 +352,136 @@ auto_update {
 
 // endregion
 
+// region Ocean GKE Import: DynamicVolumeSize
+func TestAccSpotinstOceanGKEImport_DynamicVolumeSize(t *testing.T) {
+	spotClusterName := "tf-dynamic-vol-size-test-do-not-delete"
+	resourceName := createOceanGKEImportResourceName(spotClusterName)
+
+	var cluster gcp.Cluster
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t, "gcp") },
+		Providers:    TestAccProviders,
+		CheckDestroy: testOceanGKEImportDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testDynamicVolumeSizeOceanGKEImportConfig_CreateNew,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+				),
+			},
+			{
+				Config: testDynamicVolumeSizeOceanGKEImportConfig_Add,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, spotClusterName),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.base_size", "20"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.size_per_resource_unit", "10"),
+				),
+			},
+			{
+				Config: testDynamicVolumeSizeOceanGKEImportConfig_Update,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckOceanGKEImportExists(&cluster, resourceName),
+					testCheckOceanGKEImportAttributes(&cluster, spotClusterName),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.base_size", "25"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.resource", "CPU"),
+					resource.TestCheckResourceAttr(resourceName, "dynamic_volume_size.0.size_per_resource_unit", "15"),
+				),
+			},
+		},
+	})
+}
+
+const testDynamicVolumeSizeOceanGKEImportConfig_CreateNew = `
+provider "gcp" {
+  token   = "fake"
+  account = "fake"
+}
+
+resource "` + string(commons.OceanGKEImportResourceName) + `" "tf-dynamic-vol-size-test-do-not-delete" {
+  provider = "gcp"
+
+  cluster_name     = "tf-dynamic-vol-size-test-do-not-delete"
+  location         = "us-east4-b"
+  whitelist        = ["n1-standard-1", "n1-standard-2"]
+  min_size         = 0
+  max_size         = 1000
+  desired_capacity = 1
+  root_volume_type = "pd-standard"
+
+  shielded_instance_config {
+    enable_secure_boot          = false
+    enable_integrity_monitoring = true
+  }
+
+}
+`
+
+const testDynamicVolumeSizeOceanGKEImportConfig_Add = `
+provider "gcp" {
+  token   = "fake"
+  account = "fake"
+}
+
+resource "` + string(commons.OceanGKEImportResourceName) + `" "tf-dynamic-vol-size-test-do-not-delete" {
+  provider = "gcp"
+
+  cluster_name     = "tf-dynamic-vol-size-test-do-not-delete"
+  location         = "us-east4-b"
+  whitelist        = ["n1-standard-1", "n1-standard-2"]
+  min_size         = 0
+  max_size         = 1000
+  desired_capacity = 1
+  root_volume_type = "pd-standard"
+
+  shielded_instance_config {
+    enable_secure_boot             = false
+    enable_integrity_monitoring    = true
+  }
+
+  dynamic_volume_size {
+  base_size              = 20
+  resource               = "CPU"
+  size_per_resource_unit = 10
+  }
+}
+`
+
+const testDynamicVolumeSizeOceanGKEImportConfig_Update = `
+provider "gcp" {
+  token   = "fake"
+  account = "fake"
+}
+
+resource "` + string(commons.OceanGKEImportResourceName) + `" "tf-dynamic-vol-size-test-do-not-delete" {
+  provider = "gcp"
+
+  cluster_name     = "tf-dynamic-vol-size-test-do-not-delete"
+  location         = "us-east4-b"
+  whitelist        = ["n1-standard-1", "n1-standard-2"]
+  min_size         = 0
+  max_size         = 1000
+  desired_capacity = 1
+  root_volume_type = "pd-standard"
+
+  shielded_instance_config {
+    enable_secure_boot          = false
+    enable_integrity_monitoring = true
+  }
+
+  dynamic_volume_size {
+    base_size              = 25
+    resource               = "CPU"
+    size_per_resource_unit = 15
+  }
+}
+`
+
+// endregion
+
 // region Ocean GKE Import: Scheduling
 func TestAccSpotinstOceanGKEImport_Scheduling(t *testing.T) {
 	spotClusterName := "terraform-tests-do-not-delete"

@@ -67,6 +67,75 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[DynamicVolumeSize] = commons.NewGenericField(
+		commons.OceanGKEImportLaunchSpecification,
+		DynamicVolumeSize,
+		&schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					string(BaseSize): {
+						Type:     schema.TypeInt,
+						Required: true,
+					},
+					string(Resource): {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					string(SizePerResourceUnit): {
+						Type:     schema.TypeInt,
+						Required: true,
+					},
+				},
+			},
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			cluster := resourceObject.(*commons.GKEImportClusterWrapper).GetCluster()
+			var result []interface{}
+			if cluster.Compute != nil && cluster.Compute.LaunchSpecification != nil {
+				result = flattenDynamicVolumeSize(cluster.Compute.LaunchSpecification.DynamicVolumeSize)
+			}
+			if err := resourceData.Set(string(DynamicVolumeSize), result); err != nil {
+				return fmt.Errorf(string(commons.FailureFieldReadPattern), string(DynamicVolumeSize), err)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			cluster := resourceObject.(*commons.GKEImportClusterWrapper).GetCluster()
+
+			if v, ok := resourceData.GetOk(string(DynamicVolumeSize)); ok {
+				dynamicVolumeSize, err := expandDynamicVolumeSize(v)
+				if err != nil {
+					return err
+				}
+				if cluster.Compute == nil {
+					cluster.SetCompute(&gcp.Compute{})
+				}
+				if cluster.Compute.LaunchSpecification == nil {
+					cluster.Compute.SetLaunchSpecification(&gcp.LaunchSpecification{})
+				}
+				cluster.Compute.LaunchSpecification.SetDynamicVolumeSize(dynamicVolumeSize)
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			ls := resourceObject.(*commons.GKEImportClusterWrapper).GetCluster().Compute.LaunchSpecification
+			var dynamicVolumeSize *gcp.ClusterDynamicVolumeSize
+			if v, ok := resourceData.GetOk(string(DynamicVolumeSize)); ok {
+				var err error
+				dynamicVolumeSize, err = expandDynamicVolumeSize(v)
+				if err != nil {
+					return err
+				}
+			}
+			ls.SetDynamicVolumeSize(dynamicVolumeSize)
+			return nil
+		},
+		nil,
+	)
+
 	fieldsMap[ShieldedInstanceConfig] = commons.NewGenericField(
 		commons.OceanGKEImportLaunchSpecification,
 		ShieldedInstanceConfig,
@@ -190,6 +259,61 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		},
 		nil,
 	)
+}
+
+func expandDynamicVolumeSize(data interface{}) (*gcp.ClusterDynamicVolumeSize, error) {
+	var dynamicVolumeSize *gcp.ClusterDynamicVolumeSize
+	list := data.([]interface{})
+
+	for _, v := range list {
+		attr, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		d := &gcp.ClusterDynamicVolumeSize{}
+
+		if v, ok := attr[string(BaseSize)].(int); ok {
+			d.SetBaseSize(spotinst.Int(v))
+		}
+
+		if v, ok := attr[string(Resource)].(string); ok && v != "" {
+			d.SetResource(spotinst.String(v))
+		}
+
+		if v, ok := attr[string(SizePerResourceUnit)].(int); ok {
+			d.SetSizePerResourceUnit(spotinst.Int(v))
+		}
+
+		dynamicVolumeSize = d
+	}
+
+	return dynamicVolumeSize, nil
+}
+
+func flattenDynamicVolumeSize(dynamicVolumeSize *gcp.ClusterDynamicVolumeSize) []interface{} {
+	var out []interface{}
+
+	if dynamicVolumeSize != nil {
+		result := make(map[string]interface{})
+
+		if dynamicVolumeSize.BaseSize != nil {
+			result[string(BaseSize)] = spotinst.IntValue(dynamicVolumeSize.BaseSize)
+		}
+
+		if dynamicVolumeSize.Resource != nil {
+			result[string(Resource)] = spotinst.StringValue(dynamicVolumeSize.Resource)
+		}
+
+		if dynamicVolumeSize.SizePerResourceUnit != nil {
+			result[string(SizePerResourceUnit)] = spotinst.IntValue(dynamicVolumeSize.SizePerResourceUnit)
+		}
+
+		if len(result) > 0 {
+			out = append(out, result)
+		}
+	}
+	return out
 }
 
 func flattenShieldedInstanceConfig(shieldedInstanceConfig *gcp.LaunchSpecShieldedInstanceConfig) []interface{} {
