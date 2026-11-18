@@ -95,3 +95,10 @@ const (
 	MinMemoryGiB    commons.FieldName = "min_memory_gib"
 	MinVcpu         commons.FieldName = "min_vcpu"
 )
+
+const (
+	DynamicVolumeSize   commons.FieldName = "dynamic_volume_size"
+	BaseSize            commons.FieldName = "base_size"
+	Resource            commons.FieldName = "resource"
+	SizePerResourceUnit commons.FieldName = "size_per_resource_unit"
+)

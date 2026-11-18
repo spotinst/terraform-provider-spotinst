@@ -29,7 +29,13 @@ resource "spotinst_ocean_gke_launch_spec" "example" {
   create_options {
     initial_nodes = 1
   }
-  
+
+  dynamic_volume_size {
+    base_size              = 50
+    resource               = "CPU"
+    size_per_resource_unit = 20
+  }
+
   shielded_instance_config {
     enable_secure_boot = false
     enable_integrity_monitoring = true
@@ -148,7 +154,11 @@ The following arguments are supported:
     * `value` - (Required) The label value.
 * `restrict_scale_down` - (Optional) Boolean. When set to `true`, VNG nodes will be treated as if all pods running have the restrict-scale-down label. Therefore, Ocean will not scale nodes down unless empty.
 * `root_volume_type` - (Optional) Root volume disk type. Valid values: `"pd-standard"`, `"pd-ssd"`, `"pd-balanced"`.
-* `root_volume_size` - (Optional) Root volume size (in GB).
+* `root_volume_size` - (Optional) Optionally set the root disk size (in GB). Configure either this field or dynamicVolumeSize, not both.
+* `dynamic_volume_size` - (Optional) Set dynamic volume size properties. When using this object, you cannot use `root_volume_size`. You must use one or the other. When `dynamic_volume_size` is configured, `root_volume_type` is optional and defaults to `pd-standard`.
+  * `base_size` - (Required) Initial size per volume (in GB). Must be `>= 1`, and must meet the minimum size for the selected GCP boot disk type and source image, whichever is greater. For example, `pd-standard`, `pd-ssd`, and `pd-balanced` require at least 10 GB; `pd-extreme` requires 500 GB; and `hyperdisk-balanced` requires 4 GB.
+  * `resource` - (Required) Resource used to calculate the volume size. Valid value: `"CPU"`.
+  * `size_per_resource_unit` - (Required) Additional size per resource unit (in GB). Must be `>= 1`. For example: if `base_size` = 50, `size_per_resource_unit` = 20, and an instance with 2 CPU is launched, its disk size will be 90 GB.
 * `instance_types` - (Optional) List of supported machine types for the Launch Spec.
 * `tags` - (Optional) Every node launched from this configuration will be tagged with those tags. Note: during creation some tags are automatically imported to the state file, it is required to manually add it to the template configuration
 * `autoscale_headrooms_automatic` - (Optional) Set automatic headroom per launch spec.

@@ -70,8 +70,15 @@ resource "spotinst_ocean_gke_import" "example" {
  shielded_instance_config {
     enable_secure_boot =  true
     enable_integrity_monitoring = true
+ } 
+
+ dynamic_volume_size {
+   base_size              = 50
+   resource               = "CPU"
+   size_per_resource_unit = 20
  }
- use_as_template_only = false
+  
+  use_as_template_only = false
   
 }
 ```
@@ -113,6 +120,10 @@ The following arguments are supported:
 * `shielded_instance_config` - (Optional) The Ocean shielded instance configuration object.
     * `enable_integrity_monitoring` - (Optional) Boolean. Enable the integrity monitoring parameter on the GCP instances.
     * `enable_secure_boot` - (Optional) Boolean. Enable the secure boot parameter on the GCP instances.
+* `dynamic_volume_size` - (Optional) Set dynamic volume size properties. When using this object, you cannot use `root_volume_size`. You must use one or the other. When `dynamic_volume_size` is configured, `root_volume_type` is optional and defaults to `pd-standard`.
+    * `base_size` - (Required) Initial size per volume (in GB). Must be `>= 1`, and must meet the minimum size for the selected GCP boot disk type and source image, whichever is greater. For example, `pd-standard`, `pd-ssd`, and `pd-balanced` require at least 10 GB; `pd-extreme` requires 500 GB; and `hyperdisk-balanced` requires 4 GB.
+    * `resource` - (Required) Resource used to calculate the volume size. Valid value: `"CPU"`.
+    * `size_per_resource_unit` - (Required) Additional size per resource unit (in GB). Must be `>= 1`. For example: if `base_size` = 50, `size_per_resource_unit` = 20, and an instance with 2 CPU is launched, its disk size will be 90 GB.
 * `use_as_template_only` - (Optional, Default: false) launch specification defined on the Ocean object will function only as a template for virtual node groups.
 * `auto_update` - (Optional) The Ocean Kubernetes AutoUpdate object. If set to 'true', Ocean will ensure that your clusters have an up-to-date configuration according to the respective GKE cluster.
     * `is_enabled` - (Optional, Default:`true`) Enable the Ocean Kubernetes AutoUpdate.

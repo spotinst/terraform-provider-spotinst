@@ -12,3 +12,10 @@ const (
 	EnableSecureBoot          commons.FieldName = "enable_secure_boot"
 	EnableIntegrityMonitoring commons.FieldName = "enable_integrity_monitoring"
 )
+
+const (
+	DynamicVolumeSize   commons.FieldName = "dynamic_volume_size"
+	BaseSize            commons.FieldName = "base_size"
+	Resource            commons.FieldName = "resource"
+	SizePerResourceUnit commons.FieldName = "size_per_resource_unit"
+)
