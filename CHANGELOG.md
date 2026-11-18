@@ -1,5 +1,10 @@
 ## Unreleased
 
+## 1.242.0 (November, 18 2026)
+ENHANCEMENTS:
+* resource/spotinst_ocean_gke_import: Added support for `dynamic_volume_size` object.
+* resource/spotinst_ocean_gke_launch_spec: Added support for `dynamic_volume_size` object.
+
 ## 1.241.2 (October, 1 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aws_launch_spec: Added support for `capacity_reservations` object.
