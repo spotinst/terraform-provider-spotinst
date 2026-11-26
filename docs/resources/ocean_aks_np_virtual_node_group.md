@@ -125,6 +125,7 @@ resource "spotinst_ocean_aks_np_virtual_node_group" "example" {
   draining_timeout            = 600
   should_utilize_commitments  = true
   restrict_scale_down         = true
+  orientation                 = "cost"
 
   // ---------------------------------------------------------------------------
 
@@ -232,6 +233,7 @@ The following arguments are supported:
   * `kube_dns_overrides` - (Optional) Per-zone DNS override configuration for kube-dns/CoreDNS resolution. Keys are DNS zone names (e.g. `"."` or `"cluster.local"`) and all values are same as `vnet_dns_overrides`.
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `should_utilize_commitments` - (Optional, Default: `false`) Determines whether to utilize any existing Azure Savings Plans or Reserved Instances associated with the subscription for On-Demand VMs.
+* `orientation` - (Optional, Default: `"cost"`) Controls and manages optimization priorities. Valid values: `"cost"`, `"availability"`.
 * `restrict_scale_down` - (Optional, Default: `false`) When set to `true`, nodes in this VNG will be protected from scale-down as long as they have reschedulable workloads running.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
     * `key` - (Optional) Tag key for VMs in the cluster.

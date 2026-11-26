@@ -193,4 +193,41 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Orientation] = commons.NewGenericField(
+		commons.OceanAKSNPVirtualNodeGroupStrategy,
+		Orientation,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  spotinst.String("cost"),
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if virtualNodeGroup != nil && virtualNodeGroup.Strategy != nil && virtualNodeGroup.Strategy.Orientation != nil {
+				if err := resourceData.Set(string(Orientation), spotinst.StringValue(virtualNodeGroup.Strategy.Orientation)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Orientation), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOk(string(Orientation)); ok {
+				virtualNodeGroup.Strategy.SetOrientation(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			vngWrapper := resourceObject.(*commons.VirtualNodeGroupAKSNPWrapper)
+			virtualNodeGroup := vngWrapper.GetVirtualNodeGroup()
+			if v, ok := resourceData.GetOk(string(Orientation)); ok {
+				virtualNodeGroup.Strategy.SetOrientation(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 }
