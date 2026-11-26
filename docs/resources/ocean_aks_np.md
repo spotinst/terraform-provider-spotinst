@@ -226,6 +226,7 @@ resource "spotinst_ocean_aks_np" "example" {
   fallback_to_ondemand        = true
   draining_timeout            = 600
   should_utilize_commitments  = true
+  orientation                 = "cost"
 
   // ----------------------------------------------------------------------
 
@@ -351,6 +352,7 @@ The following arguments are supported:
   * `kube_dns_overrides` - (Optional) Per-zone DNS override configuration for kube-dns/CoreDNS resolution. Keys are DNS zone names (e.g. `"."` or `"cluster.local"`) and all values are same as `vnet_dns_overrides`. 
 * `spot_percentage` - (Optional) Percentage of spot VMs to maintain.
 * `should_utilize_commitments` - (Optional, Default: `false`) Determines whether to utilize any existing Azure Savings Plans or Reserved Instances associated with the subscription for On-Demand VMs.
+* `orientation` - (Optional, Default: `"cost"`) Controls and manages optimization priorities. Valid values: `"cost"`, `"availability"`.
 * `tag` - (Optional) A maximum of 10 unique key-value pairs for VM tags in the virtual node group.
   * `key` - (Optional) Tag key for VMs in the cluster.
   * `value` - (Optional) Tag value for VMs in the cluster.

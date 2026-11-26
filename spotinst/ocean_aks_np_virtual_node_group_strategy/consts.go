@@ -7,4 +7,5 @@ const (
 	FallbackToOnDemand       commons.FieldName = "fallback_to_ondemand"
 	DrainingTimeout          commons.FieldName = "draining_timeout"
 	ShouldUtilizeCommitments commons.FieldName = "should_utilize_commitments"
+	Orientation              commons.FieldName = "orientation"
 )
