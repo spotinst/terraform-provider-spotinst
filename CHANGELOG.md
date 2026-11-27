@@ -1,6 +1,6 @@
 ## Unreleased
 
-## 1.243.0 (November, 18 2026)
+## 1.243.0 (November, 27 2026)
 ENHANCEMENTS:
 * resource/spotinst_ocean_aks_np: Added support for `orientation` field.
 * resource/spotinst_ocean_aks_np_virtual_node_group: Added support for `orientation` field.
