@@ -141,6 +141,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "50"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "false"),
 					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "false"),
+					resource.TestCheckResourceAttr(resourceName, "orientation", "cost"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "true"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.#", "1"),
 					//resource.TestCheckResourceAttr(resourceName, "vnet_subnet_ids.0", "/subscriptions/a9e813ad-f18b-4ad2-9dbc-5c6df28e9cb8/resourceGroups/AutomationResourceGroup/providers/Microsoft.Network/virtualNetworks/Automation-VirtualNetwork/subnets/default"),
@@ -210,6 +211,7 @@ func TestAccSpotinstOceanAKSNPVirtualNodeGroup_Baseline(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "spot_percentage", "100"),
 					resource.TestCheckResourceAttr(resourceName, "fallback_to_ondemand", "true"),
 					resource.TestCheckResourceAttr(resourceName, "should_utilize_commitments", "true"),
+					resource.TestCheckResourceAttr(resourceName, "orientation", "availability"),
 					resource.TestCheckResourceAttr(resourceName, "restrict_scale_down", "false"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.#", "3"),
 					resource.TestCheckResourceAttr(resourceName, "availability_zones.0", "1"),
@@ -306,6 +308,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   fallback_to_ondemand       = false
   draining_timeout           = 300
   should_utilize_commitments = false
+  orientation                = "cost"
   restrict_scale_down        = true
 
   // ---------------------------------------------------------------------------
@@ -411,6 +414,7 @@ resource "` + string(commons.OceanAKSNPVirtualNodeGroupResourceName) + `" "%v" {
   fallback_to_ondemand       = true
   draining_timeout           = 900
   should_utilize_commitments = true
+  orientation                = "availability"
   restrict_scale_down        = false
 
   // ---------------------------------------------------------------------------

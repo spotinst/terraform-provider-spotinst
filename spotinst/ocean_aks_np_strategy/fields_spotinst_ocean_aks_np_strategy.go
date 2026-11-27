@@ -190,4 +190,42 @@ func Setup(fieldsMap map[commons.FieldName]*commons.GenericField) {
 		nil,
 	)
 
+	fieldsMap[Orientation] = commons.NewGenericField(
+		commons.OceanAKSNPStrategy,
+		Orientation,
+		&schema.Schema{
+			Type:     schema.TypeString,
+			Optional: true,
+			Default:  spotinst.String("cost"),
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if cluster.VirtualNodeGroupTemplate != nil && cluster.VirtualNodeGroupTemplate.Strategy != nil &&
+				cluster.VirtualNodeGroupTemplate.Strategy.Orientation != nil {
+				if err := resourceData.Set(string(Orientation), spotinst.StringValue(cluster.VirtualNodeGroupTemplate.Strategy.Orientation)); err != nil {
+					return fmt.Errorf(string(commons.FailureFieldReadPattern), string(Orientation), err)
+				}
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOk(string(Orientation)); ok {
+				cluster.VirtualNodeGroupTemplate.Strategy.SetOrientation(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		func(resourceObject interface{}, resourceData *schema.ResourceData, meta interface{}) error {
+			clusterWrapper := resourceObject.(*commons.AKSNPClusterWrapper)
+			cluster := clusterWrapper.GetNPCluster()
+			if v, ok := resourceData.GetOk(string(Orientation)); ok {
+				cluster.VirtualNodeGroupTemplate.Strategy.SetOrientation(spotinst.String(v.(string)))
+			}
+			return nil
+		},
+		nil,
+	)
+
 }
